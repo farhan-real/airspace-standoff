@@ -1,5 +1,5 @@
 /* ==========================================================================
-   APEX VECTOR // Active Squadron Bays (Zero Right-Overflow)
+   APEX VECTOR // Active Squadron Bays (Clean Sizing, Zero Overlap)
    ========================================================================== */
 
 .roster-header-bar {
@@ -13,14 +13,14 @@
 }
 
 .roster-header-bar h3 {
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 800;
   font-family: var(--font-mono);
   color: #f1f5f9;
 }
 
 .roster-header-bar .subtext {
-  font-size: 0.62rem;
+  font-size: 0.66rem;
   color: var(--color-green);
   font-family: var(--font-mono);
 }
@@ -67,18 +67,18 @@
   flex-wrap: wrap;
 }
 
-.squad-unit-name { font-size: 0.84rem; font-weight: 800; color: #fff; }
+.squad-unit-name { font-size: 0.88rem; font-weight: 800; color: #fff; }
 
 .squad-unit-badge {
-  font-size: 0.56rem;
+  font-size: 0.60rem;
   font-family: var(--font-mono);
   font-weight: 700;
-  padding: 1px 5px;
+  padding: 2px 6px;
   border-radius: 2px;
 }
 
 .squad-unit-cost {
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-family: var(--font-mono);
   font-weight: 800;
   color: var(--color-green);
@@ -88,10 +88,10 @@
   background: #08172c;
   border: 1px solid #0284c7;
   color: #ffb830;
-  font-size: 0.60rem;
+  font-size: 0.64rem;
   font-family: var(--font-mono);
   font-weight: 800;
-  padding: 2px 6px;
+  padding: 3px 7px;
   border-radius: 2px;
   cursor: pointer;
   display: inline-flex;
@@ -118,12 +118,12 @@
   background: #020610;
   border: 1px solid #132236;
   border-radius: 3px;
-  padding: 4px 7px;
+  padding: 5px 8px;
   box-sizing: border-box;
 }
 
 .gun-sel-label {
-  font-size: 0.62rem;
+  font-size: 0.66rem;
   font-family: var(--font-mono);
   color: #ffb830;
   font-weight: 700;
@@ -136,9 +136,9 @@
   background: #060e1a;
   border: 1px solid #162a44;
   color: #f8fafc;
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   font-family: var(--font-mono);
-  padding: 3px 6px;
+  padding: 4px 6px;
   border-radius: 2px;
   outline: none;
 }
@@ -163,7 +163,7 @@
 .metric-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.60rem;
+  font-size: 0.64rem;
   font-family: var(--font-mono);
   color: #cbd5e1;
 }
@@ -213,7 +213,7 @@
 }
 
 .upgrades-label-row {
-  font-size: 0.60rem;
+  font-size: 0.64rem;
   font-family: var(--font-mono);
   color: #8494ab;
   font-weight: 700;
@@ -233,7 +233,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-family: var(--font-mono);
   color: #818cf8;
 }
@@ -264,7 +264,7 @@
   background: #030712;
   border: 1px solid #14243b;
   border-radius: 2px;
-  padding: 4px 6px;
+  padding: 5px 7px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -272,17 +272,17 @@
   box-sizing: border-box;
 }
 
-.iic-title { font-size: 0.64rem; font-weight: 700; color: #f8fafc; }
-.iic-sub { font-size: 0.56rem; color: #8494ab; margin-left: 6px; }
+.iic-title { font-size: 0.68rem; font-weight: 700; color: #f8fafc; }
+.iic-sub { font-size: 0.60rem; color: #8494ab; margin-left: 6px; }
 
 .btn-dismount-item {
   background: rgba(255, 51, 102, 0.12);
   border: 1px solid var(--color-red);
   color: #fecdd3;
-  padding: 2px 6px;
+  padding: 3px 7px;
   border-radius: 2px;
   cursor: pointer;
-  font-size: 0.60rem;
+  font-size: 0.64rem;
   font-family: var(--font-mono);
 }
 
@@ -291,7 +291,7 @@
 .empty-bay-indicator {
   text-align: center;
   padding: 8px;
-  font-size: 0.60rem;
+  font-size: 0.64rem;
   font-family: var(--font-mono);
   color: #64748b;
   border: 1px dashed #142338;
@@ -304,7 +304,6 @@
   color: var(--color-cyan);
 }
 
-/* Two-Line Mobile Squadron Bay Header (Zero Right-Edge Clipping) */
 @media (max-width: 1024px) {
   .squadron-container {
     grid-template-columns: 100%;
@@ -314,8 +313,8 @@
   }
 
   .squad-unit-card {
-    padding: 5px 6px;
-    gap: 3px;
+    padding: 6px 8px;
+    gap: 4px;
     width: 100%;
     box-sizing: border-box;
   }
@@ -323,7 +322,7 @@
   .squad-unit-header {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
     align-items: stretch;
   }
 
@@ -332,32 +331,32 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: 3px;
+    gap: 4px;
   }
 
   .squad-unit-name {
-    font-size: 0.76rem;
+    font-size: 0.82rem;
   }
 
   .squad-unit-actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 3px;
+    gap: 4px;
     width: 100%;
   }
 
   .squad-unit-actions .hud-btn {
-    padding: 2px 5px;
-    font-size: 0.52rem;
+    padding: 3px 7px;
+    font-size: 0.58rem;
   }
 
   .installed-item-card {
-    padding: 3px 4px;
+    padding: 4px 6px;
   }
 
   .iic-title {
-    max-width: 120px;
+    max-width: 140px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

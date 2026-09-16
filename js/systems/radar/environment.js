@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Radar Environment Sub-Renderer (150km x 100km Theater)
- * Optimized radar sweep gradient to minimize garbage collection and mobile fill-rate lag.
+ * AIRSPACE STANDOFF // Radar Environment Sub-Renderer (150km x 100km Theater)
+ * RTB BASE text completely removed per directive (clean dashed line only).
  */
 
 class RadarEnvironmentRenderer {
@@ -27,18 +27,15 @@ class RadarEnvironmentRenderer {
     const pBottom = cam.toScreen(corridorX, cfg.THEATER_HEIGHT_KM);
 
     ctx.save();
-    ctx.strokeStyle = 'rgba(0, 245, 160, 0.35)';
-    ctx.lineWidth = 1.2;
-    ctx.setLineDash([4, 6]);
+    ctx.strokeStyle = 'rgba(0, 245, 160, 0.40)';
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([5, 6]);
     ctx.beginPath();
     ctx.moveTo(Math.round(pTop.x), Math.round(pTop.y));
     ctx.lineTo(Math.round(pBottom.x), Math.round(pBottom.y));
     ctx.stroke();
 
-    const textX = Math.max(10, Math.min(cssWidth - 190, pTop.x - 175));
-    ctx.font = '700 9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-    ctx.fillStyle = '#00f5a0';
-    ctx.fillText('RTB BASE SANCTUARY (<32KM)', textX, 18);
+    // RTB BASE text completely removed to eliminate any UI overlap
     ctx.restore();
   }
 
@@ -89,17 +86,17 @@ class RadarEnvironmentRenderer {
 
   static drawUplinkBanner(ctx, count, cssWidth, cssHeight) {
     ctx.save();
-    ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Consolas", monospace';
+    ctx.font = '800 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Consolas", monospace';
     const text = `SATELLITE RADAR UPLINK: ${count} HOSTILE${count > 1 ? 'S' : ''} REMAINING (PINPOINTED)`;
     const textWidth = ctx.measureText(text).width;
     const x = Math.round((cssWidth - textWidth) / 2);
     const y = cssHeight - 16;
 
-    ctx.fillStyle = 'rgba(2, 6, 23, 0.90)';
+    ctx.fillStyle = 'rgba(2, 6, 23, 0.92)';
     ctx.strokeStyle = '#00f0ff';
-    ctx.lineWidth = 1.2;
-    ctx.fillRect(x - 10, y - 13, textWidth + 20, 18);
-    ctx.strokeRect(x - 10, y - 13, textWidth + 20, 18);
+    ctx.lineWidth = 1.4;
+    ctx.fillRect(x - 10, y - 14, textWidth + 20, 20);
+    ctx.strokeRect(x - 10, y - 14, textWidth + 20, 20);
 
     ctx.fillStyle = '#00f0ff';
     ctx.fillText(text, x, y);

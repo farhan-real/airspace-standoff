@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Touch & Pointer Controls (Smooth 1-finger canvas pan and zero target pre-select)
- * Protects unidentified aircraft anonymity during radar touch selection.
+ * AIRSPACE STANDOFF // Delta-Based Ultra-Smooth Touch & Pointer Engine
+ * Eliminates pan-locking via direct delta tracking, bounds clamping & gesture isolation.
  */
 
 class PointerControlsHandler {
@@ -8,12 +8,10 @@ class PointerControlsHandler {
     this.sys = controlsSys;
     this.game = controlsSys.game;
     this.isDraggingMap = false;
-    this.dragStartX = 0;
-    this.dragStartY = 0;
-    this.initialPanX = 0;
-    this.initialPanY = 0;
+    this.lastPointerX = 0;
+    this.lastPointerY = 0;
     this.pinchStartDist = 0;
-    this.hasMovedSignificantly = false;
+    this.totalDragDist = 0;
     this.initCanvasPointer();
   }
 
@@ -21,66 +19,82 @@ class PointerControlsHandler {
     const canvas = document.getElementById('radar-canvas');
     if (!canvas) return;
 
+    // Two-finger pinch-to-zoom
     canvas.addEventListener('touchstart', (e) => {
       if (e.touches.length === 2) {
+        this.isDraggingMap = false;
         this.pinchStartDist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
         );
       }
-    }, { passive: true });
+    }, { passive: false });
 
     canvas.addEventListener('touchmove', (e) => {
       if (e.touches.length === 2 && this.pinchStartDist > 0) {
+        e.preventDefault();
         const curDist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
         );
         const ratio = curDist / this.pinchStartDist;
-        if (Math.abs(ratio - 1.0) > 0.03) {
+        if (Math.abs(ratio - 1.0) > 0.02) {
           this.game.radar.cam.zoomAtCenter(ratio > 1 ? 1.04 : 0.96);
           this.pinchStartDist = curDist;
         }
       }
-    }, { passive: true });
+    }, { passive: false });
 
     canvas.addEventListener('touchend', (e) => {
       if (e.touches.length < 2) this.pinchStartDist = 0;
-    }, { passive: true });
+    }, { passive: false });
 
+    // Single-finger ultra-smooth delta panning
     canvas.addEventListener('pointerdown', (e) => {
-      const rect = canvas.getBoundingClientRect();
+      e.preventDefault();
+      if (this.pinchStartDist > 0) return;
+
       this.isDraggingMap = true;
-      this.hasMovedSignificantly = false;
-      this.dragStartX = e.clientX - rect.left;
-      this.dragStartY = e.clientY - rect.top;
-      this.initialPanX = this.game.radar.panX;
-      this.initialPanY = this.game.radar.panY;
-      canvas.setPointerCapture(e.pointerId);
+      this.totalDragDist = 0;
+      this.lastPointerX = e.clientX;
+      this.lastPointerY = e.clientY;
+
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch (err) {}
     });
 
     canvas.addEventListener('pointermove', (e) => {
+      e.preventDefault();
       const rect = canvas.getBoundingClientRect();
       const curX = e.clientX - rect.left;
       const curY = e.clientY - rect.top;
-      const km = this.game.radar.toKm(curX, curY);
-
-      const coordsEl = document.getElementById('cursor-coords');
-      if (coordsEl) {
-        coordsEl.textContent = 'COORD: ' + km.x.toFixed(1) + 'KM, ' + km.y.toFixed(1) + 'KM • TAP TO STEER / TARGET';
-      }
 
       if (this.isDraggingMap && this.pinchStartDist === 0) {
-        const dx = curX - this.dragStartX;
-        const dy = curY - this.dragStartY;
-        if (Math.hypot(dx, dy) > 5) {
-          this.hasMovedSignificantly = true;
+        const dx = e.clientX - this.lastPointerX;
+        const dy = e.clientY - this.lastPointerY;
+        this.lastPointerX = e.clientX;
+        this.lastPointerY = e.clientY;
+
+        this.totalDragDist += Math.hypot(dx, dy);
+
+        if (this.totalDragDist > 4) {
+          // Release camera tracking lock on manual drag
           this.game.radar.trackingUnit = null;
-          const cfg = window.CONFIG || { THEATER_WIDTH_KM: 100.0, THEATER_HEIGHT_KM: 70.0 };
+
+          const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
           const effScaleX = (this.game.radar.cssWidth / cfg.THEATER_WIDTH_KM) * this.game.radar.zoom;
           const effScaleY = (this.game.radar.cssHeight / cfg.THEATER_HEIGHT_KM) * this.game.radar.zoom;
-          this.game.radar.panX = this.initialPanX - (dx / effScaleX);
-          this.game.radar.panY = this.initialPanY - (dy / effScaleY);
+
+          // Direct delta displacement (cannot lock or freeze)
+          this.game.radar.panX -= (dx / effScaleX);
+          this.game.radar.panY -= (dy / effScaleY);
+
+          // Boundaries clamp
+          const maxPanX = cfg.THEATER_WIDTH_KM;
+          const maxPanY = cfg.THEATER_HEIGHT_KM;
+          this.game.radar.panX = Math.max(-50, Math.min(maxPanX + 50, this.game.radar.panX));
+          this.game.radar.panY = Math.max(-30, Math.min(maxPanY + 30, this.game.radar.panY));
         }
       } else {
         const candidate = this.findClosestContactInScreenSpace(curX, curY, 32);
@@ -88,83 +102,48 @@ class PointerControlsHandler {
       }
     });
 
-    canvas.addEventListener('pointerup', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const upX = e.clientX - rect.left;
-      const upY = e.clientY - rect.top;
+    const releasePointer = (e) => {
+      if (!this.isDraggingMap) return;
       this.isDraggingMap = false;
 
-      if (this.hasMovedSignificantly) return;
+      try {
+        canvas.releasePointerCapture(e.pointerId);
+      } catch (err) {}
 
-      const pick = this.findClosestContactInScreenSpace(upX, upY, 40);
-      if (pick) {
-        const entity = pick.entity;
-        const commanderTeam = this.game.currentPvpCommander || 'friendly';
+      // If drag distance was negligible, treat as target tap
+      if (this.totalDragDist <= 6) {
+        const rect = canvas.getBoundingClientRect();
+        const tapX = e.clientX - rect.left;
+        const tapY = e.clientY - rect.top;
 
-        if (entity.isDecoyDrone && entity.team === commanderTeam) {
-          if (this.game.radar) {
-            this.game.radar.spawnCombatText(entity.x, entity.y, 'DECOY DRONE [AUTONOMOUS]', '#c084fc');
-          }
-          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-          return;
-        }
+        const pick = this.findClosestContactInScreenSpace(tapX, tapY, 38);
+        if (pick) {
+          const entity = pick.entity;
+          const commanderTeam = this.game.currentPvpCommander || 'friendly';
 
-        if (entity.team === commanderTeam && entity instanceof Aircraft) {
-          this.game.activeUnit = entity;
-          if (this.game.radar && this.game.radar.cam && this.game.radar.trackingUnit) {
-            this.game.radar.cam.trackActiveCraft(entity);
-          }
-          this.game.avionics.renderFlightRoster();
-          this.game.avionics.updateActiveUnitMFD();
-          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-          return;
-        } else {
-          this.game.selectedTarget = entity;
-          const dist = this.game.activeUnit ? Math.round(Math.hypot(entity.x - this.game.activeUnit.x, entity.y - this.game.activeUnit.y)) : 0;
-          const alt = entity.altFt !== undefined ? ('FL' + Math.round(entity.altFt / 100)) : 'GROUND';
-
-          const isKnown = (entity.team === commanderTeam) ||
-            (typeof entity.isIdentifiedBy === 'function' ? entity.isIdentifiedBy(commanderTeam) : entity.isIdentified);
-
-          let rawTargetName = 'BOGEY [?]';
-          if (!isKnown) {
-            rawTargetName = 'BOGEY [?]';
-          } else if (entity.isGhost) {
-            rawTargetName = 'FALSE ECHO [' + (entity.ghostType || 'CLUTTER') + ']';
-          } else if (entity.isDecoyDrone) {
-            rawTargetName = 'DECOY [' + (entity.mirroredModel || 'UCAV') + ']';
-          } else if (entity.isCivilian) {
-            rawTargetName = entity.flightCode || 'CIVILIAN AIRLINER';
-          } else if (entity.type) {
-            rawTargetName = entity.name || entity.type;
+          if (entity.team === commanderTeam && entity instanceof Aircraft) {
+            this.game.activeUnit = entity;
+            if (this.game.radar && this.game.radar.cam && this.game.radar.trackingUnit) {
+              this.game.radar.cam.trackActiveCraft(entity);
+            }
+            this.game.avionics.renderFlightRoster();
+            this.game.avionics.updateActiveUnitMFD();
+            if (typeof AudioSys !== 'undefined') AudioSys.playClick();
           } else {
-            rawTargetName = entity.callsign || (entity.spec ? entity.spec.name : 'TARGET');
+            this.game.selectedTarget = entity;
+            if (this.game.radar) {
+              this.game.radar.spawnCombatText(entity.x, entity.y, 'TARGET SELECTED', '#00f0ff');
+              this.game.radar.spawnShockwave(entity.x, entity.y, '#00f0ff', 24);
+            }
+            if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+            this.game.avionics.updateActiveUnitMFD();
           }
-
-          const targetName = String(rawTargetName).replace(/<[^>]*>/g, '').trim();
-
-          const lockInfo = document.getElementById('selected-target-info');
-          if (lockInfo) lockInfo.textContent = 'TARGET: ' + targetName + ' [' + dist + 'km • ' + alt + ']';
-          if (this.game.radar) {
-            const lockCol = !isKnown ? '#f97316' : '#00f0ff';
-            this.game.radar.spawnCombatText(entity.x, entity.y, isKnown ? 'TARGET LOCKED' : 'BOGEY LOCKED', lockCol);
-            this.game.radar.spawnShockwave(entity.x, entity.y, lockCol, 25);
-          }
-          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-          this.game.avionics.updateActiveUnitMFD();
-          return;
         }
       }
+    };
 
-      const km = this.game.radar.toKm(upX, upY);
-      if (this.game.activeUnit && this.game.activeUnit.hp > 0) {
-        this.game.activeUnit.heading = Math.atan2(km.y - this.game.activeUnit.y, km.x - this.game.activeUnit.x);
-        this.game.activeUnit.applyActionStress(0.06);
-        if (this.game.radar) {
-          this.game.radar.spawnCombatText(km.x, km.y, 'VECTOR SET', '#00f0ff');
-        }
-      }
-    });
+    canvas.addEventListener('pointerup', releasePointer);
+    canvas.addEventListener('pointercancel', releasePointer);
   }
 
   findClosestContactInScreenSpace(screenX, screenY, maxRadiusPx) {

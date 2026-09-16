@@ -1,5 +1,6 @@
 /**
- * APEX VECTOR // Keyboard Controls (Hotkeys for Declutter [V], Ground [B], Pause & Actions)
+ * AIRSPACE STANDOFF // Keyboard Controls
+ * Removed hotkeys from feedback text, RTB expanded to RETURN TO BASE.
  */
 
 class KeyboardControlsHandler {
@@ -41,7 +42,7 @@ class KeyboardControlsHandler {
 
       const binds = (window.Settings && window.Settings.keybinds) ? window.Settings.keybinds : (window.DEFAULT_KEYBINDS || {});
 
-      // Pause simulation hotkey [P]
+      // Pause simulation
       if (key === binds.PAUSE_TIME || key === 'KeyP') {
         e.preventDefault();
         this.sys.togglePause();
@@ -53,7 +54,7 @@ class KeyboardControlsHandler {
       if (e.key === '2') { this.sys.setTimeWarp(2); return; }
       if (e.key === '3' || e.key === '4') { this.sys.setTimeWarp(4); return; }
 
-      // Hotkey: Toggle Declutter Mode [V]
+      // Toggle Declutter Mode
       if (key === binds.TOGGLE_DECLUTTER || key === 'KeyV') {
         e.preventDefault();
         if (this.game.radar) {
@@ -64,7 +65,7 @@ class KeyboardControlsHandler {
         return;
       }
 
-      // Hotkey: Toggle Ground Targets Visibility [B]
+      // Toggle Ground Targets Visibility
       if (key === binds.TOGGLE_GROUND || key === 'KeyB') {
         e.preventDefault();
         if (this.game.radar) {
@@ -88,19 +89,14 @@ class KeyboardControlsHandler {
         e.preventDefault(); this.sys.cycleFriendlyUnit(-1); return;
       }
 
-      // Target Cycling [T] or Tab
-      if (key === binds.CYCLE_TARGET || key === 'KeyT' || key === 'Tab') {
+      // Target Cycling
+      if (key === binds.CYCLE_TARGET || key === 'KeyT' || key === 'Tab' || key === 'Space') {
         e.preventDefault();
         this.sys.cycleTarget(1);
         return;
       }
 
-      // Auto-Lock Nearest [Space]
-      if (key === binds.AUTO_LOCK || key === 'Space' || key === 'KeyE') {
-        e.preventDefault(); this.sys.autoTargetNearestEnemy(); return;
-      }
-
-      // Manual Autocannon Key [G]
+      // Autocannon
       if (key === binds.FIRE_GUN || key === 'KeyG') {
         e.preventDefault();
         const u = this.game.activeUnit;
@@ -110,14 +106,14 @@ class KeyboardControlsHandler {
         return;
       }
 
-      // Toggle RTB Re-Arm / Cancel Reload [R]
+      // Return to Base
       if (key === binds.RTB || key === 'KeyR') {
         e.preventDefault();
         const uRtb = this.game.activeUnit;
         if (uRtb && uRtb.hp > 0) {
           const isReturning = uRtb.toggleRTB();
           if (this.game.radar) {
-            const msg = isReturning ? 'HIGH-SPEED RTB ORDERED' : 'RTB CANCELLED // ENGAGING';
+            const msg = isReturning ? 'HIGH-SPEED RETURN TO BASE ORDERED' : 'RETURN TO BASE CANCELLED // ENGAGING';
             const col = isReturning ? '#00f5a0' : '#38bdf8';
             this.game.radar.spawnCombatText(uRtb.x, uRtb.y, msg, col);
           }
@@ -127,7 +123,7 @@ class KeyboardControlsHandler {
         return;
       }
 
-      // Weapon Pylons 1-9
+      // Weapon Pylons
       for (let p = 1; p <= 9; p++) {
         const bindCode = binds['FIRE_PYLON_' + p] || ('Digit' + p);
         if (key === bindCode || e.key === String(p) || key === ('Digit' + p)) {
@@ -135,7 +131,7 @@ class KeyboardControlsHandler {
         }
       }
 
-      // Countermeasures [F] (Chaff Decoys)
+      // Countermeasures
       if (key === binds.COUNTERMEASURES || key === 'KeyF') {
         e.preventDefault();
         if (this.game.activeUnit && this.game.activeUnit.hp > 0) {

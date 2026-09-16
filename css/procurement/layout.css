@@ -1,17 +1,21 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Procurement Hangar Layout: Compact Single-Line Title
+   ========================================================================== */
+
 .procurement-window {
   width: 98vw;
   max-width: 1760px;
   height: 98vh;
   max-height: 98vh;
-  min-height: 600px;
+  min-height: 500px;
   background: #050b16;
   border: 1px solid #16273e;
   border-top: 3px solid #00f0ff;
   border-radius: 6px;
   display: flex;
   flex-direction: column;
-  padding: 10px 14px;
-  gap: 8px;
+  padding: 6px 10px;
+  gap: 4px;
   overflow: hidden;
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
   transform: translateZ(0);
@@ -20,31 +24,75 @@
 .procurement-header {
   flex-shrink: 0;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   border-bottom: 1px solid #16273e;
-  padding-bottom: 8px;
+  padding-bottom: 4px;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* TITLE GROUP: TITLE ON LEFT, SQUADRON CALLSIGN IN RIGHT CORNER */
+.title-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
   gap: 8px;
 }
 
-.procurement-header .title-group h1 {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #f8fafc;
-  letter-spacing: 0.8px;
+.brand-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
 }
 
-.procurement-header .subtext {
-  font-size: 0.64rem;
+.game-name {
+  font-size: 0.96rem;
+  font-weight: 900;
+  color: #f8fafc;
+  letter-spacing: 1px;
+}
+
+.hangar-badge {
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid #00f0ff;
   color: #00f0ff;
   font-family: var(--font-mono);
+  font-size: 0.56rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
+}
+
+.squad-callsign-tag {
+  margin-left: auto; /* Locks to the top-right corner of the title row */
+  background: #08172c;
+  border: 1px solid #0284c7;
+  color: #ffb830;
+  font-size: 0.64rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.squad-callsign-tag:hover {
+  background: #0284c7;
+  color: #fff;
 }
 
 .mode-and-ai-controls {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
@@ -59,9 +107,9 @@
 .seg-btn {
   border: none;
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  padding: 4px 10px;
+  padding: 3px 7px;
   border-radius: 2px;
   background: transparent;
   color: var(--text-muted);
@@ -70,38 +118,38 @@
 
 .seg-btn.active { background: var(--color-cyan); color: #000; }
 
-.ai-config-group { display: flex; align-items: center; gap: 5px; }
+.ai-config-group { display: flex; align-items: center; gap: 4px; }
 
 .budget-display {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-family: var(--font-mono);
   background: #020610;
   border: 1px solid #16273e;
   border-radius: 3px;
-  padding: 4px 10px;
+  padding: 3px 8px;
 }
 
-.budget-line { display: flex; align-items: baseline; gap: 5px; }
-.budget-display .label { font-size: 0.62rem; color: #8494ab; font-weight: 700; }
-.budget-display .amount { font-size: 0.95rem; font-weight: 800; color: #00f0ff; }
+.budget-line { display: flex; align-items: baseline; gap: 4px; }
+.budget-display .label { font-size: 0.60rem; color: #8494ab; font-weight: 700; }
+.budget-display .amount { font-size: 0.88rem; font-weight: 800; color: #00f0ff; }
 .budget-display .amount .spent-val { color: var(--color-green); }
 .budget-display .amount .spent-val.overbudget { color: var(--color-red) !important; }
 
 .budget-display .amount .rem-val {
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   color: #8494ab;
   font-weight: 700;
-  margin-left: 3px;
+  margin-left: 2px;
 }
 
 .budget-display .count-tag {
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   color: #e2e8f0;
   background: #091526;
   border: 1px solid #173252;
-  padding: 2px 6px;
+  padding: 2px 5px;
   border-radius: 2px;
   font-weight: 700;
 }
@@ -111,16 +159,16 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   background: #020610;
-  padding: 5px 8px;
+  padding: 4px 6px;
   border-radius: 3px;
   border: 1px solid #142338;
 }
 
 .preset-label {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   font-weight: 800;
   color: #ffb830;
 }
@@ -130,9 +178,9 @@
   border: 1px solid #16273e;
   color: #e2e8f0;
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  padding: 4px 8px;
+  padding: 3px 7px;
   border-radius: 2px;
   cursor: pointer;
   transition: border-color 0.12s ease, background-color 0.12s ease;
@@ -152,14 +200,14 @@
   overflow: hidden;
 }
 
-.custom-preset-chip .preset-btn { border: none; background: transparent; padding: 4px 6px; }
+.custom-preset-chip .preset-btn { border: none; background: transparent; padding: 3px 6px; }
 .preset-icon-btn {
   background: transparent;
   border: none;
   border-left: 1px solid #163252;
   color: #7dd3fc;
-  font-size: 0.62rem;
-  padding: 4px 6px;
+  font-size: 0.60rem;
+  padding: 3px 6px;
   cursor: pointer;
 }
 
@@ -173,8 +221,8 @@
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 6px;
   overflow: hidden;
   contain: layout;
 }
@@ -187,7 +235,7 @@
   border: 1px solid #142338;
   background: #030712;
   border-radius: 5px;
-  padding: 8px;
+  padding: 6px;
   overflow: hidden;
   contain: paint;
 }
@@ -195,7 +243,7 @@
 .procurement-footer {
   flex-shrink: 0;
   border-top: 1px solid #16273e;
-  padding-top: 6px;
+  padding-top: 4px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -208,7 +256,7 @@
   font-family: var(--font-mono);
   font-size: 0.82rem;
   font-weight: 800;
-  padding: 8px 24px;
+  padding: 7px 22px;
   border-radius: 3px;
   cursor: pointer;
   letter-spacing: 0.8px;
@@ -229,6 +277,9 @@
   cursor: not-allowed;
 }
 
+/* ==========================================================================
+   MOBILE LANDSCAPE: 75%+ VERTICAL SPACE FOR CATALOG & ROSTER
+   ========================================================================== */
 @media (max-width: 1024px) {
   .procurement-window {
     width: 100vw;
@@ -238,7 +289,7 @@
     max-height: 100dvh;
     min-height: 100dvh;
     border-radius: 0;
-    padding: 4px;
+    padding: 4px 6px;
     gap: 3px;
     box-sizing: border-box;
     overflow-x: hidden;
@@ -252,32 +303,31 @@
     box-sizing: border-box;
   }
 
-  .procurement-header .title-group h1 { font-size: 0.76rem; }
-  .procurement-header .subtext { display: none; }
+  .game-name { font-size: 0.82rem; }
 
   .mode-and-ai-controls {
-    gap: 2px;
+    gap: 3px;
     width: 100%;
     justify-content: flex-start;
   }
 
-  .seg-btn { padding: 2px 5px; font-size: 0.52rem; }
-  .hud-select { padding: 2px 3px; font-size: 0.52rem; }
+  .seg-btn { padding: 2px 6px; font-size: 0.56rem; }
+  .hud-select { padding: 2px 4px; font-size: 0.56rem; }
 
   .budget-display {
-    padding: 2px 4px;
+    padding: 2px 6px;
     width: 100%;
     justify-content: space-between;
     box-sizing: border-box;
   }
 
-  .budget-display .amount { font-size: 0.74rem; }
+  .budget-display .amount { font-size: 0.78rem; }
 
   .procurement-presets {
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding: 2px 3px;
-    gap: 2px;
+    padding: 2px 4px;
+    gap: 3px;
     width: 100%;
     box-sizing: border-box;
     -webkit-overflow-scrolling: touch;
@@ -285,62 +335,13 @@
 
   .preset-btn {
     white-space: nowrap;
-    padding: 2px 5px;
-    font-size: 0.54rem;
+    padding: 2px 6px;
+    font-size: 0.56rem;
     flex-shrink: 0;
-  }
-
-  .procurement-mobile-tabs {
-    display: flex;
-    gap: 3px;
-    flex-shrink: 0;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .p-mob-tab {
-    flex: 1;
-    background: #070e1a;
-    border: 1px solid #162a42;
-    color: #8494ab;
-    font-family: var(--font-mono);
-    font-size: 0.60rem;
-    font-weight: 800;
-    padding: 4px;
-    border-radius: 2px;
-    cursor: pointer;
-  }
-
-  .p-mob-tab.active {
-    background: #0284c7;
-    color: #fff;
-    border-color: #00f0ff;
-  }
-
-  .procurement-body {
-    display: block;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .hanger-shelf, .flight-roster {
-    width: 100%;
-    height: 100%;
-    padding: 3px;
-    box-sizing: border-box;
-  }
-
-  .hanger-shelf.mob-hidden,
-  .flight-roster.mob-hidden {
-    display: none !important;
   }
 
   .procurement-footer {
-    padding-top: 3px;
+    padding-top: 2px;
     width: 100%;
     box-sizing: border-box;
   }
@@ -348,7 +349,7 @@
   .scramble-btn {
     width: 100%;
     padding: 6px;
-    font-size: 0.72rem;
+    font-size: 0.74rem;
   }
 }
 
@@ -357,13 +358,15 @@
 
   .procurement-body {
     display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
+    grid-template-columns: 1.15fr 1fr !important;
     gap: 4px !important;
+    flex: 1 1 auto !important;
   }
 
   .hanger-shelf, .flight-roster {
     display: flex !important;
     width: 100% !important;
     height: 100% !important;
+    padding: 4px !important;
   }
 }

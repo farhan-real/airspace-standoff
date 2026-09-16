@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Weapon Pylon Bay (Streamlined SMS Station Manager)
- * All team weaponry, guns, missiles, and countermeasures operate under 100% manual command
+ * AIRSPACE STANDOFF // Weapon Pylon Bay
+ * Pure manual command. All keyboard hotkeys ([G], [1], [SPACE], etc.) removed from buttons/text.
  */
 
 class PylonBayRenderer {
@@ -73,12 +73,12 @@ class PylonBayRenderer {
             <div>ARMOR: <b id="tsb-hp">--</b></div>
             <div>CLASSIFICATION: <b id="tsb-type">--</b></div>
           </div>
-          <div id="tsb-target-empty-prompt" class="tsb-empty">NO TARGET LOCKED • TAP RADAR CONTACT OR PRESS [SPACEBAR]</div>
+          <div id="tsb-target-empty-prompt" class="tsb-empty">NO TARGET LOCKED &bull; TAP RADAR CONTACT TO TARGET</div>
         `;
         targetContainer.appendChild(targetCard);
       }
 
-      // Autocannon SMS Bay (Pure Manual Control for Player Team)
+      // Autocannon SMS Bay (No [G] Hotkey In Text)
       const gun = activeUnit.gun || (window.AUTOCANNONS_CATALOG && window.AUTOCANNONS_CATALOG['M61A2']) || { name: 'Autocannon', id: 'M61A2', rangeKm: 4.8, damagePerSec: 2.5 };
       const gunName = String(gun.name || 'Autocannon');
       const shortGunName = gunName.split(' ')[0] || 'GUN';
@@ -90,14 +90,13 @@ class PylonBayRenderer {
         gunBox.className = 'mob-compact-cannon';
         gunBox.innerHTML = `
           <div class="mob-cannon-row">
-            <div style="display:flex;align-items:center;gap:3px;overflow:hidden;">
-              <span class="pylon-key-badge" style="background:#0284c7;color:#fff;">[G]</span>
+            <div style="display:flex;align-items:center;gap:4px;overflow:hidden;">
               <span class="mob-pylon-name">${shortGunName}</span>
               <span id="gun-ui-ammo" class="mob-pylon-cap">${activeUnit.gunAmmo || 0} RDS</span>
             </div>
-            <div style="display:flex;align-items:center;gap:3px;">
+            <div style="display:flex;align-items:center;gap:4px;">
               <button type="button" class="micro-spec-btn" data-inspect-type="gun" data-inspect-id="${gun.id}">SPECS</button>
-              <button type="button" id="btn-fire-cannon-manual" class="btn-fire-pylon mob-fire-btn" style="width:auto;min-width:65px;">BURST [G]</button>
+              <button type="button" id="btn-fire-cannon-manual" class="btn-fire-pylon mob-fire-btn" style="width:auto;min-width:65px;">BURST</button>
             </div>
           </div>
         `;
@@ -106,20 +105,19 @@ class PylonBayRenderer {
         gunBox.innerHTML = `
           <div class="pylon-top-row">
             <div style="display:flex;align-items:center;gap:6px;">
-              <span class="pylon-key-badge" style="background:#0284c7;color:#fff;">[G]</span>
               <span id="gun-ui-name" style="color:#f8fafc;font-weight:800;">${gunName}</span>
             </div>
             <div style="display:flex;align-items:center;gap:6px;">
-              <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${gun.id}">[SPECS]</button>
+              <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${gun.id}">SPECS</button>
               <span id="gun-ui-ammo" class="gun-ammo-tag" style="color:#00f5a0;font-family:var(--font-mono);font-weight:700;">${activeUnit.gunAmmo || 0} RDS</span>
             </div>
           </div>
           <div class="autocannon-auto-badge">
             <span id="gun-ui-stats">MAX: ${gun.rangeKm || 4.8}km &bull; <b style="color:#ffb830;">${gunDmg} HP/s</b></span>
-            <span id="gun-ui-indicator" class="armed-indicator" style="color:#00f5a0;">[MANUAL CONTROL (PRESS G)]</span>
+            <span id="gun-ui-indicator" class="armed-indicator" style="color:#00f0ff;">ARMED</span>
           </div>
           <button type="button" id="btn-fire-cannon-manual" class="btn-fire-pylon" style="margin-top:2px;border-color:#00f0ff;color:#7dd3fc;">
-            FIRE MANUAL BURST [G]
+            FIRE BURST
           </button>
         `;
       }
@@ -137,7 +135,7 @@ class PylonBayRenderer {
       }
       targetContainer.appendChild(gunBox);
 
-      // Pylon Stations
+      // Pylon Stations (Hotkeys [1], [2] Removed from Text)
       if (weapons.length === 0) {
         const emptyNotice = document.createElement('div');
         emptyNotice.className = 'empty-bay-indicator';
@@ -149,7 +147,6 @@ class PylonBayRenderer {
         weapons.forEach((item, idx) => {
           const w = item.weapon;
           if (!w) return;
-          const keyNum = (idx + 1) <= 9 ? (idx + 1) : '';
           const wpnName = String(w.name || w.id || 'MISSILE');
           const shortWpnName = wpnName.split(' ')[0] || 'WPN';
           const wpnDmg = w.damage !== undefined ? w.damage : 2;
@@ -161,7 +158,6 @@ class PylonBayRenderer {
             pylonCard.innerHTML = `
               <div class="mob-pylon-top-line">
                 <div class="mob-pylon-name-group">
-                  ${keyNum ? `<span class="pylon-key-badge">[${keyNum}]</span>` : ''}
                   <span class="mob-pylon-name">${shortWpnName}</span>
                 </div>
                 <div class="mob-pylon-top-right">
@@ -173,18 +169,17 @@ class PylonBayRenderer {
                 <span class="mob-pylon-sub">${w.rangeKm || 0}km &bull; ${wpnDmg}HP</span>
                 <span class="pk-value-tag mob-pylon-pk">P_K: --%</span>
               </div>
-              <button type="button" class="btn-fire-pylon mob-fire-btn" disabled>FIRE [${keyNum}]</button>
+              <button type="button" class="btn-fire-pylon mob-fire-btn" disabled>FIRE</button>
             `;
           } else {
             pylonCard.className = 'pylon-item-card';
             pylonCard.innerHTML = `
               <div class="pylon-top-row">
                 <div class="pylon-name-group">
-                  ${keyNum ? `<span class="pylon-key-badge">[${keyNum}]</span>` : ''}
                   <span class="pylon-name">${wpnName}</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:6px;">
-                  <button type="button" class="pylon-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w.id}">[SPECS]</button>
+                  <button type="button" class="pylon-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button>
                   <span class="pylon-ammo-counter">${item.ammo} / ${item.maxAmmo}</span>
                 </div>
               </div>
@@ -193,7 +188,7 @@ class PylonBayRenderer {
                 <span class="pk-value-tag">P_K: --%</span>
               </div>
               <div class="pk-progress-bar-bg"><div class="pk-progress-fill" style="width: 0%;"></div></div>
-              <button type="button" class="btn-fire-pylon" disabled>ENGAGE [${keyNum}]</button>
+              <button type="button" class="btn-fire-pylon" disabled>ENGAGE</button>
             `;
           }
 
@@ -233,13 +228,13 @@ class PylonBayRenderer {
 
       if (ammoEl) ammoEl.textContent = `${activeUnit.gunAmmo || 0} RDS`;
       if (indicatorEl) {
-        indicatorEl.textContent = inGunRange ? '[IN RANGE (PRESS G)]' : '[MANUAL CONTROL (PRESS G)]';
+        indicatorEl.textContent = inGunRange ? 'IN RANGE' : 'ARMED';
         indicatorEl.style.color = inGunRange ? '#00f5a0' : '#00f0ff';
       }
       if (cannonBtn) {
         cannonBtn.disabled = ((activeUnit.gunAmmo || 0) <= 0);
-        if (isMobile) cannonBtn.textContent = ((activeUnit.gunAmmo || 0) <= 0) ? 'EMPTY' : (inGunRange ? 'BURST [G]' : 'STRAFE [G]');
-        else cannonBtn.textContent = ((activeUnit.gunAmmo || 0) <= 0) ? 'CANNON DEPLETED' : (inGunRange ? 'FIRE MANUAL BURST [G]' : 'FIRE STRAFE BURST [G]');
+        if (isMobile) cannonBtn.textContent = ((activeUnit.gunAmmo || 0) <= 0) ? 'EMPTY' : (inGunRange ? 'BURST' : 'STRAFE');
+        else cannonBtn.textContent = ((activeUnit.gunAmmo || 0) <= 0) ? 'CANNON DEPLETED' : (inGunRange ? 'FIRE BURST' : 'FIRE STRAFE BURST');
       }
     }
 
@@ -263,7 +258,6 @@ class PylonBayRenderer {
       const pkTag = cardEl.querySelector('.pk-value-tag');
       const pkFill = cardEl.querySelector('.pk-progress-fill');
       const fireBtn = cardEl.querySelector('.btn-fire-pylon');
-      const keyNum = (idx + 1) <= 9 ? (idx + 1) : '';
 
       if (w.isJammerPod) {
         cardEl.classList.remove('empty');
@@ -292,7 +286,7 @@ class PylonBayRenderer {
         const hasTokens = (curTokens >= tokenCost);
         if (fireBtn) {
           fireBtn.disabled = !hasTokens;
-          fireBtn.textContent = !hasTokens ? (isMobile ? 'TOK' : `NEED ${tokenCost.toFixed(1)} TOK`) : (isMobile ? `DEPLOY [${keyNum}]` : (w.isDecoyDrone ? `LAUNCH MALD [${keyNum}]` : `DEPLOY FOTD [${keyNum}]`));
+          fireBtn.textContent = !hasTokens ? 'NEED TOK' : (w.isDecoyDrone ? 'LAUNCH MALD' : 'DEPLOY FOTD');
         }
         return;
       }
@@ -338,7 +332,6 @@ class PylonBayRenderer {
 
       if (fireBtn) {
         fireBtn.disabled = !canFire;
-        const keyTag = keyNum ? ` [${keyNum}]` : '';
         if (isMobile) {
           if (pkResult.label === 'AIR ONLY') fireBtn.textContent = 'AIR ONLY';
           else if (pkResult.label === 'GROUND ONLY') fireBtn.textContent = 'GND ONLY';
@@ -346,15 +339,15 @@ class PylonBayRenderer {
           else if (pkResult.label === 'TOO CLOSE') fireBtn.textContent = 'TOO CLOSE';
           else if (pkResult.label === 'OUT OF RANGE') fireBtn.textContent = 'OUT RNG';
           else if (curTokens < tokenCost) fireBtn.textContent = 'NEED TOK';
-          else fireBtn.textContent = `FIRE [${keyNum}] (${currentPk}%)`;
+          else fireBtn.textContent = `FIRE (${currentPk}%)`;
         } else {
           if (pkResult.label === 'AIR ONLY') fireBtn.textContent = 'AIR TARGET REQUIRED';
           else if (pkResult.label === 'GROUND ONLY') fireBtn.textContent = 'SURFACE TARGET REQUIRED';
-          else if (pkResult.label === 'IMMUNE') fireBtn.textContent = 'BUNKER IMMUNE (CRACKER REQ)';
+          else if (pkResult.label === 'IMMUNE') fireBtn.textContent = 'BUNKER IMMUNE';
           else if (pkResult.label === 'TOO CLOSE') fireBtn.textContent = `TOO CLOSE (<${w.minRangeKm || 1.2}km)`;
           else if (pkResult.label === 'OUT OF RANGE') fireBtn.textContent = `OUT OF RANGE (${w.rangeKm || 0}km MAX)`;
-          else if (curTokens < tokenCost) fireBtn.textContent = `NEED ${tokenCost.toFixed(1)} TOKEN${keyTag}`;
-          else fireBtn.textContent = `ENGAGE TARGET${keyTag} (${currentPk}%)`;
+          else if (curTokens < tokenCost) fireBtn.textContent = `NEED ${tokenCost.toFixed(1)} TOKEN`;
+          else fireBtn.textContent = `ENGAGE TARGET (${currentPk}%)`;
         }
       }
     });
@@ -435,7 +428,7 @@ class PylonBayRenderer {
     const ty = unit.y + Math.sin(heading) * (gun.rangeKm || 4.5);
     if (this.currentGame && this.currentGame.radar) {
       this.currentGame.radar.spawnGunTracer(unit.x, unit.y, tx, ty, '#00f0ff');
-      this.currentGame.radar.spawnCombatText(unit.x, unit.y, 'MANUAL STRAFE', '#00f0ff');
+      this.currentGame.radar.spawnCombatText(unit.x, unit.y, 'STRAFE', '#00f0ff');
     }
     if (typeof AudioSys !== 'undefined') AudioSys.playGunBurst();
     this.render(unit, this.getValidatedTarget());

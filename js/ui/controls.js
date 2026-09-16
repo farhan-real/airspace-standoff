@@ -1,15 +1,11 @@
 /**
- * APEX VECTOR // Controls System Coordinator
- * - Mobile Landscape Orientation Lock
- * - Time Warp Speed Controls (Pause, 1X, 2X, 4X)
- * - Auto-Pause when any dialog is displayed
- * - Squadron Name Customization
+ * AIRSPACE STANDOFF // Controls System Coordinator
+ * Pure manual target selection and switching. Full RTB names and no hotkeys in UI text.
  */
 
 class ControlsSystem {
   constructor(gameEngine) {
     this.game = gameEngine;
-    this.autolock = new AutoLockController(gameEngine);
     this.keyboard = new KeyboardControlsHandler(this);
     this.pointer = new PointerControlsHandler(this);
   }
@@ -19,7 +15,6 @@ class ControlsSystem {
     this.initModeSelectors();
     this.initMobileControls();
     this.initTimeWarpControls();
-    this.initOrientationLockControls();
     this.initPauseScreenModal();
   }
 
@@ -61,35 +56,6 @@ class ControlsSystem {
       this.game.simulation.setTimeWarp(1);
       this._wasAutoPaused = false;
     }
-  }
-
-  initOrientationLockControls() {
-    const toggleOrientation = async () => {
-      try {
-        if (!document.fullscreenElement) {
-          const docEl = document.documentElement;
-          if (docEl.requestFullscreen) {
-            await docEl.requestFullscreen();
-          } else if (docEl.webkitRequestFullscreen) {
-            await docEl.webkitRequestFullscreen();
-          }
-        }
-        if (screen.orientation && screen.orientation.lock) {
-          await screen.orientation.lock('landscape').catch(() => {});
-        }
-      } catch (err) {
-        console.warn('Orientation lock notice:', err);
-      }
-      if (this.game.radar) {
-        setTimeout(() => this.game.radar.resize(), 80);
-      }
-      if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-    };
-
-    const btnHUD = document.getElementById('btn-toggle-orientation');
-    const btnProc = document.getElementById('btn-toggle-orientation-proc');
-    if (btnHUD) btnHUD.onclick = toggleOrientation;
-    if (btnProc) btnProc.onclick = toggleOrientation;
   }
 
   initPauseScreenModal() {
@@ -134,14 +100,8 @@ class ControlsSystem {
     if (prevBtn) prevBtn.onclick = () => this.cycleFriendlyUnit(-1);
     if (nextBtn) nextBtn.onclick = () => this.cycleFriendlyUnit(1);
 
-    const autoLockBtn = document.getElementById('btn-mobile-autolock');
-    const cycleTgtBtn = document.getElementById('btn-mobile-cycle-target');
-    if (autoLockBtn) autoLockBtn.onclick = () => this.autoTargetNearestEnemy();
-    if (cycleTgtBtn) cycleTgtBtn.onclick = () => this.cycleTarget(1);
-
     const openFleetBtn = document.getElementById('btn-mobile-open-fleet');
     const closeFleetBtn = document.getElementById('btn-close-fleet-drawer');
-    const craftLabelBox = document.getElementById('mob-craft-label-box');
     const fleetPane = document.getElementById('pane-fleet');
 
     const openDrawer = () => {
@@ -155,7 +115,6 @@ class ControlsSystem {
     };
 
     if (openFleetBtn) openFleetBtn.onclick = openDrawer;
-    if (craftLabelBox) craftLabelBox.onclick = openDrawer;
     if (closeFleetBtn) closeFleetBtn.onclick = closeDrawer;
 
     const steerLeft = document.getElementById('mobile-steer-left');
@@ -176,9 +135,6 @@ class ControlsSystem {
   initHUDButtons() {
     const audioBtn = document.getElementById('btn-audio-toggle');
     if (audioBtn) audioBtn.onclick = () => { audioBtn.textContent = AudioSys.toggle() ? 'AUDIO: ON' : 'AUDIO: OFF'; };
-
-    const autoTargetBtn = document.getElementById('btn-autotarget');
-    if (autoTargetBtn) autoTargetBtn.onclick = () => this.autoTargetNearestEnemy();
 
     const inspectCraftBtn = document.getElementById('btn-inspect-active-unit');
     if (inspectCraftBtn) {
@@ -256,7 +212,7 @@ class ControlsSystem {
     if (this.game.consumeCurrentCommanderTokens(0.4)) {
       u.dive();
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-      if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'DIVE (-ALT / +SPD)', '#00f0ff');
+      if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'DIVE', '#00f0ff');
       this.game.avionics.updateActiveUnitMFD();
     }
   }
@@ -271,7 +227,7 @@ class ControlsSystem {
     if (this.game.consumeCurrentCommanderTokens(0.4)) {
       u.zoomClimb();
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-      if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'ZOOM CLIMB (+ALT / -SPD)', '#00f5a0');
+      if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'ZOOM CLIMB', '#00f5a0');
       this.game.avionics.updateActiveUnitMFD();
     }
   }
@@ -296,8 +252,104 @@ class ControlsSystem {
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
+  // MANUAL TARGET CYCLING
+  getDetectedTargets() {
+    const active = this.game.activeUnit;
+    if (!active || active.hp <= 0) return [];
+
+    const commanderTeam = this.game.currentPvpCommander || 'friendly';
+    const detectedSet = (commanderTeam === 'friendly')
+      ? (this.game.detectedByBlue || new Set())
+      : (this.game.detectedByRed || new Set());
+    const enemyRoster = (commanderTeam === 'friendly') ? this.game.hostileAircraft : this.game.alliedAircraft;
+    const enemyTeamTag = (commanderTeam === 'friendly') ? 'hostile' : 'friendly';
+
+    const detected = [];
+
+    for (const h of enemyRoster) {
+      if (h && h.hp > 0 && detectedSet.has(h.id)) {
+        const dist = Math.hypot(h.x - active.x, h.y - active.y);
+        detected.push({ entity: h, dist: dist });
+      }
+    }
+
+    const ghosts = (this.game.simulation && this.game.simulation.ghostContacts) || [];
+    for (const g of ghosts) {
+      if (g && g.hp > 0 && !g.isDissolved && detectedSet.has(g.id)) {
+        const distG = Math.hypot(g.x - active.x, g.y - active.y);
+        detected.push({ entity: g, dist: distG });
+      }
+    }
+
+    const decoys = (this.game.simulation && this.game.simulation.decoyDrones) || [];
+    for (const d of decoys) {
+      if (d && d.hp > 0 && d.team === enemyTeamTag && detectedSet.has(d.id)) {
+        const distD = Math.hypot(d.x - active.x, d.y - active.y);
+        detected.push({ entity: d, dist: distD });
+      }
+    }
+
+    for (const s of this.game.surfaceUnits) {
+      if (s && s.team === enemyTeamTag && s.hp > 0 && detectedSet.has(s.id)) {
+        const distS = Math.hypot(s.x - active.x, s.y - active.y);
+        detected.push({ entity: s, dist: distS });
+      }
+    }
+
+    const civilians = (this.game.simulation && this.game.simulation.civilianTraffic) || [];
+    for (const c of civilians) {
+      if (c && c.hp > 0 && detectedSet.has(c.id)) {
+        const distC = Math.hypot(c.x - active.x, c.y - active.y);
+        detected.push({ entity: c, dist: distC });
+      }
+    }
+
+    detected.sort((a, b) => a.dist - b.dist);
+    return detected;
+  }
+
   cycleTarget(direction = 1) {
-    this.autolock.cycleTarget(direction);
+    const active = this.game.activeUnit;
+    if (!active || active.hp <= 0) return;
+
+    const targets = this.getDetectedTargets();
+    if (targets.length === 0) {
+      if (this.game.radar) this.game.radar.spawnCombatText(active.x, active.y, 'NO RADAR CONTACTS', '#f97316');
+      if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+      return;
+    }
+
+    let currentIndex = -1;
+    if (this.game.selectedTarget) {
+      for (let k = 0; k < targets.length; k++) {
+        if (targets[k].entity.id === this.game.selectedTarget.id) {
+          currentIndex = k; break;
+        }
+      }
+    }
+
+    const nextIndex = (currentIndex + direction + targets.length) % targets.length;
+    const nextTarget = targets[nextIndex].entity;
+    this.lockTargetEntity(nextTarget);
+  }
+
+  lockTargetEntity(target) {
+    const active = this.game.activeUnit;
+    const commanderTeam = this.game.currentPvpCommander || 'friendly';
+
+    this.game.selectedTarget = target;
+
+    const isKnown = (target.team === active.team) ||
+      (typeof target.isIdentifiedBy === 'function' ? target.isIdentifiedBy(commanderTeam) : target.isIdentified);
+
+    if (this.game.radar) {
+      const lockColor = !isKnown ? '#f97316' : ((target.isAce && isKnown) ? '#ffd700' : '#00f0ff');
+      this.game.radar.spawnCombatText(target.x, target.y, isKnown ? 'TARGET SWITCHED' : 'BOGEY SWITCHED', lockColor);
+      this.game.radar.spawnShockwave(target.x, target.y, lockColor, 25);
+    }
+
+    if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+    this.game.avionics.updateActiveUnitMFD();
   }
 
   firePylonByIndex(pIdx) {
@@ -306,10 +358,6 @@ class ControlsSystem {
     if (u.equippedWeapons && u.equippedWeapons[pIdx]) {
       this.game.firePylon(u, pIdx, this.game.selectedTarget);
     }
-  }
-
-  autoTargetNearestEnemy() {
-    this.autolock.autoTargetNearestEnemy();
   }
 
   initModeSelectors() {

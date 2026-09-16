@@ -1,5 +1,5 @@
 /* ==========================================================================
-   APEX VECTOR // Radar Flight HUD, Weapons SMS & Maneuver Deck (No Cutoff)
+   AIRSPACE STANDOFF // Flight HUD Tape (Wider & Taller Center), SMS & Deck
    ========================================================================== */
 
 /* Embedded Glass HUD Tape on Top of Radar Viewport */
@@ -10,109 +10,140 @@
   transform: translateX(-50%);
   display: flex;
   align-items: stretch;
-  gap: 5px;
+  justify-content: center;
+  gap: 6px;
   z-index: 7;
   pointer-events: none;
   font-family: var(--font-mono);
-  max-width: calc(100% - 320px);
+  width: auto;
+  max-width: 90%;
 }
 
 .rfh-panel {
-  background: rgba(3, 7, 18, 0.85);
+  background: rgba(3, 7, 18, 0.88);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   border: 1px solid rgba(0, 240, 255, 0.35);
   border-radius: 4px;
-  padding: 3px 7px;
+  padding: 4px 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  text-align: center;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
   white-space: nowrap;
+  overflow: hidden;
+}
+
+.rfh-left,
+.rfh-center,
+.rfh-right {
+  align-items: center;
+  text-align: center;
+  justify-content: center;
 }
 
 .rfh-label {
-  font-size: 0.48rem;
+  font-size: 0.50rem;
   color: #8494ab;
   font-weight: 800;
   letter-spacing: 0.5px;
+  text-align: center;
 }
 
 .rfh-val-box {
   display: flex;
   align-items: baseline;
-  gap: 3px;
+  justify-content: center;
+  gap: 4px;
 }
 
 .rfh-num {
-  font-size: 0.90rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: #f8fafc;
+  text-align: center;
 }
 
 .rfh-arrow {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 800;
 }
 
 .rfh-sub {
-  font-size: 0.50rem;
+  font-size: 0.54rem;
   color: #00f0ff;
   font-weight: 700;
+  text-align: center;
 }
 
+/* CENTER PANEL: WIDER & TALLER, LEVERAGING VERTICAL SPACE */
 .rfh-center {
-  min-width: 160px;
+  min-width: 200px;
+  max-width: 250px;
+  padding: 4px 10px;
   align-items: center;
   border-color: #00f0ff;
 }
 
 .rfh-center-top {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 1px;
+  width: 100%;
 }
 
 .rfh-cs {
-  font-size: 0.66rem;
-  font-weight: 800;
+  font-size: 0.74rem;
+  font-weight: 900;
   color: #00f0ff;
+  letter-spacing: 0.3px;
 }
 
 .rfh-model {
-  font-size: 0.54rem;
-  color: #cbd5e1;
-  font-weight: 700;
+  font-size: 0.52rem;
+  color: #94a3b8;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  display: block;
 }
 
 .rfh-compass-strip {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 1px;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 2px;
 }
 
 .rfh-cardinal {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 900;
   color: #00f5a0;
 }
 
 .rfh-deg {
-  font-size: 0.66rem;
+  font-size: 0.70rem;
   font-weight: 800;
   color: #f8fafc;
 }
 
 .rfh-sub-pills {
   display: flex;
-  gap: 3px;
+  justify-content: center;
+  gap: 4px;
   margin-left: 2px;
 }
 
 .rfh-pill {
-  font-size: 0.48rem;
-  padding: 1px 4px;
+  font-size: 0.50rem;
+  padding: 1px 5px;
   border-radius: 2px;
   background: rgba(0, 240, 255, 0.12);
   border: 1px solid rgba(0, 240, 255, 0.3);
@@ -146,7 +177,7 @@
   background: #020610;
   border: 1px dashed #142338;
   color: #64748b;
-  font-size: 0.56rem;
+  font-size: 0.58rem;
   text-align: center;
   padding: 5px;
 }
@@ -160,7 +191,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.64rem;
+  font-size: 0.66rem;
   font-weight: 800;
   color: #00f0ff;
   border-bottom: 1px solid #142338;
@@ -174,7 +205,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1px 4px;
-  font-size: 0.56rem;
+  font-size: 0.58rem;
   color: #8494ab;
 }
 
@@ -197,19 +228,19 @@
 .autocannon-auto-badge {
   display: flex;
   justify-content: space-between;
-  font-size: 0.52rem;
+  font-size: 0.54rem;
   font-family: var(--font-mono);
   color: #8494ab;
 }
 
 .armed-indicator { color: var(--color-green); font-weight: 700; }
 
-/* Pylon Station Cards (Desktop) */
+/* Pylon Station Cards */
 .pylon-item-card {
   background: #070e1a;
   border: 1px solid #14243b;
   border-radius: 3px;
-  padding: 3px 5px;
+  padding: 4px 6px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -224,7 +255,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.64rem;
+  font-size: 0.66rem;
   font-weight: 700;
 }
 
@@ -239,9 +270,9 @@
   background: #0284c7;
   color: #fff;
   font-family: var(--font-mono);
-  font-size: 0.52rem;
+  font-size: 0.54rem;
   font-weight: 800;
-  padding: 1px 3px;
+  padding: 1px 4px;
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -257,14 +288,14 @@
 .pylon-ammo-counter {
   color: var(--color-green);
   font-family: var(--font-mono);
-  font-size: 0.60rem;
+  font-size: 0.62rem;
   flex-shrink: 0;
 }
 
 .pylon-sub-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.54rem;
+  font-size: 0.56rem;
   font-family: var(--font-mono);
   color: #8494ab;
 }
@@ -291,12 +322,12 @@
   background: rgba(0, 240, 255, 0.08);
   border: 1px solid var(--color-cyan);
   color: #e0f2fe;
-  font-size: 0.60rem;
+  font-size: 0.62rem;
   font-weight: 700;
   font-family: var(--font-mono);
-  padding: 3px 5px;
+  padding: 3px 6px;
   text-align: center;
-  margin-top: 1px;
+  margin-top: 2px;
   cursor: pointer;
   border-radius: 2px;
   transition: all 0.12s ease;
@@ -315,7 +346,7 @@
   background: #050b14;
 }
 
-/* Tactical Maneuver Deck at Bottom (Desktop) */
+/* Tactical Maneuver Deck at Bottom */
 .tactical-deck-bay {
   height: 110px;
   min-height: 110px;
@@ -333,7 +364,7 @@
 .deck-header {
   display: flex;
   justify-content: space-between;
-  font-size: 0.60rem;
+  font-size: 0.62rem;
   font-family: var(--font-mono);
   font-weight: 700;
   color: #8494ab;
@@ -391,16 +422,16 @@
   align-items: baseline;
 }
 
-.mcard-name { font-size: 0.66rem; font-weight: 800; color: #f8fafc; }
-.mcard-cost { font-size: 0.56rem; font-family: var(--font-mono); color: var(--color-green); font-weight: 700; }
-.mcard-badge { font-size: 0.52rem; font-family: var(--font-mono); color: var(--color-cyan); }
+.mcard-name { font-size: 0.68rem; font-weight: 800; color: #f8fafc; }
+.mcard-cost { font-size: 0.58rem; font-family: var(--font-mono); color: var(--color-green); font-weight: 700; }
+.mcard-badge { font-size: 0.54rem; font-family: var(--font-mono); color: var(--color-cyan); }
 
 .mcard-hint-box {
   background: #020610;
   border: 1px solid #111d2e;
   border-radius: 2px;
   padding: 2px 4px;
-  font-size: 0.52rem;
+  font-size: 0.54rem;
   font-family: var(--font-mono);
   display: flex;
   flex-direction: column;
@@ -414,7 +445,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.56rem;
+  font-size: 0.58rem;
   font-family: var(--font-mono);
   border-top: 1px dashed #14243b;
   padding-top: 2px;
@@ -426,75 +457,263 @@
   background: #0284c7;
   color: #fff;
   font-weight: 800;
-  font-size: 0.50rem;
+  font-size: 0.52rem;
   padding: 1px 4px;
   border-radius: 2px;
 }
 .recom-badge.hidden { display: none; }
 
-/* ==========================================================================
-   MOBILE & LANDSCAPE: ZERO CUTOFF & PROPER DECK PROPORTIONS
-   ========================================================================== */
+/* Mobile Compact Cannon Container */
+.mob-compact-cannon {
+  grid-column: 1 / -1;
+  background: #060e1a;
+  border: 1px solid #162a44;
+  border-radius: 4px;
+  padding: 5px 8px;
+  margin-bottom: 3px;
+  font-family: var(--font-mono);
+  box-sizing: border-box;
+}
+
+.mob-cannon-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Mobile Compact Pylon Missile Cards */
+.mob-compact-pylon {
+  background: #070e1a;
+  border: 1px solid #14243b;
+  border-radius: 4px;
+  padding: 5px 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3px;
+  font-family: var(--font-mono);
+  box-sizing: border-box;
+  min-height: 56px;
+}
+
+.mob-compact-pylon.empty {
+  opacity: 0.35;
+  border-style: dashed;
+}
+
+.mob-pylon-top-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+}
+
+.mob-pylon-name-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  max-width: 65%;
+}
+
+.mob-pylon-name {
+  color: #f8fafc;
+  font-size: 0.66rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mob-pylon-top-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.mob-pylon-cap {
+  color: var(--color-green);
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.mob-pylon-prob-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.58rem;
+  color: #8494ab;
+  line-height: 1.2;
+}
+
+.mob-pylon-sub {
+  color: #7dd3fc;
+  white-space: nowrap;
+  font-size: 0.56rem;
+}
+
+.mob-pylon-pk {
+  font-weight: 800;
+  white-space: nowrap;
+  font-size: 0.60rem;
+}
+
+.micro-spec-btn {
+  background: #081628;
+  border: 1px solid #0284c7;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.mob-fire-btn {
+  width: 100% !important;
+  padding: 3px 6px !important;
+  font-size: 0.62rem !important;
+  height: 24px !important;
+  line-height: 1 !important;
+  margin-top: 2px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (max-width: 1024px) {
+  #pylon-rack,
+  .pylon-rack-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+  }
+}
+
+/* ==========================================================================
+   LANDSCAPE FLIGHT HUD: WIDER & TALLER CENTER DETAILS PANEL
+   ========================================================================== */
+@media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
   .radar-flight-hud {
-    top: 4px;
-    left: 4px;
-    transform: none;
-    max-width: calc(100% - 70px);
-    gap: 2px;
+    position: absolute !important;
+    top: 6px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    display: flex !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    z-index: 7 !important;
+    width: auto !important;
+    max-width: 78% !important;
+    pointer-events: none !important;
   }
 
-  .rfh-panel { padding: 1px 3px; }
-  .rfh-label { font-size: 0.40rem; }
-  .rfh-num { font-size: 0.64rem; }
-  .rfh-arrow { font-size: 0.52rem; }
-  .rfh-sub { font-size: 0.40rem; }
-  .rfh-center { min-width: 80px; }
-  .rfh-cs { font-size: 0.52rem; }
-  .rfh-model { font-size: 0.40rem; }
-  .rfh-cardinal { font-size: 0.54rem; }
-  .rfh-deg { font-size: 0.48rem; }
-  .rfh-pill { font-size: 0.38rem; padding: 0 2px; }
+  .rfh-panel {
+    padding: 3px 8px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    min-height: 48px !important; /* Taller vertical profile */
+  }
 
-  /* Fully visible deck */
+  .rfh-left {
+    min-width: 72px !important;
+    max-width: 85px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* WIDER, TALLER CENTER PANEL LEVERAGING VERTICAL SPACE */
+  .rfh-center {
+    min-width: 190px !important;
+    max-width: 240px !important;
+    flex-shrink: 0 !important;
+    padding: 3px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .rfh-center-top {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1px !important;
+    width: 100% !important;
+  }
+
+  .rfh-cs {
+    font-size: 0.72rem !important;
+    font-weight: 900 !important;
+    color: #00f0ff !important;
+  }
+
+  /* Role / Model shown cleanly with vertical spacing */
+  .rfh-model {
+    display: block !important;
+    font-size: 0.50rem !important;
+    color: #94a3b8 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 100% !important;
+  }
+
+  .rfh-compass-strip {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    margin-top: 1px !important;
+  }
+
+  .rfh-right {
+    min-width: 72px !important;
+    max-width: 85px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .rfh-val-box { justify-content: center !important; }
+
+  .rfh-label { font-size: 0.46rem !important; text-align: center !important; }
+  .rfh-num { font-size: 0.86rem !important; text-align: center !important; }
+  .rfh-arrow { font-size: 0.68rem !important; }
+  .rfh-sub { font-size: 0.50rem !important; text-align: center !important; }
+  .rfh-cardinal { font-size: 0.70rem !important; }
+  .rfh-deg { font-size: 0.66rem !important; }
+  .rfh-pill { font-size: 0.48rem !important; padding: 1px 4px !important; }
+
   .tactical-deck-bay {
     height: 48px !important;
     min-height: 48px !important;
     max-height: 48px !important;
-    padding: 2px 4px !important;
-    gap: 1px !important;
-    box-sizing: border-box !important;
+    padding: 2px 8px !important;
     background: #040812 !important;
     border-top: 1px solid #14243b !important;
+    box-sizing: border-box !important;
   }
 
-  .deck-header {
-    font-size: 0.46rem !important;
-    line-height: 1.1 !important;
-    margin-bottom: 1px !important;
-  }
-
-  .deck-header span:first-child {
-    max-width: 65%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .deck-header { display: none !important; }
 
   .deck-grid {
-    gap: 4px !important;
-    padding-bottom: 2px !important;
+    gap: 6px !important;
+    align-items: center !important;
     overflow-x: auto !important;
-    overflow-y: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
   }
 
   .maneuver-card {
-    width: 116px !important;
-    min-width: 116px !important;
-    max-width: 116px !important;
-    height: 31px !important;
-    padding: 2px 4px !important;
+    height: 42px !important;
+    width: 135px !important;
+    min-width: 135px !important;
+    max-width: 135px !important;
+    padding: 4px 6px !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
@@ -502,17 +721,17 @@
   }
 
   .mcard-name {
-    font-size: 0.50rem !important;
+    font-size: 0.62rem !important;
     font-weight: 800 !important;
-    line-height: 1 !important;
+    line-height: 1.1 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    max-width: 78px !important;
+    max-width: 90px !important;
   }
 
   .mcard-cost {
-    font-size: 0.46rem !important;
+    font-size: 0.54rem !important;
     line-height: 1 !important;
   }
 
@@ -522,46 +741,14 @@
   }
 
   .mcard-status-bar {
-    font-size: 0.44rem !important;
+    font-size: 0.52rem !important;
     padding-top: 0 !important;
     border-top: none !important;
     line-height: 1 !important;
   }
 
   .bonus-tag {
-    font-size: 0.44rem !important;
+    font-size: 0.52rem !important;
     line-height: 1 !important;
-  }
-
-  #pylon-rack,
-  .pylon-rack-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 3px !important;
-  }
-}
-
-@media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
-  .radar-flight-hud {
-    top: 4px !important;
-    left: 4px !important;
-    max-width: calc(100% - 115px) !important;
-  }
-
-  .tactical-deck-bay {
-    height: 36px !important;
-    min-height: 36px !important;
-    max-height: 36px !important;
-    padding: 1px 4px !important;
-  }
-
-  .deck-header { display: none !important; }
-
-  .maneuver-card {
-    height: 30px !important;
-    width: 105px !important;
-    min-width: 105px !important;
-    max-width: 105px !important;
-    padding: 2px 3px !important;
   }
 }

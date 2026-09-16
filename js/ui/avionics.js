@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Avionics UI
- * Displays Flight Lead and Ace status indicators, compass tape, and flight telemetry.
+ * AIRSPACE STANDOFF // Avionics UI
+ * Displays telemetry, compass tape, and full names (RETURN TO BASE).
  */
 
 class AvionicsUI {
@@ -41,7 +41,7 @@ class AvionicsUI {
         if (this.game.activeUnit && this.game.activeUnit.hp > 0) {
           const isReturning = this.game.activeUnit.toggleRTB();
           if (this.game.radar) {
-            const msg = isReturning ? 'HIGH-SPEED RTB ORDERED' : 'RTB CANCELLED // ENGAGING';
+            const msg = isReturning ? 'HIGH-SPEED RETURN TO BASE ORDERED' : 'RETURN TO BASE CANCELLED // ENGAGING';
             const col = isReturning ? '#00f5a0' : '#38bdf8';
             this.game.radar.spawnCombatText(this.game.activeUnit.x, this.game.activeUnit.y, msg, col);
           }
@@ -85,10 +85,6 @@ class AvionicsUI {
     const slider = document.getElementById('engine-slider');
     const alphaLabel = document.getElementById('alpha-val');
 
-    const mobCallsign = document.getElementById('mob-unit-callsign');
-    const mobMeta = document.getElementById('mob-unit-meta');
-    const mobTgtText = document.getElementById('mob-target-summary');
-
     const hudSpdMain = document.getElementById('hud-speed-main');
     const hudSpdArrow = document.getElementById('hud-speed-arrow');
     const hudSpdSub = document.getElementById('hud-speed-sub');
@@ -105,9 +101,6 @@ class AvionicsUI {
     if (!u || u.hp <= 0) {
       if (nameEl) nameEl.textContent = 'NO CRAFT SELECTED';
       if (callsignValEl) { callsignValEl.textContent = '--'; callsignValEl.style.color = '#8494ab'; }
-      if (mobCallsign) mobCallsign.textContent = 'NO CRAFT';
-      if (mobMeta) mobMeta.textContent = '--';
-      if (mobTgtText) { mobTgtText.textContent = 'TGT: NONE'; mobTgtText.style.color = '#8494ab'; }
       if (coffinTag) coffinTag.classList.add('hidden');
       if (leadTag) leadTag.classList.add('hidden');
       if (aceTag) aceTag.classList.add('hidden');
@@ -122,7 +115,7 @@ class AvionicsUI {
       if (hudSpdSub) hudSpdSub.textContent = '0 km/h';
       if (hudAltMain) { hudAltMain.textContent = 'FL000'; hudAltMain.style.color = '#8494ab'; }
       if (hudAltArrow) { hudAltArrow.textContent = '--'; hudAltArrow.className = 'rfh-arrow val-trend-flat'; }
-      if (hudVsi) hudVsi.textContent = '0 fpm [LVL]';
+      if (hudVsi) hudVsi.textContent = '0 fpm LVL';
       if (hudCallsign) hudCallsign.textContent = 'NO CRAFT SELECTED';
       if (hudModel) hudModel.textContent = '--';
       if (hudCardinal) hudCardinal.textContent = 'N';
@@ -146,39 +139,6 @@ class AvionicsUI {
     if (callsignValEl) {
       callsignValEl.textContent = `${modelCode} (${callsignText})`;
       callsignValEl.style.color = isFriendly ? '#00f0ff' : '#ff3366';
-    }
-
-    if (mobCallsign) {
-      const roleBadge = u.isAce ? ' ★ ACE' : (u.isFlightLead ? ' ★ LEAD' : '');
-      mobCallsign.textContent = `${modelCode}${roleBadge}`;
-      mobCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00f0ff' : '#ff3366'));
-    }
-    if (mobMeta) {
-      const altFl = Math.round((u.altFt || 30000) / 100);
-      mobMeta.textContent = `${callsignText} • ${Math.round(u.hp)}/${u.maxHp}HP • M${(u.speed || 0.8).toFixed(2)} • FL${altFl}`;
-    }
-
-    if (mobTgtText) {
-      const tgt = this.game.selectedTarget;
-      if (tgt && tgt.hp > 0 && !tgt.isDissolved) {
-        const dist = Math.round(Math.hypot(tgt.x - u.x, tgt.y - u.y));
-        const isKnown = (tgt.team === u.team) || (typeof tgt.isIdentifiedBy === 'function' ? tgt.isIdentifiedBy(this.game.currentPvpCommander || 'friendly') : tgt.isIdentified);
-        let rawTName = 'BOGEY [?]';
-        if (!isKnown) rawTName = 'BOGEY [?]';
-        else if (tgt.isGhost) rawTName = `ECHO [${tgt.ghostType || 'CLUTTER'}]`;
-        else if (tgt.isDecoyDrone) rawTName = `DECOY [${tgt.mirroredModel}]`;
-        else if (tgt.isCivilian) rawTName = tgt.flightCode || 'CIVILIAN';
-        else if (tgt.type) rawTName = tgt.name || tgt.type;
-        else rawTName = tgt.spec ? tgt.spec.id : (tgt.isIndestructible ? 'AMMO DEPOT' : (tgt.callsign || 'TGT'));
-
-        const tName = String(rawTName).replace(/<[^>]*>/g, '');
-        const hpTag = isKnown ? (tgt.isIndestructible ? 'INF' : `${Math.round(tgt.hp)}HP`) : '? HP';
-        mobTgtText.textContent = `TGT: ${tName} ${dist}km [${hpTag}]`;
-        mobTgtText.style.color = !isKnown ? '#f97316' : ((tgt.isAce && isKnown) ? '#ffd700' : (tgt.team === 'hostile' ? '#ff3366' : (tgt.isCivilian ? '#7dd3fc' : '#00f0ff')));
-      } else {
-        mobTgtText.textContent = 'TGT: NONE';
-        mobTgtText.style.color = '#8494ab';
-      }
     }
 
     if (coffinTag) coffinTag.classList.toggle('hidden', !u.isCoffin);
@@ -218,12 +178,12 @@ class AvionicsUI {
     if (hudAltMain) { hudAltMain.textContent = 'FL' + Math.round(u.altFt / 100); hudAltMain.style.color = this.getAltColor(u.altFt); }
     if (hudAltArrow) { hudAltArrow.textContent = aTr; hudAltArrow.className = 'rfh-arrow ' + (aTr === '^' ? 'val-trend-up' : (aTr === 'v' ? 'val-trend-down' : 'val-trend-flat')); }
     if (hudVsi) {
-      hudVsi.textContent = (fpm > 0 ? '+' : '') + fpm + ' fpm [' + (fpm > 300 ? 'CLMB' : (fpm < -300 ? 'DIVE' : 'LVL')) + ']';
+      hudVsi.textContent = (fpm > 0 ? '+' : '') + fpm + ' fpm ' + (fpm > 300 ? 'CLIMB' : (fpm < -300 ? 'DIVE' : 'LVL'));
       hudVsi.style.color = fpm > 300 ? '#00f5a0' : (fpm < -300 ? '#ff3366' : '#8494ab');
     }
 
     if (hudCallsign) {
-      const badge = u.isAce ? ' ★ ACE' : (u.isFlightLead ? ' ★ LEAD' : '');
+      const badge = u.isAce ? ' ACE' : (u.isFlightLead ? ' LEAD' : '');
       hudCallsign.textContent = `${modelCode}${badge}`;
       hudCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00f0ff' : '#ff3366'));
     }
@@ -233,19 +193,20 @@ class AvionicsUI {
     if (hudEturn) { hudEturn.textContent = 'TURN: ' + Math.round(eturn * 100) + '%' + (eturn >= 0.88 ? ' OPT' : ''); hudEturn.style.color = this.getTurnColor(eturn); }
     if (hudWr) {
       const pPct = Math.round((u.Wr || 0) * 100);
-      hudWr.textContent = 'LOAD: ' + pPct + '% [' + (pPct <= 35 ? 'CLEAN' : (pPct <= 60 ? 'NORM' : (pPct <= 80 ? 'HEAVY' : 'OVERLOAD'))) + ']';
+      hudWr.textContent = 'LOAD: ' + pPct + '% ' + (pPct <= 35 ? 'CLEAN' : (pPct <= 60 ? 'NORM' : (pPct <= 80 ? 'HEAVY' : 'OVERLOAD')));
       hudWr.style.color = this.getLoadColor(u.Wr || 0);
     }
 
     const pct = Math.round((u.engineAlpha !== undefined ? u.engineAlpha : 0.60) * 100);
     if (slider) slider.value = pct;
     if (alphaLabel) {
-      alphaLabel.textContent = pct + '% ' + (pct > 85 ? 'AFTERBURNER (HIGH IR PROFILE)' : (pct > 75 ? 'MIL POWER' : (pct > 35 ? 'CRUISE' : 'IDLE')));
+      alphaLabel.textContent = pct + '% ' + (pct > 85 ? 'AFTERBURNER' : (pct > 75 ? 'MIL POWER' : (pct > 35 ? 'CRUISE' : 'IDLE')));
       alphaLabel.classList.toggle('burner', pct > 85);
     }
 
+    // FULL NAME: RETURN TO BASE (NO HOTKEYS)
     if (rtbBtn) {
-      rtbBtn.textContent = u.isRTB ? 'CANCEL RTB [R]' : 'RTB [R]';
+      rtbBtn.textContent = u.isRTB ? 'CANCEL RETURN TO BASE' : 'RETURN TO BASE';
       rtbBtn.style.background = u.isRTB ? '#450a0a' : '#064e3b';
       rtbBtn.style.borderColor = u.isRTB ? '#ef4444' : '#10b981';
       rtbBtn.style.color = u.isRTB ? '#fecdd3' : '#a7f3d0';
@@ -286,8 +247,8 @@ class AvionicsUI {
       rwrState = nearest.distanceToTarget < 30 ? 'lock' : 'sweep';
       if (detailEl) {
         detailEl.textContent = nearest.isStealthMissile
-          ? `STEALTH MSL: ${Math.round(nearest.distanceToTarget)}km [BREAK 90°]`
-          : `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km [NOTCH 90°]`;
+          ? `STEALTH MSL: ${Math.round(nearest.distanceToTarget)}km`
+          : `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km`;
       }
     } else {
       let hasSweeps = false;

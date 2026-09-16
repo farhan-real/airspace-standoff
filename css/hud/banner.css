@@ -1,5 +1,5 @@
 /* ==========================================================================
-   APEX VECTOR // Aerospace C4ISR Tactical Header Banner & Action Cluster
+   AIRSPACE STANDOFF // Header Banner: Matched Fleet & Camera Controls Dock
    ========================================================================== */
 
 .tactical-banner {
@@ -18,27 +18,8 @@
   z-index: 20;
 }
 
-/* CLUSTER 1: THEATER & COMBAT SCENARIO */
 .theater-block {
-  display: flex;
-  flex-direction: column;
-  min-width: 110px;
-  flex-shrink: 0;
-}
-
-.sys-title {
-  font-weight: 800;
-  font-size: 0.84rem;
-  letter-spacing: 0.8px;
-  color: var(--color-cyan);
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-}
-
-.theater-name {
-  font-size: 0.56rem;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  letter-spacing: 0.2px;
+  display: none !important;
 }
 
 /* PVP Team Switcher */
@@ -69,7 +50,7 @@
 .pvp-team-btn.blue.active { background: var(--color-blue); color: #000; }
 .pvp-team-btn.red.active { background: var(--color-red); color: #fff; }
 
-/* CLUSTER 2: TIME, SPEED MULTIPLIER & NAVIGATION COORDINATES */
+/* TIME & SPEED CONTROLS */
 .banner-time-coords-cluster {
   display: flex;
   align-items: center;
@@ -84,25 +65,24 @@
   background: #020610;
   border: 1px solid #142338;
   border-radius: 3px;
-  padding: 2px 6px;
+  padding: 2px 7px;
   font-family: var(--font-mono);
   flex-shrink: 0;
 }
 
 .timer-label {
-  font-size: 0.52rem;
+  font-size: 0.54rem;
   color: #8494ab;
   font-weight: 700;
 }
 
 .timer-digits {
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: #00f0ff;
   letter-spacing: 0.8px;
 }
 
-/* TIME WARP CONTROLS */
 .time-warp-controls {
   display: flex;
   align-items: center;
@@ -119,9 +99,9 @@
   border: 1px solid #15273f;
   color: #8494ab;
   font-family: var(--font-mono);
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-weight: 800;
-  padding: 2px 6px;
+  padding: 3px 7px;
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.12s ease;
@@ -141,76 +121,7 @@
   box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
 }
 
-.banner-coords-box {
-  display: flex;
-  flex-direction: column;
-  background: #020610;
-  border: 1px solid #142338;
-  border-radius: 3px;
-  padding: 2px 7px;
-  font-family: var(--font-mono);
-  font-size: 0.54rem;
-  min-width: 140px;
-  max-width: 190px;
-  overflow: hidden;
-}
-
-.banner-coords-text {
-  color: #7dd3fc;
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.banner-target-text {
-  color: #00f0ff;
-  font-weight: 800;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* CLUSTER 3: COMMAND BUS CAPACITOR */
-.token-bucket-mfd {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 110px;
-  max-width: 135px;
-  flex-shrink: 0;
-}
-
-.token-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.62rem;
-  font-family: var(--font-mono);
-}
-
-.mfd-label { color: var(--text-muted); }
-.token-numeric { color: var(--color-cyan); font-weight: 700; }
-.token-rate { color: var(--color-green); font-size: 0.56rem; }
-
-.token-meter-frame {
-  width: 100%;
-  height: 6px;
-  background: #020610;
-  border: 1px solid #142338;
-  border-radius: 2px;
-  position: relative;
-  overflow: hidden;
-}
-
-.token-fill {
-  height: 100%;
-  width: 100%;
-  background: linear-gradient(90deg, #0284c7, var(--color-cyan));
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
-  transition: width 0.1s linear;
-}
-
-/* CLUSTER 4: TACTICAL SCORE */
+/* HIGH-EMPHASIS COMMAND SCORE */
 .banner-score-controls-cluster {
   display: flex;
   align-items: center;
@@ -221,210 +132,139 @@
 .victory-tracker {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: #020610;
-  padding: 2px 7px;
-  border: 1px solid var(--border-color);
-  border-radius: 3px;
+  gap: 8px;
+  background: linear-gradient(180deg, #071930 0%, #030a16 100%);
+  padding: 3px 12px;
+  border: 1.5px solid #00f0ff;
+  border-radius: 4px;
   font-family: var(--font-mono);
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
   flex-shrink: 0;
 }
 
-.vp-group { display: flex; flex-direction: column; align-items: center; }
-.vp-tag { font-size: 0.50rem; font-weight: 800; }
-.vp-group.ally .vp-tag { color: var(--color-blue); }
-.vp-group.hostile .vp-tag { color: var(--color-red); }
+.vp-group { display: flex; align-items: baseline; gap: 4px; }
+.vp-tag { font-size: 0.60rem; font-weight: 900; letter-spacing: 0.6px; }
+.vp-group.ally .vp-tag { color: #38bdf8; }
+.vp-group.hostile .vp-tag { color: #ff3366; }
 
-.vp-value { font-size: 0.84rem; font-weight: 800; }
-.vp-group.ally .vp-value { color: var(--color-blue); }
-.vp-group.hostile .vp-value { color: var(--color-red); }
-.vp-divider { color: #334155; font-size: 0.78rem; }
+.vp-value { font-size: 1.05rem; font-weight: 900; letter-spacing: 0.8px; }
+.vp-group.ally .vp-value { color: #ffffff; text-shadow: 0 0 10px rgba(56, 189, 248, 0.8); }
+.vp-group.hostile .vp-value { color: #ffffff; text-shadow: 0 0 10px rgba(255, 51, 102, 0.8); }
+.vp-divider { color: #475569; font-size: 0.95rem; font-weight: 800; }
 
-/* CLUSTER 5: SYSTEM ACTIONS (Unclipped, fully visible) */
-.top-quick-actions {
+/* SQUADRON CYCLER & FLEET BUTTON CLUSTER */
+.banner-nav-cluster {
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-shrink: 0;
+}
+
+.mob-craft-cycler {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.mob-craft-cycler .hud-btn {
+  padding: 3px 8px;
+  font-size: 0.64rem;
+  height: 26px;
+  box-sizing: border-box;
+}
+
+/* FLEET BUTTON: MATCHED 26PX HEIGHT */
+.fleet-btn {
+  height: 26px !important;
+  font-size: 0.64rem !important;
+  font-weight: 800 !important;
+  padding: 3px 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+}
+
+/* CAMERA CONTROLS: POSITIONED EXACTLY BETWEEN FLEET AND AUDIO */
+.banner-cam-controls {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.banner-cam-controls .cam-btn {
+  background: #08111e;
+  border: 1px solid #172a44;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 800;
+  height: 26px;
+  min-width: 26px;
+  padding: 0 6px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s ease;
+  box-sizing: border-box;
+}
+
+.banner-cam-controls .cam-btn:hover {
+  background: var(--color-cyan);
+  color: #000;
+  border-color: var(--color-cyan);
+}
+
+.banner-cam-controls .cam-btn:active {
+  background: #0284c7;
+  color: #fff;
+  border-color: #00f0ff;
+}
+
+/* SYSTEM ACTIONS */
+.top-quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   flex-shrink: 0;
   margin-left: auto;
 }
 
 .top-quick-actions .hud-btn {
-  padding: 4px 8px;
-  font-size: 0.66rem;
+  padding: 5px 10px;
+  font-size: 0.70rem;
   white-space: nowrap;
+  height: 26px;
+  box-sizing: border-box;
 }
 
-.mobile-subbar-row {
-  display: none;
-}
-
-/* ==========================================================================
-   MOBILE RESPONSIVE BANNER (PORTRAIT)
-   ========================================================================== */
-@media (max-width: 1024px) {
-  .tactical-banner {
-    height: auto;
-    padding: 2px 4px;
-    display: grid;
-    grid-template-columns: auto auto auto 1fr;
-    grid-template-rows: auto auto;
-    align-items: center;
-    gap: 2px 4px;
-    white-space: normal;
-    overflow: visible;
-    box-sizing: border-box;
-    width: 100vw;
-    max-width: 100vw;
-  }
-
-  .tactical-banner > .theater-block { display: none; }
-
-  .banner-time-coords-cluster {
-    grid-column: 1;
-    grid-row: 1;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-  }
-
-  .banner-coords-box { display: none; }
-  .match-timer-block { padding: 1px 3px; }
-  .timer-label { display: none; }
-  .timer-digits { font-size: 0.68rem; }
-
-  .token-bucket-mfd {
-    grid-column: 2;
-    grid-row: 1;
-    min-width: 58px;
-    max-width: 68px;
-    gap: 1px;
-  }
-
-  .token-meta { font-size: 0.48rem; }
-  .token-rate { display: none; }
-  .token-meter-frame { height: 4px; }
-
-  .banner-score-controls-cluster {
-    grid-column: 3;
-    grid-row: 1;
-    gap: 2px;
-  }
-
-  .victory-tracker {
-    padding: 1px 4px;
-    gap: 2px;
-  }
-
-  .vp-value { font-size: 0.68rem; }
-
-  .top-quick-actions {
-    grid-column: 4;
-    grid-row: 1;
-    justify-content: flex-end;
-    gap: 2px;
-  }
-
-  .top-quick-actions .hud-btn {
-    padding: 2px 5px;
-    font-size: 0.52rem;
-    min-width: 20px;
-    text-align: center;
-  }
-
-  #btn-autotarget { display: none; }
-
-  /* Subbar (Row 2): Unit switch & Target lock */
-  .mobile-subbar-row {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #030712;
-    border: 1px solid #142338;
-    border-radius: 3px;
-    padding: 1px 3px;
-    gap: 4px;
-    font-family: var(--font-mono);
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .mob-craft-cycler {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    flex-shrink: 0;
-  }
-
-  .mob-craft-cycler .hud-btn {
-    padding: 1px 4px;
-    font-size: 0.54rem;
-    font-weight: 800;
-  }
-
-  .mob-craft-label-box {
-    display: flex;
-    flex-direction: column;
-    min-width: 75px;
-    max-width: 105px;
-    cursor: pointer;
-  }
-
-  .mob-craft-label-box #mob-unit-callsign {
-    font-size: 0.54rem;
-    font-weight: 800;
-    color: var(--color-cyan);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .mob-craft-label-box #mob-unit-meta {
-    font-size: 0.44rem;
-    color: #8494ab;
-    white-space: nowrap;
-  }
-
-  .mob-target-action-box {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    overflow: hidden;
-    flex: 1;
-    justify-content: flex-end;
-  }
-
-  .mob-tgt-text {
-    font-size: 0.48rem;
-    color: #00f0ff;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 80px;
-    margin-right: 2px;
-  }
-
-  .mob-target-action-box .hud-btn {
-    padding: 1px 4px;
-    font-size: 0.50rem;
-    flex-shrink: 0;
-  }
+/* DEAD CODE PURGED */
+.banner-coords-box,
+.token-bucket-mfd,
+#btn-autotarget,
+#btn-mobile-autolock,
+#btn-mobile-cycle-target,
+#mob-target-summary,
+.mob-target-action-box {
+  display: none !important;
 }
 
 /* ==========================================================================
-   MOBILE LANDSCAPE: SINGLE-LINE INTEGRATED BANNER
+   LANDSCAPE BATTLE BANNER
    ========================================================================== */
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
   .tactical-banner {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    height: 32px !important;
-    padding: 0 4px !important;
-    gap: 4px !important;
+    height: 40px !important;
+    padding: 0 10px !important;
+    gap: 8px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
   }
@@ -432,86 +272,61 @@
   .banner-time-coords-cluster {
     display: flex !important;
     align-items: center !important;
-    gap: 3px !important;
+    gap: 4px !important;
     flex-shrink: 0 !important;
   }
 
-  .timer-digits { font-size: 0.62rem !important; }
-  .time-btn { font-size: 0.50rem !important; padding: 1px 3px !important; }
-
-  .token-bucket-mfd {
-    min-width: 50px !important;
-    max-width: 60px !important;
-    flex-shrink: 0 !important;
-  }
-  .token-meta { font-size: 0.44rem !important; }
-  .token-meter-frame { height: 3px !important; }
-  .vp-value { font-size: 0.62rem !important; }
-
-  .mobile-subbar-row {
-    display: flex !important;
+  .timer-digits { font-size: 0.80rem !important; }
+  .time-btn {
+    font-size: 0.62rem !important;
+    padding: 3px 6px !important;
+    height: 26px !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    gap: 3px !important;
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
   }
 
-  .mob-craft-cycler {
+  .banner-score-controls-cluster {
     display: flex !important;
     align-items: center !important;
-    gap: 2px !important;
     flex-shrink: 0 !important;
   }
 
-  .mob-craft-cycler .hud-btn {
-    padding: 1px 3px !important;
-    font-size: 0.50rem !important;
-    height: 18px !important;
+  .victory-tracker {
+    padding: 3px 12px !important;
+    gap: 8px !important;
+    border: 1.5px solid #00f0ff !important;
+    background: #071930 !important;
   }
 
-  .mob-craft-label-box {
-    min-width: 55px !important;
-    max-width: 85px !important;
-  }
+  .vp-value { font-size: 0.95rem !important; }
+  .vp-tag { font-size: 0.58rem !important; }
 
-  .mob-craft-label-box #mob-unit-callsign { font-size: 0.50rem !important; }
-  .mob-craft-label-box #mob-unit-meta { font-size: 0.40rem !important; }
-
-  .mob-target-action-box {
+  .banner-nav-cluster {
     display: flex !important;
     align-items: center !important;
-    gap: 3px !important;
+    gap: 4px !important;
     flex-shrink: 0 !important;
   }
 
-  .mob-tgt-text {
-    font-size: 0.46rem !important;
-    max-width: 70px !important;
-  }
-
-  .mob-target-action-box .hud-btn {
-    padding: 1px 4px !important;
-    font-size: 0.48rem !important;
-    height: 18px !important;
+  .banner-cam-controls .cam-btn {
+    height: 26px !important;
+    min-width: 26px !important;
+    font-size: 0.60rem !important;
+    padding: 0 5px !important;
   }
 
   .top-quick-actions {
     display: flex !important;
     align-items: center !important;
-    gap: 2px !important;
+    gap: 4px !important;
     flex-shrink: 0 !important;
   }
 
   .top-quick-actions .hud-btn {
-    padding: 1px 4px !important;
-    font-size: 0.48rem !important;
-    height: 18px !important;
+    padding: 3px 8px !important;
+    font-size: 0.62rem !important;
+    height: 26px !important;
   }
 
   #btn-hud-glossary { display: none !important; }
