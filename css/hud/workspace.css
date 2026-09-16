@@ -1,0 +1,268 @@
+/* ==========================================================================
+   APEX VECTOR // Cockpit Workspace (Desktop Grid, Shorter Mobile & Mobile Landscape)
+   ========================================================================== */
+
+.hud-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-sizing: border-box;
+}
+
+.cockpit-workspace {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 210px 1fr 300px;
+  background: #02050e;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.strip-header {
+  background: #070f1e;
+  padding: 5px 8px;
+  font-size: 0.64rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: #cbd5e1;
+  border-bottom: 1px solid #14243b;
+  letter-spacing: 0.6px;
+  flex-shrink: 0;
+}
+
+.strip-subhead {
+  font-size: 0.60rem;
+  font-weight: 700;
+  color: #8494ab;
+  font-family: var(--font-mono);
+  padding: 2px 0;
+  border-bottom: 1px dashed #14243b;
+  margin-bottom: 2px;
+  flex-shrink: 0;
+}
+
+.fleet-drawer-close-btn {
+  display: none;
+}
+
+.mobile-pane-tabs {
+  display: none;
+  gap: 3px;
+}
+
+.mobile-steering-overlay {
+  display: none;
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.mobile-steer-btn {
+  pointer-events: auto;
+  background: rgba(6, 13, 24, 0.90);
+  border: 1px solid #0284c7;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 6px 11px;
+  border-radius: 4px;
+  touch-action: manipulation;
+}
+
+.mobile-steer-btn:active {
+  background: #0284c7;
+  color: #fff;
+}
+
+/* Medium Displays */
+@media (max-width: 1400px) {
+  .cockpit-workspace {
+    grid-template-columns: 195px 1fr 285px;
+  }
+}
+
+/* Compact Laptop Displays */
+@media (max-width: 1200px) {
+  .cockpit-workspace {
+    grid-template-columns: 180px 1fr 275px;
+  }
+}
+
+/* ==========================================================================
+   MOBILE PORTRAIT: TALL RADAR, COMPACT CONTROLS WINDOW
+   ========================================================================== */
+@media (max-width: 1024px) and (orientation: portrait) {
+  .mobile-pane-tabs { display: none !important; }
+  .mobile-steering-overlay { display: flex; }
+
+  .cockpit-workspace {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #pane-radar.radar-viewport {
+    display: flex !important;
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 200px;
+    width: 100%;
+    z-index: 1;
+  }
+
+  #pane-mfd.active-unit-mfd {
+    display: flex !important;
+    position: static;
+    flex: 0 0 auto;
+    max-height: 28vh;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    background: #060c18;
+    padding: 2px 4px;
+    gap: 2px;
+    z-index: 2;
+  }
+
+  #pane-fleet.squadron-flight-data {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: rgba(3, 7, 18, 0.97);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    flex-direction: column;
+    padding: 6px;
+    overflow-y: auto;
+  }
+
+  #pane-fleet.squadron-flight-data.drawer-open {
+    display: flex !important;
+  }
+
+  .fleet-drawer-close-btn {
+    display: inline-flex;
+    margin-left: auto;
+  }
+}
+
+/* ==========================================================================
+   MOBILE LANDSCAPE: 2-COLUMN COCKPIT LAYOUT & 2-IN-1-ROW FLEET GRID DRAWER
+   ========================================================================== */
+@media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
+  .mobile-steering-overlay { display: flex; }
+
+  .cockpit-workspace {
+    display: flex !important;
+    flex-direction: row !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #pane-radar.radar-viewport {
+    display: flex !important;
+    position: relative;
+    flex: 1 1 auto;
+    height: 100%;
+    min-width: 0;
+    z-index: 1;
+  }
+
+  #pane-mfd.active-unit-mfd {
+    display: flex !important;
+    position: static;
+    flex: 0 0 280px;
+    width: 280px;
+    max-height: 100%;
+    height: 100%;
+    border-left: 1px solid var(--border-color);
+    border-top: none;
+    background: #060c18;
+    padding: 3px 5px;
+    gap: 2px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 2;
+  }
+
+  #pane-fleet.squadron-flight-data {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: rgba(3, 7, 18, 0.98);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 8px 12px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  #pane-fleet.squadron-flight-data.drawer-open {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  #fleet-strip-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    padding: 4px 8px !important;
+    background: #081426 !important;
+    border-radius: 3px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .fleet-drawer-close-btn {
+    display: inline-flex !important;
+    margin-left: auto !important;
+    padding: 3px 10px !important;
+    font-size: 0.60rem !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+  }
+
+  #pane-fleet.squadron-flight-data.drawer-open #flight-units-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+  }
+
+  #pane-fleet.squadron-flight-data.drawer-open .combat-score-log-box {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    max-height: 90px !important;
+    overflow-y: auto !important;
+  }
+}

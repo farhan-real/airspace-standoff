@@ -1,0 +1,366 @@
+/* ==========================================================================
+   APEX VECTOR // Radar Viewport, Left Camera Dock & Right Layer Dock
+   ========================================================================== */
+
+.radar-viewport {
+  position: relative;
+  background: #02050e;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+#radar-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* RWR THREAT WARNING */
+.rwr-warning-box {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: rgba(4, 9, 18, 0.94);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid #16273e;
+  border-radius: 3px;
+  padding: 4px 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.rwr-warning-box:hover { border-color: var(--color-cyan); }
+
+.rwr-label {
+  font-size: 0.54rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.rwr-status {
+  font-size: 0.64rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 1px 5px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+}
+
+.rwr-status.clean { color: var(--color-green); }
+.rwr-status.sweep { color: #f97316; }
+.rwr-status.lock { background: var(--color-red); color: #fff; }
+
+.rwr-subtext {
+  font-size: 0.52rem;
+  font-family: var(--font-mono);
+  color: #8494ab;
+}
+
+/* CIVILIAN CORRIDOR BANNER (CENTERED, FREE OF BUTTON OVERLAPS) */
+.civilian-alert-banner {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 7;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(4, 8, 16, 0.94);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid #0284c7;
+  border-radius: 3px;
+  padding: 3px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: #cbd5e1;
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  width: max-content;
+  max-width: calc(100% - 320px);
+  box-sizing: border-box;
+}
+
+.civ-ico {
+  font-weight: 800;
+  color: #00f0ff;
+  flex-shrink: 0;
+}
+
+.civ-text {
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+/* 4 CAMERA NAVIGATION BUTTONS (DOCKED LEFT) */
+.radar-cam-left-bar {
+  display: flex;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 10;
+  background: rgba(4, 10, 20, 0.92);
+  border: 1px solid #14243b;
+  border-radius: 4px;
+  padding: 3px 5px;
+  gap: 3px;
+  align-items: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.radar-cam-left-bar .cam-btn {
+  background: #08111e;
+  border: 1px solid #172a44;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 800;
+  height: 22px;
+  min-width: 22px;
+  padding: 0 5px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s ease;
+}
+
+.radar-cam-left-bar .cam-btn:hover {
+  background: var(--color-cyan);
+  color: #000;
+  border-color: var(--color-cyan);
+}
+
+.radar-cam-left-bar .cam-btn:active,
+.radar-cam-left-bar .cam-btn.active {
+  background: #0284c7;
+  color: #fff;
+  border-color: #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+/* RADAR LAYER DOCK (DOCKED RIGHT: DECLUTTER & GROUND) */
+.radar-floating-cam-bar {
+  display: flex;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 10;
+  background: rgba(4, 10, 20, 0.92);
+  border: 1px solid #14243b;
+  border-radius: 4px;
+  padding: 3px 5px;
+  gap: 3px;
+  align-items: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.radar-floating-cam-bar .cam-btn {
+  background: #08111e;
+  border: 1px solid #172a44;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 800;
+  height: 22px;
+  min-width: 22px;
+  padding: 0 5px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s ease;
+}
+
+.radar-floating-cam-bar .cam-btn:hover {
+  background: var(--color-cyan);
+  color: #000;
+  border-color: var(--color-cyan);
+}
+
+.radar-floating-cam-bar .cam-btn:active,
+.radar-floating-cam-bar .cam-btn.active {
+  background: #0284c7;
+  color: #fff;
+  border-color: #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+.radar-floating-cam-bar .prominent-cam-btn {
+  height: 22px;
+  font-size: 0.58rem;
+  padding: 0 7px;
+  min-width: 90px;
+}
+
+/* Portrait mobile styling */
+@media (max-width: 1024px) and (orientation: portrait) {
+  .rwr-warning-box {
+    top: 4px;
+    right: 4px;
+    padding: 1px 4px;
+  }
+
+  .rwr-status { font-size: 0.52rem; padding: 0 3px; }
+  .rwr-subtext { font-size: 0.42rem; }
+
+  .civilian-alert-banner {
+    bottom: 2px;
+    font-size: 0.44rem;
+    padding: 1px 4px;
+    gap: 3px;
+    max-width: 90%;
+  }
+
+  .radar-cam-left-bar {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 32px;
+    bottom: auto;
+    left: 4px;
+    gap: 2px;
+    padding: 2px;
+    background: rgba(3, 7, 18, 0.88);
+  }
+
+  .radar-cam-left-bar .cam-btn {
+    height: 18px;
+    min-width: 18px;
+    font-size: 0.48rem;
+    padding: 0 2px;
+  }
+
+  .radar-floating-cam-bar {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 32px;
+    bottom: auto;
+    right: 4px;
+    gap: 2px;
+    padding: 2px;
+    background: rgba(3, 7, 18, 0.88);
+  }
+
+  .radar-floating-cam-bar .cam-btn {
+    height: 18px;
+    min-width: 18px;
+    font-size: 0.48rem;
+    padding: 0 2px;
+  }
+
+  .radar-floating-cam-bar .prominent-cam-btn {
+    height: 18px;
+    font-size: 0.46rem;
+    min-width: 58px;
+    padding: 0 2px;
+  }
+
+  .mobile-steering-overlay {
+    bottom: 6px;
+    left: 6px;
+    right: 6px;
+  }
+
+  .mobile-steer-btn {
+    padding: 5px 10px;
+    font-size: 0.60rem;
+  }
+}
+
+/* Landscape mobile styling */
+@media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
+  .rwr-warning-box {
+    top: 4px;
+    right: 6px;
+    padding: 1px 5px;
+    z-index: 9;
+    max-width: 105px;
+  }
+
+  .rwr-status { font-size: 0.48rem; padding: 0 2px; }
+  .rwr-subtext { display: none; }
+  .civilian-alert-banner { display: none; }
+
+  .radar-cam-left-bar {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: auto;
+    bottom: 6px;
+    left: 6px;
+    gap: 2px;
+    padding: 2px;
+    background: rgba(3, 7, 18, 0.88);
+    border: 1px solid #14243b;
+    border-radius: 3px;
+    z-index: 10;
+  }
+
+  .radar-cam-left-bar .cam-btn {
+    height: 18px;
+    min-width: 18px;
+    font-size: 0.44rem;
+    padding: 0 3px;
+  }
+
+  .radar-floating-cam-bar {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: auto;
+    bottom: 6px;
+    right: 6px;
+    gap: 2px;
+    padding: 2px;
+    background: rgba(3, 7, 18, 0.88);
+    border: 1px solid #14243b;
+    border-radius: 3px;
+    z-index: 10;
+  }
+
+  .radar-floating-cam-bar .cam-btn {
+    height: 18px;
+    min-width: 18px;
+    font-size: 0.44rem;
+    padding: 0 3px;
+  }
+
+  .radar-floating-cam-bar .prominent-cam-btn {
+    height: 18px;
+    font-size: 0.44rem;
+    min-width: 58px;
+    padding: 0 3px;
+  }
+
+  .mobile-steering-overlay {
+    bottom: 28px;
+    left: 6px;
+    right: auto;
+    gap: 4px;
+    z-index: 10;
+  }
+
+  .mobile-steer-btn {
+    padding: 4px 8px;
+    font-size: 0.54rem;
+  }
+}

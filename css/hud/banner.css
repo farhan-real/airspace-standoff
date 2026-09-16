@@ -1,0 +1,518 @@
+/* ==========================================================================
+   APEX VECTOR // Aerospace C4ISR Tactical Header Banner & Action Cluster
+   ========================================================================== */
+
+.tactical-banner {
+  height: 42px;
+  background: linear-gradient(180deg, #091322 0%, #050b14 100%);
+  border-bottom: 1px solid #14243b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  gap: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  z-index: 20;
+}
+
+/* CLUSTER 1: THEATER & COMBAT SCENARIO */
+.theater-block {
+  display: flex;
+  flex-direction: column;
+  min-width: 110px;
+  flex-shrink: 0;
+}
+
+.sys-title {
+  font-weight: 800;
+  font-size: 0.84rem;
+  letter-spacing: 0.8px;
+  color: var(--color-cyan);
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+}
+
+.theater-name {
+  font-size: 0.56rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  letter-spacing: 0.2px;
+}
+
+/* PVP Team Switcher */
+.pvp-switcher {
+  display: flex;
+  gap: 2px;
+  background: #020610;
+  padding: 2px;
+  border-radius: 3px;
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.pvp-switcher.hidden { display: none !important; }
+
+.pvp-team-btn {
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--text-muted);
+  background: transparent;
+}
+
+.pvp-team-btn.blue.active { background: var(--color-blue); color: #000; }
+.pvp-team-btn.red.active { background: var(--color-red); color: #fff; }
+
+/* CLUSTER 2: TIME, SPEED MULTIPLIER & NAVIGATION COORDINATES */
+.banner-time-coords-cluster {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.match-timer-block {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  background: #020610;
+  border: 1px solid #142338;
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.timer-label {
+  font-size: 0.52rem;
+  color: #8494ab;
+  font-weight: 700;
+}
+
+.timer-digits {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #00f0ff;
+  letter-spacing: 0.8px;
+}
+
+/* TIME WARP CONTROLS */
+.time-warp-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: #020610;
+  border: 1px solid #142338;
+  border-radius: 3px;
+  padding: 2px;
+  flex-shrink: 0;
+}
+
+.time-btn {
+  background: #060d18;
+  border: 1px solid #15273f;
+  color: #8494ab;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  line-height: 1.2;
+}
+
+.time-btn:hover {
+  background: #0d1e34;
+  color: #00f0ff;
+  border-color: #00f0ff;
+}
+
+.time-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+.banner-coords-box {
+  display: flex;
+  flex-direction: column;
+  background: #020610;
+  border: 1px solid #142338;
+  border-radius: 3px;
+  padding: 2px 7px;
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  min-width: 140px;
+  max-width: 190px;
+  overflow: hidden;
+}
+
+.banner-coords-text {
+  color: #7dd3fc;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.banner-target-text {
+  color: #00f0ff;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* CLUSTER 3: COMMAND BUS CAPACITOR */
+.token-bucket-mfd {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 110px;
+  max-width: 135px;
+  flex-shrink: 0;
+}
+
+.token-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+}
+
+.mfd-label { color: var(--text-muted); }
+.token-numeric { color: var(--color-cyan); font-weight: 700; }
+.token-rate { color: var(--color-green); font-size: 0.56rem; }
+
+.token-meter-frame {
+  width: 100%;
+  height: 6px;
+  background: #020610;
+  border: 1px solid #142338;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.token-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #0284c7, var(--color-cyan));
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+  transition: width 0.1s linear;
+}
+
+/* CLUSTER 4: TACTICAL SCORE */
+.banner-score-controls-cluster {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.victory-tracker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #020610;
+  padding: 2px 7px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.vp-group { display: flex; flex-direction: column; align-items: center; }
+.vp-tag { font-size: 0.50rem; font-weight: 800; }
+.vp-group.ally .vp-tag { color: var(--color-blue); }
+.vp-group.hostile .vp-tag { color: var(--color-red); }
+
+.vp-value { font-size: 0.84rem; font-weight: 800; }
+.vp-group.ally .vp-value { color: var(--color-blue); }
+.vp-group.hostile .vp-value { color: var(--color-red); }
+.vp-divider { color: #334155; font-size: 0.78rem; }
+
+/* CLUSTER 5: SYSTEM ACTIONS (Unclipped, fully visible) */
+.top-quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.top-quick-actions .hud-btn {
+  padding: 4px 8px;
+  font-size: 0.66rem;
+  white-space: nowrap;
+}
+
+.mobile-subbar-row {
+  display: none;
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVE BANNER (PORTRAIT)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .tactical-banner {
+    height: auto;
+    padding: 2px 4px;
+    display: grid;
+    grid-template-columns: auto auto auto 1fr;
+    grid-template-rows: auto auto;
+    align-items: center;
+    gap: 2px 4px;
+    white-space: normal;
+    overflow: visible;
+    box-sizing: border-box;
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  .tactical-banner > .theater-block { display: none; }
+
+  .banner-time-coords-cluster {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .banner-coords-box { display: none; }
+  .match-timer-block { padding: 1px 3px; }
+  .timer-label { display: none; }
+  .timer-digits { font-size: 0.68rem; }
+
+  .token-bucket-mfd {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 58px;
+    max-width: 68px;
+    gap: 1px;
+  }
+
+  .token-meta { font-size: 0.48rem; }
+  .token-rate { display: none; }
+  .token-meter-frame { height: 4px; }
+
+  .banner-score-controls-cluster {
+    grid-column: 3;
+    grid-row: 1;
+    gap: 2px;
+  }
+
+  .victory-tracker {
+    padding: 1px 4px;
+    gap: 2px;
+  }
+
+  .vp-value { font-size: 0.68rem; }
+
+  .top-quick-actions {
+    grid-column: 4;
+    grid-row: 1;
+    justify-content: flex-end;
+    gap: 2px;
+  }
+
+  .top-quick-actions .hud-btn {
+    padding: 2px 5px;
+    font-size: 0.52rem;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  #btn-autotarget { display: none; }
+
+  /* Subbar (Row 2): Unit switch & Target lock */
+  .mobile-subbar-row {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #030712;
+    border: 1px solid #142338;
+    border-radius: 3px;
+    padding: 1px 3px;
+    gap: 4px;
+    font-family: var(--font-mono);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mob-craft-cycler {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .mob-craft-cycler .hud-btn {
+    padding: 1px 4px;
+    font-size: 0.54rem;
+    font-weight: 800;
+  }
+
+  .mob-craft-label-box {
+    display: flex;
+    flex-direction: column;
+    min-width: 75px;
+    max-width: 105px;
+    cursor: pointer;
+  }
+
+  .mob-craft-label-box #mob-unit-callsign {
+    font-size: 0.54rem;
+    font-weight: 800;
+    color: var(--color-cyan);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mob-craft-label-box #mob-unit-meta {
+    font-size: 0.44rem;
+    color: #8494ab;
+    white-space: nowrap;
+  }
+
+  .mob-target-action-box {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    overflow: hidden;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .mob-tgt-text {
+    font-size: 0.48rem;
+    color: #00f0ff;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
+    margin-right: 2px;
+  }
+
+  .mob-target-action-box .hud-btn {
+    padding: 1px 4px;
+    font-size: 0.50rem;
+    flex-shrink: 0;
+  }
+}
+
+/* ==========================================================================
+   MOBILE LANDSCAPE: SINGLE-LINE INTEGRATED BANNER
+   ========================================================================== */
+@media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
+  .tactical-banner {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 32px !important;
+    padding: 0 4px !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+
+  .banner-time-coords-cluster {
+    display: flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .timer-digits { font-size: 0.62rem !important; }
+  .time-btn { font-size: 0.50rem !important; padding: 1px 3px !important; }
+
+  .token-bucket-mfd {
+    min-width: 50px !important;
+    max-width: 60px !important;
+    flex-shrink: 0 !important;
+  }
+  .token-meta { font-size: 0.44rem !important; }
+  .token-meter-frame { height: 3px !important; }
+  .vp-value { font-size: 0.62rem !important; }
+
+  .mobile-subbar-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 3px !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .mob-craft-cycler {
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mob-craft-cycler .hud-btn {
+    padding: 1px 3px !important;
+    font-size: 0.50rem !important;
+    height: 18px !important;
+  }
+
+  .mob-craft-label-box {
+    min-width: 55px !important;
+    max-width: 85px !important;
+  }
+
+  .mob-craft-label-box #mob-unit-callsign { font-size: 0.50rem !important; }
+  .mob-craft-label-box #mob-unit-meta { font-size: 0.40rem !important; }
+
+  .mob-target-action-box {
+    display: flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mob-tgt-text {
+    font-size: 0.46rem !important;
+    max-width: 70px !important;
+  }
+
+  .mob-target-action-box .hud-btn {
+    padding: 1px 4px !important;
+    font-size: 0.48rem !important;
+    height: 18px !important;
+  }
+
+  .top-quick-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .top-quick-actions .hud-btn {
+    padding: 1px 4px !important;
+    font-size: 0.48rem !important;
+    height: 18px !important;
+  }
+
+  #btn-hud-glossary { display: none !important; }
+}
