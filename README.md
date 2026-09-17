@@ -19,11 +19,11 @@ A browser-based air combat game played entirely from a tactical radar screen. Co
 
 ---
 
-
 ## How to Run
 
-1. **Directly:** Double-click `index.html` to open it in any modern browser (Chrome, Firefox, Safari, Edge).
-2. **Local Server (Optional):**
+1. **Online:** Play directly at [https://farhan-real.github.io/airspace-standoff/](https://farhan-real.github.io/airspace-standoff/)
+2. **Directly (Offline):** Double-click `index.html` to open it in any modern browser (Chrome, Firefox, Safari, Edge).
+3. **Local Server (Optional):**
    ```bash
    python3 -m http.server 8000
    ```
