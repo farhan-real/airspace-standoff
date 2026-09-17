@@ -1,7 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Radar Tactical Sub-Renderer (150km x 100km Theater)
  * Unidentified aircraft render identically to standard bogeys.
- * Displays clean commercial airliner icon and multiline space-separated civilian telemetry.
+ * Displays commercial airliner icon, multiline civilian telemetry, and grouped missile salvos.
  */
 
 class RadarTacticalRenderer {
@@ -10,15 +10,11 @@ class RadarTacticalRenderer {
     const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0 };
     const isMobile = (cssWidth < 800);
     ctx.save();
-    if (!isMobile) {
-      ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 2;
-    }
+    if (!isMobile) { ctx.shadowColor = '#000000'; ctx.shadowBlur = 2; }
 
     for (const s of units) {
       if (!s || s.hp <= 0 || typeof s.x !== 'number') continue;
       const isSelectedSurface = Boolean(selectedTarget && selectedTarget.id === s.id);
-
       if (!cam.showGroundTargets && !isSelectedSurface) continue;
 
       const pos = cam.toScreen(s.x, s.y);
@@ -48,21 +44,14 @@ class RadarTacticalRenderer {
         ctx.moveTo(px, py - 7); ctx.lineTo(px + 7, py); ctx.lineTo(px, py + 7); ctx.lineTo(px - 7, py);
         ctx.closePath(); ctx.stroke();
       } else if (s.type === 'EW_JAMMER') {
-        ctx.beginPath();
-        ctx.arc(px, py, 6, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(px - 4, py); ctx.lineTo(px, py - 4); ctx.lineTo(px + 4, py); ctx.lineTo(px, py + 4);
+        ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px - 4, py); ctx.lineTo(px, py - 4); ctx.lineTo(px + 4, py); ctx.lineTo(px, py + 4);
         ctx.closePath(); ctx.fill();
       } else if (s.type === 'RADAR_ARRAY') {
-        ctx.beginPath();
-        ctx.arc(px, py, 5, Math.PI, Math.PI * 2);
-        ctx.stroke();
+        ctx.beginPath(); ctx.arc(px, py, 5, Math.PI, Math.PI * 2); ctx.stroke();
       } else if (s.type === 'AMMO_DUMP') {
-        ctx.strokeStyle = '#00f5a0';
-        ctx.strokeRect(px - 6, py - 6, 12, 12);
-        ctx.fillStyle = '#00f5a0';
-        ctx.fillRect(px - 2, py - 2, 4, 4);
+        ctx.strokeStyle = '#00f5a0'; ctx.strokeRect(px - 6, py - 6, 12, 12);
+        ctx.fillStyle = '#00f5a0'; ctx.fillRect(px - 2, py - 2, 4, 4);
       } else {
         ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2); ctx.stroke();
       }
@@ -84,10 +73,7 @@ class RadarTacticalRenderer {
     if (!civilians || civilians.length === 0) return;
     const isMobile = (cssWidth < 800);
     ctx.save();
-    if (!isMobile) {
-      ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 2;
-    }
+    if (!isMobile) { ctx.shadowColor = '#000000'; ctx.shadowBlur = 2; }
 
     for (const civ of civilians) {
       if (!civ || civ.hp <= 0 || typeof civ.x !== 'number') continue;
@@ -111,32 +97,16 @@ class RadarTacticalRenderer {
         ctx.beginPath();
         ctx.moveTo(11, 0);
         ctx.quadraticCurveTo(8.5, 2.2, 4.5, 2.2);
-        ctx.lineTo(2, 2.4);
-        ctx.lineTo(-3, 11);
-        ctx.lineTo(-5, 11);
-        ctx.lineTo(-2, 2.4);
-        ctx.lineTo(-7.5, 1.8);
-        ctx.lineTo(-10.5, 5.5);
-        ctx.lineTo(-12, 5.5);
-        ctx.lineTo(-10, 1.0);
-        ctx.lineTo(-12, 0);
-        ctx.lineTo(-10, -1.0);
-        ctx.lineTo(-12, -5.5);
-        ctx.lineTo(-10.5, -5.5);
-        ctx.lineTo(-7.5, -1.8);
-        ctx.lineTo(-2, -2.4);
-        ctx.lineTo(-5, -11);
-        ctx.lineTo(-3, -11);
-        ctx.lineTo(2, -2.4);
-        ctx.lineTo(4.5, -2.2);
+        ctx.lineTo(2, 2.4); ctx.lineTo(-3, 11); ctx.lineTo(-5, 11); ctx.lineTo(-2, 2.4);
+        ctx.lineTo(-7.5, 1.8); ctx.lineTo(-10.5, 5.5); ctx.lineTo(-12, 5.5); ctx.lineTo(-10, 1.0);
+        ctx.lineTo(-12, 0); ctx.lineTo(-10, -1.0); ctx.lineTo(-12, -5.5); ctx.lineTo(-10.5, -5.5);
+        ctx.lineTo(-7.5, -1.8); ctx.lineTo(-2, -2.4); ctx.lineTo(-5, -11); ctx.lineTo(-3, -11);
+        ctx.lineTo(2, -2.4); ctx.lineTo(4.5, -2.2);
         ctx.quadraticCurveTo(8.5, -2.2, 11, 0);
         ctx.closePath();
 
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.28)';
-        ctx.fill();
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 1.4;
-        ctx.stroke();
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.28)'; ctx.fill();
+        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.4; ctx.stroke();
 
         ctx.fillStyle = '#38bdf8';
         ctx.fillRect(-1.5, 4.2, 3.2, 1.5);
@@ -243,16 +213,17 @@ class RadarTacticalRenderer {
   static drawMissiles(ctx, cam, missiles, team, detectedSet, declutterMode, cleanFn) {
     const isMobile = (cam.cssWidth < 800);
     ctx.save();
-    if (!isMobile) {
-      ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 2;
-    }
+    if (!isMobile) { ctx.shadowColor = '#000000'; ctx.shadowBlur = 2; }
 
+    const visibleMissiles = [];
+
+    // 1. Draw physical missile sprites and trails
     for (const m of missiles) {
       if (!m || m.isDead || typeof m.x !== 'number' || (m.team !== team && !detectedSet.has(m.id))) continue;
       const pos = cam.toScreen(m.x, m.y);
       const px = Math.round(pos.x);
       const py = Math.round(pos.y);
+      visibleMissiles.push({ m: m, px: px, py: py });
 
       if (m.trail && m.trail.length > 1) {
         for (let t = 0; t < m.trail.length - 1; t++) {
@@ -268,26 +239,66 @@ class RadarTacticalRenderer {
       ctx.save();
       ctx.translate(px, py);
       ctx.rotate(m.heading || 0);
-
       const isBlue = (m.team === 'friendly');
-      const isIdentified = isBlue || (typeof m.isIdentifiedBy === 'function' ? m.isIdentifiedBy(team) : m.isIdentified);
-      const mslColor = isBlue ? '#00f0ff' : '#ef4444';
-
-      ctx.fillStyle = mslColor;
+      ctx.fillStyle = isBlue ? '#00f0ff' : '#ef4444';
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 0.8;
       ctx.beginPath();
       ctx.moveTo(8, 0); ctx.lineTo(2, -2.5); ctx.lineTo(-5, -2.5); ctx.lineTo(-6, 0); ctx.lineTo(-5, 2.5); ctx.lineTo(2, 2.5);
       ctx.closePath(); ctx.fill(); ctx.stroke();
       ctx.restore();
+    }
 
-      if (!declutterMode) {
-        const rawMslName = (m.weapon && m.weapon.id) ? m.weapon.id : 'MSL';
-        const mslLabel = isIdentified ? cleanFn(rawMslName) : 'FAST TRACK [?]';
+    // 2. Render labels: group identical missiles launched from the same aircraft; shows missile name in both declutter ON and OFF
+    if (visibleMissiles.length > 0) {
+      const clusters = [];
+
+      for (const item of visibleMissiles) {
+        const m = item.m;
+        const px = item.px;
+        const py = item.py;
+        const isBlue = (m.team === 'friendly');
+        const isIdentified = isBlue || (typeof m.isIdentifiedBy === 'function' ? m.isIdentifiedBy(team) : m.isIdentified);
+        const sourceId = (m.source && m.source.id) ? m.source.id : 'src';
+        const weaponId = (m.weapon && m.weapon.id) ? m.weapon.id : 'MSL';
         const distVal = (typeof m.distanceToTarget === 'number' && !isNaN(m.distanceToTarget)) ? Math.round(m.distanceToTarget) : 0;
-        ctx.font = '700 9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-        ctx.fillStyle = isBlue ? '#7dd3fc' : '#ef4444';
-        ctx.fillText(cleanFn(mslLabel + ' [' + distVal + 'km]'), px + 8, py - 2);
+
+        let cluster = null;
+        for (const cl of clusters) {
+          if (cl.sourceId === sourceId && cl.weaponId === weaponId && cl.isBlue === isBlue && cl.isIdentified === isIdentified) {
+            if (Math.hypot(cl.px - px, cl.py - py) < 34) { cluster = cl; break; }
+          }
+        }
+
+        if (cluster) {
+          cluster.count++;
+          if (distVal < cluster.minDist) {
+            cluster.minDist = distVal;
+            cluster.px = px;
+            cluster.py = py;
+          }
+        } else {
+          clusters.push({
+            sourceId: sourceId,
+            weaponId: weaponId,
+            weaponName: (m.weapon && (m.weapon.id || m.weapon.name)) ? (m.weapon.id || m.weapon.name) : 'MSL',
+            isBlue: isBlue,
+            isIdentified: isIdentified,
+            count: 1,
+            minDist: distVal,
+            px: px,
+            py: py
+          });
+        }
+      }
+
+      ctx.font = '700 9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+      for (const cl of clusters) {
+        ctx.fillStyle = cl.isBlue ? '#7dd3fc' : '#ef4444';
+        const countTag = cl.count > 1 ? ` x${cl.count}` : '';
+        const mslLabel = cl.isIdentified ? cleanFn(cl.weaponName) : 'FAST TRACK [?]';
+        const distTag = declutterMode ? '' : ` [${cl.minDist}km]`;
+        ctx.fillText(cleanFn(`${mslLabel}${countTag}${distTag}`), cl.px + 8, cl.py - 2);
       }
     }
     ctx.restore();
