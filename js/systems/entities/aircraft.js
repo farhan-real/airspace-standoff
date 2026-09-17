@@ -2,7 +2,7 @@
  * AIRSPACE STANDOFF // Aircraft Entity
  * Flight Lead receives category-specific buffs (RCS, speed, agility, armor, bus regen, CMs).
  * In 2P mode, isIdentifiedBy always returns true for fair mutual tactical visibility.
- * Synchronizes initial altFt and targetAltFt so aircraft start in steady trimmed level flight.
+ * Autocannons dynamically evaluate specific ballistic ranges and firing cones.
  */
 
 class Aircraft {
@@ -31,7 +31,6 @@ class Aircraft {
       this.altFt = 30000;
     }
 
-    // Target altitude starts identical to spawn altitude so aircraft do not begin with climb or dive
     this.targetAltFt = this.altFt;
     this.vsiFpm = 0;
     this.alt = this.altFt / 65000.0;
@@ -463,7 +462,7 @@ class Aircraft {
         while (angleDiff > Math.PI) angleDiff = Math.abs(angleDiff - Math.PI * 2);
 
         if (angleDiff < maxConeRad) {
-          let rawDmg = (this.gun.damagePerSec || 2.4) * 0.35;
+          let rawDmg = (this.gun.damagePerSec || 2.5) * 0.35;
           if (enemy.spec && enemy.spec.category === 'STRIKE') rawDmg *= 0.50;
           if (enemy.isFlightLead && enemy.autocannonResistance) rawDmg *= (1.0 - enemy.autocannonResistance);
           if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) rawDmg *= 0.75;
@@ -472,7 +471,7 @@ class Aircraft {
           this.gunCooldown = (window.CONFIG && window.CONFIG.AUTO_GUN_COOLDOWN) || 0.35;
 
           if (radarRenderer) {
-            radarRenderer.spawnGunTracer(this.x, this.y, enemy.x, enemy.y, '#ef4444');
+            radarRenderer.spawnGunTracer(this.x, this.y, enemy.x, enemy.y, this.gun.tracerColor || '#ef4444');
             radarRenderer.spawnCombatText(enemy.x, enemy.y, `GUN -${rawDmg.toFixed(1)}HP`, '#ef4444');
           }
           if (typeof AudioSys !== 'undefined') AudioSys.playGunBurst();

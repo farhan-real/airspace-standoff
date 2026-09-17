@@ -1,5 +1,6 @@
 /**
- * APEX VECTOR // 5-Tier Color Classification Engine
+ * AIRSPACE STANDOFF // 5-Tier Color Classification Engine
+ * Calibrated against 150km theater weapon ranges and acquisition costs.
  */
 
 class StatEvaluator {
@@ -101,10 +102,10 @@ class StatEvaluator {
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'cost_weapon':
-        if (val <= 0.6) return { tier: 1, colorClass: 'stat-tier-1' };
-        if (val <= 1.2) return { tier: 2, colorClass: 'stat-tier-2' };
-        if (val <= 1.8) return { tier: 3, colorClass: 'stat-tier-3' };
-        if (val <= 2.5) return { tier: 4, colorClass: 'stat-tier-4' };
+        if (val <= 0.7) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val <= 1.5) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val <= 2.2) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val <= 3.0) return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'cost_upgrade':
@@ -114,10 +115,10 @@ class StatEvaluator {
         return { tier: 4, colorClass: 'stat-tier-4' };
 
       case 'missile_range':
-        if (val >= 90)  return { tier: 1, colorClass: 'stat-tier-1' };
-        if (val >= 60)  return { tier: 2, colorClass: 'stat-tier-2' };
-        if (val >= 35)  return { tier: 3, colorClass: 'stat-tier-3' };
-        if (val >= 20)  return { tier: 4, colorClass: 'stat-tier-4' };
+        if (val >= 110) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 75)  return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 50)  return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 25)  return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'min_arming':

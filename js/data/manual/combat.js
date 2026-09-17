@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Flight Manual Submodule: Chapters 6 to 7
+ * AIRSPACE STANDOFF // Flight Manual Submodule: Chapters 6 to 7
  * Covers: Guided Munitions, Seekers, Salvos, Electronic Warfare & Doppler Notching
  */
 
@@ -17,25 +17,25 @@ window.MANUAL_COMBAT = [
           <tr>
             <td style="color:#00f0ff;"><b>ARH</b></td>
             <td>Active Radar Homing (AIM-120D, Meteor, R-37M, PL-15E, AIM-260)</td>
-            <td>Autonomous internal radar seeker. Fire-and-forget; long BVR reach (95–100 km).</td>
-            <td><b>Doppler Notch (Beam 90°) + Dispense Chaff / ECM Pod / MALD Decoys.</b> Cuts closure rate and creates zero-Doppler false echoes.</td>
+            <td>Autonomous internal radar seeker. Fire-and-forget; long BVR reach (72–130 km).</td>
+            <td><b>Doppler Notch (Beam 90°) + Dispense Chaff / ECM Pod / MALD Decoys.</b> Cuts radial closure velocity and creates zero-Doppler false echoes.</td>
           </tr>
           <tr>
             <td style="color:#00f5a0;"><b>IIR / EO</b></td>
             <td>Imaging Infrared / Optical (AIM-9X, R-73, Python-5, IRIS-T)</td>
-            <td>Tracks heat plume and visual 3D silhouette. Immune to RF radar jamming and notching.</td>
-            <td><b>Throttle to Idle / Dive into Weather Clouds / Break Line of Sight.</b> Clouds scatter infrared tracking; idle cuts thermal bloom.</td>
+            <td>Tracks exhaust heat plume and 3D silhouette. Immune to RF radar jamming and Doppler notching.</td>
+            <td><b>Throttle to Idle / Dive into Weather Clouds / Break Line of Sight.</b> Clouds scatter infrared tracking; idle reduces thermal exhaust bloom.</td>
           </tr>
           <tr>
             <td style="color:#ffb830;"><b>PASSIVE RADAR</b></td>
             <td>Anti-Radiation Homing (AGM-88G AARGM-ER)</td>
-            <td>Homes directly on active radar emissions. Deals <b>3× damage</b> to SAM radars.</td>
+            <td>Homes directly on active radar emissions. Deals <b>3× damage</b> to SAM radar batteries.</td>
             <td>Power down emitter radar array, deactivate jammer pods, or intercept with CIWS.</td>
           </tr>
           <tr>
             <td style="color:#c084fc;"><b>DIRECT ENERGY</b></td>
             <td>Hitscan Chemical Laser / Railgun (DE-Pulse, TLS, EML)</td>
-            <td>Instantaneous speed-of-light kinetic/thermal impact. Zero lead time required.</td>
+            <td>Instantaneous speed-of-light kinetic or thermal impact. Zero lead time required.</td>
             <td>Dive into weather clouds (scatters thermal laser beam) or maintain standoff beyond 9.0 km.</td>
           </tr>
         </tbody>
@@ -56,7 +56,7 @@ window.MANUAL_COMBAT = [
         <br><br>
         <center><code>P_k = Base P_k × Range Score × Aspect Score - Target Agility - CMs + Salvo Bonus + Seeker Synergy</code></center>
         <br>
-        <b>Salvo Saturation:</b> When multiple missiles are in flight against the same target, target defensive agility is degraded by <b>25% per additional missile</b>, while firing systems gain <b>+12% P_k per extra missile (up to +30%)</b>. Combining an ARH radar missile with an IIR optical missile grants an extra <b>+10% Mixed-Seeker Synergy Bonus</b>!
+        <b>Salvo Saturation:</b> When multiple missiles are in flight against the same target, target defensive agility is degraded by <b>25% per additional missile</b>, while firing systems gain <b>+12% P_k per extra missile (up to +30%)</b>. Combining an ARH radar missile with an IIR optical missile grants an extra <b>+10% Mixed-Seeker Synergy Bonus</b>.
       </div>
     `
   },
@@ -68,15 +68,15 @@ window.MANUAL_COMBAT = [
       <div class="ge-desc">
         Pulse-Doppler radars detect targets by filtering for frequency shifts caused by closure velocity:
         <br><br>
-        <b>To notch:</b> Turn your aircraft exactly <b>90° perpendicular</b> to the threat's radar vector (beam aspect). Your relative radial closure speed drops to zero relative to ground clutter. The hostile radar mistakes you for stationary background terrain and drops lock! Dispensing chaff creates an artificial zero-Doppler false echo, breaking missile homing.
+        <b>To notch:</b> Turn your aircraft exactly <b>90° perpendicular</b> to the threat's radar vector (beam aspect). Your relative radial closure speed drops to zero relative to ground clutter. The hostile radar mistakes you for stationary background terrain and drops lock. Dispensing chaff creates an artificial zero-Doppler false echo, breaking missile homing.
       </div>
 
       <div class="ge-subhead">ACTIVE ELECTRONIC WARFARE (EW) PODS &amp; DECOYS</div>
       <div class="ge-desc">
         <ul>
           <li><b>AN/ALQ-184 &amp; AN/ALQ-99:</b> Emit broadband microwave noise that degrades incoming active radar locks by 30%–45%. Vulnerable to Home-On-Jam (HOJ) missiles.</li>
-          <li><b>AN/ALQ-249 NGJ-MB:</b> Next-generation GaN AESA standoff jamming pod delivering directional beam jamming out to 120 km (60% suppression).</li>
-          <li><b>ADM-160B MALD Decoy Drone:</b> Autonomous decoy drone replicating the host aircraft's radar cross-section and speed profile to deceive enemy sensors.</li>
+          <li><b>AN/ALQ-249 NGJ-MB:</b> Next-generation GaN AESA standoff jamming pod delivering directional beam jamming out to 125 km (60% suppression).</li>
+          <li><b>ADM-160B MALD Decoy Drone:</b> Autonomous decoy drone replicating the host aircraft's radar cross-section and speed profile out to 110 km to deceive enemy sensors.</li>
           <li><b>AN/ALE-55 FOTD:</b> Fiber-optic towed decoy trailing high-power RF repeaters behind the aircraft to seduce radar missiles away from the airframe.</li>
         </ul>
       </div>

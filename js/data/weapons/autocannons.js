@@ -1,5 +1,6 @@
 /**
- * APEX VECTOR // Built-In & Podded Autocannons (Substantially Increased Ammo Capacity)
+ * AIRSPACE STANDOFF // Built-In & Podded Aircraft Autocannons
+ * Calibrated merge ranges (3.6km - 9.5km), realistic cyclic rates, and ballistic envelopes.
  */
 
 window.AUTOCANNONS_CATALOG = {
@@ -8,71 +9,71 @@ window.AUTOCANNONS_CATALOG = {
     name: 'M61A2 Vulcan 20mm Gatling',
     caliber: '20mm Rotary',
     rpm: 6000,
-    rangeKm: 4.8,
-    damagePerSec: 2.4,
+    rangeKm: 4.6,
+    damagePerSec: 2.5,
     coneAngleDeg: 55,
     mass: 115,
     tracerColor: '#fbbf24',
-    badge: 'RAPID ROTARY (6000 RPM)',
+    badge: '20MM ROTARY CANNON',
     defaultAmmo: 3200,
-    desc: 'High-cyclic 6-barrel Gatling cannon. Deep 3,200 round drum capacity and 55 degree engagement arc for close merges.'
+    desc: 'High-cyclic 6-barrel hydraulic Gatling cannon. Wide 55-degree boresight cone excels in high-G snapshot deflection merges.'
   },
   'GSH-30-1': {
     id: 'GSH-30-1',
     name: 'GSh-30-1 30mm Autocannon',
     caliber: '30mm Heavy',
     rpm: 1800,
-    rangeKm: 5.0,
-    damagePerSec: 3.2,
+    rangeKm: 5.2,
+    damagePerSec: 3.4,
     coneAngleDeg: 35,
     mass: 46,
     tracerColor: '#f97316',
-    badge: 'SNIPER CANNON (30MM HE)',
+    badge: '30MM HIGH-EXPLOSIVE',
     defaultAmmo: 1800,
-    desc: 'Precision single-barrel cannon firing heavy 30mm high-explosive rounds with 1,800 round magazine.'
+    desc: 'Extremely lightweight recoil-operated 30mm cannon (46 kg). Heavy high-explosive fragmentation shells deliver lethal burst damage.'
   },
   'BK-27': {
     id: 'BK-27',
     name: 'BK-27 27mm Revolver Cannon',
     caliber: '27mm Revolver',
     rpm: 1700,
-    rangeKm: 4.8,
-    damagePerSec: 2.8,
+    rangeKm: 5.0,
+    damagePerSec: 2.9,
     coneAngleDeg: 40,
     mass: 100,
     tracerColor: '#facc15',
-    badge: 'REVOLVER PRECISION',
+    badge: '27MM REVOLVER CANNON',
     defaultAmmo: 2400,
-    desc: 'Gas-operated revolver cannon with 2,400 round capacity balancing high single-shot impact with tight grouping.'
+    desc: 'Gas-operated revolver cannon. High muzzle velocity and tight projectile dispersion balance single-shot damage with accuracy.'
   },
   'GAU-8': {
     id: 'GAU-8',
     name: 'GAU-8/A Avenger 30mm Gatling',
-    caliber: '30mm Tank Buster',
+    caliber: '30mm Heavy Gatling',
     rpm: 3900,
-    rangeKm: 5.4,
-    damagePerSec: 4.8,
+    rangeKm: 5.8,
+    damagePerSec: 5.2,
     coneAngleDeg: 38,
     mass: 281,
     tracerColor: '#ef4444',
-    badge: 'DEPLETED URANIUM PENETRATOR',
+    badge: '30MM ARMOR-PIERCING',
     lockedTo: ['A-10C', 'Su-34', 'Su-25SM3'],
     defaultAmmo: 4800,
-    desc: '7-barrel hydraulic Gatling firing depleted-uranium armor penetrators. 4,800 rounds shred ground bunkers and heavy armor.'
+    desc: '7-barrel hydraulic Gatling firing depleted-uranium armor-piercing incendiary shells. Heavy recoil; shreds armor and fortified installations.'
   },
   'GAU-22': {
     id: 'GAU-22',
     name: 'GAU-22/A 25mm Equalizer',
     caliber: '25mm 4-Barrel',
     rpm: 3300,
-    rangeKm: 4.6,
-    damagePerSec: 2.7,
+    rangeKm: 4.8,
+    damagePerSec: 2.8,
     coneAngleDeg: 45,
     mass: 105,
     tracerColor: '#38bdf8',
-    badge: 'STEALTH GATLING',
+    badge: '25MM 4-BARREL GATLING',
     defaultAmmo: 2600,
-    desc: '4-barrel lightweight Gatling engineered for stealth bays with 2,600 round magazine.'
+    desc: '4-barrel lightweight Gatling engineered for internal stealth weapon bays. Delivers higher impact energy per shell than 20mm.'
   },
   'GSH-23L': {
     id: 'GSH-23L',
@@ -80,56 +81,56 @@ window.AUTOCANNONS_CATALOG = {
     caliber: '23mm Twin',
     rpm: 3400,
     rangeKm: 4.2,
-    damagePerSec: 2.2,
+    damagePerSec: 2.3,
     coneAngleDeg: 50,
     mass: 50,
     tracerColor: '#fb923c',
-    badge: 'GAST PRINCIPLE TWIN',
+    badge: '23MM GAST-PRINCIPLE TWIN',
     defaultAmmo: 2800,
-    desc: 'Gast-principle twin-barrel cannon firing alternating bursts with 2,800 rounds.'
+    desc: 'Gast-principle twin-barrel cannon firing alternating bursts. Extremely compact mechanism with generous spread for close dogfights.'
+  },
+  'MICRO_GUN': {
+    id: 'MICRO_GUN',
+    name: 'UCAV Micro-Gun 12.7mm',
+    caliber: '12.7mm Lightweight',
+    rpm: 2600,
+    rangeKm: 3.6,
+    damagePerSec: 1.6,
+    coneAngleDeg: 60,
+    mass: 35,
+    tracerColor: '#a855f7',
+    badge: '12.7MM UCAV GUN',
+    defaultAmmo: 3600,
+    desc: 'Lightweight low-recoil machine gun engineered for unmanned combat drones with minimal aerodynamic drag.'
   },
   'DE-PULSE': {
     id: 'DE-PULSE',
-    name: 'Tactical DE-Pulse Laser Gun',
-    caliber: 'Laser 80kW Pulse',
+    name: 'Solid-State Tactical Laser (80 kW)',
+    caliber: 'Directed Energy (DEW)',
     rpm: 9999,
-    rangeKm: 6.8,
-    damagePerSec: 4.0,
+    rangeKm: 7.5,
+    damagePerSec: 4.2,
     coneAngleDeg: 40,
     mass: 220,
     tracerColor: '#00f0ff',
     badge: 'DIRECTED ENERGY (HITSCAN)',
     lockedTo: ['F-22A', 'Su-57', 'X-02S', 'B-21', 'J-20', 'F-15EX', 'FC-31', 'YF-23', 'ADF-11F', 'DARKSTAR', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'CFA-44'],
-    defaultAmmo: 300, // 300 pulses
-    desc: 'High-energy pulsed chemical laser with 300 pulses providing instantaneous speed-of-light thermal damage.'
+    defaultAmmo: 300,
+    desc: '80 kW solid-state pulsed fiber laser. Provides instantaneous speed-of-light thermal damage out to 7.5 km. Beam is scattered by weather clouds.'
   },
   'EML_GUN': {
     id: 'EML_GUN',
     name: 'EML Hyper-Velocity Railgun',
-    caliber: 'Hyper-Velocity Slug',
+    caliber: 'Hyper-Velocity Kinetic',
     rpm: 120,
-    rangeKm: 8.8,
-    damagePerSec: 4.6,
+    rangeKm: 9.5,
+    damagePerSec: 4.8,
     coneAngleDeg: 25,
     mass: 320,
     tracerColor: '#38bdf8',
-    badge: 'RAILGUN PENETRATOR',
+    badge: 'HYPER-VELOCITY RAILGUN',
     lockedTo: ['CFA-44', 'X-02S', 'ADF-11F'],
-    defaultAmmo: 120, // 120 slugs
-    desc: 'Electromagnetic accelerator firing 120 hyper-velocity kinetic slugs with direct penetrative impact at extreme merge range.'
-  },
-  'MICRO_GUN': {
-    id: 'MICRO_GUN',
-    name: 'Drone Micro-Gun 12.7mm',
-    caliber: '12.7mm Micro',
-    rpm: 2600,
-    rangeKm: 3.8,
-    damagePerSec: 1.6,
-    coneAngleDeg: 60,
-    mass: 35,
-    tracerColor: '#a855f7',
-    badge: 'DRONE SPEC (ZERO DRAG)',
-    defaultAmmo: 3600,
-    desc: 'Ultra-lightweight micro-gun pod engineered for unmanned combat drones with 3,600 round reserve.'
+    defaultAmmo: 120,
+    desc: 'Electromagnetic accelerator firing hyper-velocity kinetic penetrators. Out-ranges conventional cannons with heavy penetrative damage.'
   }
-};  
+};

@@ -1,6 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Weapon Pylon Bay
- * Pure manual command. All keyboard hotkeys ([G], [1], [SPACE], etc.) removed from buttons/text.
+ * Pure manual command. All keyboard hotkeys removed from UI text.
+ * Dynamic autocannon range check and damage computation per weapon spec.
  */
 
 class PylonBayRenderer {
@@ -78,8 +79,7 @@ class PylonBayRenderer {
         targetContainer.appendChild(targetCard);
       }
 
-      // Autocannon SMS Bay (No [G] Hotkey In Text)
-      const gun = activeUnit.gun || (window.AUTOCANNONS_CATALOG && window.AUTOCANNONS_CATALOG['M61A2']) || { name: 'Autocannon', id: 'M61A2', rangeKm: 4.8, damagePerSec: 2.5 };
+      const gun = activeUnit.gun || (window.AUTOCANNONS_CATALOG && window.AUTOCANNONS_CATALOG['M61A2']) || { name: 'Autocannon', id: 'M61A2', rangeKm: 4.6, damagePerSec: 2.5 };
       const gunName = String(gun.name || 'Autocannon');
       const shortGunName = gunName.split(' ')[0] || 'GUN';
       const gunDmg = (gun.damagePerSec !== undefined) ? Number(gun.damagePerSec).toFixed(1) : '2.5';
@@ -113,7 +113,7 @@ class PylonBayRenderer {
             </div>
           </div>
           <div class="autocannon-auto-badge">
-            <span id="gun-ui-stats">MAX: ${gun.rangeKm || 4.8}km &bull; <b style="color:#ffb830;">${gunDmg} HP/s</b></span>
+            <span id="gun-ui-stats">MAX: ${gun.rangeKm || 4.6}km &bull; <b style="color:#ffb830;">${gunDmg} HP/s</b></span>
             <span id="gun-ui-indicator" class="armed-indicator" style="color:#00f0ff;">ARMED</span>
           </div>
           <button type="button" id="btn-fire-cannon-manual" class="btn-fire-pylon" style="margin-top:2px;border-color:#00f0ff;color:#7dd3fc;">
@@ -135,7 +135,6 @@ class PylonBayRenderer {
       }
       targetContainer.appendChild(gunBox);
 
-      // Pylon Stations (Hotkeys [1], [2] Removed from Text)
       if (weapons.length === 0) {
         const emptyNotice = document.createElement('div');
         emptyNotice.className = 'empty-bay-indicator';
@@ -208,20 +207,19 @@ class PylonBayRenderer {
       }
     }
 
-    // Target solution card updates
     const targetBox = document.getElementById('mfd-target-solution-card');
     if (targetBox && !isMobile && typeof PylonTargetSolution !== 'undefined') {
       const commanderTeam = (this.currentGame && this.currentGame.currentPvpCommander) || 'friendly';
       PylonTargetSolution.updateTargetCard(targetBox, validTarget, activeUnit, commanderTeam);
     }
 
-    // Autocannon telemetry updates
     const gunCard = document.getElementById('autocannon-active-bay');
     if (gunCard) {
       const ax = (typeof activeUnit.x === 'number' && !isNaN(activeUnit.x)) ? activeUnit.x : 0;
       const ay = (typeof activeUnit.y === 'number' && !isNaN(activeUnit.y)) ? activeUnit.y : 0;
       const distToTgt = validTarget ? Math.hypot(validTarget.x - ax, validTarget.y - ay) : 999;
-      const inGunRange = (distToTgt <= (activeUnit.gun ? (activeUnit.gun.rangeKm || 4.8) : 4.8));
+      const effectiveGunRange = activeUnit.gun ? (activeUnit.gun.rangeKm || 4.6) : 4.6;
+      const inGunRange = (distToTgt <= effectiveGunRange);
       const ammoEl = gunCard.querySelector('#gun-ui-ammo');
       const indicatorEl = gunCard.querySelector('#gun-ui-indicator');
       const cannonBtn = gunCard.querySelector('#btn-fire-cannon-manual');
@@ -238,7 +236,6 @@ class PylonBayRenderer {
       }
     }
 
-    // Pylon Statuses & P_k updates
     const clouds = (this.currentGame && this.currentGame.simulation && this.currentGame.simulation.weatherClouds) || [];
     const cards = targetContainer.querySelectorAll('.pylon-item-card, .mob-compact-pylon');
     const tokenCost = (window.CONFIG && window.CONFIG.TOKEN_ACTION_COST) || 0.70;
@@ -355,7 +352,7 @@ class PylonBayRenderer {
 
   fireAutocannonManual(unit, target) {
     if (!unit || unit.hp <= 0 || (unit.gunAmmo || 0) <= 0) return;
-    const gun = unit.gun || (window.AUTOCANNONS_CATALOG && window.AUTOCANNONS_CATALOG['M61A2']) || { rangeKm: 4.8, damagePerSec: 2.5, tracerColor: '#00f0ff' };
+    const gun = unit.gun || (window.AUTOCANNONS_CATALOG && window.AUTOCANNONS_CATALOG['M61A2']) || { rangeKm: 4.6, damagePerSec: 2.5, tracerColor: '#00f0ff' };
     const rounds = Math.min(unit.gunAmmo, 30);
     unit.gunAmmo -= rounds;
 
@@ -363,7 +360,7 @@ class PylonBayRenderer {
 
     if (validTarget) {
       const dist = Math.hypot(validTarget.x - unit.x, validTarget.y - unit.y);
-      if (dist <= (gun.rangeKm || 4.8)) {
+      if (dist <= (gun.rangeKm || 4.6)) {
         let rawDmg = (gun.damagePerSec || 2.5) * 0.45;
         const wasAlive = validTarget.hp > 0;
 
@@ -402,7 +399,7 @@ class PylonBayRenderer {
         }
 
         if (this.currentGame && this.currentGame.radar) {
-          this.currentGame.radar.spawnGunTracer(unit.x, unit.y, validTarget.x, validTarget.y, '#00f0ff');
+          this.currentGame.radar.spawnGunTracer(unit.x, unit.y, validTarget.x, validTarget.y, gun.tracerColor || '#00f0ff');
           this.currentGame.radar.spawnCombatText(validTarget.x, validTarget.y, `GUN -${rawDmg.toFixed(1)}HP`, '#00f0ff');
         }
         if (typeof AudioSys !== 'undefined') AudioSys.playGunBurst();
@@ -427,7 +424,7 @@ class PylonBayRenderer {
     const tx = unit.x + Math.cos(heading) * (gun.rangeKm || 4.5);
     const ty = unit.y + Math.sin(heading) * (gun.rangeKm || 4.5);
     if (this.currentGame && this.currentGame.radar) {
-      this.currentGame.radar.spawnGunTracer(unit.x, unit.y, tx, ty, '#00f0ff');
+      this.currentGame.radar.spawnGunTracer(unit.x, unit.y, tx, ty, gun.tracerColor || '#00f0ff');
       this.currentGame.radar.spawnCombatText(unit.x, unit.y, 'STRAFE', '#00f0ff');
     }
     if (typeof AudioSys !== 'undefined') AudioSys.playGunBurst();

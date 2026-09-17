@@ -1,5 +1,6 @@
 /**
- * APEX VECTOR // Air-to-Ground, Anti-Radiation (SEAD) & Bunker Crackers
+ * AIRSPACE STANDOFF // Air-to-Ground, Anti-Radiation (SEAD) & Hardened Installation Penetrators
+ * Scaled for 150km theater depth.
  */
 
 window.WEAPONS_A2G = {
@@ -9,26 +10,26 @@ window.WEAPONS_A2G = {
     slots: 2,
     minRating: 'Type M',
     mass: 700,
-    cost: 1.5,
-    rangeKm: 85.0,
-    speedMach: 3.8,
+    cost: 1.6,
+    rangeKm: 90.0,
+    speedMach: 4.0,
     seeker: 'PASSIVE_RADAR',
     rcs: 0.06,
     trait: 'EMITTER_KILLER',
     traitBadge: '3x SAM DAMAGE',
-    behaviorDesc: 'Passive RF seeker homes on radar emissions. Deals 3x damage to surface SAM radar arrays.',
+    behaviorDesc: 'Passive RF seeker locks onto active radar emissions. Deals 3x damage against surface SAM radar arrays.',
     damage: 5,
     ammoCount: 4,
     minRangeKm: 5.0,
     sweetSpotMin: 15.0,
-    sweetSpotMax: 75.0,
+    sweetSpotMax: 80.0,
     lambda: 0.20,
     p: 1.5,
-    T_0: 0.85,
+    T_0: 0.86,
     isAntiRadiation: true,
     sigmaPylon: 0.12,
     category: 'A2G',
-    desc: 'Anti-radiation missile pack destroying enemy surface radars and SAM arrays (4x).'
+    desc: 'Extended-range anti-radiation missile pack (4x) designed to neutralize hostile early warning radars and SAM batteries.'
   },
   'GBU-39': {
     id: 'GBU-39',
@@ -43,7 +44,7 @@ window.WEAPONS_A2G = {
     rcs: 0.005,
     trait: 'GLIDE_SATURATION',
     traitBadge: 'STANDOFF DISPERSAL',
-    behaviorDesc: 'Gliding wing dispensers release 8 GPS penetrators simultaneously for base saturation.',
+    behaviorDesc: 'Gliding wing dispensers release 8 GPS penetrators simultaneously for facility saturation.',
     damage: 3,
     ammoCount: 8,
     minRangeKm: 4.0,
@@ -55,7 +56,7 @@ window.WEAPONS_A2G = {
     isBunkerCracker: true,
     sigmaPylon: 0.14,
     category: 'A2G',
-    desc: 'Precision stand-off glide bomb pack designed for bunker cracking and base neutralization (8x).'
+    desc: 'Precision stand-off glide bomb pack (8x) designed for bunker cracking and airfield facility neutralization.'
   },
   'AGM-158B': {
     id: 'AGM-158B',
@@ -63,8 +64,8 @@ window.WEAPONS_A2G = {
     slots: 4,
     minRating: 'Type H',
     mass: 2200,
-    cost: 2.4,
-    rangeKm: 95.0,
+    cost: 2.6,
+    rangeKm: 110.0,
     speedMach: 0.88,
     seeker: 'IIR',
     rcs: 0.0005,
@@ -76,14 +77,14 @@ window.WEAPONS_A2G = {
     ammoCount: 2,
     minRangeKm: 10.0,
     sweetSpotMin: 25.0,
-    sweetSpotMax: 90.0,
+    sweetSpotMax: 100.0,
     lambda: 0.05,
     p: 1.0,
-    T_0: 0.90,
+    T_0: 0.92,
     isBunkerCracker: true,
     sigmaPylon: 0.35,
     category: 'A2G',
-    desc: 'Long-range stealth cruise missiles designed to destroy underground command bunkers (2x).'
+    desc: 'Long-range stealth cruise missiles (2x) designed to penetrate deep contested airspace and destroy command bunkers.'
   },
   'KINZHAL': {
     id: 'KINZHAL',
@@ -91,19 +92,19 @@ window.WEAPONS_A2G = {
     slots: 6,
     minRating: 'Type X',
     mass: 4300,
-    cost: 3.5,
-    rangeKm: 100.0,
+    cost: 4.2,
+    rangeKm: 135.0,
     speedMach: 8.5,
     seeker: 'INS_RADAR',
     rcs: 0.25,
     trait: 'HYPERSONIC_IMPACT',
     traitBadge: 'MACH 8.5 KINETIC SHOCK',
-    behaviorDesc: 'Mach 8.5 aero-ballistic missile with extreme kinetic shock that penetrates bunkers in 1-2 hits.',
+    behaviorDesc: 'Mach 8.5 aero-ballistic trajectory with extreme kinetic impact that neutralizes heavy bunkers in 1-2 hits.',
     damage: 16,
     ammoCount: 2,
-    minRangeKm: 12.0,
+    minRangeKm: 15.0,
     sweetSpotMin: 30.0,
-    sweetSpotMax: 95.0,
+    sweetSpotMax: 125.0,
     lambda: 0.05,
     p: 1.0,
     T_0: 0.95,
@@ -111,6 +112,6 @@ window.WEAPONS_A2G = {
     sigmaPylon: 0.80,
     category: 'A2G',
     allowedAirframes: ['MiG-31BM', 'Tu-160M', 'Su-34', 'F-15EX', 'J-16', 'B-1B'],
-    desc: 'Hypersonic aero-ballistic heavy missile penetrating deep reinforced structures (2x).'
+    desc: 'Hypersonic aero-ballistic heavy missile pack (2x) capable of penetrating deeply reinforced theater structures.'
   }
 };

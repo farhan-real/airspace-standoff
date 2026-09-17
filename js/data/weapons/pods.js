@@ -1,5 +1,6 @@
 /**
- * APEX VECTOR // Electronic Warfare Pods, Gunpods, Decoy Drones & Tactical Lasers
+ * AIRSPACE STANDOFF // Electronic Warfare Pods, Gunpods, Decoy Drones & Tactical Lasers
+ * Rebalanced ranges and durations for 150km theater scale.
  */
 
 window.WEAPONS_PODS = {
@@ -10,17 +11,17 @@ window.WEAPONS_PODS = {
     minRating: 'Type S',
     mass: 110,
     cost: 0.5,
-    rangeKm: 85.0,
+    rangeKm: 110.0,
     speedMach: 0.90,
     damage: 0,
     isDecoyDrone: true,
     trait: 'RADAR_SIGNATURE_SPOOF',
     traitBadge: 'RADAR RCS MIRROR',
-    behaviorDesc: 'Miniature Air-Launched Decoy drones (2x). Replicates host aircraft radar cross-section and speed profile to seduce enemy radar and missiles.',
+    behaviorDesc: 'Miniature Air-Launched Decoy drones (2x). Replicates host aircraft radar cross-section and speed profile to deceive enemy radars.',
     ammoCount: 2,
     sigmaPylon: 0.02,
     category: 'POD',
-    desc: 'Air-launched dual decoy drones (2x) replicating host radar cross-section and flight profile.'
+    desc: 'Air-launched decoy drones (2x) matching host radar profile to draw hostile missiles across theater depth.'
   },
   'ALE-55': {
     id: 'ALE-55',
@@ -34,11 +35,11 @@ window.WEAPONS_PODS = {
     isDecoy: true,
     trait: 'FIBER_OPTIC_TOWED',
     traitBadge: '4x FOTD REPEATER',
-    behaviorDesc: 'Fiber-Optic Towed Decoy dispenser pod (4x charges). Deploys high-power RF repeaters that seduce active radar missiles away from host.',
+    behaviorDesc: 'Fiber-Optic Towed Decoy dispenser pod (4x charges). Deploys high-power RF repeaters that decoy active radar missiles.',
     ammoCount: 4,
     sigmaPylon: 0.04,
     category: 'POD',
-    desc: 'Heavy pylon-mounted fiber-optic towed decoy dispenser system (4x charges). Seduces inbound radar-guided missiles.'
+    desc: 'Towed fiber-optic decoy system (4x charges). Deflects inbound radar-guided missiles away from the host airframe.'
   },
   'AN-ALQ-184': {
     id: 'AN-ALQ-184',
@@ -47,16 +48,16 @@ window.WEAPONS_PODS = {
     minRating: 'Type S',
     mass: 210,
     cost: 0.7,
-    rangeKm: 65.0,
+    rangeKm: 70.0,
     damage: 0,
     isJammerPod: true,
     jamEfficiency: 0.30,
     trait: 'COMPACT_SELF_ECM',
     traitBadge: '1-SLOT COMPACT ECM',
-    behaviorDesc: 'Lightweight self-protection jammer pod. Emits directional pulse jamming against radar threats (30% suppression).',
+    behaviorDesc: 'Lightweight self-protection jammer pod. Emits directional RF pulse jamming against radar threats (30% suppression).',
     sigmaPylon: 0.08,
     category: 'POD',
-    desc: 'Compact 1-slot self-protection ECM pod. Mounts on light fighter pylons to degrade enemy radar lock reliability.'
+    desc: 'Compact 1-slot self-protection ECM pod. Mounts on fighter hardpoints to degrade hostile radar lock quality.'
   },
   'AN-ALQ-99': {
     id: 'AN-ALQ-99',
@@ -65,16 +66,16 @@ window.WEAPONS_PODS = {
     minRating: 'Type M',
     mass: 450,
     cost: 1.2,
-    rangeKm: 90.0,
+    rangeKm: 95.0,
     damage: 0,
     isJammerPod: true,
     jamEfficiency: 0.45,
     trait: 'BROADBAND_JAM',
     traitBadge: 'AREA ECM JAMMING',
-    behaviorDesc: 'Emits broadband microwave noise that degrades incoming active radar locks and search arrays (45% suppression).',
+    behaviorDesc: 'Emits broadband microwave noise that degrades incoming active radar locks and search arrays across 95 km (45% suppression).',
     sigmaPylon: 0.15,
     category: 'POD',
-    desc: 'Broadband tactical radar jammer reducing enemy radar detection distance and lock reliability.'
+    desc: 'Broadband tactical radar jammer pod reducing enemy radar detection ranges and lock reliability.'
   },
   'AN-ALQ-249': {
     id: 'AN-ALQ-249',
@@ -83,16 +84,16 @@ window.WEAPONS_PODS = {
     minRating: 'Type H',
     mass: 620,
     cost: 2.2,
-    rangeKm: 120.0,
+    rangeKm: 125.0,
     damage: 0,
     isJammerPod: true,
     jamEfficiency: 0.60,
     trait: 'AESA_STANDOFF_JAM',
     traitBadge: 'AESA GAN STANDOFF ECM',
-    behaviorDesc: 'Next Generation Jammer Mid-Band with GaN AESA transmitters. Delivers concentrated high-power beam jamming out to 120km (60% suppression).',
+    behaviorDesc: 'Next Generation Jammer Mid-Band with GaN AESA transmitters. Delivers concentrated high-power beam jamming out to 125 km (60% suppression).',
     sigmaPylon: 0.20,
     category: 'POD',
-    desc: 'High-power GaN AESA tactical jamming pod. Blinds enemy radar arrays and severely degrades active radar missile locks.'
+    desc: 'High-power GaN AESA tactical jamming pod. Blinds enemy early warning radars and severely degrades active missile tracking.'
   },
   'GPU-5A': {
     id: 'GPU-5A',
@@ -101,18 +102,18 @@ window.WEAPONS_PODS = {
     minRating: 'Type M',
     mass: 860,
     cost: 0.8,
-    rangeKm: 4.8,
+    rangeKm: 5.0,
     speedMach: 3.2,
     seeker: 'DIRECT_FIRE',
     trait: 'ARMOR_BURST',
     traitBadge: 'HEAVY ROTARY BURST',
-    behaviorDesc: '4-barrel 30mm rotary cannon delivering instantaneous kinetic burst damage (3 HP per burst). 36 burst rounds.',
+    behaviorDesc: '4-barrel 30mm rotary cannon delivering immediate kinetic burst damage (3 HP per burst). 36 burst rounds.',
     damage: 3,
     ammoCount: 36,
     isGunpod: true,
     sigmaPylon: 0.15,
     category: 'GUN',
-    desc: 'Heavy 30mm rotary cannon pod delivering powerful close-range kinetic burst fire (36 bursts).'
+    desc: 'Heavy 30mm rotary cannon pod delivering close-range armor-piercing kinetic fire (36 bursts).'
   },
   'TLS_POD': {
     id: 'TLS_POD',
@@ -126,13 +127,13 @@ window.WEAPONS_PODS = {
     seeker: 'DIRECT_ENERGY',
     trait: 'HITSCAN_THERMAL',
     traitBadge: 'SPEED-OF-LIGHT BEAM',
-    behaviorDesc: 'Zero lead time required. Instantaneous thermal hitscan beam (4 HP damage, 24 shots). Scattered by weather clouds.',
+    behaviorDesc: 'Direct speed-of-light thermal hitscan beam (4 HP damage, 24 shots). Zero lead time required; scattered by clouds.',
     damage: 4,
     ammoCount: 24,
     isLaser: true,
     sigmaPylon: 0.25,
     category: 'GUN',
     allowedAirframes: ['X-02S', 'Su-35S', 'Su-57', 'F-22A', 'B-21', 'F-15EX', 'J-20', 'FC-31', 'ADF-11F', 'CFA-44', 'DARKSTAR', 'F-22C-COFFIN', 'Su-37-COFFIN'],
-    desc: 'High-energy chemical laser pod providing instantaneous hitscan thermal damage (24 charges).'
+    desc: 'High-energy chemical laser pod providing instantaneous thermal damage out to 9 km (24 charges).'
   }
 };

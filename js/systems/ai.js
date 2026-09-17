@@ -1,7 +1,6 @@
 /**
- * APEX VECTOR // Tactical AI Commander
- * High-difficulty AI (Elite, Ace, Master, Legend) coordinates fleet-wide maneuvers,
- * lethal mixed-seeker salvos, aggressive notching, and Ace escape tactics.
+ * AIRSPACE STANDOFF // Tactical AI Commander
+ * High-difficulty AI coordinates fleet-wide maneuvers, mixed-seeker salvos, and long-range BVR engagements.
  */
 
 class TacticalAICommander {
@@ -39,10 +38,8 @@ class TacticalAICommander {
     const candidateAirTargets = visibleAllies.concat(blueDecoys);
     const visibleBunkers = (this.game.surfaceUnits || []).filter(s => s.team === 'friendly' && s.hp > 0);
 
-    // Coordinate Ace maneuvers and extreme missile evasion
     this.coordinateAceTactics(aliveHostiles.filter(h => h.isAce), candidateAirTargets, dt);
 
-    // Fleet-wide defensive reactions on higher difficulty
     if (profile.multiTarget) {
       for (const h of aliveHostiles) {
         this.handleDefensiveBehavior(h, profile, dt);
@@ -61,12 +58,10 @@ class TacticalAICommander {
       this.handleDefensiveBehavior(activeFocusUnit, profile, dt);
     }
 
-    // Fleet navigation
     for (const h of aliveHostiles) {
       this.handleNavigation(h, candidateAirTargets, visibleBunkers, profile, dt);
     }
 
-    // Weapons engagement
     const tokenCost = (window.CONFIG && window.CONFIG.TOKEN_ACTION_COST) || 0.70;
     if (this.actionCooldown <= 0 && this.game.tokenBucketRed >= tokenCost) {
       const shooters = profile.multiTarget ? aliveHostiles : [activeFocusUnit];
@@ -80,7 +75,6 @@ class TacticalAICommander {
   coordinateAceTactics(aces, candidateTargets, dt) {
     if (aces.length === 0) return;
 
-    // Aces proactively evade any incoming missiles within 42km
     for (const ace of aces) {
       const incoming = (this.game.missiles || []).filter(m => m.active && m.target && m.target.id === ace.id);
       if (incoming.length > 0) {
@@ -120,7 +114,7 @@ class TacticalAICommander {
 
       if (this.aceSalvoTimer <= 0 && this.game.tokenBucketRed >= 1.4) {
         const dist = Math.hypot(targetLead.x - ace.x, targetLead.y - ace.y);
-        if (dist <= 75.0 && dist >= 6.0 && ace.equippedWeapons) {
+        if (dist <= 95.0 && dist >= 6.0 && ace.equippedWeapons) {
           for (let pIdx = 0; pIdx < ace.equippedWeapons.length; pIdx++) {
             const item = ace.equippedWeapons[pIdx];
             if (item && item.ammo > 0 && item.weapon && !item.weapon.isJammerPod && !item.weapon.isDecoy) {
