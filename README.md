@@ -13,7 +13,7 @@ A browser-based air combat game played entirely from a tactical radar screen. Co
   - **Realistic Trade-offs:** Heavy long-range missiles and external drop tanks add deadweight - lowering top speed, climb rates, and turn agility while increasing your radar signature.
   - **Flight Leads:** Designate a squadron leader with specialized perks, like better missile evasion, faster sensor data-sharing, or reduced radar beam spikes.
 - **Game Modes:** 
-  - **Skirmish:** Quick squadron vs. squadron fleet battles.
+  - **Skirmish:** Quick squadron vs squadron battles.
   - **Dynamic Theater:** Multi-wave engagements against enemy reinforcements, SAM sites, and radar networks.
   - **2P Versus:** Local 1v1 on the same device.
 
