@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // After Action Report System
- * Displays Top 3 Podium, Full Squadron Stats, Difficulty & Budget Multipliers, and saves persistently.
+ * AIRSPACE STANDOFF // After Action Report System
+ * Displays Top 3 Podium, Squadron Debrief Table, and High-Precision Telemetry Reporting.
  */
 
 class AfterActionReportSystem {
@@ -21,7 +21,7 @@ class AfterActionReportSystem {
     const timeStr = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
 
     if (tEl) {
-      tEl.textContent = blueWon ? 'TACTICAL VICTORY // AIRSPACE SECURED' : 'SORTIE CONCLUDED // SUMMARY';
+      tEl.textContent = blueWon ? 'TACTICAL VICTORY // AIRSPACE SECURED' : 'SORTIE TERMINATED // MISSION DEBRIEF';
       tEl.style.color = blueWon ? '#00f0ff' : '#ff3366';
     }
     if (dEl) dEl.textContent = msg || 'THEATER COMBAT ASSESSMENT';
@@ -80,7 +80,6 @@ class AfterActionReportSystem {
       `;
     }
 
-    // Calculate score multipliers
     const scoreData = (game.simulation && game.simulation.scoring)
       ? game.simulation.scoring.getScoreMultipliers()
       : { diffKey: game.aiDifficulty, diffMult: 1.0, budgetCap: 400.0, budgetMult: 1.0, totalMult: 1.0 };
@@ -89,29 +88,48 @@ class AfterActionReportSystem {
     const finalSortieScore = Math.round(rawBlueScore * scoreData.totalMult);
 
     if (sEl) {
-      sEl.innerHTML = (
-        `<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:4px;">` +
-          `<span>MISSION DURATION:</span><b>${timeStr}</b>` +
-        `</div>` +
-        `<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:4px;">` +
-          `<span>RAW VICTORY POINTS:</span><b>BLUE: ${game.vpAlly} VP • RED: ${game.vpHostile} VP</b>` +
-        `</div>` +
-        `<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:4px;color:#7dd3fc;">` +
-          `<span>AI DIFFICULTY (${scoreData.diffKey}):</span><b>x${scoreData.diffMult.toFixed(2)} MULTIPLIER</b>` +
-        `</div>` +
-        `<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:4px;color:#ffb830;">` +
-          `<span>DEFENSE BUDGET CAP (${scoreData.budgetCap}M):</span><b>x${scoreData.budgetMult.toFixed(2)} MULTIPLIER</b>` +
-        `</div>` +
-        `<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:4px;font-size:0.76rem;color:#00f5a0;font-weight:800;">` +
-          `<span>COMBINED SCORE RATING:</span><b>x${scoreData.totalMult.toFixed(2)} &bull; ${finalSortieScore.toLocaleString()} FINAL PTS</b>` +
-        `</div>` +
-        `<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:4px;">` +
-          `<span>AIR LOSSES:</span><b>BLUE: ${game.stats.blueLosses} • RED: ${game.stats.redLosses}</b>` +
-        `</div>` +
-        `<div style="display:flex;justify-content:space-between;">` +
-          `<span>MISSILES EXPENDED:</span><b>${game.stats.missilesLaunched}</b>` +
-        `</div>`
-      );
+      sEl.innerHTML = `
+        <div class="aar-report-section">
+          <div class="aar-report-grid">
+            <div class="aar-report-card">
+              <div class="aar-card-head">
+                <span class="aar-card-title">SORTIE TELEMETRY &amp; ENGAGEMENT</span>
+                <span class="aar-card-badge">THEATER LOG</span>
+              </div>
+              <div class="aar-metrics-table">
+                <div class="aar-metric-row"><span>OPERATIONAL DURATION:</span><b style="color:#00f0ff;">${timeStr}</b></div>
+                <div class="aar-metric-row"><span>MISSILES EXPENDED:</span><b style="color:#f8fafc;">${game.stats.missilesLaunched}</b></div>
+                <div class="aar-metric-row"><span>ALLIED LOSSES (BLUE):</span><b style="color:${game.stats.blueLosses > 0 ? '#ff3366' : '#00f5a0'};">${game.stats.blueLosses}</b></div>
+                <div class="aar-metric-row"><span>HOSTILE LOSSES (RED):</span><b style="color:#38bdf8;">${game.stats.redLosses}</b></div>
+              </div>
+            </div>
+
+            <div class="aar-report-card">
+              <div class="aar-card-head">
+                <span class="aar-card-title">TACTICAL EVALUATION &amp; RATING</span>
+                <span class="aar-card-badge highlight">SCORE ENGINE</span>
+              </div>
+              <div class="aar-metrics-table">
+                <div class="aar-metric-row"><span>RAW VICTORY POINTS:</span><b><span style="color:#38bdf8;">BLUE ${game.vpAlly}</span> : <span style="color:#ff3366;">RED ${game.vpHostile}</span></b></div>
+                <div class="aar-metric-row"><span>AI DIFFICULTY (${scoreData.diffKey}):</span><b style="color:#7dd3fc;">x${scoreData.diffMult.toFixed(2)} MULTIPLIER</b></div>
+                <div class="aar-metric-row"><span>BUDGET TIER (${scoreData.budgetCap}M):</span><b style="color:#ffb830;">x${scoreData.budgetMult.toFixed(2)} MULTIPLIER</b></div>
+                <div class="aar-metric-row"><span>TOTAL SCORE RATING:</span><b style="color:#00f5a0;">x${scoreData.totalMult.toFixed(2)} MULTIPLIER</b></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="aar-score-banner ${blueWon ? 'victory' : 'defeat'}">
+            <div class="aar-banner-lead">
+              <span class="aar-banner-status">${blueWon ? 'SORTIE SUCCESSFUL // AIR DOMINANCE' : 'SORTIE TERMINATED // WITHDRAWAL'}</span>
+              <span class="aar-banner-sub">Combined Coalition Performance Rating</span>
+            </div>
+            <div class="aar-banner-score">
+              <span class="aar-score-num">${finalSortieScore.toLocaleString()}</span>
+              <span class="aar-score-unit">FINAL PTS</span>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     if (timelineListEl && game.simulation && game.simulation.timelineEvents) {

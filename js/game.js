@@ -74,7 +74,7 @@ class AirspaceStandoffGame {
     this.budgetMax = tierData.budget;
     const subtextEl = document.getElementById('proc-budget-subtext');
     if (subtextEl) {
-      subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) â€¢ UP TO 16 UNITS`;
+      subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) • UP TO 16 UNITS`;
     }
     this.updateModeIndicator();
     if (this.procurement) this.procurement.updateUI();
@@ -86,7 +86,7 @@ class AirspaceStandoffGame {
     const dispEl = document.getElementById('display-squadron-name');
     if (dispEl) dispEl.textContent = this.squadronName;
     const headerEl = document.getElementById('header-squadron-name');
-    if (headerEl) headerEl.textContent = `${this.squadronName.toUpperCase()} â€¢ FLIGHT DATA`;
+    if (headerEl) headerEl.textContent = `${this.squadronName.toUpperCase()} • FLIGHT DATA`;
     if (this.alliedAircraft) {
       this.alliedAircraft.forEach(ac => { ac.squadronName = this.squadronName; });
     }
@@ -119,9 +119,9 @@ class AirspaceStandoffGame {
     };
     const diffTag = diffMap[this.aiDifficulty] || this.aiDifficulty;
     const bTag = bMap[this.playerBudgetId] || '400M';
-    const modeTag = this.playerMode === '1P' ? (`1P VS AI [${diffTag}] â€¢ [${bTag}]`) : '2P VERSUS';
+    const modeTag = this.playerMode === '1P' ? (`1P VS AI [${diffTag}] • [${bTag}]`) : '2P VERSUS';
     const scenarioTag = this.scenarioMode === 'DYNAMIC_THEATER' ? 'DYNAMIC SQUADRON THEATER' : 'SKIRMISH';
-    ind.textContent = `${modeTag} â€¢ ${scenarioTag}`;
+    ind.textContent = `${modeTag} • ${scenarioTag}`;
   }
 
   canFirePylon(u, item, tgt) {

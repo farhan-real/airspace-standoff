@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Procurement Orchestrator
- * Flight Lead selection, preconfigured aircraft templates, and auto-persistence.
+ * AIRSPACE STANDOFF // Procurement Orchestrator
+ * Flight Lead selection, custom dropdown management, and auto-persistence.
  */
 
 class ProcurementManager {
@@ -27,12 +27,62 @@ class ProcurementManager {
     this.initMobileProcurement();
     this.initPreconfigModalListeners();
     this.initSquadronNameEditor();
+    this.initHangarCustomDropdowns();
   }
 
   showPromptModal(t, m, d, cb) { this.dialogModal.showPrompt(t, m, d, cb); }
   showConfirmModal(t, m, cb) { this.dialogModal.showConfirm(t, m, cb); }
   showAlertModal(t, m) { this.dialogModal.showAlert(t, m); }
   openCallsignPickerModal(sIdx) { this.dialogModal.openCallsignPicker(sIdx); }
+
+  initHangarCustomDropdowns() {
+    if (typeof CustomDropdown === 'undefined') return;
+
+    CustomDropdown.setup('cdd-budget', {
+      label: 'BUDGET',
+      value: this.game.playerBudgetId || 'BUDGET_400',
+      options: [
+        { value: 'BUDGET_200', text: '200M (1.50x VP)' },
+        { value: 'BUDGET_300', text: '300M (1.25x VP)' },
+        { value: 'BUDGET_400', text: '400M (1.00x VP)' },
+        { value: 'BUDGET_500', text: '500M (0.85x VP)' },
+        { value: 'BUDGET_650', text: '650M (0.70x VP)' }
+      ],
+      onChange: (val) => {
+        this.game.setPlayerBudgetTier(val);
+      }
+    });
+
+    CustomDropdown.setup('cdd-difficulty', {
+      label: 'DIFFICULTY',
+      value: this.game.aiDifficulty || 'VETERAN',
+      options: [
+        { value: 'CADET', text: 'CADET (0.6x)' },
+        { value: 'VETERAN', text: 'VETERAN (1.0x)' },
+        { value: 'ELITE', text: 'ELITE (1.4x)' },
+        { value: 'ACE', text: 'ACE (1.8x)' },
+        { value: 'MASTER', text: 'MASTER (2.2x)' },
+        { value: 'LEGEND', text: 'LEGEND (2.8x)' }
+      ],
+      onChange: (val) => {
+        this.game.aiDifficulty = val;
+        this.game.updateModeIndicator();
+      }
+    });
+
+    CustomDropdown.setup('cdd-doctrine', {
+      label: 'DOCTRINE',
+      value: this.game.aiDoctrine || 'BALANCED',
+      options: [
+        { value: 'BALANCED', text: 'BALANCED' },
+        { value: 'AGGRESSIVE', text: 'AGGRESSIVE' },
+        { value: 'STANDOFF', text: 'STAND-OFF' }
+      ],
+      onChange: (val) => {
+        this.game.aiDoctrine = val;
+      }
+    });
+  }
 
   setLeadAirframe(sIdx) {
     this.game.procurementSquadron.forEach((item, idx) => {
@@ -79,20 +129,22 @@ class ProcurementManager {
       };
     }
 
-    const airframeSelect = document.getElementById('preconfig-airframe-filter');
-    if (airframeSelect) {
-      airframeSelect.onchange = (e) => {
-        this.preconfigAirframe = e.target.value;
-        this.renderPreconfigCardsGrid();
-      };
-    }
-
-    const sortSelect = document.getElementById('preconfig-sort-select');
-    if (sortSelect) {
-      sortSelect.onchange = (e) => {
-        this.preconfigSort = e.target.value;
-        this.renderPreconfigCardsGrid();
-      };
+    if (typeof CustomDropdown !== 'undefined') {
+      CustomDropdown.setup('cdd-preconfig-sort', {
+        label: 'SORT',
+        value: this.preconfigSort,
+        options: [
+          { value: 'DEFAULT', text: 'DEFAULT' },
+          { value: 'COST_ASC', text: 'COST: LOW TO HIGH' },
+          { value: 'COST_DESC', text: 'COST: HIGH TO LOW' },
+          { value: 'SPEED', text: 'SPEED: HIGH TO LOW' },
+          { value: 'ARMOR', text: 'ARMOR: HIGH TO LOW' }
+        ],
+        onChange: (val) => {
+          this.preconfigSort = val;
+          this.renderPreconfigCardsGrid();
+        }
+      });
     }
 
     const catPills = document.querySelectorAll('#preconfig-category-pills .cat-pill-btn');
@@ -111,13 +163,22 @@ class ProcurementManager {
     if (!modal) return;
     if (this.game.controls) this.game.controls.autoPauseOnDialogOpen();
 
-    const select = document.getElementById('preconfig-airframe-filter');
-    if (select) {
-      const templates = this.customLoadouts.getTemplates();
-      const uniqueSpecs = Array.from(new Set(Object.values(templates).map(t => t.specId))).sort();
-      select.innerHTML = '<option value="ALL">ALL AIRFRAMES</option>' + uniqueSpecs.map(sId => `<option value="${sId}">${sId}</option>`).join('');
-      select.value = this.preconfigAirframe;
+    const templates = this.customLoadouts.getTemplates();
+    const uniqueSpecs = Array.from(new Set(Object.values(templates).map(t => t.specId))).sort();
+    const airframeOpts = [{ value: 'ALL', text: 'ALL AIRFRAMES' }, ...uniqueSpecs.map(sId => ({ value: sId, text: sId }))];
+
+    if (typeof CustomDropdown !== 'undefined') {
+      CustomDropdown.setup('cdd-preconfig-airframe', {
+        label: 'AIRFRAME',
+        value: this.preconfigAirframe,
+        options: airframeOpts,
+        onChange: (val) => {
+          this.preconfigAirframe = val;
+          this.renderPreconfigCardsGrid();
+        }
+      });
     }
+
     this.renderPreconfigCardsGrid();
     modal.classList.add('active');
   }
@@ -340,13 +401,6 @@ class ProcurementManager {
           return;
         }
         this.game.scrambleFlight();
-      };
-    }
-
-    const budgetSelect = document.getElementById('player-budget-select');
-    if (budgetSelect) {
-      budgetSelect.onchange = (e) => {
-        this.game.setPlayerBudgetTier(e.target.value);
       };
     }
 

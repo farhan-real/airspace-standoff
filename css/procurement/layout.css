@@ -137,12 +137,6 @@
   flex-wrap: wrap;
 }
 
-.ai-config-group .hud-select {
-  font-size: 0.74rem;
-  padding: 5px 10px;
-  height: 30px;
-}
-
 /* FULLSCREEN & MANUAL RIGHT-CORNER CONTAINER */
 .proc-right-actions {
   margin-left: auto;
@@ -366,12 +360,6 @@
   .seg-btn {
     padding: 4px 8px;
     font-size: 0.68rem;
-  }
-
-  .ai-config-group .hud-select {
-    padding: 4px 6px;
-    font-size: 0.66rem;
-    height: 28px;
   }
 
   .proc-right-actions {

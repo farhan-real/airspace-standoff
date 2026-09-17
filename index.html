@@ -75,20 +75,12 @@
       <button id="btn-close-preconfig" class="hud-btn small">X</button>
     </div>
 
-    <!-- CONTROLS & FILTER TOOLBAR -->
+    <!-- CONTROLS & FILTER TOOLBAR (CUSTOM DROPDOWNS ONLY) -->
     <div class="preconfig-toolbar">
       <div class="preconfig-search-row">
-        <input type="text" id="preconfig-search-input" class="hud-search-input" placeholder="Search by template name, airframe, weapon (e.g. Railgun, Kinzhal, Meteor), or feature...">
-        <select id="preconfig-airframe-filter" class="hud-select" style="min-width: 160px;">
-          <option value="ALL">ALL AIRFRAMES</option>
-        </select>
-        <select id="preconfig-sort-select" class="hud-select" style="min-width: 140px;">
-          <option value="DEFAULT">SORT: DEFAULT</option>
-          <option value="COST_ASC">COST: LOW TO HIGH</option>
-          <option value="COST_DESC">COST: HIGH TO LOW</option>
-          <option value="SPEED">SPEED: HIGH TO LOW</option>
-          <option value="ARMOR">ARMOR: HIGH TO LOW</option>
-        </select>
+        <input type="text" id="preconfig-search-input" class="hud-search-input" placeholder="Search by template name, airframe, weapon, or feature...">
+        <div id="cdd-preconfig-airframe"></div>
+        <div id="cdd-preconfig-sort"></div>
       </div>
       <div class="preconfig-pills-row" id="preconfig-category-pills">
         <button type="button" class="cat-pill-btn active" data-pcat="ALL">ALL</button>
@@ -207,34 +199,21 @@
           <button id="scenario-btn-skirmish" class="seg-btn active">SKIRMISH</button>
           <button id="scenario-btn-dynamic" class="seg-btn">DYNAMIC THEATER</button>
         </div>
+
+        <!-- CUSTOM CYBER-MILITARY DROPDOWNS -->
         <div class="ai-config-group" id="ai-config-panel">
-          <select id="player-budget-select" class="hud-select" title="Defense Budget Allocation (Score Multiplier)">
-            <option value="BUDGET_200">200M (1.50x VP)</option>
-            <option value="BUDGET_300">300M (1.25x VP)</option>
-            <option value="BUDGET_400" selected>400M (1.00x VP)</option>
-            <option value="BUDGET_500">500M (0.85x VP)</option>
-            <option value="BUDGET_650">650M (0.70x VP)</option>
-          </select>
-          <select id="ai-difficulty-select" class="hud-select" title="Hostile AI Combat Difficulty">
-            <option value="CADET">CADET (0.6x)</option>
-            <option value="VETERAN" selected>VETERAN (1.0x)</option>
-            <option value="ELITE">ELITE (1.4x)</option>
-            <option value="ACE">ACE (1.8x)</option>
-            <option value="MASTER">MASTER (2.2x)</option>
-            <option value="LEGEND">LEGEND (2.8x)</option>
-          </select>
-          <select id="ai-doctrine-select" class="hud-select">
-            <option value="BALANCED" selected>BALANCED</option>
-            <option value="AGGRESSIVE">AGGRESSIVE</option>
-            <option value="STANDOFF">STAND-OFF</option>
-          </select>
+          <div id="cdd-budget"></div>
+          <div id="cdd-difficulty"></div>
+          <div id="cdd-doctrine"></div>
         </div>
+
         <!-- RIGHT CORNER ACTIONS -->
         <div class="proc-right-actions">
           <button id="btn-proc-fullscreen" class="hud-btn" title="Toggle Fullscreen">FULLSCREEN</button>
           <button id="btn-open-glossary" class="hud-btn">MANUAL</button>
         </div>
       </div>
+
       <div class="budget-display">
         <div class="budget-line">
           <span class="label">BUDGET:</span>
@@ -329,7 +308,7 @@
       <button type="button" id="btn-mobile-open-fleet" class="hud-btn small highlight fleet-btn">FLEET</button>
     </div>
 
-    <!-- CAMERA CONTROLS: DOCKED BETWEEN FLEET AND ACTIONS -->
+    <!-- CAMERA CONTROLS -->
     <div class="banner-cam-controls" id="radar-cam-left-dock">
       <button id="cam-btn-zoom-in" class="cam-btn" title="Zoom In">+</button>
       <button id="cam-btn-zoom-out" class="cam-btn" title="Zoom Out">-</button>
@@ -410,7 +389,7 @@
         <span id="rwr-threat-detail" class="rwr-subtext">NO EMISSIONS</span>
       </div>
 
-      <!-- RADAR LAYER TOGGLES (DOCKED TO BOTTOM-LEFT) -->
+      <!-- RADAR LAYER TOGGLES -->
       <div class="radar-floating-cam-bar" id="radar-floating-cam-bar">
         <button id="cam-btn-declutter" class="cam-btn declutter-btn prominent-cam-btn">DECLUTTER: OFF</button>
         <button id="cam-btn-ground" class="cam-btn ground-toggle-btn prominent-cam-btn">GROUND: OFF</button>
@@ -422,7 +401,7 @@
         <span class="civ-text">Commercial flights in sector &bull; Penalty: -800 VP</span>
       </div>
 
-      <!-- MOBILE STEERING OVERLAY (DOCKED TO BOTTOM-RIGHT) -->
+      <!-- MOBILE STEERING OVERLAY -->
       <div class="mobile-steering-overlay">
         <button id="mobile-steer-left" class="mobile-steer-btn">&lt; STEER LEFT</button>
         <button id="mobile-steer-right" class="mobile-steer-btn">STEER RIGHT &gt;</button>
@@ -526,7 +505,8 @@
       <div id="aar-full-roster-content" style="max-height: 180px; overflow-y: auto;"></div>
     </div>
 
-    <div class="stats-summary" id="game-over-stats"></div>
+    <!-- STRUCTURED DEBRIEF TELEMETRY BELOW THE TABLE -->
+    <div id="game-over-stats"></div>
 
     <div class="aar-timeline-container">
       <div class="aar-timeline-toggle-row">
@@ -606,6 +586,7 @@
 <script src="js/ui/controls/keyboard.js"></script>
 <script src="js/ui/controls/pointer.js"></script>
 <script src="js/ui/controls/fullscreen.js"></script>
+<script src="js/ui/custom-dropdown.js"></script>
 <script src="js/ui/controls.js"></script>
 <script src="js/ui/cards/maneuver-deck.js"></script>
 <script src="js/ui/cards/target.js"></script>

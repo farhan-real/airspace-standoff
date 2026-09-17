@@ -326,167 +326,135 @@
 }
 
 /* ==========================================================================
-   PRECONFIGURED COMBAT LOADOUTS & CARDS
+   CUSTOM DROPDOWN MENUS (NO NATIVE SELECT BOXES)
    ========================================================================== */
 
-.preconfig-window {
-  width: 95vw;
-  max-width: 1120px;
-  height: 90vh;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
+.custom-dropdown {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
 }
 
-.preconfig-toolbar {
-  display: flex;
-  flex-direction: column;
-  background: #040914;
-  border-bottom: 1px solid #142338;
-  padding: 8px 12px;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.preconfig-search-row {
-  display: flex;
-  gap: 8px;
+.custom-dropdown-trigger {
+  background: #040913;
+  border: 1px solid #16273e;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 5px 10px;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
-  flex-wrap: wrap;
-}
-
-.preconfig-search-row .hud-search-input {
-  flex: 1;
-  min-width: 220px;
-}
-
-.preconfig-pills-row {
-  display: flex;
-  gap: 4px;
-  overflow-x: auto;
+  gap: 6px;
+  height: 30px;
   white-space: nowrap;
-  padding-bottom: 2px;
-}
-
-.preconfig-modal-body {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  background: #020610;
-  padding: 10px;
-}
-
-.preconfig-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(490px, 1fr));
-  gap: 8px;
-}
-
-.preconfig-card {
-  background: #060d1a;
-  border: 1px solid #15273f;
-  border-left: 3px solid #0284c7;
-  border-radius: 4px;
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+  box-sizing: border-box;
   transition: all 0.12s ease;
+}
+
+.custom-dropdown-trigger:hover,
+.custom-dropdown.open .custom-dropdown-trigger {
+  border-color: var(--color-cyan);
+  background: #081629;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+}
+
+.cdd-label {
+  font-size: 0.64rem;
+  color: #8494ab;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+}
+
+.cdd-val {
+  color: #00f0ff;
+  font-weight: 800;
+}
+
+.cdd-arrow {
+  font-size: 0.58rem;
+  color: #7dd3fc;
+  transition: transform 0.14s ease;
+}
+
+.custom-dropdown.open .cdd-arrow {
+  transform: rotate(180deg);
+}
+
+.custom-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 100%;
+  max-height: 240px;
+  overflow-y: auto;
+  background: #050b16;
+  border: 1px solid #00f0ff;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.95);
+  z-index: 5500;
+  flex-direction: column;
+  padding: 3px;
+  gap: 2px;
   box-sizing: border-box;
 }
 
-.preconfig-card:hover {
-  border-color: var(--color-cyan);
-  background: #091526;
-}
-
-.preconfig-card.cat-stealth { border-left-color: #9333ea; }
-.preconfig-card.cat-superiority { border-left-color: #0284c7; }
-.preconfig-card.cat-strike { border-left-color: #f97316; }
-.preconfig-card.cat-ew { border-left-color: #6366f1; }
-.preconfig-card.cat-drones { border-left-color: #ec4899; }
-.preconfig-card.cat-experimental { border-left-color: #38bdf8; }
-
-.pc-top-row {
+.custom-dropdown.open .custom-dropdown-menu {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
 }
 
-.pc-title-group { display: flex; flex-direction: column; }
-.pc-template-name { font-size: 0.86rem; font-weight: 800; color: #f8fafc; }
-.pc-spec-name { font-size: 0.62rem; color: #8494ab; font-family: var(--font-mono); }
-.pc-cost-badge { font-size: 0.84rem; font-weight: 800; font-family: var(--font-mono); white-space: nowrap; }
-
-.pc-badges-row { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
-.pc-role-badge { font-size: 0.54rem; font-weight: 800; font-family: var(--font-mono); padding: 1px 5px; border-radius: 2px; background: #0284c7; color: #fff; }
-
-.pc-stats-strip {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  background: #020610;
-  border: 1px solid #111e30;
-  border-radius: 3px;
-  padding: 3px 6px;
-  font-size: 0.58rem;
-  font-family: var(--font-mono);
-  gap: 2px;
-  text-align: center;
-}
-
-.pc-stat-cell { display: flex; flex-direction: column; }
-.pc-stat-cell span { font-size: 0.50rem; color: #64748b; font-weight: 700; }
-
-.pc-loadout-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  background: #030814;
-  border: 1px dashed #142338;
-  border-radius: 3px;
-  padding: 4px 6px;
-  font-size: 0.58rem;
-  font-family: var(--font-mono);
-}
-
-.pc-loadout-line { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-.pc-tag-label { color: #8494ab; font-weight: 700; min-width: 55px; }
-
-.pc-item-pill {
-  background: #091322;
-  border: 1px solid #1c324e;
+.custom-dropdown-opt {
+  background: transparent;
+  border: 1px solid transparent;
   color: #cbd5e1;
-  padding: 1px 4px;
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  font-weight: 700;
+  padding: 5px 9px;
+  text-align: left;
+  cursor: pointer;
   border-radius: 2px;
-  font-size: 0.56rem;
-  cursor: help;
+  transition: all 0.10s ease;
+  white-space: nowrap;
 }
 
-.pc-item-pill.wpn { color: #7dd3fc; border-color: #0284c7; }
-.pc-item-pill.upg { color: #c7d2fe; border-color: #4338ca; }
-.pc-item-pill.gun { color: #fde047; border-color: #ca8a04; }
+.custom-dropdown-opt:hover {
+  background: #0d1e34;
+  color: #ffffff;
+  border-color: #0284c7;
+}
 
-.pc-desc-box { font-size: 0.60rem; color: #94a3b8; line-height: 1.35; }
+.custom-dropdown-opt.active {
+  background: #0284c7;
+  color: #ffffff;
+  font-weight: 800;
+  border-color: #00f0ff;
+}
 
-.pc-footer {
-  display: flex;
+.custom-dropdown-opt:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+/* In-Card Gun Custom Dropdown */
+.su-gun-dropdown {
+  flex: 1;
+  min-width: 0;
+}
+
+.su-gun-dropdown .custom-dropdown-trigger {
+  width: 100%;
   justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid #142338;
-  padding-top: 5px;
-  margin-top: 2px;
-}
-
-@media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
-  .preconfig-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 6px !important; }
-  .preconfig-card { padding: 6px 8px !important; gap: 4px !important; }
 }
 
 /* ==========================================================================
-   AFTER ACTION REPORT, ALL-AIRCRAFT DEBRIEF & MISSION ARCHIVE
+   AFTER ACTION REPORT: HIGH-TECH REPORT CARDS & FINAL SCORE BANNER
    ========================================================================== */
 
 .game-over-dialog {
@@ -570,6 +538,154 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+/* STRUCTURED AFTER ACTION REPORT SECTION BELOW TABLE */
+.aar-report-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.aar-report-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.aar-report-card {
+  background: #030712;
+  border: 1px solid #15263f;
+  border-left: 3px solid #0284c7;
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.aar-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #14243b;
+  padding-bottom: 5px;
+}
+
+.aar-card-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #cbd5e1;
+  letter-spacing: 0.5px;
+}
+
+.aar-card-badge {
+  font-size: 0.54rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: #081c32;
+  color: #7dd3fc;
+  border: 1px solid #0284c7;
+}
+
+.aar-card-badge.highlight {
+  background: rgba(0, 245, 160, 0.12);
+  color: #00f5a0;
+  border-color: #00f5a0;
+}
+
+.aar-metrics-table {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.aar-metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  padding: 2px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
+}
+
+.aar-metric-row span {
+  color: #8494ab;
+  font-weight: 700;
+}
+
+.aar-metric-row b {
+  color: #f8fafc;
+  font-weight: 800;
+}
+
+/* HIGH-EMPHASIS GLOWING FINAL SCORE BANNER */
+.aar-score-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #071930 0%, #030a16 100%);
+  border: 1.5px solid #00f0ff;
+  border-radius: 4px;
+  padding: 10px 16px;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.35);
+}
+
+.aar-score-banner.defeat {
+  background: linear-gradient(90deg, #300714 0%, #160308 100%);
+  border-color: #ff3366;
+  box-shadow: 0 0 16px rgba(255, 51, 102, 0.35);
+}
+
+.aar-banner-lead {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.aar-banner-status {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #00f0ff;
+  letter-spacing: 0.6px;
+}
+
+.aar-score-banner.defeat .aar-banner-status {
+  color: #ff3366;
+}
+
+.aar-banner-sub {
+  font-size: 0.58rem;
+  color: #94a3b8;
+}
+
+.aar-banner-score {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.aar-score-num {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.85);
+  letter-spacing: 0.8px;
+}
+
+.aar-score-banner.defeat .aar-score-num {
+  text-shadow: 0 0 12px rgba(255, 51, 102, 0.85);
+}
+
+.aar-score-unit {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #00f5a0;
+}
+
+/* Timeline */
 .aar-timeline-container {
   background: #02060f;
   border: 1px solid #142236;
@@ -602,3 +718,9 @@
 .timeline-entry.kill { background: rgba(0, 240, 255, 0.06); border-left: 2px solid #00f0ff; }
 .timeline-entry.ace-kill { background: rgba(255, 215, 0, 0.12); border-left: 2px solid #ffd700; }
 .timeline-entry.roe { background: rgba(255, 51, 102, 0.08); border-left: 2px solid #ff3366; }
+
+@media (max-width: 768px) {
+  .aar-report-grid {
+    grid-template-columns: 1fr;
+  }
+}

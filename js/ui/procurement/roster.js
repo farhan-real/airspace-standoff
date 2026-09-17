@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Squadron Loadout Bay Roster
- * Supports interactive Flight Lead hover dossiers and category-specific lead command buffs.
+ * AIRSPACE STANDOFF // Squadron Loadout Bay Roster
+ * Supports custom cyber-military autocannon picker menus and Flight Lead command buffs.
  */
 
 class ProcurementRoster {
@@ -124,10 +124,12 @@ class ProcurementRoster {
       const wrPercent = Math.round(Math.min(1.0, totalMass / maxMass) * 100);
 
       const allowed = spec.allowedGuns || [spec.builtInGun || 'M61A2'];
-      const gunOptionsHtml = Object.values(gunsMap).map(g => {
+      const gunOptsList = Object.values(gunsMap).map(g => {
         const isComp = allowed.includes(g.id);
         const isSelected = item.chosenGunId === g.id;
-        return `<option value="${g.id}" ${isSelected ? 'selected' : ''} ${isComp ? '' : 'disabled'}>${isComp ? '[OK] ' + g.name + ' (' + (g.damagePerSec || 2.5) + ' HP/s)' : '[LOCKED] ' + g.name}</option>`;
+        return `<button type="button" class="custom-dropdown-opt ${isSelected ? 'active' : ''}" data-gun-id="${g.id}" ${isComp ? '' : 'disabled'}>
+          ${isComp ? g.name + ' (' + (g.damagePerSec || 2.5) + ' HP/s)' : '[LOCKED] ' + g.name}
+        </button>`;
       }).join('');
 
       let pipsHtml = '';
@@ -197,8 +199,16 @@ class ProcurementRoster {
         </div>
         <div class="su-gun-selector-row">
           <label class="gun-sel-label">AUTOCANNON:</label>
-          <select class="hud-select gun-dropdown" data-sidx="${sIdx}">${gunOptionsHtml}</select>
-          <span class="gun-dmg-badge" style="color:#ffb830;font-size:0.60rem;font-weight:800;font-family:var(--font-mono);">${activeGunDmg} HP/s DMG</span>
+          <div class="custom-dropdown su-gun-dropdown" id="cdd-gun-${sIdx}">
+            <button type="button" class="custom-dropdown-trigger gun-sel-trigger">
+              <span class="cdd-val">${activeGun ? activeGun.name : 'Autocannon'}</span>
+              <span class="cdd-arrow">▾</span>
+            </button>
+            <div class="custom-dropdown-menu gun-menu">
+              ${gunOptsList}
+            </div>
+          </div>
+          <span class="gun-dmg-badge" style="color:#ffb830;font-size:0.64rem;font-weight:800;font-family:var(--font-mono);">${activeGunDmg} HP/s DMG</span>
           <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${activeGun ? activeGun.id : 'M61A2'}">[SPECS]</button>
         </div>
         <div class="unit-metric-strip">
@@ -219,10 +229,33 @@ class ProcurementRoster {
 
       card.querySelector('.squad-callsign-tag').onclick = () => this.pm.openCallsignPickerModal(sIdx);
       card.querySelector('.btn-toggle-lead').onclick = () => this.pm.setLeadAirframe(sIdx);
-      card.querySelector('.gun-dropdown').onchange = (e) => { item.chosenGunId = e.target.value; this.pm.updateUI(); };
       card.querySelector('.btn-clone-jet').onclick = () => this.pm.cloneAirframe(sIdx);
       card.querySelector('.btn-equip-selected').onclick = () => this.pm.equipSelectedToSquadron(sIdx);
       card.querySelector('.btn-remove-airframe').onclick = () => { squadron.splice(sIdx, 1); this.pm.updateUI(); };
+
+      // Custom Gun Dropdown Trigger
+      const gunCdd = card.querySelector(`#cdd-gun-${sIdx}`);
+      if (gunCdd) {
+        const trigger = gunCdd.querySelector('.gun-sel-trigger');
+        trigger.onclick = (e) => {
+          e.stopPropagation();
+          const isOpen = gunCdd.classList.contains('open');
+          document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+          if (!isOpen) gunCdd.classList.add('open');
+        };
+
+        gunCdd.querySelectorAll('.custom-dropdown-opt').forEach(opt => {
+          opt.onclick = (e) => {
+            e.stopPropagation();
+            const gunId = opt.getAttribute('data-gun-id');
+            if (gunId && allowed.includes(gunId)) {
+              item.chosenGunId = gunId;
+              gunCdd.classList.remove('open');
+              this.pm.updateUI();
+            }
+          };
+        });
+      }
 
       const emptyBay = card.querySelector('.empty-bay-indicator');
       if (emptyBay) {

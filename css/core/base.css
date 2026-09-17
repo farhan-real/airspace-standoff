@@ -154,22 +154,6 @@ html, body {
   color: #7dd3fc;
 }
 
-.hud-select {
-  background: #040913;
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  padding: 5px 9px;
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
-}
-
-.hud-select:focus {
-  border-color: var(--color-cyan);
-}
-
 .mobile-only-btn {
   display: none !important;
 }

@@ -1,7 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Controls System Coordinator
  * Pure manual target selection and switching. Full RTB names and no hotkeys in UI text.
- * Integrates cross-browser Fullscreen controller for desktop and mobile browser play.
+ * Integrates cross-browser Fullscreen controller and reliable pause modal transitions.
  */
 
 class ControlsSystem {
@@ -412,11 +412,6 @@ class ControlsSystem {
         this.game.updateModeIndicator();
       };
     }
-
-    const diffSelect = document.getElementById('ai-difficulty-select');
-    const doctSelect = document.getElementById('ai-doctrine-select');
-    if (diffSelect) diffSelect.onchange = (e) => { this.game.aiDifficulty = e.target.value; this.game.updateModeIndicator(); };
-    if (doctSelect) doctSelect.onchange = (e) => { this.game.aiDoctrine = e.target.value; };
 
     const btnBlue = document.getElementById('btn-switch-blue');
     const btnRed = document.getElementById('btn-switch-red');
