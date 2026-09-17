@@ -71,14 +71,14 @@
 }
 
 .squad-callsign-tag {
-  margin-left: auto; /* Locks to the top-right corner of the title row */
+  margin-left: auto;
   background: #08172c;
   border: 1px solid #0284c7;
   color: #ffb830;
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   font-family: var(--font-mono);
   font-weight: 800;
-  padding: 3px 8px;
+  padding: 4px 9px;
   border-radius: 3px;
   cursor: pointer;
   white-space: nowrap;
@@ -89,36 +89,88 @@
   color: #fff;
 }
 
+/* COMFORTABLE MODE AND AI SELECTION ROW */
 .mode-and-ai-controls {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .segmented-control {
   display: flex;
   background: #020610;
   border: 1px solid #16273e;
-  border-radius: 3px;
+  border-radius: 4px;
   padding: 2px;
 }
 
 .seg-btn {
   border: none;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 700;
-  padding: 3px 7px;
-  border-radius: 2px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 5px 11px;
+  border-radius: 3px;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
+  transition: all 0.12s ease;
+  line-height: 1.2;
 }
 
-.seg-btn.active { background: var(--color-cyan); color: #000; }
+.seg-btn:hover {
+  color: #f1f5f9;
+}
 
-.ai-config-group { display: flex; align-items: center; gap: 4px; }
+.seg-btn.active {
+  background: var(--color-cyan);
+  color: #000;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
+}
+
+.ai-config-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ai-config-group .hud-select {
+  font-size: 0.74rem;
+  padding: 5px 10px;
+  height: 30px;
+}
+
+/* FULLSCREEN & MANUAL RIGHT-CORNER CONTAINER */
+.proc-right-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.proc-right-actions .hud-btn {
+  font-size: 0.74rem;
+  padding: 5px 13px;
+  font-weight: 800;
+  height: 30px;
+}
+
+#btn-proc-fullscreen.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+/* HIDE FULLSCREEN IN NATIVE ANDROID APK */
+.is-android-apk #btn-proc-fullscreen,
+.is-android-apk #btn-fullscreen-toggle {
+  display: none !important;
+}
 
 .budget-display {
   display: flex;
@@ -278,7 +330,7 @@
 }
 
 /* ==========================================================================
-   MOBILE LANDSCAPE: 75%+ VERTICAL SPACE FOR CATALOG & ROSTER
+   MOBILE RESPONSIVENESS: ENLARGED TOUCH CONTROLS
    ========================================================================== */
 @media (max-width: 1024px) {
   .procurement-window {
@@ -306,13 +358,32 @@
   .game-name { font-size: 0.82rem; }
 
   .mode-and-ai-controls {
-    gap: 3px;
+    gap: 4px;
     width: 100%;
     justify-content: flex-start;
   }
 
-  .seg-btn { padding: 2px 6px; font-size: 0.56rem; }
-  .hud-select { padding: 2px 4px; font-size: 0.56rem; }
+  .seg-btn {
+    padding: 4px 8px;
+    font-size: 0.68rem;
+  }
+
+  .ai-config-group .hud-select {
+    padding: 4px 6px;
+    font-size: 0.66rem;
+    height: 28px;
+  }
+
+  .proc-right-actions {
+    margin-left: auto;
+    gap: 4px;
+  }
+
+  .proc-right-actions .hud-btn {
+    font-size: 0.68rem;
+    padding: 4px 9px;
+    height: 28px;
+  }
 
   .budget-display {
     padding: 2px 6px;

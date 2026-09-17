@@ -187,7 +187,7 @@
   box-sizing: border-box !important;
 }
 
-/* CAMERA CONTROLS: POSITIONED EXACTLY BETWEEN FLEET AND AUDIO */
+/* CAMERA CONTROLS: POSITIONED EXACTLY BETWEEN FLEET AND ACTIONS */
 .banner-cam-controls {
   display: flex;
   align-items: center;
@@ -241,6 +241,18 @@
   white-space: nowrap;
   height: 26px;
   box-sizing: border-box;
+}
+
+#btn-fullscreen-toggle.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+/* HIDE FULLSCREEN IN NATIVE ANDROID APK */
+.is-android-apk #btn-fullscreen-toggle {
+  display: none !important;
 }
 
 /* DEAD CODE PURGED */
@@ -324,8 +336,8 @@
   }
 
   .top-quick-actions .hud-btn {
-    padding: 3px 8px !important;
-    font-size: 0.62rem !important;
+    padding: 3px 6px !important;
+    font-size: 0.60rem !important;
     height: 26px !important;
   }
 

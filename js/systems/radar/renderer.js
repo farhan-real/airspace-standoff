@@ -1,6 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Tactical Radar Viewport Renderer (Optimized 60-120 FPS Engine)
  * Smooth 2.0x Retina scaling without mobile overdraw or gradient garbage collection lag.
+ * In 2P mode, detectedSet includes all aircraft from match start for fair visibility.
  */
 
 class TacticalRadarRenderer {
@@ -14,7 +15,6 @@ class TacticalRadarRenderer {
     this.cssHeight = 500;
     this.isMobile = (typeof window !== 'undefined') && (window.innerWidth <= 1024);
 
-    // 2.0x DPR: perfectly sharp on retina/OLED without overworking mobile GPUs
     const rawDpr = window.devicePixelRatio || 1;
     this.dpr = Math.min(Math.max(rawDpr, 1.75), 2.0);
 
@@ -179,9 +179,21 @@ class TacticalRadarRenderer {
     }
 
     const commanderTeam = (window.Game && window.Game.currentPvpCommander) || 'friendly';
-    const detectedSet = (commanderTeam === 'friendly')
-      ? (window.Game && window.Game.detectedByBlue ? window.Game.detectedByBlue : new Set())
-      : (window.Game && window.Game.detectedByRed ? window.Game.detectedByRed : new Set());
+    const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
+
+    const detectedSet = is2P
+      ? new Set([
+          ...allied.map(a => a.id),
+          ...hostiles.map(h => h.id),
+          ...surface.map(s => s.id),
+          ...missiles.map(m => m.id),
+          ...civilians.map(c => c.id),
+          ...ghosts.map(g => g.id),
+          ...decoys.map(d => d.id)
+        ])
+      : ((commanderTeam === 'friendly')
+        ? (window.Game && window.Game.detectedByBlue ? window.Game.detectedByBlue : new Set())
+        : (window.Game && window.Game.detectedByRed ? window.Game.detectedByRed : new Set()));
 
     ctx.fillStyle = '#02050e';
     ctx.fillRect(0, 0, w, h);
@@ -213,7 +225,7 @@ class TacticalRadarRenderer {
 
     const liveHostiles = hostiles.filter(a => a && a.hp > 0);
     const uplinkThreshold = (window.CONFIG && window.CONFIG.UPLINK_THRESHOLD_FIGHTERS !== undefined) ? window.CONFIG.UPLINK_THRESHOLD_FIGHTERS : 3;
-    if (commanderTeam === 'friendly' && liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold && typeof RadarEnvironmentRenderer !== 'undefined') {
+    if (!is2P && commanderTeam === 'friendly' && liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold && typeof RadarEnvironmentRenderer !== 'undefined') {
       RadarEnvironmentRenderer.drawUplinkBanner(ctx, liveHostiles.length, w, h);
     }
 

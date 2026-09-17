@@ -1,6 +1,8 @@
 /**
  * AIRSPACE STANDOFF // Master Game Orchestrator (150km x 100km Arena & Full Persistence)
  * Flight Lead spawns in the formation center (middle of squadron) with command buffs.
+ * In 2P mode, mutual full detection & identification active from start.
+ * Aircraft altitude initialized cleanly to prevent false climb/dive states.
  */
 
 class AirspaceStandoffGame {
@@ -72,7 +74,7 @@ class AirspaceStandoffGame {
     this.budgetMax = tierData.budget;
     const subtextEl = document.getElementById('proc-budget-subtext');
     if (subtextEl) {
-      subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) • UP TO 16 UNITS`;
+      subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) â€¢ UP TO 16 UNITS`;
     }
     this.updateModeIndicator();
     if (this.procurement) this.procurement.updateUI();
@@ -84,7 +86,7 @@ class AirspaceStandoffGame {
     const dispEl = document.getElementById('display-squadron-name');
     if (dispEl) dispEl.textContent = this.squadronName;
     const headerEl = document.getElementById('header-squadron-name');
-    if (headerEl) headerEl.textContent = `${this.squadronName.toUpperCase()} • FLIGHT DATA`;
+    if (headerEl) headerEl.textContent = `${this.squadronName.toUpperCase()} â€¢ FLIGHT DATA`;
     if (this.alliedAircraft) {
       this.alliedAircraft.forEach(ac => { ac.squadronName = this.squadronName; });
     }
@@ -117,9 +119,9 @@ class AirspaceStandoffGame {
     };
     const diffTag = diffMap[this.aiDifficulty] || this.aiDifficulty;
     const bTag = bMap[this.playerBudgetId] || '400M';
-    const modeTag = this.playerMode === '1P' ? (`1P VS AI [${diffTag}] • [${bTag}]`) : '2P VERSUS';
+    const modeTag = this.playerMode === '1P' ? (`1P VS AI [${diffTag}] â€¢ [${bTag}]`) : '2P VERSUS';
     const scenarioTag = this.scenarioMode === 'DYNAMIC_THEATER' ? 'DYNAMIC SQUADRON THEATER' : 'SKIRMISH';
-    ind.textContent = `${modeTag} • ${scenarioTag}`;
+    ind.textContent = `${modeTag} â€¢ ${scenarioTag}`;
   }
 
   canFirePylon(u, item, tgt) {
@@ -224,8 +226,13 @@ class AirspaceStandoffGame {
       const item = plan.item;
       if (!item) return;
       const heading = (Math.random() * 0.2 - 0.1);
-      const ac = new Aircraft(item.specId, 'friendly', plan.x, plan.y, heading, item.chosenGunId, item.callsign || takeCallsign(), this.squadronName || 'Wardog Squadron', plan.isLead, false);
-      ac.altFt = 24000 + Math.floor(Math.random() * 8) * 1000;
+      const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (24000 + Math.floor(Math.random() * 8) * 1000);
+
+      const ac = new Aircraft(
+        item.specId, 'friendly', plan.x, plan.y, heading, item.chosenGunId,
+        item.callsign || takeCallsign(), this.squadronName || 'Wardog Squadron',
+        plan.isLead, false, initialAltFt
+      );
 
       (item.upgrades || []).forEach(uItem => {
         const uId = (typeof uItem === 'object' && uItem !== null) ? (uItem.id || uItem.specId) : uItem;
@@ -241,6 +248,24 @@ class AirspaceStandoffGame {
     this.hostileAircraft = (typeof FleetGenerator !== 'undefined')
       ? FleetGenerator.generateHostileFleet(this.aiDifficulty, this.aiDoctrine, mapW, mapH)
       : [];
+
+    // IN 2P MODE: Mutual detection and identification from the start
+    if (this.playerMode === '2P') {
+      this.alliedAircraft.forEach(a => {
+        a.identifiedByBlue = true;
+        a.identifiedByRed = true;
+        a.isIdentified = true;
+        this.detectedByBlue.add(a.id);
+        this.detectedByRed.add(a.id);
+      });
+      this.hostileAircraft.forEach(h => {
+        h.identifiedByBlue = true;
+        h.identifiedByRed = true;
+        h.isIdentified = true;
+        this.detectedByBlue.add(h.id);
+        this.detectedByRed.add(h.id);
+      });
+    }
 
     this.surfaceUnits = [
       new SurfaceUnit('BUNKER', 'friendly', 8, mapH / 2),
@@ -323,7 +348,6 @@ class AirspaceStandoffGame {
 }
 
 window.AirspaceStandoffGame = AirspaceStandoffGame;
-window.ApexVectorGame = AirspaceStandoffGame;
 
 function initAirspaceStandoff() {
   if (!window.Game) window.Game = new AirspaceStandoffGame();

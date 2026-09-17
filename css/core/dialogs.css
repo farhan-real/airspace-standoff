@@ -1,14 +1,15 @@
 /* ==========================================================================
-   APEX VECTOR // Core Modals, Pause Screen, Settings & Full Sortie Debriefing
+   AIRSPACE STANDOFF // Core Modals, Pause Screen, Settings & Full Sortie Debriefing
    ========================================================================== */
 
+#tactical-dialog-modal { z-index: 3500 !important; }
+#system-inspect-modal { z-index: 3200 !important; }
+#settings-modal { z-index: 3000 !important; }
+#glossary-modal { z-index: 3000 !important; }
+#rwr-briefing-modal { z-index: 2900 !important; }
+#abort-confirm-modal { z-index: 2800 !important; }
 #pause-modal { z-index: 2500 !important; }
-#tactical-dialog-modal { z-index: 2100 !important; }
 #preconfig-aircraft-modal { z-index: 1400 !important; }
-#settings-modal { z-index: 1300 !important; }
-#system-inspect-modal { z-index: 1200 !important; }
-#rwr-briefing-modal { z-index: 1250 !important; }
-#glossary-modal { z-index: 1100 !important; }
 #game-over-modal { z-index: 1000 !important; }
 #procurement-modal { z-index: 500 !important; }
 
@@ -539,7 +540,7 @@
 .ace-sub { font-size: 0.62rem; color: #8494ab; }
 .ace-stats { display: flex; justify-content: space-between; font-size: 0.65rem; color: #00f0ff; border-top: 1px dashed #172a42; padding-top: 4px; margin-top: 2px; }
 
-/* Full Squadron Debriefing Table (All Aircraft) */
+/* Full Squadron Debriefing Table */
 .aar-full-roster-box {
   background: #02060f;
   border: 1px solid #142236;

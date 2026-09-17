@@ -1,9 +1,10 @@
 /**
- * APEX VECTOR // Simulation System Orchestrator (150km x 100km Theater)
- * - Ground targets are always visible and identified
- * - All aircraft are always visible on radar (at least as BOGEY [?])
- * - Full match data saved persistently
- * - 3.5s missile and target track hold memory prevents radar flickering/popping
+ * AIRSPACE STANDOFF // Simulation System Orchestrator (150km x 100km Theater)
+ * - In 2P mode: all aircraft on both coalitions are visible and identified from match start.
+ * - Ground targets are always visible and identified.
+ * - All aircraft are always visible on radar (at least as BOGEY [?]).
+ * - Full match data saved persistently.
+ * - 3.5s missile and target track hold memory prevents radar flickering/popping.
  */
 
 class SimulationSystem {
@@ -83,7 +84,6 @@ class SimulationSystem {
 
   initGhostContacts() {
     this.ghostContacts = [];
-    // Start with 1 subtle ghost contact rather than cluttering the screen
     const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
     const gx = (w - 25.0) - Math.random() * 20.0;
@@ -123,7 +123,6 @@ class SimulationSystem {
     for (const civ of this.civilianTraffic) civ.update(dt);
     this.civilianTraffic = this.civilianTraffic.filter(c => c.hp > 0);
 
-    // Reduced ghost clutter spawn frequency (90s interval, max 1 ghost) to prevent rapid popping
     this.ghostSpawnTimer += dt;
     if (this.ghostSpawnTimer >= 90.0 && this.ghostContacts.length < 1) {
       this.ghostSpawnTimer = 0.0;
@@ -237,7 +236,6 @@ class SimulationSystem {
     const baseAirIdTime = cfg.RADAR_IDENTIFY_BASE_SEC || 6.0;
     const baseMslIdTime = cfg.MISSILE_IDENTIFY_BASE_SEC || 3.5;
     const stealthMult = cfg.STEALTH_IDENTIFY_PENALTY_MULT || 2.0;
-    // Updated satellite radar uplink threshold to 3
     const uplinkThreshold = cfg.UPLINK_THRESHOLD_FIGHTERS !== undefined ? cfg.UPLINK_THRESHOLD_FIGHTERS : 3;
 
     const blueSensors = this.game.alliedAircraft.filter(a => a.hp > 0).concat(
@@ -245,81 +243,123 @@ class SimulationSystem {
     );
 
     this.game.detectedByBlue = new Set();
+    this.game.detectedByRed = new Set();
 
-    // RULE: All hostile aircraft are permanently present on radar at least as BOGEY tracks
-    for (const h of this.game.hostileAircraft) {
-      if (h.hp <= 0) continue;
-      this.game.detectedByBlue.add(h.id);
-
-      let inSensorRange = false;
-      let highestProgressRate = 0.0;
-      let isImmediateBurnThrough = false;
-
-      let inClouds = false;
-      if (this.weatherClouds) {
-        for (const c of this.weatherClouds) {
-          if (c.containsPoint(h.x, h.y)) { inClouds = true; break; }
+    // 2P VERSUS MODE: Complete fair mutual visibility from the start
+    const is2P = (this.game.playerMode === '2P');
+    if (is2P) {
+      for (const h of this.game.hostileAircraft) {
+        if (h.hp > 0) {
+          this.game.detectedByBlue.add(h.id);
+          this.game.detectedByRed.add(h.id);
+          h.identifiedByBlue = true;
+          h.identifiedByRed = true;
+          h.isIdentified = true;
         }
       }
+      for (const a of this.game.alliedAircraft) {
+        if (a.hp > 0) {
+          this.game.detectedByBlue.add(a.id);
+          this.game.detectedByRed.add(a.id);
+          a.identifiedByBlue = true;
+          a.identifiedByRed = true;
+          a.isIdentified = true;
+        }
+      }
+    } else {
+      // 1P MODE: Progressive Doppler Track Identification
+      for (const h of this.game.hostileAircraft) {
+        if (h.hp <= 0) continue;
+        this.game.detectedByBlue.add(h.id);
 
-      for (const sensor of blueSensors) {
-        const maxDist = Physics.getRadarMaxDetectionRange(sensor, h, this.weatherClouds);
-        if (maxDist <= 0.0) continue;
-        const dist = Math.hypot(h.x - sensor.x, h.y - sensor.y);
+        let inSensorRange = false;
+        let highestProgressRate = 0.0;
+        let isImmediateBurnThrough = false;
 
-        if (dist <= maxDist) {
-          inSensorRange = true;
-          const irstOpticalVisual = sensor.hasIRST && (dist <= (inClouds ? 12.0 : 28.0));
-          if (dist <= 18.0 || irstOpticalVisual) isImmediateBurnThrough = true;
-
-          if (dist <= maxDist * 0.85) {
-            const rangeFactor = Math.max(0.25, 1.0 - (dist / maxDist));
-            let rate = (sensor.radarIdentifySpeed || 1.0) * rangeFactor;
-            if (inClouds) rate *= 0.60;
-            if (rate > highestProgressRate) highestProgressRate = rate;
+        let inClouds = false;
+        if (this.weatherClouds) {
+          for (const c of this.weatherClouds) {
+            if (c.containsPoint(h.x, h.y)) { inClouds = true; break; }
           }
         }
+
+        for (const sensor of blueSensors) {
+          const maxDist = Physics.getRadarMaxDetectionRange(sensor, h, this.weatherClouds);
+          if (maxDist <= 0.0) continue;
+          const dist = Math.hypot(h.x - sensor.x, h.y - sensor.y);
+
+          if (dist <= maxDist) {
+            inSensorRange = true;
+            const irstOpticalVisual = sensor.hasIRST && (dist <= (inClouds ? 12.0 : 28.0));
+            if (dist <= 18.0 || irstOpticalVisual) isImmediateBurnThrough = true;
+
+            if (dist <= maxDist * 0.85) {
+              const rangeFactor = Math.max(0.25, 1.0 - (dist / maxDist));
+              let rate = (sensor.radarIdentifySpeed || 1.0) * rangeFactor;
+              if (inClouds) rate *= 0.60;
+              if (rate > highestProgressRate) highestProgressRate = rate;
+            }
+          }
+        }
+
+        if (inSensorRange) {
+          if (!h.firstDetectedTime) h.firstDetectedTime = this.getElapsedTimeString();
+          const isStealth = (h.spec && (h.spec.sigma_0 <= 0.01 || h.spec.category === 'STEALTH'));
+          const requiredTime = isStealth ? (baseAirIdTime * stealthMult) : baseAirIdTime;
+
+          if (isImmediateBurnThrough) h.trackDurationBlue += dt * 3.0;
+          else h.trackDurationBlue += dt * highestProgressRate;
+
+          if (h.trackDurationBlue >= requiredTime || (isImmediateBurnThrough && h.trackDurationBlue >= 1.5)) {
+            h.identifiedByBlue = true;
+            h.isIdentified = true;
+          }
+        } else {
+          h.trackDurationBlue = Math.max(0.0, h.trackDurationBlue - dt * 0.2);
+        }
       }
 
-      if (inSensorRange) {
-        if (!h.firstDetectedTime) h.firstDetectedTime = this.getElapsedTimeString();
-        const isStealth = (h.spec && (h.spec.sigma_0 <= 0.01 || h.spec.category === 'STEALTH'));
-        const requiredTime = isStealth ? (baseAirIdTime * stealthMult) : baseAirIdTime;
-
-        if (isImmediateBurnThrough) h.trackDurationBlue += dt * 3.0;
-        else h.trackDurationBlue += dt * highestProgressRate;
-
-        if (h.trackDurationBlue >= requiredTime || (isImmediateBurnThrough && h.trackDurationBlue >= 1.5)) {
+      // SATELLITE RADAR UPLINK (<= 3 hostiles remain)
+      const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0);
+      if (liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold) {
+        for (const h of liveHostiles) {
+          this.game.detectedByBlue.add(h.id);
+          h.trackDurationBlue = Math.max(h.trackDurationBlue || 0, 10.0);
           h.identifiedByBlue = true;
           h.isIdentified = true;
         }
-      } else {
-        h.trackDurationBlue = Math.max(0.0, h.trackDurationBlue - dt * 0.2);
-      }
-    }
-
-    // SATELLITE RADAR UPLINK (<= 3 hostiles remain)
-    const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0);
-    if (liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold) {
-      for (const h of liveHostiles) {
-        this.game.detectedByBlue.add(h.id);
-        h.trackDurationBlue = Math.max(h.trackDurationBlue || 0, 10.0);
-        h.identifiedByBlue = true;
-        h.isIdentified = true;
-      }
-      if (!this._satelliteUplinkAnnouncedBlue) {
-        this._satelliteUplinkAnnouncedBlue = true;
-        if (this.game.radar) {
-          this.game.radar.spawnCombatText(liveHostiles[0].x, liveHostiles[0].y, `SATELLITE UPLINK ACTIVE // ${liveHostiles.length} TARGETS PINPOINTED`, '#00f0ff');
+        if (!this._satelliteUplinkAnnouncedBlue) {
+          this._satelliteUplinkAnnouncedBlue = true;
+          if (this.game.radar) {
+            this.game.radar.spawnCombatText(liveHostiles[0].x, liveHostiles[0].y, `SATELLITE UPLINK ACTIVE // ${liveHostiles.length} TARGETS PINPOINTED`, '#00f0ff');
+          }
+          this.logScoreEvent('friendly', 0, `SATELLITE UPLINK: ${liveHostiles.length} target(s) remaining â€” continuous radar broadcast active`);
+          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
         }
-        this.logScoreEvent('friendly', 0, `SATELLITE UPLINK: ${liveHostiles.length} target(s) remaining — continuous radar broadcast active`);
-        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+      } else if (liveHostiles.length > uplinkThreshold) {
+        this._satelliteUplinkAnnouncedBlue = false;
       }
-    } else if (liveHostiles.length > uplinkThreshold) {
-      this._satelliteUplinkAnnouncedBlue = false;
+
+      // Red team sensors (1P AI)
+      const redSensors = this.game.hostileAircraft.filter(a => a.hp > 0).concat(
+        this.game.surfaceUnits.filter(s => s.team === 'hostile' && s.hp > 0)
+      );
+
+      for (const a of this.game.alliedAircraft) {
+        if (a.hp <= 0) continue;
+        this.game.detectedByRed.add(a.id);
+        let inRedSensor = false;
+        for (const sensor of redSensors) {
+          if (Physics.canRadarDetect(sensor, a, this.weatherClouds)) { inRedSensor = true; break; }
+        }
+        if (inRedSensor) {
+          a.trackDurationRed = (a.trackDurationRed || 0) + dt;
+          if (a.trackDurationRed >= baseAirIdTime) a.identifiedByRed = true;
+        }
+      }
     }
 
-    // Ghost clutter reflections: calm classification without rapid popping
+    // Ghost clutter reflections
     for (const ghost of this.ghostContacts) {
       if (ghost.hp <= 0 || ghost.isDissolved) continue;
       this.game.detectedByBlue.add(ghost.id);
@@ -333,12 +373,23 @@ class SimulationSystem {
     for (const decoy of this.decoyDrones) {
       if (decoy.hp <= 0) continue;
       this.game.detectedByBlue.add(decoy.id);
-      if (decoy.team === 'friendly') decoy.identifiedByBlue = true;
+      this.game.detectedByRed.add(decoy.id);
+      if (decoy.team === 'friendly' || is2P) decoy.identifiedByBlue = true;
+      if (decoy.team === 'hostile' || is2P) decoy.identifiedByRed = true;
     }
 
-    // Missile tracking with 3.5s hysteresis track-hold to eliminate radar popping/flicker
+    // Missile tracking with 3.5s hysteresis track-hold
     for (const m of this.game.missiles) {
-      if (!m.active || m.team !== 'hostile') continue;
+      if (!m.active) continue;
+      if (is2P) {
+        this.game.detectedByBlue.add(m.id);
+        this.game.detectedByRed.add(m.id);
+        m.identifiedByBlue = true;
+        m.identifiedByRed = true;
+        continue;
+      }
+
+      if (m.team !== 'hostile') continue;
       let detected = false;
       for (const sensor of blueSensors) {
         const maxDist = Physics.getRadarMaxDetectionRange(sensor, m, this.weatherClouds);
@@ -362,38 +413,20 @@ class SimulationSystem {
     // Surface Units ALWAYS detected and fully identified
     for (const s of this.game.surfaceUnits) {
       this.game.detectedByBlue.add(s.id);
+      this.game.detectedByRed.add(s.id);
       s.identifiedByBlue = true;
+      s.identifiedByRed = true;
     }
 
     for (const civ of this.civilianTraffic) {
       if (civ.hp <= 0) continue;
       this.game.detectedByBlue.add(civ.id);
+      this.game.detectedByRed.add(civ.id);
       civ.trackDuration = (civ.trackDuration || 0) + dt;
-      if (civ.trackDuration >= 3.5) civ.identifiedByBlue = true;
-    }
-
-    // Red team sensors
-    this.game.detectedByRed = new Set();
-    const redSensors = this.game.hostileAircraft.filter(a => a.hp > 0).concat(
-      this.game.surfaceUnits.filter(s => s.team === 'hostile' && s.hp > 0)
-    );
-
-    for (const a of this.game.alliedAircraft) {
-      if (a.hp <= 0) continue;
-      this.game.detectedByRed.add(a.id);
-      let inRedSensor = false;
-      for (const sensor of redSensors) {
-        if (Physics.canRadarDetect(sensor, a, this.weatherClouds)) { inRedSensor = true; break; }
+      if (civ.trackDuration >= 3.5 || is2P) {
+        civ.identifiedByBlue = true;
+        civ.identifiedByRed = true;
       }
-      if (inRedSensor) {
-        a.trackDurationRed = (a.trackDurationRed || 0) + dt;
-        if (a.trackDurationRed >= baseAirIdTime) a.identifiedByRed = true;
-      }
-    }
-
-    for (const s of this.game.surfaceUnits) {
-      this.game.detectedByRed.add(s.id);
-      s.identifiedByRed = true;
     }
   }
 

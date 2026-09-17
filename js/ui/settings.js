@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Tactical Settings, Rebinding & Audio Configuration Engine
+ * AIRSPACE STANDOFF // Settings, Rebinding & Audio Configuration Engine
  * Includes Declutter [V] and Ground targets [B] keybinding configuration.
  */
 
@@ -160,8 +160,8 @@ class SettingsManager {
       'PAUSE_TIME': 'Pause / Resume Combat Simulation [P]',
       'CAMERA_TRACK': 'Center & Track Currently Selected Craft',
       'CAMERA_RESET': 'Reset Radar Viewport Pan & Zoom Level',
-      'OPEN_SETTINGS': 'Open Tactical Settings & Configuration',
-      'OPEN_MANUAL': 'Open Tactical Flight Manual & Combat Codex'
+      'OPEN_SETTINGS': 'Open Settings & Configuration',
+      'OPEN_MANUAL': 'Open Flight Manual & Combat Codex'
     };
 
     const table = document.createElement('table');
@@ -169,7 +169,7 @@ class SettingsManager {
     table.innerHTML = `
       <thead>
         <tr>
-          <th style="width:26%;">TACTICAL ACTION</th>
+          <th style="width:26%;">ACTION</th>
           <th style="width:48%;">COMBAT FUNCTION</th>
           <th style="width:26%; text-align:right;">ASSIGNED KEY</th>
         </tr>
@@ -212,10 +212,10 @@ class SettingsManager {
     return code
       .replace('Key', '')
       .replace('Digit', '')
-      .replace('ArrowLeft', '← LEFT')
-      .replace('ArrowRight', 'RIGHT →')
-      .replace('ArrowUp', '▲ UP')
-      .replace('ArrowDown', '▼ DOWN')
+      .replace('ArrowLeft', 'â†  LEFT')
+      .replace('ArrowRight', 'RIGHT â†’')
+      .replace('ArrowUp', 'â–² UP')
+      .replace('ArrowDown', 'â–¼ DOWN')
       .replace('Space', 'SPACE')
       .replace('BracketLeft', '[')
       .replace('BracketRight', ']')
@@ -297,7 +297,7 @@ class SettingsManager {
       </div>
       <div class="settings-form-row">
         <div class="settings-label-group">
-          <label>CENTER ON ACTIVE UNIT</label>
+          <label>CENTER ON ACTIVE CRAFT</label>
           <span class="settings-hint">Lock camera tracking onto the currently piloted jet</span>
         </div>
         <button type="button" id="btn-cfg-center" class="hud-btn small">TRACK [C]</button>
@@ -305,7 +305,7 @@ class SettingsManager {
       <div class="settings-form-row">
         <div class="settings-label-group">
           <label>RESET RADAR VIEWPORT</label>
-          <span class="settings-hint">Restore default panoramic 150km × 100km view</span>
+          <span class="settings-hint">Restore default panoramic 150km Ã— 100km view</span>
         </div>
         <button type="button" id="btn-cfg-reset-cam" class="hud-btn small">RESET [0]</button>
       </div>

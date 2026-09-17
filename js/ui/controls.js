@@ -1,6 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Controls System Coordinator
  * Pure manual target selection and switching. Full RTB names and no hotkeys in UI text.
+ * Integrates cross-browser Fullscreen controller for desktop and mobile browser play.
  */
 
 class ControlsSystem {
@@ -8,6 +9,7 @@ class ControlsSystem {
     this.game = gameEngine;
     this.keyboard = new KeyboardControlsHandler(this);
     this.pointer = new PointerControlsHandler(this);
+    this.fullscreen = (typeof FullscreenHandler !== 'undefined') ? new FullscreenHandler(this) : null;
   }
 
   init() {
@@ -16,6 +18,9 @@ class ControlsSystem {
     this.initMobileControls();
     this.initTimeWarpControls();
     this.initPauseScreenModal();
+    if (this.fullscreen && this.fullscreen.init) {
+      this.fullscreen.init();
+    }
   }
 
   initTimeWarpControls() {
@@ -59,7 +64,7 @@ class ControlsSystem {
   }
 
   initPauseScreenModal() {
-    const modal = document.getElementById('pause-modal');
+    const pauseModal = document.getElementById('pause-modal');
     const btnResume = document.getElementById('btn-resume-sortie');
     const btnSettings = document.getElementById('btn-pause-settings');
     const btnManual = document.getElementById('btn-pause-manual');
@@ -67,7 +72,7 @@ class ControlsSystem {
 
     if (btnResume) {
       btnResume.onclick = () => {
-        if (modal) modal.classList.remove('active');
+        if (pauseModal) pauseModal.classList.remove('active');
         this.setTimeWarp(1);
       };
     }
@@ -75,7 +80,10 @@ class ControlsSystem {
     if (btnSettings) {
       btnSettings.onclick = () => {
         const sm = document.getElementById('settings-modal');
-        if (sm) sm.classList.add('active');
+        if (sm) {
+          if (this.game.settings) this.game.settings.renderTabContent();
+          sm.classList.add('active');
+        }
       };
     }
 
@@ -88,7 +96,7 @@ class ControlsSystem {
 
     if (btnAbort) {
       btnAbort.onclick = () => {
-        if (modal) modal.classList.remove('active');
+        if (pauseModal) pauseModal.classList.remove('active');
         this.game.abortSortie();
       };
     }
@@ -252,22 +260,24 @@ class ControlsSystem {
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
-  // MANUAL TARGET CYCLING
   getDetectedTargets() {
     const active = this.game.activeUnit;
     if (!active || active.hp <= 0) return [];
 
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
-    const detectedSet = (commanderTeam === 'friendly')
-      ? (this.game.detectedByBlue || new Set())
-      : (this.game.detectedByRed || new Set());
+    const is2P = Boolean(this.game && this.game.playerMode === '2P');
+    const detectedSet = is2P
+      ? null
+      : ((commanderTeam === 'friendly')
+        ? (this.game.detectedByBlue || new Set())
+        : (this.game.detectedByRed || new Set()));
     const enemyRoster = (commanderTeam === 'friendly') ? this.game.hostileAircraft : this.game.alliedAircraft;
     const enemyTeamTag = (commanderTeam === 'friendly') ? 'hostile' : 'friendly';
 
     const detected = [];
 
     for (const h of enemyRoster) {
-      if (h && h.hp > 0 && detectedSet.has(h.id)) {
+      if (h && h.hp > 0 && (is2P || (detectedSet && detectedSet.has(h.id)))) {
         const dist = Math.hypot(h.x - active.x, h.y - active.y);
         detected.push({ entity: h, dist: dist });
       }
@@ -275,7 +285,7 @@ class ControlsSystem {
 
     const ghosts = (this.game.simulation && this.game.simulation.ghostContacts) || [];
     for (const g of ghosts) {
-      if (g && g.hp > 0 && !g.isDissolved && detectedSet.has(g.id)) {
+      if (g && g.hp > 0 && !g.isDissolved && (is2P || (detectedSet && detectedSet.has(g.id)))) {
         const distG = Math.hypot(g.x - active.x, g.y - active.y);
         detected.push({ entity: g, dist: distG });
       }
@@ -283,14 +293,14 @@ class ControlsSystem {
 
     const decoys = (this.game.simulation && this.game.simulation.decoyDrones) || [];
     for (const d of decoys) {
-      if (d && d.hp > 0 && d.team === enemyTeamTag && detectedSet.has(d.id)) {
+      if (d && d.hp > 0 && d.team === enemyTeamTag && (is2P || (detectedSet && detectedSet.has(d.id)))) {
         const distD = Math.hypot(d.x - active.x, d.y - active.y);
         detected.push({ entity: d, dist: distD });
       }
     }
 
     for (const s of this.game.surfaceUnits) {
-      if (s && s.team === enemyTeamTag && s.hp > 0 && detectedSet.has(s.id)) {
+      if (s && s.team === enemyTeamTag && s.hp > 0 && (is2P || (detectedSet && detectedSet.has(s.id)))) {
         const distS = Math.hypot(s.x - active.x, s.y - active.y);
         detected.push({ entity: s, dist: distS });
       }
@@ -298,7 +308,7 @@ class ControlsSystem {
 
     const civilians = (this.game.simulation && this.game.simulation.civilianTraffic) || [];
     for (const c of civilians) {
-      if (c && c.hp > 0 && detectedSet.has(c.id)) {
+      if (c && c.hp > 0 && (is2P || (detectedSet && detectedSet.has(c.id)))) {
         const distC = Math.hypot(c.x - active.x, c.y - active.y);
         detected.push({ entity: c, dist: distC });
       }
@@ -336,10 +346,11 @@ class ControlsSystem {
   lockTargetEntity(target) {
     const active = this.game.activeUnit;
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
+    const is2P = Boolean(this.game && this.game.playerMode === '2P');
 
     this.game.selectedTarget = target;
 
-    const isKnown = (target.team === active.team) ||
+    const isKnown = is2P || (target.team === active.team) ||
       (typeof target.isIdentifiedBy === 'function' ? target.isIdentifiedBy(commanderTeam) : target.isIdentified);
 
     if (this.game.radar) {

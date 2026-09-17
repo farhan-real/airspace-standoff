@@ -1,6 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Radar Contacts Sub-Renderer
  * Full RETURN TO BASE name in labels. Zero hotkeys in contact text.
+ * In 2P mode, renders all aircraft with full tactical telemetry immediately.
  */
 
 class RadarContactsRenderer {
@@ -8,13 +9,14 @@ class RadarContactsRenderer {
     if (!list || list.length === 0) return;
     const isBlue = (team === 'friendly');
     const isEnemy = (team !== commanderTeam);
+    const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
     const mainCol = isBlue ? '#00f0ff' : '#ef4444';
     const isMobile = (cssWidth < 800);
     const occupiedSlots = [];
 
     const liveEnemies = list.filter(a => a && a.hp > 0);
     const uplinkThreshold = (window.CONFIG && window.CONFIG.UPLINK_THRESHOLD_FIGHTERS !== undefined) ? window.CONFIG.UPLINK_THRESHOLD_FIGHTERS : 3;
-    const isLastFew = (isEnemy && liveEnemies.length > 0 && liveEnemies.length <= uplinkThreshold);
+    const isLastFew = (!is2P && isEnemy && liveEnemies.length > 0 && liveEnemies.length <= uplinkThreshold);
 
     ctx.save();
     if (!isMobile) {
@@ -29,12 +31,12 @@ class RadarContactsRenderer {
       const py = Math.round(pos.y);
       const isSelected = activeUnit && activeUnit.id === a.id;
       const isTgt = selectedTarget && selectedTarget.id === a.id;
-      const isIdentified = isBlue || (typeof a.isIdentifiedBy === 'function' ? a.isIdentifiedBy(commanderTeam) : a.isIdentified);
+      const isIdentified = is2P || isBlue || (typeof a.isIdentifiedBy === 'function' ? a.isIdentifiedBy(commanderTeam) : a.isIdentified);
       const isAce = Boolean(a.isAce);
 
       const relDistKm = (activeUnit && activeUnit.hp > 0 && activeUnit.id !== a.id)
         ? Math.round(Math.hypot(a.x - activeUnit.x, a.y - activeUnit.y)) : null;
-      const rangeTag = (relDistKm !== null) ? (' • R:' + relDistKm + 'km') : '';
+      const rangeTag = (relDistKm !== null) ? (' â€¢ R:' + relDistKm + 'km') : '';
 
       const safeModel = cleanFn ? cleanFn(a.spec ? a.spec.id : 'JET') : (a.spec ? a.spec.id : 'JET');
       const safeCallsign = cleanFn ? cleanFn(a.callsign || 'PILOT') : (a.callsign || 'PILOT');
@@ -139,7 +141,6 @@ class RadarContactsRenderer {
       const fl = 'FL' + Math.round((a.altFt || 30000) / 100);
       const mch = 'M ' + (a.speed || 0.8).toFixed(2);
 
-      // FULL RETURN TO BASE NAME (NO SHORT RTB)
       const rtbTag = a.isRTB ? ' [RETURN TO BASE]' : '';
       const leadTag = (isAce && isIdentified) ? ' ACE' : ((a.isFlightLead && isIdentified) ? ' LEAD' : '');
       const pinpointTag = (isLastFew && isIdentified) ? ' PINPOINTED' : '';
@@ -160,7 +161,7 @@ class RadarContactsRenderer {
 
           ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = '#8494ab';
-          ctx.fillText((cleanFn ? cleanFn(mch + ' • ' + fl) : (mch + ' • ' + fl)), labelX, labelY + 10);
+          ctx.fillText((cleanFn ? cleanFn(mch + ' â€¢ ' + fl) : (mch + ' â€¢ ' + fl)), labelX, labelY + 10);
         } else {
           const hpText = Math.round(a.hp) + '/' + a.maxHp + ' HP';
 
@@ -170,11 +171,11 @@ class RadarContactsRenderer {
 
           ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = isAce ? '#fef08a' : '#94a3b8';
-          ctx.fillText((cleanFn ? cleanFn(safeCallsign + ' • ' + cat) : (safeCallsign + ' • ' + cat)), labelX, labelY + 10);
+          ctx.fillText((cleanFn ? cleanFn(safeCallsign + ' â€¢ ' + cat) : (safeCallsign + ' â€¢ ' + cat)), labelX, labelY + 10);
 
           ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = a.hp <= 1 ? '#ef4444' : (isBlue ? '#00f5a0' : '#f87171');
-          ctx.fillText((cleanFn ? cleanFn(mch + ' • ' + fl + ' • ' + hpText) : (mch + ' • ' + fl + ' • ' + hpText)), labelX, labelY + 20);
+          ctx.fillText((cleanFn ? cleanFn(mch + ' â€¢ ' + fl + ' â€¢ ' + hpText) : (mch + ' â€¢ ' + fl + ' â€¢ ' + hpText)), labelX, labelY + 20);
         }
       }
 
@@ -230,7 +231,7 @@ class RadarContactsRenderer {
       ctx.restore();
 
       const distKm = (activeUnit && activeUnit.hp > 0) ? Math.round(Math.hypot(ghost.x - activeUnit.x, ghost.y - activeUnit.y)) : null;
-      const distTag = distKm !== null ? (' • R:' + distKm + 'km') : '';
+      const distTag = distKm !== null ? (' â€¢ R:' + distKm + 'km') : '';
       const mch = 'M ' + (ghost.speed || 0.8).toFixed(2);
       const fl = 'FL' + Math.round((ghost.altFt || 28000) / 100);
 
@@ -240,7 +241,7 @@ class RadarContactsRenderer {
         ctx.fillText((cleanFn ? cleanFn('BOGEY' + distTag) : ('BOGEY' + distTag)), px + 12, py - 8);
         ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#8494ab';
-        ctx.fillText((cleanFn ? cleanFn(mch + ' • ' + fl) : (mch + ' • ' + fl)), px + 12, py + 10);
+        ctx.fillText((cleanFn ? cleanFn(mch + ' â€¢ ' + fl) : (mch + ' â€¢ ' + fl)), px + 12, py + 10);
       } else {
         ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#94a3b8';
@@ -256,6 +257,7 @@ class RadarContactsRenderer {
 
   static drawDecoyDrones(ctx, cam, decoys, detectedSet, commanderTeam, activeUnit, cleanFn) {
     if (!decoys || decoys.length === 0) return;
+    const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
     ctx.save();
     for (const decoy of decoys) {
       if (!decoy || decoy.hp <= 0) continue;
@@ -263,7 +265,7 @@ class RadarContactsRenderer {
       const pos = cam.toScreen(decoy.x, decoy.y);
       const px = Math.round(pos.x);
       const py = Math.round(pos.y);
-      const isIdentified = decoy.isIdentifiedBy(commanderTeam);
+      const isIdentified = is2P || decoy.isIdentifiedBy(commanderTeam);
 
       ctx.save();
       ctx.translate(px, py);
@@ -289,7 +291,7 @@ class RadarContactsRenderer {
       ctx.restore();
 
       const distKm = (activeUnit && activeUnit.hp > 0) ? Math.round(Math.hypot(decoy.x - activeUnit.x, decoy.y - activeUnit.y)) : null;
-      const distTag = distKm !== null ? (' • R:' + distKm + 'km') : '';
+      const distTag = distKm !== null ? (' â€¢ R:' + distKm + 'km') : '';
       const mch = 'M ' + (decoy.speed || 0.8).toFixed(2);
       const fl = 'FL' + Math.round((decoy.altFt || 30000) / 100);
 
@@ -303,7 +305,7 @@ class RadarContactsRenderer {
         ctx.fillText((cleanFn ? cleanFn('BOGEY' + distTag) : ('BOGEY' + distTag)), px + 12, py - 8);
         ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#8494ab';
-        ctx.fillText((cleanFn ? cleanFn(mch + ' • ' + fl) : (mch + ' • ' + fl)), px + 12, py + 10);
+        ctx.fillText((cleanFn ? cleanFn(mch + ' â€¢ ' + fl) : (mch + ' â€¢ ' + fl)), px + 12, py + 10);
       } else {
         ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#f43f5e';

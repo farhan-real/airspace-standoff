@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Tactical Combat Engine & Pylon Discharge Bus
- * Enforces verified ROE; deductions applied only to firing team without awarding enemy points
+ * AIRSPACE STANDOFF // Tactical Combat Engine & Pylon Discharge Bus
+ * Enforces verified ROE; in 2P mode all aircraft are mutually identified from start.
  */
 
 class CombatSystem {
@@ -50,12 +50,14 @@ class CombatSystem {
     const w = item.weapon;
     sourceUnit.applyActionStress(0.08);
 
-    // PENALTY CHECK: Firing at an unverified BOGEY contact (deducts from friendly, does NOT give points to Red)
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
-    const isTargetIdentified = targetEntity && (
-      targetEntity.type ||
-      targetEntity.identifiedByBlue ||
-      (typeof targetEntity.isIdentifiedBy === 'function' ? targetEntity.isIdentifiedBy(commanderTeam) : targetEntity.isIdentified)
+    const is2P = Boolean(this.game && this.game.playerMode === '2P');
+    const isTargetIdentified = is2P || Boolean(
+      targetEntity && (
+        targetEntity.type ||
+        targetEntity.identifiedByBlue ||
+        (typeof targetEntity.isIdentifiedBy === 'function' ? targetEntity.isIdentifiedBy(commanderTeam) : targetEntity.isIdentified)
+      )
     );
 
     if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !targetEntity.isCivilian) {

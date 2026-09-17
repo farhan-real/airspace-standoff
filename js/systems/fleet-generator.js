@@ -1,5 +1,6 @@
 /**
- * APEX VECTOR // Fleet Generator (150km x 100km Theater Adaptation)
+ * AIRSPACE STANDOFF // Fleet Generator (150km x 100km Theater Adaptation)
+ * Generates balanced hostile formations and reinforcement waves in trimmed, level flight.
  */
 
 const FleetGenerator = {
@@ -40,11 +41,11 @@ const FleetGenerator = {
         const spawnY = 18.0 + (a + 1) * (theaterHeight / (aceQuota + 1.5));
         const heading = Math.PI + (Math.random() * 0.2 - 0.1);
         const aceCallsign = aceCallsigns[a % aceCallsigns.length] || `★ Ace ${a + 1} ★`;
+        const aceAltFt = (aceSpecId === 'DARKSTAR') ? 58000 : (34000 + a * 2000);
 
         const aceUnit = new Aircraft(
-          aceSpecId, 'hostile', spawnX, spawnY, heading, null, aceCallsign, 'Elite Ace Cadre', true, true
+          aceSpecId, 'hostile', spawnX, spawnY, heading, null, aceCallsign, 'Elite Ace Cadre', true, true, aceAltFt
         );
-        aceUnit.altFt = 34000 + a * 2000;
         spentBudget += aceUnit.spec.cost;
 
         aceUnit.installWeapon('AIM-260');
@@ -67,14 +68,14 @@ const FleetGenerator = {
       const baseY = 14.0 + (i / Math.max(1, maxPlanes - 1)) * (theaterHeight - 28.0);
       const spawnY = Math.max(10.0, Math.min(theaterHeight - 10.0, baseY + (Math.random() * 6.0 - 3.0)));
       const randomizedHeading = Math.PI + (Math.random() * 0.3 - 0.15);
+      const hostileAltFt = (chosenId === 'DARKSTAR') ? 58000 : (24000 + Math.floor(Math.random() * 10) * 1000);
 
       const isLead = (i === 0 && acesSpawned === 0);
       const chosenCallsign = isLead ? 'Saber Lead' : (callsigns.pop() || (`Bandit ${i + 1}`));
 
       const ac = new Aircraft(
-        chosenId, 'hostile', spawnX, spawnY, randomizedHeading, null, chosenCallsign, 'Hostile Intercept Wing', isLead, false
+        chosenId, 'hostile', spawnX, spawnY, randomizedHeading, null, chosenCallsign, 'Hostile Intercept Wing', isLead, false, hostileAltFt
       );
-      ac.altFt = 24000 + Math.floor(Math.random() * 10) * 1000;
 
       spentBudget += ac.spec.cost;
       hostileSquadron.push(ac);
@@ -102,13 +103,13 @@ const FleetGenerator = {
       const spawnX = isBlue ? (10.0 + Math.random() * 15.0) : (theaterWidth - 10.0 - Math.random() * 15.0);
       const spawnY = 16.0 + Math.random() * (theaterHeight - 32.0);
       const baseHeading = isBlue ? (Math.random() * 0.3 - 0.15) : (Math.PI + (Math.random() * 0.3 - 0.15));
+      const waveAltFt = (specId === 'DARKSTAR') ? 58000 : (26000 + Math.floor(Math.random() * 8) * 1000);
 
       const isLead = (i === 0);
       const isAce = (!isBlue && isLead && (diff === 'ACE' || diff === 'MASTER' || diff === 'LEGEND'));
       const callsign = isAce ? `★ Ace ${sqName} Lead ★` : (isLead ? `${sqName} Lead` : `${sqName} ${i + 1}`);
 
-      const ac = new Aircraft(specId, team, spawnX, spawnY, baseHeading, null, callsign, sqName, isLead, isAce);
-      ac.altFt = 26000 + Math.floor(Math.random() * 8) * 1000;
+      const ac = new Aircraft(specId, team, spawnX, spawnY, baseHeading, null, callsign, sqName, isLead, isAce, waveAltFt);
 
       ac.installWeapon(isLead ? 'AIM-260' : 'AIM-120D');
       ac.installWeapon('AIM-9X-2');

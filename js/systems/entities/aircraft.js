@@ -1,10 +1,12 @@
 /**
- * APEX VECTOR // Aircraft Entity
+ * AIRSPACE STANDOFF // Aircraft Entity
  * Flight Lead receives category-specific buffs (RCS, speed, agility, armor, bus regen, CMs).
+ * In 2P mode, isIdentifiedBy always returns true for fair mutual tactical visibility.
+ * Synchronizes initial altFt and targetAltFt so aircraft start in steady trimmed level flight.
  */
 
 class Aircraft {
-  constructor(specId, team, spawnX, spawnY, heading, chosenGunId, callsign, squadronName, isFlightLead = false, isAce = false) {
+  constructor(specId, team, spawnX, spawnY, heading, chosenGunId, callsign, squadronName, isFlightLead = false, isAce = false, spawnAltFt = null) {
     this.id = 'AC_' + Math.random().toString(36).substr(2, 6);
     const catalog = window.AIRCRAFT_CATALOG || {};
     this.spec = catalog[specId] ? JSON.parse(JSON.stringify(catalog[specId])) : {
@@ -20,22 +22,26 @@ class Aircraft {
     this.callsign = callsign || this.generateRandomCallsign();
     this.squadronName = squadronName || (team === 'friendly' ? 'Wardog Squadron' : 'Red Flight');
 
-    if (this.spec.id === 'DARKSTAR') {
+    if (typeof spawnAltFt === 'number' && !isNaN(spawnAltFt)) {
+      this.altFt = Math.max(5000, Math.min(65000, spawnAltFt));
+    } else if (this.spec.id === 'DARKSTAR') {
       this.spec.S_0 = 3.20;
       this.altFt = 58000;
     } else {
       this.altFt = 30000;
     }
+
+    // Target altitude starts identical to spawn altitude so aircraft do not begin with climb or dive
     this.targetAltFt = this.altFt;
     this.vsiFpm = 0;
     this.alt = this.altFt / 65000.0;
+    this.prevAltFt = this.altFt;
+    this.altTrend = '--';
 
     this.engineAlpha = 0.60;
     this.speed = (this.spec.S_0 || 0.95) * 0.85;
     this.prevSpeed = this.speed;
-    this.prevAltFt = this.altFt;
     this.speedTrend = '--';
-    this.altTrend = '--';
 
     this.aceEvasionBonus = 0.0;
     this.leadStressMitigation = 1.0;
@@ -92,10 +98,11 @@ class Aircraft {
     this.hasMaldDecoy = false;
     this.maldDecoyCharges = 0;
 
-    this.trackDurationBlue = 0.0;
-    this.trackDurationRed = 0.0;
-    this.identifiedByBlue = (team === 'friendly');
-    this.identifiedByRed = (team === 'hostile');
+    const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
+    this.trackDurationBlue = (team === 'friendly' || is2P) ? 999.0 : 0.0;
+    this.trackDurationRed = (team === 'hostile' || is2P) ? 999.0 : 0.0;
+    this.identifiedByBlue = (team === 'friendly' || is2P);
+    this.identifiedByRed = (team === 'hostile' || is2P);
 
     this.kills = 0;
     this.scorePoints = 0;
@@ -111,6 +118,15 @@ class Aircraft {
     this.glocThreshold = (this.spec.isDrone || this.isCoffin) ? 999.0 : 0.95;
 
     this.recalculateWeight();
+  }
+
+  setAltitude(altFt) {
+    this.altFt = Math.max(5000, Math.min(65000, altFt));
+    this.targetAltFt = this.altFt;
+    this.vsiFpm = 0;
+    this.alt = this.altFt / 65000.0;
+    this.prevAltFt = this.altFt;
+    this.altTrend = '--';
   }
 
   applyCategoryLeadBuffs() {
@@ -178,11 +194,13 @@ class Aircraft {
   }
 
   isIdentifiedBy(team) {
+    if (window.Game && window.Game.playerMode === '2P') return true;
     if (this.team === team) return true;
     return (team === 'friendly') ? Boolean(this.identifiedByBlue) : Boolean(this.identifiedByRed);
   }
 
   get isIdentified() {
+    if (window.Game && window.Game.playerMode === '2P') return true;
     const commander = (window.Game && window.Game.currentPvpCommander) || 'friendly';
     return this.isIdentifiedBy(commander);
   }
@@ -334,7 +352,7 @@ class Aircraft {
   }
 
   orderRTB() { this.isRTB = true; this.targetAltFt = 36000; this.engineAlpha = 1.0; }
-  cancelRTB() { this.isRTB = false; this.rtbTimer = 0.0; this.targetAltFt = 30000; this.engineAlpha = 0.60; }
+  cancelRTB() { this.isRTB = false; this.rtbTimer = 0.0; this.targetAltFt = this.altFt; this.vsiFpm = 0; this.engineAlpha = 0.60; }
   toggleRTB() { if (this.isRTB) { this.cancelRTB(); return false; } else { this.orderRTB(); return true; } }
 
   processRTB(dt) {
