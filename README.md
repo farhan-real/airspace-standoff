@@ -15,7 +15,7 @@ A browser-based air combat game played entirely from a tactical radar screen. Co
 - **Game Modes:** 
   - **Skirmish:** Quick squadron vs. squadron fleet battles.
   - **Dynamic Theater:** Multi-wave engagements against enemy reinforcements, SAM sites, and radar networks.
-  - **2P Versus:** Local hotseat mode on the same device.
+  - **2P Versus:** Local 1v1 on the same device.
 
 ---
 
