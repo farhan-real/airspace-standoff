@@ -32,7 +32,7 @@
   box-sizing: border-box;
 }
 
-/* TITLE GROUP: TITLE ON LEFT, SQUADRON CALLSIGN IN RIGHT CORNER */
+/* TITLE GROUP: ENLARGED BRAND TITLE ON LEFT, MANUAL + WING CALLSIGN ON RIGHT */
 .title-group {
   display: flex;
   align-items: center;
@@ -44,13 +44,13 @@
 .brand-title {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin: 0;
   padding: 0;
 }
 
 .game-name {
-  font-size: 0.96rem;
+  font-size: 1.15rem;
   font-weight: 900;
   color: #f8fafc;
   letter-spacing: 1px;
@@ -61,32 +61,54 @@
   border: 1px solid #00f0ff;
   color: #00f0ff;
   font-family: var(--font-mono);
-  font-size: 0.56rem;
+  font-size: 0.68rem;
   font-weight: 800;
-  padding: 2px 6px;
+  padding: 3px 8px;
   border-radius: 3px;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
 }
 
-.squad-callsign-tag {
+.title-right-group {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.squad-callsign-tag,
+.proc-manual-btn {
   background: #08172c;
   border: 1px solid #0284c7;
-  color: #ffb830;
-  font-size: 0.68rem;
+  font-size: 0.76rem;
   font-family: var(--font-mono);
   font-weight: 800;
-  padding: 4px 9px;
+  padding: 5px 12px;
   border-radius: 3px;
   cursor: pointer;
   white-space: nowrap;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: all 0.14s ease;
 }
 
-.squad-callsign-tag:hover {
+.squad-callsign-tag {
+  color: #ffb830;
+}
+
+.proc-manual-btn {
+  color: #7dd3fc;
+}
+
+.squad-callsign-tag:hover,
+.proc-manual-btn:hover {
   background: #0284c7;
-  color: #fff;
+  color: #ffffff;
+  border-color: #00f0ff;
 }
 
 /* COMFORTABLE MODE AND AI SELECTION ROW */
@@ -137,7 +159,13 @@
   flex-wrap: wrap;
 }
 
-/* FULLSCREEN & MANUAL RIGHT-CORNER CONTAINER */
+.ai-config-group .hud-select {
+  font-size: 0.74rem;
+  padding: 5px 10px;
+  height: 30px;
+}
+
+/* FULLSCREEN RIGHT-CORNER CONTAINER */
 .proc-right-actions {
   margin-left: auto;
   display: flex;
@@ -349,7 +377,15 @@
     box-sizing: border-box;
   }
 
-  .game-name { font-size: 0.82rem; }
+  .game-name { font-size: 0.98rem; }
+  .hangar-badge { font-size: 0.60rem; padding: 2px 6px; }
+
+  .squad-callsign-tag,
+  .proc-manual-btn {
+    padding: 4px 9px;
+    font-size: 0.70rem;
+    height: 28px;
+  }
 
   .mode-and-ai-controls {
     gap: 4px;
@@ -360,6 +396,12 @@
   .seg-btn {
     padding: 4px 8px;
     font-size: 0.68rem;
+  }
+
+  .ai-config-group .hud-select {
+    padding: 4px 6px;
+    font-size: 0.66rem;
+    height: 28px;
   }
 
   .proc-right-actions {

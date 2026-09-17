@@ -185,9 +185,12 @@
           <span class="game-name">AIRSPACE STANDOFF</span>
           <span class="hangar-badge">HANGAR</span>
         </h1>
-        <button id="btn-edit-squadron-name" class="squad-callsign-tag" title="Click to change your squadron name">
-          WING: <span id="display-squadron-name">Wardog Squadron</span>
-        </button>
+        <div class="title-right-group">
+          <button id="btn-open-glossary" class="hud-btn proc-manual-btn">MANUAL</button>
+          <button id="btn-edit-squadron-name" class="squad-callsign-tag" title="Click to change your squadron name">
+            WING: <span id="display-squadron-name">Wardog Squadron</span>
+          </button>
+        </div>
       </div>
 
       <div class="mode-and-ai-controls">
@@ -200,17 +203,16 @@
           <button id="scenario-btn-dynamic" class="seg-btn">DYNAMIC THEATER</button>
         </div>
 
-        <!-- CUSTOM CYBER-MILITARY DROPDOWNS -->
+        <!-- CUSTOM DROPDOWNS -->
         <div class="ai-config-group" id="ai-config-panel">
           <div id="cdd-budget"></div>
           <div id="cdd-difficulty"></div>
           <div id="cdd-doctrine"></div>
         </div>
 
-        <!-- RIGHT CORNER ACTIONS -->
+        <!-- RIGHT CORNER FULLSCREEN ACTION (WEB PLAYERS) -->
         <div class="proc-right-actions">
           <button id="btn-proc-fullscreen" class="hud-btn" title="Toggle Fullscreen">FULLSCREEN</button>
-          <button id="btn-open-glossary" class="hud-btn">MANUAL</button>
         </div>
       </div>
 
