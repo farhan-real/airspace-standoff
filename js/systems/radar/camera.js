@@ -1,7 +1,7 @@
 /**
- * APEX VECTOR // Radar Camera Controller (Pan, Zoom & Viewport Transforms)
+ * AIRSPACE STANDOFF // Radar Camera Controller (Pan, Zoom & Viewport Transforms)
  * Viewport starts centered in the middle of the theater (75km, 50km).
- * Declutter starts ON on phones, OFF on desktop. Ground targets start always OFF.
+ * Declutter starts ON by default on mobile and OFF by default on desktop.
  */
 
 class RadarCameraController {
@@ -16,11 +16,11 @@ class RadarCameraController {
     this.panY = 0;
     this.trackingUnit = null;
 
-    // Declutter on at start in phones, off at start in desktop
-    const isPhone = (typeof window !== 'undefined') && (window.innerWidth <= 1024);
-    this.declutterMode = isPhone;
+    // Declutter is ON by default on mobile devices, and OFF by default on desktop
+    const isMobile = (typeof window !== 'undefined') && (window.innerWidth <= 1024);
+    this.declutterMode = isMobile;
 
-    // Ground targets always off at start
+    // Ground targets start OFF by default
     this.showGroundTargets = false;
 
     this.centerTheater();

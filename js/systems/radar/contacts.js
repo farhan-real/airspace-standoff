@@ -1,7 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Radar Contacts Sub-Renderer
  * Full RETURN TO BASE name in labels. Zero hotkeys in contact text.
- * Renders all contacts with clean space-separated compact telemetry.
+ * Respects declutter toggle across all screen sizes with multiline telemetry when OFF.
  */
 
 class RadarContactsRenderer {
@@ -145,7 +145,8 @@ class RadarContactsRenderer {
       const leadTag = (isAce && isIdentified) ? ' ACE' : ((a.isFlightLead && isIdentified) ? ' LEAD' : '');
       const pinpointTag = (isLastFew && isIdentified) ? ' PINPOINTED' : '';
 
-      if ((isMobile || declutterMode) && !isSelected && !isTgt) {
+      // Declutter only engages when declutterMode is explicitly ON (unless selected/targeted)
+      if (declutterMode && !isSelected && !isTgt) {
         ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = !isIdentified ? '#f97316' : ((isAce && isIdentified) ? '#ffd700' : (isBlue ? '#38bdf8' : '#ef4444'));
         if (!isIdentified) {
@@ -154,6 +155,7 @@ class RadarContactsRenderer {
           ctx.fillText(cleanFn(safeModel + leadTag + pinpointTag), labelX, labelY);
         }
       } else {
+        // Full multiline contact telemetry shown whenever Declutter is OFF
         if (!isIdentified) {
           ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = isSelected ? '#ffffff' : '#f97316';
