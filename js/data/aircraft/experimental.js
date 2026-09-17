@@ -1,10 +1,9 @@
 /**
- * APEX VECTOR // Category: EXPERIMENTAL SUPERFIGHTERS, DEMONSTRATORS & MANUAL COFFIN CRAFT
- * COFFIN craft are 100% MANUAL (player-controlled), immune to stress/G-LOC, and have +25% extreme dodge bonus.
+ * AIRSPACE STANDOFF // Category: EXPERIMENTAL SUPERFIGHTERS, DEMONSTRATORS & COFFIN AIRFRAMES
+ * COFFIN airframes utilize enclosed armored cockpits with synthetic vision and are 100% manual.
  */
 
 window.AIRCRAFT_EXPERIMENTAL = {
-  // 1. F-15 S/MTD ACTIVE
   'F-15-SMTD': {
     id: 'F-15-SMTD',
     name: 'F-15 S/MTD ACTIVE',
@@ -32,16 +31,14 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Real-world flight demonstrator pairing canard foreplanes with 2D vectoring nozzles. Exceptional pitch authority.'
+    desc: 'Flight technology demonstrator pairing canard foreplanes with 2D vectoring nozzles for pitch response.'
   },
-
-  // 2. Su-47 Berkut
   'Su-47': {
     id: 'Su-47',
     name: 'Su-47 Berkut',
     category: 'EXPERIMENTAL',
-    badge: 'FORWARD-SWEPT AGILE KING',
-    role: 'Super-Agile Dogfight Demonstrator',
+    badge: 'FORWARD-SWEPT WING',
+    role: 'High-AoA Maneuver Demonstrator',
     cost: 32.0,
     hp: 5,
     AGI_0: 0.99,
@@ -63,10 +60,8 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Forward-swept carbon-composite wing demonstrator. Delivers instantaneous 0.99 agility to win close dogfights.'
+    desc: 'Forward-swept composite wing demonstrator providing instantaneous 0.99 turn agility for close-range combat.'
   },
-
-  // 3. Su-37 Terminator
   'Su-37': {
     id: 'Su-37',
     name: 'Su-37 Terminator',
@@ -94,10 +89,8 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Equipped with canard foreplanes and 3D all-axis thrust vectoring for post-stall Kulbit loops.'
+    desc: 'Equipped with canard foreplanes and 3D thrust vectoring nozzles for post-stall Kulbit loops.'
   },
-
-  // 4. X-29A
   'X-29A': {
     id: 'X-29A',
     name: 'Grumman X-29A',
@@ -125,16 +118,14 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Lightweight forward-swept wing technology demonstrator ($19.0M). High roll and pitch rates at extreme AoA.'
+    desc: 'Forward-swept wing technology demonstrator ($19.0M) delivering high roll and pitch authority at extreme AoA.'
   },
-
-  // 5. X-02S Strike Wyvern
   'X-02S': {
     id: 'X-02S',
     name: 'X-02S Strike Wyvern',
     category: 'EXPERIMENTAL',
     badge: 'VARIABLE FORWARD-SWEPT',
-    role: 'Experimental Variable-Geometry Superfighter',
+    role: 'Variable-Geometry Stealth Prototype',
     cost: 46.0,
     hp: 5,
     AGI_0: 0.98,
@@ -156,15 +147,13 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Variable-geometry stealth superfighter. Seamlessly transitions from high-speed dash to dogfight mode.'
+    desc: 'Variable-geometry stealth prototype airframe with variable wing sweep for transition between sprint and turn regimes.'
   },
-
-  // 6. ADFX-01 Morgan
   'ADFX-01': {
     id: 'ADFX-01',
     name: 'ADFX-01 Morgan',
     category: 'EXPERIMENTAL',
-    badge: 'MULTI-MISSION SUPERFIGHTER',
+    badge: 'MULTI-MISSION PROTOTYPE',
     role: 'Experimental Multirole Prototype',
     cost: 48.0,
     hp: 5,
@@ -187,15 +176,13 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Prototype superfighter with forward-canted canards certified to mount TLS lasers and MPBM burst missiles.'
+    desc: 'Forward-canted canard prototype airframe configured to mount TLS tactical laser pods and MPBM burst munitions.'
   },
-
-  // 7. CFA-44 Nosferatu
   'CFA-44': {
     id: 'CFA-44',
     name: 'CFA-44 Nosferatu',
     category: 'EXPERIMENTAL',
-    badge: 'ALL-ASPECT SUPERIORITY',
+    badge: 'HEAVY FLEET DEFENSE',
     role: 'Carrier-Borne Heavy Interceptor',
     cost: 52.0,
     hp: 5,
@@ -214,14 +201,12 @@ window.AIRCRAFT_EXPERIMENTAL = {
     thrustVector: true,
     builtInGun: 'EML_GUN',
     allowedGuns: ['EML_GUN', 'M61A2', 'DE-PULSE'],
-    gunRounds: 120, // 120 railgun slugs
+    gunRounds: 120,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Heavy superfighter with built-in EML hyper-velocity railgun (120 slugs) and dual ADMM micro-missile arrays.'
+    desc: 'Heavy interceptor featuring an integrated EML kinetic railgun (120 rounds) and ADMM micro-missile arrays.'
   },
-
-  // 8. Darkstar Hypersonic
   'DARKSTAR': {
     id: 'DARKSTAR',
     name: 'Darkstar Hypersonic Penetrator',
@@ -249,15 +234,8 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 6,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Scramjet penetrator cruising at Mach 1.45+ above FL600, outside standard surface SAM envelopes.'
+    desc: 'Scramjet penetrator cruising at Mach 1.45+ above FL580, outside standard surface-to-air missile envelopes.'
   },
-
-  // =========================================================================
-  // COFFIN FIGHTERS (100% MANUAL PLAYER CONTROL, NO AI AUTONOMY, ZERO STRESS,
-  // IMMUNE TO G-LOC, +25% EXTREME DODGE BONUS)
-  // =========================================================================
-
-  // 9. F-15 S/MT [COFFIN]
   'F-15-SMT-COFFIN': {
     id: 'F-15-SMT-COFFIN',
     name: 'F-15 S/MT [COFFIN]',
@@ -269,14 +247,14 @@ window.AIRCRAFT_EXPERIMENTAL = {
     AGI_0: 0.98,
     S_0: 1.12,
     R_0: 92.0,
-    radarType: 'APG-82 Neural-AESA',
+    radarType: 'APG-82 AESA Array',
     radarConeDeg: 130,
     lookDownBonus: 0.35,
     sigma_0: 0.80,
     M_max: 10500,
     G_limit: 16.0,
     isDrone: false,
-    isAutonomous: false, // 100% MANUAL player flight
+    isAutonomous: false,
     isCoffin: true,
     coffinDodgeBonus: 0.25,
     thrustVector: true,
@@ -286,29 +264,27 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual COFFIN conversion of the F-15. Armored optical shell eliminates pilot G-LOC and grants +25% extreme dodge bonus.'
+    desc: 'Manual COFFIN enclosed-cockpit conversion. Eliminates pilot G-fatigue limits and grants +25% evasive break bonus.'
   },
-
-  // 10. Su-37 [COFFIN]
   'Su-37-COFFIN': {
     id: 'Su-37-COFFIN',
     name: 'Su-37 Super Flanker [COFFIN]',
     category: 'EXPERIMENTAL',
-    badge: 'COFFIN 3D TVC APEX',
+    badge: 'COFFIN 3D TVC INTERCEPT',
     role: 'COFFIN Super-Agility Interceptor',
     cost: 44.0,
     hp: 6,
     AGI_0: 0.99,
     S_0: 1.08,
     R_0: 88.0,
-    radarType: 'N011M Opto-Phased Array',
+    radarType: 'N011M Phased Array',
     radarConeDeg: 140,
     lookDownBonus: 0.32,
     sigma_0: 0.50,
     M_max: 8800,
     G_limit: 16.0,
     isDrone: false,
-    isAutonomous: false, // 100% MANUAL player flight
+    isAutonomous: false,
     isCoffin: true,
     coffinDodgeBonus: 0.25,
     thrustVector: true,
@@ -318,29 +294,27 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual COFFIN conversion. Enclosed neural optoelectronic shell eliminates G-LOC, enabling 16G post-stall turns and +25% extreme dodge.'
+    desc: 'Manual enclosed-cockpit modification. Enables continuous 16G post-stall turns without G-LOC blackout and grants +25% evasion.'
   },
-
-  // 11. F-22C Raptor II [COFFIN]
   'F-22C-COFFIN': {
     id: 'F-22C-COFFIN',
     name: 'F-22C Raptor II [COFFIN]',
     category: 'EXPERIMENTAL',
-    badge: 'COFFIN 6TH-GEN GHOST',
-    role: 'COFFIN 6th-Gen Stealth Dominance',
+    badge: 'COFFIN STEALTH AIR DOMINANCE',
+    role: 'COFFIN Advanced Stealth Dominance',
     cost: 62.0,
     hp: 6,
     AGI_0: 0.99,
     S_0: 1.12,
     R_0: 96.0,
-    radarType: 'APG-77v2 Neural GaN AESA',
+    radarType: 'APG-77v2 GaN AESA',
     radarConeDeg: 130,
     lookDownBonus: 0.40,
     sigma_0: 0.00005,
     M_max: 5200,
     G_limit: 18.0,
     isDrone: false,
-    isAutonomous: false, // 100% MANUAL player flight
+    isAutonomous: false,
     isCoffin: true,
     coffinDodgeBonus: 0.25,
     thrustVector: true,
@@ -350,29 +324,27 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Apex 6th-Gen manual COFFIN fighter ($62.0M). Ghost RCS (0.00005m2), 18G envelope, zero G-LOC blackout, and +25% extreme dodge bonus.'
+    desc: 'Advanced stealth airframe with enclosed synthetic vision cockpit ($62.0M). 0.00005m² RCS, 18G envelope, and +25% evasive break bonus.'
   },
-
-  // 12. ADF-11F Raven (Manual COFFIN Superfighter)
   'ADF-11F': {
     id: 'ADF-11F',
     name: 'ADF-11F Raven [COFFIN]',
     category: 'EXPERIMENTAL',
-    badge: 'COFFIN NEURAL APEX',
-    role: 'COFFIN High-G Superfighter',
+    badge: 'COFFIN HIGH-G AIRFRAME',
+    role: 'COFFIN High-G Air Superiority',
     cost: 60.0,
     hp: 5,
     AGI_0: 0.99,
     S_0: 1.25,
     R_0: 95.0,
-    radarType: 'Z.O.E. Neural Array',
+    radarType: 'Advanced Phased AESA Array',
     radarConeDeg: 140,
     lookDownBonus: 0.40,
     sigma_0: 0.0008,
     M_max: 6500,
     G_limit: 20.0,
     isDrone: false,
-    isAutonomous: false, // 100% MANUAL player flight
+    isAutonomous: false,
     isCoffin: true,
     coffinDodgeBonus: 0.25,
     thrustVector: true,
@@ -382,6 +354,6 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual COFFIN superfighter. 20.0G structural envelope with hitscan DE-Pulse laser, zero pilot stress, and +25% extreme dodge bonus.'
+    desc: 'Manual COFFIN enclosed-cockpit prototype. 20.0G structural limit with directed energy pulse gun, zero G-LOC, and +25% evasive break bonus.'
   }
 };

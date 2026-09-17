@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Scaled 150km x 100km Theater, Budget Tiers, Keybinds & Flight Lead Buffs
- * Flight Lead buffs tailored to fix weaknesses and boost survivability per aircraft type.
+ * AIRSPACE STANDOFF // 150km x 100km Theater Constants, Budget Tiers & Flight Lead Modifications
+ * Realistic aerospace specifications, radar signatures, and flight lead tactical adjustments.
  */
 
 window.CONFIG = {
@@ -53,104 +53,104 @@ window.CONFIG = {
 };
 
 window.BUDGET_TIERS = {
-  BUDGET_200: { id: 'BUDGET_200', name: 'Hardcore (200M CR)', budget: 200.0, multiplier: 1.50, desc: 'Severe defense budget austerity' },
-  BUDGET_300: { id: 'BUDGET_300', name: 'Restricted (300M CR)', budget: 300.0, multiplier: 1.25, desc: 'Tight operational defense budget' },
-  BUDGET_400: { id: 'BUDGET_400', name: 'Standard (400M CR)', budget: 400.0, multiplier: 1.00, desc: 'Standard theater allocation' },
-  BUDGET_500: { id: 'BUDGET_500', name: 'Expanded (500M CR)', budget: 500.0, multiplier: 0.85, desc: 'High defense coalition funding' },
-  BUDGET_650: { id: 'BUDGET_650', name: 'Unlimited (650M CR)', budget: 650.0, multiplier: 0.70, desc: 'Maximum coalition expenditure' }
+  BUDGET_200: { id: 'BUDGET_200', name: 'Austerity (200M CR)', budget: 200.0, multiplier: 1.50, desc: 'Restricted defense allocation requiring lightweight packages.' },
+  BUDGET_300: { id: 'BUDGET_300', name: 'Restricted (300M CR)', budget: 300.0, multiplier: 1.25, desc: 'Constrained operational defense allocation.' },
+  BUDGET_400: { id: 'BUDGET_400', name: 'Standard (400M CR)', budget: 400.0, multiplier: 1.00, desc: 'Standard theater squadron allocation.' },
+  BUDGET_500: { id: 'BUDGET_500', name: 'Expanded (500M CR)', budget: 500.0, multiplier: 0.85, desc: 'Expanded coalition defense funding.' },
+  BUDGET_650: { id: 'BUDGET_650', name: 'Full Readiness (650M CR)', budget: 650.0, multiplier: 0.70, desc: 'Maximum coalition expenditure allowance.' }
 };
 
 window.LEAD_BUFFS = {
   STEALTH: {
-    title: 'GHOST COMMAND & VLO SENSOR HUB',
+    title: 'STEALTH FLIGHT LEAD // LOW-OBSERVABLE TACTICAL SUITE',
     role: 'Stealth Air Dominance Leader',
-    weaknessFixed: 'Mitigates vulnerable 3.2x broadside beam exposure spike by 50% with conformal RAM.',
-    survivability: '+20% innate missile evasion and +1 Armor HP.',
+    weaknessFixed: 'Conformal radar-absorbent material edge-treatments reduce broadside beam radar cross-section spike by 50%.',
+    survivability: '+20% missile evasion via lower seeker track fidelity and +1 airframe armor HP.',
     buffs: [
-      { label: 'MISSILE EVASION', val: '+20% Missile Evasion', desc: 'Low-RCS terminal seeker spoofing' },
-      { label: 'BEAM SPIKE REDUCTION', val: '-50% Broadside RCS', desc: 'Mitigates 90° turning detection vulnerability' },
-      { label: 'SENSOR REACH', val: '+15.0 km Radar Range', desc: 'Enhanced GaN transmitter power' },
-      { label: 'ARMOR & BUS', val: '+1 HP & +0.25 Tok/s', desc: 'Reinforced bulkheads and passive bus regen' }
+      { label: 'MISSILE EVASION', val: '+20% Missile Evasion', desc: 'Low-observable terminal seeker spoofing' },
+      { label: 'BEAM SIGNATURE', val: '-50% Broadside RCS', desc: 'Suppresses 90-degree turn radar exposure' },
+      { label: 'RADAR REACH', val: '+15.0 km Radar Range', desc: 'High-power GaN AESA transmitter configuration' },
+      { label: 'STRUCTURE & DATA', val: '+1 HP & +0.25 Tok/s', desc: 'Reinforced bulkheads and high-bandwidth datalink' }
     ],
-    summary: 'Fixes broadside stealth vulnerability while boosting missile evasion and extending deep sensor reach.'
+    summary: 'Mitigates broadside radar exposure during turns while expanding active radar reach and defensive evasion.'
   },
   SUPERIORITY: {
-    title: 'ENERGY DOMINANCE & HEAVY INTERCEPTOR',
-    role: 'Air Superiority Leader',
-    weaknessFixed: 'Fixes giant radar footprint (-40% base RCS) and high-G pilot stress buildup.',
-    survivability: '+25% break-turn missile evasion and +2 Armor HP reinforcement.',
+    title: 'AIR SUPERIORITY LEAD // INTERCEPTOR UPGRADE SUITE',
+    role: 'Air Superiority Flight Leader',
+    weaknessFixed: 'Applies radar-absorbent coatings to reduce clean airframe radar footprint (-40% RCS) and cockpit environmental systems to delay pilot G-fatigue.',
+    survivability: '+25% defensive break-turn evasion and +2 airframe armor HP reinforcement.',
     buffs: [
-      { label: 'MISSILE EVASION', val: '+25% Break Evasion', desc: 'High-G kinetic escape maneuverability' },
-      { label: 'RADAR FOOTPRINT', val: '-40% Base RCS', desc: 'Suppresses massive unstealthed radar return' },
-      { label: 'PILOT RESILIENCE', val: '-50% G-LOC Stress', desc: 'Veteran flight discipline delays fatigue' },
-      { label: 'ARMOR & WEAPONS', val: '+2 HP & +12% P_k', desc: 'Heavy structural armor and terminal accuracy' }
+      { label: 'MISSILE EVASION', val: '+25% Break Evasion', desc: 'High-rate kinetic defensive maneuvers' },
+      { label: 'RADAR SIGNATURE', val: '-40% Base RCS', desc: 'Conformal RAM treatment over leading edges' },
+      { label: 'PILOT ENDURANCE', val: '-50% G-Fatigue', desc: 'Pressurized cockpit anti-G life support' },
+      { label: 'ARMOR & ACCURACY', val: '+2 HP & +12% P_k', desc: 'Titanium framing and lead-computing fire control' }
     ],
-    summary: 'Eliminates high radar observability, halves pilot stress, and provides +25% kinetic missile evasion.'
+    summary: 'Reduces unstealthed radar returns, halves pilot G-load fatigue accumulation, and increases defensive turn agility.'
   },
   MULTIROLE: {
-    title: 'TACTICAL SURVIVABILITY & AGILITY MASTER',
+    title: 'MULTIROLE FLIGHT LEAD // AGILITY & FIELD SUPPORT SUITE',
     role: 'Multirole Flight Leader',
-    weaknessFixed: 'Fixes average airframe durability (+2 HP) and accelerates turn speed.',
-    survivability: '+25% missile evasion, +3 Chaff charges, and +2 Armor HP.',
+    weaknessFixed: 'Reinforces composite bulkheads (+2 HP), enhances instantaneous nose-pointing rate, and accelerates turnaround logistics.',
+    survivability: '+25% missile evasion, +3 emergency chaff charges, and +2 armor HP.',
     buffs: [
-      { label: 'MISSILE EVASION', val: '+25% Turn Evasion', desc: 'Agile defensive break turns' },
-      { label: 'TURN AGILITY', val: '+20% Turn Rate', desc: 'Superior instantaneous nose-pointing' },
-      { label: 'LOGISTICS SPEED', val: '-40% RTB Duration', desc: 'Priority turnaround rearming and repair' },
-      { label: 'ARMOR & DEFENSE', val: '+2 HP & +3 Chaff', desc: 'Cockpit armor and emergency decoy reserve' }
+      { label: 'MISSILE EVASION', val: '+25% Turn Evasion', desc: 'Immediate defensive break-turn authority' },
+      { label: 'NOSE AUTHORITY', val: '+20% Turn Rate', desc: 'Optimized flight control computer gain' },
+      { label: 'TURNAROUND RATE', val: '-40% RTB Duration', desc: 'Expedited field turnaround and re-arming' },
+      { label: 'ARMOR & DECOYS', val: '+2 HP & +3 Chaff', desc: 'Reinforced fuselage and expanded dispenser' }
     ],
-    summary: 'Fixes moderate baseline durability with +2 HP and unlocks +20% visual turn agility and +25% evasion.'
+    summary: 'Enhances structural durability with +2 HP, improves pitch and roll agility, and accelerates base turnaround times.'
   },
   STRIKE: {
-    title: 'TITANIUM FORTRESS & PAYLOAD JUGGERNAUT',
+    title: 'ARMORED STRIKE LEAD // CLOSE AIR SUPPORT SUITE',
     role: 'Dedicated Strike Leader',
-    weaknessFixed: 'Fixes sluggish loaded airspeed (-40% payload drag) and vulnerability to ground fire.',
-    survivability: '+3 Armor HP, -1 damage from incoming missiles, and 60% gun deflection.',
+    weaknessFixed: 'Reduces heavy payload aerodynamic drag (-40%), reinforces structural armor against ground fire, and adds titanium cockpit protection.',
+    survivability: '+3 Max Armor HP, -1 damage reduction per missile impact, and 60% autocannon fire deflection.',
     buffs: [
-      { label: 'DAMAGE RESISTANCE', val: '-1 Damage / Missile', desc: 'Reinforced explosive composite armor' },
-      { label: 'ARMOR INTEGRITY', val: '+3 Max HP Armor', desc: 'Heavy titanium bathtub cockpit enclosure' },
-      { label: 'DEADWEIGHT DRAG', val: '-40% Payload Drag', desc: 'Eliminates speed penalties when fully loaded' },
-      { label: 'GUN DEFLECTION', val: '60% Gun Resistance', desc: 'Absorbs close-range autocannon strafes' }
+      { label: 'DAMAGE RESISTANCE', val: '-1 Damage / Missile', desc: 'Reinforced ceramic-composite bulkheads' },
+      { label: 'ARMOR INTEGRITY', val: '+3 Max HP Armor', desc: 'Welded titanium tub enclosing cockpit and engines' },
+      { label: 'PAYLOAD DRAG', val: '-40% Ordnance Drag', desc: 'Conformal hardpoint fairings reduce parasite drag' },
+      { label: 'CANNON DEFLECTION', val: '60% Gun Resistance', desc: 'Deflects close-in autocannon strafing runs' }
     ],
-    summary: 'Transforms strike craft into an armored juggernaut (+3 HP, -1 missile damage) and eliminates payload drag.'
+    summary: 'Adds heavy armor plating (+3 HP, -1 damage per missile hit) and eliminates speed penalties from heavy payload carriage.'
   },
   EW: {
-    title: 'ELECTROMAGNETIC SHIELD & JAMMING AURA',
+    title: 'ELECTRONIC WARFARE LEAD // TACTICAL ESCORT SUITE',
     role: 'Electronic Warfare Escort Leader',
-    weaknessFixed: 'Fixes fragile airframe durability (+2 HP) and suppresses active radar tracking.',
-    survivability: '+30% missile evasion vs radar-guided weapons and amplified jammer aura.',
+    weaknessFixed: 'Hardens fragile escort airframes (+2 HP), amplifies standoff jamming power, and broadens ESM receiver sensitivity.',
+    survivability: '+30% missile evasion against radar-guided munitions and reinforced self-protection decoys.',
     buffs: [
-      { label: 'MISSILE EVASION', val: '+30% vs Radar/ARH', desc: 'Electromagnetic false-echo lock breaking' },
-      { label: 'JAMMING AURA', val: '+25% Jammer Power', desc: 'Blinds enemy radar arrays and incoming SAMs' },
-      { label: 'SENSOR REACH', val: '+25.0 km ESM Range', desc: 'Instantly geolocates surface radar emitters' },
-      { label: 'ARMOR & COUNTER', val: '+2 HP & +3 Chaff', desc: 'Hardened airframe and expanded decoy store' }
+      { label: 'MISSILE EVASION', val: '+30% vs Radar/ARH', desc: 'Cross-eye radar lock disruption' },
+      { label: 'JAMMING OUTPUT', val: '+25% Standoff Power', desc: 'Concentrated beam jamming against emitter radars' },
+      { label: 'ESM SENSITIVITY', val: '+25.0 km ESM Reach', desc: 'Passive geolocation of surface emitter radars' },
+      { label: 'ARMOR & DECOYS', val: '+2 HP & +3 Chaff', desc: 'Hardened airframe and additional decoy reserve' }
     ],
-    summary: 'Protects fragile EW escort with +2 HP and projects an electronic shield delivering +30% radar missile evasion.'
+    summary: 'Protects vulnerable electronic attack aircraft with +2 HP and projects high-power electronic countermeasures.'
   },
   DRONES: {
-    title: 'HIVEMIND QUEEN & 20G EVASION ROUTER',
-    role: 'Autonomous Drone Lead',
-    weaknessFixed: 'Fixes paper-thin 1-2 HP drone fragility (+2 HP) and enhances swarm guidance.',
-    survivability: '+35% extreme missile dodge (full 20G envelope) and +2 free MALD decoy drones.',
+    title: 'AUTONOMOUS FLIGHT LEAD // HIGH-G DATA RELAY SUITE',
+    role: 'Autonomous UCAV Flight Leader',
+    weaknessFixed: 'Reinforces light composite drone airframes (+2 HP), adds integrated MALD decoy drone dispensers, and calculates predictive target intercepts.',
+    survivability: '+35% high-G defensive break-turn evasion (up to 20G structural envelope) and 2 autonomous decoy drones.',
     buffs: [
-      { label: 'EXTREME DODGE', val: '+35% Missile Dodge', desc: 'Instantaneous 20G structural break turns' },
-      { label: 'AIRFRAME INTEGRITY', val: '+2 Max HP Armor', desc: 'Fixes fragile 1-2 HP drone weakness' },
-      { label: 'DECOY SYSTEM', val: '+2 MALD Decoys', desc: 'Deploys autonomous radar-signature decoys' },
-      { label: 'SWARM GUIDANCE', val: '+12% Missile P_k', desc: 'High-frequency predictive AI computation' }
+      { label: 'HIGH-G EVASION', val: '+35% Missile Dodge', desc: 'Immediate fly-by-wire 20G evasive breaks' },
+      { label: 'DRONE INTEGRITY', val: '+2 Max HP Armor', desc: 'Replaces ultra-light panels with carbon laminate' },
+      { label: 'DECOY SYSTEM', val: '+2 MALD Decoys', desc: 'Deployable radar cross-section mirror drones' },
+      { label: 'FIRE CONTROL', val: '+12% Missile P_k', desc: 'Automated predictive target lead calculation' }
     ],
-    summary: 'Triples fragile drone survivability (+2 HP, +2 MALD decoys) and unlocks ruthless +35% 20G missile evasion.'
+    summary: 'Triples fragile drone structural durability (+2 HP, +2 decoys) and executes high-G evasive breaks without human physiological limits.'
   },
   EXPERIMENTAL: {
-    title: 'NEURAL APEX & POST-STALL DEMONSTRATOR',
-    role: 'Experimental Technology Leader',
-    weaknessFixed: 'Fixes heavy engine heat vulnerability (-40% thermal bloom) and adds +2 HP armor.',
-    survivability: '+30% neural reflex missile evasion and rapid direct-energy weapon cooling.',
+    title: 'EXPERIMENTAL FLIGHT LEAD // ADVANCED PROTOTYPE SUITE',
+    role: 'Experimental Technology Flight Leader',
+    weaknessFixed: 'Insulates engine exhaust conduits to suppress thermal infrared bloom (-40%), reinforces structure (+2 HP), and refines flight computer control laws.',
+    survivability: '+30% defensive break evasion, -40% thermal infrared signature, and rapid capacitor recharging.',
     buffs: [
-      { label: 'EXTREME EVASION', val: '+30% Neural Evasion', desc: 'Electro-neural flight control breaks' },
-      { label: 'THERMAL SHIELD', val: '-40% Thermal Bloom', desc: 'Suppresses heat-seeking missile tracking' },
-      { label: 'ENERGY WEAPONS', val: '+25% Beam Cooling', desc: 'Rapid capacitor recharge for DE-Pulse/EML' },
-      { label: 'ARMOR & BUS', val: '+2 HP & +0.30 Tok/s', desc: 'Titanium framing and neural command bridge' }
+      { label: 'BREAK EVASION', val: '+30% Evasive Break', desc: 'High-rate fly-by-wire control surface deflection' },
+      { label: 'THERMAL SIGNATURE', val: '-40% IR Signature', desc: 'Shielded exhaust mixing ducts reduce IR lock range' },
+      { label: 'ENERGY WEAPONS', val: '+25% Capacitor Cooling', desc: 'Expedited capacitor recharge for pulsed DEW/EML' },
+      { label: 'FRAME & DATA', val: '+2 HP & +0.30 Tok/s', desc: 'Titanium-alloy framework and high-speed data bus' }
     ],
-    summary: 'Fixes engine heat bloom (-40%), reinforces armor (+2 HP), and provides +30% neural missile evasion.'
+    summary: 'Suppresses thermal exhaust signature, strengthens structural armor (+2 HP), and improves high-AOA evasive authority.'
   }
 };
 

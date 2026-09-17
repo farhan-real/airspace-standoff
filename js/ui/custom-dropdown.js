@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Cyber-Military Custom Dropdown Engine
+ * AIRSPACE STANDOFF // Tactical Custom Dropdown Engine
  * Replaces all native OS <select> boxes with styled, accessible tactical dropdowns.
  */
 

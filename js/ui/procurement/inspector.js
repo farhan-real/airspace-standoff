@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Inspector Coordinator & Hover Tooltip Engine
- * Includes interactive specs-style hover dossier for Flight Leads detailing category buffs.
+ * AIRSPACE STANDOFF // Inspector Coordinator & Hover Tooltip Engine
+ * Formats aerospace specifications, armament data, and Flight Lead doctrinal adjustments.
  */
 
 class ProcurementInspector {
@@ -23,7 +23,7 @@ class ProcurementInspector {
     document.addEventListener('mouseover', (e) => {
       const tagTarget = e.target && e.target.closest ? e.target.closest('[data-tag-tooltip]') : null;
       if (tagTarget) {
-        const title = tagTarget.getAttribute('data-tag-title') || 'TACTICAL SPECIFICATION';
+        const title = tagTarget.getAttribute('data-tag-title') || 'TECHNICAL SPECIFICATION';
         const desc = tagTarget.getAttribute('data-tag-tooltip');
         if (desc) {
           const html = `
@@ -110,8 +110,8 @@ class ProcurementInspector {
 
     return `
       <div class="tt-header-row">
-        <span class="tt-title" style="color:#ffd700;">★ FLIGHT LEAD: ${(spec.name || specId).toUpperCase()}</span>
-        <span class="tt-badge" style="background:#082846;color:#38bdf8;border:1px solid #0284c7;">CENTER SPATIAL NODE</span>
+        <span class="tt-title" style="color:#ffd700;">FLIGHT LEAD: ${(spec.name || specId).toUpperCase()}</span>
+        <span class="tt-badge" style="background:#082846;color:#38bdf8;border:1px solid #0284c7;">FORMATION CENTER</span>
       </div>
       <div class="tt-sub-bar">
         <span class="tt-role-text" style="color:#fef08a;">${data.role}</span>
@@ -121,18 +121,18 @@ class ProcurementInspector {
         ${cellsHtml}
       </div>
       <div class="tt-trait-pill" style="border-left-color:#00f5a0;background:rgba(0,245,160,0.06);border-color:rgba(0,245,160,0.25);">
-        <b style="color:#00f5a0;">[SURVIVABILITY &amp; EVASION UPGRADE]</b><br>
+        <b style="color:#00f5a0;">[SURVIVABILITY &amp; DEFENSIVE CAPABILITIES]</b><br>
         <span style="color:#cbd5e1;">${data.survivability}</span>
       </div>
       <div class="tt-trait-pill" style="border-left-color:#ffd700;background:rgba(255,215,0,0.06);border-color:rgba(255,215,0,0.25);">
-        <b style="color:#ffd700;">[WEAKNESS MITIGATION MATRIX: ${data.title}]</b>
+        <b style="color:#ffd700;">[FLIGHT LEAD SYSTEMS &amp; TACTICAL MODIFICATIONS: ${data.title}]</b>
         <div style="margin-top:3px;font-size:0.58rem;color:#cbd5e1;line-height:1.4;">${data.weaknessFixed}</div>
         <div style="margin-top:4px;font-size:0.56rem;display:flex;flex-direction:column;gap:1px;">
           ${buffsList}
         </div>
       </div>
       <div class="tt-footer-desc" style="color:#94a3b8;">
-        <b>FORMATION COMMAND:</b> Always placed at the center apex of the squadron. ${data.summary}
+        <b>FORMATION POSITION:</b> Positioned in the central flight slot. ${data.summary}
       </div>
     `;
   }
@@ -160,7 +160,7 @@ class ProcurementInspector {
           <div class="tt-cell"><span>RCS:</span><b>${c.rcs || 25.0} m²</b></div>
           <div class="tt-cell"><span>ARMOR:</span><b>6 HP</b></div>
         </div>
-        <div class="tt-footer-desc">Protected commercial flight. Strict RoE applies.</div>
+        <div class="tt-footer-desc">Protected commercial transit flight. Rules of Engagement strictly apply.</div>
       `;
     }
 
@@ -175,7 +175,7 @@ class ProcurementInspector {
       const rSlots = rate('pylon_slots', a.totalSlots || 6);
       const rCost = rate('cost_airframe', a.cost || 20.0);
       const rcsTag = (a.sigma_0 <= 0.0005) ? `VLO (${a.sigma_0}m²)` : ((a.sigma_0 < 0.1) ? `LO (${a.sigma_0}m²)` : `${a.sigma_0}m²`);
-      const tvcFeature = a.thrustVector ? '3D/2D THRUST VECTORING' : (a.isCoffin ? 'COFFIN NEURAL (MANUAL +25% DODGE)' : 'AERODYNAMIC SURFACES');
+      const tvcFeature = a.thrustVector ? '3D/2D THRUST VECTORING' : (a.isCoffin ? 'COFFIN SYNTHETIC VISION (+25% DODGE)' : 'CONVENTIONAL CONTROL SURFACES');
 
       return `
         <div class="tt-header-row"><span class="tt-title">${a.name || id}</span><span class="tt-cost-tag ${rCost.colorClass}">$${Number(a.cost || 0).toFixed(1)}M</span></div>
@@ -188,7 +188,7 @@ class ProcurementInspector {
           <div class="tt-cell"><span>STATIONS:</span><b class="${rSlots.colorClass}">${a.totalSlots || 6} (${a.maxPylonRating || 'Type M'})</b></div>
           <div class="tt-cell"><span>ARMOR:</span><b class="stat-tier-2">${a.hp || 4} HP</b></div>
         </div>
-        <div class="tt-trait-pill"><b>[${tvcFeature}]</b><br><span style="color:#8494ab;">Scan Cone:</span> <span style="color:#f8fafc;">±${Math.round((a.radarConeDeg || 120)/2)}° &bull; Clutter: +${Math.round((a.lookDownBonus || 0.2)*100)}%</span></div>
+        <div class="tt-trait-pill"><b>[${tvcFeature}]</b><br><span style="color:#8494ab;">Scan Cone:</span> <span style="color:#f8fafc;">±${Math.round((a.radarConeDeg || 120)/2)}° &bull; Clutter Filter: +${Math.round((a.lookDownBonus || 0.2)*100)}%</span></div>
         <div class="tt-footer-desc">${a.desc || ''}</div>
       `;
     }
@@ -256,7 +256,7 @@ class ProcurementInspector {
     if (type === 'airframe') {
       const a = aircraft[id];
       if (!a) return;
-      titleEl.textContent = `AIRFRAME DOSSIER // ${(a.name || id).toUpperCase()}`;
+      titleEl.textContent = `AIRFRAME SPECIFICATION // ${(a.name || id).toUpperCase()}`;
       bodyEl.innerHTML = window.InspectorModalRenderer.renderAirframe(a, guns);
       const btn = bodyEl.querySelector('#inspect-btn-req');
       if (btn) btn.onclick = () => { this.pm.addAirframe(a.id); btn.textContent = 'ADDED'; };
@@ -267,7 +267,7 @@ class ProcurementInspector {
     if (type === 'weapon') {
       const w = weapons[id];
       if (!w) return;
-      titleEl.textContent = `MUNITION DOSSIER // ${(w.name || id).toUpperCase()}`;
+      titleEl.textContent = `ORDNANCE SPECIFICATION // ${(w.name || id).toUpperCase()}`;
       bodyEl.innerHTML = window.InspectorModalRenderer.renderWeapon(w);
       const selBtn = bodyEl.querySelector('#inspect-btn-sel');
       if (selBtn) selBtn.onclick = () => { this.pm.setSelectedItem('weapon', w.id, w.name); modal.classList.remove('active'); };
@@ -278,7 +278,7 @@ class ProcurementInspector {
     if (type === 'gun') {
       const g = guns[id] || guns['M61A2'];
       if (!g) return;
-      titleEl.textContent = `AUTOCANNON DOSSIER // ${(g.name || id).toUpperCase()}`;
+      titleEl.textContent = `AUTOCANNON SPECIFICATION // ${(g.name || id).toUpperCase()}`;
       bodyEl.innerHTML = window.InspectorModalRenderer.renderGun(g);
       modal.classList.add('active');
       return;
@@ -287,7 +287,7 @@ class ProcurementInspector {
     if (type === 'upgrade') {
       const u = upgrades[id];
       if (!u) return;
-      titleEl.textContent = `SUBSYSTEM SPECIFICATION // ${(u.name || id).toUpperCase()}`;
+      titleEl.textContent = `AVIONICS SUBSYSTEM SPECIFICATION // ${(u.name || id).toUpperCase()}`;
       bodyEl.innerHTML = window.InspectorModalRenderer.renderUpgrade(u);
       const selUpg = bodyEl.querySelector('#inspect-btn-sel-upg');
       if (selUpg) selUpg.onclick = () => { this.pm.setSelectedItem('upgrade', u.id, u.name); modal.classList.remove('active'); };
