@@ -1,7 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Radar Contacts Sub-Renderer
  * Full RETURN TO BASE name in labels. Zero hotkeys in contact text.
- * In 2P mode, renders all aircraft with full tactical telemetry immediately.
+ * Renders all contacts with clean space-separated compact telemetry.
  */
 
 class RadarContactsRenderer {
@@ -36,7 +36,7 @@ class RadarContactsRenderer {
 
       const relDistKm = (activeUnit && activeUnit.hp > 0 && activeUnit.id !== a.id)
         ? Math.round(Math.hypot(a.x - activeUnit.x, a.y - activeUnit.y)) : null;
-      const rangeTag = (relDistKm !== null) ? (' â€¢ R:' + relDistKm + 'km') : '';
+      const rangeTag = (relDistKm !== null) ? (' R:' + relDistKm + 'km') : '';
 
       const safeModel = cleanFn ? cleanFn(a.spec ? a.spec.id : 'JET') : (a.spec ? a.spec.id : 'JET');
       const safeCallsign = cleanFn ? cleanFn(a.callsign || 'PILOT') : (a.callsign || 'PILOT');
@@ -149,33 +149,33 @@ class RadarContactsRenderer {
         ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = !isIdentified ? '#f97316' : ((isAce && isIdentified) ? '#ffd700' : (isBlue ? '#38bdf8' : '#ef4444'));
         if (!isIdentified) {
-          ctx.fillText((cleanFn ? cleanFn('BOGEY' + rangeTag) : ('BOGEY' + rangeTag)), labelX, labelY);
+          ctx.fillText(cleanFn('BOGEY' + rangeTag), labelX, labelY);
         } else {
-          ctx.fillText((cleanFn ? cleanFn(safeModel + leadTag + pinpointTag) : (safeModel + leadTag + pinpointTag)), labelX, labelY);
+          ctx.fillText(cleanFn(safeModel + leadTag + pinpointTag), labelX, labelY);
         }
       } else {
         if (!isIdentified) {
           ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = isSelected ? '#ffffff' : '#f97316';
-          ctx.fillText((cleanFn ? cleanFn('BOGEY' + rangeTag) : ('BOGEY' + rangeTag)), labelX, labelY);
+          ctx.fillText(cleanFn('BOGEY' + rangeTag), labelX, labelY);
 
           ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = '#8494ab';
-          ctx.fillText((cleanFn ? cleanFn(mch + ' â€¢ ' + fl) : (mch + ' â€¢ ' + fl)), labelX, labelY + 10);
+          ctx.fillText(cleanFn(mch + ' ' + fl), labelX, labelY + 10);
         } else {
           const hpText = Math.round(a.hp) + '/' + a.maxHp + ' HP';
 
           ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = isAce ? '#ffd700' : (isSelected ? '#ffffff' : (isBlue ? '#00f0ff' : '#ef4444'));
-          ctx.fillText((cleanFn ? cleanFn(safeModel + leadTag + rtbTag + rangeTag + pinpointTag) : (safeModel + leadTag + rtbTag + rangeTag + pinpointTag)), labelX, labelY);
+          ctx.fillText(cleanFn(safeModel + leadTag + rtbTag + rangeTag + pinpointTag), labelX, labelY);
 
           ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = isAce ? '#fef08a' : '#94a3b8';
-          ctx.fillText((cleanFn ? cleanFn(safeCallsign + ' â€¢ ' + cat) : (safeCallsign + ' â€¢ ' + cat)), labelX, labelY + 10);
+          ctx.fillText(cleanFn(safeCallsign + ' ' + cat), labelX, labelY + 10);
 
           ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = a.hp <= 1 ? '#ef4444' : (isBlue ? '#00f5a0' : '#f87171');
-          ctx.fillText((cleanFn ? cleanFn(mch + ' â€¢ ' + fl + ' â€¢ ' + hpText) : (mch + ' â€¢ ' + fl + ' â€¢ ' + hpText)), labelX, labelY + 20);
+          ctx.fillText(cleanFn(mch + ' ' + fl + ' ' + hpText), labelX, labelY + 20);
         }
       }
 
@@ -231,24 +231,24 @@ class RadarContactsRenderer {
       ctx.restore();
 
       const distKm = (activeUnit && activeUnit.hp > 0) ? Math.round(Math.hypot(ghost.x - activeUnit.x, ghost.y - activeUnit.y)) : null;
-      const distTag = distKm !== null ? (' â€¢ R:' + distKm + 'km') : '';
+      const distTag = distKm !== null ? (' R:' + distKm + 'km') : '';
       const mch = 'M ' + (ghost.speed || 0.8).toFixed(2);
       const fl = 'FL' + Math.round((ghost.altFt || 28000) / 100);
 
       if (!ghost.isDissolving) {
         ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = isSelectedTarget ? '#ffffff' : '#f97316';
-        ctx.fillText((cleanFn ? cleanFn('BOGEY' + distTag) : ('BOGEY' + distTag)), px + 12, py - 8);
+        ctx.fillText(cleanFn('BOGEY' + distTag), px + 12, py - 8);
         ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#8494ab';
-        ctx.fillText((cleanFn ? cleanFn(mch + ' â€¢ ' + fl) : (mch + ' â€¢ ' + fl)), px + 12, py + 10);
+        ctx.fillText(cleanFn(mch + ' ' + fl), px + 12, py + 10);
       } else {
         ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#94a3b8';
-        ctx.fillText((cleanFn ? cleanFn('FALSE ECHO' + distTag) : ('FALSE ECHO' + distTag)), px + 12, py - 4);
+        ctx.fillText(cleanFn('FALSE ECHO' + distTag), px + 12, py - 4);
         ctx.font = '700 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#64748b';
-        ctx.fillText((cleanFn ? cleanFn(ghost.ghostType || 'CLUTTER') : (ghost.ghostType || 'CLUTTER')), px + 12, py + 7);
+        ctx.fillText(cleanFn(ghost.ghostType || 'CLUTTER'), px + 12, py + 7);
       }
       ctx.restore();
     }
@@ -291,25 +291,25 @@ class RadarContactsRenderer {
       ctx.restore();
 
       const distKm = (activeUnit && activeUnit.hp > 0) ? Math.round(Math.hypot(decoy.x - activeUnit.x, decoy.y - activeUnit.y)) : null;
-      const distTag = distKm !== null ? (' â€¢ R:' + distKm + 'km') : '';
+      const distTag = distKm !== null ? (' R:' + distKm + 'km') : '';
       const mch = 'M ' + (decoy.speed || 0.8).toFixed(2);
       const fl = 'FL' + Math.round((decoy.altFt || 30000) / 100);
 
       if (isFriendly) {
         ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#c084fc';
-        ctx.fillText((cleanFn ? cleanFn('DECOY ' + decoy.mirroredModel + distTag) : ('DECOY ' + decoy.mirroredModel + distTag)), px + 12, py - 3);
+        ctx.fillText(cleanFn('DECOY ' + decoy.mirroredModel + distTag), px + 12, py - 3);
       } else if (!isIdentified) {
         ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#f97316';
-        ctx.fillText((cleanFn ? cleanFn('BOGEY' + distTag) : ('BOGEY' + distTag)), px + 12, py - 8);
+        ctx.fillText(cleanFn('BOGEY' + distTag), px + 12, py - 8);
         ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#8494ab';
-        ctx.fillText((cleanFn ? cleanFn(mch + ' â€¢ ' + fl) : (mch + ' â€¢ ' + fl)), px + 12, py + 10);
+        ctx.fillText(cleanFn(mch + ' ' + fl), px + 12, py + 10);
       } else {
         ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#f43f5e';
-        ctx.fillText((cleanFn ? cleanFn('DECOY ' + decoy.mirroredModel + distTag) : ('DECOY ' + decoy.mirroredModel + distTag)), px + 12, py - 3);
+        ctx.fillText(cleanFn('DECOY ' + decoy.mirroredModel + distTag), px + 12, py - 3);
       }
     }
     ctx.restore();

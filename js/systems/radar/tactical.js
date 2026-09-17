@@ -1,6 +1,7 @@
 /**
- * APEX VECTOR // Radar Tactical Sub-Renderer (150km x 100km Theater)
- * Unidentified aircraft (including civilian) render 100% identically to standard bogeys.
+ * AIRSPACE STANDOFF // Radar Tactical Sub-Renderer (150km x 100km Theater)
+ * Unidentified aircraft render identically to standard bogeys.
+ * Displays clean commercial airliner icon and multiline space-separated civilian telemetry.
  */
 
 class RadarTacticalRenderer {
@@ -71,7 +72,7 @@ class RadarTacticalRenderer {
         ctx.fillStyle = col;
         const shortCode = s.type === 'BUNKER' ? 'HQ' : (s.type === 'EW_JAMMER' ? 'EW JAMMER' : (s.type === 'RADAR_ARRAY' ? 'RADAR' : (s.isIndestructible ? 'AMMO DEPOT [SAFE]' : (s.name || s.type))));
         const distKm = (activeUnit && activeUnit.hp > 0) ? Math.round(Math.hypot(s.x - activeUnit.x, s.y - activeUnit.y)) : null;
-        const distTag = distKm !== null ? (' • R:' + distKm + 'km') : '';
+        const distTag = distKm !== null ? (' R:' + distKm + 'km') : '';
         const hpTag = s.isIndestructible ? ' [INF]' : ` [${Math.round(s.hp)}]`;
         ctx.fillText(cleanFn(shortCode + hpTag + distTag), px + 9, py + 3);
       }
@@ -107,18 +108,44 @@ class RadarTacticalRenderer {
         ctx.moveTo(0, -7); ctx.lineTo(7, 0); ctx.lineTo(0, 7); ctx.lineTo(-7, 0);
         ctx.closePath(); ctx.fill(); ctx.stroke();
       } else {
-        ctx.strokeStyle = '#7dd3fc';
-        ctx.lineWidth = 1.4;
         ctx.beginPath();
-        ctx.moveTo(9, 0); ctx.lineTo(-8, -2); ctx.lineTo(-8, 2); ctx.closePath();
-        ctx.moveTo(1, 0); ctx.lineTo(-3, -11); ctx.lineTo(-5, -11); ctx.lineTo(-1, 0);
-        ctx.moveTo(1, 0); ctx.lineTo(-3, 11); ctx.lineTo(-5, 11); ctx.lineTo(-1, 0);
+        ctx.moveTo(11, 0);
+        ctx.quadraticCurveTo(8.5, 2.2, 4.5, 2.2);
+        ctx.lineTo(2, 2.4);
+        ctx.lineTo(-3, 11);
+        ctx.lineTo(-5, 11);
+        ctx.lineTo(-2, 2.4);
+        ctx.lineTo(-7.5, 1.8);
+        ctx.lineTo(-10.5, 5.5);
+        ctx.lineTo(-12, 5.5);
+        ctx.lineTo(-10, 1.0);
+        ctx.lineTo(-12, 0);
+        ctx.lineTo(-10, -1.0);
+        ctx.lineTo(-12, -5.5);
+        ctx.lineTo(-10.5, -5.5);
+        ctx.lineTo(-7.5, -1.8);
+        ctx.lineTo(-2, -2.4);
+        ctx.lineTo(-5, -11);
+        ctx.lineTo(-3, -11);
+        ctx.lineTo(2, -2.4);
+        ctx.lineTo(4.5, -2.2);
+        ctx.quadraticCurveTo(8.5, -2.2, 11, 0);
+        ctx.closePath();
+
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.28)';
+        ctx.fill();
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.4;
         ctx.stroke();
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.fillRect(-1.5, 4.2, 3.2, 1.5);
+        ctx.fillRect(-1.5, -5.7, 3.2, 1.5);
       }
       ctx.restore();
 
       const vLen = (civ.speed || 0.78) * 18 * cam.zoom;
-      ctx.strokeStyle = isIdentified ? '#7dd3fc' : '#f97316';
+      ctx.strokeStyle = isIdentified ? '#38bdf8' : '#f97316';
       ctx.lineWidth = 1.4;
       ctx.beginPath();
       ctx.moveTo(px, py);
@@ -127,19 +154,19 @@ class RadarTacticalRenderer {
 
       const relDistKm = (activeUnit && activeUnit.hp > 0)
         ? Math.round(Math.hypot(civ.x - activeUnit.x, civ.y - activeUnit.y)) : null;
-      const rangeTag = (relDistKm !== null) ? (' • R:' + relDistKm + 'km') : '';
+      const rangeTag = (relDistKm !== null) ? (' R:' + relDistKm + 'km') : '';
       const rawCode = cleanFn ? cleanFn(civ.flightCode || '700') : (civ.flightCode || '700');
       const mch = 'M ' + (civ.speed || 0.78).toFixed(2);
       const fl = 'FL' + Math.round((civ.altFt || 36000) / 100);
 
-      const labelX = px + 12;
-      const labelY = py - 8;
+      const labelX = px + 14;
+      const labelY = py - 7;
 
       if (declutterMode) {
         ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-        ctx.fillStyle = isIdentified ? '#7dd3fc' : '#f97316';
-        const tag = isIdentified ? ('CIV // ' + rawCode + rangeTag) : ('BOGEY [?]' + rangeTag);
-        ctx.fillText(cleanFn(tag), labelX, labelY);
+        ctx.fillStyle = isIdentified ? '#38bdf8' : '#f97316';
+        const tag = isIdentified ? 'CIVILIAN' : ('BOGEY' + (rangeTag ? ` [${relDistKm}km]` : ''));
+        ctx.fillText(cleanFn(tag), labelX, labelY + 6);
       } else {
         if (!isIdentified) {
           ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
@@ -148,21 +175,21 @@ class RadarTacticalRenderer {
 
           ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = '#8494ab';
-          ctx.fillText(cleanFn(mch + ' • ' + fl), labelX, labelY + 10);
+          ctx.fillText(cleanFn(mch + ' ' + fl), labelX, labelY + 11);
         } else {
           ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-          ctx.fillStyle = '#7dd3fc';
-          ctx.fillText(cleanFn('CIV // ' + rawCode + rangeTag), labelX, labelY);
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillText(cleanFn('CIVILIAN ' + rawCode), labelX, labelY);
 
           ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = '#94a3b8';
           const modelName = civ.model || civ.name || 'Commercial Airliner';
-          ctx.fillText(cleanFn(modelName + ' • NON-COMBATANT'), labelX, labelY + 10);
+          ctx.fillText(cleanFn(modelName + rangeTag), labelX, labelY + 11);
 
           ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = '#00f5a0';
           const hpText = Math.round(civ.hp) + '/' + (civ.maxHp || 6) + ' HP';
-          ctx.fillText(cleanFn(mch + ' • ' + fl + ' • ' + hpText), labelX, labelY + 20);
+          ctx.fillText(cleanFn(mch + ' ' + fl + ' ' + hpText), labelX, labelY + 22);
         }
       }
     }
@@ -291,7 +318,7 @@ class RadarTacticalRenderer {
     if (isKnown) {
       if (isAce) reticleColor = '#ffd700';
       else if (isHostile) reticleColor = '#ef4444';
-      else if (target.isCivilian) reticleColor = '#7dd3fc';
+      else if (target.isCivilian) reticleColor = '#38bdf8';
       else reticleColor = '#00f0ff';
     }
     ctx.strokeStyle = reticleColor;

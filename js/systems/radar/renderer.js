@@ -1,7 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Tactical Radar Viewport Renderer (Optimized 60-120 FPS Engine)
  * Smooth 2.0x Retina scaling without mobile overdraw or gradient garbage collection lag.
- * In 2P mode, detectedSet includes all aircraft from match start for fair visibility.
+ * Strips pipe (|) and corrupted characters from canvas text rendering.
  */
 
 class TacticalRadarRenderer {
@@ -53,15 +53,18 @@ class TacticalRadarRenderer {
 
   cleanCanvasText(str) {
     if (str === undefined || str === null) return '';
-    const s = String(str);
+    let s = String(str);
+    s = s.replace(/\u00e2\u20ac\u00a2|â€¢|&bull;|•|\|/g, ' ');
+    s = s.replace(/\s+/g, ' ');
     if (!s.includes('<') && !s.includes('\\') && !s.includes('{') && !s.includes('katex')) {
-      return s;
+      return s.trim();
     }
     return s
       .replace(/<annotation[^>]*>[\s\S]*?<\/annotation>/gi, '')
       .replace(/<[^>]*>/g, '')
       .replace(/katex[a-z-]*/gi, '')
       .replace(/[\{\}\\]/g, '')
+      .replace(/\s+/g, ' ')
       .trim();
   }
 
