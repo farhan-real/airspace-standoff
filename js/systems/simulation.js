@@ -245,7 +245,6 @@ class SimulationSystem {
     this.game.detectedByBlue = new Set();
     this.game.detectedByRed = new Set();
 
-    // 2P VERSUS MODE: Complete fair mutual visibility from the start
     const is2P = (this.game.playerMode === '2P');
     if (is2P) {
       for (const h of this.game.hostileAircraft) {
@@ -267,7 +266,6 @@ class SimulationSystem {
         }
       }
     } else {
-      // 1P MODE: Progressive Doppler Track Identification
       for (const h of this.game.hostileAircraft) {
         if (h.hp <= 0) continue;
         this.game.detectedByBlue.add(h.id);
@@ -319,7 +317,6 @@ class SimulationSystem {
         }
       }
 
-      // SATELLITE RADAR UPLINK (<= 3 hostiles remain)
       const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0);
       if (liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold) {
         for (const h of liveHostiles) {
@@ -331,16 +328,15 @@ class SimulationSystem {
         if (!this._satelliteUplinkAnnouncedBlue) {
           this._satelliteUplinkAnnouncedBlue = true;
           if (this.game.radar) {
-            this.game.radar.spawnCombatText(liveHostiles[0].x, liveHostiles[0].y, `SATELLITE UPLINK ACTIVE // ${liveHostiles.length} TARGETS PINPOINTED`, '#00f0ff');
+            this.game.radar.spawnCombatText(liveHostiles[0].x, liveHostiles[0].y, `SATELLITE UPLINK ACTIVE - ${liveHostiles.length} TARGETS PINPOINTED`, '#00f0ff');
           }
-          this.logScoreEvent('friendly', 0, `SATELLITE UPLINK: ${liveHostiles.length} target(s) remaining â€” continuous radar broadcast active`);
+          this.logScoreEvent('friendly', 0, `SATELLITE UPLINK: ${liveHostiles.length} target(s) remaining - continuous radar broadcast active`);
           if (typeof AudioSys !== 'undefined') AudioSys.playClick();
         }
       } else if (liveHostiles.length > uplinkThreshold) {
         this._satelliteUplinkAnnouncedBlue = false;
       }
 
-      // Red team sensors (1P AI)
       const redSensors = this.game.hostileAircraft.filter(a => a.hp > 0).concat(
         this.game.surfaceUnits.filter(s => s.team === 'hostile' && s.hp > 0)
       );
@@ -359,7 +355,6 @@ class SimulationSystem {
       }
     }
 
-    // Ghost clutter reflections
     for (const ghost of this.ghostContacts) {
       if (ghost.hp <= 0 || ghost.isDissolved) continue;
       this.game.detectedByBlue.add(ghost.id);
@@ -378,7 +373,6 @@ class SimulationSystem {
       if (decoy.team === 'hostile' || is2P) decoy.identifiedByRed = true;
     }
 
-    // Missile tracking with 3.5s hysteresis track-hold
     for (const m of this.game.missiles) {
       if (!m.active) continue;
       if (is2P) {
@@ -410,7 +404,6 @@ class SimulationSystem {
       }
     }
 
-    // Surface Units ALWAYS detected and fully identified
     for (const s of this.game.surfaceUnits) {
       this.game.detectedByBlue.add(s.id);
       this.game.detectedByRed.add(s.id);

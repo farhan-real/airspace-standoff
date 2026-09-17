@@ -27,7 +27,7 @@
 <div id="pause-modal" class="modal-backdrop">
   <div class="inspect-window" style="max-width: 440px; text-align: center;">
     <div class="inspect-header" style="background:#0a1e36;">
-      <h2 style="color:#00f0ff;">SORTIE PAUSED // SIMULATION SUSPENDED</h2>
+      <h2 style="color:#00f0ff;">SORTIE PAUSED - SIMULATION SUSPENDED</h2>
     </div>
     <div class="inspect-body" style="padding: 20px; gap: 14px;">
       <p style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.45;">
@@ -69,7 +69,7 @@
   <div class="inspect-window preconfig-window">
     <div class="inspect-header">
       <div class="modal-title-row">
-        <h2>PRECONFIGURED COMBAT LOADOUTS // DEPLOYMENT CATALOG</h2>
+        <h2>PRECONFIGURED COMBAT LOADOUTS - DEPLOYMENT CATALOG</h2>
         <span class="subtext" style="color:#00f0ff;font-family:var(--font-mono);font-size:0.64rem;margin-left:8px;">TACTICAL DOCTRINE PRESETS</span>
       </div>
       <button id="btn-close-preconfig" class="hud-btn small">X</button>
@@ -489,7 +489,7 @@
   </footer>
 </div>
 
-<!-- AFTER ACTION REPORT MODAL -->
+<!-- AFTER ACTION REPORT MODAL (WITH LOCKED RETURN TO HANGAR FOOTER) -->
 <div id="game-over-modal" class="modal-backdrop">
   <div class="game-over-dialog">
     <div class="after-action-header">
@@ -497,28 +497,34 @@
       <span id="game-over-desc" class="after-action-subtitle">OPERATIONAL THEATER SUMMARY</span>
     </div>
 
-    <div class="ace-podium-section">
-      <div class="strip-subhead" style="color:#00f0ff;">TOP THEATER COMBAT ACES</div>
-      <div class="ace-podium-grid" id="ace-podium-cards"></div>
-    </div>
-
-    <div class="aar-full-roster-box">
-      <div class="strip-subhead" style="color:#00f0ff; margin-bottom: 4px;">ALL SQUADRON COMBATANTS &bull; SORTIE DEBRIEF</div>
-      <div id="aar-full-roster-content" style="max-height: 180px; overflow-y: auto;"></div>
-    </div>
-
-    <!-- STRUCTURED DEBRIEF TELEMETRY BELOW THE TABLE -->
-    <div id="game-over-stats"></div>
-
-    <div class="aar-timeline-container">
-      <div class="aar-timeline-toggle-row">
-        <span class="strip-subhead" style="margin:0;">MISSION CHRONOLOGY &amp; KILL TIMELINE</span>
-        <button id="btn-toggle-aar-timeline" class="hud-btn small">EXPAND TIMELINE</button>
+    <!-- SCROLLABLE DEBRIEF BODY -->
+    <div class="after-action-body">
+      <div class="ace-podium-section">
+        <div class="strip-subhead" style="color:#00f0ff;">TOP THEATER COMBAT ACES</div>
+        <div class="ace-podium-grid" id="ace-podium-cards"></div>
       </div>
-      <div id="aar-timeline-list" class="aar-timeline-content hidden"></div>
+
+      <div class="aar-full-roster-box">
+        <div class="strip-subhead" style="color:#00f0ff; margin-bottom: 4px;">ALL SQUADRON COMBATANTS &bull; SORTIE DEBRIEF</div>
+        <div id="aar-full-roster-content" style="max-height: 180px; overflow-y: auto;"></div>
+      </div>
+
+      <!-- STRUCTURED DEBRIEF TELEMETRY BELOW THE TABLE -->
+      <div id="game-over-stats"></div>
+
+      <div class="aar-timeline-container">
+        <div class="aar-timeline-toggle-row">
+          <span class="strip-subhead" style="margin:0;">MISSION CHRONOLOGY &amp; KILL TIMELINE</span>
+          <button id="btn-toggle-aar-timeline" class="hud-btn small">EXPAND TIMELINE</button>
+        </div>
+        <div id="aar-timeline-list" class="aar-timeline-content hidden"></div>
+      </div>
     </div>
 
-    <button id="btn-restart" class="scramble-btn" style="width:100%;">RETURN TO PROCUREMENT HANGAR</button>
+    <!-- LOCKED DEBRIEF FOOTER (NEVER REQUIRES SCROLLING) -->
+    <div class="after-action-footer">
+      <button id="btn-restart" class="scramble-btn" style="width:100%;">RETURN TO PROCUREMENT HANGAR</button>
+    </div>
   </div>
 </div>
 

@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Pylon Target Solution Submodule
- * Unidentified aircraft (including civilian) display raw doppler telemetry without revealing model or faction.
+ * AIRSPACE STANDOFF // Pylon Target Solution Submodule
+ * Displays verified target telemetry and ground/civilian classification.
  */
 
 class PylonTargetSolution {
@@ -42,11 +42,11 @@ class PylonTargetSolution {
         armorText = `${Math.round(validTarget.hp)} HP`;
       } else if (validTarget.isCivilian) {
         rawTgtName = validTarget.flightCode || 'CIVILIAN AIRLINER';
-        classification = `CIVILIAN // ${validTarget.model || 'AIRLINER'}`;
+        classification = `CIVILIAN: ${validTarget.model || 'AIRLINER'}`;
         armorText = `${Math.round(validTarget.hp)}/${validTarget.maxHp} HP`;
       } else if (validTarget.type) {
         rawTgtName = validTarget.name || validTarget.type;
-        classification = `GROUND INSTALLATION // ${validTarget.type}`;
+        classification = `GROUND INSTALLATION: ${validTarget.type}`;
         armorText = validTarget.isIndestructible ? 'INDESTRUCTIBLE' : `${Math.round(validTarget.hp)}/${validTarget.maxHp} HP`;
       } else {
         rawTgtName = validTarget.spec ? validTarget.spec.id : (validTarget.callsign || 'TARGET');

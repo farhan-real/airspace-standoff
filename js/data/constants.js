@@ -62,7 +62,7 @@ window.BUDGET_TIERS = {
 
 window.LEAD_BUFFS = {
   STEALTH: {
-    title: 'STEALTH FLIGHT LEAD // LOW-OBSERVABLE TACTICAL SUITE',
+    title: 'STEALTH FLIGHT LEAD - LOW-OBSERVABLE TACTICAL SUITE',
     role: 'Stealth Air Dominance Leader',
     weaknessFixed: 'Conformal radar-absorbent material edge-treatments reduce broadside beam radar cross-section spike by 50%.',
     survivability: '+20% missile evasion via lower seeker track fidelity and +1 airframe armor HP.',
@@ -75,7 +75,7 @@ window.LEAD_BUFFS = {
     summary: 'Mitigates broadside radar exposure during turns while expanding active radar reach and defensive evasion.'
   },
   SUPERIORITY: {
-    title: 'AIR SUPERIORITY LEAD // INTERCEPTOR UPGRADE SUITE',
+    title: 'AIR SUPERIORITY LEAD - INTERCEPTOR UPGRADE SUITE',
     role: 'Air Superiority Flight Leader',
     weaknessFixed: 'Applies radar-absorbent coatings to reduce clean airframe radar footprint (-40% RCS) and cockpit environmental systems to delay pilot G-fatigue.',
     survivability: '+25% defensive break-turn evasion and +2 airframe armor HP reinforcement.',
@@ -88,7 +88,7 @@ window.LEAD_BUFFS = {
     summary: 'Reduces unstealthed radar returns, halves pilot G-load fatigue accumulation, and increases defensive turn agility.'
   },
   MULTIROLE: {
-    title: 'MULTIROLE FLIGHT LEAD // AGILITY & FIELD SUPPORT SUITE',
+    title: 'MULTIROLE FLIGHT LEAD - AGILITY & FIELD SUPPORT SUITE',
     role: 'Multirole Flight Leader',
     weaknessFixed: 'Reinforces composite bulkheads (+2 HP), enhances instantaneous nose-pointing rate, and accelerates turnaround logistics.',
     survivability: '+25% missile evasion, +3 emergency chaff charges, and +2 armor HP.',
@@ -101,7 +101,7 @@ window.LEAD_BUFFS = {
     summary: 'Enhances structural durability with +2 HP, improves pitch and roll agility, and accelerates base turnaround times.'
   },
   STRIKE: {
-    title: 'ARMORED STRIKE LEAD // CLOSE AIR SUPPORT SUITE',
+    title: 'ARMORED STRIKE LEAD - CLOSE AIR SUPPORT SUITE',
     role: 'Dedicated Strike Leader',
     weaknessFixed: 'Reduces heavy payload aerodynamic drag (-40%), reinforces structural armor against ground fire, and adds titanium cockpit protection.',
     survivability: '+3 Max Armor HP, -1 damage reduction per missile impact, and 60% autocannon fire deflection.',
@@ -114,7 +114,7 @@ window.LEAD_BUFFS = {
     summary: 'Adds heavy armor plating (+3 HP, -1 damage per missile hit) and eliminates speed penalties from heavy payload carriage.'
   },
   EW: {
-    title: 'ELECTRONIC WARFARE LEAD // TACTICAL ESCORT SUITE',
+    title: 'ELECTRONIC WARFARE LEAD - TACTICAL ESCORT SUITE',
     role: 'Electronic Warfare Escort Leader',
     weaknessFixed: 'Hardens fragile escort airframes (+2 HP), amplifies standoff jamming power, and broadens ESM receiver sensitivity.',
     survivability: '+30% missile evasion against radar-guided munitions and reinforced self-protection decoys.',
@@ -127,7 +127,7 @@ window.LEAD_BUFFS = {
     summary: 'Protects vulnerable electronic attack aircraft with +2 HP and projects high-power electronic countermeasures.'
   },
   DRONES: {
-    title: 'AUTONOMOUS FLIGHT LEAD // HIGH-G DATA RELAY SUITE',
+    title: 'AUTONOMOUS FLIGHT LEAD - HIGH-G DATA RELAY SUITE',
     role: 'Autonomous UCAV Flight Leader',
     weaknessFixed: 'Reinforces light composite drone airframes (+2 HP), adds integrated MALD decoy drone dispensers, and calculates predictive target intercepts.',
     survivability: '+35% high-G defensive break-turn evasion (up to 20G structural envelope) and 2 autonomous decoy drones.',
@@ -140,7 +140,7 @@ window.LEAD_BUFFS = {
     summary: 'Triples fragile drone structural durability (+2 HP, +2 decoys) and executes high-G evasive breaks without human physiological limits.'
   },
   EXPERIMENTAL: {
-    title: 'EXPERIMENTAL FLIGHT LEAD // ADVANCED PROTOTYPE SUITE',
+    title: 'EXPERIMENTAL FLIGHT LEAD - ADVANCED PROTOTYPE SUITE',
     role: 'Experimental Technology Flight Leader',
     weaknessFixed: 'Insulates engine exhaust conduits to suppress thermal infrared bloom (-40%), reinforces structure (+2 HP), and refines flight computer control laws.',
     survivability: '+30% defensive break evasion, -40% thermal infrared signature, and rapid capacitor recharging.',

@@ -21,7 +21,7 @@ class AfterActionReportSystem {
     const timeStr = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
 
     if (tEl) {
-      tEl.textContent = blueWon ? 'TACTICAL VICTORY // AIRSPACE SECURED' : 'SORTIE TERMINATED // MISSION DEBRIEF';
+      tEl.textContent = blueWon ? 'TACTICAL VICTORY - AIRSPACE SECURED' : 'SORTIE TERMINATED - MISSION DEBRIEF';
       tEl.style.color = blueWon ? '#00f0ff' : '#ff3366';
     }
     if (dEl) dEl.textContent = msg || 'THEATER COMBAT ASSESSMENT';
@@ -39,9 +39,9 @@ class AfterActionReportSystem {
 
         return (
           `<div class="ace-card ${rankClass}">` +
-            `<div class="ace-rank-title"><span>#${idx + 1} • ${rankNames[idx]}</span> <b style="color:${teamColor}">[${teamTag}]</b></div>` +
+            `<div class="ace-rank-title"><span>#${idx + 1} - ${rankNames[idx]}</span> <b style="color:${teamColor}">[${teamTag}]</b></div>` +
             `<div class="ace-callsign">${p.callsign || 'PILOT'}</div>` +
-            `<div class="ace-sub">${p.spec ? p.spec.name : 'JET'} • ${p.squadronName || 'FLIGHT'}</div>` +
+            `<div class="ace-sub">${p.spec ? p.spec.name : 'JET'} - ${p.squadronName || 'FLIGHT'}</div>` +
             `<div class="ace-stats">` +
               `<span>KILLS: <b>${p.kills || 0}</b></span>` +
               `<span>EVADED: <b>${p.missilesEvadedCount || 0}</b></span>` +
@@ -120,7 +120,7 @@ class AfterActionReportSystem {
 
           <div class="aar-score-banner ${blueWon ? 'victory' : 'defeat'}">
             <div class="aar-banner-lead">
-              <span class="aar-banner-status">${blueWon ? 'SORTIE SUCCESSFUL // AIR DOMINANCE' : 'SORTIE TERMINATED // WITHDRAWAL'}</span>
+              <span class="aar-banner-status">${blueWon ? 'SORTIE SUCCESSFUL - AIR DOMINANCE' : 'SORTIE TERMINATED - WITHDRAWAL'}</span>
               <span class="aar-banner-sub">Combined Coalition Performance Rating</span>
             </div>
             <div class="aar-banner-score">

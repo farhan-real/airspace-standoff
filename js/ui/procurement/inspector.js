@@ -256,7 +256,7 @@ class ProcurementInspector {
     if (type === 'airframe') {
       const a = aircraft[id];
       if (!a) return;
-      titleEl.textContent = `AIRFRAME SPECIFICATION // ${(a.name || id).toUpperCase()}`;
+      titleEl.textContent = `AIRFRAME SPECIFICATION - ${(a.name || id).toUpperCase()}`;
       bodyEl.innerHTML = window.InspectorModalRenderer.renderAirframe(a, guns);
       const btn = bodyEl.querySelector('#inspect-btn-req');
       if (btn) btn.onclick = () => { this.pm.addAirframe(a.id); btn.textContent = 'ADDED'; };
@@ -267,7 +267,7 @@ class ProcurementInspector {
     if (type === 'weapon') {
       const w = weapons[id];
       if (!w) return;
-      titleEl.textContent = `ORDNANCE SPECIFICATION // ${(w.name || id).toUpperCase()}`;
+      titleEl.textContent = `ORDNANCE SPECIFICATION - ${(w.name || id).toUpperCase()}`;
       bodyEl.innerHTML = window.InspectorModalRenderer.renderWeapon(w);
       const selBtn = bodyEl.querySelector('#inspect-btn-sel');
       if (selBtn) selBtn.onclick = () => { this.pm.setSelectedItem('weapon', w.id, w.name); modal.classList.remove('active'); };
@@ -278,7 +278,7 @@ class ProcurementInspector {
     if (type === 'gun') {
       const g = guns[id] || guns['M61A2'];
       if (!g) return;
-      titleEl.textContent = `AUTOCANNON SPECIFICATION // ${(g.name || id).toUpperCase()}`;
+      titleEl.textContent = `AUTOCANNON SPECIFICATION - ${(g.name || id).toUpperCase()}`;
       bodyEl.innerHTML = window.InspectorModalRenderer.renderGun(g);
       modal.classList.add('active');
       return;
@@ -287,7 +287,7 @@ class ProcurementInspector {
     if (type === 'upgrade') {
       const u = upgrades[id];
       if (!u) return;
-      titleEl.textContent = `AVIONICS SUBSYSTEM SPECIFICATION // ${(u.name || id).toUpperCase()}`;
+      titleEl.textContent = `AVIONICS SUBSYSTEM SPECIFICATION - ${(u.name || id).toUpperCase()}`;
       bodyEl.innerHTML = window.InspectorModalRenderer.renderUpgrade(u);
       const selUpg = bodyEl.querySelector('#inspect-btn-sel-upg');
       if (selUpg) selUpg.onclick = () => { this.pm.setSelectedItem('upgrade', u.id, u.name); modal.classList.remove('active'); };

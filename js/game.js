@@ -141,7 +141,7 @@ class AirspaceStandoffGame {
 
   abortSortie() {
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
-    this.triggerGameOver(false, 'SORTIE ABORTED // TACTICAL WITHDRAWAL');
+    this.triggerGameOver(false, 'SORTIE ABORTED - TACTICAL WITHDRAWAL');
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 

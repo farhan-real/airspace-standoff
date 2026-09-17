@@ -41,7 +41,7 @@ class AvionicsUI {
         if (this.game.activeUnit && this.game.activeUnit.hp > 0) {
           const isReturning = this.game.activeUnit.toggleRTB();
           if (this.game.radar) {
-            const msg = isReturning ? 'HIGH-SPEED RETURN TO BASE ORDERED' : 'RETURN TO BASE CANCELLED // ENGAGING';
+            const msg = isReturning ? 'HIGH-SPEED RETURN TO BASE ORDERED' : 'RETURN TO BASE CANCELLED - ENGAGING';
             const col = isReturning ? '#00f5a0' : '#38bdf8';
             this.game.radar.spawnCombatText(this.game.activeUnit.x, this.game.activeUnit.y, msg, col);
           }
@@ -187,7 +187,7 @@ class AvionicsUI {
       hudCallsign.textContent = `${modelCode}${badge}`;
       hudCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00f0ff' : '#ff3366'));
     }
-    if (hudModel) hudModel.textContent = `${callsignText} • ${u.spec ? u.spec.role : ''}`;
+    if (hudModel) hudModel.textContent = `${callsignText} - ${u.spec ? u.spec.role : ''}`;
     if (hudCardinal) { hudCardinal.textContent = cardStr; hudCardinal.style.color = (cardStr === 'E') ? '#00f0ff' : (cardStr === 'W' ? '#00f5a0' : '#f8fafc'); }
     if (hudDeg) hudDeg.textContent = String(deg).padStart(3, '0') + '°';
     if (hudEturn) { hudEturn.textContent = 'TURN: ' + Math.round(eturn * 100) + '%' + (eturn >= 0.88 ? ' OPT' : ''); hudEturn.style.color = this.getTurnColor(eturn); }
@@ -204,7 +204,6 @@ class AvionicsUI {
       alphaLabel.classList.toggle('burner', pct > 85);
     }
 
-    // FULL NAME: RETURN TO BASE (NO HOTKEYS)
     if (rtbBtn) {
       rtbBtn.textContent = u.isRTB ? 'CANCEL RETURN TO BASE' : 'RETURN TO BASE';
       rtbBtn.style.background = u.isRTB ? '#450a0a' : '#064e3b';
