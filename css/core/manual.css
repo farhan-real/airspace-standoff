@@ -1,0 +1,294 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Tactical Flight Manual & Operational Reference Theme
+   ========================================================================== */
+
+.glossary-window {
+  background: #040814;
+  border: 1px solid #0284c7;
+  border-top: 3px solid #00f0ff;
+  border-radius: 6px;
+  width: 96vw;
+  max-width: 1200px;
+  height: 92vh;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
+  overflow: hidden;
+  font-family: var(--font-sans);
+}
+
+.glossary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #091526 0%, #050c18 100%);
+  padding: 10px 18px;
+  border-bottom: 1.5px solid #162b48;
+  flex-shrink: 0;
+}
+
+.glossary-header h2 {
+  font-size: 1.05rem;
+  color: #00f0ff;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  font-family: var(--font-mono);
+}
+
+.manual-toolbar {
+  display: flex;
+  flex-direction: column;
+  background: #030712;
+  border-bottom: 1px solid #14243b;
+  padding: 8px 16px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.manual-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.manual-search-input {
+  flex: 1;
+  background: #060e1c;
+  border: 1px solid #172d4a;
+  color: #f8fafc;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  padding: 6px 10px;
+  border-radius: 3px;
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+
+.manual-search-input:focus {
+  border-color: #00f0ff;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+}
+
+.manual-nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 2px;
+}
+
+.manual-nav-btn {
+  background: #081424;
+  border: 1px solid #162c46;
+  color: #8494ab;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 4px 9px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  letter-spacing: 0.3px;
+}
+
+.manual-nav-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+}
+
+.manual-nav-btn.active {
+  background: #00f0ff;
+  color: #020610;
+  border-color: #00f0ff;
+  font-weight: 900;
+}
+
+.glossary-content {
+  padding: 16px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scroll-behavior: smooth;
+}
+
+.glossary-entry {
+  background: linear-gradient(180deg, #060e1c 0%, #030712 100%);
+  border: 1px solid #15273e;
+  border-left: 4px solid #00f0ff;
+  border-radius: 4px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.ge-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.0rem;
+  font-weight: 900;
+  color: #00f0ff;
+  font-family: var(--font-mono);
+  letter-spacing: 0.6px;
+  border-bottom: 1.5px solid rgba(0, 240, 255, 0.3);
+  padding-bottom: 6px;
+  margin-bottom: 2px;
+}
+
+.ge-subhead {
+  font-size: 0.80rem;
+  font-weight: 900;
+  color: #ffb830;
+  font-family: var(--font-mono);
+  margin-top: 12px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ge-content,
+.ge-desc {
+  font-size: 0.80rem;
+  color: #cbd5e1;
+  line-height: 1.65;
+}
+
+.ge-card {
+  background: #020610;
+  border: 1px solid #142338;
+  border-radius: 4px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.ge-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.ge-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.ge-callout {
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-left: 3.5px solid #00f0ff;
+  border-radius: 3px;
+  padding: 8px 12px;
+  font-size: 0.76rem;
+  color: #e0f2fe;
+  line-height: 1.55;
+  margin: 6px 0;
+}
+
+.ge-alert {
+  background: rgba(239, 68, 68, 0.07);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-left: 3.5px solid #ef4444;
+  border-radius: 3px;
+  padding: 8px 12px;
+  font-size: 0.76rem;
+  color: #fecdd3;
+  line-height: 1.55;
+  margin: 6px 0;
+}
+
+.ge-formula-card {
+  background: #02050c;
+  border: 1px solid #172c48;
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: #00f5a0;
+  margin: 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ge-formula-code {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: #081424;
+  padding: 5px 10px;
+  border-radius: 3px;
+  border-left: 3px solid #00f5a0;
+  letter-spacing: 0.4px;
+}
+
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 8px 0;
+  border: 1px solid #14243b;
+  border-radius: 4px;
+  background: #020610;
+}
+
+.ge-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.74rem;
+  font-family: var(--font-mono);
+  min-width: 580px;
+}
+
+.ge-table th {
+  text-align: left;
+  padding: 8px 12px;
+  background: #081426;
+  color: #00f0ff;
+  font-weight: 800;
+  border-bottom: 1.5px solid #172a44;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.ge-table td {
+  padding: 7px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.ge-table tr:hover td {
+  background: rgba(0, 240, 255, 0.04);
+}
+
+@media (max-width: 1024px) {
+  .glossary-window {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  .glossary-content { padding: 10px 12px; gap: 14px; }
+  .ge-title { font-size: 0.88rem; }
+  .ge-subhead { font-size: 0.72rem; }
+  .ge-content, .ge-desc { font-size: 0.74rem; }
+  .ge-grid-2, .ge-grid-3 { grid-template-columns: 1fr; }
+}

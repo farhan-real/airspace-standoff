@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Flight Manual Submodule: Chapters 1 to 3
- * Covers: Core Rules, Kinematics & Throttle, Flight Lead Selection, Formation & Systems
+ * Covers: Core Rules, Kinematics & Throttle, Flight Lead Systems & COFFIN
  */
 
 window.MANUAL_BASICS = [
@@ -9,31 +9,61 @@ window.MANUAL_BASICS = [
     title: 'CHAPTER 1: QUICK-START DOCTRINE & 5 FOUNDATIONAL RULES',
     desc: `
       <div class="ge-desc">
-        Welcome to <b>AIRSPACE STANDOFF</b>. You command an advanced tactical fighter squadron in a high-density, contested electromagnetic combat theater. Master these five foundational operational rules:
+        Welcome to <b>AIRSPACE STANDOFF</b>. You command an advanced tactical fighter squadron in a high-density, contested electromagnetic combat arena. Master these five foundational operational rules:
       </div>
 
-      <div class="ge-subhead">1. DEFENSE ALLOCATION ($400.0M BUDGET) &amp; FLIGHT LEAD</div>
+      <div class="ge-subhead">1. DEFENSE ALLOCATION ($400.0M BUDGET) &amp; FLIGHT LEAD SELECTION</div>
       <div class="ge-desc">
-        Your squadron can field up to <b>16 combat airframes</b> within your defense budget. Designate one aircraft as your <b>[★ FLIGHT LEAD]</b> in the Hangar. The Lead always flies in the <b>central formation slot</b> and receives tactical upgrades tailored to airframe role and survivability:
-        <ul>
-          <li><b>Stealth Lead:</b> 50% broadside beam radar spike reduction, +20% missile evasion, +15km radar range, +1 HP armor.</li>
-          <li><b>Superiority Lead:</b> -40% clean airframe RCS, -50% pilot G-fatigue buildup, +25% break-turn evasion, +2 HP armor.</li>
-          <li><b>Multirole Lead:</b> +2 Max HP armor, +20% instantaneous turn authority, -40% base turnaround time, +25% missile evasion.</li>
-          <li><b>Strike Lead:</b> +3 Max HP titanium tub armor, -1 damage reduction per missile hit, -40% payload drag penalty, 60% cannon fire deflection.</li>
-          <li><b>EW Lead:</b> +30% missile evasion vs radar-guided munitions, +25% standoff jamming power, +25km passive ESM detection range, +2 HP armor.</li>
-          <li><b>Drone Lead:</b> +2 Max HP armor (significantly reinforcing light UCAVs), +35% high-G break evasion, +2 MALD decoy drones.</li>
-          <li><b>Experimental Lead:</b> -40% thermal exhaust signature (mitigates IR missile tracking), +2 HP armor, +30% break-turn evasion.</li>
-        </ul>
+        Your squadron can deploy up to <b>16 combat airframes</b> within your defense budget. Designate one aircraft as your <b>[★ FLIGHT LEAD]</b> in the Hangar. The Lead always flies in the <b>central formation slot</b> and receives tactical upgrades tailored to airframe role and survivability:
+      </div>
+
+      <div class="ge-grid-2">
+        <div class="ge-card">
+          <b style="color:#00f0ff;">STEALTH LEAD SUITE</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            • Conformal RAM edge-treatment cuts 90° beam radar spike by <b>50%</b>.<br>
+            • <b>+20%</b> missile evasion via low-observable seeker spoofing.<br>
+            • <b>+15.0 km</b> active radar reach via high-power GaN AESA transmitters.<br>
+            • <b>+1 HP</b> structural armor bulkhead reinforcement.
+          </div>
+        </div>
+        <div class="ge-card">
+          <b style="color:#00f5a0;">AIR SUPERIORITY LEAD SUITE</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            • <b>-40%</b> clean airframe radar cross-section via leading-edge coatings.<br>
+            • Pressurized cockpit environmental systems delay pilot G-fatigue by <b>50%</b>.<br>
+            • <b>+25%</b> defensive break-turn evasion &amp; <b>+12%</b> missile P_k accuracy.<br>
+            • <b>+2 HP</b> titanium-alloy framework reinforcement.
+          </div>
+        </div>
+        <div class="ge-card">
+          <b style="color:#38bdf8;">MULTIROLE LEAD SUITE</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            • <b>+2 Max HP</b> composite armor durability.<br>
+            • Optimized fly-by-wire gain provides <b>+20%</b> instantaneous turn authority.<br>
+            • <b>-40%</b> base turnaround duration for accelerated replenishment.<br>
+            • <b>+25%</b> missile evasion &amp; <b>+3</b> emergency chaff charges.
+          </div>
+        </div>
+        <div class="ge-card">
+          <b style="color:#f97316;">ARMORED STRIKE LEAD SUITE</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            • <b>+3 Max HP</b> armor with welded titanium cockpit bathtub.<br>
+            • <b>-1 Damage</b> structural reduction per missile impact.<br>
+            • <b>60%</b> cannon fire deflection against enemy close-in strafes.<br>
+            • <b>-40%</b> ordnance drag penalty elimination.
+          </div>
+        </div>
       </div>
 
       <div class="ge-subhead">2. RADAR CROSS SECTION (RCS) &amp; THE 90° BEAM SPIKE</div>
       <div class="ge-desc">
-        Radar stealth is directional. A Very Low Observable (VLO) airframe with a frontal RCS of <b>0.0001 m²</b> is virtually undetectable beyond 15 km nose-on. However, turning 90° broadside to hostile radar exposes fuselage and vertical stabilizers, multiplying the radar signature by <b>3.2× (+220% signature increase)</b>. Approach hostile threats nose-on whenever practical.
+        Radar stealth is highly directional. A Very Low Observable (VLO) airframe with a frontal RCS of <b>0.0001 m²</b> is virtually invisible beyond 15 km nose-on. However, turning 90° broadside exposes fuselage surfaces and vertical stabilizers, multiplying radar return by <b>3.2× (+220% signature increase)</b>. Approach hostile radars nose-on whenever practical.
       </div>
 
       <div class="ge-subhead">3. 100% MANUAL COMMAND DOCTRINE</div>
       <div class="ge-desc">
-        Your flight operates under <b>Manual Command</b>. Automatic flight laws will not divert your aircraft, alter headings, fire missiles, expend command tokens, or deploy countermeasures without your direct trigger. Autocannons fire strictly upon command: press <b>[Key G]</b> or tap <b>[BURST]</b>.
+        Your flight operates under <b>Manual Command</b>. Automated flight laws will not divert your aircraft, alter headings, fire missiles, expend command tokens, or deploy countermeasures without your direct trigger. Autocannons fire strictly upon command: press <b>[Key G]</b> or tap <b>[BURST]</b>.
       </div>
 
       <div class="ge-subhead">4. MULTI-MISSILE SALVO SATURATION DOCTRINE</div>
@@ -56,30 +86,54 @@ window.MANUAL_BASICS = [
       </div>
 
       <div class="ge-subhead">ENGINE POWER MODES: IDLE, CRUISE, MILITARY POWER &amp; AFTERBURNER</div>
-      <div class="ge-desc">
-        Your engine throttle quadrant operates across four distinct regimes:
-        <ul>
-          <li><b>IDLE (20%):</b> Minimum sustained power. Bleeds excess airspeed to re-enter corner turn velocity and cools engine exhaust to lower thermal IR signature.</li>
-          <li><b>CRUISE (50%–60%):</b> Standard transit power. Efficient fuel consumption, stable turn performance, and minimal thermal emissions.</li>
-          <li><b>MILITARY POWER (85%):</b> Maximum dry thrust. High acceleration and climb performance without blooming the infrared exhaust plume.</li>
-          <li><b>AFTERBURNER (86%–100%):</b> Wet thrust injecting raw fuel into the exhaust conduit. Delivers peak acceleration and sprint velocity at the cost of high thermal signature (+15% tracking bonus for hostile heat-seeking missiles).</li>
-        </ul>
-      </div>
-
-      <div class="ge-subhead">MANUAL CANNON &amp; WEAPON DISCHARGE</div>
-      <div class="ge-desc">
-        <ul>
-          <li><b>MANUAL BURST [Key G]:</b> Fires a 30-round high-velocity burst along your boresight heading. When locked onto a target within cannon range (&lt;4.8 km), rounds deliver direct penetrative damage.</li>
-          <li><b>PYLONS [Keys 1–9]:</b> Discharges the weapon system mounted on the corresponding hardpoint station against your designated target.</li>
-        </ul>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>POWER DETENT</th><th>THROTTLE %</th><th>AIRSPEED PROFILE</th><th>TACTICAL CHARACTERISTICS &amp; THERMAL EMISSION</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#8494ab;font-weight:800;">IDLE</td>
+              <td>20% – 35%</td>
+              <td>Mach 0.35 – 0.55</td>
+              <td>Bleeds excess speed to re-enter corner velocity. Cools exhaust plume to minimize IR lock detection range.</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">CRUISE</td>
+              <td>36% – 70%</td>
+              <td>Mach 0.65 – 0.85</td>
+              <td>Standard formation transit. Optimal fuel efficiency, stable turn performance, and minimal thermal emissions.</td>
+            </tr>
+            <tr>
+              <td style="color:#00f5a0;font-weight:800;">MIL POWER</td>
+              <td>71% – 85%</td>
+              <td>Mach 0.85 – 1.05</td>
+              <td>Maximum dry thrust. High acceleration and climb performance without blooming the infrared exhaust plume.</td>
+            </tr>
+            <tr>
+              <td style="color:#f97316;font-weight:800;">AFTERBURNER</td>
+              <td>86% – 100%</td>
+              <td>Mach 1.05 – 3.20+</td>
+              <td>Wet thrust injecting raw fuel into exhaust conduits. Peak dash velocity (+15% tracking vulnerability to hostile IR missiles).</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="ge-subhead">KINETIC ENERGY CONVERSIONS: DIVE &amp; ZOOM</div>
-      <div class="ge-desc">
-        <ul>
-          <li><b>KINETIC DIVE [Key X]:</b> Trades 7,500 ft of altitude to recover <b>+0.32 Mach</b> in escape velocity. Recommended for defensive disengagement from missile envelopes.</li>
-          <li><b>ZOOM CLIMB [Key Z]:</b> Converts kinetic airspeed (-0.28 Mach) into <b>+8,500 ft</b> of altitude perch (FL380–FL500), where thinner air expands radar line-of-sight and missile kinematic range. Requires at least Mach 0.45.</li>
-        </ul>
+      <div class="ge-grid-2">
+        <div class="ge-card">
+          <b style="color:#38bdf8;">KINETIC DIVE [Key X]</b>
+          <div style="font-size:0.74rem;color:#cbd5e1;line-height:1.5;">
+            Trades <b>7,500 ft</b> of altitude to gain <b>+0.32 Mach</b> in escape velocity. Recommended for defensive disengagement from long-range missile envelopes and escaping high-G merges. Costs 0.40 TOK.
+          </div>
+        </div>
+        <div class="ge-card">
+          <b style="color:#00f5a0;">ZOOM CLIMB [Key Z]</b>
+          <div style="font-size:0.74rem;color:#cbd5e1;line-height:1.5;">
+            Converts kinetic airspeed (<b>-0.28 Mach</b>) into <b>+8,500 ft</b> of altitude perch (FL380–FL580), where thinner air expands radar line-of-sight and missile kinematic launch range. Requires at least Mach 0.45. Costs 0.40 TOK.
+          </div>
+        </div>
       </div>
 
       <div class="ge-subhead">ALL-AXIS THRUST VECTORING (TVC)</div>
@@ -93,27 +147,63 @@ window.MANUAL_BASICS = [
     title: 'CHAPTER 3: PAYLOAD RATIO, PILOT G-LOAD & SYNTHETIC VISION',
     desc: `
       <div class="ge-subhead">PAYLOAD RATIO (LOAD %) &amp; WEIGHT CALCULATIONS</div>
-      <div class="ge-desc">
-        Every airframe has an empty weight and a certified <b>Maximum Payload Carriage (M_max)</b>:
-        <br><br>
-        <center><code>Payload % = (Equipment Mass / Max Payload Mass) × 100%</code></center>
-        <br>
-        <ul>
-          <li><b>&le; 35% [CLEAN / LIGHT]:</b> Peak thrust-to-weight ratio. Full top sprint speed (100% S0), rapid acceleration, and maximum climb rate.</li>
-          <li><b>36% – 60% [NORMAL]:</b> Standard combat loadout with minor aerodynamic degradation (~5% top speed reduction).</li>
-          <li><b>61% – 80% [HEAVY]:</b> Heavy strike package. Maximum sprint speed degraded by 10%–15% and turning radius widened.</li>
-          <li><b>&gt; 80% [OVERLOAD]:</b> Maximum ordnance loadout. Top speed degraded by up to 25% with noticeable acceleration lag.</li>
-        </ul>
+      <div class="ge-formula-card">
+        <span style="color:#94a3b8;font-size:0.62rem;">PAYLOAD RATIO FORMULATION:</span>
+        <div class="ge-formula-code">Payload % = (Equipment Mass / Max Payload Mass) × 100%</div>
+      </div>
+
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>WEIGHT STATUS</th><th>PAYLOAD RATIO</th><th>KINEMATIC IMPACT</th><th>AIRFRAME PERFORMANCE IMPACT</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#00f0ff;font-weight:800;">CLEAN / LIGHT</td>
+              <td>&le; 35%</td>
+              <td>None (100% Top Speed)</td>
+              <td>Peak thrust-to-weight ratio. Full dry sprint speed, maximum climb rate, and rapid roll acceleration.</td>
+            </tr>
+            <tr>
+              <td style="color:#00f5a0;font-weight:800;">NORMAL</td>
+              <td>36% – 60%</td>
+              <td>~5% Speed Decay</td>
+              <td>Standard combat loadout with minor aerodynamic degradation. High combat capability.</td>
+            </tr>
+            <tr>
+              <td style="color:#ffb830;font-weight:800;">HEAVY</td>
+              <td>61% – 80%</td>
+              <td>10% – 15% Speed Decay</td>
+              <td>Heavy strike package. Maximum sprint speed degraded by 10%–15% and turning radius noticeably widened.</td>
+            </tr>
+            <tr>
+              <td style="color:#ef4444;font-weight:800;">OVERLOAD</td>
+              <td>&gt; 80%</td>
+              <td>Up to 25% Speed Decay</td>
+              <td>Maximum ordnance loadout. Top speed degraded by up to 25% with pronounced acceleration lag.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="ge-subhead">PILOT G-LOAD FATIGUE, TUNNEL VISION &amp; G-LOC</div>
       <div class="ge-desc">
         Sustained high-G turns induce physiological circulatory strain on human pilots:
-        <ul>
-          <li><b>STRESS &ge; 0.65 [TUNNEL VISION]:</b> Visual field constriction. Turn authority degrades by <b>30%</b>, weapon accuracy decreases by <b>15%</b>, and defensive evasion efficiency drops by <b>50%</b>.</li>
-          <li><b>STRESS &ge; 0.95 [G-LOC BLACKOUT]:</b> Temporary loss of consciousness for 2.8 seconds. The aircraft maintains current heading without maneuver authority; evasion drops to <b>0%</b>.</li>
-          <li>Stress dissipates during straight-and-level flight. Titanium-Kevlar cockpit tubs raise G-LOC tolerance to 1.05. Flight Leads receive an inherent G-fatigue mitigation bonus.</li>
-        </ul>
+      </div>
+
+      <div class="ge-grid-2">
+        <div class="ge-card" style="border-left:3px solid #ffb830;">
+          <b style="color:#ffb830;">TUNNEL VISION (STRESS &ge; 0.65)</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Visual field constriction. Turn authority degrades by <b>30%</b>, weapon targeting accuracy decreases by <b>15%</b>, and defensive evasion efficiency drops by <b>50%</b>. Dissipates during straight-and-level flight.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #ef4444;">
+          <b style="color:#ef4444;">G-LOC BLACKOUT (STRESS &ge; 0.95)</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Temporary loss of consciousness for <b>2.8 seconds</b>. The aircraft maintains current heading without maneuver authority; missile evasion drops to <b>0%</b>.
+          </div>
+        </div>
       </div>
 
       <div class="ge-subhead">COFFIN SYNTHETIC VISION (MANUAL FLIGHT INTERFACE)</div>

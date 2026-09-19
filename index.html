@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/core/dropdown.css">
   <link rel="stylesheet" href="css/core/tooltips.css">
   <link rel="stylesheet" href="css/core/codex.css">
+  <link rel="stylesheet" href="css/core/manual.css">
   <link rel="stylesheet" href="css/core/dialogs/dialogs.css">
   <link rel="stylesheet" href="css/core/dialogs/settings.css">
   <link rel="stylesheet" href="css/core/dialogs/debrief.css">
@@ -155,8 +156,16 @@
 <div id="glossary-modal" class="modal-backdrop">
   <div class="glossary-window">
     <div class="glossary-header">
-      <div class="modal-title-row"><h2>FLIGHT MANUAL &amp; OPERATIONAL REFERENCE</h2></div>
+      <div class="modal-title-row">
+        <h2>FLIGHT MANUAL &amp; OPERATIONAL REFERENCE</h2>
+      </div>
       <button id="btn-close-glossary" class="hud-btn small">CLOSE</button>
+    </div>
+    <div class="manual-toolbar">
+      <div class="manual-search-row">
+        <input type="text" id="manual-search-filter" class="manual-search-input" placeholder="Search operational manual by keyword (e.g. Notch, RCS, COFFIN, Salvo, Depot)...">
+      </div>
+      <div class="manual-nav-bar" id="manual-quick-nav-bar"></div>
     </div>
     <div class="glossary-content" id="glossary-modal-content"></div>
   </div>
