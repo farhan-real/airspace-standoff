@@ -25,10 +25,7 @@ class ControlsSystem {
 
   initExitButtons() {
     const procExit = document.getElementById('btn-proc-exit');
-    const pauseExit = document.getElementById('btn-pause-exit');
-
     if (procExit) procExit.onclick = () => this.exitGame();
-    if (pauseExit) pauseExit.onclick = () => this.exitGame();
   }
 
   exitGame() {
