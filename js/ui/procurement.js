@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Procurement Orchestrator (<250 lines)
+ * AIRSPACE STANDOFF // Procurement Orchestrator
  * Professional military terminology for squadron management.
  */
 

@@ -1,0 +1,213 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Tactical Maneuver Deck Stylesheet
+   ========================================================================== */
+
+.tactical-deck-bay {
+  height: 110px;
+  min-height: 110px;
+  max-height: 110px;
+  flex-shrink: 0;
+  background: #040814;
+  border-top: 1.5px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 4px 10px;
+  gap: 3px;
+  box-sizing: border-box;
+}
+
+.deck-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.64rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: #8494ab;
+  flex-shrink: 0;
+}
+
+.deck-alert {
+  color: #00f0ff;
+}
+
+.deck-grid {
+  flex: 1;
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  align-items: stretch;
+}
+
+.maneuver-card {
+  width: 195px;
+  min-width: 195px;
+  max-width: 195px;
+  height: 86px;
+  background: #07101e;
+  border: 1px solid #162b48;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 5px 7px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  box-sizing: border-box;
+}
+
+.maneuver-card:hover:not(.locked) {
+  border-color: var(--color-cyan);
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+}
+
+.maneuver-card.recommended-card {
+  border-color: #00f0ff;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+.maneuver-card.locked {
+  opacity: 0.30;
+  filter: grayscale(0.8);
+  cursor: not-allowed;
+}
+
+.mcard-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.mcard-name {
+  font-size: 0.70rem;
+  font-weight: 800;
+  color: #f8fafc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mcard-cost {
+  font-size: 0.60rem;
+  font-family: var(--font-mono);
+  color: var(--color-green);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.mcard-badge {
+  font-size: 0.54rem;
+  font-family: var(--font-mono);
+  color: var(--color-cyan);
+}
+
+.mcard-hint-box {
+  background: #020610;
+  border: 1px solid #111d2e;
+  border-radius: 2px;
+  padding: 2px 5px;
+  font-size: 0.54rem;
+  font-family: var(--font-mono);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.mcard-when {
+  color: #7dd3fc;
+  font-weight: 700;
+}
+
+.mcard-why {
+  color: #cbd5e1;
+}
+
+.mcard-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.60rem;
+  font-family: var(--font-mono);
+  border-top: 1px dashed #142844;
+  padding-top: 2px;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bonus-tag {
+  color: var(--color-green);
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.recom-badge {
+  background: #0284c7;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.52rem;
+  padding: 1px 4px;
+  border-radius: 2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.recom-badge.hidden {
+  display: none;
+}
+
+@media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
+  .tactical-deck-bay {
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+    padding: 3px 8px !important;
+  }
+
+  .deck-header {
+    display: none !important;
+  }
+
+  .deck-grid {
+    gap: 6px !important;
+    align-items: center !important;
+  }
+
+  .maneuver-card {
+    height: 48px !important;
+    width: 165px !important;
+    min-width: 165px !important;
+    max-width: 165px !important;
+    padding: 4px 7px !important;
+  }
+
+  .mcard-name {
+    font-size: 0.62rem !important;
+    font-weight: 800 !important;
+    max-width: 110px !important;
+  }
+
+  .mcard-cost {
+    font-size: 0.54rem !important;
+  }
+
+  .mcard-badge,
+  .mcard-hint-box {
+    display: none !important;
+  }
+
+  .mcard-status-bar {
+    font-size: 0.54rem !important;
+  }
+
+  .bonus-tag {
+    font-size: 0.54rem !important;
+  }
+
+  .recom-badge {
+    font-size: 0.48rem !important;
+  }
+}

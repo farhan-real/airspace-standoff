@@ -1,0 +1,235 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Airframe Catalog Cards Stylesheet
+   ========================================================================== */
+
+.airframe-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.cat-pill-btn {
+  background-color: #070e1a;
+  border: 1px solid #16273e;
+  color: #8494ab;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 4px 9px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.cat-pill-btn.active {
+  background-color: #00f0ff;
+  color: #000000;
+  border-color: #00f0ff;
+}
+
+.airframes-dense-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 4px;
+}
+
+.airframe-dense-card {
+  background-color: #070e1a;
+  border: 1px solid #16273e;
+  border-radius: 4px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.adc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.adc-name {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.adc-role {
+  font-size: 0.58rem;
+  color: #8494ab;
+  font-family: var(--font-mono);
+}
+
+.adc-cost {
+  font-size: 0.82rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--color-green);
+}
+
+.adc-badges-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin: 1px 0;
+}
+
+.adc-badge {
+  font-size: 0.64rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+}
+
+.adc-feat {
+  background-color: #032338;
+  border: 1px solid #0284c7;
+  color: #7dd3fc;
+}
+
+.badge-cat-stealth {
+  background-color: #3b0764;
+  border: 1px solid #9333ea;
+  color: #e9d5ff;
+}
+
+.badge-cat-superiority {
+  background-color: #032338;
+  border: 1px solid #0284c7;
+  color: #bae6fd;
+}
+
+.badge-cat-multirole {
+  background-color: #064e3b;
+  border: 1px solid #10b981;
+  color: #a7f3d0;
+}
+
+.badge-cat-strike {
+  background-color: #451a03;
+  border: 1px solid #f97316;
+  color: #fed7aa;
+}
+
+.badge-cat-ew {
+  background-color: #312e81;
+  border: 1px solid #6366f1;
+  color: #c7d2fe;
+}
+
+.badge-cat-drones {
+  background-color: #3f123f;
+  border: 1px solid #ec4899;
+  color: #fbcfe8;
+}
+
+.badge-cat-experimental {
+  background-color: #1e1b4b;
+  border: 1px solid #6366f1;
+  color: #e0e7ff;
+}
+
+.adc-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 5px;
+  background-color: #020610;
+  border: 1px solid #111e30;
+  border-radius: 3px;
+  padding: 4px 6px;
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+}
+
+.adc-metric-cell {
+  display: flex;
+  justify-content: space-between;
+  color: #8494ab;
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+.adc-metric-cell b {
+  color: #f1f5f9;
+}
+
+.adc-desc {
+  font-size: 0.58rem;
+  color: #8494ab;
+  line-height: 1.25;
+}
+
+.adc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed #16273e;
+  padding-top: 4px;
+}
+
+.adc-btn-add {
+  background-color: #0284c7;
+  border: 1px solid #38bdf8;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.adc-btn-add:active {
+  background-color: #00f0ff;
+  color: #000000;
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cat-pill-btn:hover {
+    border-color: #00f0ff;
+    color: #ffffff;
+  }
+
+  .airframe-dense-card:hover {
+    border-color: var(--color-cyan);
+    background-color: #0a1526;
+  }
+
+  .adc-btn-add:hover {
+    background-color: var(--color-cyan);
+    color: #000000;
+  }
+}
+
+@media (max-width: 1024px) {
+  .airframe-filter-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 2px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .cat-pill-btn {
+    padding: 2px 6px;
+    font-size: 0.58rem;
+    flex-shrink: 0;
+  }
+
+  .airframes-dense-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

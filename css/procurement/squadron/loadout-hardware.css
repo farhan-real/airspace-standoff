@@ -1,0 +1,260 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Roster Hardware & Weapon Stations
+   ========================================================================== */
+
+.su-gun-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #020610;
+  border: 1px solid #132236;
+  border-radius: 3px;
+  padding: 4px 7px;
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.gun-sel-label {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: #ffb830;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.gun-dmg-badge {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.unit-metric-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background-color: #020610;
+  border: 1px solid #111e30;
+  border-radius: 3px;
+  padding: 5px 8px;
+  box-sizing: border-box;
+}
+
+.metric-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metric-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.64rem;
+  font-family: var(--font-mono);
+  color: #cbd5e1;
+}
+
+.capacity-pips-bar {
+  display: flex;
+  height: 6px;
+  gap: 2px;
+  background-color: #08111e;
+  border-radius: 1px;
+  padding: 1px;
+}
+
+.slot-pip {
+  flex: 1;
+  background-color: #142338;
+  border-radius: 1px;
+}
+
+.slot-pip.filled {
+  background-color: var(--color-cyan);
+}
+
+.weight-bar-bg {
+  height: 6px;
+  background-color: #08111e;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.weight-bar-fill {
+  height: 100%;
+  background-color: var(--color-green);
+  transition: width 0.1s ease;
+}
+
+.weight-bar-fill.heavy {
+  background-color: var(--color-amber);
+}
+
+.weight-bar-fill.overload {
+  background-color: var(--color-red);
+}
+
+.upgrades-socket-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background-color: #020610;
+  border: 1px solid #111e30;
+  padding: 5px 8px;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+.upgrades-label-row {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: #8494ab;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.upgrade-slots-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.upgrade-socket {
+  background-color: #060c18;
+  border: 1px dashed #162a44;
+  padding: 3px 6px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: #818cf8;
+}
+
+.upgrade-socket.filled {
+  border-style: solid;
+  border-color: #6366f1;
+  background-color: #0f1026;
+  color: #e0e7ff;
+}
+
+.upgrade-socket.empty {
+  cursor: pointer;
+  color: #64748b;
+}
+
+.upgrade-socket.empty:hover {
+  border-color: #00f0ff;
+  color: #00f0ff;
+}
+
+.btn-socket-dismount {
+  background-color: transparent;
+  border: none;
+  color: #f87171;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0 3px;
+}
+
+.installed-weapons-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.installed-item-card {
+  background-color: #030712;
+  border: 1px solid #14243b;
+  border-radius: 2px;
+  padding: 4px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  box-sizing: border-box;
+}
+
+.iic-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.iic-sub {
+  font-size: 0.58rem;
+  color: #8494ab;
+  margin-left: 6px;
+}
+
+.btn-dismount-item {
+  background-color: rgba(255, 51, 102, 0.12);
+  border: 1px solid var(--color-red);
+  color: #fecdd3;
+  padding: 2px 6px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+}
+
+.btn-dismount-item:hover {
+  background-color: var(--color-red);
+  color: #ffffff;
+}
+
+.empty-bay-indicator {
+  text-align: center;
+  padding: 6px;
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: #64748b;
+  border: 1px dashed #142338;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.empty-bay-indicator:hover {
+  border-color: var(--color-cyan);
+  color: var(--color-cyan);
+  background-color: rgba(0, 240, 255, 0.05);
+}
+
+.slot-action-btn {
+  background-color: rgba(2, 132, 199, 0.15);
+  border: 1px dashed #0284c7;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  font-size: 0.60rem;
+  font-weight: 700;
+  padding: 4px;
+  border-radius: 3px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.slot-action-btn:hover {
+  background-color: #0284c7;
+  color: #ffffff;
+  border-style: solid;
+  border-color: #00f0ff;
+}
+
+@media (max-width: 1024px) {
+  .installed-item-card {
+    padding: 3px 5px;
+  }
+
+  .iic-title {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+  }
+}

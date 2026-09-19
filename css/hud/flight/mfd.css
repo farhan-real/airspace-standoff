@@ -1,0 +1,263 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Flight Controls & MFD Panel Stylesheet
+   ========================================================================== */
+
+.active-unit-mfd {
+  background: var(--bg-panel);
+  border-left: 1.5px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  gap: 5px;
+  overflow-y: auto;
+}
+
+.unit-flight-box {
+  background-color: #07101e;
+  border: 1px solid #142844;
+  border-radius: 4px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.unit-title {
+  font-size: 0.80rem;
+  font-weight: 900;
+  color: var(--color-cyan);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.mfd-callsign-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: #8494ab;
+}
+
+.mfd-callsign-row b {
+  color: #00f0ff;
+}
+
+.coffin-indicator {
+  background-color: #1e1b4b;
+  color: #c7d2fe;
+  font-size: 0.52rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 2px;
+  border: 1px solid #6366f1;
+}
+
+.coffin-indicator.hidden {
+  display: none !important;
+}
+
+.lead-indicator {
+  background-color: #082846;
+  color: #ffd700;
+  font-size: 0.54rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 2px;
+  border: 1px solid #eab308;
+}
+
+.lead-indicator.hidden {
+  display: none !important;
+}
+
+.ace-indicator {
+  background-color: #78350f;
+  color: #ffd700;
+  font-size: 0.54rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 2px;
+  border: 1px solid #ffd700;
+}
+
+.ace-indicator.hidden {
+  display: none !important;
+}
+
+/* Military Throttle Quadrant */
+.throttle-quadrant {
+  background-color: #020610;
+  border: 1px solid #12243d;
+  border-radius: 4px;
+  padding: 5px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.throttle-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+}
+
+.tq-label {
+  font-size: 0.56rem;
+  color: #8494ab;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.tq-val {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: var(--color-cyan);
+}
+
+.tq-val.burner {
+  color: #f97316 !important;
+  text-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
+}
+
+.throttle-track-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 12px;
+  margin-top: 2px;
+}
+
+.military-throttle-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, #091728 0%, #0284c7 72%, #dc2626 100%);
+  border-radius: 3px;
+  border: 1px solid #0f243d;
+  outline: none;
+  cursor: pointer;
+}
+
+.military-throttle-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(180deg, #1e3a60 0%, #0a1422 100%);
+  border: 1px solid #00f0ff;
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  cursor: ew-resize;
+}
+
+.throttle-detents {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+  color: #4b5e78;
+  pointer-events: none;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.throttle-detents .highlight {
+  color: #f97316;
+}
+
+.stress-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.56rem;
+  font-family: var(--font-mono);
+  color: #8494ab;
+  margin-bottom: 2px;
+  font-weight: 700;
+}
+
+.stress-bar-frame {
+  height: 5px;
+  background-color: #020610;
+  border: 1px solid #142844;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-green), var(--color-cyan), var(--color-red));
+  transition: width 0.15s ease;
+}
+
+.gloc-badge {
+  background-color: var(--color-red);
+  color: #ffffff;
+  font-weight: 800;
+  text-align: center;
+  font-size: 0.56rem;
+  font-family: var(--font-mono);
+  padding: 2px 0;
+  margin-top: 2px;
+  border-radius: 2px;
+}
+
+.gloc-badge.hidden {
+  display: none !important;
+}
+
+.stress-warn-badge {
+  background-color: #78350f;
+  border: 1px solid #f97316;
+  color: #fed7aa;
+  font-weight: 800;
+  text-align: center;
+  font-size: 0.52rem;
+  font-family: var(--font-mono);
+  padding: 2px 0;
+  margin-top: 2px;
+  border-radius: 2px;
+}
+
+.stress-warn-badge.hidden {
+  display: none !important;
+}
+
+.flight-actions-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.energy-trade-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+}
+
+.energy-trade-buttons .hud-btn {
+  padding: 4px;
+  font-size: 0.60rem;
+  text-align: center;
+}
+
+.rtb-toggle-btn {
+  width: 100%;
+  padding: 4px;
+  font-size: 0.62rem;
+  background-color: #064e3b;
+  border-color: #10b981;
+  color: #a7f3d0;
+  transition: all 0.14s ease;
+}

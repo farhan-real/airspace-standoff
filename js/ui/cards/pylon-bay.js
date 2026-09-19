@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Weapon Pylon Bay (<250 lines)
+ * AIRSPACE STANDOFF // Weapon Pylon Bay
  * Pure manual command. Cancels accidental clicks during touch-scrolling.
  */
 

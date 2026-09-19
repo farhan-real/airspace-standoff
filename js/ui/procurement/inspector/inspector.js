@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Inspector Coordinator & Tag-Only Tooltip Engine (<250 lines)
+ * AIRSPACE STANDOFF // Inspector Coordinator & Tag-Only Tooltip Engine
  * Mobile inspection is strictly for tags and badges; aircraft cards do not trigger mobile tooltips.
  */
 

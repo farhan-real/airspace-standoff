@@ -1,0 +1,330 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Stores Management System (SMS) Stylesheet
+   ========================================================================== */
+
+.pylon-bay,
+.pylon-rack-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.target-solution-box {
+  border-radius: 4px;
+  padding: 5px 7px;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.target-solution-box.no-target {
+  background: #020610;
+  border: 1px dashed #142844;
+  color: #64748b;
+  font-size: 0.58rem;
+  text-align: center;
+}
+
+.target-solution-box.active-target {
+  background: #071224;
+  border: 1.5px solid #0284c7;
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.3);
+}
+
+.tsb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #00f0ff;
+  border-bottom: 1px solid #142844;
+  padding-bottom: 3px;
+  margin-bottom: 3px;
+}
+
+.tsb-dist {
+  color: #00f0ff;
+}
+
+.tsb-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 4px;
+  font-size: 0.60rem;
+  color: #8494ab;
+}
+
+.tsb-grid.hidden,
+.tsb-empty.hidden {
+  display: none;
+}
+
+.tsb-grid b {
+  color: #f1f5f9;
+}
+
+.autocannon-status-card {
+  background: #060e1c;
+  border: 1px solid #0284c7;
+  border-radius: 4px;
+  padding: 5px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.autocannon-status-card .pylon-top-row span#gun-ui-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 155px;
+  display: inline-block;
+}
+
+.autocannon-auto-badge {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.56rem;
+  font-family: var(--font-mono);
+  color: #8494ab;
+}
+
+.armed-indicator {
+  color: var(--color-green);
+  font-weight: 800;
+}
+
+.pylon-item-card {
+  background: #070f1e;
+  border: 1px solid #162b48;
+  border-radius: 4px;
+  padding: 5px 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: all 0.12s ease;
+}
+
+.pylon-item-card.empty {
+  opacity: 0.32;
+  border-style: dashed;
+}
+
+.pylon-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.pylon-name-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.pylon-name {
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 155px;
+}
+
+.pylon-ammo-counter {
+  color: var(--color-green);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.pylon-sub-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  color: #8494ab;
+}
+
+.pk-value-tag {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.pk-progress-bar-bg {
+  height: 4px;
+  background: #020610;
+  border: 1px solid #142844;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.pk-progress-fill {
+  height: 100%;
+  transition: width 0.12s ease;
+}
+
+.btn-fire-pylon {
+  background: rgba(0, 240, 255, 0.10);
+  border: 1px solid var(--color-cyan);
+  color: #e0f2fe;
+  font-size: 0.64rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 4px 8px;
+  text-align: center;
+  margin-top: 2px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.12s ease;
+}
+
+.btn-fire-pylon:hover:not(:disabled) {
+  background: var(--color-cyan);
+  color: #000;
+  box-shadow: 0 0 10px var(--color-cyan);
+}
+
+.btn-fire-pylon:disabled {
+  opacity: 0.32;
+  border-color: #243850;
+  color: #64748b;
+  cursor: not-allowed;
+  background: #050b14;
+}
+
+.mob-compact-cannon {
+  grid-column: 1 / -1;
+  background: #060e1a;
+  border: 1px solid #162a44;
+  border-radius: 4px;
+  padding: 5px 8px;
+  margin-bottom: 3px;
+  font-family: var(--font-mono);
+  box-sizing: border-box;
+}
+
+.mob-cannon-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.mob-compact-pylon {
+  background: #070e1a;
+  border: 1px solid #14243b;
+  border-radius: 4px;
+  padding: 5px 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3px;
+  font-family: var(--font-mono);
+  box-sizing: border-box;
+  min-height: 56px;
+}
+
+.mob-compact-pylon.empty {
+  opacity: 0.35;
+  border-style: dashed;
+}
+
+.mob-pylon-top-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+}
+
+.mob-pylon-name-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  max-width: 65%;
+  min-width: 0;
+}
+
+.mob-pylon-name {
+  color: #f8fafc;
+  font-size: 0.66rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mob-pylon-top-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.mob-pylon-cap {
+  color: var(--color-green);
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.mob-pylon-prob-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.58rem;
+  color: #8494ab;
+  line-height: 1.2;
+}
+
+.mob-pylon-sub {
+  color: #7dd3fc;
+  white-space: nowrap;
+  font-size: 0.56rem;
+}
+
+.mob-pylon-pk {
+  font-weight: 800;
+  white-space: nowrap;
+  font-size: 0.60rem;
+}
+
+.micro-spec-btn {
+  background: #081628;
+  border: 1px solid #0284c7;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.mob-fire-btn {
+  width: 100% !important;
+  padding: 3px 6px !important;
+  font-size: 0.62rem !important;
+  height: 24px !important;
+  line-height: 1 !important;
+  margin-top: 2px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 1024px) {
+  #pylon-rack,
+  .pylon-rack-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+  }
+}

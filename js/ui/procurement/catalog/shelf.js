@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Armory Catalog Shelf (<250 lines)
+ * AIRSPACE STANDOFF // Armory Catalog Shelf
  * Single-tap equipping on '+ EQUIP'; tags are clickable with tooltips.
  */
 

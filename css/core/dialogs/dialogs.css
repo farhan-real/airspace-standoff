@@ -1,0 +1,241 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Core Dialogs & System Inspection Window
+   ========================================================================== */
+
+#tactical-dialog-modal { z-index: 3500 !important; }
+#system-inspect-modal { z-index: 3200 !important; }
+#settings-modal { z-index: 3000 !important; }
+#glossary-modal { z-index: 3000 !important; }
+#rwr-briefing-modal { z-index: 2900 !important; }
+#abort-confirm-modal { z-index: 2800 !important; }
+#pause-modal { z-index: 2500 !important; }
+#preconfig-aircraft-modal { z-index: 1400 !important; }
+#game-over-modal { z-index: 1000 !important; }
+#procurement-modal { z-index: 500 !important; }
+
+.modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Tactical Command Dialog Actions */
+.tactical-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #142338;
+}
+
+.tactical-dialog-btn {
+  height: 36px;
+  min-width: 110px;
+  padding: 0 18px;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.14s ease;
+}
+
+.tactical-dialog-btn.highlight {
+  background: #0284c7;
+  border: 1px solid #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.35);
+}
+
+.tactical-dialog-btn.highlight:hover {
+  background: #00f0ff;
+  border-color: #00f0ff;
+  color: #000000;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.5);
+}
+
+.tactical-dialog-btn.alert {
+  background: #dc2626;
+  border: 1px solid #f87171;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.4);
+}
+
+.tactical-dialog-btn.alert:hover {
+  background: #ef4444;
+  border-color: #fca5a5;
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.6);
+}
+
+/* System Inspection Window */
+.inspect-window {
+  background: #050b16;
+  border: 1px solid #00f0ff;
+  border-top: 3px solid #00f0ff;
+  border-radius: 6px;
+  width: 95%;
+  max-width: 860px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+
+.inspect-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #091322;
+  padding: 10px 16px;
+  border-bottom: 1px solid #16273e;
+  flex-shrink: 0;
+}
+
+.inspect-header h2 {
+  font-size: 0.90rem;
+  color: #00f0ff;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.inspect-body {
+  padding: 14px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.inspect-type-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inspect-badge {
+  font-size: 0.60rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.inspect-cost-tag {
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.inspect-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3px;
+  background: #030712;
+  border: 1px solid #132236;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.68rem;
+}
+
+.inspect-stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #94a3b8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 5px 0;
+}
+
+.inspect-stat-item span {
+  color: #8494ab;
+  font-weight: 700;
+  font-size: 0.65rem;
+}
+
+.inspect-stat-item b {
+  text-align: right;
+  font-size: 0.68rem;
+}
+
+.inspect-desc-box {
+  background: #030712;
+  border-left: 3px solid #00f0ff;
+  padding: 8px 12px;
+  border-radius: 3px;
+  font-size: 0.70rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
+.inspect-action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid #142236;
+}
+
+.inspect-action-btn {
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.inspect-action-btn.req-btn {
+  background: #0284c7;
+  color: #fff;
+  border-color: #00f0ff;
+}
+
+.inspect-action-btn.select-btn {
+  background: #059669;
+  color: #fff;
+  border-color: #10b981;
+}
+
+.inspect-action-btn.close-btn {
+  background: #1a273b;
+  color: #94a3b8;
+  border-color: #2e3e56;
+}
+
+.spec-inspect-btn,
+.gun-inspect-btn,
+.pylon-inspect-btn {
+  background: #081628;
+  border: 1px solid #0284c7;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  font-size: 0.60rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.spec-inspect-btn:hover,
+.gun-inspect-btn:hover,
+.pylon-inspect-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #00f0ff;
+}

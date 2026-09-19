@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Shelf Airframes Sub-Renderer
- * Single-tap purchasing on '+ ADD'; tags are clickable with tooltips (<250 lines).
+ * Single-tap purchasing on '+ ADD'; tags are clickable with tooltips.
  */
 
 class ShelfAirframesRenderer {

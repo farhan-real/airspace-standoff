@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Tactical Maneuvers Hand Deck (<250 lines)
+ * AIRSPACE STANDOFF // Tactical Maneuvers Hand Deck
  */
 
 class ManeuverDeckRenderer {

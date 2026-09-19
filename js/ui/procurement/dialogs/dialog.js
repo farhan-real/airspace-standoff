@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Tactical Dialog Modal Submodule (<250 lines)
+ * AIRSPACE STANDOFF // Tactical Dialog Modal Submodule
  * Standardized operational dialogs and clean confirmations.
  */
 

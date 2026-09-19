@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // After Action Report System (<250 lines)
+ * AIRSPACE STANDOFF // After Action Report System
  * Standard military mission debrief format.
  */
 

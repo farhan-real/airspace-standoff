@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AIRSPACE STANDOFF // Procurement Hangar Layout
+   AIRSPACE STANDOFF // Procurement Hangar Window & Layout
    ========================================================================== */
 
 .procurement-window {
@@ -8,281 +8,28 @@
   height: 98vh;
   max-height: 98vh;
   min-height: 500px;
-  background: #050b16;
-  border: 1px solid #16273e;
+  background-color: #040916;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.08) 0%, transparent 40%),
+    linear-gradient(180deg, #050c1b 0%, #030712 100%);
+  border: 1px solid #162f52;
   border-top: 3px solid #00f0ff;
   border-radius: 6px;
   display: flex;
   flex-direction: column;
-  padding: 6px 10px;
-  gap: 5px;
+  padding: 7px 12px;
+  gap: 6px;
   overflow: hidden;
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
   transform: translateZ(0);
 }
 
-.procurement-header {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  border-bottom: 1px solid #16273e;
-  padding-bottom: 4px;
-  gap: 4px;
-  width: 100%;
-  box-sizing: border-box;
+.procurement-mobile-tabs {
+  display: none;
 }
-
-.title-group {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: 8px;
-}
-
-.brand-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-}
-
-.game-name {
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: #f8fafc;
-  letter-spacing: 1px;
-}
-
-.hangar-badge {
-  background: rgba(0, 240, 255, 0.12);
-  border: 1px solid #00f0ff;
-  color: #00f0ff;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 3px;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
-}
-
-.title-right-group {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.squad-callsign-tag,
-.proc-manual-btn,
-.proc-exit-btn {
-  font-size: 0.76rem;
-  font-family: var(--font-mono);
-  font-weight: 800;
-  padding: 5px 12px;
-  border-radius: 3px;
-  cursor: pointer;
-  white-space: nowrap;
-  height: 30px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  transition: all 0.14s ease;
-}
-
-.squad-callsign-tag { background: #08172c; border: 1px solid #0284c7; color: #ffb830; }
-.proc-manual-btn { background: #08172c; border: 1px solid #0284c7; color: #7dd3fc; }
-.proc-exit-btn { background: rgba(153, 27, 27, 0.35); border: 1px solid #ef4444; color: #fecdd3; }
-
-.squad-callsign-tag:hover, .proc-manual-btn:hover { background: #0284c7; color: #ffffff; border-color: #00f0ff; }
-.proc-exit-btn:hover { background: #ef4444; color: #ffffff; border-color: #f87171; box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
-
-.mode-and-ai-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.segmented-control {
-  display: flex;
-  background: #020610;
-  border: 1px solid #16273e;
-  border-radius: 4px;
-  padding: 2px;
-}
-
-.seg-btn {
-  border: none;
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  font-weight: 800;
-  padding: 5px 11px;
-  border-radius: 3px;
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.12s ease;
-}
-
-.seg-btn:hover { color: #f1f5f9; }
-.seg-btn.active { background: var(--color-cyan); color: #000; box-shadow: 0 0 8px rgba(0, 240, 255, 0.35); }
-
-.ai-config-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-
-.proc-right-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.proc-right-actions .hud-btn {
-  font-size: 0.74rem;
-  padding: 5px 13px;
-  font-weight: 800;
-  height: 30px;
-}
-
-#btn-proc-fullscreen.active { background: #0284c7; color: #ffffff; border-color: #00f0ff; }
-.is-android-apk #btn-proc-fullscreen, .is-android-apk #btn-fullscreen-toggle { display: none !important; }
-
-.budget-display {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  background: #020610;
-  border: 1px solid #16273e;
-  border-radius: 3px;
-  padding: 3px 8px;
-}
-
-.budget-line { display: flex; align-items: baseline; gap: 4px; }
-.budget-display .label { font-size: 0.60rem; color: #8494ab; font-weight: 700; }
-.budget-display .amount { font-size: 0.88rem; font-weight: 800; color: #00f0ff; }
-.budget-display .amount .spent-val { color: var(--color-green); }
-.budget-display .amount .spent-val.overbudget { color: var(--color-red) !important; }
-.budget-display .amount .rem-val { font-size: 0.62rem; color: #8494ab; font-weight: 700; margin-left: 2px; }
-.budget-display .count-tag { font-size: 0.62rem; color: #e2e8f0; background: #091526; border: 1px solid #173252; padding: 2px 5px; border-radius: 2px; font-weight: 700; }
-
-/* Substantially Enlarged Doctrines, Preconfigured & Fleet Action Toolbar */
-.procurement-presets {
-  flex-shrink: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  background: #020610;
-  padding: 6px 10px;
-  border-radius: 4px;
-  border: 1px solid #16273e;
-}
-
-.preset-label {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 900;
-  color: #ffb830;
-  letter-spacing: 0.5px;
-  margin-right: 4px;
-}
-
-.preset-btn {
-  background: #081426;
-  border: 1px solid #172a44;
-  color: #f1f5f9;
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  font-weight: 800;
-  height: 32px;
-  padding: 0 14px;
-  border-radius: 3px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  letter-spacing: 0.4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  transition: all 0.14s ease;
-}
-
-.preset-btn:hover {
-  border-color: #00f0ff;
-  color: #ffffff;
-  background: #0f243e;
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
-}
-
-.preset-btn.active {
-  background: #0284c7 !important;
-  color: #ffffff !important;
-  border-color: #00f0ff !important;
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.45);
-}
-
-.preset-btn.highlight {
-  background: #092646;
-  border-color: #0284c7;
-  color: #7dd3fc;
-}
-
-.preset-btn.highlight:hover {
-  background: #0284c7;
-  border-color: #00f0ff;
-  color: #ffffff;
-}
-
-.preset-btn.alert {
-  background: rgba(153, 27, 27, 0.4);
-  border-color: #991b1b;
-  color: #fca5a5;
-}
-
-.preset-btn.alert:hover {
-  background: #dc2626;
-  border-color: #ef4444;
-  color: #ffffff;
-}
-
-.custom-preset-chip {
-  display: inline-flex;
-  align-items: center;
-  background: #06152a;
-  border: 1px solid #19385c;
-  border-radius: 3px;
-  height: 32px;
-  overflow: hidden;
-}
-
-.custom-preset-chip .preset-btn { border: none; background: transparent; padding: 0 10px; height: 100%; box-shadow: none; }
-.preset-icon-btn {
-  background: transparent;
-  border: none;
-  border-left: 1px solid #19385c;
-  color: #7dd3fc;
-  font-size: 0.70rem;
-  font-weight: 800;
-  padding: 0 9px;
-  height: 100%;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.preset-icon-btn:hover { background: #0284c7; color: #fff; }
-
-.procurement-mobile-tabs { display: none; }
 
 .procurement-body {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   display: grid;
   grid-template-columns: 1.15fr 1fr;
@@ -291,13 +38,14 @@
   contain: layout;
 }
 
-.hanger-shelf, .flight-roster {
+.hanger-shelf,
+.flight-roster {
   display: flex;
   flex-direction: column;
   min-height: 0;
   height: 100%;
   border: 1px solid #142338;
-  background: #030712;
+  background-color: #030712;
   border-radius: 5px;
   padding: 6px;
   overflow: hidden;
@@ -330,36 +78,63 @@
 
 .scramble-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #00f0ff, #0284c7);
-  color: #000;
+  color: #000000;
   box-shadow: 0 0 24px rgba(0, 240, 255, 0.5);
 }
 
-.scramble-btn:disabled { background: #0a111c; border-color: #17263b; color: #64748b; cursor: not-allowed; }
+.scramble-btn:disabled {
+  background-color: #0a111c;
+  border-color: #17263b;
+  color: #64748b;
+  cursor: not-allowed;
+}
 
 @media (max-width: 1024px) {
   .procurement-window {
-    width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: 100dvh; min-height: 100dvh;
-    border-radius: 0; padding: 4px 6px; gap: 3px; box-sizing: border-box; overflow-x: hidden; box-shadow: none;
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 100dvh;
+    border-radius: 0;
+    padding: 4px 6px;
+    gap: 3px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    box-shadow: none;
   }
-  .procurement-header { padding-bottom: 2px; gap: 2px; width: 100%; box-sizing: border-box; }
-  .game-name { font-size: 0.98rem; }
-  .hangar-badge { font-size: 0.60rem; padding: 2px 6px; }
-  .squad-callsign-tag, .proc-manual-btn, .proc-exit-btn { padding: 4px 9px; font-size: 0.70rem; height: 28px; }
-  .mode-and-ai-controls { gap: 4px; width: 100%; justify-content: flex-start; }
-  .seg-btn { padding: 4px 8px; font-size: 0.68rem; }
-  .proc-right-actions { margin-left: auto; gap: 4px; }
-  .proc-right-actions .hud-btn { font-size: 0.68rem; padding: 4px 9px; height: 28px; }
-  .budget-display { padding: 2px 6px; width: 100%; justify-content: space-between; box-sizing: border-box; }
-  .budget-display .amount { font-size: 0.78rem; }
-  .procurement-presets { flex-wrap: nowrap; overflow-x: auto; padding: 4px 6px; gap: 4px; width: 100%; box-sizing: border-box; -webkit-overflow-scrolling: touch; }
-  .preset-btn { white-space: nowrap; padding: 0 10px; font-size: 0.68rem; height: 30px; flex-shrink: 0; }
-  .preset-label { font-size: 0.68rem; flex-shrink: 0; }
-  .procurement-footer { padding-top: 2px; width: 100%; box-sizing: border-box; }
-  .scramble-btn { width: 100%; padding: 6px; font-size: 0.74rem; }
+
+  .procurement-footer {
+    padding-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .scramble-btn {
+    width: 100%;
+    padding: 6px;
+    font-size: 0.74rem;
+  }
 }
 
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
-  .procurement-mobile-tabs { display: none !important; }
-  .procurement-body { display: grid !important; grid-template-columns: 1.15fr 1fr !important; gap: 4px !important; flex: 1 1 auto !important; }
-  .hanger-shelf, .flight-roster { display: flex !important; width: 100% !important; height: 100% !important; padding: 4px !important; }
+  .procurement-mobile-tabs {
+    display: none !important;
+  }
+
+  .procurement-body {
+    display: grid !important;
+    grid-template-columns: 1.15fr 1fr !important;
+    gap: 4px !important;
+    flex: 1 1 auto !important;
+  }
+
+  .hanger-shelf,
+  .flight-roster {
+    display: flex !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 4px !important;
+  }
 }

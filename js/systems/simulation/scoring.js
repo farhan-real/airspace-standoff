@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Simulation Scoring & Engagement Logging (<250 lines)
+ * AIRSPACE STANDOFF // Simulation Scoring & Engagement Logging
  * Objective military engagement reporting and RoE accounting.
  */
 

@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Fleet Presets & Preconfigured Aircraft Toolbar (<250 lines)
+ * AIRSPACE STANDOFF // Fleet Presets & Preconfigured Aircraft Toolbar
  * Clean military operational designations.
  */
 

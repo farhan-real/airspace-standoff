@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Controls System Coordinator (<250 lines)
+ * AIRSPACE STANDOFF // Controls System Coordinator
  * Standardized dialogs, touch steering, pause overlay, and application exit.
  */
 

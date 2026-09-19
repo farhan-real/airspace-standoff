@@ -1,0 +1,182 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Squadron Roster Bays Stylesheet
+   ========================================================================== */
+
+.roster-header-bar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1.5px solid #142948;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+
+.roster-header-bar h3 {
+  font-size: 0.84rem;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: #f1f5f9;
+  letter-spacing: 0.5px;
+}
+
+.roster-header-bar .subtext {
+  font-size: 0.66rem;
+  color: var(--color-green);
+  font-family: var(--font-mono);
+  font-weight: 800;
+}
+
+.squadron-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.squad-unit-card {
+  background-color: #050d1a;
+  border: 1px solid #142948;
+  border-radius: 5px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: all 0.14s ease;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.squad-unit-card:hover {
+  border-color: #0284c7;
+}
+
+.squad-unit-card.active-bay {
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.28);
+  background-color: #061426;
+}
+
+.active-bay-badge {
+  font-size: 0.56rem;
+  background-color: #0284c7;
+  color: #ffffff;
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.squad-unit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.suh-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.squad-unit-name {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.squad-unit-badge {
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.squad-unit-cost {
+  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: var(--color-green);
+}
+
+.squad-callsign-tag {
+  background-color: #08172c;
+  border: 1px solid #0284c7;
+  color: #ffb830;
+  font-size: 0.64rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.squad-callsign-tag:hover {
+  background-color: #0284c7;
+  color: #ffffff;
+}
+
+.squad-unit-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+  .squadron-container {
+    grid-template-columns: 100%;
+    padding-right: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .squad-unit-card {
+    padding: 6px 8px;
+    gap: 4px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .squad-unit-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: stretch;
+  }
+
+  .suh-title-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 4px;
+  }
+
+  .squad-unit-name {
+    font-size: 0.82rem;
+  }
+
+  .squad-unit-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .squad-unit-actions .hud-btn {
+    padding: 3px 6px;
+    font-size: 0.56rem;
+  }
+}

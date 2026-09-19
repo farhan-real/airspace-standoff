@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Squadron Roster Display (<250 lines)
+ * AIRSPACE STANDOFF // Squadron Roster Display
  * Clear military aviation labels and layout.
  */
 

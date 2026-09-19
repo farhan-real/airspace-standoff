@@ -1,0 +1,238 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Flight HUD Tape Stylesheet
+   ========================================================================== */
+
+.radar-flight-hud {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 6px;
+  z-index: 7;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  width: auto;
+  max-width: 90%;
+}
+
+.rfh-panel {
+  background: rgba(3, 8, 20, 0.90);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(0, 240, 255, 0.4);
+  border-radius: 4px;
+  padding: 4px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.rfh-left,
+.rfh-center,
+.rfh-right {
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+
+.rfh-label {
+  font-size: 0.52rem;
+  color: #8494ab;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.rfh-val-box {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+}
+
+.rfh-num {
+  font-size: 0.96rem;
+  font-weight: 900;
+  color: #f8fafc;
+}
+
+.rfh-arrow {
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.rfh-sub {
+  font-size: 0.56rem;
+  color: #00f0ff;
+  font-weight: 800;
+}
+
+.rfh-center {
+  min-width: 210px;
+  max-width: 260px;
+  padding: 4px 12px;
+  border-color: #00f0ff;
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.25);
+}
+
+.rfh-center-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  width: 100%;
+}
+
+.rfh-cs {
+  font-size: 0.76rem;
+  font-weight: 900;
+  color: #00f0ff;
+  letter-spacing: 0.4px;
+}
+
+.rfh-model {
+  font-size: 0.54rem;
+  color: #94a3b8;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  display: block;
+}
+
+.rfh-compass-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.rfh-cardinal {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #00f5a0;
+}
+
+.rfh-deg {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.rfh-sub-pills {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-left: 2px;
+}
+
+.rfh-pill {
+  font-size: 0.52rem;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: #7dd3fc;
+  font-weight: 800;
+}
+
+@media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
+  .radar-flight-hud {
+    position: absolute !important;
+    top: 6px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    display: flex !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    z-index: 7 !important;
+    width: auto !important;
+    max-width: 78% !important;
+    pointer-events: none !important;
+  }
+
+  .rfh-panel {
+    padding: 3px 8px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    min-height: 48px !important;
+  }
+
+  .rfh-left {
+    min-width: 72px !important;
+    max-width: 85px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .rfh-center {
+    min-width: 190px !important;
+    max-width: 240px !important;
+    flex-shrink: 0 !important;
+    padding: 3px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .rfh-center-top {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1px !important;
+    width: 100% !important;
+  }
+
+  .rfh-cs {
+    font-size: 0.72rem !important;
+    font-weight: 900 !important;
+    color: #00f0ff !important;
+  }
+
+  .rfh-model {
+    display: block !important;
+    font-size: 0.50rem !important;
+    color: #94a3b8 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 100% !important;
+  }
+
+  .rfh-compass-strip {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    margin-top: 1px !important;
+  }
+
+  .rfh-right {
+    min-width: 72px !important;
+    max-width: 85px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .rfh-val-box { justify-content: center !important; }
+  .rfh-label { font-size: 0.46rem !important; text-align: center !important; }
+  .rfh-num { font-size: 0.86rem !important; text-align: center !important; }
+  .rfh-arrow { font-size: 0.68rem !important; }
+  .rfh-sub { font-size: 0.50rem !important; text-align: center !important; }
+  .rfh-cardinal { font-size: 0.70rem !important; }
+  .rfh-deg { font-size: 0.66rem !important; }
+  .rfh-pill { font-size: 0.48rem !important; padding: 1px 4px !important; }
+}

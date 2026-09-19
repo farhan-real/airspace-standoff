@@ -1,0 +1,294 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Hangar Operations Header Stylesheet
+   ========================================================================== */
+
+.procurement-header {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1.5px solid #142948;
+  padding-bottom: 5px;
+  gap: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.title-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+
+.brand-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.game-name {
+  font-size: 1.18rem;
+  font-weight: 900;
+  color: #f8fafc;
+  letter-spacing: 1.2px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.hangar-badge {
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid #00f0ff;
+  color: #00f0ff;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.title-right-group {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.squad-callsign-tag,
+.proc-manual-btn,
+.proc-exit-btn {
+  font-size: 0.76rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: all 0.14s ease;
+}
+
+.squad-callsign-tag {
+  background-color: #08172c;
+  border: 1px solid #0284c7;
+  color: #ffb830;
+}
+
+.proc-manual-btn {
+  background-color: #08172c;
+  border: 1px solid #0284c7;
+  color: #7dd3fc;
+}
+
+.proc-exit-btn {
+  background-color: rgba(153, 27, 27, 0.35);
+  border: 1px solid #ef4444;
+  color: #fecdd3;
+}
+
+.squad-callsign-tag:hover,
+.proc-manual-btn:hover {
+  background-color: #0284c7;
+  color: #ffffff;
+  border-color: #00f0ff;
+}
+
+.proc-exit-btn:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+  border-color: #f87171;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+.mode-and-ai-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.segmented-control {
+  display: flex;
+  background-color: #020610;
+  border: 1px solid #142844;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.seg-btn {
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 5px 11px;
+  border-radius: 3px;
+  background-color: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.seg-btn:hover {
+  color: #f1f5f9;
+}
+
+.seg-btn.active {
+  background-color: var(--color-cyan);
+  color: #000000;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
+}
+
+.ai-config-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.proc-right-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.proc-right-actions .hud-btn {
+  font-size: 0.74rem;
+  padding: 5px 13px;
+  font-weight: 800;
+  height: 30px;
+}
+
+#btn-proc-fullscreen.active {
+  background-color: #0284c7;
+  color: #ffffff;
+  border-color: #00f0ff;
+}
+
+.is-android-apk #btn-proc-fullscreen,
+.is-android-apk #btn-fullscreen-toggle {
+  display: none !important;
+}
+
+.budget-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  background-color: #020610;
+  border: 1px solid #142844;
+  border-radius: 3px;
+  padding: 3px 8px;
+}
+
+.budget-line {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.budget-display .label {
+  font-size: 0.60rem;
+  color: #8494ab;
+  font-weight: 700;
+}
+
+.budget-display .amount {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #00f0ff;
+}
+
+.budget-display .amount .spent-val {
+  color: var(--color-green);
+}
+
+.budget-display .amount .spent-val.overbudget {
+  color: var(--color-red) !important;
+}
+
+.budget-display .amount .rem-val {
+  font-size: 0.62rem;
+  color: #8494ab;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.budget-display .count-tag {
+  font-size: 0.62rem;
+  color: #e2e8f0;
+  background-color: #091526;
+  border: 1px solid #173252;
+  padding: 2px 5px;
+  border-radius: 2px;
+  font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+  .procurement-header {
+    padding-bottom: 2px;
+    gap: 2px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .game-name {
+    font-size: 0.98rem;
+  }
+
+  .hangar-badge {
+    font-size: 0.60rem;
+    padding: 2px 6px;
+  }
+
+  .squad-callsign-tag,
+  .proc-manual-btn,
+  .proc-exit-btn {
+    padding: 4px 9px;
+    font-size: 0.70rem;
+    height: 28px;
+  }
+
+  .mode-and-ai-controls {
+    gap: 4px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .seg-btn {
+    padding: 4px 8px;
+    font-size: 0.68rem;
+  }
+
+  .proc-right-actions {
+    margin-left: auto;
+    gap: 4px;
+  }
+
+  .proc-right-actions .hud-btn {
+    font-size: 0.68rem;
+    padding: 4px 9px;
+    height: 28px;
+  }
+
+  .budget-display {
+    padding: 2px 6px;
+    width: 100%;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+
+  .budget-display .amount {
+    font-size: 0.78rem;
+  }
+}

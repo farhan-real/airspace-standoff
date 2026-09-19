@@ -1,0 +1,230 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Armory Catalog Shelf
+   ========================================================================== */
+
+.shelf-tabs {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.shelf-tab-btn {
+  background-color: #070e1a;
+  border: 1px solid #162a42;
+  color: #8494ab;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.shelf-tab-btn.active {
+  background-color: var(--color-cyan);
+  color: #000000;
+  border-color: var(--color-cyan);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.shelf-helper-bar {
+  flex-shrink: 0;
+  background-color: #020610;
+  border: 1px dashed #142338;
+  padding: 4px 8px;
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  color: #8494ab;
+  margin-bottom: 4px;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shelf-active-bay-notice {
+  color: #00f0ff;
+  font-weight: 800;
+}
+
+.catalog-search-row {
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.hud-search-input {
+  width: 100%;
+  background-color: #020610;
+  border: 1px solid #142338;
+  color: #f8fafc;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 4px 8px;
+  border-radius: 3px;
+  outline: none;
+}
+
+.hud-search-input:focus {
+  border-color: var(--color-cyan);
+}
+
+.catalog-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 2px;
+}
+
+.dense-sub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 4px;
+}
+
+.catalog-item-card {
+  background-color: #070e1a;
+  border: 1px solid #16273e;
+  border-radius: 4px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: all 0.12s;
+}
+
+.catalog-item-card.selected,
+.catalog-item-card:active {
+  border-color: var(--color-cyan);
+  background-color: #091a30;
+}
+
+.cic-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.cic-cost {
+  color: var(--color-green);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.cic-type-bar {
+  display: flex;
+  gap: 4px;
+  font-size: 0.64rem;
+  font-family: var(--font-mono);
+  flex-wrap: wrap;
+}
+
+.badge-slots {
+  background-color: #051628;
+  border: 1px solid #0284c7;
+  color: #38bdf8;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 0.64rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+}
+
+.badge-mass {
+  color: var(--color-amber);
+  padding: 2px 6px;
+  font-size: 0.64rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cic-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: 0.60rem;
+  font-family: var(--font-mono);
+  color: #8494ab;
+  background-color: #020610;
+  padding: 3px 5px;
+  border-radius: 2px;
+}
+
+.cic-desc {
+  font-size: 0.58rem;
+  color: #cbd5e1;
+  line-height: 1.25;
+}
+
+.btn-quick-equip {
+  background-color: #0c1828;
+  border: 1px solid #1a2d48;
+  color: #f1f5f9;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 5px;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-top: 2px;
+  touch-action: manipulation;
+}
+
+.btn-quick-equip:active {
+  background-color: var(--color-cyan);
+  color: #000000;
+  border-color: var(--color-cyan);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .shelf-tab-btn:hover {
+    border-color: var(--color-cyan);
+    color: #f8fafc;
+  }
+
+  .catalog-item-card:hover {
+    border-color: var(--color-cyan);
+    background-color: #0a1526;
+  }
+
+  .btn-quick-equip:hover {
+    background-color: var(--color-cyan);
+    color: #000000;
+    border-color: var(--color-cyan);
+  }
+}
+
+@media (max-width: 1024px) {
+  .shelf-helper-bar {
+    display: none !important;
+  }
+
+  .shelf-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 2px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .shelf-tab-btn {
+    padding: 3px 7px;
+    font-size: 0.58rem;
+    flex-shrink: 0;
+  }
+
+  .dense-sub-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

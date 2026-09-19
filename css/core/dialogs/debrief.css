@@ -1,0 +1,355 @@
+/* ==========================================================================
+   AIRSPACE STANDOFF // Mission Debrief & After Action Report Stylesheet
+   ========================================================================== */
+
+.game-over-dialog {
+  background: #050b16;
+  border: 1px solid #00f0ff;
+  border-radius: 6px;
+  width: 95%;
+  max-width: 840px;
+  height: 92vh;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.after-action-header {
+  padding: 12px 18px;
+  background: #091322;
+  border-bottom: 1px solid #16273e;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.after-action-header h2 {
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+.after-action-subtitle {
+  font-size: 0.64rem;
+  color: #8494ab;
+  font-weight: 700;
+}
+
+.after-action-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.after-action-footer {
+  flex-shrink: 0;
+  background: #091322;
+  border-top: 1px solid #16273e;
+  padding: 10px 18px 12px 18px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.6);
+  z-index: 5;
+}
+
+.ace-podium-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #02060f;
+  border: 1px solid #142236;
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+
+.ace-podium-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.ace-card {
+  background: #070f1e;
+  border: 1px solid #172a42;
+  border-radius: 4px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ace-card.rank-1 { border-color: #ffd700; background: #141204; }
+.ace-card.rank-2 { border-color: #38bdf8; background: #08101a; }
+.ace-card.rank-3 { border-color: #64748b; background: #090e16; }
+
+.ace-rank-title {
+  font-size: 0.66rem;
+  font-weight: 800;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ace-callsign {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.ace-sub {
+  font-size: 0.62rem;
+  color: #8494ab;
+}
+
+.ace-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #00f0ff;
+  border-top: 1px dashed #172a42;
+  padding-top: 4px;
+  margin-top: 2px;
+}
+
+.aar-full-roster-box {
+  background: #02060f;
+  border: 1px solid #142236;
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.debrief-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.64rem;
+}
+
+.debrief-table th {
+  text-align: left;
+  padding: 5px 8px;
+  background: #091322;
+  color: #7dd3fc;
+  border-bottom: 1px solid #14243b;
+}
+
+.debrief-table td {
+  padding: 5px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.aar-report-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.aar-report-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.aar-report-card {
+  background: #030712;
+  border: 1px solid #15263f;
+  border-left: 3px solid #0284c7;
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.aar-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #14243b;
+  padding-bottom: 5px;
+}
+
+.aar-card-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #cbd5e1;
+  letter-spacing: 0.5px;
+}
+
+.aar-card-badge {
+  font-size: 0.54rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: #081c32;
+  color: #7dd3fc;
+  border: 1px solid #0284c7;
+}
+
+.aar-card-badge.highlight {
+  background: rgba(0, 245, 160, 0.12);
+  color: #00f5a0;
+  border-color: #00f5a0;
+}
+
+.aar-metrics-table {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.aar-metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  padding: 2px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
+}
+
+.aar-metric-row span {
+  color: #8494ab;
+  font-weight: 700;
+}
+
+.aar-metric-row b {
+  color: #f8fafc;
+  font-weight: 800;
+}
+
+.aar-score-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #071930 0%, #030a16 100%);
+  border: 1.5px solid #00f0ff;
+  border-radius: 4px;
+  padding: 10px 16px;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.35);
+}
+
+.aar-score-banner.defeat {
+  background: linear-gradient(90deg, #300714 0%, #160308 100%);
+  border-color: #ff3366;
+  box-shadow: 0 0 16px rgba(255, 51, 102, 0.35);
+}
+
+.aar-banner-lead {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.aar-banner-status {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #00f0ff;
+  letter-spacing: 0.6px;
+}
+
+.aar-score-banner.defeat .aar-banner-status {
+  color: #ff3366;
+}
+
+.aar-banner-sub {
+  font-size: 0.58rem;
+  color: #94a3b8;
+}
+
+.aar-banner-score {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.aar-score-num {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.85);
+  letter-spacing: 0.8px;
+}
+
+.aar-score-banner.defeat .aar-score-num {
+  text-shadow: 0 0 12px rgba(255, 51, 102, 0.85);
+}
+
+.aar-score-unit {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #00f5a0;
+}
+
+.aar-timeline-container {
+  background: #02060f;
+  border: 1px solid #142236;
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.aar-timeline-content {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.timeline-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.64rem;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+  padding: 4px 6px;
+  color: #cbd5e1;
+  gap: 8px;
+}
+
+.timeline-entry.kill {
+  background: rgba(0, 240, 255, 0.06);
+  border-left: 2px solid #00f0ff;
+}
+
+.timeline-entry.ace-kill {
+  background: rgba(255, 215, 0, 0.12);
+  border-left: 2px solid #ffd700;
+}
+
+.timeline-entry.roe {
+  background: rgba(255, 51, 102, 0.08);
+  border-left: 2px solid #ff3366;
+}
+
+@media (max-width: 768px) {
+  .aar-report-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .game-over-dialog {
+    width: 98vw;
+    height: 96vh;
+    max-height: 96vh;
+    border-radius: 4px;
+  }
+  .after-action-header { padding: 8px 12px; }
+  .after-action-body { padding: 8px 12px; gap: 8px; }
+  .after-action-footer { padding: 8px 12px; }
+}

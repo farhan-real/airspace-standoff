@@ -1,56 +1,73 @@
 /* ==========================================================================
-   AIRSPACE STANDOFF // Header Banner: Matched Fleet & Camera Controls Dock
+   AIRSPACE STANDOFF // Header Banner: C4ISR Status Console
    ========================================================================== */
 
 .tactical-banner {
-  height: 42px;
-  background: linear-gradient(180deg, #091322 0%, #050b14 100%);
-  border-bottom: 1px solid #14243b;
+  height: 44px;
+  background: linear-gradient(180deg, #0b172a 0%, #050b14 100%);
+  border-bottom: 1.5px solid #162b48;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
   gap: 8px;
   flex-shrink: 0;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
   white-space: nowrap;
   overflow: hidden;
   z-index: 20;
+  position: relative;
 }
 
-.theater-block {
-  display: none !important;
+.tactical-banner::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.4) 50%, transparent 100%);
 }
 
-/* PVP Team Switcher */
 .pvp-switcher {
   display: flex;
   gap: 2px;
-  background: #020610;
+  background-color: #020610;
   padding: 2px;
   border-radius: 3px;
   border: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 
-.pvp-switcher.hidden { display: none !important; }
+.pvp-switcher.hidden {
+  display: none !important;
+}
 
 .pvp-team-btn {
   border: none;
   font-family: var(--font-mono);
   font-size: 0.64rem;
-  font-weight: 700;
+  font-weight: 800;
   padding: 3px 8px;
   border-radius: 2px;
   cursor: pointer;
   color: var(--text-muted);
-  background: transparent;
+  background-color: transparent;
 }
 
-.pvp-team-btn.blue.active { background: var(--color-blue); color: #000; }
-.pvp-team-btn.red.active { background: var(--color-red); color: #fff; }
+.pvp-team-btn.blue.active {
+  background-color: var(--color-blue);
+  color: #000000;
+  box-shadow: 0 0 8px var(--color-blue);
+}
 
-/* TIME & SPEED CONTROLS */
+.pvp-team-btn.red.active {
+  background-color: var(--color-red);
+  color: #ffffff;
+  box-shadow: 0 0 8px var(--color-red);
+}
+
+/* Time and Mission Speed Cluster */
 .banner-time-coords-cluster {
   display: flex;
   align-items: center;
@@ -61,33 +78,36 @@
 .match-timer-block {
   display: flex;
   align-items: baseline;
-  gap: 4px;
-  background: #020610;
+  gap: 5px;
+  background-color: #030712;
   border: 1px solid #142338;
+  border-left: 2px solid var(--color-cyan);
   border-radius: 3px;
-  padding: 2px 7px;
+  padding: 3px 8px;
   font-family: var(--font-mono);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
   flex-shrink: 0;
 }
 
 .timer-label {
   font-size: 0.54rem;
   color: #8494ab;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .timer-digits {
-  font-size: 0.88rem;
-  font-weight: 800;
+  font-size: 0.90rem;
+  font-weight: 900;
   color: #00f0ff;
   letter-spacing: 0.8px;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
 }
 
 .time-warp-controls {
   display: flex;
   align-items: center;
   gap: 2px;
-  background: #020610;
+  background-color: #020610;
   border: 1px solid #142338;
   border-radius: 3px;
   padding: 2px;
@@ -95,33 +115,36 @@
 }
 
 .time-btn {
-  background: #060d18;
-  border: 1px solid #15273f;
+  background-color: #060e1b;
+  border: 1px solid #13243a;
   color: #8494ab;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.64rem;
   font-weight: 800;
   padding: 3px 7px;
+  height: 26px;
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.12s ease;
-  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .time-btn:hover {
-  background: #0d1e34;
+  background-color: #0d1e34;
   color: #00f0ff;
   border-color: #00f0ff;
 }
 
 .time-btn.active {
-  background: #0284c7;
+  background-color: #0284c7;
   color: #ffffff;
   border-color: #00f0ff;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.45);
 }
 
-/* HIGH-EMPHASIS COMMAND SCORE */
+/* Score Board */
 .banner-score-controls-cluster {
   display: flex;
   align-items: center;
@@ -132,27 +155,59 @@
 .victory-tracker {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: linear-gradient(180deg, #071930 0%, #030a16 100%);
-  padding: 3px 12px;
+  padding: 3px 14px;
   border: 1.5px solid #00f0ff;
   border-radius: 4px;
   font-family: var(--font-mono);
-  box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
 }
 
-.vp-group { display: flex; align-items: baseline; gap: 4px; }
-.vp-tag { font-size: 0.60rem; font-weight: 900; letter-spacing: 0.6px; }
-.vp-group.ally .vp-tag { color: #38bdf8; }
-.vp-group.hostile .vp-tag { color: #ff3366; }
+.vp-group {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
 
-.vp-value { font-size: 1.05rem; font-weight: 900; letter-spacing: 0.8px; }
-.vp-group.ally .vp-value { color: #ffffff; text-shadow: 0 0 10px rgba(56, 189, 248, 0.8); }
-.vp-group.hostile .vp-value { color: #ffffff; text-shadow: 0 0 10px rgba(255, 51, 102, 0.8); }
-.vp-divider { color: #475569; font-size: 0.95rem; font-weight: 800; }
+.vp-tag {
+  font-size: 0.60rem;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+}
 
-/* SQUADRON CYCLER & FLEET BUTTON CLUSTER */
+.vp-group.ally .vp-tag {
+  color: #38bdf8;
+}
+
+.vp-group.hostile .vp-tag {
+  color: #ff3366;
+}
+
+.vp-value {
+  font-size: 1.10rem;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+.vp-group.ally .vp-value {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.85);
+}
+
+.vp-group.hostile .vp-value {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 51, 102, 0.85);
+}
+
+.vp-divider {
+  color: #475569;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+/* Navigation Cluster */
 .banner-nav-cluster {
   display: flex;
   align-items: center;
@@ -174,7 +229,6 @@
   box-sizing: border-box;
 }
 
-/* FLEET BUTTON: MATCHED 26PX HEIGHT */
 .fleet-btn {
   height: 26px !important;
   font-size: 0.64rem !important;
@@ -187,7 +241,6 @@
   box-sizing: border-box !important;
 }
 
-/* CAMERA CONTROLS: POSITIONED EXACTLY BETWEEN FLEET AND ACTIONS */
 .banner-cam-controls {
   display: flex;
   align-items: center;
@@ -196,15 +249,15 @@
 }
 
 .banner-cam-controls .cam-btn {
-  background: #08111e;
-  border: 1px solid #172a44;
+  background-color: #060e1b;
+  border: 1px solid #142844;
   color: #7dd3fc;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.64rem;
   font-weight: 800;
   height: 26px;
   min-width: 26px;
-  padding: 0 6px;
+  padding: 0 7px;
   border-radius: 2px;
   cursor: pointer;
   display: inline-flex;
@@ -215,18 +268,13 @@
 }
 
 .banner-cam-controls .cam-btn:hover {
-  background: var(--color-cyan);
-  color: #000;
+  background-color: var(--color-cyan);
+  color: #000000;
   border-color: var(--color-cyan);
+  box-shadow: 0 0 8px var(--color-cyan);
 }
 
-.banner-cam-controls .cam-btn:active {
-  background: #0284c7;
-  color: #fff;
-  border-color: #00f0ff;
-}
-
-/* SYSTEM ACTIONS */
+/* Quick Actions */
 .top-quick-actions {
   display: flex;
   align-items: center;
@@ -236,110 +284,37 @@
 }
 
 .top-quick-actions .hud-btn {
-  padding: 5px 10px;
-  font-size: 0.70rem;
-  white-space: nowrap;
   height: 26px;
-  box-sizing: border-box;
+  font-size: 0.68rem;
+  padding: 3px 8px;
 }
 
-#btn-fullscreen-toggle.active {
-  background: #0284c7;
-  color: #ffffff;
-  border-color: #00f0ff;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
-}
-
-/* HIDE FULLSCREEN IN NATIVE ANDROID APK */
-.is-android-apk #btn-fullscreen-toggle {
-  display: none !important;
-}
-
-/* DEAD CODE PURGED */
-.banner-coords-box,
-.token-bucket-mfd,
-#btn-autotarget,
-#btn-mobile-autolock,
-#btn-mobile-cycle-target,
-#mob-target-summary,
-.mob-target-action-box {
-  display: none !important;
-}
-
-/* ==========================================================================
-   LANDSCAPE BATTLE BANNER
-   ========================================================================== */
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
   .tactical-banner {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
     height: 40px !important;
-    padding: 0 10px !important;
-    gap: 8px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
+    padding: 0 8px !important;
+    gap: 6px !important;
   }
 
-  .banner-time-coords-cluster {
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .timer-digits { font-size: 0.80rem !important; }
-  .time-btn {
-    font-size: 0.62rem !important;
-    padding: 3px 6px !important;
-    height: 26px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .banner-score-controls-cluster {
-    display: flex !important;
-    align-items: center !important;
-    flex-shrink: 0 !important;
+  .timer-digits {
+    font-size: 0.82rem !important;
   }
 
   .victory-tracker {
-    padding: 3px 12px !important;
-    gap: 8px !important;
-    border: 1.5px solid #00f0ff !important;
-    background: #071930 !important;
+    padding: 2px 10px !important;
+    gap: 6px !important;
   }
 
-  .vp-value { font-size: 0.95rem !important; }
-  .vp-tag { font-size: 0.58rem !important; }
-
-  .banner-nav-cluster {
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .banner-cam-controls .cam-btn {
-    height: 26px !important;
-    min-width: 26px !important;
-    font-size: 0.60rem !important;
-    padding: 0 5px !important;
-  }
-
-  .top-quick-actions {
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    flex-shrink: 0 !important;
+  .vp-value {
+    font-size: 0.95rem !important;
   }
 
   .top-quick-actions .hud-btn {
-    padding: 3px 6px !important;
+    padding: 2px 6px !important;
     font-size: 0.60rem !important;
-    height: 26px !important;
   }
 
-  #btn-hud-glossary { display: none !important; }
+  #btn-hud-glossary {
+    display: none !important;
+  }
 }

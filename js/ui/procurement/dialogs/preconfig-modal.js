@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Aircraft Presets Modal Controller (<250 lines)
+ * AIRSPACE STANDOFF // Aircraft Presets Modal Controller
  * Clean military operational roles and presets.
  */
 
