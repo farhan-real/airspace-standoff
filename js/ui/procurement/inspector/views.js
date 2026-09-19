@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Subsystem Dossier Views Module
+ * AIRSPACE STANDOFF // Subsystem Dossier Views Module
  * Renders modal dossiers for: Guided Weapons, Autocannons, Modular Components, Civilians, Surface Units
  */
 
@@ -109,6 +109,7 @@ class InspectorSubsystemViews {
       </div>
 
       <div class="inspect-action-bar">
+        <button type="button" class="inspect-action-btn select-btn" id="inspect-btn-equip-gun" onclick="if(window.Game&&window.Game.procurement){window.Game.procurement.equipItemDirectly({type:'gun',id:'${g.id}',name:'${g.name}'});document.getElementById('system-inspect-modal').classList.remove('active');}">EQUIP TO ACTIVE AIRCRAFT</button>
         <button type="button" class="inspect-action-btn close-btn" onclick="document.getElementById('system-inspect-modal').classList.remove('active');">CLOSE</button>
       </div>
     `;

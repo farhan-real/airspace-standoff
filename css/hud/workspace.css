@@ -107,16 +107,18 @@ body.has-touch .mobile-steering-overlay {
   }
 
   .tactical-deck-bay {
-    height: 102px;
-    min-height: 102px;
-    max-height: 102px;
+    height: 120px;
+    min-height: 120px;
+    max-height: 120px;
   }
 
   .maneuver-card {
-    width: 185px;
-    min-width: 185px;
-    max-width: 185px;
-    height: 82px;
+    width: 195px;
+    min-width: 195px;
+    max-width: 195px;
+    height: 94px;
+    min-height: 94px;
+    max-height: 94px;
   }
 }
 

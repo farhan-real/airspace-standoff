@@ -2,6 +2,7 @@
  * AIRSPACE STANDOFF // Radar Tactical Sub-Renderer (150km x 100km Theater)
  * Unidentified aircraft render identically to standard bogeys.
  * Displays commercial airliner icon, multiline civilian telemetry, and grouped missile salvos.
+ * Stable non-flickering cluster anchor positions.
  */
 
 class RadarTacticalRenderer {
@@ -217,7 +218,6 @@ class RadarTacticalRenderer {
 
     const visibleMissiles = [];
 
-    // 1. Draw physical missile sprites and trails
     for (const m of missiles) {
       if (!m || m.isDead || typeof m.x !== 'number' || (m.team !== team && !detectedSet.has(m.id))) continue;
       const pos = cam.toScreen(m.x, m.y);
@@ -249,7 +249,6 @@ class RadarTacticalRenderer {
       ctx.restore();
     }
 
-    // 2. Render labels: group identical missiles launched from the same aircraft; shows missile name in both declutter ON and OFF
     if (visibleMissiles.length > 0) {
       const clusters = [];
 
@@ -274,8 +273,6 @@ class RadarTacticalRenderer {
           cluster.count++;
           if (distVal < cluster.minDist) {
             cluster.minDist = distVal;
-            cluster.px = px;
-            cluster.py = py;
           }
         } else {
           clusters.push({

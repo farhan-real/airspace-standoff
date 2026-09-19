@@ -9,6 +9,10 @@
   min-width: 0;
 }
 
+.custom-dropdown.open {
+  z-index: 6000;
+}
+
 .custom-dropdown-trigger {
   background: #040913;
   border: 1px solid #16273e;
@@ -78,7 +82,7 @@
   border: 1px solid #00f0ff;
   border-radius: 4px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.95);
-  z-index: 5500;
+  z-index: 6500;
   flex-direction: column;
   padding: 3px;
   gap: 2px;
@@ -104,7 +108,7 @@
   white-space: nowrap;
 }
 
-.custom-dropdown-opt:hover {
+.custom-dropdown-opt:hover:not(:disabled) {
   background: #0d1e34;
   color: #ffffff;
   border-color: #0284c7;
@@ -126,7 +130,10 @@
 .su-gun-dropdown {
   flex: 1 1 0;
   min-width: 0;
-  overflow: hidden;
+}
+
+.su-gun-dropdown.open {
+  z-index: 6000;
 }
 
 .su-gun-dropdown .custom-dropdown-trigger {
@@ -137,4 +144,7 @@
 .su-gun-dropdown .cdd-val {
   flex: 1;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

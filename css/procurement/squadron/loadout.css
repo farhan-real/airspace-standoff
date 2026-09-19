@@ -48,6 +48,7 @@
   transition: all 0.14s ease;
   box-sizing: border-box;
   position: relative;
+  overflow: visible;
 }
 
 .squad-unit-card:hover {
@@ -58,6 +59,10 @@
   border-color: #00f0ff !important;
   box-shadow: 0 0 16px rgba(0, 240, 255, 0.28);
   background-color: #061426;
+}
+
+.squad-unit-card:has(.custom-dropdown.open) {
+  z-index: 100;
 }
 
 .active-bay-badge {

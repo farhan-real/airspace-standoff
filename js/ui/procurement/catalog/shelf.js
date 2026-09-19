@@ -70,11 +70,16 @@ class ProcurementShelf {
     grid.className = 'dense-sub-grid';
     const guns = Object.values(window.AUTOCANNONS_CATALOG || {});
     const active = this.getActiveBaySummary();
+    const activeSpec = active ? (window.AIRCRAFT_CATALOG || {})[active.specId] : null;
 
     guns.forEach(g => {
       const card = document.createElement('div');
       card.className = 'catalog-item-card';
-      const isLocked = g.lockedTo && active && !g.lockedTo.includes(active.specId);
+
+      const isComp = activeSpec && window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
+        ? window.AircraftRegistry.isGunCompatible(activeSpec, g)
+        : (!g.lockedTo || (active && g.lockedTo.includes(active.specId)));
+      const isLocked = !isComp;
 
       card.innerHTML = `
         <div class="cic-top"><span class="cic-title">${g.name}</span><span class="cic-cost" style="color:#7dd3fc;">${g.caliber}</span></div>
@@ -93,6 +98,7 @@ class ProcurementShelf {
 
       card.querySelector('.btn-equip-gun').onclick = (e) => {
         e.stopPropagation();
+        if (isLocked) return;
         this.pm.equipItemDirectly({ type: 'gun', id: g.id, name: g.name });
       };
       grid.appendChild(card);

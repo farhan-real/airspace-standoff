@@ -12,7 +12,12 @@
   padding: 4px 7px;
   box-sizing: border-box;
   min-width: 0;
-  overflow: hidden;
+  position: relative;
+  z-index: 20;
+}
+
+.su-gun-selector-row:has(.custom-dropdown.open) {
+  z-index: 5500;
 }
 
 .gun-sel-label {

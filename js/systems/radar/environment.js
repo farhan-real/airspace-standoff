@@ -1,6 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Radar Environment Sub-Renderer (150km x 100km Theater)
- * RTB BASE text completely removed per directive (clean dashed line only).
+ * Grid, boundary corridor, weather clouds, and orbital uplink status banner.
+ * Rotating visual radar sweep removed per directive.
  */
 
 class RadarEnvironmentRenderer {
@@ -10,12 +11,20 @@ class RadarEnvironmentRenderer {
     ctx.lineWidth = 1;
     const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
     for (let kmX = 0; kmX <= cfg.THEATER_WIDTH_KM; kmX += 25) {
-      const pT = cam.toScreen(kmX, 0); const pB = cam.toScreen(kmX, cfg.THEATER_HEIGHT_KM);
-      ctx.beginPath(); ctx.moveTo(Math.round(pT.x), Math.round(pT.y)); ctx.lineTo(Math.round(pB.x), Math.round(pB.y)); ctx.stroke();
+      const pT = cam.toScreen(kmX, 0);
+      const pB = cam.toScreen(kmX, cfg.THEATER_HEIGHT_KM);
+      ctx.beginPath();
+      ctx.moveTo(Math.round(pT.x), Math.round(pT.y));
+      ctx.lineTo(Math.round(pB.x), Math.round(pB.y));
+      ctx.stroke();
     }
     for (let kmY = 0; kmY <= cfg.THEATER_HEIGHT_KM; kmY += 25) {
-      const pL = cam.toScreen(0, kmY); const pR = cam.toScreen(cfg.THEATER_WIDTH_KM, kmY);
-      ctx.beginPath(); ctx.moveTo(Math.round(pL.x), Math.round(pL.y)); ctx.lineTo(Math.round(pR.x), Math.round(pR.y)); ctx.stroke();
+      const pL = cam.toScreen(0, kmY);
+      const pR = cam.toScreen(cfg.THEATER_WIDTH_KM, kmY);
+      ctx.beginPath();
+      ctx.moveTo(Math.round(pL.x), Math.round(pL.y));
+      ctx.lineTo(Math.round(pR.x), Math.round(pR.y));
+      ctx.stroke();
     }
     ctx.restore();
   }
@@ -34,8 +43,6 @@ class RadarEnvironmentRenderer {
     ctx.moveTo(Math.round(pTop.x), Math.round(pTop.y));
     ctx.lineTo(Math.round(pBottom.x), Math.round(pBottom.y));
     ctx.stroke();
-
-    // RTB BASE text completely removed to eliminate any UI overlap
     ctx.restore();
   }
 
@@ -58,30 +65,6 @@ class RadarEnvironmentRenderer {
       ctx.stroke();
       ctx.restore();
     }
-  }
-
-  static drawSweep(ctx, cam, sweepAngle, cssWidth, cssHeight, isMobile) {
-    const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
-    const pCenter = cam.toScreen(cfg.THEATER_WIDTH_KM / 2, cfg.THEATER_HEIGHT_KM / 2);
-    const radius = Math.max(cssWidth, cssHeight) * cam.zoom;
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(pCenter.x, pCenter.y);
-    ctx.arc(pCenter.x, pCenter.y, radius, sweepAngle, sweepAngle + 0.14);
-    ctx.closePath();
-
-    if (isMobile) {
-      ctx.fillStyle = 'rgba(0, 240, 255, 0.04)';
-      ctx.fill();
-    } else {
-      const grad = ctx.createRadialGradient(pCenter.x, pCenter.y, 4, pCenter.x, pCenter.y, radius);
-      grad.addColorStop(0, 'rgba(0, 240, 255, 0.08)');
-      grad.addColorStop(1, 'rgba(0, 240, 255, 0.0)');
-      ctx.fillStyle = grad;
-      ctx.fill();
-    }
-    ctx.restore();
   }
 
   static drawUplinkBanner(ctx, count, cssWidth, cssHeight) {

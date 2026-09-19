@@ -2,6 +2,7 @@
  * AIRSPACE STANDOFF // Radar Contacts Sub-Renderer
  * Full RETURN TO BASE name in labels. Zero hotkeys in contact text.
  * Respects declutter toggle across all screen sizes with multiline telemetry when OFF.
+ * Clean, stable label positioning anchored directly to contact coordinates without flickering.
  */
 
 class RadarContactsRenderer {
@@ -12,7 +13,6 @@ class RadarContactsRenderer {
     const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
     const mainCol = isBlue ? '#00f0ff' : '#ef4444';
     const isMobile = (cssWidth < 800);
-    const occupiedSlots = [];
 
     const liveEnemies = list.filter(a => a && a.hp > 0);
     const uplinkThreshold = (window.CONFIG && window.CONFIG.UPLINK_THRESHOLD_FIGHTERS !== undefined) ? window.CONFIG.UPLINK_THRESHOLD_FIGHTERS : 3;
@@ -68,12 +68,6 @@ class RadarContactsRenderer {
       }
 
       if (isOffScreen) continue;
-
-      let offY = -10;
-      for (const oc of occupiedSlots) {
-        if (Math.hypot(px - oc.x, py - oc.y) < 28) offY += 24;
-      }
-      occupiedSlots.push({ x: px, y: py });
 
       if (isLastFew && isIdentified) {
         const pulse = (performance.now() % 1400) / 1400;
@@ -136,7 +130,7 @@ class RadarContactsRenderer {
       ctx.restore();
 
       const labelX = px + 12;
-      const labelY = py + offY;
+      const labelY = py - 8;
 
       const fl = 'FL' + Math.round((a.altFt || 30000) / 100);
       const mch = 'M ' + (a.speed || 0.8).toFixed(2);
@@ -145,7 +139,6 @@ class RadarContactsRenderer {
       const leadTag = (isAce && isIdentified) ? ' ACE' : ((a.isFlightLead && isIdentified) ? ' LEAD' : '');
       const pinpointTag = (isLastFew && isIdentified) ? ' PINPOINTED' : '';
 
-      // Declutter only engages when declutterMode is explicitly ON (unless selected/targeted)
       if (declutterMode && !isSelected && !isTgt) {
         ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = !isIdentified ? '#f97316' : ((isAce && isIdentified) ? '#ffd700' : (isBlue ? '#38bdf8' : '#ef4444'));
@@ -155,7 +148,6 @@ class RadarContactsRenderer {
           ctx.fillText(cleanFn(safeModel + leadTag + pinpointTag), labelX, labelY);
         }
       } else {
-        // Full multiline contact telemetry shown whenever Declutter is OFF
         if (!isIdentified) {
           ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = isSelected ? '#ffffff' : '#f97316';

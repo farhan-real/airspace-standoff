@@ -248,8 +248,13 @@ class Aircraft {
 
   setGun(gunId) {
     const gunCatalog = window.AUTOCANNONS_CATALOG || {};
-    if (!gunCatalog[gunId] || (this.spec.allowedGuns && !this.spec.allowedGuns.includes(gunId))) return false;
-    this.gun = gunCatalog[gunId];
+    const gun = gunCatalog[gunId];
+    if (!gun) return false;
+    const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
+      ? window.AircraftRegistry.isGunCompatible(this.spec, gun)
+      : (!this.spec.allowedGuns || this.spec.allowedGuns.includes(gunId));
+    if (!isComp) return false;
+    this.gun = gun;
     this.gunAmmo = this.gun.defaultAmmo || 3200;
     this.recalculateWeight();
     return true;

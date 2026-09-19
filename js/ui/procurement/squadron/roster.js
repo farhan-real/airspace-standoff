@@ -128,9 +128,10 @@ class ProcurementRoster {
       const maxMass = spec.M_max || 5000;
       const wrPercent = Math.round(Math.min(1.0, totalMass / maxMass) * 100);
 
-      const allowed = spec.allowedGuns || [spec.builtInGun || 'M61A2'];
       const gunOptsList = Object.values(gunsMap).map(g => {
-        const isComp = allowed.includes(g.id);
+        const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
+          ? window.AircraftRegistry.isGunCompatible(spec, g)
+          : (!g.lockedTo || g.lockedTo.includes(spec.id));
         const isSelected = item.chosenGunId === g.id;
         return `<button type="button" class="custom-dropdown-opt ${isSelected ? 'active' : ''}" data-gun-id="${g.id}" ${isComp ? '' : 'disabled'}>
           ${isComp ? g.name + ' (' + (g.damagePerSec || 2.5) + ' HP/s)' : '[INCOMPATIBLE] ' + g.name}
@@ -245,7 +246,7 @@ class ProcurementRoster {
         </div>`;
 
       card.onclick = (e) => {
-        if (!e.target.closest('button, input, select, .squad-callsign-tag')) {
+        if (!e.target.closest('button, input, select, .squad-callsign-tag, .custom-dropdown')) {
           this.pm.activeBayIndex = sIdx;
           this.pm.updateUI();
         }
@@ -270,11 +271,18 @@ class ProcurementRoster {
         gunCdd.querySelectorAll('.custom-dropdown-opt').forEach(opt => {
           opt.onclick = (e) => {
             e.stopPropagation();
+            if (opt.disabled) return;
             const gunId = opt.getAttribute('data-gun-id');
-            if (gunId && allowed.includes(gunId)) {
+            const gun = gunsMap[gunId];
+            const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
+              ? window.AircraftRegistry.isGunCompatible(spec, gun)
+              : (!gun.lockedTo || gun.lockedTo.includes(spec.id));
+
+            if (gunId && isComp) {
               item.chosenGunId = gunId;
               gunCdd.classList.remove('open');
               this.pm.updateUI();
+              if (typeof AudioSys !== 'undefined') AudioSys.playClick();
             }
           };
         });

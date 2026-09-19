@@ -1,14 +1,13 @@
 /**
  * AIRSPACE STANDOFF // Tactical Radar Viewport Renderer (Optimized 60-120 FPS Engine)
  * Smooth 2.0x Retina scaling without mobile overdraw or gradient garbage collection lag.
- * Strips pipe (|) and corrupted characters from canvas text rendering.
+ * Rotating visual radar sweep removed. RWR electronic sweep detection preserved.
  */
 
 class TacticalRadarRenderer {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas ? this.canvas.getContext('2d', { alpha: false, desynchronized: true }) : null;
-    this.sweepAngle = 0;
     this.selectedTarget = null;
     this.hoveredContact = null;
     this.cssWidth = 800;
@@ -54,7 +53,7 @@ class TacticalRadarRenderer {
   cleanCanvasText(str) {
     if (str === undefined || str === null) return '';
     let s = String(str);
-    s = s.replace(/\u00e2\u20ac\u00a2|â€¢|&bull;|•|\|/g, ' ');
+    s = s.replace(/\u00e2\u20ac\u00a2|•|&bull;|•|\|/g, ' ');
     s = s.replace(/\s+/g, ' ');
     if (!s.includes('<') && !s.includes('\\') && !s.includes('{') && !s.includes('katex')) {
       return s.trim();
@@ -205,10 +204,6 @@ class TacticalRadarRenderer {
       RadarEnvironmentRenderer.drawGrid(ctx, this.cam, w, h);
       RadarEnvironmentRenderer.drawBaseCorridor(ctx, this.cam, w);
       RadarEnvironmentRenderer.drawClouds(ctx, this.cam, clouds, w, h);
-
-      this.sweepAngle += 0.035;
-      if (this.sweepAngle > Math.PI * 2) this.sweepAngle = 0;
-      RadarEnvironmentRenderer.drawSweep(ctx, this.cam, this.sweepAngle, w, h, this.isMobile);
     }
 
     if (typeof RadarTacticalRenderer !== 'undefined') {

@@ -257,7 +257,12 @@ class ProcurementManager {
 
     if (itemData.type === 'gun') {
       const spec = (window.AIRCRAFT_CATALOG || {})[item.specId];
-      if (spec && spec.allowedGuns && !spec.allowedGuns.includes(itemData.id)) {
+      const gun = (window.AUTOCANNONS_CATALOG || {})[itemData.id];
+      const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
+        ? window.AircraftRegistry.isGunCompatible(spec, gun)
+        : (spec && spec.allowedGuns ? spec.allowedGuns.includes(itemData.id) : true);
+
+      if (!isComp) {
         this.showAlertModal('INCOMPATIBLE', `${itemData.name} is not compatible with this aircraft.`);
         return;
       }
