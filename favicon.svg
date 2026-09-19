@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+    <defs>
+        <!-- Background Gradient -->
+        <radialGradient id="dark-bg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#0a1220"/>
+            <stop offset="70%" stop-color="#04070e"/>
+            <stop offset="100%" stop-color="#020307"/>
+        </radialGradient>
+    </defs>
+
+    <!-- Dark Base Chassis -->
+    <rect width="512" height="512" rx="112" fill="#03050a"/>
+    <rect x="12" y="12" width="488" height="488" rx="102" fill="url(#dark-bg)" stroke="#131e31" stroke-width="4"/>
+
+    <!-- Radar Scope Rings -->
+    <circle cx="256" cy="256" r="206" fill="none" stroke="#00f0ff" stroke-opacity="0.22" stroke-width="8"/>
+    <circle cx="256" cy="256" r="124" fill="none" stroke="#00f0ff" stroke-opacity="0.18" stroke-width="6" stroke-dasharray="16 12"/>
+
+    <!-- Radar Crosshairs -->
+    <line x1="50" y1="256" x2="462" y2="256" stroke="#00f0ff" stroke-opacity="0.2" stroke-width="6"/>
+    <line x1="256" y1="50" x2="256" y2="462" stroke="#00f0ff" stroke-opacity="0.2" stroke-width="6"/>
+</svg>

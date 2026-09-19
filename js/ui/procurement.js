@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Procurement Orchestrator
- * Flight Lead selection, custom dropdown management, and auto-persistence.
+ * AIRSPACE STANDOFF // Procurement Orchestrator (<250 lines)
+ * Professional military terminology for squadron management.
  */
 
 class ProcurementManager {
@@ -9,31 +9,27 @@ class ProcurementManager {
     this.currentTab = 'airframes';
     this.currentAirframeCategory = 'ALL';
     this.searchQuery = '';
-    this.selectedItem = null;
-
-    this.preconfigCategory = 'ALL';
-    this.preconfigAirframe = 'ALL';
-    this.preconfigSearch = '';
-    this.preconfigSort = 'DEFAULT';
+    this.activeBayIndex = 0;
 
     this.dialogModal = new TacticalDialogModal(this);
     this.inspector = new ProcurementInspector(this);
     this.shelf = new ProcurementShelf(this);
     this.roster = new ProcurementRoster(this);
     this.customLoadouts = new CustomLoadoutsManager();
+    this.preconfigModal = new PreconfigModalController(this);
 
     window.openSystemInspectModal = (t, id) => this.inspector.openInspectModal(t, id);
     this.initInspectListeners();
     this.initMobileProcurement();
-    this.initPreconfigModalListeners();
     this.initSquadronNameEditor();
     this.initHangarCustomDropdowns();
   }
 
   showPromptModal(t, m, d, cb) { this.dialogModal.showPrompt(t, m, d, cb); }
-  showConfirmModal(t, m, cb) { this.dialogModal.showConfirm(t, m, cb); }
+  showConfirmModal(t, m, cb, o) { this.dialogModal.showConfirm(t, m, cb, o); }
   showAlertModal(t, m) { this.dialogModal.showAlert(t, m); }
   openCallsignPickerModal(sIdx) { this.dialogModal.openCallsignPicker(sIdx); }
+  openPreconfiguredAircraftModal() { this.preconfigModal.open(); }
 
   initHangarCustomDropdowns() {
     if (typeof CustomDropdown === 'undefined') return;
@@ -42,27 +38,25 @@ class ProcurementManager {
       label: 'BUDGET',
       value: this.game.playerBudgetId || 'BUDGET_400',
       options: [
-        { value: 'BUDGET_200', text: '200M (1.50x VP)' },
-        { value: 'BUDGET_300', text: '300M (1.25x VP)' },
-        { value: 'BUDGET_400', text: '400M (1.00x VP)' },
-        { value: 'BUDGET_500', text: '500M (0.85x VP)' },
-        { value: 'BUDGET_650', text: '650M (0.70x VP)' }
+        { value: 'BUDGET_200', text: '200M (1.50x)' },
+        { value: 'BUDGET_300', text: '300M (1.25x)' },
+        { value: 'BUDGET_400', text: '400M (1.00x)' },
+        { value: 'BUDGET_500', text: '500M (0.85x)' },
+        { value: 'BUDGET_650', text: '650M (0.70x)' }
       ],
-      onChange: (val) => {
-        this.game.setPlayerBudgetTier(val);
-      }
+      onChange: (val) => this.game.setPlayerBudgetTier(val)
     });
 
     CustomDropdown.setup('cdd-difficulty', {
       label: 'DIFFICULTY',
       value: this.game.aiDifficulty || 'VETERAN',
       options: [
-        { value: 'CADET', text: 'CADET (0.6x)' },
-        { value: 'VETERAN', text: 'VETERAN (1.0x)' },
-        { value: 'ELITE', text: 'ELITE (1.4x)' },
-        { value: 'ACE', text: 'ACE (1.8x)' },
-        { value: 'MASTER', text: 'MASTER (2.2x)' },
-        { value: 'LEGEND', text: 'LEGEND (2.8x)' }
+        { value: 'CADET', text: 'RECRUIT (0.6x)' },
+        { value: 'VETERAN', text: 'STANDARD (1.0x)' },
+        { value: 'ELITE', text: 'ADVANCED (1.4x)' },
+        { value: 'ACE', text: 'EXPERT (1.8x)' },
+        { value: 'MASTER', text: 'ELITE (2.2x)' },
+        { value: 'LEGEND', text: 'MASTER (2.8x)' }
       ],
       onChange: (val) => {
         this.game.aiDifficulty = val;
@@ -78,18 +72,34 @@ class ProcurementManager {
         { value: 'AGGRESSIVE', text: 'AGGRESSIVE' },
         { value: 'STANDOFF', text: 'STAND-OFF' }
       ],
-      onChange: (val) => {
-        this.game.aiDoctrine = val;
-      }
+      onChange: (val) => { this.game.aiDoctrine = val; }
     });
   }
 
   setLeadAirframe(sIdx) {
-    this.game.procurementSquadron.forEach((item, idx) => {
-      item.isLead = (idx === sIdx);
-    });
+    this.game.procurementSquadron.forEach((item, idx) => { item.isLead = (idx === sIdx); });
+    this.activeBayIndex = sIdx;
     this.updateUI();
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+  }
+
+  saveSquadronBayConfig(sIdx, callback) {
+    const item = this.game.procurementSquadron[sIdx];
+    if (!item) return;
+    const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
+    const defName = `${item.callsign || spec.name} Config`;
+
+    this.showPromptModal('SAVE PRESET', `Save Aircraft #${sIdx + 1} configuration as a preset:`, defName, (name) => {
+      if (name && name.trim()) {
+        this.customLoadouts.saveTemplate(name.trim(), {
+          name: name.trim(), specId: item.specId, roleCategory: 'CUSTOM', chosenGunId: item.chosenGunId || 'M61A2',
+          weapons: [...(item.weapons || [])], upgrades: [...(item.upgrades || [])],
+          desc: `User configuration based on ${spec.name} (${item.callsign}).`
+        });
+        this.showAlertModal('PRESET SAVED', `Configuration "${name.trim()}" saved to preset library.`);
+        if (callback) callback();
+      }
+    });
   }
 
   initSquadronNameEditor() {
@@ -97,7 +107,7 @@ class ProcurementManager {
     if (editBtn) {
       editBtn.onclick = () => {
         const curName = this.game.squadronName || 'Wardog Squadron';
-        this.showPromptModal('CUSTOMIZE SQUADRON DESIGNATION', 'Enter a tactical name for your combat fighter squadron:', curName, (newName) => {
+        this.showPromptModal('RENAME SQUADRON', 'Enter a name for your squadron:', curName, (newName) => {
           if (newName && newName.trim()) {
             this.game.setSquadronName(newName.trim());
             if (window.Persistence) window.Persistence.saveSquadronName(newName.trim());
@@ -105,234 +115,6 @@ class ProcurementManager {
         });
       };
     }
-  }
-
-  initPreconfigModalListeners() {
-    const modal = document.getElementById('preconfig-aircraft-modal');
-    const closeBtn = document.getElementById('btn-close-preconfig');
-    if (closeBtn && modal) {
-      closeBtn.onclick = () => {
-        modal.classList.remove('active');
-        if (this.game.controls) this.game.controls.autoUnpauseOnDialogClose();
-      };
-    }
-
-    const searchInput = document.getElementById('preconfig-search-input');
-    if (searchInput) {
-      let debounceTimer = null;
-      searchInput.oninput = (e) => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-          this.preconfigSearch = (e.target.value || '').toLowerCase();
-          this.renderPreconfigCardsGrid();
-        }, 120);
-      };
-    }
-
-    if (typeof CustomDropdown !== 'undefined') {
-      CustomDropdown.setup('cdd-preconfig-sort', {
-        label: 'SORT',
-        value: this.preconfigSort,
-        options: [
-          { value: 'DEFAULT', text: 'DEFAULT' },
-          { value: 'COST_ASC', text: 'COST: LOW TO HIGH' },
-          { value: 'COST_DESC', text: 'COST: HIGH TO LOW' },
-          { value: 'SPEED', text: 'SPEED: HIGH TO LOW' },
-          { value: 'ARMOR', text: 'ARMOR: HIGH TO LOW' }
-        ],
-        onChange: (val) => {
-          this.preconfigSort = val;
-          this.renderPreconfigCardsGrid();
-        }
-      });
-    }
-
-    const catPills = document.querySelectorAll('#preconfig-category-pills .cat-pill-btn');
-    catPills.forEach(btn => {
-      btn.onclick = () => {
-        catPills.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        this.preconfigCategory = btn.getAttribute('data-pcat') || 'ALL';
-        this.renderPreconfigCardsGrid();
-      };
-    });
-  }
-
-  openPreconfiguredAircraftModal() {
-    const modal = document.getElementById('preconfig-aircraft-modal');
-    if (!modal) return;
-    if (this.game.controls) this.game.controls.autoPauseOnDialogOpen();
-
-    const templates = this.customLoadouts.getTemplates();
-    const uniqueSpecs = Array.from(new Set(Object.values(templates).map(t => t.specId))).sort();
-    const airframeOpts = [{ value: 'ALL', text: 'ALL AIRFRAMES' }, ...uniqueSpecs.map(sId => ({ value: sId, text: sId }))];
-
-    if (typeof CustomDropdown !== 'undefined') {
-      CustomDropdown.setup('cdd-preconfig-airframe', {
-        label: 'AIRFRAME',
-        value: this.preconfigAirframe,
-        options: airframeOpts,
-        onChange: (val) => {
-          this.preconfigAirframe = val;
-          this.renderPreconfigCardsGrid();
-        }
-      });
-    }
-
-    this.renderPreconfigCardsGrid();
-    modal.classList.add('active');
-  }
-
-  renderPreconfigCardsGrid() {
-    const grid = document.getElementById('preconfig-cards-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    const templates = this.customLoadouts.getTemplates();
-    const acMap = window.AIRCRAFT_CATALOG || {};
-    const wpnMap = window.WEAPONS_CATALOG || {};
-    const upgMap = window.UPGRADES_CATALOG || {};
-    const gunsMap = window.AUTOCANNONS_CATALOG || {};
-
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
-
-    let list = Object.values(templates);
-    if (this.preconfigCategory && this.preconfigCategory !== 'ALL') {
-      list = list.filter(t => t.roleCategory === this.preconfigCategory);
-    }
-    if (this.preconfigAirframe && this.preconfigAirframe !== 'ALL') {
-      list = list.filter(t => t.specId === this.preconfigAirframe);
-    }
-    if (this.preconfigSearch && this.preconfigSearch.trim()) {
-      const q = this.preconfigSearch.trim();
-      list = list.filter(t => {
-        const spec = acMap[t.specId] || {};
-        const haystack = [t.name, t.specId, t.roleCategory, t.desc, spec.name, spec.role, spec.category, t.chosenGunId, ...(t.weapons || []), ...(t.upgrades || [])].join(' ').toLowerCase();
-        return haystack.includes(q);
-      });
-    }
-
-    list.sort((a, b) => {
-      const specA = acMap[a.specId] || {};
-      const specB = acMap[b.specId] || {};
-      const costA = (specA.cost || 0) + (a.weapons || []).reduce((s, w) => s + ((wpnMap[w] || {}).cost || 0), 0) + (a.upgrades || []).reduce((s, u) => s + ((upgMap[u] || {}).cost || 0), 0);
-      const costB = (specB.cost || 0) + (b.weapons || []).reduce((s, w) => s + ((wpnMap[w] || {}).cost || 0), 0) + (b.upgrades || []).reduce((s, u) => s + ((upgMap[u] || {}).cost || 0), 0);
-      if (this.preconfigSort === 'COST_ASC') return costA - costB;
-      if (this.preconfigSort === 'COST_DESC') return costB - costA;
-      if (this.preconfigSort === 'SPEED') return (specB.S_0 || 0) - (specA.S_0 || 0);
-      if (this.preconfigSort === 'ARMOR') return (specB.hp || 0) - (specA.hp || 0);
-      return 0;
-    });
-
-    if (list.length === 0) {
-      grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: #8494ab; font-family: var(--font-mono); font-size: 0.74rem;"><b style="color:#00f0ff;">NO MATCHING PRECONFIGURED LOADOUTS FOUND</b></div>`;
-      return;
-    }
-
-    list.forEach(tpl => {
-      const spec = acMap[tpl.specId];
-      if (!spec) return;
-
-      const card = document.createElement('div');
-      const category = spec.category || 'MULTIROLE';
-      card.className = `preconfig-card cat-${category.toLowerCase()}`;
-
-      let totalCost = Number(spec.cost || 0);
-      let totalMass = 100;
-      const gun = gunsMap[tpl.chosenGunId] || gunsMap[spec.builtInGun] || gunsMap['M61A2'];
-      if (gun) totalMass += gun.mass || 0;
-
-      const weaponsListHtml = (tpl.weapons || []).map(wId => {
-        const w = wpnMap[wId];
-        if (!w) return '';
-        totalCost += Number(w.cost || 0); totalMass += Number(w.mass || 0);
-        return `<span class="pc-item-pill wpn" data-tag-title="${w.name}" data-tag-tooltip="${w.rangeKm}km RNG • ${w.damage} HP DMG • ${w.seeker || 'GUIDED'} • ${w.ammoCount || 4}x Pack">${w.name.split(' ')[0]} (${w.ammoCount || 4}x)</span>`;
-      }).join('');
-
-      const upgradesListHtml = (tpl.upgrades || []).map(uId => {
-        const u = upgMap[uId];
-        if (!u) return '';
-        totalCost += Number(u.cost || 0); totalMass += Number(u.mass || 0);
-        return `<span class="pc-item-pill upg" data-tag-title="${u.name}" data-tag-tooltip="${u.desc}">[${u.category || 'MOD'}] ${u.name.split(' ')[0]}</span>`;
-      }).join('');
-
-      const gunHtml = gun ? `<span class="pc-item-pill gun" data-tag-title="${gun.name}" data-tag-tooltip="${gun.rpm} RPM • ${gun.damagePerSec} HP/s">${gun.name.split(' ')[0]}</span>` : '';
-      const maxMass = spec.M_max || 5000;
-      const wrPercent = Math.round(Math.min(1.0, totalMass / maxMass) * 100);
-
-      const rSpeed = rate('speed', spec.S_0 || 0.90);
-      const rAgi = rate('agility', spec.AGI_0 || 0.85);
-      const rHp = rate('hp', spec.hp || 4);
-      const rRadar = rate('radar_range', spec.R_0 || 75.0);
-      const rRcs = rate('rcs', spec.sigma_0 || 1.0);
-      const rCost = rate('cost_airframe', totalCost);
-      const tvcLabel = spec.thrustVector ? '3D TVC' : (spec.isCoffin ? 'COFFIN' : 'AERO');
-      const rcsTag = (spec.sigma_0 <= 0.0005) ? `VLO` : ((spec.sigma_0 < 0.1) ? `LO` : `${spec.sigma_0}m²`);
-
-      card.innerHTML = `
-        <div class="pc-top-row">
-          <div class="pc-title-group">
-            <div class="pc-template-name">${tpl.name}</div>
-            <div class="pc-spec-name">${spec.name} &bull; ${spec.role}</div>
-          </div>
-          <div class="pc-cost-badge ${rCost.colorClass}">$${totalCost.toFixed(1)}M</div>
-        </div>
-        <div class="pc-badges-row">
-          <span class="pc-role-badge">${tpl.roleCategory}</span>
-          <span class="adc-badge badge-cat-${category.toLowerCase()}">${category}</span>
-          <span class="adc-badge" style="background:#091e36;border:1px solid #0284c7;color:#7dd3fc;">${tvcLabel}</span>
-          <span class="adc-badge" style="background:#051424;border:1px solid #162a42;color:#94a3b8;">LOAD: ${wrPercent}%</span>
-        </div>
-        <div class="pc-stats-strip">
-          <div class="pc-stat-cell"><span>SPEED</span><b class="${rSpeed.colorClass}">M ${(spec.S_0 || 0.9).toFixed(2)}</b></div>
-          <div class="pc-stat-cell"><span>AGI (G)</span><b class="${rAgi.colorClass}">${(spec.AGI_0 || 0.85).toFixed(2)} (${spec.G_limit || 9}G)</b></div>
-          <div class="pc-stat-cell"><span>ARMOR</span><b class="${rHp.colorClass}">${spec.hp || 4} HP</b></div>
-          <div class="pc-stat-cell"><span>RADAR</span><b class="${rRadar.colorClass}">${spec.R_0 || 75}km</b></div>
-          <div class="pc-stat-cell"><span>RCS</span><b class="${rRcs.colorClass}">${rcsTag}</b></div>
-          <div class="pc-stat-cell"><span>HARDPOINTS</span><b>${spec.totalSlots || 6} Pylons</b></div>
-        </div>
-        <div class="pc-loadout-summary">
-          <div class="pc-loadout-line"><span class="pc-tag-label">GUN:</span>${gunHtml}</div>
-          <div class="pc-loadout-line"><span class="pc-tag-label">WEAPONS:</span>${weaponsListHtml || '<span style="color:#64748b;">NONE</span>'}</div>
-          <div class="pc-loadout-line"><span class="pc-tag-label">UPGRADES:</span>${upgradesListHtml || '<span style="color:#64748b;">NONE</span>'}</div>
-        </div>
-        <div class="pc-desc-box">${tpl.desc || spec.desc || ''}</div>
-        <div class="pc-footer">
-          <button type="button" class="spec-inspect-btn small" data-inspect-type="airframe" data-inspect-id="${spec.id}">[SPECS]</button>
-          <button type="button" class="scramble-btn btn-deploy-tpl" style="padding: 4px 14px; font-size: 0.68rem;">+ DEPLOY TO SQUADRON</button>
-        </div>
-      `;
-
-      card.querySelector('.btn-deploy-tpl').onclick = () => {
-        this.deployPreconfiguredTemplate(tpl);
-        document.getElementById('preconfig-aircraft-modal').classList.remove('active');
-        if (this.game.controls) this.game.controls.autoUnpauseOnDialogClose();
-      };
-      grid.appendChild(card);
-    });
-  }
-
-  deployPreconfiguredTemplate(tpl) {
-    const maxUnits = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
-    if (this.game.procurementSquadron.length >= maxUnits) {
-      this.showAlertModal('MAX CAPACITY', `Squadron capacity of ${maxUnits} units reached!`);
-      return;
-    }
-    const pool = window.CALLSIGN_POOL || ['Trigger', 'Mobius 1', 'Cipher', 'Viper'];
-    const assignedCallsign = pool[Math.floor(Math.random() * pool.length)];
-    const isFirstCraft = (this.game.procurementSquadron.length === 0);
-
-    this.game.procurementSquadron.push({
-      specId: tpl.specId,
-      chosenGunId: tpl.chosenGunId || 'M61A2',
-      weapons: [...(tpl.weapons || [])],
-      upgrades: [...(tpl.upgrades || [])],
-      callsign: `${assignedCallsign}`,
-      isLead: isFirstCraft
-    });
-    this.updateUI();
-    if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
   initMobileProcurement() {
@@ -355,7 +137,7 @@ class ProcurementManager {
 
   initInspectListeners() {
     document.addEventListener('click', (e) => {
-      const btn = e.target && e.target.closest ? e.target.closest('.gun-inspect-btn, .spec-inspect-btn, .pylon-inspect-btn, .micro-spec-btn') : null;
+      const btn = e.target.closest('.gun-inspect-btn, .spec-inspect-btn, .pylon-inspect-btn, .micro-spec-btn');
       if (btn) {
         e.preventDefault(); e.stopPropagation();
         const type = btn.getAttribute('data-inspect-type');
@@ -393,14 +175,20 @@ class ProcurementManager {
       bScramble.onclick = (e) => {
         e.preventDefault();
         if (this.game.procurementSquadron.length === 0) {
-          this.showAlertModal('HANGAR EMPTY', 'Add at least one aircraft or select a doctrine preset before scrambling.');
+          this.showAlertModal('EMPTY SQUADRON', 'Add at least one aircraft to your squadron before launching the mission.');
           return;
         }
         if (this.game.budgetRemaining < 0) {
-          this.showAlertModal('BUDGET DEFICIT', `Fleet cost exceeds defense allocation ($${this.game.budgetMax.toFixed(1)}M). Remove ordnance or airframes.`);
+          this.showAlertModal('OVER BUDGET', `Total cost exceeds available budget ($${this.game.budgetMax.toFixed(1)}M). Adjust aircraft or weapons.`);
           return;
         }
-        this.game.scrambleFlight();
+
+        this.showConfirmModal(
+          'COMMENCE MISSION',
+          `Launch mission with ${this.game.procurementSquadron.length} aircraft?`,
+          () => this.game.scrambleFlight(),
+          { confirmText: 'LAUNCH MISSION', isAlert: false }
+        );
       };
     }
 
@@ -413,43 +201,39 @@ class ProcurementManager {
     if (presetsContainer) ProcurementPresets.renderDoctrineBar(presetsContainer, this);
   }
 
-  setSelectedItem(type, id, name) {
-    this.selectedItem = { type: type, id: id, name: name };
-    const el = document.getElementById('shelf-instructions');
-    if (el) el.textContent = `SELECTED: ${name}. Tap "+ EQUIP" or select Bay.`;
-
-    const catalogEl = document.getElementById('armory-catalog');
-    if (catalogEl) {
-      const cards = catalogEl.querySelectorAll('.catalog-item-card, .airframe-dense-card');
-      cards.forEach(c => {
-        const isMatch = (c.dataset.itemId === id && c.dataset.itemType === type);
-        c.classList.toggle('selected', isMatch);
-      });
-    }
-  }
-
   renderCatalog() {
     const catalogEl = document.getElementById('armory-catalog');
-    this.shelf.render(catalogEl, this.currentTab, this.currentAirframeCategory, this.searchQuery, this.selectedItem);
+    this.shelf.render(catalogEl, this.currentTab, this.currentAirframeCategory, this.searchQuery);
+  }
+
+  equipItemDirectly(itemData) {
+    if (this.game.procurementSquadron.length === 0) {
+      this.showAlertModal('NO AIRCRAFT', 'Add an aircraft to your squadron before equipping weapons or systems.');
+      return;
+    }
+    const sIdx = (this.activeBayIndex !== undefined && this.activeBayIndex < this.game.procurementSquadron.length) ? this.activeBayIndex : 0;
+    this.equipItemDataToSquadron(sIdx, itemData);
   }
 
   addAirframe(specId) {
     const spec = (window.AIRCRAFT_CATALOG || {})[specId];
     if (!spec) return;
     if (this.game.budgetRemaining < (spec.cost || 0)) {
-      this.showAlertModal('INSUFFICIENT BUDGET', `Adding ${spec.name} ($${Number(spec.cost).toFixed(1)}M) exceeds available defense funds!`);
+      this.showAlertModal('INSUFFICIENT FUNDS', `Adding ${spec.name} ($${Number(spec.cost).toFixed(1)}M) exceeds available budget.`);
       return;
     }
     const maxUnits = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
     if (this.game.procurementSquadron.length >= maxUnits) {
-      this.showAlertModal('MAX CAPACITY', `Maximum squadron capacity of ${maxUnits} airframes reached!`);
+      this.showAlertModal('LIMIT REACHED', `Maximum squadron capacity of ${maxUnits} aircraft reached.`);
       return;
     }
     const isFirst = (this.game.procurementSquadron.length === 0);
     this.game.procurementSquadron.push({
       specId: specId, chosenGunId: spec.builtInGun || 'M61A2', weapons: [], upgrades: [], isLead: isFirst
     });
+    this.activeBayIndex = this.game.procurementSquadron.length - 1;
     this.updateUI();
+    this.renderCatalog();
   }
 
   cloneAirframe(sIdx) {
@@ -457,12 +241,13 @@ class ProcurementManager {
     if (!item) return;
     const maxUnits = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
     if (this.game.procurementSquadron.length >= maxUnits) {
-      this.showAlertModal('MAX CAPACITY', `Maximum squadron capacity of ${maxUnits} reached!`);
+      this.showAlertModal('LIMIT REACHED', `Maximum squadron capacity of ${maxUnits} aircraft reached.`);
       return;
     }
     this.game.procurementSquadron.push({
       specId: item.specId, chosenGunId: item.chosenGunId, weapons: [...item.weapons], upgrades: [...item.upgrades], isLead: false
     });
+    this.activeBayIndex = this.game.procurementSquadron.length - 1;
     this.updateUI();
   }
 
@@ -473,7 +258,7 @@ class ProcurementManager {
     if (itemData.type === 'gun') {
       const spec = (window.AIRCRAFT_CATALOG || {})[item.specId];
       if (spec && spec.allowedGuns && !spec.allowedGuns.includes(itemData.id)) {
-        this.showAlertModal('INCOMPATIBLE AUTOCANNON', `${itemData.name} cannot be mounted on this airframe.`);
+        this.showAlertModal('INCOMPATIBLE', `${itemData.name} is not compatible with this aircraft.`);
         return;
       }
       item.chosenGunId = itemData.id;
@@ -483,31 +268,25 @@ class ProcurementManager {
       if (!wpn || !spec) return;
       const curSlots = item.weapons.reduce((sum, wId) => sum + ((window.WEAPONS_CATALOG[wId] || {}).slots || 1), 0);
       if (curSlots + (wpn.slots || 1) > (spec.totalSlots || 6)) {
-        this.showAlertModal('HARDPOINTS FULL', `Mounting ${wpn.name} exceeds available stations on this craft.`);
+        this.showAlertModal('HARDPOINTS FULL', `Mounting ${wpn.name} exceeds remaining hardpoint capacity on Aircraft #${sIdx + 1}.`);
         return;
       }
       item.weapons.push(itemData.id);
     } else if (itemData.type === 'upgrade') {
       const specU = (window.AIRCRAFT_CATALOG || {})[item.specId];
       if (item.upgrades.length >= (specU.upgradeSockets || 3)) {
-        this.showAlertModal('SOCKETS FULL', 'All available modular component sockets are filled on this airframe.');
+        this.showAlertModal('SLOTS FULL', `All component slots on Aircraft #${sIdx + 1} are occupied.`);
         return;
       }
       if (item.upgrades.includes(itemData.id)) {
-        this.showAlertModal('ALREADY INSTALLED', 'This component is already mounted on this airframe.');
+        this.showAlertModal('ALREADY INSTALLED', 'This component is already installed on this aircraft.');
         return;
       }
       item.upgrades.push(itemData.id);
     }
+    if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     this.updateUI();
-  }
-
-  equipSelectedToSquadron(sIdx) {
-    if (!this.selectedItem) {
-      this.showAlertModal('NO SELECTION', 'Select an autocannon, weapon, or component from the catalog first.');
-      return;
-    }
-    this.equipItemDataToSquadron(sIdx, this.selectedItem);
+    this.renderCatalog();
   }
 
   applyBuiltinPreset(type) {
@@ -515,7 +294,9 @@ class ProcurementManager {
     if (this.game.procurementSquadron.length > 0 && !this.game.procurementSquadron.some(it => it && it.isLead)) {
       this.game.procurementSquadron[0].isLead = true;
     }
+    this.activeBayIndex = 0;
     this.updateUI();
+    this.renderCatalog();
   }
 
   applyCustomPreset(name) {
@@ -525,13 +306,17 @@ class ProcurementManager {
       if (this.game.procurementSquadron.length > 0 && !this.game.procurementSquadron.some(it => it && it.isLead)) {
         this.game.procurementSquadron[0].isLead = true;
       }
+      this.activeBayIndex = 0;
       this.updateUI();
+      this.renderCatalog();
     }
   }
 
   clearSquadron() {
     this.game.procurementSquadron = [];
+    this.activeBayIndex = 0;
     this.updateUI();
+    this.renderCatalog();
   }
 
   updateUI() {

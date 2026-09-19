@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AIRSPACE STANDOFF // Procurement Hangar Layout: Compact Single-Line Title
+   AIRSPACE STANDOFF // Procurement Hangar Layout
    ========================================================================== */
 
 .procurement-window {
@@ -15,7 +15,7 @@
   display: flex;
   flex-direction: column;
   padding: 6px 10px;
-  gap: 4px;
+  gap: 5px;
   overflow: hidden;
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
   transform: translateZ(0);
@@ -32,7 +32,6 @@
   box-sizing: border-box;
 }
 
-/* TITLE GROUP: ENLARGED BRAND TITLE ON LEFT, MANUAL + WING CALLSIGN ON RIGHT */
 .title-group {
   display: flex;
   align-items: center;
@@ -78,9 +77,8 @@
 }
 
 .squad-callsign-tag,
-.proc-manual-btn {
-  background: #08172c;
-  border: 1px solid #0284c7;
+.proc-manual-btn,
+.proc-exit-btn {
   font-size: 0.76rem;
   font-family: var(--font-mono);
   font-weight: 800;
@@ -96,22 +94,13 @@
   transition: all 0.14s ease;
 }
 
-.squad-callsign-tag {
-  color: #ffb830;
-}
+.squad-callsign-tag { background: #08172c; border: 1px solid #0284c7; color: #ffb830; }
+.proc-manual-btn { background: #08172c; border: 1px solid #0284c7; color: #7dd3fc; }
+.proc-exit-btn { background: rgba(153, 27, 27, 0.35); border: 1px solid #ef4444; color: #fecdd3; }
 
-.proc-manual-btn {
-  color: #7dd3fc;
-}
+.squad-callsign-tag:hover, .proc-manual-btn:hover { background: #0284c7; color: #ffffff; border-color: #00f0ff; }
+.proc-exit-btn:hover { background: #ef4444; color: #ffffff; border-color: #f87171; box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
 
-.squad-callsign-tag:hover,
-.proc-manual-btn:hover {
-  background: #0284c7;
-  color: #ffffff;
-  border-color: #00f0ff;
-}
-
-/* COMFORTABLE MODE AND AI SELECTION ROW */
 .mode-and-ai-controls {
   display: flex;
   align-items: center;
@@ -139,33 +128,13 @@
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.12s ease;
-  line-height: 1.2;
 }
 
-.seg-btn:hover {
-  color: #f1f5f9;
-}
+.seg-btn:hover { color: #f1f5f9; }
+.seg-btn.active { background: var(--color-cyan); color: #000; box-shadow: 0 0 8px rgba(0, 240, 255, 0.35); }
 
-.seg-btn.active {
-  background: var(--color-cyan);
-  color: #000;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
-}
+.ai-config-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
-.ai-config-group {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.ai-config-group .hud-select {
-  font-size: 0.74rem;
-  padding: 5px 10px;
-  height: 30px;
-}
-
-/* FULLSCREEN RIGHT-CORNER CONTAINER */
 .proc-right-actions {
   margin-left: auto;
   display: flex;
@@ -181,18 +150,8 @@
   height: 30px;
 }
 
-#btn-proc-fullscreen.active {
-  background: #0284c7;
-  color: #ffffff;
-  border-color: #00f0ff;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
-}
-
-/* HIDE FULLSCREEN IN NATIVE ANDROID APK */
-.is-android-apk #btn-proc-fullscreen,
-.is-android-apk #btn-fullscreen-toggle {
-  display: none !important;
-}
+#btn-proc-fullscreen.active { background: #0284c7; color: #ffffff; border-color: #00f0ff; }
+.is-android-apk #btn-proc-fullscreen, .is-android-apk #btn-fullscreen-toggle { display: none !important; }
 
 .budget-display {
   display: flex;
@@ -210,86 +169,117 @@
 .budget-display .amount { font-size: 0.88rem; font-weight: 800; color: #00f0ff; }
 .budget-display .amount .spent-val { color: var(--color-green); }
 .budget-display .amount .spent-val.overbudget { color: var(--color-red) !important; }
+.budget-display .amount .rem-val { font-size: 0.62rem; color: #8494ab; font-weight: 700; margin-left: 2px; }
+.budget-display .count-tag { font-size: 0.62rem; color: #e2e8f0; background: #091526; border: 1px solid #173252; padding: 2px 5px; border-radius: 2px; font-weight: 700; }
 
-.budget-display .amount .rem-val {
-  font-size: 0.62rem;
-  color: #8494ab;
-  font-weight: 700;
-  margin-left: 2px;
-}
-
-.budget-display .count-tag {
-  font-size: 0.62rem;
-  color: #e2e8f0;
-  background: #091526;
-  border: 1px solid #173252;
-  padding: 2px 5px;
-  border-radius: 2px;
-  font-weight: 700;
-}
-
+/* Substantially Enlarged Doctrines, Preconfigured & Fleet Action Toolbar */
 .procurement-presets {
   flex-shrink: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   background: #020610;
-  padding: 4px 6px;
-  border-radius: 3px;
-  border: 1px solid #142338;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #16273e;
 }
 
 .preset-label {
   font-family: var(--font-mono);
-  font-size: 0.60rem;
-  font-weight: 800;
+  font-size: 0.72rem;
+  font-weight: 900;
   color: #ffb830;
+  letter-spacing: 0.5px;
+  margin-right: 4px;
 }
 
 .preset-btn {
-  background: #091322;
-  border: 1px solid #16273e;
-  color: #e2e8f0;
+  background: #081426;
+  border: 1px solid #172a44;
+  color: #f1f5f9;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 700;
-  padding: 3px 7px;
-  border-radius: 2px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 3px;
   cursor: pointer;
-  transition: border-color 0.12s ease, background-color 0.12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  letter-spacing: 0.4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: all 0.14s ease;
 }
 
-.preset-btn:hover { border-color: #00f0ff; color: #fff; }
-.preset-btn.active { background: #0284c7 !important; color: #fff !important; border-color: #00f0ff !important; }
-.preset-btn.highlight { background: #082846; border-color: #0284c7; color: #7dd3fc; }
-.preset-btn.alert { background: rgba(153, 27, 27, 0.4); border-color: #991b1b; color: #fca5a5; }
+.preset-btn:hover {
+  border-color: #00f0ff;
+  color: #ffffff;
+  background: #0f243e;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
+}
+
+.preset-btn.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.45);
+}
+
+.preset-btn.highlight {
+  background: #092646;
+  border-color: #0284c7;
+  color: #7dd3fc;
+}
+
+.preset-btn.highlight:hover {
+  background: #0284c7;
+  border-color: #00f0ff;
+  color: #ffffff;
+}
+
+.preset-btn.alert {
+  background: rgba(153, 27, 27, 0.4);
+  border-color: #991b1b;
+  color: #fca5a5;
+}
+
+.preset-btn.alert:hover {
+  background: #dc2626;
+  border-color: #ef4444;
+  color: #ffffff;
+}
 
 .custom-preset-chip {
   display: inline-flex;
   align-items: center;
-  background: #051222;
-  border: 1px solid #163252;
+  background: #06152a;
+  border: 1px solid #19385c;
   border-radius: 3px;
+  height: 32px;
   overflow: hidden;
 }
 
-.custom-preset-chip .preset-btn { border: none; background: transparent; padding: 3px 6px; }
+.custom-preset-chip .preset-btn { border: none; background: transparent; padding: 0 10px; height: 100%; box-shadow: none; }
 .preset-icon-btn {
   background: transparent;
   border: none;
-  border-left: 1px solid #163252;
+  border-left: 1px solid #19385c;
   color: #7dd3fc;
-  font-size: 0.60rem;
-  padding: 3px 6px;
+  font-size: 0.70rem;
+  font-weight: 800;
+  padding: 0 9px;
+  height: 100%;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-
 .preset-icon-btn:hover { background: #0284c7; color: #fff; }
 
-.procurement-mobile-tabs {
-  display: none;
-}
+.procurement-mobile-tabs { display: none; }
 
 .procurement-body {
   flex: 1;
@@ -344,130 +334,32 @@
   box-shadow: 0 0 24px rgba(0, 240, 255, 0.5);
 }
 
-.scramble-btn:disabled {
-  background: #0a111c;
-  border-color: #17263b;
-  color: #64748b;
-  cursor: not-allowed;
-}
+.scramble-btn:disabled { background: #0a111c; border-color: #17263b; color: #64748b; cursor: not-allowed; }
 
-/* ==========================================================================
-   MOBILE RESPONSIVENESS: ENLARGED TOUCH CONTROLS
-   ========================================================================== */
 @media (max-width: 1024px) {
   .procurement-window {
-    width: 100vw;
-    max-width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 100dvh;
-    border-radius: 0;
-    padding: 4px 6px;
-    gap: 3px;
-    box-sizing: border-box;
-    overflow-x: hidden;
-    box-shadow: none;
+    width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: 100dvh; min-height: 100dvh;
+    border-radius: 0; padding: 4px 6px; gap: 3px; box-sizing: border-box; overflow-x: hidden; box-shadow: none;
   }
-
-  .procurement-header {
-    padding-bottom: 2px;
-    gap: 2px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
+  .procurement-header { padding-bottom: 2px; gap: 2px; width: 100%; box-sizing: border-box; }
   .game-name { font-size: 0.98rem; }
   .hangar-badge { font-size: 0.60rem; padding: 2px 6px; }
-
-  .squad-callsign-tag,
-  .proc-manual-btn {
-    padding: 4px 9px;
-    font-size: 0.70rem;
-    height: 28px;
-  }
-
-  .mode-and-ai-controls {
-    gap: 4px;
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .seg-btn {
-    padding: 4px 8px;
-    font-size: 0.68rem;
-  }
-
-  .ai-config-group .hud-select {
-    padding: 4px 6px;
-    font-size: 0.66rem;
-    height: 28px;
-  }
-
-  .proc-right-actions {
-    margin-left: auto;
-    gap: 4px;
-  }
-
-  .proc-right-actions .hud-btn {
-    font-size: 0.68rem;
-    padding: 4px 9px;
-    height: 28px;
-  }
-
-  .budget-display {
-    padding: 2px 6px;
-    width: 100%;
-    justify-content: space-between;
-    box-sizing: border-box;
-  }
-
+  .squad-callsign-tag, .proc-manual-btn, .proc-exit-btn { padding: 4px 9px; font-size: 0.70rem; height: 28px; }
+  .mode-and-ai-controls { gap: 4px; width: 100%; justify-content: flex-start; }
+  .seg-btn { padding: 4px 8px; font-size: 0.68rem; }
+  .proc-right-actions { margin-left: auto; gap: 4px; }
+  .proc-right-actions .hud-btn { font-size: 0.68rem; padding: 4px 9px; height: 28px; }
+  .budget-display { padding: 2px 6px; width: 100%; justify-content: space-between; box-sizing: border-box; }
   .budget-display .amount { font-size: 0.78rem; }
-
-  .procurement-presets {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding: 2px 4px;
-    gap: 3px;
-    width: 100%;
-    box-sizing: border-box;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .preset-btn {
-    white-space: nowrap;
-    padding: 2px 6px;
-    font-size: 0.56rem;
-    flex-shrink: 0;
-  }
-
-  .procurement-footer {
-    padding-top: 2px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .scramble-btn {
-    width: 100%;
-    padding: 6px;
-    font-size: 0.74rem;
-  }
+  .procurement-presets { flex-wrap: nowrap; overflow-x: auto; padding: 4px 6px; gap: 4px; width: 100%; box-sizing: border-box; -webkit-overflow-scrolling: touch; }
+  .preset-btn { white-space: nowrap; padding: 0 10px; font-size: 0.68rem; height: 30px; flex-shrink: 0; }
+  .preset-label { font-size: 0.68rem; flex-shrink: 0; }
+  .procurement-footer { padding-top: 2px; width: 100%; box-sizing: border-box; }
+  .scramble-btn { width: 100%; padding: 6px; font-size: 0.74rem; }
 }
 
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
   .procurement-mobile-tabs { display: none !important; }
-
-  .procurement-body {
-    display: grid !important;
-    grid-template-columns: 1.15fr 1fr !important;
-    gap: 4px !important;
-    flex: 1 1 auto !important;
-  }
-
-  .hanger-shelf, .flight-roster {
-    display: flex !important;
-    width: 100% !important;
-    height: 100% !important;
-    padding: 4px !important;
-  }
+  .procurement-body { display: grid !important; grid-template-columns: 1.15fr 1fr !important; gap: 4px !important; flex: 1 1 auto !important; }
+  .hanger-shelf, .flight-roster { display: flex !important; width: 100% !important; height: 100% !important; padding: 4px !important; }
 }

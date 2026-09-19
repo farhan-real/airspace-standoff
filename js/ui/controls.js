@@ -1,7 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Controls System Coordinator
- * Pure manual target selection and switching. Full RTB names and no hotkeys in UI text.
- * Integrates cross-browser Fullscreen controller and reliable pause modal transitions.
+ * AIRSPACE STANDOFF // Controls System Coordinator (<250 lines)
+ * Standardized dialogs, touch steering, pause overlay, and application exit.
  */
 
 class ControlsSystem {
@@ -18,8 +17,49 @@ class ControlsSystem {
     this.initMobileControls();
     this.initTimeWarpControls();
     this.initPauseScreenModal();
+    this.initExitButtons();
     if (this.fullscreen && this.fullscreen.init) {
       this.fullscreen.init();
+    }
+  }
+
+  initExitButtons() {
+    const procExit = document.getElementById('btn-proc-exit');
+    const pauseExit = document.getElementById('btn-pause-exit');
+
+    if (procExit) procExit.onclick = () => this.exitGame();
+    if (pauseExit) pauseExit.onclick = () => this.exitGame();
+  }
+
+  exitGame() {
+    const confirmMsg = 'Are you sure you want to exit the application?';
+    const doExit = () => {
+      try {
+        if (typeof window.AndroidAppBridge !== 'undefined' && typeof window.AndroidAppBridge.exitApp === 'function') {
+          window.AndroidAppBridge.exitApp();
+          return;
+        }
+      } catch (e) {}
+
+      try {
+        window.close();
+      } catch (e) {}
+
+      document.body.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#03070d;color:#00f0ff;font-family:ui-monospace,monospace;text-align:center;padding:20px;">
+          <h1 style="letter-spacing:1px;margin-bottom:12px;">SIMULATION ENDED</h1>
+          <p style="color:#8494ab;font-size:0.9rem;">You may now close this application window or browser tab.</p>
+        </div>
+      `;
+    };
+
+    if (this.game.procurement && typeof this.game.procurement.showConfirmModal === 'function') {
+      this.game.procurement.showConfirmModal('EXIT', confirmMsg, doExit, {
+        confirmText: 'EXIT',
+        isAlert: true
+      });
+    } else if (window.confirm(confirmMsg)) {
+      doExit();
     }
   }
 
@@ -36,16 +76,12 @@ class ControlsSystem {
   }
 
   setTimeWarp(speed) {
-    if (this.game.simulation) {
-      this.game.simulation.setTimeWarp(speed);
-    }
+    if (this.game.simulation) this.game.simulation.setTimeWarp(speed);
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
   togglePause() {
-    if (this.game.simulation) {
-      this.game.simulation.togglePause();
-    }
+    if (this.game.simulation) this.game.simulation.togglePause();
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
@@ -76,7 +112,6 @@ class ControlsSystem {
         this.setTimeWarp(1);
       };
     }
-
     if (btnSettings) {
       btnSettings.onclick = () => {
         const sm = document.getElementById('settings-modal');
@@ -86,14 +121,12 @@ class ControlsSystem {
         }
       };
     }
-
     if (btnManual) {
       btnManual.onclick = () => {
         const gm = document.getElementById('glossary-modal');
         if (gm) gm.classList.add('active');
       };
     }
-
     if (btnAbort) {
       btnAbort.onclick = () => {
         if (pauseModal) pauseModal.classList.remove('active');
@@ -158,8 +191,7 @@ class ControlsSystem {
     if (slider) {
       slider.oninput = (e) => {
         if (!this.game.activeUnit || this.game.activeUnit.hp <= 0) return;
-        const alpha = parseInt(e.target.value, 10) / 100.0;
-        this.game.activeUnit.engineAlpha = alpha;
+        this.game.activeUnit.engineAlpha = parseInt(e.target.value, 10) / 100.0;
         this.game.avionics.updateActiveUnitMFD();
       };
     }
@@ -229,13 +261,13 @@ class ControlsSystem {
     const u = this.game.activeUnit;
     if (!u || u.hp <= 0) return;
     if (u.speed < 0.45) {
-      if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'TOO SLOW FOR ZOOM', '#ff3366');
+      if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'SPEED TOO LOW FOR CLIMB', '#ff3366');
       return;
     }
     if (this.game.consumeCurrentCommanderTokens(0.4)) {
       u.zoomClimb();
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-      if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'ZOOM CLIMB', '#00f5a0');
+      if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'CLIMB', '#00f5a0');
       this.game.avionics.updateActiveUnitMFD();
     }
   }
@@ -266,51 +298,37 @@ class ControlsSystem {
 
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
     const is2P = Boolean(this.game && this.game.playerMode === '2P');
-    const detectedSet = is2P
-      ? null
-      : ((commanderTeam === 'friendly')
-        ? (this.game.detectedByBlue || new Set())
-        : (this.game.detectedByRed || new Set()));
+    const detectedSet = is2P ? null : ((commanderTeam === 'friendly') ? (this.game.detectedByBlue || new Set()) : (this.game.detectedByRed || new Set()));
     const enemyRoster = (commanderTeam === 'friendly') ? this.game.hostileAircraft : this.game.alliedAircraft;
     const enemyTeamTag = (commanderTeam === 'friendly') ? 'hostile' : 'friendly';
 
     const detected = [];
-
     for (const h of enemyRoster) {
       if (h && h.hp > 0 && (is2P || (detectedSet && detectedSet.has(h.id)))) {
-        const dist = Math.hypot(h.x - active.x, h.y - active.y);
-        detected.push({ entity: h, dist: dist });
+        detected.push({ entity: h, dist: Math.hypot(h.x - active.x, h.y - active.y) });
       }
     }
-
     const ghosts = (this.game.simulation && this.game.simulation.ghostContacts) || [];
     for (const g of ghosts) {
       if (g && g.hp > 0 && !g.isDissolved && (is2P || (detectedSet && detectedSet.has(g.id)))) {
-        const distG = Math.hypot(g.x - active.x, g.y - active.y);
-        detected.push({ entity: g, dist: distG });
+        detected.push({ entity: g, dist: Math.hypot(g.x - active.x, g.y - active.y) });
       }
     }
-
     const decoys = (this.game.simulation && this.game.simulation.decoyDrones) || [];
     for (const d of decoys) {
       if (d && d.hp > 0 && d.team === enemyTeamTag && (is2P || (detectedSet && detectedSet.has(d.id)))) {
-        const distD = Math.hypot(d.x - active.x, d.y - active.y);
-        detected.push({ entity: d, dist: distD });
+        detected.push({ entity: d, dist: Math.hypot(d.x - active.x, d.y - active.y) });
       }
     }
-
     for (const s of this.game.surfaceUnits) {
       if (s && s.team === enemyTeamTag && s.hp > 0 && (is2P || (detectedSet && detectedSet.has(s.id)))) {
-        const distS = Math.hypot(s.x - active.x, s.y - active.y);
-        detected.push({ entity: s, dist: distS });
+        detected.push({ entity: s, dist: Math.hypot(s.x - active.x, s.y - active.y) });
       }
     }
-
     const civilians = (this.game.simulation && this.game.simulation.civilianTraffic) || [];
     for (const c of civilians) {
       if (c && c.hp > 0 && (is2P || (detectedSet && detectedSet.has(c.id)))) {
-        const distC = Math.hypot(c.x - active.x, c.y - active.y);
-        detected.push({ entity: c, dist: distC });
+        detected.push({ entity: c, dist: Math.hypot(c.x - active.x, c.y - active.y) });
       }
     }
 
@@ -324,7 +342,7 @@ class ControlsSystem {
 
     const targets = this.getDetectedTargets();
     if (targets.length === 0) {
-      if (this.game.radar) this.game.radar.spawnCombatText(active.x, active.y, 'NO RADAR CONTACTS', '#f97316');
+      if (this.game.radar) this.game.radar.spawnCombatText(active.x, active.y, 'NO CONTACTS', '#f97316');
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       return;
     }
@@ -339,8 +357,7 @@ class ControlsSystem {
     }
 
     const nextIndex = (currentIndex + direction + targets.length) % targets.length;
-    const nextTarget = targets[nextIndex].entity;
-    this.lockTargetEntity(nextTarget);
+    this.lockTargetEntity(targets[nextIndex].entity);
   }
 
   lockTargetEntity(target) {
@@ -349,13 +366,12 @@ class ControlsSystem {
     const is2P = Boolean(this.game && this.game.playerMode === '2P');
 
     this.game.selectedTarget = target;
-
     const isKnown = is2P || (target.team === active.team) ||
       (typeof target.isIdentifiedBy === 'function' ? target.isIdentifiedBy(commanderTeam) : target.isIdentified);
 
     if (this.game.radar) {
       const lockColor = !isKnown ? '#f97316' : ((target.isAce && isKnown) ? '#ffd700' : '#00f0ff');
-      this.game.radar.spawnCombatText(target.x, target.y, isKnown ? 'TARGET SWITCHED' : 'BOGEY SWITCHED', lockColor);
+      this.game.radar.spawnCombatText(target.x, target.y, isKnown ? 'TARGET LOCKED' : 'CONTACT TRACKED', lockColor);
       this.game.radar.spawnShockwave(target.x, target.y, lockColor, 25);
     }
 
@@ -382,16 +398,14 @@ class ControlsSystem {
     if (btn1p && btn2p) {
       btn1p.onclick = () => {
         this.game.playerMode = '1P';
-        btn1p.classList.add('active');
-        btn2p.classList.remove('active');
+        btn1p.classList.add('active'); btn2p.classList.remove('active');
         if (aiPanel) aiPanel.style.display = 'flex';
         if (pvpSwitcher) pvpSwitcher.classList.add('hidden');
         this.game.updateModeIndicator();
       };
       btn2p.onclick = () => {
         this.game.playerMode = '2P';
-        btn2p.classList.add('active');
-        btn1p.classList.remove('active');
+        btn2p.classList.add('active'); btn1p.classList.remove('active');
         if (aiPanel) aiPanel.style.display = 'none';
         if (pvpSwitcher) pvpSwitcher.classList.remove('hidden');
         this.game.updateModeIndicator();
@@ -401,14 +415,12 @@ class ControlsSystem {
     if (btnSkirmish && btnDynamic) {
       btnSkirmish.onclick = () => {
         this.game.scenarioMode = 'SKIRMISH';
-        btnSkirmish.classList.add('active');
-        btnDynamic.classList.remove('active');
+        btnSkirmish.classList.add('active'); btnDynamic.classList.remove('active');
         this.game.updateModeIndicator();
       };
       btnDynamic.onclick = () => {
         this.game.scenarioMode = 'DYNAMIC_THEATER';
-        btnDynamic.classList.add('active');
-        btnSkirmish.classList.remove('active');
+        btnDynamic.classList.add('active'); btnSkirmish.classList.remove('active');
         this.game.updateModeIndicator();
       };
     }

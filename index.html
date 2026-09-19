@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>AIRSPACE STANDOFF</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
   <link rel="stylesheet" href="css/core/base.css">
   <link rel="stylesheet" href="css/core/dialogs.css">
@@ -17,6 +18,7 @@
   <link rel="stylesheet" href="css/procurement/layout.css">
   <link rel="stylesheet" href="css/procurement/armory.css">
   <link rel="stylesheet" href="css/procurement/loadout.css">
+  <link rel="stylesheet" href="css/procurement/preconfig.css">
 </head>
 <body>
 
@@ -27,17 +29,18 @@
 <div id="pause-modal" class="modal-backdrop">
   <div class="inspect-window" style="max-width: 440px; text-align: center;">
     <div class="inspect-header" style="background:#0a1e36;">
-      <h2 style="color:#00f0ff;">SORTIE PAUSED - SIMULATION SUSPENDED</h2>
+      <h2 style="color:#00f0ff;">SIMULATION PAUSED</h2>
     </div>
     <div class="inspect-body" style="padding: 20px; gap: 14px;">
       <p style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.45;">
-        Operations are temporarily halted. Resume flight or adjust directives.
+        Simulation paused. Select an option to proceed.
       </p>
       <div style="display: flex; flex-direction: column; gap: 8px;">
-        <button id="btn-resume-sortie" class="scramble-btn" style="width: 100%; padding: 8px;">RESUME SORTIE</button>
+        <button id="btn-resume-sortie" class="scramble-btn" style="width: 100%; padding: 8px;">RESUME</button>
         <button id="btn-pause-settings" class="hud-btn" style="width: 100%;">SETTINGS</button>
         <button id="btn-pause-manual" class="hud-btn" style="width: 100%;">FLIGHT MANUAL</button>
-        <button id="btn-pause-abort" class="hud-btn alert" style="width: 100%;">WITHDRAW / ABORT SORTIE</button>
+        <button id="btn-pause-abort" class="hud-btn alert" style="width: 100%;">ABORT MISSION</button>
+        <button id="btn-pause-exit" class="hud-btn alert" style="width: 100%;">EXIT SIMULATION</button>
       </div>
     </div>
   </div>
@@ -47,18 +50,18 @@
 <div id="tactical-dialog-modal" class="modal-backdrop">
   <div class="inspect-window" style="max-width: 500px;">
     <div class="inspect-header">
-      <div class="modal-title-row"><h2 id="tactical-dialog-title">COMMAND DIRECTIVE</h2></div>
+      <div class="modal-title-row"><h2 id="tactical-dialog-title">CONFIRMATION</h2></div>
       <button id="btn-tactical-dialog-close" class="hud-btn small">X</button>
     </div>
     <div class="inspect-body" style="padding: 16px 18px; gap: 12px;">
-      <p id="tactical-dialog-msg" style="font-size: 0.74rem; color: #cbd5e1; line-height: 1.45;"></p>
+      <p id="tactical-dialog-msg" style="font-size: 0.80rem; color: #cbd5e1; line-height: 1.5;"></p>
       <div id="tactical-dialog-field-wrap">
         <input type="text" id="tactical-dialog-input" class="hud-search-input" style="font-size: 0.78rem; padding: 7px 10px; width: 100%;">
       </div>
-      <div id="tactical-dialog-options-wrap" style="display:none; flex-direction:column; gap:5px; max-height:180px; overflow-y:auto;"></div>
-      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;">
-        <button id="btn-tactical-dialog-cancel" class="hud-btn small">CANCEL</button>
-        <button id="btn-tactical-dialog-confirm" class="hud-btn small" style="background: #0284c7; border-color: #38bdf8; color: #fff;">CONFIRM</button>
+      <div id="tactical-dialog-options-wrap" style="display:none; flex-direction:column; gap:5px; max-height:200px; overflow-y:auto;"></div>
+      <div class="tactical-dialog-actions">
+        <button id="btn-tactical-dialog-cancel" class="hud-btn tactical-dialog-btn">CANCEL</button>
+        <button id="btn-tactical-dialog-confirm" class="hud-btn tactical-dialog-btn highlight">CONFIRM</button>
       </div>
     </div>
   </div>
@@ -69,27 +72,29 @@
   <div class="inspect-window preconfig-window">
     <div class="inspect-header">
       <div class="modal-title-row">
-        <h2>PRECONFIGURED COMBAT LOADOUTS - DEPLOYMENT CATALOG</h2>
-        <span class="subtext" style="color:#00f0ff;font-family:var(--font-mono);font-size:0.64rem;margin-left:8px;">TACTICAL DOCTRINE PRESETS</span>
+        <h2>AIRCRAFT LOADOUT PRESETS</h2>
+        <span class="subtext" style="color:#00f0ff;font-family:var(--font-mono);font-size:0.64rem;margin-left:8px;">STANDARD &amp; CUSTOM CONFIGURATIONS</span>
       </div>
       <button id="btn-close-preconfig" class="hud-btn small">X</button>
     </div>
 
-    <!-- CONTROLS & FILTER TOOLBAR (CUSTOM DROPDOWNS ONLY) -->
+    <!-- CONTROLS & FILTER TOOLBAR -->
     <div class="preconfig-toolbar">
       <div class="preconfig-search-row">
-        <input type="text" id="preconfig-search-input" class="hud-search-input" placeholder="Search by template name, airframe, weapon, or feature...">
+        <input type="text" id="preconfig-search-input" class="hud-search-input" placeholder="Filter by preset name, aircraft, weapons, or role...">
         <div id="cdd-preconfig-airframe"></div>
         <div id="cdd-preconfig-sort"></div>
+        <button type="button" class="hud-btn small highlight" id="btn-save-current-to-templates">+ SAVE CURRENT AIRCRAFT</button>
       </div>
       <div class="preconfig-pills-row" id="preconfig-category-pills">
         <button type="button" class="cat-pill-btn active" data-pcat="ALL">ALL</button>
-        <button type="button" class="cat-pill-btn" data-pcat="AIR DOMINANCE">AIR DOMINANCE</button>
-        <button type="button" class="cat-pill-btn" data-pcat="DOGFIGHT">DOGFIGHT</button>
+        <button type="button" class="cat-pill-btn" data-pcat="AIR DOMINANCE">AIR SUPERIORITY</button>
+        <button type="button" class="cat-pill-btn" data-pcat="DOGFIGHT">WVR COMBAT</button>
         <button type="button" class="cat-pill-btn" data-pcat="STRIKE">STRIKE &amp; CAS</button>
         <button type="button" class="cat-pill-btn" data-pcat="SEAD & EW">SEAD &amp; EW</button>
-        <button type="button" class="cat-pill-btn" data-pcat="SWARM & DRONES">SWARM &amp; DRONES</button>
-        <button type="button" class="cat-pill-btn" data-pcat="COFFIN & FLAGSHIPS">COFFIN &amp; FLAGSHIPS</button>
+        <button type="button" class="cat-pill-btn" data-pcat="SWARM & DRONES">UNMANNED (UAV)</button>
+        <button type="button" class="cat-pill-btn" data-pcat="COFFIN & FLAGSHIPS">ADVANCED / EXPERIMENTAL</button>
+        <button type="button" class="cat-pill-btn" data-pcat="CUSTOM">USER PRESETS</button>
       </div>
     </div>
 
@@ -104,7 +109,7 @@
 <div id="system-inspect-modal" class="modal-backdrop">
   <div class="inspect-window" style="max-width: 860px;">
     <div class="inspect-header">
-      <div class="modal-title-row"><h2 id="inspect-modal-title">DETAILED SYSTEM SPECIFICATIONS</h2></div>
+      <div class="modal-title-row"><h2 id="inspect-modal-title">SYSTEM SPECIFICATIONS</h2></div>
       <button id="btn-close-inspect" class="hud-btn small">CLOSE</button>
     </div>
     <div class="inspect-body" id="inspect-modal-body"></div>
@@ -115,17 +120,17 @@
 <div id="rwr-briefing-modal" class="modal-backdrop">
   <div class="inspect-window" style="max-width: 660px;">
     <div class="inspect-header">
-      <div class="modal-title-row"><h2>RWR THREAT IDENTIFICATION &amp; COUNTERMEASURES</h2></div>
+      <div class="modal-title-row"><h2>RWR THREAT REFERENCE &amp; PROCEDURES</h2></div>
       <button id="btn-close-rwr-modal" class="hud-btn small">CLOSE</button>
     </div>
     <div class="inspect-body">
       <div class="inspect-stat-grid" style="grid-template-columns: 1fr; gap: 6px;">
-        <div class="inspect-stat-item"><span style="color:#00f5a0;font-weight:800;">SEARCH CLEAR:</span><b>No hostile radar emissions detected. Safe to maintain altitude perch or cruise.</b></div>
-        <div class="inspect-stat-item"><span style="color:#f97316;font-weight:800;">RADAR SWEEP:</span><b>Hostile radar sweep detected in sector. Turn nose toward threat or dive into clouds to reduce RCS.</b></div>
-        <div class="inspect-stat-item"><span style="color:#ff3366;font-weight:800;">RADAR LOCK:</span><b>Active tracking lock or inbound ARH missile. Beam 90 degrees (Doppler Notch) and deploy chaff.</b></div>
-        <div class="inspect-stat-item"><span style="color:#ff3366;font-weight:800;">STEALTH MISSILE:</span><b>Low-observable missile inbound. Minimal warning distance; execute an emergency break turn immediately.</b></div>
-        <div class="inspect-stat-item"><span style="color:#00f0ff;font-weight:800;">CIVILIAN ROE:</span><b>Commercial flights active in designated corridor. Confirm target identity before firing. Firing on civilians incurs -800 VP penalty.</b></div>
-        <div class="inspect-stat-item"><span style="color:#ffd700;font-weight:800;">ACE FIGHTERS:</span><b>Designated hostile Ace pilots active in theater. They execute extreme break turns, post-stall maneuvers, and yield massive VP bounties.</b></div>
+        <div class="inspect-stat-item"><span style="color:#00f5a0;font-weight:800;">SEARCH CLEAR:</span><b>No hostile radar emissions detected. Safe to maintain altitude and cruise profile.</b></div>
+        <div class="inspect-stat-item"><span style="color:#f97316;font-weight:800;">RADAR SWEEP:</span><b>Hostile radar sweep detected in sector. Turn nose-on to reduce RCS or use terrain/clouds for masking.</b></div>
+        <div class="inspect-stat-item"><span style="color:#ff3366;font-weight:800;">RADAR LOCK:</span><b>Target tracking lock or active missile seeker detected. Beam 90 degrees (Doppler Notch) and deploy chaff.</b></div>
+        <div class="inspect-stat-item"><span style="color:#ff3366;font-weight:800;">STEALTH MISSILE:</span><b>Low-observable missile detected. Minimum warning range; execute immediate defensive break turn.</b></div>
+        <div class="inspect-stat-item"><span style="color:#00f0ff;font-weight:800;">CIVILIAN ROE:</span><b>Commercial flights active in designated airway. Positively identify target prior to firing. Firing on civilians results in penalties.</b></div>
+        <div class="inspect-stat-item"><span style="color:#ffd700;font-weight:800;">HOSTILE LEADERS:</span><b>Designated hostile flight leads active in theater. They employ high-G defensive breaks and coordinated missile volleys.</b></div>
       </div>
     </div>
   </div>
@@ -135,7 +140,7 @@
 <div id="glossary-modal" class="modal-backdrop">
   <div class="glossary-window">
     <div class="glossary-header">
-      <div class="modal-title-row"><h2>FLIGHT MANUAL &amp; COMBAT CODEX</h2></div>
+      <div class="modal-title-row"><h2>FLIGHT MANUAL &amp; OPERATIONAL REFERENCE</h2></div>
       <button id="btn-close-glossary" class="hud-btn small">CLOSE</button>
     </div>
     <div class="glossary-content" id="glossary-modal-content"></div>
@@ -146,11 +151,11 @@
 <div id="settings-modal" class="modal-backdrop">
   <div class="settings-window">
     <div class="settings-header">
-      <div class="modal-title-row"><h2>SETTINGS &amp; KEYBINDS</h2></div>
+      <div class="modal-title-row"><h2>SETTINGS &amp; CONTROLS</h2></div>
       <button id="btn-close-settings" class="hud-btn small">CLOSE</button>
     </div>
     <div class="settings-nav-tabs">
-      <button class="settings-tab-btn active" data-stab="keybinds">KEYBINDS</button>
+      <button class="settings-tab-btn active" data-stab="keybinds">CONTROLS</button>
       <button class="settings-tab-btn" data-stab="audio">AUDIO</button>
       <button class="settings-tab-btn" data-stab="radar">RADAR</button>
     </div>
@@ -165,11 +170,11 @@
 <!-- ABORT CONFIRM MODAL -->
 <div id="abort-confirm-modal" class="modal-backdrop">
   <div class="inspect-window" style="max-width: 440px; text-align: center;">
-    <div class="inspect-header" style="background:#450a0a;"><h2 style="color:#f87171;">ABORT SORTIE?</h2></div>
+    <div class="inspect-header" style="background:#450a0a;"><h2 style="color:#f87171;">ABORT MISSION?</h2></div>
     <div class="inspect-body" style="gap:12px; padding: 18px;">
-      <p style="font-size:0.80rem; color:#cbd5e1;">Withdraw squadron from combat theater and review after-action analytics?</p>
+      <p style="font-size:0.80rem; color:#cbd5e1;">Abort current mission and review the debriefing log?</p>
       <div style="display:flex; justify-content:center; gap:10px;">
-        <button id="btn-confirm-abort" class="hud-btn alert">CONFIRM WITHDRAWAL</button>
+        <button id="btn-confirm-abort" class="hud-btn alert">ABORT MISSION</button>
         <button id="btn-cancel-abort" class="hud-btn">CANCEL</button>
       </div>
     </div>
@@ -186,17 +191,18 @@
           <span class="hangar-badge">HANGAR</span>
         </h1>
         <div class="title-right-group">
+          <button id="btn-proc-exit" class="hud-btn alert proc-exit-btn" title="Exit Application">EXIT</button>
           <button id="btn-open-glossary" class="hud-btn proc-manual-btn">MANUAL</button>
-          <button id="btn-edit-squadron-name" class="squad-callsign-tag" title="Click to change your squadron name">
-            WING: <span id="display-squadron-name">Wardog Squadron</span>
+          <button id="btn-edit-squadron-name" class="squad-callsign-tag" title="Click to rename squadron">
+            UNIT: <span id="display-squadron-name">Wardog Squadron</span>
           </button>
         </div>
       </div>
 
       <div class="mode-and-ai-controls">
         <div class="segmented-control" id="control-mode-group">
-          <button id="mode-btn-1p" class="seg-btn active">1P VS AI</button>
-          <button id="mode-btn-2p" class="seg-btn">2P VERSUS</button>
+          <button id="mode-btn-1p" class="seg-btn active">SINGLE PLAYER</button>
+          <button id="mode-btn-2p" class="seg-btn">TWO PLAYER</button>
         </div>
         <div class="segmented-control" id="scenario-mode-group">
           <button id="scenario-btn-skirmish" class="seg-btn active">SKIRMISH</button>
@@ -210,7 +216,6 @@
           <div id="cdd-doctrine"></div>
         </div>
 
-        <!-- RIGHT CORNER FULLSCREEN ACTION (WEB PLAYERS) -->
         <div class="proc-right-actions">
           <button id="btn-proc-fullscreen" class="hud-btn" title="Toggle Fullscreen">FULLSCREEN</button>
         </div>
@@ -235,22 +240,22 @@
     <div class="procurement-body">
       <div class="hanger-shelf" id="proc-hanger-shelf">
         <div class="shelf-tabs">
-          <button class="shelf-tab-btn active" data-tab="airframes">AIRFRAMES</button>
+          <button class="shelf-tab-btn active" data-tab="airframes">AIRCRAFT</button>
           <button class="shelf-tab-btn" data-tab="a2a">AIR-TO-AIR</button>
           <button class="shelf-tab-btn" data-tab="a2g">AIR-TO-GROUND</button>
           <button class="shelf-tab-btn" data-tab="guns">GUNS</button>
           <button class="shelf-tab-btn" data-tab="utility">EW &amp; PODS</button>
-          <button class="shelf-tab-btn" data-tab="upgrades">COMPONENTS</button>
+          <button class="shelf-tab-btn" data-tab="upgrades">SYSTEMS</button>
         </div>
         <div class="shelf-helper-bar">
-          <span id="shelf-instructions">CLICK "+ ADD" OR DRAG &amp; DROP WEAPONS/COMPONENTS DIRECTLY INTO SQUADRON BAYS</span>
+          <span id="shelf-instructions">Select an aircraft to add to squadron. Select a roster slot to equip weapons and systems.</span>
         </div>
         <div id="armory-catalog" class="catalog-grid"></div>
       </div>
       <div class="flight-roster" id="proc-flight-roster">
         <div class="roster-header-bar">
-          <h3>ACTIVE SQUADRON BAYS</h3>
-          <span id="roster-quick-stat" class="subtext">0 CRAFT OPERATIONAL</span>
+          <h3>SQUADRON ROSTER</h3>
+          <span id="roster-quick-stat" class="subtext">0 AIRCRAFT ASSIGNED</span>
         </div>
         <div id="squadron-list" class="squadron-container"></div>
       </div>
@@ -258,7 +263,7 @@
 
     <footer class="procurement-footer">
       <div class="intel-summary" id="procurement-intel"></div>
-      <button id="btn-scramble" class="scramble-btn" disabled>ENGAGE THEATER (SCRAMBLE)</button>
+      <button id="btn-scramble" class="scramble-btn" disabled>LAUNCH MISSION</button>
     </footer>
   </div>
 </div>
@@ -292,7 +297,7 @@
       </div>
     </div>
 
-    <!-- HIGH EMPHASIS SCORE -->
+    <!-- SCORE DISPLAY -->
     <div class="banner-score-controls-cluster">
       <div class="victory-tracker">
         <div class="vp-group ally"><span class="vp-tag">BLUE</span><span id="vp-ally" class="vp-value">0</span></div>
@@ -307,7 +312,7 @@
         <button type="button" id="btn-mobile-prev-unit" class="hud-btn small">&#x25C0;</button>
         <button type="button" id="btn-mobile-next-unit" class="hud-btn small">&#x25B6;</button>
       </div>
-      <button type="button" id="btn-mobile-open-fleet" class="hud-btn small highlight fleet-btn">FLEET</button>
+      <button type="button" id="btn-mobile-open-fleet" class="hud-btn small highlight fleet-btn">ROSTER</button>
     </div>
 
     <!-- CAMERA CONTROLS -->
@@ -315,14 +320,14 @@
       <button id="cam-btn-zoom-in" class="cam-btn" title="Zoom In">+</button>
       <button id="cam-btn-zoom-out" class="cam-btn" title="Zoom Out">-</button>
       <button id="cam-btn-track" class="cam-btn" title="Track Active Aircraft">TRK</button>
-      <button id="cam-btn-reset" class="cam-btn" title="Reset Camera">RST</button>
+      <button id="cam-btn-reset" class="cam-btn" title="Reset View">RST</button>
     </div>
 
     <!-- SYSTEM ACTIONS -->
     <div class="top-quick-actions">
       <button id="btn-fullscreen-toggle" class="hud-btn small" title="Toggle Fullscreen">FULLSCREEN</button>
       <button id="btn-audio-toggle" class="hud-btn small" title="Toggle Audio">AUDIO: ON</button>
-      <button id="btn-hud-glossary" class="hud-btn small">GUIDE</button>
+      <button id="btn-hud-glossary" class="hud-btn small">MANUAL</button>
       <button id="btn-open-settings" class="hud-btn small">SETTINGS</button>
       <button id="btn-abort-match" class="hud-btn small alert">ABORT</button>
     </div>
@@ -334,12 +339,12 @@
     <!-- LEFT: SQUADRON ROSTER -->
     <aside class="squadron-flight-data pane-item" id="pane-fleet">
       <div class="strip-header" id="fleet-strip-header">
-        <span id="header-squadron-name">WARDOG SQUADRON &bull; FLIGHT DATA</span>
+        <span id="header-squadron-name">WARDOG SQUADRON &bull; UNIT DATA</span>
         <button type="button" id="btn-close-fleet-drawer" class="hud-btn small alert fleet-drawer-close-btn">CLOSE</button>
       </div>
       <div id="flight-units-list" class="units-list"></div>
       <div class="combat-score-log-box">
-        <div class="strip-subhead">CHRONOLOGICAL COMBAT LOG</div>
+        <div class="strip-subhead">EVENT LOG</div>
         <div id="combat-score-log-list" class="score-log-container"></div>
       </div>
     </aside>
@@ -348,9 +353,9 @@
     <main class="radar-viewport pane-item active" id="pane-radar">
       <canvas id="radar-canvas"></canvas>
 
-      <!-- FLOATING TACTICAL FIGHTER HUD TAPE -->
+      <!-- FLIGHT DATA TAPE -->
       <div class="radar-flight-hud" id="radar-flight-hud">
-        <div class="rfh-panel rfh-left" title="Indicated Mach Airspeed and True Airspeed">
+        <div class="rfh-panel rfh-left" title="Indicated Mach and Airspeed">
           <span class="rfh-label">AIRSPEED</span>
           <div class="rfh-val-box">
             <span id="hud-speed-main" class="rfh-num">M 0.00</span>
@@ -359,9 +364,9 @@
           <span id="hud-speed-sub" class="rfh-sub">0 km/h</span>
         </div>
 
-        <div class="rfh-panel rfh-center" title="Active Airframe, Compass Bearing & Corner Turn Efficiency">
+        <div class="rfh-panel rfh-center" title="Aircraft, Heading & Turn Performance">
           <div class="rfh-center-top">
-            <span id="hud-unit-callsign" class="rfh-cs">NO CRAFT SELECTED</span>
+            <span id="hud-unit-callsign" class="rfh-cs">NO AIRCRAFT SELECTED</span>
             <span id="hud-unit-model" class="rfh-model">--</span>
           </div>
           <div class="rfh-compass-strip">
@@ -400,25 +405,25 @@
       <!-- CIVILIAN ALERT STRIP -->
       <div class="civilian-alert-banner" id="civilian-alert-strip">
         <span class="civ-ico">CIVILIAN CORRIDOR ACTIVE</span>
-        <span class="civ-text">Commercial flights in sector &bull; Penalty: -800 VP</span>
+        <span class="civ-text">Commercial traffic active in sector &bull; RoE penalty: -800 VP</span>
       </div>
 
       <!-- MOBILE STEERING OVERLAY -->
       <div class="mobile-steering-overlay">
-        <button id="mobile-steer-left" class="mobile-steer-btn">&lt; STEER LEFT</button>
-        <button id="mobile-steer-right" class="mobile-steer-btn">STEER RIGHT &gt;</button>
+        <button id="mobile-steer-left" class="mobile-steer-btn">&lt; TURN LEFT</button>
+        <button id="mobile-steer-right" class="mobile-steer-btn">TURN RIGHT &gt;</button>
       </div>
     </main>
 
     <!-- RIGHT: FLIGHT CONTROLS & WEAPONS SMS -->
     <aside class="active-unit-mfd pane-item" id="pane-mfd">
-      <div class="strip-header">FLIGHT CONTROLS &amp; WEAPONS SMS</div>
+      <div class="strip-header">FLIGHT CONTROLS &amp; STORES MANAGEMENT</div>
 
       <div id="active-unit-details" class="unit-flight-box">
         <div class="unit-title-row" style="display:flex;justify-content:space-between;align-items:center;">
-          <div class="unit-title" id="mfd-unit-name">NO CRAFT SELECTED</div>
+          <div class="unit-title" id="mfd-unit-name">NO AIRCRAFT SELECTED</div>
           <div style="display:flex;gap:4px;">
-            <span id="mfd-coffin-tag" class="coffin-indicator hidden">COFFIN MANUAL</span>
+            <span id="mfd-coffin-tag" class="coffin-indicator hidden">COFFIN INTERFACE</span>
             <button id="btn-inspect-active-unit" class="spec-inspect-btn small hidden" data-inspect-type="airframe" data-inspect-id="">SPECS</button>
           </div>
         </div>
@@ -426,12 +431,12 @@
           <span>CALLSIGN: <b id="mfd-callsign-val">--</b></span>
           <div style="display:flex;gap:4px;align-items:center;">
             <span id="mfd-lead-tag" class="lead-indicator hidden">FLIGHT LEAD</span>
-            <span id="mfd-ace-tag" class="ace-indicator hidden">ACE CRAFT</span>
+            <span id="mfd-ace-tag" class="ace-indicator hidden">LEAD PILOT</span>
           </div>
         </div>
 
         <!-- THROTTLE QUADRANT -->
-        <div class="throttle-quadrant" id="throttle-quadrant" title="Engine Thrust">
+        <div class="throttle-quadrant" id="throttle-quadrant" title="Engine Thrust Setting">
           <div class="throttle-meta-row">
             <span class="tq-label">ENGINE POWER</span>
             <span id="alpha-val" class="tq-val">50% CRUISE</span>
@@ -448,24 +453,24 @@
           </div>
         </div>
 
-        <!-- PILOT G-LOAD & STRESS METER -->
+        <!-- PILOT G-LOAD METER -->
         <div class="stress-container" id="stress-container-box">
           <div class="stress-label-row">
-            <span id="stress-label-text">PILOT G-LOAD STRESS:</span>
+            <span id="stress-label-text">PILOT G-LOAD ACCUMULATION:</span>
             <span id="mfd-stress-val">0.00</span>
           </div>
           <div class="stress-bar-frame"><div id="mfd-stress-fill" class="stress-bar-fill"></div></div>
           <div id="gloc-badge" class="gloc-badge hidden">G-LOC BLACKOUT</div>
-          <div id="stress-warning-badge" class="stress-warn-badge hidden">TUNNEL VISION (-30% TURN &amp; EVASION)</div>
+          <div id="stress-warning-badge" class="stress-warn-badge hidden">TUNNEL VISION (-30% TURN EFFICIENCY)</div>
         </div>
 
         <!-- FLIGHT ACTION BUTTONS -->
         <div class="flight-actions-cluster">
           <div class="energy-trade-buttons">
-            <button id="btn-pitch-dive" class="hud-btn small" title="Convert altitude into Mach escape speed">DIVE</button>
-            <button id="btn-pitch-climb" class="hud-btn small" title="Convert kinetic airspeed into altitude perch">ZOOM</button>
+            <button id="btn-pitch-dive" class="hud-btn small" title="Convert altitude into airspeed">DIVE</button>
+            <button id="btn-pitch-climb" class="hud-btn small" title="Convert airspeed into altitude">CLIMB</button>
           </div>
-          <button id="btn-rtb-rearm" class="hud-btn small rtb-toggle-btn" title="Return to base for munitions replenishment or cancel">
+          <button id="btn-rtb-rearm" class="hud-btn small rtb-toggle-btn" title="Return to base for replenishment">
             RETURN TO BASE
           </button>
         </div>
@@ -482,48 +487,45 @@
   <!-- TACTICAL MANEUVER DECK -->
   <footer class="tactical-deck-bay">
     <div class="deck-header">
-      <span>TACTICAL MANEUVERS (NOTCH: 90 DEG BEAM &bull; RETURN TO BASE: CORRIDOR)</span>
-      <span class="deck-alert" id="maneuver-alert">AWAITING THREAT ENGAGEMENT</span>
+      <span>TACTICAL MANEUVERS</span>
+      <span class="deck-alert" id="maneuver-alert">READY</span>
     </div>
     <div id="maneuver-deck" class="deck-grid"></div>
   </footer>
 </div>
 
-<!-- AFTER ACTION REPORT MODAL (WITH LOCKED RETURN TO HANGAR FOOTER) -->
+<!-- AFTER ACTION REPORT MODAL -->
 <div id="game-over-modal" class="modal-backdrop">
   <div class="game-over-dialog">
     <div class="after-action-header">
-      <h2 id="game-over-title">SORTIE TERMINATED</h2>
-      <span id="game-over-desc" class="after-action-subtitle">OPERATIONAL THEATER SUMMARY</span>
+      <h2 id="game-over-title">MISSION DEBRIEF</h2>
+      <span id="game-over-desc" class="after-action-subtitle">OPERATIONAL SUMMARY</span>
     </div>
 
-    <!-- SCROLLABLE DEBRIEF BODY -->
     <div class="after-action-body">
       <div class="ace-podium-section">
-        <div class="strip-subhead" style="color:#00f0ff;">TOP THEATER COMBAT ACES</div>
+        <div class="strip-subhead" style="color:#00f0ff;">FLIGHT PERFORMANCE SUMMARY</div>
         <div class="ace-podium-grid" id="ace-podium-cards"></div>
       </div>
 
       <div class="aar-full-roster-box">
-        <div class="strip-subhead" style="color:#00f0ff; margin-bottom: 4px;">ALL SQUADRON COMBATANTS &bull; SORTIE DEBRIEF</div>
+        <div class="strip-subhead" style="color:#00f0ff; margin-bottom: 4px;">PARTICIPATING AIRCRAFT &bull; STATUS REPORT</div>
         <div id="aar-full-roster-content" style="max-height: 180px; overflow-y: auto;"></div>
       </div>
 
-      <!-- STRUCTURED DEBRIEF TELEMETRY BELOW THE TABLE -->
       <div id="game-over-stats"></div>
 
       <div class="aar-timeline-container">
         <div class="aar-timeline-toggle-row">
-          <span class="strip-subhead" style="margin:0;">MISSION CHRONOLOGY &amp; KILL TIMELINE</span>
+          <span class="strip-subhead" style="margin:0;">ENGAGEMENT TIMELINE</span>
           <button id="btn-toggle-aar-timeline" class="hud-btn small">EXPAND TIMELINE</button>
         </div>
         <div id="aar-timeline-list" class="aar-timeline-content hidden"></div>
       </div>
     </div>
 
-    <!-- LOCKED DEBRIEF FOOTER (NEVER REQUIRES SCROLLING) -->
     <div class="after-action-footer">
-      <button id="btn-restart" class="scramble-btn" style="width:100%;">RETURN TO PROCUREMENT HANGAR</button>
+      <button id="btn-restart" class="scramble-btn" style="width:100%;">RETURN TO HANGAR</button>
     </div>
   </div>
 </div>
@@ -608,6 +610,7 @@
 
 <script src="js/ui/procurement/custom-loadouts.js"></script>
 <script src="js/ui/procurement/presets.js"></script>
+<script src="js/ui/procurement/preconfig-modal.js"></script>
 <script src="js/ui/procurement/airframes.js"></script>
 <script src="js/ui/procurement/shelf.js"></script>
 <script src="js/ui/procurement/roster.js"></script>

@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Tactical Dialog Modal Submodule
- * Manages prompts, confirmations, alerts, callsign picker, and mobile bay equipping popups
+ * AIRSPACE STANDOFF // Tactical Dialog Modal Submodule (<250 lines)
+ * Standardized operational dialogs and clean confirmations.
  */
 
 class TacticalDialogModal {
@@ -45,14 +45,15 @@ class TacticalDialogModal {
   showPrompt(title, msg, defValue, onConfirm) {
     if (!this.dialogModal) return;
     if (this.pm.game.controls) this.pm.game.controls.autoPauseOnDialogOpen();
-    this.dialogTitle.textContent = title || 'TACTICAL PROMPT';
+    this.dialogTitle.textContent = title || 'INPUT REQUIRED';
     this.dialogMsg.textContent = msg || '';
     this.dialogInputWrap.style.display = 'block';
     if (this.dialogOptionsWrap) this.dialogOptionsWrap.style.display = 'none';
     this.dialogInput.value = defValue || '';
-    this.dialogCancelBtn.style.display = 'inline-block';
+    this.dialogCancelBtn.style.display = 'inline-flex';
     this.dialogConfirmBtn.textContent = 'CONFIRM';
-    this.dialogConfirmBtn.style.display = 'inline-block';
+    this.dialogConfirmBtn.className = 'hud-btn tactical-dialog-btn highlight';
+    this.dialogConfirmBtn.style.display = 'inline-flex';
     this._dialogCallback = onConfirm;
 
     this.dialogModal.classList.add('active');
@@ -62,16 +63,17 @@ class TacticalDialogModal {
     }, 50);
   }
 
-  showConfirm(title, msg, onConfirm) {
+  showConfirm(title, msg, onConfirm, options = {}) {
     if (!this.dialogModal) return;
     if (this.pm.game.controls) this.pm.game.controls.autoPauseOnDialogOpen();
-    this.dialogTitle.textContent = title || 'CONFIRM ACTION';
+    this.dialogTitle.textContent = title || 'CONFIRMATION';
     this.dialogMsg.textContent = msg || '';
     this.dialogInputWrap.style.display = 'none';
     if (this.dialogOptionsWrap) this.dialogOptionsWrap.style.display = 'none';
-    this.dialogCancelBtn.style.display = 'inline-block';
-    this.dialogConfirmBtn.textContent = 'PROCEED';
-    this.dialogConfirmBtn.style.display = 'inline-block';
+    this.dialogCancelBtn.style.display = 'inline-flex';
+    this.dialogConfirmBtn.textContent = options.confirmText || 'CONFIRM';
+    this.dialogConfirmBtn.className = 'hud-btn tactical-dialog-btn ' + (options.isAlert ? 'alert' : 'highlight');
+    this.dialogConfirmBtn.style.display = 'inline-flex';
     this._dialogCallback = () => { if (onConfirm) onConfirm(); };
     this.dialogModal.classList.add('active');
   }
@@ -84,8 +86,9 @@ class TacticalDialogModal {
     this.dialogInputWrap.style.display = 'none';
     if (this.dialogOptionsWrap) this.dialogOptionsWrap.style.display = 'none';
     this.dialogCancelBtn.style.display = 'none';
-    this.dialogConfirmBtn.textContent = 'DISMISS';
-    this.dialogConfirmBtn.style.display = 'inline-block';
+    this.dialogConfirmBtn.textContent = 'OK';
+    this.dialogConfirmBtn.className = 'hud-btn tactical-dialog-btn highlight';
+    this.dialogConfirmBtn.style.display = 'inline-flex';
     this._dialogCallback = null;
     this.dialogModal.classList.add('active');
   }
@@ -95,12 +98,13 @@ class TacticalDialogModal {
     if (!item) return;
 
     this.dialogTitle.textContent = 'ASSIGN CALLSIGN';
-    this.dialogMsg.textContent = `Select an authentic aviation callsign for Bay #${sIdx + 1} or enter a custom designation:`;
+    this.dialogMsg.textContent = `Select an operational callsign for Aircraft #${sIdx + 1} or enter a custom identifier:`;
     this.dialogInputWrap.style.display = 'block';
     this.dialogInput.value = item.callsign || '';
-    this.dialogCancelBtn.style.display = 'inline-block';
+    this.dialogCancelBtn.style.display = 'inline-flex';
     this.dialogConfirmBtn.textContent = 'ASSIGN';
-    this.dialogConfirmBtn.style.display = 'inline-block';
+    this.dialogConfirmBtn.className = 'hud-btn tactical-dialog-btn highlight';
+    this.dialogConfirmBtn.style.display = 'inline-flex';
 
     if (this.dialogOptionsWrap) {
       this.dialogOptionsWrap.style.display = 'flex';
@@ -127,12 +131,12 @@ class TacticalDialogModal {
 
   openEquipToBayModal(itemData) {
     if (this.pm.game.procurementSquadron.length === 0) {
-      this.showAlert('EMPTY SQUADRON', 'Add at least one airframe to your active squadron first!');
+      this.showAlert('NO AIRCRAFT', 'Add at least one aircraft to the squadron before equipping weapons.');
       return;
     }
     const acMap = window.AIRCRAFT_CATALOG || {};
     this.dialogTitle.textContent = `EQUIP ${itemData.name.toUpperCase()}`;
-    this.dialogMsg.textContent = 'Select which active aircraft bay to equip:';
+    this.dialogMsg.textContent = 'Select aircraft to receive this system:';
     this.dialogInputWrap.style.display = 'none';
 
     if (this.dialogOptionsWrap) {
@@ -150,7 +154,7 @@ class TacticalDialogModal {
         row.style.padding = '8px 10px';
 
         row.innerHTML = `
-          <span><b>Bay #${sIdx + 1}:</b> ${item.callsign || 'Pilot'} [${spec.name || item.specId}]</span>
+          <span><b>Aircraft #${sIdx + 1}:</b> ${item.callsign || 'Pilot'} [${spec.name || item.specId}]</span>
           <span style="color:#00f0ff;font-weight:800;">+ EQUIP</span>
         `;
 
@@ -165,7 +169,7 @@ class TacticalDialogModal {
       });
     }
 
-    this.dialogCancelBtn.style.display = 'inline-block';
+    this.dialogCancelBtn.style.display = 'inline-flex';
     this.dialogConfirmBtn.style.display = 'none';
     this.dialogModal.classList.add('active');
   }

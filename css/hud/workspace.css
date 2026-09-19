@@ -1,5 +1,5 @@
 /* ==========================================================================
-   APEX VECTOR // Cockpit Workspace (Desktop Grid, Shorter Mobile & Mobile Landscape)
+   AIRSPACE STANDOFF // Cockpit Workspace (Desktop, 10-12" 2K Tablets & Mobile)
    ========================================================================== */
 
 .hud-container {
@@ -47,37 +47,32 @@
   flex-shrink: 0;
 }
 
-.fleet-drawer-close-btn {
-  display: none;
-}
-
-.mobile-pane-tabs {
-  display: none;
-  gap: 3px;
-}
+.fleet-drawer-close-btn { display: none; }
+.mobile-pane-tabs { display: none; gap: 3px; }
 
 .mobile-steering-overlay {
   display: none;
   position: absolute;
   bottom: 8px;
-  left: 8px;
-  right: 8px;
-  justify-content: space-between;
+  right: 12px;
+  gap: 8px;
   pointer-events: none;
-  z-index: 10;
+  z-index: 15;
 }
 
 .mobile-steer-btn {
   pointer-events: auto;
-  background: rgba(6, 13, 24, 0.90);
-  border: 1px solid #0284c7;
+  background: rgba(6, 14, 28, 0.92);
+  border: 1.5px solid #0284c7;
   color: #7dd3fc;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.66rem;
   font-weight: 800;
-  padding: 6px 11px;
+  padding: 6px 14px;
+  height: 34px;
   border-radius: 4px;
   touch-action: manipulation;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
 }
 
 .mobile-steer-btn:active {
@@ -85,23 +80,39 @@
   color: #fff;
 }
 
-/* Medium Displays */
-@media (max-width: 1400px) {
+/* Enable touch steering overlay whenever touch capability is detected */
+body.has-touch .mobile-steering-overlay {
+  display: flex !important;
+}
+
+/* Medium Desktop Displays */
+@media (max-width: 1440px) and (min-width: 1201px) {
   .cockpit-workspace {
     grid-template-columns: 195px 1fr 285px;
   }
 }
 
-/* Compact Laptop Displays */
-@media (max-width: 1200px) {
+/* 10-12 Inch Tablet Optimization (Landscape: 1025px - 1366px, 2K & High-DPI Displays) */
+@media (min-width: 1025px) and (max-width: 1366px) {
   .cockpit-workspace {
-    grid-template-columns: 180px 1fr 275px;
+    grid-template-columns: 190px 1fr 275px;
   }
+  .tactical-deck-bay {
+    height: 102px;
+    min-height: 102px;
+    max-height: 102px;
+  }
+  .maneuver-card {
+    width: 185px;
+    min-width: 185px;
+    max-width: 185px;
+    height: 82px;
+  }
+  .unit-flight-box { padding: 6px 8px; }
+  .pylon-item-card { padding: 5px 7px; }
 }
 
-/* ==========================================================================
-   MOBILE PORTRAIT: TALL RADAR, COMPACT CONTROLS WINDOW
-   ========================================================================== */
+/* Mobile Portrait */
 @media (max-width: 1024px) and (orientation: portrait) {
   .mobile-pane-tabs { display: none !important; }
   .mobile-steering-overlay { display: flex; }
@@ -165,9 +176,7 @@
   }
 }
 
-/* ==========================================================================
-   MOBILE LANDSCAPE: 2-COLUMN COCKPIT LAYOUT & 2-IN-1-ROW FLEET GRID DRAWER
-   ========================================================================== */
+/* Compact Mobile & Tablet Landscape */
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
   .mobile-steering-overlay { display: flex; }
 

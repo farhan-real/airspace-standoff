@@ -1,5 +1,6 @@
 /**
- * APEX VECTOR // Fleet Presets & Preconfigured Aircraft Templates Toolbar
+ * AIRSPACE STANDOFF // Fleet Presets & Preconfigured Aircraft Toolbar (<250 lines)
+ * Clean military operational designations.
  */
 
 class ProcurementPresets {
@@ -52,13 +53,13 @@ class ProcurementPresets {
 
     const label = document.createElement('span');
     label.className = 'preset-label';
-    label.textContent = 'DOCTRINES:';
+    label.textContent = 'PRESETS:';
     container.appendChild(label);
 
     const builtins = [
-      { id: 'stealth', name: 'STEALTH WING' },
-      { id: 'sead', name: 'SEAD ARMADA' },
-      { id: 'swarm', name: 'DRONE SWARM' },
+      { id: 'stealth', name: 'STEALTH SWEEP' },
+      { id: 'sead', name: 'SEAD ESCORT' },
+      { id: 'swarm', name: 'UAV FLIGHT' },
       { id: 'interceptor', name: 'BVR INTERCEPT' }
     ];
 
@@ -84,10 +85,10 @@ class ProcurementPresets {
 
       chip.innerHTML = `
         <button class="preset-btn custom-load-btn ${isAct ? 'active' : ''}" title="Load ${name}">
-          [SAVE] ${name}
+          ${name}
         </button>
-        <button class="preset-icon-btn btn-rename" title="Rename custom loadout">[R]</button>
-        <button class="preset-icon-btn btn-delete alert" title="Delete custom loadout">[X]</button>
+        <button class="preset-icon-btn btn-rename" title="Rename preset">[R]</button>
+        <button class="preset-icon-btn btn-delete alert" title="Delete preset">[X]</button>
       `;
 
       chip.querySelector('.custom-load-btn').onclick = () => {
@@ -98,8 +99,8 @@ class ProcurementPresets {
       chip.querySelector('.btn-rename').onclick = (e) => {
         e.stopPropagation();
         procurementManager.showPromptModal(
-          'RENAME LOADOUT',
-          `Enter a new tactical designation for "${name}":`,
+          'RENAME PRESET',
+          `Enter a new name for "${name}":`,
           name,
           (newName) => {
             if (newName && newName.trim() && newName.trim() !== name) {
@@ -117,8 +118,8 @@ class ProcurementPresets {
       chip.querySelector('.btn-delete').onclick = (e) => {
         e.stopPropagation();
         procurementManager.showConfirmModal(
-          'PURGE LOADOUT',
-          `Decommission saved custom loadout "${name}"?`,
+          'DELETE PRESET',
+          `Delete preset configuration "${name}"?`,
           () => {
             customManager.delete(name);
             if (ProcurementPresets.activePreset === `custom:${name}`) {
@@ -136,7 +137,7 @@ class ProcurementPresets {
 
     const templateBtn = document.createElement('button');
     templateBtn.className = 'preset-btn highlight';
-    templateBtn.textContent = '+ PRECONFIGURED AIRCRAFT';
+    templateBtn.textContent = '+ AIRCRAFT PRESETS';
     templateBtn.onclick = () => {
       procurementManager.openPreconfiguredAircraftModal();
     };
@@ -144,18 +145,18 @@ class ProcurementPresets {
 
     const saveBtn = document.createElement('button');
     saveBtn.className = 'preset-btn highlight';
-    saveBtn.textContent = '+ SAVE FLEET';
+    saveBtn.textContent = '+ SAVE SQUADRON';
     saveBtn.onclick = () => {
       if (procurementManager.game.procurementSquadron.length === 0) {
-        procurementManager.showAlertModal('EMPTY SQUADRON', 'Cannot save an empty fleet. Add aircraft first.');
+        procurementManager.showAlertModal('EMPTY SQUADRON', 'Cannot save an empty squadron. Add aircraft first.');
         return;
       }
       const count = Object.keys(customMap).length + 1;
-      const defName = `Custom Wing ${count}`;
+      const defName = `Squadron ${count}`;
 
       procurementManager.showPromptModal(
-        'SAVE CUSTOM SQUADRON',
-        'Enter a callsign/name for this tactical squadron configuration:',
+        'SAVE SQUADRON PRESET',
+        'Enter a name for this squadron configuration:',
         defName,
         (name) => {
           if (name && name.trim()) {
@@ -171,11 +172,11 @@ class ProcurementPresets {
 
     const clearBtn = document.createElement('button');
     clearBtn.className = 'preset-btn alert';
-    clearBtn.textContent = 'CLEAR FLEET';
+    clearBtn.textContent = 'CLEAR ALL';
     clearBtn.onclick = () => {
       procurementManager.showConfirmModal(
-        'CLEAR FLEET',
-        'Dismount all aircraft and empty all squadron bays?',
+        'CLEAR SQUADRON',
+        'Remove all aircraft from the current squadron?',
         () => {
           ProcurementPresets.activePreset = '';
           procurementManager.clearSquadron();

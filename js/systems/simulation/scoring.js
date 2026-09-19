@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Simulation Scoring & Combat Chronology Submodule
- * Manages kill events, RoE shootdown penalties, chronological combat logs, and difficulty/budget multipliers.
+ * AIRSPACE STANDOFF // Simulation Scoring & Engagement Logging (<250 lines)
+ * Objective military engagement reporting and RoE accounting.
  */
 
 class SimulationScoring {
@@ -30,16 +30,12 @@ class SimulationScoring {
     const bTierKey = this.game.playerBudgetId || 'BUDGET_400';
     const bTierData = (window.BUDGET_TIERS && window.BUDGET_TIERS[bTierKey]) || { multiplier: 1.00, budget: 400.0 };
     const budgetMult = bTierData.multiplier || 1.00;
-
     const totalMult = Number((diffMult * budgetMult).toFixed(2));
 
     return {
-      diffKey,
-      diffMult,
-      budgetTierKey: bTierKey,
-      budgetCap: bTierData.budget || 400.0,
-      budgetMult,
-      totalMult
+      diffKey, diffMult,
+      budgetTierKey: bTierKey, budgetCap: bTierData.budget || 400.0,
+      budgetMult, totalMult
     };
   }
 
@@ -86,12 +82,12 @@ class SimulationScoring {
 
     const rawSrcName = firingSource ? (firingSource.callsign || firingSource.id || 'BASE') : 'BASE';
     const srcName = String(rawSrcName).replace(/<[^>]*>/g, '');
-    const srcType = (firingSource && firingSource.spec) ? (firingSource.spec.id || firingSource.spec.name) : 'AIRFRAME';
+    const srcType = (firingSource && firingSource.spec) ? (firingSource.spec.id || firingSource.spec.name) : 'AIRCRAFT';
 
     const wpnName = details.weapon ? (details.weapon.name || details.weapon.id) : (details.weaponName || 'Missile');
     const isSalvo = Boolean(details.isSalvo || (details.salvoCount > 1));
     const salvoCount = details.salvoCount || (isSalvo ? 2 : 1);
-    const salvoTag = isSalvo ? `[SALVO x${salvoCount}]` : '[SOLO]';
+    const salvoTag = isSalvo ? `[Salvo x${salvoCount}]` : '';
 
     let pts = isDecoy ? 20 : (isAircraft ? Math.round(((targetEntity.spec && targetEntity.spec.cost) || 20) * 3) : 250);
     if (targetEntity.isFlightLead) pts *= 2;
@@ -101,8 +97,7 @@ class SimulationScoring {
       firingSource.kills++;
     }
 
-    const aceTag = isAce ? '★ ACE SLAIN ★ ' : '';
-    const logDesc = `${aceTag}${srcName} (${srcType}) neutralized ${tgtName} (${tgtType}) via ${wpnName} ${salvoTag}`;
+    const logDesc = `${srcName} (${srcType}) destroyed ${tgtName} (${tgtType}) using ${wpnName} ${salvoTag}`.trim();
 
     if (firingTeam === 'friendly') {
       if (!isDecoy) this.game.stats.redLosses++;
@@ -131,9 +126,9 @@ class SimulationScoring {
     const penalty = (window.CONFIG && window.CONFIG.VP_CIVILIAN_DESTROYED_PENALTY) || 800;
 
     if (firingTeam === 'friendly') {
-      this.logScoreEvent('friendly', -penalty, 'ROE VIOLATION: Shot down civilian ' + civilianFlight.flightCode);
+      this.logScoreEvent('friendly', -penalty, 'ROE VIOLATION: Civilian flight destroyed (' + civilianFlight.flightCode + ')');
     } else {
-      this.logScoreEvent('hostile', -penalty, 'Hostile shot down civilian ' + civilianFlight.flightCode);
+      this.logScoreEvent('hostile', -penalty, 'Civilian flight destroyed (' + civilianFlight.flightCode + ')');
     }
 
     this.timelineEvents.push({

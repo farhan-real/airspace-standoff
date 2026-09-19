@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Tactical Maneuvers Hand Deck
+ * AIRSPACE STANDOFF // Tactical Maneuvers Hand Deck (<250 lines)
  */
 
 class ManeuverDeckRenderer {
@@ -18,14 +18,14 @@ class ManeuverDeckRenderer {
       return;
     }
 
-    var cardsList = window.MANEUVER_CARDS || [];
+    const cardsList = window.MANEUVER_CARDS || [];
 
     if (this.currentUnitId !== activeUnit.id || container.children.length === 0) {
       this.currentUnitId = activeUnit.id;
       container.innerHTML = '';
 
       cardsList.forEach(card => {
-        var cardEl = document.createElement('div');
+        const cardEl = document.createElement('div');
         cardEl.className = 'maneuver-card';
         cardEl.dataset.cardId = card.id;
 
@@ -41,7 +41,7 @@ class ManeuverDeckRenderer {
           </div>
           <div class="mcard-status-bar">
             <span class="bonus-tag">+${Math.round((card.evasionBonus || 0.3) * 100)}% EVASION</span>
-            <span class="recom-badge hidden">RECOMMENDED</span>
+            <span class="recom-badge hidden">REC</span>
           </div>
         `;
 
@@ -56,21 +56,21 @@ class ManeuverDeckRenderer {
       });
     }
 
-    var currentTokens = this.game.getCurrentCommanderTokenBucket();
-    var cardElements = container.querySelectorAll('.maneuver-card');
+    const currentTokens = this.game.getCurrentCommanderTokenBucket();
+    const cardElements = container.querySelectorAll('.maneuver-card');
 
     cardElements.forEach(el => {
-      var cardId = el.dataset.cardId;
-      var card = cardsList.find(c => c.id === cardId);
+      const cardId = el.dataset.cardId;
+      const card = cardsList.find(c => c.id === cardId);
       if (!card) return;
 
-      var cost = card.cost || 0.7;
-      var isEligible = card.checkPrereq(activeUnit) && currentTokens >= cost;
+      const cost = card.cost || 0.7;
+      const isEligible = card.checkPrereq(activeUnit) && currentTokens >= cost;
       if (isEligible) el.classList.remove('locked');
       else el.classList.add('locked');
 
-      var recomBadge = el.querySelector('.recom-badge');
-      var isRecom = card.isRecommended && card.isRecommended(activeUnit, this.game);
+      const recomBadge = el.querySelector('.recom-badge');
+      const isRecom = card.isRecommended && card.isRecommended(activeUnit, this.game);
       if (recomBadge) {
         if (isRecom) {
           recomBadge.classList.remove('hidden');

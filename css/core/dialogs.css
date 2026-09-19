@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AIRSPACE STANDOFF // Core Modals, Pause Screen, Settings & Full Sortie Debriefing
+   AIRSPACE STANDOFF // Core Modals, Pause Screen & Settings
    ========================================================================== */
 
 #tactical-dialog-modal { z-index: 3500 !important; }
@@ -14,6 +14,62 @@
 #procurement-modal { z-index: 500 !important; }
 
 .modal-title-row { display: flex; align-items: center; gap: 8px; }
+
+/* Tactical Command Dialog Prominent Actions */
+.tactical-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #142338;
+}
+
+.tactical-dialog-btn {
+  height: 36px;
+  min-width: 110px;
+  padding: 0 18px;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.14s ease;
+}
+
+.tactical-dialog-btn.highlight {
+  background: #0284c7;
+  border: 1px solid #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.35);
+}
+
+.tactical-dialog-btn.highlight:hover {
+  background: #00f0ff;
+  border-color: #00f0ff;
+  color: #000000;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.5);
+}
+
+.tactical-dialog-btn.alert {
+  background: #dc2626;
+  border: 1px solid #f87171;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.4);
+}
+
+.tactical-dialog-btn.alert:hover {
+  background: #ef4444;
+  border-color: #fca5a5;
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.6);
+}
 
 .settings-window {
   background: #060c18;
@@ -325,14 +381,12 @@
   border-color: #00f0ff;
 }
 
-/* ==========================================================================
-   CUSTOM DROPDOWN MENUS (NO NATIVE SELECT BOXES)
-   ========================================================================== */
-
+/* Custom Dropdown Menus */
 .custom-dropdown {
   position: relative;
   display: inline-flex;
   vertical-align: middle;
+  min-width: 0;
 }
 
 .custom-dropdown-trigger {
@@ -353,6 +407,7 @@
   white-space: nowrap;
   box-sizing: border-box;
   transition: all 0.12s ease;
+  min-width: 0;
 }
 
 .custom-dropdown-trigger:hover,
@@ -368,22 +423,26 @@
   color: #8494ab;
   font-weight: 800;
   letter-spacing: 0.4px;
+  flex-shrink: 0;
 }
 
 .cdd-val {
   color: #00f0ff;
   font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .cdd-arrow {
   font-size: 0.58rem;
   color: #7dd3fc;
   transition: transform 0.14s ease;
+  flex-shrink: 0;
 }
 
-.custom-dropdown.open .cdd-arrow {
-  transform: rotate(180deg);
-}
+.custom-dropdown.open .cdd-arrow { transform: rotate(180deg); }
 
 .custom-dropdown-menu {
   display: none;
@@ -404,9 +463,7 @@
   box-sizing: border-box;
 }
 
-.custom-dropdown.open .custom-dropdown-menu {
-  display: flex;
-}
+.custom-dropdown.open .custom-dropdown-menu { display: flex; }
 
 .custom-dropdown-opt {
   background: transparent;
@@ -443,19 +500,15 @@
 }
 
 .su-gun-dropdown {
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
+  overflow: hidden;
 }
 
-.su-gun-dropdown .custom-dropdown-trigger {
-  width: 100%;
-  justify-content: space-between;
-}
+.su-gun-dropdown .custom-dropdown-trigger { width: 100%; justify-content: space-between; }
+.su-gun-dropdown .cdd-val { flex: 1; text-align: left; }
 
-/* ==========================================================================
-   AFTER ACTION REPORT: LOCKED RETURN-TO-HANGAR FOOTER & SCROLLABLE BODY
-   ========================================================================== */
-
+/* Debrief Dialog */
 .game-over-dialog {
   background: #050b16;
   border: 1px solid #00f0ff;
@@ -468,7 +521,7 @@
   flex-direction: column;
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
   font-family: var(--font-mono);
-  overflow: hidden; /* Dialog itself stays locked; children handle scrolling */
+  overflow: hidden;
   box-sizing: border-box;
 }
 
@@ -482,19 +535,9 @@
   gap: 2px;
 }
 
-.after-action-header h2 {
-  font-size: 1.05rem;
-  font-weight: 900;
-  letter-spacing: 0.8px;
-}
+.after-action-header h2 { font-size: 1.05rem; font-weight: 900; letter-spacing: 0.8px; }
+.after-action-subtitle { font-size: 0.64rem; color: #8494ab; font-weight: 700; }
 
-.after-action-subtitle {
-  font-size: 0.64rem;
-  color: #8494ab;
-  font-weight: 700;
-}
-
-/* Scrollable central content body */
 .after-action-body {
   flex: 1 1 auto;
   min-height: 0;
@@ -506,7 +549,6 @@
   box-sizing: border-box;
 }
 
-/* Locked bottom footer holding Return button */
 .after-action-footer {
   flex-shrink: 0;
   background: #091322;
@@ -551,7 +593,6 @@
 .ace-sub { font-size: 0.62rem; color: #8494ab; }
 .ace-stats { display: flex; justify-content: space-between; font-size: 0.65rem; color: #00f0ff; border-top: 1px dashed #172a42; padding-top: 4px; margin-top: 2px; }
 
-/* Full Squadron Debriefing Table */
 .aar-full-roster-box {
   background: #02060f;
   border: 1px solid #142236;
@@ -562,39 +603,12 @@
   gap: 6px;
 }
 
-.debrief-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.64rem;
-}
+.debrief-table { width: 100%; border-collapse: collapse; font-size: 0.64rem; }
+.debrief-table th { text-align: left; padding: 5px 8px; background: #091322; color: #7dd3fc; border-bottom: 1px solid #14243b; }
+.debrief-table td { padding: 5px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
 
-.debrief-table th {
-  text-align: left;
-  padding: 5px 8px;
-  background: #091322;
-  color: #7dd3fc;
-  border-bottom: 1px solid #14243b;
-}
-
-.debrief-table td {
-  padding: 5px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-/* Structured Report Cards Below Table */
-.aar-report-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-.aar-report-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  width: 100%;
-}
+.aar-report-section { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.aar-report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
 
 .aar-report-card {
   background: #030712;
@@ -608,181 +622,47 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
 }
 
-.aar-card-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #14243b;
-  padding-bottom: 5px;
-}
+.aar-card-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #14243b; padding-bottom: 5px; }
+.aar-card-title { font-size: 0.68rem; font-weight: 800; color: #cbd5e1; letter-spacing: 0.5px; }
+.aar-card-badge { font-size: 0.54rem; font-weight: 800; padding: 1px 5px; border-radius: 2px; background: #081c32; color: #7dd3fc; border: 1px solid #0284c7; }
+.aar-card-badge.highlight { background: rgba(0, 245, 160, 0.12); color: #00f5a0; border-color: #00f5a0; }
+.aar-metrics-table { display: flex; flex-direction: column; gap: 5px; }
+.aar-metric-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.65rem; padding: 2px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.04); }
+.aar-metric-row span { color: #8494ab; font-weight: 700; }
+.aar-metric-row b { color: #f8fafc; font-weight: 800; }
 
-.aar-card-title {
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: #cbd5e1;
-  letter-spacing: 0.5px;
-}
-
-.aar-card-badge {
-  font-size: 0.54rem;
-  font-weight: 800;
-  padding: 1px 5px;
-  border-radius: 2px;
-  background: #081c32;
-  color: #7dd3fc;
-  border: 1px solid #0284c7;
-}
-
-.aar-card-badge.highlight {
-  background: rgba(0, 245, 160, 0.12);
-  color: #00f5a0;
-  border-color: #00f5a0;
-}
-
-.aar-metrics-table {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.aar-metric-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.65rem;
-  padding: 2px 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
-}
-
-.aar-metric-row span {
-  color: #8494ab;
-  font-weight: 700;
-}
-
-.aar-metric-row b {
-  color: #f8fafc;
-  font-weight: 800;
-}
-
-/* High-Emphasis Final Score Banner */
 .aar-score-banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex; justify-content: space-between; align-items: center;
   background: linear-gradient(90deg, #071930 0%, #030a16 100%);
-  border: 1.5px solid #00f0ff;
-  border-radius: 4px;
-  padding: 10px 16px;
+  border: 1.5px solid #00f0ff; border-radius: 4px; padding: 10px 16px;
   box-shadow: 0 0 16px rgba(0, 240, 255, 0.35);
 }
 
 .aar-score-banner.defeat {
   background: linear-gradient(90deg, #300714 0%, #160308 100%);
-  border-color: #ff3366;
-  box-shadow: 0 0 16px rgba(255, 51, 102, 0.35);
+  border-color: #ff3366; box-shadow: 0 0 16px rgba(255, 51, 102, 0.35);
 }
 
-.aar-banner-lead {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+.aar-banner-lead { display: flex; flex-direction: column; gap: 2px; }
+.aar-banner-status { font-size: 0.78rem; font-weight: 900; color: #00f0ff; letter-spacing: 0.6px; }
+.aar-score-banner.defeat .aar-banner-status { color: #ff3366; }
+.aar-banner-sub { font-size: 0.58rem; color: #94a3b8; }
+.aar-banner-score { display: flex; align-items: baseline; gap: 6px; }
+.aar-score-num { font-size: 1.45rem; font-weight: 900; color: #ffffff; text-shadow: 0 0 12px rgba(0, 240, 255, 0.85); letter-spacing: 0.8px; }
+.aar-score-banner.defeat .aar-score-num { text-shadow: 0 0 12px rgba(255, 51, 102, 0.85); }
+.aar-score-unit { font-size: 0.68rem; font-weight: 800; color: #00f5a0; }
 
-.aar-banner-status {
-  font-size: 0.78rem;
-  font-weight: 900;
-  color: #00f0ff;
-  letter-spacing: 0.6px;
-}
-
-.aar-score-banner.defeat .aar-banner-status {
-  color: #ff3366;
-}
-
-.aar-banner-sub {
-  font-size: 0.58rem;
-  color: #94a3b8;
-}
-
-.aar-banner-score {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.aar-score-num {
-  font-size: 1.45rem;
-  font-weight: 900;
-  color: #ffffff;
-  text-shadow: 0 0 12px rgba(0, 240, 255, 0.85);
-  letter-spacing: 0.8px;
-}
-
-.aar-score-banner.defeat .aar-score-num {
-  text-shadow: 0 0 12px rgba(255, 51, 102, 0.85);
-}
-
-.aar-score-unit {
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: #00f5a0;
-}
-
-/* Timeline */
-.aar-timeline-container {
-  background: #02060f;
-  border: 1px solid #142236;
-  border-radius: 4px;
-  padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.aar-timeline-content {
-  max-height: 200px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.timeline-entry {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.64rem;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
-  padding: 4px 6px;
-  color: #cbd5e1;
-  gap: 8px;
-}
-
+.aar-timeline-container { background: #02060f; border: 1px solid #142236; border-radius: 4px; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; }
+.aar-timeline-content { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+.timeline-entry { display: flex; justify-content: space-between; align-items: center; font-size: 0.64rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.05); padding: 4px 6px; color: #cbd5e1; gap: 8px; }
 .timeline-entry.kill { background: rgba(0, 240, 255, 0.06); border-left: 2px solid #00f0ff; }
 .timeline-entry.ace-kill { background: rgba(255, 215, 0, 0.12); border-left: 2px solid #ffd700; }
 .timeline-entry.roe { background: rgba(255, 51, 102, 0.08); border-left: 2px solid #ff3366; }
 
-@media (max-width: 768px) {
-  .aar-report-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
+@media (max-width: 768px) { .aar-report-grid { grid-template-columns: 1fr; } }
 @media (max-width: 1024px) {
-  .game-over-dialog {
-    width: 98vw;
-    height: 96vh;
-    max-height: 96vh;
-    border-radius: 4px;
-  }
-  .after-action-header {
-    padding: 8px 12px;
-  }
-  .after-action-body {
-    padding: 8px 12px;
-    gap: 8px;
-  }
-  .after-action-footer {
-    padding: 8px 12px;
-  }
+  .game-over-dialog { width: 98vw; height: 96vh; max-height: 96vh; border-radius: 4px; }
+  .after-action-header { padding: 8px 12px; }
+  .after-action-body { padding: 8px 12px; gap: 8px; }
+  .after-action-footer { padding: 8px 12px; }
 }

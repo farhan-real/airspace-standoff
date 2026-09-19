@@ -1,8 +1,7 @@
 /* ==========================================================================
-   AIRSPACE STANDOFF // Flight HUD Tape (Wider & Taller Center), SMS & Deck
+   AIRSPACE STANDOFF // Flight HUD Tape, SMS & Deck
    ========================================================================== */
 
-/* Embedded Glass HUD Tape on Top of Radar Viewport */
 .radar-flight-hud {
   position: absolute;
   top: 8px;
@@ -36,9 +35,7 @@
   overflow: hidden;
 }
 
-.rfh-left,
-.rfh-center,
-.rfh-right {
+.rfh-left, .rfh-center, .rfh-right {
   align-items: center;
   text-align: center;
   justify-content: center;
@@ -78,7 +75,6 @@
   text-align: center;
 }
 
-/* CENTER PANEL: WIDER & TALLER, LEVERAGING VERTICAL SPACE */
 .rfh-center {
   min-width: 200px;
   max-width: 250px;
@@ -152,7 +148,6 @@
   letter-spacing: 0.3px;
 }
 
-/* Stores Management System (SMS) */
 .pylon-bay {
   display: flex;
   flex-direction: column;
@@ -165,7 +160,6 @@
   gap: 3px;
 }
 
-/* Target Solution Box */
 .target-solution-box {
   border-radius: 3px;
   padding: 4px 6px;
@@ -213,7 +207,6 @@
 .tsb-empty.hidden { display: none; }
 .tsb-grid b { color: #f1f5f9; }
 
-/* Autocannon Status Card */
 .autocannon-status-card {
   background: #060e1a;
   border: 1px solid #0284c7;
@@ -223,6 +216,14 @@
   flex-direction: column;
   gap: 2px;
   flex-shrink: 0;
+}
+
+.autocannon-status-card .pylon-top-row span#gun-ui-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 155px;
+  display: inline-block;
 }
 
 .autocannon-auto-badge {
@@ -235,7 +236,6 @@
 
 .armed-indicator { color: var(--color-green); font-weight: 700; }
 
-/* Pylon Station Cards */
 .pylon-item-card {
   background: #070e1a;
   border: 1px solid #14243b;
@@ -264,17 +264,7 @@
   align-items: center;
   gap: 4px;
   overflow: hidden;
-}
-
-.pylon-key-badge {
-  background: #0284c7;
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 0.54rem;
-  font-weight: 800;
-  padding: 1px 4px;
-  border-radius: 2px;
-  flex-shrink: 0;
+  min-width: 0;
 }
 
 .pylon-name {
@@ -303,6 +293,7 @@
 .pk-value-tag {
   display: inline-flex;
   align-items: center;
+  white-space: nowrap;
 }
 
 .pk-progress-bar-bg {
@@ -346,7 +337,6 @@
   background: #050b14;
 }
 
-/* Tactical Maneuver Deck at Bottom */
 .tactical-deck-bay {
   height: 110px;
   min-height: 110px;
@@ -420,10 +410,26 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 4px;
 }
 
-.mcard-name { font-size: 0.68rem; font-weight: 800; color: #f8fafc; }
-.mcard-cost { font-size: 0.58rem; font-family: var(--font-mono); color: var(--color-green); font-weight: 700; }
+.mcard-name {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #f8fafc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mcard-cost {
+  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  color: var(--color-green);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
 .mcard-badge { font-size: 0.54rem; font-family: var(--font-mono); color: var(--color-cyan); }
 
 .mcard-hint-box {
@@ -449,9 +455,18 @@
   font-family: var(--font-mono);
   border-top: 1px dashed #14243b;
   padding-top: 2px;
+  gap: 4px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.bonus-tag { color: var(--color-green); font-weight: 700; }
+.bonus-tag {
+  color: var(--color-green);
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 
 .recom-badge {
   background: #0284c7;
@@ -460,10 +475,11 @@
   font-size: 0.52rem;
   padding: 1px 4px;
   border-radius: 2px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .recom-badge.hidden { display: none; }
 
-/* Mobile Compact Cannon Container */
 .mob-compact-cannon {
   grid-column: 1 / -1;
   background: #060e1a;
@@ -482,7 +498,6 @@
   gap: 6px;
 }
 
-/* Mobile Compact Pylon Missile Cards */
 .mob-compact-pylon {
   background: #070e1a;
   border: 1px solid #14243b;
@@ -516,6 +531,7 @@
   gap: 4px;
   overflow: hidden;
   max-width: 65%;
+  min-width: 0;
 }
 
 .mob-pylon-name {
@@ -586,18 +602,15 @@
 }
 
 @media (max-width: 1024px) {
-  #pylon-rack,
-  .pylon-rack-grid {
+  #pylon-rack, .pylon-rack-grid {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 4px !important;
   }
 }
 
-/* ==========================================================================
-   LANDSCAPE FLIGHT HUD: WIDER & TALLER CENTER DETAILS PANEL
-   ========================================================================== */
-@media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
+/* Tablet & Mobile Landscape Optimization (10-12" 2K & Compact Landscape Displays) */
+@media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
   .radar-flight-hud {
     position: absolute !important;
     top: 6px !important;
@@ -620,16 +633,10 @@
     text-align: center !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
-    min-height: 48px !important; /* Taller vertical profile */
+    min-height: 48px !important;
   }
 
-  .rfh-left {
-    min-width: 72px !important;
-    max-width: 85px !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* WIDER, TALLER CENTER PANEL LEVERAGING VERTICAL SPACE */
+  .rfh-left { min-width: 72px !important; max-width: 85px !important; flex-shrink: 0 !important; }
   .rfh-center {
     min-width: 190px !important;
     max-width: 240px !important;
@@ -649,13 +656,7 @@
     width: 100% !important;
   }
 
-  .rfh-cs {
-    font-size: 0.72rem !important;
-    font-weight: 900 !important;
-    color: #00f0ff !important;
-  }
-
-  /* Role / Model shown cleanly with vertical spacing */
+  .rfh-cs { font-size: 0.72rem !important; font-weight: 900 !important; color: #00f0ff !important; }
   .rfh-model {
     display: block !important;
     font-size: 0.50rem !important;
@@ -674,14 +675,8 @@
     margin-top: 1px !important;
   }
 
-  .rfh-right {
-    min-width: 72px !important;
-    max-width: 85px !important;
-    flex-shrink: 0 !important;
-  }
-
+  .rfh-right { min-width: 72px !important; max-width: 85px !important; flex-shrink: 0 !important; }
   .rfh-val-box { justify-content: center !important; }
-
   .rfh-label { font-size: 0.46rem !important; text-align: center !important; }
   .rfh-num { font-size: 0.86rem !important; text-align: center !important; }
   .rfh-arrow { font-size: 0.68rem !important; }
@@ -690,30 +685,26 @@
   .rfh-deg { font-size: 0.66rem !important; }
   .rfh-pill { font-size: 0.48rem !important; padding: 1px 4px !important; }
 
+  /* Expanded Maneuver Bay: Guarantees Evasion Percentage is NEVER Cut Off */
   .tactical-deck-bay {
-    height: 48px !important;
-    min-height: 48px !important;
-    max-height: 48px !important;
-    padding: 2px 8px !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+    padding: 3px 8px !important;
     background: #040812 !important;
     border-top: 1px solid #14243b !important;
     box-sizing: border-box !important;
   }
 
   .deck-header { display: none !important; }
-
-  .deck-grid {
-    gap: 6px !important;
-    align-items: center !important;
-    overflow-x: auto !important;
-  }
+  .deck-grid { gap: 6px !important; align-items: center !important; overflow-x: auto !important; }
 
   .maneuver-card {
-    height: 42px !important;
-    width: 135px !important;
-    min-width: 135px !important;
-    max-width: 135px !important;
-    padding: 4px 6px !important;
+    height: 48px !important;
+    width: 165px !important;
+    min-width: 165px !important;
+    max-width: 165px !important;
+    padding: 4px 7px !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
@@ -727,28 +718,35 @@
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    max-width: 90px !important;
+    max-width: 110px !important;
   }
 
-  .mcard-cost {
-    font-size: 0.54rem !important;
-    line-height: 1 !important;
-  }
-
-  .mcard-badge,
-  .mcard-hint-box {
-    display: none !important;
-  }
+  .mcard-cost { font-size: 0.54rem !important; line-height: 1 !important; }
+  .mcard-badge, .mcard-hint-box { display: none !important; }
 
   .mcard-status-bar {
-    font-size: 0.52rem !important;
+    font-size: 0.54rem !important;
     padding-top: 0 !important;
     border-top: none !important;
     line-height: 1 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
   }
 
   .bonus-tag {
-    font-size: 0.52rem !important;
+    font-size: 0.54rem !important;
     line-height: 1 !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    font-weight: 800 !important;
+  }
+
+  .recom-badge {
+    font-size: 0.48rem !important;
+    padding: 1px 3px !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
   }
 }

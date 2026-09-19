@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Cross-Platform Custom Loadouts & Preconfigured Aircraft Storage
+ * AIRSPACE STANDOFF // Custom Loadouts & Preconfigured Aircraft Storage
  */
 
 class SafeStorageAdapter {
@@ -110,6 +110,21 @@ class CustomLoadoutsManager {
     all[templateName.trim()] = JSON.parse(JSON.stringify(aircraftConfig));
     this.storage.setItem(this.aircraftTemplateKey, JSON.stringify(all));
     return true;
+  }
+
+  deleteTemplate(templateName) {
+    if (!templateName) return false;
+    try {
+      let raw = this.storage.getItem(this.aircraftTemplateKey);
+      if (!raw) return false;
+      const parsed = JSON.parse(raw);
+      if (parsed[templateName]) {
+        delete parsed[templateName];
+        this.storage.setItem(this.aircraftTemplateKey, JSON.stringify(parsed));
+        return true;
+      }
+    } catch (e) {}
+    return false;
   }
 }
 

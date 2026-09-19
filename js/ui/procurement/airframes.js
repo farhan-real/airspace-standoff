@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Shelf Airframes Sub-Renderer
- * Manages category filters, live searching, and grid cards for the Airframes Armory catalog
+ * AIRSPACE STANDOFF // Shelf Airframes Sub-Renderer
+ * Single-tap purchasing on '+ ADD'; tags are clickable with tooltips (<250 lines).
  */
 
 class ShelfAirframesRenderer {
@@ -60,6 +60,16 @@ class ShelfAirframesRenderer {
       ? window.StatEvaluator.rate
       : () => ({ tier: 3, colorClass: 'stat-tier-3' });
 
+    const catDescriptions = {
+      STEALTH: 'Very Low Observable airframe designed to evade early radar detection (RCS ≤ 0.005 m²).',
+      SUPERIORITY: 'Air superiority fighter engineered for high-altitude BVR intercept and energy merges.',
+      MULTIROLE: 'Versatile tactical fighter balancing BVR missile combat with close-in dogfight agility.',
+      STRIKE: 'Armored ground-attack or strategic penetrator carrying heavy payloads against surface bases.',
+      EW: 'Electronic Warfare escort projecting standoff microwave jamming and passive ESM radar geolocation.',
+      DRONES: 'Unmanned Combat Air Vehicle (UCAV) executing high-G maneuvers (up to 20G) without pilot G-LOC.',
+      EXPERIMENTAL: 'Advanced superfighter prototype featuring 3D TVC, directed-energy weapons, or COFFIN systems.'
+    };
+
     all.forEach(spec => {
       const card = document.createElement('div');
       card.className = 'airframe-dense-card';
@@ -75,10 +85,10 @@ class ShelfAirframesRenderer {
       const category = spec.category || 'MULTIROLE';
       const rcsVal = spec.sigma_0 || 1.0;
       const rcsTag = (rcsVal <= 0.0005) ? `VLO (${rcsVal}m²)` : ((rcsVal < 0.1) ? `LO (${rcsVal}m²)` : `${rcsVal}m²`);
-
-      let tvcLabel = 'AERO';
-      if (spec.thrustVector) tvcLabel = '3D TVC';
-      else if (spec.isCoffin) tvcLabel = 'COFFIN';
+      const tvcLabel = spec.thrustVector ? '3D TVC' : (spec.isCoffin ? 'COFFIN' : 'AERO');
+      const tvcDesc = spec.thrustVector
+        ? '3D Thrust Vectoring Nozzles provide post-stall pitch and yaw authority (Pugachev Cobra loops).'
+        : (spec.isCoffin ? 'COFFIN Synthetic Vision enclosed cockpit: eliminates G-LOC blackout and grants +25% evasion.' : 'Conventional aerodynamic control surfaces.');
 
       card.innerHTML = `
         <div class="adc-header">
@@ -86,21 +96,21 @@ class ShelfAirframesRenderer {
             <div class="adc-name">${spec.name}</div>
             <div class="adc-role">${spec.role}</div>
           </div>
-          <div class="adc-cost ${rCost.colorClass}">$${Number(spec.cost || 0).toFixed(1)}M</div>
+          <div class="adc-cost ${rCost.colorClass}" data-tag-title="ACQUISITION COST" data-tag-tooltip="Deducted from squadron defense budget ($${Number(spec.cost || 0).toFixed(1)}M).">$${Number(spec.cost || 0).toFixed(1)}M</div>
         </div>
         <div class="adc-badges-row">
-          <span class="adc-badge badge-cat-${category.toLowerCase()}">${category}</span>
-          <span class="adc-badge adc-feat">${spec.badge || 'READY'}</span>
-          <span class="adc-badge" style="background:#091e36;border:1px solid #0284c7;color:#7dd3fc;">${tvcLabel}</span>
-          <span class="adc-badge" style="background:#051424;border:1px solid #162a42;color:#94a3b8;">CLUTTER: +${Math.round((spec.lookDownBonus || 0.2)*100)}%</span>
+          <span class="adc-badge badge-cat-${category.toLowerCase()}" data-tag-title="${category} DOCTRINE" data-tag-tooltip="${catDescriptions[category] || 'Tactical airframe.'}">${category}</span>
+          <span class="adc-badge adc-feat" data-tag-title="AIRFRAME TRAIT" data-tag-tooltip="${spec.desc || 'Operational fighter.'}">${spec.badge || 'READY'}</span>
+          <span class="adc-badge" style="background:#091e36;border:1px solid #0284c7;color:#7dd3fc;" data-tag-title="FLIGHT DYNAMICS" data-tag-tooltip="${tvcDesc}">${tvcLabel}</span>
+          <span class="adc-badge" style="background:#051424;border:1px solid #162a42;color:#94a3b8;" data-tag-title="CLUTTER SUPPRESSION" data-tag-tooltip="Look-down clutter filter (+${Math.round((spec.lookDownBonus || 0.2)*100)}%) allows radar tracking of deck-skimming targets.">CLUTTER: +${Math.round((spec.lookDownBonus || 0.2)*100)}%</span>
         </div>
         <div class="adc-metrics-grid">
-          <div class="adc-metric-cell"><span>SPEED:</span><b class="${rSpeed.colorClass}">M ${(spec.S_0 || 0.9).toFixed(2)}</b></div>
-          <div class="adc-metric-cell"><span>AGILITY:</span><b class="${rAgi.colorClass}">${(spec.AGI_0 || 0.85).toFixed(2)} (${spec.G_limit || 9}G)</b></div>
-          <div class="adc-metric-cell"><span>RADAR:</span><b class="${rRadar.colorClass}">${spec.R_0 || 75}km (±${Math.round((spec.radarConeDeg || 120)/2)}°)</b></div>
-          <div class="adc-metric-cell"><span>RCS:</span><b class="${rRcs.colorClass}">${rcsTag}</b></div>
-          <div class="adc-metric-cell"><span>ARMOR:</span><b class="${rHp.colorClass}">${spec.hp || 4} HP</b></div>
-          <div class="adc-metric-cell"><span>STATIONS:</span><b class="${rSlots.colorClass}">${spec.totalSlots || 6} Pylons</b></div>
+          <div class="adc-metric-cell" data-tag-title="SPRINT AIRSPEED" data-tag-tooltip="Maximum clean sprint speed: Mach ${(spec.S_0 || 0.9).toFixed(2)} (~${Math.round((spec.S_0 || 0.9) * 1225)} km/h)."><span>SPEED:</span><b class="${rSpeed.colorClass}">M ${(spec.S_0 || 0.9).toFixed(2)}</b></div>
+          <div class="adc-metric-cell" data-tag-title="TURN AGILITY & G-LIMIT" data-tag-tooltip="Corner turn agility (${(spec.AGI_0 || 0.85).toFixed(2)}) and structural maneuvering tolerance (${spec.G_limit || 9}G)."><span>AGILITY:</span><b class="${rAgi.colorClass}">${(spec.AGI_0 || 0.85).toFixed(2)} (${spec.G_limit || 9}G)</b></div>
+          <div class="adc-metric-cell" data-tag-title="RADAR ENVELOPE" data-tag-tooltip="Instrumented radar range (${spec.R_0 || 75}km) across forward cone (±${Math.round((spec.radarConeDeg || 120)/2)}° off nose)."><span>RADAR:</span><b class="${rRadar.colorClass}">${spec.R_0 || 75}km</b></div>
+          <div class="adc-metric-cell" data-tag-title="RADAR CROSS SECTION" data-tag-tooltip="Nose-on radar signature: ${rcsTag}. Lower RCS exponentially reduces enemy radar lock distance."><span>RCS:</span><b class="${rRcs.colorClass}">${rcsTag}</b></div>
+          <div class="adc-metric-cell" data-tag-title="ARMOR HP" data-tag-tooltip="Fuselage damage tolerance: ${spec.hp || 4} Hit Points. Deflects close-in kinetic fire."><span>ARMOR:</span><b class="${rHp.colorClass}">${spec.hp || 4} HP</b></div>
+          <div class="adc-metric-cell" data-tag-title="HARDPOINTS" data-tag-tooltip="Certified weapon rails: ${spec.totalSlots || 6} stations (${spec.maxPylonRating || 'Type M'} rating)."><span>STATIONS:</span><b class="${rSlots.colorClass}">${spec.totalSlots || 6} Pylons</b></div>
         </div>
         <div class="adc-desc">${spec.desc || ''}</div>
         <div class="adc-footer">
@@ -108,12 +118,16 @@ class ShelfAirframesRenderer {
           <button type="button" class="adc-btn-add">+ ADD</button>
         </div>`;
 
-      card.onclick = (e) => {
-        if (!e.target || !e.target.closest || !e.target.closest('.spec-inspect-btn')) {
+      // Single-tap purchase on '+ ADD' button only
+      const addBtn = card.querySelector('.adc-btn-add');
+      if (addBtn) {
+        addBtn.onclick = (e) => {
+          e.stopPropagation();
           shelfInstance.pm.addAirframe(spec.id);
           if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-        }
-      };
+        };
+      }
+
       grid.appendChild(card);
     });
   }

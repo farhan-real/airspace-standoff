@@ -1,5 +1,5 @@
 /* ==========================================================================
-   APEX VECTOR // Active Squadron Bays (Clean Sizing, Zero Overlap)
+   AIRSPACE STANDOFF // Active Squadron Bays
    ========================================================================== */
 
 .roster-header-bar {
@@ -39,17 +39,33 @@
   background: #060c18;
   border: 1px solid #15263f;
   border-radius: 4px;
-  padding: 9px 11px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   transition: all 0.12s ease;
   box-sizing: border-box;
+  position: relative;
 }
 
-.squad-unit-card.drag-over {
-  border-color: var(--color-cyan);
-  background: rgba(0, 240, 255, 0.08);
+.squad-unit-card:hover {
+  border-color: #0284c7;
+}
+
+.squad-unit-card.active-bay {
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+  background: #071324;
+}
+
+.active-bay-badge {
+  font-size: 0.54rem;
+  background: #0284c7;
+  color: #ffffff;
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
 }
 
 .squad-unit-header {
@@ -118,29 +134,19 @@
   background: #020610;
   border: 1px solid #132236;
   border-radius: 3px;
-  padding: 5px 8px;
+  padding: 4px 7px;
   box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .gun-sel-label {
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-family: var(--font-mono);
   color: #ffb830;
-  font-weight: 700;
+  font-weight: 800;
   white-space: nowrap;
-}
-
-.gun-dropdown {
-  flex: 1;
-  min-width: 0;
-  background: #060e1a;
-  border: 1px solid #162a44;
-  color: #f8fafc;
-  font-size: 0.68rem;
-  font-family: var(--font-mono);
-  padding: 4px 6px;
-  border-radius: 2px;
-  outline: none;
+  flex-shrink: 0;
 }
 
 .unit-metric-strip {
@@ -213,10 +219,13 @@
 }
 
 .upgrades-label-row {
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   font-family: var(--font-mono);
   color: #8494ab;
   font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .upgrade-slots-container {
@@ -245,6 +254,16 @@
   color: #e0e7ff;
 }
 
+.upgrade-socket.empty {
+  cursor: pointer;
+  color: #64748b;
+}
+
+.upgrade-socket.empty:hover {
+  border-color: #00f0ff;
+  color: #00f0ff;
+}
+
 .btn-socket-dismount {
   background: transparent;
   border: none;
@@ -264,7 +283,7 @@
   background: #030712;
   border: 1px solid #14243b;
   border-radius: 2px;
-  padding: 5px 7px;
+  padding: 4px 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -273,16 +292,16 @@
 }
 
 .iic-title { font-size: 0.68rem; font-weight: 700; color: #f8fafc; }
-.iic-sub { font-size: 0.60rem; color: #8494ab; margin-left: 6px; }
+.iic-sub { font-size: 0.58rem; color: #8494ab; margin-left: 6px; }
 
 .btn-dismount-item {
   background: rgba(255, 51, 102, 0.12);
   border: 1px solid var(--color-red);
   color: #fecdd3;
-  padding: 3px 7px;
+  padding: 2px 6px;
   border-radius: 2px;
   cursor: pointer;
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   font-family: var(--font-mono);
 }
 
@@ -290,76 +309,51 @@
 
 .empty-bay-indicator {
   text-align: center;
-  padding: 8px;
-  font-size: 0.64rem;
+  padding: 6px;
+  font-size: 0.62rem;
   font-family: var(--font-mono);
   color: #64748b;
   border: 1px dashed #142338;
   border-radius: 3px;
   cursor: pointer;
+  transition: all 0.12s ease;
 }
 
 .empty-bay-indicator:hover {
   border-color: var(--color-cyan);
   color: var(--color-cyan);
+  background: rgba(0, 240, 255, 0.05);
+}
+
+.slot-action-btn {
+  background: rgba(2, 132, 199, 0.15);
+  border: 1px dashed #0284c7;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  font-size: 0.60rem;
+  font-weight: 700;
+  padding: 4px;
+  border-radius: 3px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.slot-action-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-style: solid;
+  border-color: #00f0ff;
 }
 
 @media (max-width: 1024px) {
-  .squadron-container {
-    grid-template-columns: 100%;
-    padding-right: 0;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .squad-unit-card {
-    padding: 6px 8px;
-    gap: 4px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .squad-unit-header {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: stretch;
-  }
-
-  .suh-title-group {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    gap: 4px;
-  }
-
-  .squad-unit-name {
-    font-size: 0.82rem;
-  }
-
-  .squad-unit-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 4px;
-    width: 100%;
-  }
-
-  .squad-unit-actions .hud-btn {
-    padding: 3px 7px;
-    font-size: 0.58rem;
-  }
-
-  .installed-item-card {
-    padding: 4px 6px;
-  }
-
-  .iic-title {
-    max-width: 140px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
-  }
+  .squadron-container { grid-template-columns: 100%; padding-right: 0; width: 100%; box-sizing: border-box; }
+  .squad-unit-card { padding: 6px 8px; gap: 4px; width: 100%; box-sizing: border-box; }
+  .squad-unit-header { display: flex; flex-direction: column; gap: 4px; align-items: stretch; }
+  .suh-title-group { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 4px; }
+  .squad-unit-name { font-size: 0.82rem; }
+  .squad-unit-actions { display: flex; align-items: center; justify-content: flex-end; gap: 4px; width: 100%; }
+  .squad-unit-actions .hud-btn { padding: 3px 6px; font-size: 0.56rem; }
+  .installed-item-card { padding: 3px 5px; }
+  .iic-title { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; }
 }
