@@ -6,7 +6,7 @@
 window.MANUAL_COMBAT = [
   {
     id: 'ch6_weapons_salvos',
-    title: 'CHAPTER 6: GUIDED MISSILES, SEEKERS & SALVO SATURATION DOCTRINE',
+    title: 'SECTION 06 // GUIDED MISSILES, HOMING SEEKERS & SALVO SATURATION DOCTRINE',
     desc: `
       <div class="ge-subhead">MISSILE SEEKER TYPES &amp; COUNTERMEASURES</div>
       <div class="table-scroll-wrapper">
@@ -78,7 +78,7 @@ window.MANUAL_COMBAT = [
   },
   {
     id: 'ch7_defense_ew',
-    title: 'CHAPTER 7: ELECTRONIC WARFARE, DOPPLER NOTCHING & MANEUVERS',
+    title: 'SECTION 07 // ELECTRONIC WARFARE, DOPPLER NOTCHING & DEFENSIVE MANEUVERS',
     desc: `
       <div class="ge-subhead">HOW TO EXECUTE A DOPPLER NOTCH (BEAMING 90°)</div>
       <div class="ge-desc">

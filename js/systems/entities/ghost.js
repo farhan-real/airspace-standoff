@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Ghost Contact Reflection Entity
+ * AIRSPACE STANDOFF // Ghost Contact Reflection Entity
  * Simulates raw radar reflections, temperature inversions, and atmospheric clutter
  */
 
@@ -14,17 +14,17 @@ class GhostContact {
     const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
 
-    this.x = (typeof x === 'number') ? x : (w - 20.0 - Math.random() * 25.0);
-    this.y = (typeof y === 'number') ? y : (16.0 + Math.random() * (h - 32.0));
+    this.x = (typeof x === 'number') ? x : (w / 2.0);
+    this.y = (typeof y === 'number') ? y : (h / 2.0);
     this.heading = (typeof heading === 'number') ? heading : (Math.PI + (Math.random() * 0.4 - 0.2));
-    this.speed = speedMach || (0.80 + Math.random() * 0.20);
-    this.altFt = altFt || (26000 + Math.floor(Math.random() * 8) * 1000);
+    this.speed = speedMach || (0.80 + Math.random() * 0.15);
+    this.altFt = altFt || (24000 + Math.floor(Math.random() * 8) * 1000);
     this.alt = this.altFt / 65000.0;
 
     this.effectiveRcs = 1.0 + Math.random() * 1.5;
     this.turnTimer = 6.0 + Math.random() * 8.0;
     this.turnDirection = 0;
-    this.lifespan = 90.0 + Math.random() * 30.0;
+    this.lifespan = 60.0 + Math.random() * 20.0;
     this.age = 0.0;
 
     this.isDissolving = false;

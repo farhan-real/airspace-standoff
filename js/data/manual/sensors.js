@@ -6,7 +6,7 @@
 window.MANUAL_SENSORS = [
   {
     id: 'ch4_radar_physics',
-    title: 'CHAPTER 4: RADAR SENSORS, CLUTTER FILTERS & OBSERVABILITY (RCS)',
+    title: 'SECTION 04 // RADAR DETECTION EQUATION, CLUTTER FILTERS & STEALTH RCS',
     desc: `
       <div class="ge-subhead">THE RADAR RANGE EQUATION IN COMBAT</div>
       <div class="ge-desc">
@@ -89,7 +89,7 @@ window.MANUAL_SENSORS = [
   },
   {
     id: 'ch5_classification_uplink',
-    title: 'CHAPTER 5: TARGET CLASSIFICATION & AUTOMATIC SATELLITE UPLINK',
+    title: 'SECTION 05 // TARGET CLASSIFICATION PIPELINE & ORBITAL SATELLITE UPLINK',
     desc: `
       <div class="ge-desc">
         AIRSPACE STANDOFF simulates an authentic multi-stage radar signal intelligence pipeline rather than displaying omniscient contact data.
@@ -112,7 +112,7 @@ window.MANUAL_SENSORS = [
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
           <b style="color:#00f0ff;">PHASE 2: IDENTIFIED</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Continuous tracking over time allows NCTR spectral analysis to resolve turbine blade modulation or electronic emissions. Unlocks full contact dossier.
+            Continuous tracking over several seconds resolves turbine blade modulation (NCTR) or electronic emissions. Unlocks full contact dossier.
           </div>
         </div>
       </div>

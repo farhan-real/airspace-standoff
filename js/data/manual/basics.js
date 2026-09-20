@@ -6,7 +6,7 @@
 window.MANUAL_BASICS = [
   {
     id: 'ch1_quickstart',
-    title: 'CHAPTER 1: QUICK-START DOCTRINE & 5 FOUNDATIONAL RULES',
+    title: 'SECTION 01 // OPERATIONAL DOCTRINE, DEFENSE ALLOCATION & COMBAT ROE',
     desc: `
       <div class="ge-desc">
         Welcome to <b>AIRSPACE STANDOFF</b>. You command an advanced tactical fighter squadron in a high-density, contested electromagnetic combat arena. Master these five foundational operational rules:
@@ -79,7 +79,7 @@ window.MANUAL_BASICS = [
   },
   {
     id: 'ch2_kinematics',
-    title: 'CHAPTER 2: FLIGHT KINEMATICS, ENVELOPES & ENGINE REGIMES',
+    title: 'SECTION 02 // FLIGHT KINEMATICS, SPEED ENVELOPES & PROPULSION DETENTS',
     desc: `
       <div class="ge-desc">
         Aerodynamic flight in AIRSPACE STANDOFF models real-world physical dynamics: airspeed, altitude, air density, structural G-loading, and throttle propulsion states.
@@ -144,7 +144,7 @@ window.MANUAL_BASICS = [
   },
   {
     id: 'ch3_stress_coffin',
-    title: 'CHAPTER 3: PAYLOAD RATIO, PILOT G-LOAD & SYNTHETIC VISION',
+    title: 'SECTION 03 // AIRFRAME PAYLOAD RATIOS, PILOT G-LOAD & COFFIN INTERFACE',
     desc: `
       <div class="ge-subhead">PAYLOAD RATIO (LOAD %) &amp; WEIGHT CALCULATIONS</div>
       <div class="ge-formula-card">

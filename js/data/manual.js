@@ -23,15 +23,15 @@ window.initTacticalManual = function() {
   ];
 
   const chapters = [
-    { id: 'ch1_quickstart', label: 'CH 1: RULES' },
-    { id: 'ch2_kinematics', label: 'CH 2: KINEMATICS' },
-    { id: 'ch3_stress_coffin', label: 'CH 3: STRESS & COFFIN' },
-    { id: 'ch4_radar_physics', label: 'CH 4: RADAR & RCS' },
-    { id: 'ch5_classification_uplink', label: 'CH 5: UPLINK' },
-    { id: 'ch6_weapons_salvos', label: 'CH 6: MISSILES' },
-    { id: 'ch7_defense_ew', label: 'CH 7: EW & NOTCH' },
-    { id: 'ch8_aces_difficulties', label: 'CH 8: ACES & AI' },
-    { id: 'ch9_logistics_scoring', label: 'CH 9: THEATER IADS' }
+    { id: 'ch1_quickstart', label: '01 // DOCTRINE & ROE' },
+    { id: 'ch2_kinematics', label: '02 // KINEMATICS & POWER' },
+    { id: 'ch3_stress_coffin', label: '03 // G-STRESS & COFFIN' },
+    { id: 'ch4_radar_physics', label: '04 // RADAR & STEALTH RCS' },
+    { id: 'ch5_classification_uplink', label: '05 // TRACKS & SATELLITE' },
+    { id: 'ch6_weapons_salvos', label: '06 // MISSILES & SALVOS' },
+    { id: 'ch7_defense_ew', label: '07 // EW & NOTCH DEFENSE' },
+    { id: 'ch8_aces_difficulties', label: '08 // ACES & THREAT TIERS' },
+    { id: 'ch9_logistics_scoring', label: '09 // THEATER IADS & DEPOTS' }
   ];
 
   if (navContainer) {
@@ -77,7 +77,7 @@ window.initTacticalManual = function() {
       <div class="glossary-entry" id="${ch.id}">
         <div class="ge-title">
           <span>${ch.title}</span>
-          <span style="font-size:0.56rem;color:#00f5a0;border:1px solid #00f5a0;padding:1px 5px;border-radius:2px;">RESTRICTED</span>
+          <span class="manual-classified-badge">CLASSIFIED</span>
         </div>
         <div class="ge-content">${ch.desc}</div>
       </div>

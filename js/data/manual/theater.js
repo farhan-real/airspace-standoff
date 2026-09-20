@@ -6,7 +6,7 @@
 window.MANUAL_THEATER = [
   {
     id: 'ch8_aces_difficulties',
-    title: 'CHAPTER 8: ACE COMBAT CADRE & 6 THEATER DIFFICULTIES',
+    title: 'SECTION 08 // ADVERSARY ACE SQUADRONS & THEATER ENGAGEMENT TIERS',
     desc: `
       <div class="ge-subhead">DESIGNATED ACE FIGHTERS (★ ACE ★)</div>
       <div class="ge-desc">
@@ -16,55 +16,55 @@ window.MANUAL_THEATER = [
           <li><b>Coordinated Pincer Tactics:</b> Aces coordinate with wingmen to bracket your fighters from opposing angles.</li>
           <li><b>Synchronized Volleys:</b> Aces fire synchronized multi-missile salvos to maximize saturation hit bonuses.</li>
           <li><b>Extreme Evasion:</b> Aces deploy chaff/flares with disciplined timing and perform post-stall breaks (+32% evasion bonus).</li>
-          <li><b>Difficulty-Scaled Errors:</b> On Normal (Veteran), Aces occasionally misjudge merges, allowing tactical counterplay; on Master and Legend, they execute with zero blunder margin.</li>
+          <li><b>Difficulty-Scaled Errors:</b> In Contested Airspace, Aces occasionally misjudge merges, allowing tactical counterplay; in Air Denial Zone and Fortress Airspace, they execute with zero blunder margin.</li>
           <li><b>High-Value Bounty:</b> Eliminating an Ace fighter awards a massive <b>+850 Victory Point bounty</b>!</li>
         </ul>
       </div>
 
-      <div class="ge-subhead">THE 6 THEATER DIFFICULTIES</div>
+      <div class="ge-subhead">THE 6 THEATER ENGAGEMENT TIERS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>DIFFICULTY</th><th>SCORE MULTIPLIER</th><th>BUDGET CAP</th><th>ACES</th><th>AI PROFILE &amp; EVASION SKILL</th></tr>
+            <tr><th>THEATER CONTESTATION</th><th>SCORE MULTIPLIER</th><th>BUDGET CAP</th><th>ACES</th><th>AI PROFILE &amp; EVASION SKILL</th></tr>
           </thead>
           <tbody>
             <tr>
-              <td style="color:#8494ab;font-weight:800;">CADET</td>
+              <td style="color:#8494ab;font-weight:800;">PERMISSIVE SECTOR</td>
               <td>0.60x VP</td>
               <td>180.0M CR</td>
               <td>0</td>
               <td>5.2s reaction cooldown, 45% blunder rate, 20% evasion skill, basic flight logic, no Doppler notching.</td>
             </tr>
             <tr>
-              <td style="color:#38bdf8;font-weight:800;">VETERAN</td>
+              <td style="color:#38bdf8;font-weight:800;">CONTESTED AIRSPACE</td>
               <td>1.00x VP</td>
               <td>260.0M CR</td>
               <td>1</td>
               <td>3.8s reaction cooldown, 28% blunder rate, 40% evasion skill, active Doppler notching, disciplined merges.</td>
             </tr>
             <tr>
-              <td style="color:#00f0ff;font-weight:800;">ELITE</td>
+              <td style="color:#00f0ff;font-weight:800;">ACTIVE COMBAT ZONE</td>
               <td>1.40x VP</td>
               <td>360.0M CR</td>
               <td>1</td>
               <td>2.2s reaction cooldown, 12% blunder rate, 65% evasion skill, multi-unit coordination, BVR salvos.</td>
             </tr>
             <tr>
-              <td style="color:#ffd700;font-weight:800;">THEATER ACE</td>
+              <td style="color:#ffd700;font-weight:800;">HIGH-THREAT GRID</td>
               <td>1.80x VP</td>
               <td>450.0M CR</td>
               <td>2</td>
               <td>1.4s reaction cooldown, 4% blunder rate, 82% evasion skill, coordinated pincer attacks, lethal salvos.</td>
             </tr>
             <tr>
-              <td style="color:#c084fc;font-weight:800;">SUPREME MASTER</td>
+              <td style="color:#c084fc;font-weight:800;">AIR DENIAL ZONE</td>
               <td>2.20x VP</td>
               <td>550.0M CR</td>
               <td>2</td>
               <td>0.90s reaction cooldown, 1% blunder rate, 92% evasion skill, rapid countermeasure and notch responses.</td>
             </tr>
             <tr>
-              <td style="color:#ff3366;font-weight:800;">APEX LEGEND</td>
+              <td style="color:#ff3366;font-weight:800;">FORTRESS AIRSPACE</td>
               <td>2.80x VP</td>
               <td>650.0M CR</td>
               <td>3</td>
@@ -77,7 +77,7 @@ window.MANUAL_THEATER = [
   },
   {
     id: 'ch9_logistics_scoring',
-    title: 'CHAPTER 9: THEATER LOGISTICS, CENTRAL DEPOTS, SCORING & CONTROLS',
+    title: 'SECTION 09 // THEATER IADS, INDESTRUCTIBLE DEPOTS, SCORING & KEYBINDS',
     desc: `
       <div class="ge-subhead">CENTRAL INDESTRUCTIBLE AMMO DEPOTS</div>
       <div class="ge-desc">

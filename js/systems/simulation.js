@@ -1,12 +1,13 @@
 /**
  * AIRSPACE STANDOFF // Simulation System Orchestrator (150km x 100km Theater)
- * Time-seeded RNG cloud generator (Min 2, Max 5, peak at 3), sensor tracking, and win states.
+ * Real-time time warp, weather cloud generation, combat physics loop, win evaluations.
  */
 
 class SimulationSystem {
   constructor(gameEngine) {
     this.game = gameEngine;
     this.scoring = new SimulationScoring(gameEngine);
+    this.detection = new SimulationDetectionSystem(this);
     this.timeWarp = 1;
     this.isPaused = false;
     this.weatherClouds = [];
@@ -19,7 +20,6 @@ class SimulationSystem {
     this.currentWave = 1;
     this._satelliteUplinkAnnouncedBlue = false;
     this.initWeatherClouds();
-    this.initGhostContacts();
   }
 
   get scoreLog() { return this.scoring.scoreLog; }
@@ -48,8 +48,7 @@ class SimulationSystem {
 
   initWeatherClouds() {
     this.weatherClouds = [];
-    // High-resolution time-seeded PRNG (Mulberry32)
-    let s = (Date.now() ^ ((performance.now() * 1000) | 0) ^ ((Math.random() * 0x7FFFFFFF) | 0)) >>> 0;
+    let s = (Date.now() ^ ((performance.now() * 1000) | 0)) >>> 0;
     const rng = () => {
       s = (s + 0x6D2B79F5) | 0;
       let t = Math.imul(s ^ (s >>> 15), 1 | s);
@@ -57,50 +56,33 @@ class SimulationSystem {
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
 
-    // Min 2, Max 5 (3 is most common: 2=15%, 3=55%, 4=22%, 5=8%)
-    const r = rng();
-    const count = r < 0.15 ? 2 : (r < 0.70 ? 3 : (r < 0.92 ? 4 : 5));
-    const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
-    const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-
-    const sizeProfiles = [
-      { rxMin: 25, rxMax: 32, ryMin: 16, ryMax: 22 },
-      { rxMin: 24, rxMax: 32, ryMin: 12, ryMax: 16 },
-      { rxMin: 18, rxMax: 25, ryMin: 13, ryMax: 18 }
-    ].sort(() => rng() - 0.5);
-
+    const count = rng() < 0.15 ? 2 : (rng() < 0.70 ? 3 : (rng() < 0.92 ? 4 : 5));
+    const sizeProfiles = [{ rxMin: 25, rxMax: 32, ryMin: 16, ryMax: 22 }, { rxMin: 24, rxMax: 32, ryMin: 12, ryMax: 16 }, { rxMin: 18, rxMax: 25, ryMin: 13, ryMax: 18 }];
     const sectors = [
-      { minX: 25, maxX: 65, minY: 18, maxY: 45 },
-      { minX: 85, maxX: 125, minY: 18, maxY: 45 },
-      { minX: 55, maxX: 95, minY: 35, maxY: 65 },
-      { minX: 25, maxX: 65, minY: 55, maxY: 82 },
-      { minX: 85, maxX: 125, minY: 55, maxY: 82 }
+      { minX: 25, maxX: 65, minY: 18, maxY: 45 }, { minX: 85, maxX: 125, minY: 18, maxY: 45 },
+      { minX: 55, maxX: 95, minY: 35, maxY: 65 }, { minX: 25, maxX: 65, minY: 55, maxY: 82 }, { minX: 85, maxX: 125, minY: 55, maxY: 82 }
     ].sort(() => rng() - 0.5);
 
     for (let i = 0; i < count; i++) {
       const sec = sectors[i % sectors.length];
-      const profile = sizeProfiles[i % sizeProfiles.length];
+      const p = sizeProfiles[i % sizeProfiles.length];
       const cx = sec.minX + rng() * (sec.maxX - sec.minX);
       const cy = sec.minY + rng() * (sec.maxY - sec.minY);
-      const rx = profile.rxMin + rng() * (profile.rxMax - profile.rxMin);
-      const ry = profile.ryMin + rng() * (profile.ryMax - profile.ryMin);
+      const rx = p.rxMin + rng() * (p.rxMax - p.rxMin);
+      const ry = p.ryMin + rng() * (p.ryMax - p.ryMin);
       const angle = rng() * Math.PI * 2;
       const spd = 0.15 + rng() * 0.25;
-
       this.weatherClouds.push(new WeatherCloud(cx, cy, rx, ry, Math.cos(angle) * spd, Math.sin(angle) * spd * 0.6));
     }
   }
 
   initGhostContacts() {
     this.ghostContacts = [];
-    const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
-    const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-    const gx = (w - 20.0) - Math.random() * 30.0;
-    const gy = 18.0 + Math.random() * (h - 36.0);
-    const gHeading = Math.PI + (Math.random() * 0.4 - 0.2);
-    const gSpeed = 0.80 + Math.random() * 0.20;
-    const gAlt = 22000 + Math.floor(Math.random() * 10) * 1000;
-    this.ghostContacts.push(new GhostContact(gx, gy, gHeading, gSpeed, gAlt));
+    if (!this.weatherClouds || this.weatherClouds.length === 0) return;
+    const targetCloud = this.weatherClouds[Math.floor(Math.random() * this.weatherClouds.length)];
+    const gx = targetCloud.x + (Math.random() * targetCloud.rx * 0.8 - targetCloud.rx * 0.4);
+    const gy = targetCloud.y + (Math.random() * targetCloud.ry * 0.8 - targetCloud.ry * 0.4);
+    this.ghostContacts.push(new GhostContact(gx, gy, Math.PI + (Math.random() * 0.4 - 0.2), 0.80, 24000));
   }
 
   spawnCivilianFlight() {
@@ -109,10 +91,7 @@ class SimulationSystem {
     const fromLeft = Math.random() < 0.5;
     const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-    const startX = fromLeft ? -5 : (w + 5);
-    const startY = 20 + Math.random() * (h - 40);
-    const heading = fromLeft ? 0.05 : (Math.PI - 0.05);
-    this.civilianTraffic.push(new CivilianAirliner(data, startX, startY, heading));
+    this.civilianTraffic.push(new CivilianAirliner(data, fromLeft ? -5 : (w + 5), 20 + Math.random() * (h - 40), fromLeft ? 0.05 : (Math.PI - 0.05)));
   }
 
   step(realDt) {
@@ -125,7 +104,7 @@ class SimulationSystem {
     for (const c of this.weatherClouds) c.update(dt);
 
     this.civilianSpawnTimer += dt;
-    if (this.civilianSpawnTimer >= 40.0 && this.civilianTraffic.length < 2) {
+    if (this.civilianSpawnTimer >= 45.0 && this.civilianTraffic.length < 2) {
       this.civilianSpawnTimer = 0.0;
       this.spawnCivilianFlight();
     }
@@ -152,10 +131,39 @@ class SimulationSystem {
         const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
         this.game.hostileAircraft.push(...FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'hostile', mapW, mapH, this.game.aiDifficulty));
         this.game.alliedAircraft.push(...FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'friendly', mapW, mapH, this.game.aiDifficulty));
-        this.logScoreEvent('friendly', 0, 'REINFORCEMENTS: Wave ' + this.currentWave + ' entered theater');
+        this.logScoreEvent('friendly', 0, `REINFORCEMENTS: Wave ${this.currentWave} entered theater`);
       }
     }
 
+    this.updateCommandTokens(dt);
+    this.detection.update(dt);
+
+    for (const ally of this.game.alliedAircraft) {
+      ally.update(dt, this.game.missiles.filter(m => m.active && m.target && m.target.id === ally.id));
+      ally.updateAutomaticGun(dt, this.game.hostileAircraft, this.game.radar);
+    }
+    for (const hostile of this.game.hostileAircraft) {
+      hostile.update(dt, this.game.missiles.filter(m => m.active && m.target && m.target.id === hostile.id));
+      hostile.updateAutomaticGun(dt, this.game.alliedAircraft, this.game.radar);
+    }
+
+    const hostileRadarAlive = this.game.surfaceUnits.some(s => s.type === 'RADAR_ARRAY' && s.team === 'hostile' && s.hp > 0);
+    const friendlyRadarAlive = this.game.surfaceUnits.some(s => s.type === 'RADAR_ARRAY' && s.team === 'friendly' && s.hp > 0);
+    for (const surf of this.game.surfaceUnits) {
+      const isRed = (surf.team === 'hostile');
+      surf.update(dt, isRed ? this.game.alliedAircraft : this.game.hostileAircraft, this.game.missiles, this.game.missiles, isRed ? hostileRadarAlive : friendlyRadarAlive);
+    }
+
+    for (const m of this.game.missiles) m.update(dt, this.weatherClouds);
+    this.game.missiles = this.game.missiles.filter(m => !m.isDead);
+
+    this.resolveUnitFocus();
+    if (this.game.ai && typeof this.game.ai.update === 'function') this.game.ai.update(dt);
+    if (this.game.avionics && typeof this.game.avionics.updateRWRState === 'function') this.game.avionics.updateRWRState();
+    this.checkWinConditions();
+  }
+
+  updateCommandTokens(dt) {
     const cfg = window.CONFIG || {};
     const baseRegen = cfg.TOKEN_BASE_REGEN || 2.50;
     const perAcRegen = cfg.TOKEN_PER_AIRCRAFT_REGEN || 0.25;
@@ -179,38 +187,12 @@ class SimulationSystem {
     if (tokenBar) tokenBar.style.width = Math.min(100, (currentTokens / maxToken) * 100) + '%';
     if (tokenVal) tokenVal.textContent = currentTokens.toFixed(1) + ' / ' + maxToken.toFixed(1);
     if (tokenRate) tokenRate.textContent = '+' + currentRegen.toFixed(1) + '/s';
+  }
 
-    this.updateTeamSensorTracks(dt);
-
-    for (const ally of this.game.alliedAircraft) {
-      const incoming = this.game.missiles.filter(m => m.active && m.target && m.target.id === ally.id);
-      ally.update(dt, incoming);
-      ally.updateAutomaticGun(dt, this.game.hostileAircraft, this.game.radar);
-    }
-
-    for (const hostile of this.game.hostileAircraft) {
-      const incoming = this.game.missiles.filter(m => m.active && m.target && m.target.id === hostile.id);
-      hostile.update(dt, incoming);
-      hostile.updateAutomaticGun(dt, this.game.alliedAircraft, this.game.radar);
-    }
-
-    const hostileRadarAlive = this.game.surfaceUnits.some(s => s.type === 'RADAR_ARRAY' && s.team === 'hostile' && s.hp > 0);
-    const friendlyRadarAlive = this.game.surfaceUnits.some(s => s.type === 'RADAR_ARRAY' && s.team === 'friendly' && s.hp > 0);
-
-    for (const surf of this.game.surfaceUnits) {
-      if (surf.team === 'hostile') {
-        surf.update(dt, this.game.alliedAircraft, this.game.missiles, this.game.missiles, hostileRadarAlive);
-      } else {
-        surf.update(dt, this.game.hostileAircraft, this.game.missiles, this.game.missiles, friendlyRadarAlive);
-      }
-    }
-
-    for (const m of this.game.missiles) m.update(dt, this.weatherClouds);
-    this.game.missiles = this.game.missiles.filter(m => !m.isDead);
-
+  resolveUnitFocus() {
     if (this.game.activeUnit && this.game.activeUnit.hp <= 0) {
-      const activeRoster = (this.game.currentPvpCommander === 'friendly') ? this.game.alliedAircraft : this.game.hostileAircraft;
-      const nextLive = activeRoster.find(a => a.hp > 0);
+      const roster = (this.game.currentPvpCommander === 'friendly') ? this.game.alliedAircraft : this.game.hostileAircraft;
+      const nextLive = roster.find(a => a.hp > 0);
       if (nextLive) {
         this.game.activeUnit = nextLive;
         if (this.game.radar && this.game.radar.cam && this.game.radar.trackingUnit) {
@@ -218,202 +200,10 @@ class SimulationSystem {
         }
       }
     }
-
     if (this.game.selectedTarget && (this.game.selectedTarget.hp <= 0 || this.game.selectedTarget.isDissolved)) {
       this.game.selectedTarget = null;
       const targetInfo = document.getElementById('selected-target-info');
       if (targetInfo) targetInfo.textContent = 'TARGET: NONE';
-    }
-
-    if (this.game.ai && typeof this.game.ai.update === 'function') this.game.ai.update(dt);
-    if (this.game.avionics && typeof this.game.avionics.updateRWRState === 'function') this.game.avionics.updateRWRState();
-
-    this.checkWinConditions();
-  }
-
-  updateTeamSensorTracks(dt) {
-    const cfg = window.CONFIG || {};
-    const baseAirIdTime = cfg.RADAR_IDENTIFY_BASE_SEC || 6.0;
-    const baseMslIdTime = cfg.MISSILE_IDENTIFY_BASE_SEC || 3.5;
-    const stealthMult = cfg.STEALTH_IDENTIFY_PENALTY_MULT || 2.0;
-    const uplinkThreshold = cfg.UPLINK_THRESHOLD_FIGHTERS !== undefined ? cfg.UPLINK_THRESHOLD_FIGHTERS : 3;
-
-    const blueSensors = this.game.alliedAircraft.filter(a => a.hp > 0).concat(
-      this.game.surfaceUnits.filter(s => s.team === 'friendly' && s.hp > 0)
-    );
-
-    this.game.detectedByBlue = new Set();
-    this.game.detectedByRed = new Set();
-
-    const is2P = (this.game.playerMode === '2P');
-    if (is2P) {
-      for (const h of this.game.hostileAircraft) {
-        if (h.hp > 0) {
-          this.game.detectedByBlue.add(h.id); this.game.detectedByRed.add(h.id);
-          h.identifiedByBlue = true; h.identifiedByRed = true; h.isIdentified = true;
-        }
-      }
-      for (const a of this.game.alliedAircraft) {
-        if (a.hp > 0) {
-          this.game.detectedByBlue.add(a.id); this.game.detectedByRed.add(a.id);
-          a.identifiedByBlue = true; a.identifiedByRed = true; a.isIdentified = true;
-        }
-      }
-    } else {
-      for (const h of this.game.hostileAircraft) {
-        if (h.hp <= 0) continue;
-        this.game.detectedByBlue.add(h.id);
-
-        let inSensorRange = false;
-        let highestProgressRate = 0.0;
-        let isImmediateBurnThrough = false;
-
-        let inClouds = false;
-        if (this.weatherClouds) {
-          for (const c of this.weatherClouds) {
-            if (c.containsPoint(h.x, h.y)) { inClouds = true; break; }
-          }
-        }
-
-        for (const sensor of blueSensors) {
-          const maxDist = Physics.getRadarMaxDetectionRange(sensor, h, this.weatherClouds);
-          if (maxDist <= 0.0) continue;
-          const dist = Math.hypot(h.x - sensor.x, h.y - sensor.y);
-
-          if (dist <= maxDist) {
-            inSensorRange = true;
-            const irstOpticalVisual = sensor.hasIRST && (dist <= (inClouds ? 12.0 : 28.0));
-            if (dist <= 18.0 || irstOpticalVisual) isImmediateBurnThrough = true;
-
-            if (dist <= maxDist * 0.85) {
-              const rangeFactor = Math.max(0.25, 1.0 - (dist / maxDist));
-              let rate = (sensor.radarIdentifySpeed || 1.0) * rangeFactor;
-              if (inClouds) rate *= 0.60;
-              if (rate > highestProgressRate) highestProgressRate = rate;
-            }
-          }
-        }
-
-        if (inSensorRange) {
-          if (!h.firstDetectedTime) h.firstDetectedTime = this.getElapsedTimeString();
-          const isStealth = (h.spec && (h.spec.sigma_0 <= 0.01 || h.spec.category === 'STEALTH'));
-          const requiredTime = isStealth ? (baseAirIdTime * stealthMult) : baseAirIdTime;
-
-          if (isImmediateBurnThrough) h.trackDurationBlue += dt * 3.0;
-          else h.trackDurationBlue += dt * highestProgressRate;
-
-          if (h.trackDurationBlue >= requiredTime || (isImmediateBurnThrough && h.trackDurationBlue >= 1.5)) {
-            h.identifiedByBlue = true;
-            h.isIdentified = true;
-          }
-        } else {
-          h.trackDurationBlue = Math.max(0.0, h.trackDurationBlue - dt * 0.2);
-        }
-      }
-
-      const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0);
-      if (liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold) {
-        for (const h of liveHostiles) {
-          this.game.detectedByBlue.add(h.id);
-          h.trackDurationBlue = Math.max(h.trackDurationBlue || 0, 10.0);
-          h.identifiedByBlue = true;
-          h.isIdentified = true;
-        }
-        if (!this._satelliteUplinkAnnouncedBlue) {
-          this._satelliteUplinkAnnouncedBlue = true;
-          if (this.game.radar) {
-            this.game.radar.spawnCombatText(liveHostiles[0].x, liveHostiles[0].y, `SATELLITE UPLINK ACTIVE - ${liveHostiles.length} TARGETS PINPOINTED`, '#00f0ff');
-          }
-          this.logScoreEvent('friendly', 0, `SATELLITE UPLINK: ${liveHostiles.length} target(s) remaining - continuous radar broadcast active`);
-          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-        }
-      } else if (liveHostiles.length > uplinkThreshold) {
-        this._satelliteUplinkAnnouncedBlue = false;
-      }
-
-      const redSensors = this.game.hostileAircraft.filter(a => a.hp > 0).concat(
-        this.game.surfaceUnits.filter(s => s.team === 'hostile' && s.hp > 0)
-      );
-
-      for (const a of this.game.alliedAircraft) {
-        if (a.hp <= 0) continue;
-        this.game.detectedByRed.add(a.id);
-        let inRedSensor = false;
-        for (const sensor of redSensors) {
-          if (Physics.canRadarDetect(sensor, a, this.weatherClouds)) { inRedSensor = true; break; }
-        }
-        if (inRedSensor) {
-          a.trackDurationRed = (a.trackDurationRed || 0) + dt;
-          if (a.trackDurationRed >= baseAirIdTime) a.identifiedByRed = true;
-        }
-      }
-    }
-
-    for (const ghost of this.ghostContacts) {
-      if (ghost.hp <= 0 || ghost.isDissolved) continue;
-      this.game.detectedByBlue.add(ghost.id);
-      ghost.trackDurationBlue += dt * 0.3;
-      if (ghost.trackDurationBlue >= (baseAirIdTime * 1.5)) {
-        ghost.identifiedByBlue = true;
-        ghost.triggerDissolve('RESOLVED: ATMOSPHERIC CLUTTER');
-      }
-    }
-
-    for (const decoy of this.decoyDrones) {
-      if (decoy.hp <= 0) continue;
-      this.game.detectedByBlue.add(decoy.id);
-      this.game.detectedByRed.add(decoy.id);
-      if (decoy.team === 'friendly' || is2P) decoy.identifiedByBlue = true;
-      if (decoy.team === 'hostile' || is2P) decoy.identifiedByRed = true;
-    }
-
-    for (const m of this.game.missiles) {
-      if (!m.active) continue;
-      if (is2P) {
-        this.game.detectedByBlue.add(m.id);
-        this.game.detectedByRed.add(m.id);
-        m.identifiedByBlue = true;
-        m.identifiedByRed = true;
-        continue;
-      }
-
-      if (m.team !== 'hostile') continue;
-      let detected = false;
-      for (const sensor of blueSensors) {
-        const maxDist = Physics.getRadarMaxDetectionRange(sensor, m, this.weatherClouds);
-        if (maxDist <= 0.0) continue;
-        if (Math.hypot(m.x - sensor.x, m.y - sensor.y) <= maxDist) { detected = true; break; }
-      }
-
-      if (detected) {
-        m.trackHoldBlue = 3.5;
-        m.trackDurationBlue = (m.trackDurationBlue || 0.0) + dt;
-        if (m.trackDurationBlue >= baseMslIdTime) m.identifiedByBlue = true;
-      } else if (m.trackHoldBlue && m.trackHoldBlue > 0) {
-        m.trackHoldBlue -= dt;
-      }
-
-      if (detected || (m.trackHoldBlue && m.trackHoldBlue > 0)) {
-        this.game.detectedByBlue.add(m.id);
-      }
-    }
-
-    for (const s of this.game.surfaceUnits) {
-      this.game.detectedByBlue.add(s.id);
-      this.game.detectedByRed.add(s.id);
-      s.identifiedByBlue = true;
-      s.identifiedByRed = true;
-    }
-
-    for (const civ of this.civilianTraffic) {
-      if (civ.hp <= 0) continue;
-      this.game.detectedByBlue.add(civ.id);
-      this.game.detectedByRed.add(civ.id);
-      civ.trackDuration = (civ.trackDuration || 0) + dt;
-      if (civ.trackDuration >= 3.5 || is2P) {
-        civ.identifiedByBlue = true;
-        civ.identifiedByRed = true;
-      }
     }
   }
 
@@ -427,7 +217,6 @@ class SimulationSystem {
     const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0);
     const friendlyBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'friendly' && s.hp <= 0);
     const hostileBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'hostile' && s.hp <= 0);
-
     const winThreshold = (window.CONFIG && window.CONFIG.VP_WIN_THRESHOLD) || 3000;
 
     if (this.game.vpAlly >= winThreshold || allHostilesDead || hostileBunkerDestroyed) {

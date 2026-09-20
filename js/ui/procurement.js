@@ -51,12 +51,12 @@ class ProcurementManager {
       label: 'DIFFICULTY',
       value: this.game.aiDifficulty || 'VETERAN',
       options: [
-        { value: 'CADET', text: 'RECRUIT (0.6x)' },
-        { value: 'VETERAN', text: 'STANDARD (1.0x)' },
-        { value: 'ELITE', text: 'ADVANCED (1.4x)' },
-        { value: 'ACE', text: 'EXPERT (1.8x)' },
-        { value: 'MASTER', text: 'ELITE (2.2x)' },
-        { value: 'LEGEND', text: 'MASTER (2.8x)' }
+        { value: 'CADET', text: 'PERMISSIVE SECTOR (0.6x)' },
+        { value: 'VETERAN', text: 'CONTESTED AIRSPACE (1.0x)' },
+        { value: 'ELITE', text: 'ACTIVE COMBAT ZONE (1.4x)' },
+        { value: 'ACE', text: 'HIGH-THREAT GRID (1.8x)' },
+        { value: 'MASTER', text: 'AIR DENIAL ZONE (2.2x)' },
+        { value: 'LEGEND', text: 'FORTRESS AIRSPACE (2.8x)' }
       ],
       onChange: (val) => {
         this.game.aiDifficulty = val;
@@ -339,9 +339,7 @@ class ProcurementManager {
     const dispSqName = document.getElementById('display-squadron-name');
     if (dispSqName) dispSqName.textContent = this.game.squadronName || 'Wardog Squadron';
 
-    if (this.shelf) {
-      this.shelf.syncActiveAircraft();
-    }
+    if (this.shelf) this.shelf.syncActiveAircraft();
 
     if (window.Persistence && this.game.procurementSquadron.length > 0) {
       window.Persistence.saveLastSquadron(this.game.procurementSquadron);
