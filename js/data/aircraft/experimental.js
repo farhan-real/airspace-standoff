@@ -1,6 +1,7 @@
 /**
  * AIRSPACE STANDOFF // Category: EXPERIMENTAL SUPERFIGHTERS, DEMONSTRATORS & COFFIN AIRFRAMES
  * COFFIN airframes utilize enclosed armored cockpits with synthetic vision and are 100% manual.
+ * Evasion bonuses rebalanced to prevent overpowered missile dodging.
  */
 
 window.AIRCRAFT_EXPERIMENTAL = {
@@ -256,7 +257,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     isDrone: false,
     isAutonomous: false,
     isCoffin: true,
-    coffinDodgeBonus: 0.25,
+    coffinDodgeBonus: 0.08,
     thrustVector: true,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'BK-27', 'DE-PULSE'],
@@ -264,7 +265,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual COFFIN enclosed-cockpit conversion. Eliminates pilot G-fatigue limits and grants +25% evasive break bonus.'
+    desc: 'Manual COFFIN enclosed-cockpit conversion. Eliminates pilot G-fatigue limits and grants +8% evasive dodge bonus.'
   },
   'Su-37-COFFIN': {
     id: 'Su-37-COFFIN',
@@ -286,7 +287,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     isDrone: false,
     isAutonomous: false,
     isCoffin: true,
-    coffinDodgeBonus: 0.25,
+    coffinDodgeBonus: 0.08,
     thrustVector: true,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L', 'DE-PULSE'],
@@ -294,7 +295,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual enclosed-cockpit modification. Enables continuous 16G post-stall turns without G-LOC blackout and grants +25% evasion.'
+    desc: 'Manual enclosed-cockpit modification. Enables continuous 16G post-stall turns without G-LOC blackout and grants +8% evasion.'
   },
   'F-22C-COFFIN': {
     id: 'F-22C-COFFIN',
@@ -316,7 +317,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     isDrone: false,
     isAutonomous: false,
     isCoffin: true,
-    coffinDodgeBonus: 0.25,
+    coffinDodgeBonus: 0.08,
     thrustVector: true,
     builtInGun: 'DE-PULSE',
     allowedGuns: ['DE-PULSE', 'M61A2', 'GAU-22'],
@@ -324,7 +325,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Advanced stealth airframe with enclosed synthetic vision cockpit ($62.0M). 0.00005m² RCS, 18G envelope, and +25% evasive break bonus.'
+    desc: 'Advanced stealth airframe with enclosed synthetic vision cockpit ($62.0M). 0.00005m2 RCS, 18G envelope, and +8% evasive dodge bonus.'
   },
   'ADF-11F': {
     id: 'ADF-11F',
@@ -346,7 +347,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     isDrone: false,
     isAutonomous: false,
     isCoffin: true,
-    coffinDodgeBonus: 0.25,
+    coffinDodgeBonus: 0.08,
     thrustVector: true,
     builtInGun: 'DE-PULSE',
     allowedGuns: ['DE-PULSE', 'M61A2', 'BK-27', 'EML_GUN'],
@@ -354,6 +355,6 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual COFFIN enclosed-cockpit prototype. 20.0G structural limit with directed energy pulse gun, zero G-LOC, and +25% evasive break bonus.'
+    desc: 'Manual COFFIN enclosed-cockpit prototype. 20.0G structural limit with directed energy pulse gun, zero G-LOC, and +8% evasive dodge bonus.'
   }
 };

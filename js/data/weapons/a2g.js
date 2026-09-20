@@ -1,12 +1,12 @@
 /**
  * AIRSPACE STANDOFF // Air-to-Ground, Anti-Radiation (SEAD) & Hardened Installation Penetrators
- * Scaled for 150km theater depth.
+ * Standardized 4x, 2x, etc. nomenclature and anti-surface guidance models.
  */
 
 window.WEAPONS_A2G = {
   'AGM-88G': {
     id: 'AGM-88G',
-    name: 'AGM-88G AARGM-ER (Pack of 4)',
+    name: 'AGM-88G AARGM-ER (4x)',
     slots: 2,
     minRating: 'Type M',
     mass: 700,
@@ -29,11 +29,11 @@ window.WEAPONS_A2G = {
     isAntiRadiation: true,
     sigmaPylon: 0.12,
     category: 'A2G',
-    desc: 'Extended-range anti-radiation missile pack (4x) designed to neutralize hostile early warning radars and SAM batteries.'
+    desc: 'Extended-range anti-radiation missile (4x) designed to neutralize hostile early warning radars and SAM batteries.'
   },
   'GBU-39': {
     id: 'GBU-39',
-    name: 'GBU-39 SDB (Pack of 8)',
+    name: 'GBU-39 SDB (8x)',
     slots: 2,
     minRating: 'Type M',
     mass: 780,
@@ -56,11 +56,11 @@ window.WEAPONS_A2G = {
     isBunkerCracker: true,
     sigmaPylon: 0.14,
     category: 'A2G',
-    desc: 'Precision stand-off glide bomb pack (8x) designed for bunker cracking and airfield facility neutralization.'
+    desc: 'Precision stand-off glide bomb (8x) designed for bunker cracking and airfield facility neutralization.'
   },
   'AGM-158B': {
     id: 'AGM-158B',
-    name: 'AGM-158B JASSM-ER (Pack of 2)',
+    name: 'AGM-158B JASSM-ER (2x)',
     slots: 4,
     minRating: 'Type H',
     mass: 2200,
@@ -88,7 +88,7 @@ window.WEAPONS_A2G = {
   },
   'KINZHAL': {
     id: 'KINZHAL',
-    name: 'Kh-47M2 Kinzhal (Pack of 2)',
+    name: 'Kh-47M2 Kinzhal (2x)',
     slots: 6,
     minRating: 'Type X',
     mass: 4300,
@@ -112,6 +112,6 @@ window.WEAPONS_A2G = {
     sigmaPylon: 0.80,
     category: 'A2G',
     allowedAirframes: ['MiG-31BM', 'Tu-160M', 'Su-34', 'F-15EX', 'J-16', 'B-1B'],
-    desc: 'Hypersonic aero-ballistic heavy missile pack (2x) capable of penetrating deeply reinforced theater structures.'
+    desc: 'Hypersonic aero-ballistic heavy missile (2x) capable of penetrating deeply reinforced theater structures.'
   }
 };

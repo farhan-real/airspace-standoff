@@ -1,12 +1,12 @@
 /**
- * AIRSPACE STANDOFF // Air-to-Air Guided Missiles (BVR, Long-Range Standoff & High-Off-Boresight Dogfight)
- * Rebalanced for 150km x 100km theater: clear distinction between medium BVR, long-range BVR, and WVR dogfight missiles.
+ * AIRSPACE STANDOFF // Air-to-Air Guided Missiles (BVR, Standoff & Dogfight)
+ * Calibrated 4x, 2x, etc. nomenclature and diverse seeker guidance envelopes.
  */
 
 window.WEAPONS_A2A = {
   'AIM-9X-2': {
     id: 'AIM-9X-2',
-    name: 'AIM-9X Sidewinder (Pack of 4)',
+    name: 'AIM-9X Sidewinder (4x)',
     slots: 1,
     minRating: 'Type S',
     mass: 170,
@@ -29,11 +29,11 @@ window.WEAPONS_A2A = {
     decoyResistance: 0.65,
     sigmaPylon: 0.02,
     category: 'A2A',
-    desc: 'High off-boresight infrared dogfight missile pack (4x). Extremely light (170 kg), low drag, and deadly inside 26 km where BVR missiles cannot track.'
+    desc: 'High off-boresight infrared dogfight missile (4x). Extremely light (170 kg), low drag, and deadly inside 26 km where BVR missiles cannot track.'
   },
   'R-73': {
     id: 'R-73',
-    name: 'R-73 Archer (Pack of 4)',
+    name: 'R-73 Archer (4x)',
     slots: 1,
     minRating: 'Type S',
     mass: 190,
@@ -55,11 +55,11 @@ window.WEAPONS_A2A = {
     T_0: 0.88,
     sigmaPylon: 0.02,
     category: 'A2A',
-    desc: 'Gas-vane short-range dogfight missile pack (4x) with immediate turn acceleration and low weight penalty.'
+    desc: 'Gas-vane short-range dogfight missile (4x) with immediate turn acceleration and low weight penalty.'
   },
   'PYTHON-5': {
     id: 'PYTHON-5',
-    name: 'Python-5 (Pack of 4)',
+    name: 'Python-5 (4x)',
     slots: 1,
     minRating: 'Type S',
     mass: 210,
@@ -85,7 +85,7 @@ window.WEAPONS_A2A = {
   },
   'IRIS-T': {
     id: 'IRIS-T',
-    name: 'IRIS-T Dogfight (Pack of 4)',
+    name: 'IRIS-T Dogfight (4x)',
     slots: 1,
     minRating: 'Type S',
     mass: 180,
@@ -108,11 +108,11 @@ window.WEAPONS_A2A = {
     decoyResistance: 0.80,
     sigmaPylon: 0.02,
     category: 'A2A',
-    desc: 'Advanced European dogfight missile pack (4x) with optical image processing to defeat flare decoys.'
+    desc: 'Advanced European dogfight missile (4x) with optical image processing to defeat flare decoys.'
   },
   'MAM': {
     id: 'MAM',
-    name: 'MAM Micro-Missiles (Pack of 8)',
+    name: 'MAM Micro-Missiles (8x)',
     slots: 1,
     minRating: 'Type S',
     mass: 88,
@@ -135,11 +135,11 @@ window.WEAPONS_A2A = {
     sigmaPylon: 0.01,
     category: 'A2A',
     allowedAirframes: ['MQ-99', 'MQ-101', 'XQ-58A', 'Kizilelma', 'S-70', 'MQ-28', 'JAS-39E', 'F-16V', 'Tejas-MK2', 'Mirage-2000', 'CFA-44'],
-    desc: 'Ultra-lightweight micro-missile pack (8x) designed to overwhelm enemy defenses through volume of fire.'
+    desc: 'Ultra-lightweight micro-missile (8x) designed to overwhelm enemy defenses through volume of fire.'
   },
   'AIM-120D': {
     id: 'AIM-120D',
-    name: 'AIM-120D AMRAAM (Pack of 4)',
+    name: 'AIM-120D AMRAAM (4x)',
     slots: 2,
     minRating: 'Type M',
     mass: 324,
@@ -161,11 +161,11 @@ window.WEAPONS_A2A = {
     T_0: 0.75,
     sigmaPylon: 0.06,
     category: 'A2A',
-    desc: 'Fleet standard medium BVR active radar homing missile pack (4x). Affordable workhorse balancing cost, range, and accuracy.'
+    desc: 'Fleet standard medium BVR active radar homing missile (4x). Affordable workhorse balancing cost, range, and accuracy.'
   },
   'PL-15E': {
     id: 'PL-15E',
-    name: 'PL-15E Dual-Pulse (Pack of 4)',
+    name: 'PL-15E Dual-Pulse (4x)',
     slots: 2,
     minRating: 'Type M',
     mass: 380,
@@ -191,7 +191,7 @@ window.WEAPONS_A2A = {
   },
   'METEOR': {
     id: 'METEOR',
-    name: 'MBDA Meteor (Pack of 4)',
+    name: 'MBDA Meteor (4x)',
     slots: 2,
     minRating: 'Type M',
     mass: 380,
@@ -213,11 +213,11 @@ window.WEAPONS_A2A = {
     T_0: 0.84,
     sigmaPylon: 0.08,
     category: 'A2A',
-    desc: 'Ramjet-powered BVR missile pack (4x). Continuous acceleration delivers an unmatched no-escape zone out to 72 km.'
+    desc: 'Ramjet-powered BVR missile (4x). Continuous acceleration delivers an unmatched no-escape zone out to 72 km.'
   },
   'AIM-260': {
     id: 'AIM-260',
-    name: 'AIM-260 JATM Stealth (Pack of 4)',
+    name: 'AIM-260 JATM Stealth (4x)',
     slots: 2,
     minRating: 'Type M',
     mass: 360,
@@ -229,7 +229,7 @@ window.WEAPONS_A2A = {
     isStealthMissile: true,
     trait: 'STEALTH_SEEKER',
     traitBadge: 'LOW-RCS STEALTH BVR',
-    behaviorDesc: 'Advanced low-observable casing (0.0005m2 RCS). Delivers 115 km deep BVR reach (+43 km over AIM-120D) and denies early RWR warning.',
+    behaviorDesc: 'Advanced low-observable casing (0.0005m2 RCS). Delivers 115 km deep BVR reach and denies early RWR warning.',
     damage: 3,
     ammoCount: 4,
     minRangeKm: 7.0,
@@ -241,11 +241,11 @@ window.WEAPONS_A2A = {
     antiNotchBonus: 0.35,
     sigmaPylon: 0.04,
     category: 'A2A',
-    desc: 'Next-generation air dominance stealth missile pack (4x). Substantially outranges standard AMRAAMs with minimal radar observability.'
+    desc: 'Next-generation air dominance stealth missile (4x). Substantially outranges standard AMRAAMs with minimal radar observability.'
   },
   'R-37M': {
     id: 'R-37M',
-    name: 'R-37M Axehead (Pack of 2)',
+    name: 'R-37M Axehead (2x)',
     slots: 3,
     minRating: 'Type H',
     mass: 1020,
@@ -268,11 +268,11 @@ window.WEAPONS_A2A = {
     heavyTargetBonus: true,
     sigmaPylon: 0.20,
     category: 'A2A',
-    desc: 'Heavy hypersonic deep interceptor pack (2x). Extreme range and warhead power designed to neutralize bombers and airborne assets.'
+    desc: 'Heavy hypersonic deep interceptor (2x). Extreme range and warhead power designed to neutralize heavy airframes.'
   },
   'PL-21': {
     id: 'PL-21',
-    name: 'PL-21 Hypersonic BVR (Pack of 2)',
+    name: 'PL-21 Hypersonic BVR (2x)',
     slots: 3,
     minRating: 'Type H',
     mass: 950,
@@ -294,11 +294,11 @@ window.WEAPONS_A2A = {
     T_0: 0.75,
     sigmaPylon: 0.18,
     category: 'A2A',
-    desc: 'Extreme standoff ramjet interceptor pack (2x) fielding 130 km range to secure theater air perimeters.'
+    desc: 'Extreme standoff ramjet interceptor (2x) fielding 130 km range to secure theater air perimeters.'
   },
   'ADMM': {
     id: 'ADMM',
-    name: 'ADMM Micro-Missile Pod (Pack of 12)',
+    name: 'ADMM Micro-Missile Pod (12x)',
     slots: 3,
     minRating: 'Type H',
     mass: 620,
@@ -325,7 +325,7 @@ window.WEAPONS_A2A = {
   },
   'MPBM': {
     id: 'MPBM',
-    name: 'MPBM Burst Missile (Pack of 2)',
+    name: 'MPBM Burst Missile (2x)',
     slots: 3,
     minRating: 'Type H',
     mass: 890,
@@ -348,6 +348,6 @@ window.WEAPONS_A2A = {
     sigmaPylon: 0.16,
     category: 'A2A',
     allowedAirframes: ['ADFX-01', 'CFA-44', 'X-02S', 'F-15EX', 'F-22C-COFFIN'],
-    desc: 'Multi-Purpose Burst Missile pack (2x) providing standoff area-of-effect shockwave destruction against tight formations.'
+    desc: 'Multi-Purpose Burst Missile (2x) providing standoff area-of-effect shockwave destruction against tight formations.'
   }
 };

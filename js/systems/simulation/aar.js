@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // After Action Report System
- * Standard military mission debrief format.
+ * Standard military mission debrief format with salvo breakdown.
  */
 
 class AfterActionReportSystem {
@@ -140,7 +140,7 @@ class AfterActionReportSystem {
         const teamStr = ev.type === 'ace-kill' ? 'LEADER DOWN' : (ev.team ? (ev.team === 'friendly' ? 'BLUE' : 'RED') : '');
 
         if (isKill) {
-          const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge">[Salvo x${ev.salvoCount || 2}]</span>` : '';
+          const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge" style="color:#00f0ff;font-size:0.56rem;margin-left:4px;">[Salvo: ${ev.salvoBreakdown || ('x' + ev.salvoCount)}]</span>` : '';
           return (
             `<div class="timeline-entry ${ev.type === 'ace-kill' ? 'ace-kill' : 'kill'}">` +
               `<div class="timeline-main-info">` +
@@ -149,7 +149,7 @@ class AfterActionReportSystem {
                 `<span class="timeline-combatant"><b>${ev.source}</b> (${ev.sourceType || 'AIRCRAFT'})</span> ` +
                 `<span>destroyed</span> ` +
                 `<span class="timeline-combatant"><b>${ev.target}</b> (${ev.targetType || 'TARGET'})</span> ` +
-                `<span class="timeline-weapon-tag">using <b>${ev.weapon || 'Missile'}</b></span> ` +
+                `<span class="timeline-weapon-tag">using <b>${ev.weapon || 'Missile'}</b></span>` +
                 salvoBadge +
               `</div>` +
               `<b style="color:${col};white-space:nowrap;">+${ev.points} VP</b>` +

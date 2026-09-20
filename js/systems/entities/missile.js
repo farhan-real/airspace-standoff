@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Missile Entity
- * Clean hit resolution with Flight Lead evasion, damage reduction, and Ace bonuses.
+ * AIRSPACE STANDOFF // Missile Entity
+ * Clean hit resolution with multi-missile salvo composition tracking.
  */
 
 class MissileEntity {
@@ -176,8 +176,19 @@ class MissileEntity {
     }
 
     let concurrent = 1;
+    let salvoDetails = '';
     if (window.Game && window.Game.missiles) {
-      concurrent = window.Game.missiles.filter(m => m.active && m.target && m.target.id === tgt.id).length;
+      const inbounds = window.Game.missiles.filter(m => m.active && m.target && m.target.id === tgt.id);
+      concurrent = inbounds.length;
+      if (concurrent > 1) {
+        const counts = {};
+        for (const m of inbounds) {
+          const rawName = (m.weapon && (m.weapon.name || m.weapon.id)) ? (m.weapon.name || m.weapon.id) : 'Missile';
+          const clean = rawName.replace(/\s*\(\d+x\)/gi, '').replace(/\s*\(pack of \d+\)/gi, '').trim();
+          counts[clean] = (counts[clean] || 0) + 1;
+        }
+        salvoDetails = Object.entries(counts).map(([name, count]) => `${name} x${count}`).join(', ');
+      }
     }
     const isSalvo = (concurrent > 1);
 
@@ -187,7 +198,9 @@ class MissileEntity {
       tgt.takeDamage(dmg, w.isBunkerCracker);
       this.isDead = true;
       if (!wasDead && tgt.hp <= 0 && window.Game && window.Game.simulation) {
-        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo: isSalvo, salvoCount: concurrent });
+        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, {
+          weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails
+        });
       }
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, true);
@@ -220,7 +233,7 @@ class MissileEntity {
     }
 
     if (tgt.isCoffin || tgt.coffinDodgeBonus) {
-      deductions += (tgt.coffinDodgeBonus || 0.25) * suppression;
+      deductions += (tgt.coffinDodgeBonus || 0.08) * suppression;
     }
 
     if (tgt.isAce || tgt.aceEvasionBonus) {
@@ -248,7 +261,9 @@ class MissileEntity {
       if (this.source) this.source.scorePoints = (this.source.scorePoints || 0) + (finalDamage * 25);
 
       if (tgt.hp <= 0 && window.Game && window.Game.simulation) {
-        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo: isSalvo, salvoCount: concurrent });
+        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, {
+          weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails
+        });
       }
 
       if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(finalDamage >= 4);
@@ -260,7 +275,7 @@ class MissileEntity {
       let reason = 'KINETIC MISS';
       if (tgt.isAce && Math.random() < 0.70) reason = 'ACE BREAK TURN';
       else if (tgt.isFlightLead && tgt.leadEvasionBonus && Math.random() < 0.75) reason = 'LEAD EVASION BREAK';
-      else if (tgt.isCoffin) reason = 'COFFIN EXTREME DODGE';
+      else if (tgt.isCoffin) reason = 'COFFIN DODGE';
       else if (tgt.isNotching) reason = 'DOPPLER NOTCH';
       else if (tgt.cmTimer > 0) reason = 'CHAFF SPOOF';
       else if (tgt.activeManeuverBonus > 0) reason = 'EVASION';

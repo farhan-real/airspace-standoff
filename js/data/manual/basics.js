@@ -212,7 +212,7 @@ window.MANUAL_BASICS = [
         <ul>
           <li><b>Direct Manual Flight:</b> Piloted directly by the user without automated overrides.</li>
           <li><b>Zero Pilot Physiological Limits:</b> Enclosed pressurized crew capsule eliminates G-LOC blackout, allowing continuous <b>16G–20G</b> structural turns.</li>
-          <li><b>+25% High-Rate Evasive Dodge:</b> High-bandwidth digital flight controls provide an innate <b>+25% evasion bonus</b> against all incoming guided weapons.</li>
+          <li><b>+8% High-Rate Evasive Dodge:</b> High-bandwidth digital flight controls provide an innate <b>+8% evasion bonus</b> against incoming guided weapons while maintaining realistic missile vulnerability.</li>
         </ul>
       </div>
     `

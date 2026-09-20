@@ -1,5 +1,6 @@
 /**
- * APEX VECTOR // Balanced Tactical Maneuver Cards (Affected by Stress & COFFIN Dodge)
+ * AIRSPACE STANDOFF // Balanced Tactical Maneuver Cards
+ * Modulated evasion calculations and balanced COFFIN synergy.
  */
 
 window.MANEUVER_CARDS = [
@@ -24,8 +25,8 @@ window.MANEUVER_CARDS = [
       unit.isNotching = true;
       unit.activeManeuverTimer = 3.5;
       let bonus = 0.30;
-      if (unit.stress >= 0.65) bonus *= 0.70; // High-stress degradation
-      if (unit.isCoffin) bonus += 0.15; // COFFIN extreme maneuver bonus
+      if (unit.stress >= 0.65) bonus *= 0.70;
+      if (unit.isCoffin) bonus += 0.04;
       unit.activeManeuverBonus = bonus;
       unit.deployCountermeasures();
       if (window.Game && window.Game.radar) {
@@ -55,7 +56,7 @@ window.MANEUVER_CARDS = [
       unit.activeManeuverTimer = 3.0;
       let bonus = 0.25;
       if (unit.stress >= 0.65) bonus *= 0.70;
-      if (unit.isCoffin) bonus += 0.15;
+      if (unit.isCoffin) bonus += 0.04;
       unit.activeManeuverBonus = bonus;
       unit.speed = Math.max(0.20, unit.speed - 0.10);
       unit.applyActionStress(0.20);
@@ -86,7 +87,7 @@ window.MANEUVER_CARDS = [
       unit.activeManeuverTimer = 2.5;
       let bonus = 0.38;
       if (unit.stress >= 0.65) bonus *= 0.70;
-      if (unit.isCoffin) bonus += 0.20;
+      if (unit.isCoffin) bonus += 0.05;
       unit.activeManeuverBonus = bonus;
       unit.speed = Math.max(0.18, unit.speed * 0.45);
       unit.applyActionStress(0.35);
@@ -119,7 +120,7 @@ window.MANEUVER_CARDS = [
       unit.activeManeuverTimer = 3.0;
       let bonus = 0.28;
       if (unit.stress >= 0.65) bonus *= 0.70;
-      if (unit.isCoffin) bonus += 0.15;
+      if (unit.isCoffin) bonus += 0.04;
       unit.activeManeuverBonus = bonus;
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnCombatText(unit.x, unit.y, 'SPLIT-S DIVE (+28% EVASION)', '#10b981');
@@ -178,4 +179,3 @@ window.MANEUVER_CARDS = [
     }
   }
 ];
-  

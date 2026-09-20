@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Flight Manual Submodule: Chapters 8 to 9
- * Covers: Ace Pilots, Difficulties, Central Depots, Time Warp & Keybinds
+ * Covers: Ace Pilots, Difficulties, Central Depots, Time Warp, Scoring & Keybinds
  */
 
 window.MANUAL_THEATER = [
@@ -15,7 +15,7 @@ window.MANUAL_THEATER = [
           <li><b>Superior Kinematics:</b> Aces feature +1 extra armor HP, +0.08 turn agility, and +2.5G higher structural thresholds.</li>
           <li><b>Coordinated Pincer Tactics:</b> Aces coordinate with wingmen to bracket your fighters from opposing angles.</li>
           <li><b>Synchronized Volleys:</b> Aces fire synchronized multi-missile salvos to maximize saturation hit bonuses.</li>
-          <li><b>Extreme Evasion:</b> Aces deploy chaff/flares with flawless timing and perform post-stall breaks (+32% evasion bonus).</li>
+          <li><b>Extreme Evasion:</b> Aces deploy chaff/flares with disciplined timing and perform post-stall breaks (+32% evasion bonus).</li>
           <li><b>High-Value Bounty:</b> Eliminating an Ace fighter awards a massive <b>+850 Victory Point bounty</b>!</li>
         </ul>
       </div>
@@ -76,7 +76,7 @@ window.MANUAL_THEATER = [
   },
   {
     id: 'ch9_logistics_scoring',
-    title: 'CHAPTER 9: THEATER LOGISTICS, CENTRAL DEPOTS, TIME WARP & CONTROLS',
+    title: 'CHAPTER 9: THEATER LOGISTICS, CENTRAL DEPOTS, SCORING & CONTROLS',
     desc: `
       <div class="ge-subhead">CENTRAL INDESTRUCTIBLE AMMO DEPOTS</div>
       <div class="ge-desc">
@@ -99,20 +99,21 @@ window.MANUAL_THEATER = [
         </div>
       </div>
 
-      <div class="ge-subhead">INTEGRATED AIR DEFENSE SYSTEMS (IADS) &amp; SCORING</div>
+      <div class="ge-subhead">INTEGRATED AIR DEFENSE SYSTEMS (IADS) &amp; REBALANCED SCORING</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
             <tr><th>THEATER ASSET</th><th>INTEGRITY</th><th>ENGAGEMENT RANGE</th><th>VICTORY POINTS (VP)</th></tr>
           </thead>
           <tbody>
-            <tr><td><b>Command Bunker</b></td><td>24 HP</td><td>Passive Target</td><td><b>+600 VP</b> (Requires bunker penetrators)</td></tr>
-            <tr><td><b>Ace Fighter Kill</b></td><td>5–7 HP</td><td>Superfighter</td><td><b>Cost × 3 + 850 VP</b> (Elite bounty)</td></tr>
-            <tr><td><b>Standard Hostile Kill</b></td><td>1–9 HP</td><td>Varies</td><td><b>Cost × 3 VP</b> (Lead kills award 2× bounty)</td></tr>
-            <tr><td><b>S-400 / Patriot SAM</b></td><td>8 HP</td><td>48.0 km reach</td><td><b>+250 VP</b> (Requires active Radar Array to fire)</td></tr>
-            <tr><td><b>Early Warning Radar</b></td><td>5 HP</td><td>55.0 km reach</td><td><b>+200 VP</b> (Destruction blinds long-range SAMs)</td></tr>
-            <tr><td><b>EW Jammer Station</b></td><td>6 HP</td><td>36.0 km umbrella</td><td><b>+200 VP</b> (Degrades enemy radar locks by 50%)</td></tr>
-            <tr><td><b>Pantsir / Phalanx CIWS</b></td><td>6 HP</td><td>16.0 km defense</td><td><b>+150 VP</b> (+40 VP per missile intercept)</td></tr>
+            <tr><td><b>Command Bunker</b></td><td>24 HP</td><td>Passive Target</td><td><b>+800 VP</b> (Requires bunker penetrators)</td></tr>
+            <tr><td><b>Ace Fighter Kill</b></td><td>5–7 HP</td><td>Superfighter</td><td><b>Base Kill VP + 850 VP Bounty</b> (Elite bounty)</td></tr>
+            <tr><td><b>Standard Combat Aircraft</b></td><td>3–6 HP</td><td>Fighter / Bomber</td><td><b>150 + (Cost × 10) VP</b> (e.g. F-16: 285 VP, F-22: 630 VP; Lead: 1.5×)</td></tr>
+            <tr><td><b>Combat Drone / UCAV</b></td><td>1–4 HP</td><td>Unmanned</td><td><b>80 + (Cost × 12) VP</b> (e.g. MQ-99: 122 VP, S-70: 248 VP)</td></tr>
+            <tr><td><b>S-400 / Patriot SAM</b></td><td>8 HP</td><td>52.0 km reach</td><td><b>+300 VP</b> (Requires active Radar Array to fire)</td></tr>
+            <tr><td><b>Early Warning Radar</b></td><td>5 HP</td><td>65.0 km reach</td><td><b>+250 VP</b> (Destruction blinds long-range SAMs)</td></tr>
+            <tr><td><b>EW Jammer Station</b></td><td>6 HP</td><td>36.0 km umbrella</td><td><b>+250 VP</b> (Degrades enemy radar locks by 50%)</td></tr>
+            <tr><td><b>Pantsir / Phalanx CIWS</b></td><td>6 HP</td><td>16.0 km defense</td><td><b>+200 VP</b> (+40 VP per missile intercept)</td></tr>
             <tr><td><b style="color:#ff3366;">Civilian Shootdown</b></td><td>6 HP</td><td>Airliner</td><td><b style="color:#ff3366;">-800 VP Penalty</b> (Strict RoE violation)</td></tr>
           </tbody>
         </table>

@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Simulation Scoring & Engagement Logging
- * Objective military engagement reporting and RoE accounting.
+ * Rebalanced kill scoring formula and salvo composition breakdown.
  */
 
 class SimulationScoring {
@@ -75,6 +75,7 @@ class SimulationScoring {
     const isAircraft = (typeof Aircraft !== 'undefined') && (targetEntity instanceof Aircraft);
     const isDecoy = Boolean(targetEntity.isDecoyDrone);
     const isAce = Boolean(targetEntity.isAce);
+    const isDrone = Boolean(targetEntity.spec && targetEntity.spec.isDrone);
 
     const rawTgtName = targetEntity.callsign || (targetEntity.spec ? targetEntity.spec.name : (targetEntity.name || 'TARGET'));
     const tgtName = String(rawTgtName).replace(/<[^>]*>/g, '');
@@ -84,20 +85,48 @@ class SimulationScoring {
     const srcName = String(rawSrcName).replace(/<[^>]*>/g, '');
     const srcType = (firingSource && firingSource.spec) ? (firingSource.spec.id || firingSource.spec.name) : 'AIRCRAFT';
 
-    const wpnName = details.weapon ? (details.weapon.name || details.weapon.id) : (details.weaponName || 'Missile');
+    const rawWpnName = details.weapon ? (details.weapon.name || details.weapon.id) : (details.weaponName || 'Missile');
+    const wpnName = String(rawWpnName).replace(/\s*\(\d+x\)/gi, '').replace(/\s*\(pack of \d+\)/gi, '').trim();
+
     const isSalvo = Boolean(details.isSalvo || (details.salvoCount > 1));
     const salvoCount = details.salvoCount || (isSalvo ? 2 : 1);
-    const salvoTag = isSalvo ? `[Salvo x${salvoCount}]` : '';
+    const salvoBreakdown = details.salvoBreakdown || (isSalvo ? `x${salvoCount}` : '');
+    const salvoTag = isSalvo ? ` [Salvo: ${salvoBreakdown}]` : '';
 
-    let pts = isDecoy ? 20 : (isAircraft ? Math.round(((targetEntity.spec && targetEntity.spec.cost) || 20) * 3) : 250);
-    if (targetEntity.isFlightLead) pts *= 2;
-    if (isAce) pts += ((window.CONFIG && window.CONFIG.VP_ACE_FIGHTER_BOUNTY) || 850);
+    const cfg = window.CONFIG || {};
+    let pts = 250;
+    if (isDecoy) {
+      pts = 40;
+    } else if (isDrone) {
+      const droneBase = cfg.VP_DRONE_KILL_BASE || 80;
+      const droneMult = cfg.VP_DRONE_COST_MULT || 12;
+      pts = Math.round(droneBase + (((targetEntity.spec && targetEntity.spec.cost) || 5) * droneMult));
+    } else if (isAircraft) {
+      const acBase = cfg.VP_AIRCRAFT_KILL_BASE || 150;
+      const acMult = cfg.VP_AIRCRAFT_COST_MULT || 10;
+      pts = Math.round(acBase + (((targetEntity.spec && targetEntity.spec.cost) || 20) * acMult));
+    } else if (targetEntity.type === 'BUNKER') {
+      pts = cfg.VP_BUNKER_DESTROYED || 800;
+    } else if (targetEntity.type === 'S-400') {
+      pts = cfg.VP_SAM_DESTROYED || 300;
+    } else if (targetEntity.type === 'RADAR_ARRAY') {
+      pts = cfg.VP_RADAR_DESTROYED || 250;
+    } else if (targetEntity.type === 'EW_JAMMER') {
+      pts = cfg.VP_RADAR_DESTROYED || 250;
+    } else if (targetEntity.type === 'PANTSIR') {
+      pts = 200;
+    } else if (targetEntity.type === 'FUEL_DEPOT') {
+      pts = cfg.VP_FUEL_DEPOT_DESTROYED || 200;
+    }
+
+    if (targetEntity.isFlightLead) pts = Math.round(pts * 1.5);
+    if (isAce) pts += (cfg.VP_ACE_FIGHTER_BOUNTY || 850);
 
     if (firingSource && firingSource.kills !== undefined && !isDecoy) {
       firingSource.kills++;
     }
 
-    const logDesc = `${srcName} (${srcType}) destroyed ${tgtName} (${tgtType}) using ${wpnName} ${salvoTag}`.trim();
+    const logDesc = `${srcName} (${srcType}) destroyed ${tgtName} (${tgtType}) using ${wpnName}${salvoTag}`.trim();
 
     if (firingTeam === 'friendly') {
       if (!isDecoy) this.game.stats.redLosses++;
@@ -118,6 +147,7 @@ class SimulationScoring {
       weapon: wpnName,
       isSalvo: isSalvo,
       salvoCount: salvoCount,
+      salvoBreakdown: salvoBreakdown,
       points: pts
     });
   }

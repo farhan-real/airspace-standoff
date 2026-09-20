@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Weapon Pylon Bay
- * Pure manual command. Cancels accidental clicks during touch-scrolling.
+ * Displays missile homing seeker type instead of duplicate P_k badge.
  */
 
 class PylonBayRenderer {
@@ -130,7 +130,7 @@ class PylonBayRenderer {
                 <div class="mob-pylon-name-group"><span class="mob-pylon-name">${(w.name || w.id || 'WPN').split(' ')[0]}</span></div>
                 <div class="mob-pylon-top-right"><span class="pylon-ammo-counter mob-pylon-cap">${item.ammo}/${item.maxAmmo}</span><button type="button" class="micro-spec-btn" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button></div>
               </div>
-              <div class="mob-pylon-prob-row"><span class="mob-pylon-sub">${w.rangeKm || 0}km &bull; ${w.damage || 2}HP</span><span class="pk-value-tag mob-pylon-pk">P_K: --%</span></div>
+              <div class="mob-pylon-prob-row"><span class="mob-pylon-sub">${w.rangeKm || 0}km &bull; ${w.damage || 2}HP</span><span class="pk-value-tag mob-pylon-pk">[${w.seeker || 'GUIDED'}]</span></div>
               <button type="button" class="btn-fire-pylon mob-fire-btn" disabled>ENGAGE</button>
             `;
           } else {
@@ -140,7 +140,7 @@ class PylonBayRenderer {
                 <div class="pylon-name-group"><span class="pylon-name">${w.name || w.id}</span></div>
                 <div style="display:flex;align-items:center;gap:6px;"><button type="button" class="pylon-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button><span class="pylon-ammo-counter">${item.ammo} / ${item.maxAmmo}</span></div>
               </div>
-              <div class="pylon-sub-row"><span class="pylon-seeker-tag">${w.rangeKm || 0}km &bull; <b style="color:#ffb830;">${w.damage || 2} HP</b> &bull; ${w.seeker || 'GUIDED'}</span><span class="pk-value-tag">P_K: --%</span></div>
+              <div class="pylon-sub-row"><span class="pylon-seeker-tag">${w.rangeKm || 0}km &bull; <b style="color:#ffb830;">${w.damage || 2} HP</b></span><span class="pk-value-tag">[${w.seeker || 'GUIDED'}]</span></div>
               <div class="pk-progress-bar-bg"><div class="pk-progress-fill" style="width: 0%;"></div></div>
               <button type="button" class="btn-fire-pylon" disabled>ENGAGE TARGET</button>
             `;
@@ -153,7 +153,7 @@ class PylonBayRenderer {
             fireBtn.addEventListener('touchmove', () => { isTouchScroll = true; }, { passive: true });
             fireBtn.onclick = (e) => {
               e.stopPropagation();
-              if (isTouchScroll) return; // Prevent accidental launch on touch scroll
+              if (isTouchScroll) return;
               const curGame = this.currentGame;
               const currentUnit = curGame ? curGame.activeUnit : null;
               if (currentUnit && currentUnit.hp > 0 && curGame && typeof curGame.firePylon === 'function') {
@@ -205,8 +205,34 @@ class PylonBayRenderer {
       const pkFill = cardEl.querySelector('.pk-progress-fill');
       const fireBtn = cardEl.querySelector('.btn-fire-pylon');
 
+      if (pkTag) {
+        if (w.isJammerPod) {
+          pkTag.textContent = isMobile ? '[ECM]' : 'ACTIVE: [ECM]';
+          pkTag.style.color = '#00f0ff';
+        } else if (w.isDecoy || w.isDecoyDrone) {
+          pkTag.textContent = isMobile ? '[DECOY]' : 'DEFENSE: [DECOY]';
+          pkTag.style.color = '#c084fc';
+        } else if (w.isLaser) {
+          pkTag.textContent = isMobile ? '[DEW]' : 'DIRECT: [DEW]';
+          pkTag.style.color = '#00f0ff';
+        } else {
+          const seeker = w.seeker || 'GUIDED';
+          pkTag.textContent = isMobile ? `[${seeker}]` : `HOMING: [${seeker}]`;
+          const seekerColors = {
+            'ARH': '#00f0ff',
+            'IIR': '#00f5a0',
+            'EO': '#38bdf8',
+            'OPT': '#38bdf8',
+            'PASSIVE_RADAR': '#ffb830',
+            'GPS_INS': '#94a3b8',
+            'INS_RADAR': '#ffd700',
+            'DIRECT_FIRE': '#fbbf24'
+          };
+          pkTag.style.color = seekerColors[seeker] || '#7dd3fc';
+        }
+      }
+
       if (w.isJammerPod) {
-        if (pkTag) { pkTag.textContent = `ECM ${Math.round((w.jamEfficiency || 0.45)*100)}%`; pkTag.style.color = '#00f5a0'; }
         if (pkFill) pkFill.style.width = `${Math.round((w.jamEfficiency || 0.45)*100)}%`;
         if (fireBtn) { fireBtn.disabled = true; fireBtn.textContent = 'ECM ACTIVE'; }
         return;
@@ -214,21 +240,18 @@ class PylonBayRenderer {
 
       if (w.isDecoy || w.isDecoyDrone) {
         const hasTokens = (curTokens >= tokenCost);
-        if (pkTag) { pkTag.textContent = w.isDecoyDrone ? 'MALD DECOY' : 'FOTD DECOY'; pkTag.style.color = '#c084fc'; }
         if (pkFill) pkFill.style.width = item.ammo > 0 ? '100%' : '0%';
         if (fireBtn) { fireBtn.disabled = (!hasTokens || item.ammo <= 0); fireBtn.textContent = item.ammo <= 0 ? 'DEPLETED' : (hasTokens ? 'DEPLOY' : 'NEED TOK'); }
         return;
       }
 
       if (item.ammo <= 0) {
-        if (pkTag) { pkTag.textContent = '0% (EMPTY)'; pkTag.style.color = '#8494ab'; }
         if (pkFill) pkFill.style.width = '0%';
         if (fireBtn) { fireBtn.disabled = true; fireBtn.textContent = 'NO AMMO'; }
         return;
       }
 
       if (!validTarget) {
-        if (pkTag) { pkTag.textContent = '--% (NO TGT)'; pkTag.style.color = '#8494ab'; }
         if (pkFill) pkFill.style.width = '0%';
         if (fireBtn) { fireBtn.disabled = true; fireBtn.textContent = 'SELECT TARGET'; }
         return;
@@ -237,7 +260,6 @@ class PylonBayRenderer {
       const pkResult = (typeof Physics !== 'undefined' && Physics.calcPk) ? Physics.calcPk(w, activeUnit, validTarget, clouds) : { pk: 0, label: 'STANDBY', color: '#64748b' };
       const currentPk = (typeof pkResult.pk === 'number' && !isNaN(pkResult.pk)) ? pkResult.pk : 0;
 
-      if (pkTag) { pkTag.innerHTML = `P_K: ${currentPk}%`; pkTag.style.color = pkResult.color || '#00f0ff'; }
       if (pkFill) { pkFill.style.width = `${currentPk}%`; pkFill.style.background = pkResult.color || '#00f0ff'; }
 
       let canFire = false;

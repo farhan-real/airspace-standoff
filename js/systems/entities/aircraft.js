@@ -1,8 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Aircraft Entity
- * Flight Lead receives category-specific buffs (RCS, speed, agility, armor, bus regen, CMs).
- * In 2P mode, isIdentifiedBy always returns true for fair mutual tactical visibility.
- * Autocannons dynamically evaluate specific ballistic ranges and firing cones.
+ * Rebalanced COFFIN evasion, flight lead bonuses, and manual avionics.
  */
 
 class Aircraft {
@@ -10,7 +8,9 @@ class Aircraft {
     this.id = 'AC_' + Math.random().toString(36).substr(2, 6);
     const catalog = window.AIRCRAFT_CATALOG || {};
     this.spec = catalog[specId] ? JSON.parse(JSON.stringify(catalog[specId])) : {
-      id: specId, name: specId, role: 'Fighter', category: 'MULTIROLE', cost: 18.0, hp: 4, AGI_0: 0.85, S_0: 0.95, R_0: 75.0, radarType: 'Pulse-Doppler', radarConeDeg: 120, sigma_0: 1.0, M_max: 5000, G_limit: 9, builtInGun: 'M61A2', allowedGuns: ['M61A2'], gunRounds: 3200, totalSlots: 6, maxPylonRating: 'Type M', upgradeSockets: 3
+      id: specId, name: specId, role: 'Fighter', category: 'MULTIROLE', cost: 18.0, hp: 4, AGI_0: 0.85, S_0: 0.95,
+      R_0: 75.0, radarType: 'Pulse-Doppler', radarConeDeg: 120, sigma_0: 1.0, M_max: 5000, G_limit: 9,
+      builtInGun: 'M61A2', allowedGuns: ['M61A2'], gunRounds: 3200, totalSlots: 6, maxPylonRating: 'Type M', upgradeSockets: 3
     };
     this.team = team;
     this.x = spawnX;
@@ -53,13 +53,12 @@ class Aircraft {
       this.spec.AGI_0 = Math.min(1.0, (this.spec.AGI_0 || 0.85) + 0.08);
       this.spec.G_limit = (this.spec.G_limit || 9.0) + 2.5;
       this.aceEvasionBonus = 0.32;
-    } else if (this.isFlightLead) {
-      this.applyCategoryLeadBuffs();
+    } else if (this.isFlightLead && window.AircraftLeadBuffs) {
+      window.AircraftLeadBuffs.apply(this);
     }
 
     this.hp = this.spec.hp;
     this.maxHp = this.spec.hp;
-
     this.stress = 0.0;
     this.glocTimer = 0.0;
     this.activeManeuverTimer = 0.0;
@@ -90,7 +89,7 @@ class Aircraft {
     this.isCoffin = Boolean(this.spec.isCoffin);
     this.isAutonomous = (!isPlayerTeam && this.spec.isDrone && !this.isCoffin);
     this.autonomousOverride = isPlayerTeam;
-    this.coffinDodgeBonus = this.isCoffin ? 0.25 : 0.0;
+    this.coffinDodgeBonus = this.isCoffin ? 0.08 : 0.0;
 
     this.isRTB = false;
     this.rtbTimer = 0.0;
@@ -126,70 +125,6 @@ class Aircraft {
     this.alt = this.altFt / 65000.0;
     this.prevAltFt = this.altFt;
     this.altTrend = '--';
-  }
-
-  applyCategoryLeadBuffs() {
-    const cat = this.spec.category || 'MULTIROLE';
-    this.leadExtraCm = 2;
-    this.leadEvasionBonus = 0.20;
-
-    switch (cat) {
-      case 'STEALTH':
-        this.spec.hp = (this.spec.hp || 4) + 1;
-        if (this.spec.sigma_0) this.spec.sigma_0 *= 0.65;
-        this.beamSpikeReduction = 0.50;
-        if (this.spec.R_0) this.spec.R_0 += 15.0;
-        this.datalinkBonus = (this.datalinkBonus || 0) + 0.25;
-        this.radarIdentifySpeed = 1.6;
-        this.leadEvasionBonus = 0.20;
-        break;
-      case 'SUPERIORITY':
-        this.spec.hp = (this.spec.hp || 4) + 2;
-        if (this.spec.sigma_0) this.spec.sigma_0 *= 0.60;
-        if (this.spec.S_0) this.spec.S_0 *= 1.10;
-        this.pkBonus = (this.pkBonus || 0) + 0.12;
-        this.leadStressMitigation = 0.50;
-        this.leadEvasionBonus = 0.25;
-        break;
-      case 'MULTIROLE':
-        this.spec.hp = (this.spec.hp || 4) + 2;
-        this.turnBonus = (this.turnBonus || 0) + 0.20;
-        this.datalinkBonus = (this.datalinkBonus || 0) + 0.20;
-        this.hasFastRTB = true;
-        this.leadExtraCm = 3;
-        this.leadEvasionBonus = 0.25;
-        break;
-      case 'STRIKE':
-        this.spec.hp = (this.spec.hp || 4) + 3;
-        this.heavyLeadDragMitigation = 0.40;
-        this.autocannonResistance = 0.60;
-        this.missileDamageReduction = 1;
-        this.leadEvasionBonus = 0.15;
-        break;
-      case 'EW':
-        this.spec.hp = (this.spec.hp || 4) + 2;
-        this.jamEfficiency = Math.min(0.95, (this.jamEfficiency || 0.45) + 0.25);
-        this.hasESM = true;
-        this.leadExtraCm = 3;
-        this.leadEvasionBonus = 0.30;
-        break;
-      case 'DRONES':
-        this.spec.hp = (this.spec.hp || 2) + 2;
-        this.droneDodgeBonus = (this.droneDodgeBonus || 0) + 0.20;
-        this.hasMaldDecoy = true;
-        this.maldDecoyCharges = (this.maldDecoyCharges || 0) + 2;
-        this.pkBonus = (this.pkBonus || 0) + 0.12;
-        this.leadEvasionBonus = 0.35;
-        break;
-      case 'EXPERIMENTAL':
-      default:
-        this.spec.hp = (this.spec.hp || 4) + 2;
-        this.coffinDodgeBonus = (this.coffinDodgeBonus || 0) + 0.15;
-        this.datalinkBonus = (this.datalinkBonus || 0) + 0.30;
-        this.thermalBloom = 0.60;
-        this.leadEvasionBonus = 0.30;
-        break;
-    }
   }
 
   isIdentifiedBy(team) {

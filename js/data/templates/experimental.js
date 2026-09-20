@@ -1,14 +1,9 @@
 /**
- * APEX VECTOR // Preconfigured Loadouts: Experimental Superfighters & Manual COFFIN Units
+ * AIRSPACE STANDOFF // Preconfigured Loadouts: Experimental Superfighters & Manual COFFIN Units
  * Professional military test & operational nomenclature.
- * ADF-11F Raven diversified with realistic weapon allocations (no duplicate ADMM spam).
- * Darkstar upgraded to authentic Mach 3.20 hypersonic envelope.
  */
 
 window.TEMPLATES_EXPERIMENTAL = {
-  // ==========================================
-  // ADF-11F RAVEN [COFFIN] (Diversified Military Configurations)
-  // ==========================================
   'ADF-11F Advanced Air Superiority Prototype': {
     name: 'ADF-11F Advanced Air Superiority Prototype',
     specId: 'ADF-11F',
@@ -16,7 +11,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'DE-PULSE',
     weapons: ['AIM-260', 'AIM-120D', 'METEOR', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'ZOE_NEURAL_PROCESSOR', 'GAN_AESA_CORE', 'RAM_NANO_COATING'],
-    desc: 'Apex air superiority testbed ($60.0M). 20.0G structural envelope, hitscan DE-Pulse laser, diverse BVR and dogfight missiles with zero pilot stress and +25% extreme dodge bonus.'
+    desc: 'Apex air superiority testbed ($60.0M). 20.0G structural envelope, hitscan DE-Pulse laser, diverse BVR and dogfight missiles with zero pilot stress and +8% evasive dodge bonus.'
   },
   'ADF-11F Tactical Swarm Suppression': {
     name: 'ADF-11F Tactical Swarm Suppression',
@@ -25,7 +20,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'DE-PULSE',
     weapons: ['ADMM', 'AIM-260', 'AIM-9X-2', 'PYTHON-5'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'ZOE_NEURAL_PROCESSOR', 'DAS_360_OPTIC', 'EOTS_DUAL_OPTICS'],
-    desc: 'Multi-target area defense package. Carries a single 12-round ADMM all-direction micro-missile pod paired with stealth BVR and over-the-shoulder Python-5 missiles.'
+    desc: 'Multi-target area defense package. Carries an ADMM micro-missile pod (12x) paired with stealth BVR and over-the-shoulder Python-5 missiles.'
   },
   'ADF-11F Directed Energy Intercept Prototype': {
     name: 'ADF-11F Directed Energy Intercept Prototype',
@@ -52,7 +47,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'DE-PULSE',
     weapons: ['AGM-158B', 'GBU-39', 'AIM-120D'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'RAM_NANO_COATING', 'GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE'],
-    desc: 'Low-observable deep penetration package carrying stealth AGM-158B JASSM-ER cruise missiles and 8 GBU-39 SDB glide bombs for cracking enemy command bunkers.'
+    desc: 'Low-observable deep penetration package carrying stealth AGM-158B JASSM-ER cruise missiles and GBU-39 SDB glide bombs (8x).'
   },
   'ADF-11F Defense Suppression (SEAD)': {
     name: 'ADF-11F Defense Suppression (SEAD)',
@@ -63,10 +58,6 @@ window.TEMPLATES_EXPERIMENTAL = {
     upgrades: ['COFFIN_OPTICAL_BUS', 'ADAPTIVE_ECCM_SUITE', 'ESM_PASSIVE_SUITE', 'GAN_AESA_CORE'],
     desc: 'Suppression of Enemy Air Defenses escort. High-power GaN AESA jamming pod and AGM-88G anti-radiation missiles to blind and eliminate SAM radars.'
   },
-
-  // ==========================================
-  // CFA-44 NOSFERATU
-  // ==========================================
   'CFA-44 Advanced Fleet Air Defense': {
     name: 'CFA-44 Advanced Fleet Air Defense',
     specId: 'CFA-44',
@@ -74,7 +65,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'EML_GUN',
     weapons: ['ADMM', 'AIM-260', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'Heavy carrier air defense package. Built-in EML hyper-velocity railgun (120 slugs), one 12-round ADMM micro-missile pod, and long-range BVR missiles.'
+    desc: 'Heavy carrier air defense package. Built-in EML hyper-velocity railgun (120 slugs), an ADMM micro-missile pod (12x), and long-range BVR missiles.'
   },
   'CFA-44 Thermobaric Standoff Attack': {
     name: 'CFA-44 Thermobaric Standoff Attack',
@@ -83,7 +74,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'EML_GUN',
     weapons: ['MPBM', 'AIM-260', 'METEOR'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'THRUST_VECTOR', 'TITANIUM_COCKPIT'],
-    desc: 'Heavy standoff area-denial loadout armed with high-yield thermobaric MPBM burst missiles and EML kinetic railgun.'
+    desc: 'Heavy standoff area-denial loadout armed with high-yield thermobaric MPBM burst missiles (2x) and EML kinetic railgun.'
   },
   'CFA-44 Precision Fleet Interceptor': {
     name: 'CFA-44 Precision Fleet Interceptor',
@@ -94,10 +85,6 @@ window.TEMPLATES_EXPERIMENTAL = {
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'],
     desc: 'Balanced long-range carrier interceptor pairing AIM-260 stealth BVR volleys with ramjet Meteor and dual-pulse rockets.'
   },
-
-  // ==========================================
-  // ADFX-01 MORGAN
-  // ==========================================
   'ADFX-01 Standoff Multi-Mission Prototype': {
     name: 'ADFX-01 Standoff Multi-Mission Prototype',
     specId: 'ADFX-01',
@@ -105,7 +92,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'M61A2',
     weapons: ['MPBM', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'SUPERCRUISE_VCE', 'EXPANDED_CM_DISPENSER'],
-    desc: 'Forward-canted canard prototype superfighter ($48.0M) deploying high-yield MPBM thermobaric shockwave missiles.'
+    desc: 'Forward-canted canard prototype superfighter ($48.0M) deploying high-yield MPBM thermobaric shockwave missiles (2x).'
   },
   'ADFX-01 Directed Energy Testbed': {
     name: 'ADFX-01 Directed Energy Testbed',
@@ -116,10 +103,6 @@ window.TEMPLATES_EXPERIMENTAL = {
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'],
     desc: 'Equipped with the high-energy chemical TLS tactical laser pod delivering instantaneous hitscan thermal damage.'
   },
-
-  // ==========================================
-  // X-02S STRIKE WYVERN
-  // ==========================================
   'X-02S Variable-Geometry Strike Fighter': {
     name: 'X-02S Variable-Geometry Strike Fighter',
     specId: 'X-02S',
@@ -138,10 +121,6 @@ window.TEMPLATES_EXPERIMENTAL = {
     upgrades: ['SUPERCRUISE_VCE', 'GAN_AESA_CORE'],
     desc: 'Extreme-speed railgun interceptor pairing EML kinetic slugs with ramjet Meteor missiles.'
   },
-
-  // ==========================================
-  // COFFIN CONVERSIONS & DEMONSTRATORS
-  // ==========================================
   'F-22C [COFFIN] Advanced Air Superiority': {
     name: 'F-22C [COFFIN] Advanced Air Superiority',
     specId: 'F-22C-COFFIN',
@@ -149,7 +128,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'DE-PULSE',
     weapons: ['AIM-260', 'METEOR', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'],
-    desc: 'Apex 6th-Gen manual COFFIN conversion ($62.0M). Optical shell yields 0.00005m2 ghost RCS, 18.0G envelope, hitscan DE-Pulse laser, and +25% extreme dodge bonus.'
+    desc: 'Apex 6th-Gen manual COFFIN conversion ($62.0M). Optical shell yields 0.00005m2 ghost RCS, 18.0G envelope, hitscan DE-Pulse laser, and +8% evasive dodge bonus.'
   },
   'Su-37 [COFFIN] Tactical Interceptor': {
     name: 'Su-37 [COFFIN] Tactical Interceptor',
@@ -158,7 +137,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'DE-PULSE',
     weapons: ['R-37M', 'PL-15E', 'R-73'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'RAM_NANO_COATING'],
-    desc: 'Optical shell eliminates G-LOC, granting sustained 16G post-stall turns, reduced radar signature, and +25% extreme dodge bonus.'
+    desc: 'Optical shell eliminates G-LOC, granting sustained 16G post-stall turns, reduced radar signature, and +8% evasive dodge bonus.'
   },
   'F-15 S/MT [COFFIN] Strike Interceptor': {
     name: 'F-15 S/MT [COFFIN] Strike Interceptor',
@@ -178,8 +157,6 @@ window.TEMPLATES_EXPERIMENTAL = {
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
     desc: 'Scramjet penetrator ($56.0M) cruising at Mach 3.20 above FL580, completely out-pacing standard surface SAM engagement envelopes.'
   },
-
-  // Real-World Technology Demonstrators
   'F-15 S/MTD Maneuver Technology Demonstrator': {
     name: 'F-15 S/MTD Maneuver Technology Demonstrator',
     specId: 'F-15-SMTD',
