@@ -1,8 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Master Game Orchestrator (150km x 100km Arena & Full Persistence)
- * Flight Lead spawns in the formation center with tactical avionics modifications.
- * Mutual full detection & identification active from start in 2P mode.
- * Clean, compact space-separated string formatting across tactical displays.
+ * Flight Lead spawns in formation center; mutual full detection in 2P mode.
  */
 
 class AirspaceStandoffGame {
@@ -169,6 +167,7 @@ class AirspaceStandoffGame {
       this.simulation.scoreLog = [];
       this.simulation.timelineEvents = [];
       this.simulation.setTimeWarp(1);
+      this.simulation.initWeatherClouds();
     }
     const scoreLogEl = document.getElementById('combat-score-log-list');
     if (scoreLogEl) scoreLogEl.innerHTML = '';
@@ -186,7 +185,7 @@ class AirspaceStandoffGame {
 
     const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-    const callsignPool = [...(window.CALLSIGN_POOL || ['Trigger', 'Mobius 1', 'Cipher', 'Viper', 'Ghost', 'Talon'])];
+    const callsignPool = [...(window.CALLSIGN_POOL || ['Trigger', 'Mobius 1', 'Cipher', 'Viper', 'Ghost', 'Talon'])].sort(() => Math.random() - 0.5);
     const takeCallsign = () => callsignPool.length ? callsignPool.splice(Math.floor(Math.random() * callsignPool.length), 1)[0] : 'Viper';
 
     this.alliedAircraft = [];
@@ -199,25 +198,38 @@ class AirspaceStandoffGame {
     const wingmenItems = this.procurementSquadron.filter((_, idx) => idx !== chosenLeadIdx);
 
     const midY = mapH / 2.0;
-    const formationSpanY = Math.min(mapH - 24.0, Math.max(16.0, (fleetTotal - 1) * 7.5));
+    const formationSpanY = Math.min(mapH - 24.0, Math.max(16.0, (fleetTotal - 1) * (6.5 + Math.random() * 2.0)));
     const startY = midY - (formationSpanY / 2.0);
     const stepY = (fleetTotal > 1) ? (formationSpanY / (fleetTotal - 1)) : 0;
     const middleSlot = Math.floor(fleetTotal / 2);
+
+    const formationArchetype = ['WEDGE', 'ECHELON_RIGHT', 'ECHELON_LEFT', 'SWEPT_WALL', 'LINE_ABREAST'][Math.floor(Math.random() * 5)];
+    const baseSpawnX = 12.0 + Math.random() * 5.0;
 
     const spawnPlan = [];
     let wingmanCursor = 0;
 
     for (let slot = 0; slot < fleetTotal; slot++) {
       const slotBaseY = (fleetTotal === 1) ? midY : (startY + slot * stepY);
-      const finalY = Math.max(10.0, Math.min(mapH - 10.0, slotBaseY + (Math.random() * 3.0 - 1.5)));
+      const finalY = Math.max(10.0, Math.min(mapH - 10.0, slotBaseY + (Math.random() * 3.6 - 1.8)));
+
+      let offsetDistX = 0;
+      if (formationArchetype === 'WEDGE') {
+        offsetDistX = -Math.abs(slot - middleSlot) * (2.2 + Math.random() * 0.8);
+      } else if (formationArchetype === 'ECHELON_RIGHT') {
+        offsetDistX = -(slot) * (1.8 + Math.random() * 0.6);
+      } else if (formationArchetype === 'ECHELON_LEFT') {
+        offsetDistX = -(fleetTotal - 1 - slot) * (1.8 + Math.random() * 0.6);
+      } else if (formationArchetype === 'SWEPT_WALL') {
+        offsetDistX = (Math.random() * 3.5 - 1.75);
+      }
+
+      const spawnX = Math.max(5.0, baseSpawnX + offsetDistX + (Math.random() * 1.5 - 0.75));
 
       if (slot === middleSlot) {
-        const spawnX = 14.0 + Math.random() * 2.5;
         spawnPlan.push({ item: leadItem, isLead: true, x: spawnX, y: finalY });
       } else {
         const wItem = wingmenItems[wingmanCursor++];
-        const distFromMid = Math.abs(slot - middleSlot);
-        const spawnX = Math.max(6.0, 14.0 - distFromMid * 1.5 + (Math.random() * 2.0 - 1.0));
         spawnPlan.push({ item: wItem, isLead: false, x: spawnX, y: finalY });
       }
     }
@@ -225,8 +237,8 @@ class AirspaceStandoffGame {
     spawnPlan.forEach(plan => {
       const item = plan.item;
       if (!item) return;
-      const heading = (Math.random() * 0.2 - 0.1);
-      const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (24000 + Math.floor(Math.random() * 8) * 1000);
+      const heading = (Math.random() * 0.25 - 0.125);
+      const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(Math.random() * 18) * 1000);
 
       const ac = new Aircraft(
         item.specId, 'friendly', plan.x, plan.y, heading, item.chosenGunId,
@@ -251,18 +263,12 @@ class AirspaceStandoffGame {
 
     if (this.playerMode === '2P') {
       this.alliedAircraft.forEach(a => {
-        a.identifiedByBlue = true;
-        a.identifiedByRed = true;
-        a.isIdentified = true;
-        this.detectedByBlue.add(a.id);
-        this.detectedByRed.add(a.id);
+        a.identifiedByBlue = true; a.identifiedByRed = true; a.isIdentified = true;
+        this.detectedByBlue.add(a.id); this.detectedByRed.add(a.id);
       });
       this.hostileAircraft.forEach(h => {
-        h.identifiedByBlue = true;
-        h.identifiedByRed = true;
-        h.isIdentified = true;
-        this.detectedByBlue.add(h.id);
-        this.detectedByRed.add(h.id);
+        h.identifiedByBlue = true; h.identifiedByRed = true; h.isIdentified = true;
+        this.detectedByBlue.add(h.id); this.detectedByRed.add(h.id);
       });
     }
 

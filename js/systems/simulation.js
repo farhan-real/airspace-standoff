@@ -1,10 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Simulation System Orchestrator (150km x 100km Theater)
- * - In 2P mode: all aircraft on both coalitions are visible and identified from match start.
- * - Ground targets are always visible and identified.
- * - All aircraft are always visible on radar (at least as BOGEY [?]).
- * - Full match data saved persistently.
- * - 3.5s missile and target track hold memory prevents radar flickering/popping.
+ * Lean randomized weather pockets, sensor tracking, and win states.
  */
 
 class SimulationSystem {
@@ -37,48 +33,42 @@ class SimulationSystem {
   getElapsedTimeString() { return this.scoring.getElapsedTimeString(); }
 
   setTimeWarp(multiplier) {
-    if (multiplier === 0) {
-      this.isPaused = true;
-    } else {
-      this.isPaused = false;
-      this.timeWarp = multiplier;
-    }
-    const btns = document.querySelectorAll('.time-btn');
-    btns.forEach(b => b.classList.remove('active'));
-    if (this.isPaused) {
-      const pBtn = document.getElementById('btn-time-pause');
-      if (pBtn) pBtn.classList.add('active');
-    } else {
-      const aBtn = document.getElementById(`btn-time-${this.timeWarp}x`);
-      if (aBtn) aBtn.classList.add('active');
-    }
+    this.isPaused = (multiplier === 0);
+    if (!this.isPaused) this.timeWarp = multiplier;
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById(this.isPaused ? 'btn-time-pause' : `btn-time-${this.timeWarp}x`);
+    if (btn) btn.classList.add('active');
   }
 
   togglePause() {
-    if (this.isPaused) {
-      this.setTimeWarp(this.timeWarp || 1);
-      const pModal = document.getElementById('pause-modal');
-      if (pModal) pModal.classList.remove('active');
-    } else {
-      this.setTimeWarp(0);
-      const pModal = document.getElementById('pause-modal');
-      if (pModal) pModal.classList.add('active');
-    }
+    this.setTimeWarp(this.isPaused ? (this.timeWarp || 1) : 0);
+    const pModal = document.getElementById('pause-modal');
+    if (pModal) pModal.classList.toggle('active', this.isPaused);
   }
 
   initWeatherClouds() {
-    const count = (window.CONFIG && window.CONFIG.CLOUD_COUNT) || 3;
+    this.weatherClouds = [];
+    const count = 2 + Math.floor(Math.random() * 2);
     const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
 
+    const corridors = [
+      { minX: 35, maxX: 65, minY: 20, maxY: 48 },
+      { minX: 85, maxX: 115, minY: 20, maxY: 50 },
+      { minX: 55, maxX: 95, minY: 52, maxY: 80 }
+    ].sort(() => Math.random() - 0.5);
+
     for (let i = 0; i < count; i++) {
-      const cx = 30 + Math.random() * (w - 60);
-      const cy = 20 + Math.random() * (h - 40);
-      const rx = 16 + Math.random() * 16;
-      const ry = 12 + Math.random() * 14;
-      const vx = (Math.random() * 0.6 - 0.3);
-      const vy = (Math.random() * 0.4 - 0.2);
-      this.weatherClouds.push(new WeatherCloud(cx, cy, rx, ry, vx, vy));
+      const c = corridors[i % corridors.length];
+      const cx = c.minX + Math.random() * (c.maxX - c.minX);
+      const cy = c.minY + Math.random() * (c.maxY - c.minY);
+      const isSquall = Math.random() < 0.35;
+      const rx = isSquall ? (14.0 + Math.random() * 6.0) : (10.0 + Math.random() * 5.0);
+      const ry = isSquall ? (7.0 + Math.random() * 3.0) : (8.0 + Math.random() * 4.0);
+      const angle = Math.random() * Math.PI * 2;
+      const spd = 0.20 + Math.random() * 0.35;
+
+      this.weatherClouds.push(new WeatherCloud(cx, cy, rx, ry, Math.cos(angle) * spd, Math.sin(angle) * spd * 0.6));
     }
   }
 
@@ -86,11 +76,11 @@ class SimulationSystem {
     this.ghostContacts = [];
     const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-    const gx = (w - 25.0) - Math.random() * 20.0;
-    const gy = 20.0 + Math.random() * (h - 40.0);
-    const gHeading = Math.PI + (Math.random() * 0.3 - 0.15);
-    const gSpeed = 0.85;
-    const gAlt = 28000;
+    const gx = (w - 20.0) - Math.random() * 30.0;
+    const gy = 18.0 + Math.random() * (h - 36.0);
+    const gHeading = Math.PI + (Math.random() * 0.4 - 0.2);
+    const gSpeed = 0.80 + Math.random() * 0.20;
+    const gAlt = 22000 + Math.floor(Math.random() * 10) * 1000;
     this.ghostContacts.push(new GhostContact(gx, gy, gHeading, gSpeed, gAlt));
   }
 
@@ -126,14 +116,7 @@ class SimulationSystem {
     this.ghostSpawnTimer += dt;
     if (this.ghostSpawnTimer >= 90.0 && this.ghostContacts.length < 1) {
       this.ghostSpawnTimer = 0.0;
-      const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
-      const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-      const gx = (w - 20.0) - Math.random() * 25.0;
-      const gy = 18.0 + Math.random() * (h - 36.0);
-      const gHeading = Math.PI + (Math.random() * 0.3 - 0.15);
-      const gSpeed = 0.85;
-      const gAlt = 26000;
-      this.ghostContacts.push(new GhostContact(gx, gy, gHeading, gSpeed, gAlt));
+      this.initGhostContacts();
     }
     for (const ghost of this.ghostContacts) ghost.update(dt);
     this.ghostContacts = this.ghostContacts.filter(g => !g.isDissolved && g.hp > 0);
@@ -148,10 +131,8 @@ class SimulationSystem {
         this.currentWave++;
         const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
         const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-        const wCraftRed = FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'hostile', mapW, mapH, this.game.aiDifficulty);
-        this.game.hostileAircraft.push(...wCraftRed);
-        const wCraftBlue = FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'friendly', mapW, mapH, this.game.aiDifficulty);
-        this.game.alliedAircraft.push(...wCraftBlue);
+        this.game.hostileAircraft.push(...FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'hostile', mapW, mapH, this.game.aiDifficulty));
+        this.game.alliedAircraft.push(...FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'friendly', mapW, mapH, this.game.aiDifficulty));
         this.logScoreEvent('friendly', 0, 'REINFORCEMENTS: Wave ' + this.currentWave + ' entered theater');
       }
     }
@@ -249,20 +230,14 @@ class SimulationSystem {
     if (is2P) {
       for (const h of this.game.hostileAircraft) {
         if (h.hp > 0) {
-          this.game.detectedByBlue.add(h.id);
-          this.game.detectedByRed.add(h.id);
-          h.identifiedByBlue = true;
-          h.identifiedByRed = true;
-          h.isIdentified = true;
+          this.game.detectedByBlue.add(h.id); this.game.detectedByRed.add(h.id);
+          h.identifiedByBlue = true; h.identifiedByRed = true; h.isIdentified = true;
         }
       }
       for (const a of this.game.alliedAircraft) {
         if (a.hp > 0) {
-          this.game.detectedByBlue.add(a.id);
-          this.game.detectedByRed.add(a.id);
-          a.identifiedByBlue = true;
-          a.identifiedByRed = true;
-          a.isIdentified = true;
+          this.game.detectedByBlue.add(a.id); this.game.detectedByRed.add(a.id);
+          a.identifiedByBlue = true; a.identifiedByRed = true; a.isIdentified = true;
         }
       }
     } else {
@@ -434,7 +409,7 @@ class SimulationSystem {
     const friendlyBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'friendly' && s.hp <= 0);
     const hostileBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'hostile' && s.hp <= 0);
 
-    const winThreshold = (window.CONFIG && window.CONFIG.VP_WIN_THRESHOLD) || 1600;
+    const winThreshold = (window.CONFIG && window.CONFIG.VP_WIN_THRESHOLD) || 3000;
 
     if (this.game.vpAlly >= winThreshold || allHostilesDead || hostileBunkerDestroyed) {
       this.game.triggerGameOver(true, hostileBunkerDestroyed ? 'HOSTILE COMMAND BUNKER DESTROYED' : 'BLUE FORCES SECURED AIR SUPERIORITY');

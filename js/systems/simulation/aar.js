@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // After Action Report System
- * Standard military mission debrief format with salvo breakdown.
+ * Standard military mission debrief format with collapsible timeline and roster table.
  */
 
 class AfterActionReportSystem {
@@ -34,14 +34,15 @@ class AfterActionReportSystem {
       podiumEl.innerHTML = topThree.map((p, idx) => {
         const rankNames = ['TOP SCORING PILOT', '2ND HIGHEST SCORE', '3RD HIGHEST SCORE'];
         const rankClass = 'rank-' + (idx + 1);
+        const teamName = p.team === 'friendly' ? 'BLUE' : 'RED';
         const teamColor = p.isAce ? '#ffd700' : (p.team === 'friendly' ? '#00f0ff' : '#ff3366');
-        const teamTag = p.isAce ? 'LEAD' : (p.team === 'friendly' ? 'BLUE' : 'RED');
+        const teamTag = p.isAce ? `${teamName} ACE` : teamName;
 
         return (
           `<div class="ace-card ${rankClass}">` +
             `<div class="ace-rank-title"><span>#${idx + 1} - ${rankNames[idx]}</span> <b style="color:${teamColor}">[${teamTag}]</b></div>` +
             `<div class="ace-callsign">${p.callsign || 'PILOT'}</div>` +
-            `<div class="ace-sub">${p.spec ? p.spec.name : 'AIRCRAFT'} - ${p.squadronName || 'UNIT'}</div>` +
+            `<div class="ace-sub">${p.spec ? p.spec.name : 'AIRCRAFT'} - ${p.squadronName || (p.team === 'friendly' ? 'Allied Fleet' : 'Hostile Fleet')}</div>` +
             `<div class="ace-stats">` +
               `<span>HITS: <b>${p.kills || 0}</b></span>` +
               `<span>EVADED: <b>${p.missilesEvadedCount || 0}</b></span>` +
@@ -175,6 +176,44 @@ class AfterActionReportSystem {
           );
         }
       }).join('');
+    }
+
+    const toggleTimelineBtn = document.getElementById('btn-toggle-aar-timeline');
+    if (toggleTimelineBtn && timelineListEl) {
+      timelineListEl.classList.add('hidden');
+      toggleTimelineBtn.textContent = 'EXPAND TIMELINE';
+      toggleTimelineBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isCurrentlyHidden = timelineListEl.classList.contains('hidden');
+        if (isCurrentlyHidden) {
+          timelineListEl.classList.remove('hidden');
+          toggleTimelineBtn.textContent = 'COLLAPSE TIMELINE';
+        } else {
+          timelineListEl.classList.add('hidden');
+          toggleTimelineBtn.textContent = 'EXPAND TIMELINE';
+        }
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+      };
+    }
+
+    const toggleRosterBtn = document.getElementById('btn-toggle-aar-roster');
+    if (toggleRosterBtn && fullRosterContainer) {
+      fullRosterContainer.classList.remove('hidden');
+      toggleRosterBtn.textContent = 'COLLAPSE';
+      toggleRosterBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isCurrentlyHidden = fullRosterContainer.classList.contains('hidden');
+        if (isCurrentlyHidden) {
+          fullRosterContainer.classList.remove('hidden');
+          toggleRosterBtn.textContent = 'COLLAPSE';
+        } else {
+          fullRosterContainer.classList.add('hidden');
+          toggleRosterBtn.textContent = 'EXPAND';
+        }
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+      };
     }
 
     modal.classList.add('active');

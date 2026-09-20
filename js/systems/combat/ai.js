@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Tactical AI Commander
- * High-difficulty AI coordinates fleet-wide maneuvers, mixed-seeker salvos, and long-range BVR engagements.
+ * High-difficulty AI coordinates fleet-wide maneuvers, mixed-seeker salvos, and Ace aerobatics.
  */
 
 class TacticalAICommander {
@@ -93,9 +93,24 @@ class TacticalAICommander {
             ace.activeManeuverTimer = 3.0;
             ace.activeManeuverBonus = 0.35;
           }
-          if (nearest.distanceToTarget < 14.0 && ace.thrustVector) {
-            ace.activeManeuverBonus = Math.max(ace.activeManeuverBonus, 0.40);
-            ace.speed = Math.max(0.30, ace.speed * 0.75);
+          if (nearest.distanceToTarget < 15.0 && ace.activeManeuverTimer <= 0) {
+            if (ace.thrustVector) {
+              ace.activeManeuverTimer = 2.8;
+              ace.activeManeuverBonus = 0.38;
+              ace.speed = Math.max(0.18, ace.speed * 0.45);
+              if (this.game.radar) {
+                this.game.radar.spawnCombatText(ace.x, ace.y, 'ACE COBRA (+38% EVASION)', '#ffd700');
+                this.game.radar.spawnShockwave(ace.x, ace.y, '#ffd700', 35);
+              }
+            } else {
+              ace.activeManeuverTimer = 3.0;
+              ace.activeManeuverBonus = 0.25;
+              ace.speed = Math.max(0.25, ace.speed - 0.12);
+              if (this.game.radar) {
+                this.game.radar.spawnCombatText(ace.x, ace.y, 'ACE BARREL ROLL (+25% EVASION)', '#ffd700');
+                this.game.radar.spawnShockwave(ace.x, ace.y, '#ffd700', 25);
+              }
+            }
           }
         }
       }
@@ -170,9 +185,14 @@ class TacticalAICommander {
         }
       }
 
-      if (profile.useAdvancedManeuvers && nearestMsl.distanceToTarget < 12.0) {
+      if (profile.useAdvancedManeuvers && nearestMsl.distanceToTarget < 12.0 && hostile.activeManeuverTimer <= 0) {
         if (hostile.thrustVector) {
           hostile.activeManeuverBonus = Math.max(hostile.activeManeuverBonus, 0.38);
+          hostile.speed = Math.max(0.18, hostile.speed * 0.45);
+          if (this.game.radar) {
+            this.game.radar.spawnCombatText(hostile.x, hostile.y, 'PUGACHEV COBRA (+38% EVASION)', '#a855f7');
+            this.game.radar.spawnShockwave(hostile.x, hostile.y, '#a855f7', 35);
+          }
         } else if (hostile.alt > 0.30) {
           hostile.dive();
         }
