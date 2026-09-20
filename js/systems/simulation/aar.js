@@ -1,5 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Mission Debrief and After Action Report Orchestrator
+ * Mathematical parity between participating aircraft points, event timeline, and sortie final score.
  */
 
 class AfterActionReportSystem {
@@ -13,7 +14,6 @@ class AfterActionReportSystem {
     const podiumEl = document.getElementById('ace-podium-cards');
     const fullRosterContainer = document.getElementById('aar-full-roster-content');
 
-    // Compute duration in mm:ss format
     const durSec = Math.max(1, Math.round((performance.now() - (game.matchStartTime || performance.now())) / 1000));
     const min = Math.floor(durSec / 60);
     const sec = durSec % 60;
@@ -25,9 +25,8 @@ class AfterActionReportSystem {
     }
     if (dEl) dEl.textContent = msg || 'AFTER ACTION REPORT';
 
-    // Sort participating air assets by combat contribution
     const allPilots = [...game.alliedAircraft, ...game.hostileAircraft];
-    allPilots.sort((a, b) => (b.kills * 100 + (b.scorePoints || 0)) - (a.kills * 100 + (a.scorePoints || 0)));
+    allPilots.sort((a, b) => (b.scorePoints || 0) - (a.scorePoints || 0));
 
     if (podiumEl) {
       const topThree = allPilots.slice(0, 3);
@@ -56,7 +55,9 @@ class AfterActionReportSystem {
     if (fullRosterContainer) {
       const rowsHtml = allPilots.map((p, i) => {
         const col = p.team === 'friendly' ? '#00f0ff' : '#ff3366';
-        const statusStr = p.hp > 0 ? `<b style="color:#00f5a0;">SURVIVED (${Math.round(p.hp)} HP)</b>` : `<span style="color:#ef4444;">DESTROYED</span>`;
+        const isAlive = p.hp > 0.05;
+        const displayHp = isAlive ? Math.max(1, Math.round(p.hp)) : 0;
+        const statusStr = isAlive ? `<b style="color:#00f5a0;">SURVIVED (${displayHp} HP)</b>` : `<span style="color:#ef4444;">DESTROYED</span>`;
         return `
           <tr>
             <td>#${i + 1}</td>
@@ -122,7 +123,7 @@ class AfterActionReportSystem {
           <div class="aar-score-banner ${blueWon ? 'victory' : 'defeat'}">
             <div class="aar-banner-lead">
               <span class="aar-banner-status">${blueWon ? 'MISSION SUCCESSFUL - OBJECTIVES COMPLETED' : 'MISSION ABORTED'}</span>
-              <span class="aar-banner-sub">Final Performance Score</span>
+              <span class="aar-banner-sub">Final Performance Score (${game.vpAlly} x ${scoreData.totalMult.toFixed(2)})</span>
             </div>
             <div class="aar-banner-score">
               <span class="aar-score-num">${finalSortieScore.toLocaleString()}</span>
@@ -133,12 +134,10 @@ class AfterActionReportSystem {
       `;
     }
 
-    // Render timeline and pass outcome status to control initial expansion
     if (typeof AfterActionReportTimeline !== 'undefined') {
       AfterActionReportTimeline.renderTimeline(game, blueWon);
     }
 
-    // Handle collapsible roster drawer
     const toggleRosterBtn = document.getElementById('btn-toggle-aar-roster');
     if (toggleRosterBtn && fullRosterContainer) {
       fullRosterContainer.classList.remove('hidden');

@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Tactical AI Missile Decision Engine
- * Difficulty-scaled launch sizing, inbound threat prediction, and Ace blunder scaling.
+ * AIRSPACE STANDOFF: Tactical AI Missile Decision Engine
+ * Difficulty-scaled launch sizing, inbound threat prediction, and relaxed normal doctrine.
  */
 
 class AIMissileTactics {
@@ -19,13 +19,26 @@ class AIMissileTactics {
 
     if (availablePylons.length === 0) return { isBingo: true, plan: null };
 
+    const fireTiers = {
+      CADET:   { minPk: 30, rangeRatio: 0.40, hesitateChance: 0.55, maxOffAngle: Math.PI / 8.0 },
+      VETERAN: { minPk: 50, rangeRatio: 0.50, hesitateChance: 0.40, maxOffAngle: Math.PI / 7.0 },
+      ELITE:   { minPk: 55, rangeRatio: 0.62, hesitateChance: 0.28, maxOffAngle: Math.PI / 6.0 },
+      ACE:     { minPk: 62, rangeRatio: 0.72, hesitateChance: 0.18, maxOffAngle: Math.PI / 5.0 },
+      MASTER:  { minPk: 66, rangeRatio: 0.80, hesitateChance: 0.10, maxOffAngle: Math.PI / 4.5 },
+      LEGEND:  { minPk: 70, rangeRatio: 0.88, hesitateChance: 0.05, maxOffAngle: Math.PI / 4.0 }
+    };
+
+    const tier = fireTiers[diffKey] || fireTiers.VETERAN;
+
+    if (!shooter.isAce && Math.random() < tier.hesitateChance) {
+      return { isBingo: false, plan: null };
+    }
+
     const isBomber = Boolean(shooter.spec && shooter.spec.role && (shooter.spec.role.includes('Strike') || shooter.spec.role.includes('Bomber')));
     const possibleTargets = (isBomber && bunkers.length > 0) ? bunkers.concat(candidateTargets) : candidateTargets.concat(bunkers);
     if (possibleTargets.length === 0) return { isBingo: false, plan: null };
 
-    const minPkThresholds = { CADET: 25, VETERAN: 38, ELITE: 52, ACE: 60, MASTER: 66, LEGEND: 70 };
-    const requiredPk = minPkThresholds[diffKey] || 40;
-
+    const requiredPk = tier.minPk || 45;
     let bestScore = -999;
     let bestMatch = null;
 
@@ -42,7 +55,8 @@ class AIMissileTactics {
         if (effectiveHp <= 0) continue;
 
         const dist = Math.hypot(tgt.x - shooter.x, tgt.y - shooter.y);
-        const maxRange = w.rangeKm * (profile.engagementRangeRatio || 0.85);
+        const rangeRatio = shooter.isAce ? (profile.engagementRangeRatio || 0.85) : tier.rangeRatio;
+        const maxRange = w.rangeKm * rangeRatio;
         if (dist > maxRange || dist < (w.minRangeKm || 1.0)) continue;
 
         const angleToTarget = Math.atan2(tgt.y - shooter.y, tgt.x - shooter.x);
@@ -50,7 +64,8 @@ class AIMissileTactics {
         while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
 
         const isHOBS = (w.trait === 'HOBS_VANE' || w.trait === 'ALL_ASPECT_BURST' || w.trait === 'REAR_ENGAGE');
-        if (!isHOBS && offBoresight > (Math.PI / 3.0)) continue;
+        const maxAngle = shooter.isAce ? (Math.PI / 3.0) : tier.maxOffAngle;
+        if (!isHOBS && offBoresight > maxAngle) continue;
 
         const pkResult = Physics.calcPk(w, shooter, tgt, clouds);
         const pk = pkResult.pk || 0;
@@ -63,17 +78,13 @@ class AIMissileTactics {
 
         if (dist <= 25.0 && (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT')) score += 20;
         else if (dist >= 35.0 && w.seeker === 'ARH') score += 20;
-        else if (dist <= 12.0 && w.rangeKm >= 90.0) score -= 30;
 
         if (tgt.isNotching || tgt.cmTimer > 0) {
           if (w.seeker === 'IIR' || w.seeker === 'EO') score += 25;
           else if (w.seeker === 'ARH') score -= 20;
         }
 
-        const targetInCloud = clouds && clouds.some(c => c.containsPoint(tgt.x, tgt.y));
-        if (targetInCloud && (w.seeker === 'IIR' || w.seeker === 'EO')) score -= 20;
-
-        if (tgt.isFlightLead) score += 20;
+        if (tgt.isFlightLead) score += 15;
         if (tgt.hp <= 2) score += 15;
         if (diffKey === 'CADET') score += (Math.random() * 40 - 20);
 
@@ -104,7 +115,6 @@ class AIMissileTactics {
     const viableTargets = candidateTargets.filter(t => t && t.hp > 0 && !t.isCivilian);
     if (viableTargets.length === 0) return null;
 
-    // Difficulty-scaled Ace blunders in target prioritization
     const aceBlunderRates = { CADET: 0.35, VETERAN: 0.25, ELITE: 0.08, ACE: 0.03, MASTER: 0.01, LEGEND: 0.00 };
     const blunderRoll = Math.random() < (aceBlunderRates[diffKey] || 0.10);
 
@@ -122,7 +132,6 @@ class AIMissileTactics {
 
     const target = viableTargets[0];
     const dist = Math.hypot(target.x - ace.x, target.y - ace.y);
-    const inCloud = clouds && clouds.some(c => c.containsPoint(target.x, target.y));
 
     availablePylons.sort((a, b) => {
       const wa = a.weapon, wb = b.weapon;
@@ -131,10 +140,6 @@ class AIMissileTactics {
       if (dist <= 25.0 && (wb.seeker === 'IIR' || wb.seeker === 'EO' || wb.trait === 'HOBS_VANE')) sb += 40;
       if (dist >= 35.0 && wa.seeker === 'ARH') sa += 40;
       if (dist >= 35.0 && wb.seeker === 'ARH') sb += 40;
-      if ((target.isNotching || target.cmTimer > 0) && (wa.seeker === 'IIR' || wa.seeker === 'EO')) sa += 30;
-      if ((target.isNotching || target.cmTimer > 0) && (wb.seeker === 'IIR' || wb.seeker === 'EO')) sb += 30;
-      if (inCloud && wa.seeker === 'ARH') sa += 25;
-      if (inCloud && wb.seeker === 'ARH') sb += 25;
       return sb - sa;
     });
 
@@ -144,12 +149,9 @@ class AIMissileTactics {
     const pylonsToFire = [primary];
     const secondary = availablePylons.find(p => p.index !== primary.index && p.weapon.category === 'A2A' && dist <= p.weapon.rangeKm * 0.90 && dist >= (p.weapon.minRangeKm || 1.0));
 
-    // Salvo decision with difficulty-scaled discipline
     if (secondary && (target.hp >= 3 || target.isFlightLead || availablePylons.length >= 3)) {
       const skipSalvo = blunderRoll && (diffKey === 'VETERAN' || diffKey === 'CADET');
-      if (!skipSalvo) {
-        pylonsToFire.push(secondary);
-      }
+      if (!skipSalvo) pylonsToFire.push(secondary);
     }
 
     return { target, pylonsToFire };
@@ -160,13 +162,8 @@ class AIMissileTactics {
     const inbounds = allMissiles.filter(m => m.active && m.target && m.target.id === target.id && m.team === team);
     if (inbounds.length === 0) return target.hp;
 
-    if (diffKey === 'CADET') {
-      if (Math.random() < 0.65) return target.hp;
+    if (diffKey === 'CADET' || diffKey === 'VETERAN' || diffKey === 'ELITE') {
       return target.hp - inbounds.length * 1.5;
-    }
-    if (diffKey === 'VETERAN') {
-      const approxDmg = inbounds.reduce((sum, m) => sum + ((m.weapon ? m.weapon.damage : 2) * 0.55), 0);
-      return target.hp - approxDmg;
     }
 
     const hasDefenses = (target.cmTimer > 0 || target.isNotching || target.coffinDodgeBonus || target.isAce);
@@ -179,26 +176,20 @@ class AIMissileTactics {
     const tgt = match.target, w = match.weapon, pylonsToFire = [match.pylon];
     if (w.category !== 'A2A') return { target: tgt, pylonsToFire, primaryWeapon: w };
 
-    const totalAmmoLeft = availablePylons.reduce((sum, p) => sum + (p.item.ammo || 0), 0);
-    const isEvasive = Boolean(tgt.isAce || tgt.isCoffin || tgt.isFlightLead || tgt.spec.AGI_0 >= 0.92);
-    const hp = match.effectiveHp;
+    if (diffKey === 'CADET' || diffKey === 'VETERAN' || diffKey === 'ELITE' || !shooter.isAce) {
+      return { target: tgt, pylonsToFire, primaryWeapon: w };
+    }
 
+    const totalAmmoLeft = availablePylons.reduce((sum, p) => sum + (p.item.ammo || 0), 0);
+    const hp = match.effectiveHp;
     let desiredSalvo = 1;
-    if (diffKey === 'CADET') {
-      desiredSalvo = 1;
-    } else if (diffKey === 'VETERAN') {
-      // Normal: Salvo is rare (20%), single missile default
-      if ((hp > w.damage || isEvasive) && totalAmmoLeft > 2 && Math.random() < 0.20) desiredSalvo = 2;
-    } else {
-      if (hp <= w.damage && !isEvasive) desiredSalvo = 1;
-      else if (isEvasive || hp >= 4) desiredSalvo = (diffKey === 'ACE' || diffKey === 'MASTER' || diffKey === 'LEGEND') && totalAmmoLeft >= 4 ? 3 : 2;
-      else desiredSalvo = 2;
-      if (totalAmmoLeft <= 2 && desiredSalvo > 1 && !tgt.isFlightLead) desiredSalvo = 1;
+
+    if (hp > w.damage && totalAmmoLeft >= 3) {
+      desiredSalvo = (diffKey === 'ACE' || diffKey === 'MASTER' || diffKey === 'LEGEND') ? 3 : 2;
     }
 
     if (desiredSalvo > 1) {
       const remaining = availablePylons.filter(p => p.index !== match.pylon.index && p.weapon.category === 'A2A');
-      remaining.sort((a, b) => ((b.weapon.seeker !== w.seeker ? 10 : 0) - (a.weapon.seeker !== w.seeker ? 10 : 0)));
       for (let i = 0; i < (desiredSalvo - 1) && i < remaining.length; i++) {
         pylonsToFire.push(remaining[i]);
       }

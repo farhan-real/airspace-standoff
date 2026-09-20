@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Category: ELECTRONIC WARFARE & SEAD ESCORTS
+ * AIRSPACE STANDOFF: Category: Electronic Warfare & SEAD Escorts
  */
 
 window.AIRCRAFT_EW = {
@@ -25,7 +25,7 @@ window.AIRCRAFT_EW = {
     thrustVector: false,
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27'],
-    gunRounds: 2400,
+    gunRounds: 150,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -53,7 +53,7 @@ window.AIRCRAFT_EW = {
     thrustVector: false,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2'],
-    gunRounds: 3200,
+    gunRounds: 510,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -81,7 +81,7 @@ window.AIRCRAFT_EW = {
     thrustVector: false,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'GAU-22'],
-    gunRounds: 3200,
+    gunRounds: 450,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
@@ -109,7 +109,7 @@ window.AIRCRAFT_EW = {
     thrustVector: false,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1'],
-    gunRounds: 1800,
+    gunRounds: 150,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,

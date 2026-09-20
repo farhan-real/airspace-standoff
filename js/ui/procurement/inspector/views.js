@@ -35,6 +35,9 @@ class InspectorSubsystemViews {
     const traitLabel = w.traitBadge || 'STANDARD';
     const primaryDesc = w.behaviorDesc || w.desc || 'Standard precision-guided munition.';
     const subDesc = (w.desc && w.desc !== w.behaviorDesc) ? w.desc : '';
+    const airframesText = (w.allowedAirframes && w.allowedAirframes.length > 0)
+      ? w.allowedAirframes.join(', ')
+      : 'All certified aircraft with sufficient pylon rating';
 
     return `
       <div class="inspect-type-banner">
@@ -59,6 +62,7 @@ class InspectorSubsystemViews {
         <div class="inspect-stat-item"><span>GUIDANCE &amp; SEEKER HEAD:</span><b style="color:#00f0ff;">${seekerText}</b></div>
         <div class="inspect-stat-item"><span>SPECIAL TRAIT:</span><b style="color:#ffd700;">[${traitLabel}]</b></div>
         <div class="inspect-stat-item"><span>MISSILE STEALTH RCS:</span><b class="${w.isStealthMissile ? 'stat-tier-1' : 'stat-tier-3'}">${w.rcs || 0.04} m&sup2;</b></div>
+        <div class="inspect-stat-item"><span>COMPATIBLE AIRFRAMES:</span><b style="color:#fef08a;text-align:right;font-size:0.62rem;">${airframesText}</b></div>
         <div class="inspect-stat-item"><span>EVASION COUNTER:</span><b style="color:#7dd3fc;text-align:right;font-size:0.64rem;">${counterHint}</b></div>
       </div>
 
@@ -85,6 +89,11 @@ class InspectorSubsystemViews {
     const rRpm = rate('gun_rpm', g.rpm || 3000);
     const rDps = rate('gun_dps', g.damagePerSec || 2.5);
     const rMass = rate('ordnance_mass', g.mass || 100);
+    const coneDeg = g.coneAngleDeg || 45;
+    const isDEW = Boolean(g.damagePerPulse || (g.caliber && g.caliber.includes('DEW')) || g.id.startsWith('PLSL') || g.id === 'DE-PULSE' || g.id === 'EML_GUN');
+    const stealthImpact = (g.thermalBloom && g.thermalBloom > 1.0) ? '+60% IR THERMAL BLOOM (STEALTH COMPROMISED)' : 'ZERO THERMAL BLOOM (VLO STEALTH PRESERVED)';
+    const cloudPenetration = (g.cloudScattering && g.cloudScattering > 0) ? 'SCATTERED IN CLOUDS (-75% DAMAGE)' : '100% ALL-WEATHER PENETRATION';
+    const concussionText = (g.kineticConcussion && g.kineticConcussion > 0) ? `KINETIC FLINCH & ENERGY DRAIN (${Math.round(g.kineticConcussion * 100)}% STRESS)` : 'PURE THERMAL (ZERO KINETIC CONCUSSION)';
 
     return `
       <div class="inspect-type-banner">
@@ -98,13 +107,22 @@ class InspectorSubsystemViews {
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>CYCLIC FIRE RATE:</span><b class="${rRpm.colorClass}">${g.rpm || 3000} RPM</b></div>
         <div class="inspect-stat-item"><span>SUSTAINED BURST DPS:</span><b class="${rDps.colorClass}">${(g.damagePerSec || 2.5).toFixed(1)} HP/s</b></div>
-        <div class="inspect-stat-item"><span>EFFECTIVE MERGE RANGE:</span><b>${g.rangeKm || 4.8} km (Auto &lt; 4.8 km / Manual [G])</b></div>
-        <div class="inspect-stat-item"><span>BORESIGHT SCAN CONE:</span><b>&plusmn;${Math.round((g.coneAngleDeg || 45) / 2)}&deg;</b></div>
-        <div class="inspect-stat-item"><span>AMMUNITION CAPACITY:</span><b class="stat-tier-1">${g.defaultAmmo || 3200} Rounds / Pulses</b></div>
+        <div class="inspect-stat-item"><span>BURST DAMAGE:</span><b style="color:#00f0ff;">${(g.damagePerBurst || g.damagePerPulse || 0.85).toFixed(2)} HP per burst</b></div>
+        <div class="inspect-stat-item"><span>BURST RECHARGE / COOLING:</span><b style="color:#ffb830;">${(g.burstCooldown || 1.0).toFixed(1)}s Cooldown Cycle</b></div>
+        <div class="inspect-stat-item"><span>EFFECTIVE MERGE RANGE:</span><b>${g.rangeKm || 4.8} km</b></div>
+        <div class="inspect-stat-item"><span>AMMUNITION CAPACITY:</span><b class="stat-tier-1">${g.defaultAmmo || 500} Rounds / Pulses</b></div>
         <div class="inspect-stat-item"><span>MECHANISM WEIGHT:</span><b class="${rMass.colorClass}">+${g.mass || 100} kg</b></div>
       </div>
 
-      <div class="inspect-sec-head">2. BALLISTIC OPERATION</div>
+      <div class="inspect-sec-head">2. TACTICAL ADVANTAGES &amp; DOCTRINE</div>
+      <div class="inspect-stat-grid">
+        <div class="inspect-stat-item"><span>BORESIGHT CONE AUTHORITY:</span><b style="color:${coneDeg >= 48 ? '#00f5a0' : '#f97316'};">${coneDeg}&deg; Boresight Cone (${coneDeg >= 48 ? 'Forgiving High-G Snapshot' : 'Narrow Pinpoint Beam'})</b></div>
+        <div class="inspect-stat-item"><span>THERMAL STEALTH IMPACT:</span><b style="color:${g.thermalBloom > 1 ? '#f97316' : '#00f5a0'};">${stealthImpact}</b></div>
+        <div class="inspect-stat-item"><span>WEATHER CLOUD INTEGRITY:</span><b style="color:${g.cloudScattering ? '#f97316' : '#00f5a0'};">${cloudPenetration}</b></div>
+        <div class="inspect-stat-item"><span>KINETIC IMPACT DISRUPTION:</span><b style="color:#7dd3fc;">${concussionText}</b></div>
+      </div>
+
+      <div class="inspect-sec-head">3. BALLISTIC OPERATION</div>
       <div class="inspect-desc-box">
         <div style="color:#f8fafc;">${g.desc || ''}</div>
       </div>

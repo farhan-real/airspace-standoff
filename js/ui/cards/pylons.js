@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Weapon Pylon Bay & Stores Management System
+ * AIRSPACE STANDOFF: Weapon Pylon Bay & Stores Management System
  */
 
 class PylonBayRenderer {
@@ -95,7 +95,7 @@ class PylonBayRenderer {
                 <div class="mob-pylon-name-group"><span class="mob-pylon-name">${(w.name || w.id || 'WPN').split(' ')[0]}</span></div>
                 <div class="mob-pylon-top-right"><span class="pylon-ammo-counter mob-pylon-cap">${item.ammo}/${item.maxAmmo}</span><button type="button" class="micro-spec-btn" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button></div>
               </div>
-              <div class="mob-pylon-prob-row"><span class="mob-pylon-sub">${w.rangeKm || 0}km &bull; ${w.damage || 2}HP</span><span class="pk-value-tag mob-pylon-pk">[${w.seeker || 'GUIDED'}]</span></div>
+              <div class="mob-pylon-prob-row"><span class="mob-pylon-sub">${w.rangeKm || 0}km &bull; ${w.damagePerBurst || w.damage || 2}HP</span><span class="pk-value-tag mob-pylon-pk">[${w.seeker || 'GUIDED'}]</span></div>
               <button type="button" class="btn-fire-pylon mob-fire-btn" disabled>ENGAGE</button>
             `;
           } else {
@@ -105,7 +105,7 @@ class PylonBayRenderer {
                 <div class="pylon-name-group"><span class="pylon-name">${w.name || w.id}</span></div>
                 <div style="display:flex;align-items:center;gap:6px;"><button type="button" class="pylon-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button><span class="pylon-ammo-counter">${item.ammo} / ${item.maxAmmo}</span></div>
               </div>
-              <div class="pylon-sub-row"><span class="pylon-seeker-tag">${w.rangeKm || 0}km &bull; <b style="color:#ffb830;">${w.damage || 2} HP</b></span><span class="pk-value-tag">[${w.seeker || 'GUIDED'}]</span></div>
+              <div class="pylon-sub-row"><span class="pylon-seeker-tag">${w.rangeKm || 0}km &bull; <b style="color:#ffb830;">${w.damagePerBurst || w.damage || 2} HP</b></span><span class="pk-value-tag">[${w.seeker || 'GUIDED'}]</span></div>
               <div class="pk-progress-bar-bg"><div class="pk-progress-fill" style="width: 0%;"></div></div>
               <button type="button" class="btn-fire-pylon" disabled>ENGAGE TARGET</button>
             `;
@@ -152,11 +152,18 @@ class PylonBayRenderer {
       if (!item || !item.weapon) return;
       const w = item.weapon;
 
+      if (item.cooldown && item.cooldown > 0) {
+        item.cooldown = Math.max(0, item.cooldown - 0.12);
+      }
+
       const ammoTag = cardEl.querySelector('.pylon-ammo-counter');
       if (ammoTag) ammoTag.textContent = isMobile ? `${item.ammo}/${item.maxAmmo}` : `${item.ammo} / ${item.maxAmmo}`;
       const pkTag = cardEl.querySelector('.pk-value-tag');
       const pkFill = cardEl.querySelector('.pk-progress-fill');
       const fireBtn = cardEl.querySelector('.btn-fire-pylon');
+
+      const pkResult = (typeof Physics !== 'undefined' && Physics.calcPk) ? Physics.calcPk(w, activeUnit, validTarget, clouds) : { pk: 0, label: 'STANDBY', color: '#64748b', hasMixedSeekers: false };
+      const currentPk = (typeof pkResult.pk === 'number' && !isNaN(pkResult.pk)) ? pkResult.pk : 0;
 
       if (pkTag) {
         if (w.isJammerPod) {
@@ -165,29 +172,36 @@ class PylonBayRenderer {
         } else if (w.isDecoy || w.isDecoyDrone) {
           pkTag.textContent = isMobile ? '[DECOY]' : 'DEFENSE: [DECOY]';
           pkTag.style.color = '#c084fc';
+        } else if (w.isGunpod || w.category === 'GUN') {
+          pkTag.textContent = isMobile ? '[GUNPOD]' : 'BATTERY: [GUNPOD]';
+          pkTag.style.color = '#fde047';
         } else if (w.isLaser) {
           pkTag.textContent = isMobile ? '[DEW]' : 'DIRECT: [DEW]';
           pkTag.style.color = '#00f0ff';
         } else {
           const seeker = w.seeker || 'GUIDED';
-          pkTag.textContent = isMobile ? `[${seeker}]` : `HOMING: [${seeker}]`;
+          const mixedTag = pkResult.hasMixedSeekers ? ' [MIXED +25%]' : '';
+          pkTag.textContent = isMobile ? `[${seeker}]${mixedTag}` : `HOMING: [${seeker}]${mixedTag}`;
           const seekerColors = {
-            'ARH': '#00f0ff',
-            'IIR': '#00f5a0',
-            'EO': '#38bdf8',
-            'OPT': '#38bdf8',
-            'PASSIVE_RADAR': '#ffb830',
-            'GPS_INS': '#94a3b8',
-            'INS_RADAR': '#ffd700',
-            'DIRECT_FIRE': '#fbbf24'
+            'ARH': '#00f0ff', 'IIR': '#00f5a0', 'EO': '#38bdf8', 'OPT': '#38bdf8',
+            'PASSIVE_RADAR': '#ffb830', 'GPS_INS': '#94a3b8', 'INS_RADAR': '#ffd700', 'DIRECT_FIRE': '#fbbf24'
           };
-          pkTag.style.color = seekerColors[seeker] || '#7dd3fc';
+          pkTag.style.color = pkResult.hasMixedSeekers ? '#00f5a0' : (seekerColors[seeker] || '#7dd3fc');
         }
       }
 
       if (w.isJammerPod) {
         if (pkFill) pkFill.style.width = `${Math.round((w.jamEfficiency || 0.45)*100)}%`;
         if (fireBtn) { fireBtn.disabled = true; fireBtn.textContent = 'ECM ACTIVE'; }
+        return;
+      }
+
+      if (item.cooldown && item.cooldown > 0) {
+        if (pkFill) pkFill.style.width = '0%';
+        if (fireBtn) {
+          fireBtn.disabled = true;
+          fireBtn.textContent = `RECHARGE (${item.cooldown.toFixed(1)}s)`;
+        }
         return;
       }
 
@@ -204,14 +218,21 @@ class PylonBayRenderer {
         return;
       }
 
+      if (w.isGunpod || w.category === 'GUN') {
+        const hasTokens = (curTokens >= tokenCost);
+        if (pkFill) pkFill.style.width = '100%';
+        if (fireBtn) {
+          fireBtn.disabled = !hasTokens;
+          fireBtn.textContent = hasTokens ? `POD BURST (${w.damagePerBurst || 1.4} HP)` : 'NEED TOK';
+        }
+        return;
+      }
+
       if (!validTarget) {
         if (pkFill) pkFill.style.width = '0%';
         if (fireBtn) { fireBtn.disabled = true; fireBtn.textContent = 'SELECT TARGET'; }
         return;
       }
-
-      const pkResult = (typeof Physics !== 'undefined' && Physics.calcPk) ? Physics.calcPk(w, activeUnit, validTarget, clouds) : { pk: 0, label: 'STANDBY', color: '#64748b' };
-      const currentPk = (typeof pkResult.pk === 'number' && !isNaN(pkResult.pk)) ? pkResult.pk : 0;
 
       if (pkFill) { pkFill.style.width = `${currentPk}%`; pkFill.style.background = pkResult.color || '#00f0ff'; }
 
@@ -224,8 +245,10 @@ class PylonBayRenderer {
           fireBtn.textContent = pkResult.label;
         } else if (curTokens < tokenCost) {
           fireBtn.textContent = 'NEED TOK';
+        } else if (pkResult.hasMixedSeekers) {
+          fireBtn.textContent = `ENGAGE (EST. ${currentPk}% MIXED +25%)`;
         } else {
-          fireBtn.textContent = `ENGAGE (${currentPk}%)`;
+          fireBtn.textContent = `ENGAGE (EST. ${currentPk}%)`;
         }
       }
     });

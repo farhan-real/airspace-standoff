@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Category: TACTICAL MULTIROLE FIGHTERS
+ * AIRSPACE STANDOFF: Category: Tactical Multirole Fighters
  */
 
 window.AIRCRAFT_MULTIROLE = {
@@ -24,7 +24,7 @@ window.AIRCRAFT_MULTIROLE = {
     thrustVector: false,
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27', 'M61A2'],
-    gunRounds: 2400,
+    gunRounds: 125,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
@@ -51,7 +51,7 @@ window.AIRCRAFT_MULTIROLE = {
     thrustVector: false,
     builtInGun: 'GSH-23L',
     allowedGuns: ['GSH-23L', 'BK-27'],
-    gunRounds: 2800,
+    gunRounds: 220,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
@@ -78,7 +78,7 @@ window.AIRCRAFT_MULTIROLE = {
     thrustVector: false,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'GAU-22'],
-    gunRounds: 3200,
+    gunRounds: 510,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
@@ -105,7 +105,7 @@ window.AIRCRAFT_MULTIROLE = {
     thrustVector: false,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
-    gunRounds: 1800,
+    gunRounds: 150,
     totalSlots: 8,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
@@ -132,7 +132,7 @@ window.AIRCRAFT_MULTIROLE = {
     thrustVector: false,
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27', 'M61A2'],
-    gunRounds: 2400,
+    gunRounds: 120,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
@@ -159,7 +159,7 @@ window.AIRCRAFT_MULTIROLE = {
     thrustVector: false,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'GAU-22'],
-    gunRounds: 3200,
+    gunRounds: 412,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -186,7 +186,7 @@ window.AIRCRAFT_MULTIROLE = {
     thrustVector: false,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2'],
-    gunRounds: 3200,
+    gunRounds: 512,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -213,7 +213,7 @@ window.AIRCRAFT_MULTIROLE = {
     thrustVector: false,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'GAU-22'],
-    gunRounds: 3200,
+    gunRounds: 412,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,

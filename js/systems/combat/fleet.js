@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Fleet Formation Generator (150km x 100km Theater)
+ * AIRSPACE STANDOFF: Fleet Formation Generator (150km x 100km Theater)
  */
 
 const FleetGenerator = {
@@ -78,7 +78,7 @@ const FleetGenerator = {
     };
 
     const targetBudget = diffProfile.budgetCap || 260.0;
-    const basePlanes = diff === 'CADET' ? 5 : (diff === 'VETERAN' ? 8 : (diff === 'ELITE' ? 10 : 12));
+    const basePlanes = diff === 'CADET' ? 5 : (diff === 'VETERAN' ? 7 : (diff === 'ELITE' ? 9 : 11));
     const maxPlanes = Math.max(3, basePlanes + Math.floor(rng() * 2));
     const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : 1;
     const catalog = window.AIRCRAFT_CATALOG || {};
@@ -91,8 +91,12 @@ const FleetGenerator = {
       ? ['Su-35S', 'Rafale-C', 'X-02S', 'F-22A', 'Su-57', 'Su-34', 'A-10C', 'MQ-101', 'Su-47', 'ADFX-01', 'Su-30SM']
       : ['Su-57', 'F-22A', 'F-35A', 'Su-35S', 'Eurofighter', 'Rafale-C', 'F-15EX', 'MiG-31BM', 'KF-21', 'ADF-11F', 'MQ-101', 'CFA-44', 'J-16', 'Su-30SM'];
 
-    const aceCandidates = ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'F-22C-COFFIN', 'Su-57', 'Su-47', 'Su-37-COFFIN', 'DARKSTAR'];
-    const aceCallsigns = ['★ Yellow 13 ★', '★ Pixy ★', '★ Mihaly ★', '★ Gault 1 ★', '★ Strigon 1 ★', '★ Wizard 1 ★', '★ Schwarze 1 ★', '★ Espada 1 ★'];
+    // In normal mode (VETERAN), Aces pilot iconic 4.5-gen fighters rather than $60M experimental superfighters
+    const aceCandidates = (diff === 'CADET' || diff === 'VETERAN')
+      ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM']
+      : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'F-22C-COFFIN', 'Su-57', 'Su-47', 'Su-37-COFFIN', 'DARKSTAR'];
+
+    const aceCallsigns = ['Yellow 13', 'Pixy', 'Mihaly', 'Gault 1', 'Strigon 1', 'Wizard 1', 'Schwarze 1', 'Espada 1'];
     const shuffledAces = [...aceCandidates].sort(() => rng() - 0.5);
     const shuffledAceCallsigns = [...aceCallsigns].sort(() => rng() - 0.5);
 
@@ -107,7 +111,7 @@ const FleetGenerator = {
           specId: aceSpecId,
           isAce: true,
           isLead: (a === 0),
-          callsign: shuffledAceCallsigns[a % shuffledAceCallsigns.length] || `★ Ace ${a + 1} ★`
+          callsign: shuffledAceCallsigns[a % shuffledAceCallsigns.length] || `Ace ${a + 1}`
         });
         spentBudget += catalog[aceSpecId].cost;
         acesSpawned++;
@@ -155,7 +159,6 @@ const FleetGenerator = {
         const chosen = aceLoadouts[Math.floor(rng() * aceLoadouts.length)];
         chosen.forEach(wId => unit.installWeapon(wId));
         if (unit.upgradeSockets >= 2) unit.installUpgrade('GAN_AESA_CORE');
-        if (unit.upgradeSockets >= 3) unit.installUpgrade('ADAPTIVE_ECCM_SUITE');
       }
       hostileSquadron.push(unit);
     });
@@ -178,7 +181,7 @@ const FleetGenerator = {
       const isAce = (!isBlue && isLead && (diff === 'ACE' || diff === 'MASTER' || diff === 'LEGEND'));
       items.push({
         specId, isLead, isAce,
-        callsign: isAce ? `★ Ace ${sqName} ★` : `${sqName} ${i + 1}`
+        callsign: isAce ? `Ace ${sqName}` : `${sqName} ${i + 1}`
       });
     }
 

@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Armory Catalog Shelf
- * Real-time active aircraft synchronization and dynamic equip actions.
+ * AIRSPACE STANDOFF: Armory Catalog Shelf
+ * Real-time active aircraft synchronization, gun pod hardpoint mounting and dynamic equip actions.
  */
 
 class ProcurementShelf {
@@ -126,7 +126,7 @@ class ProcurementShelf {
         <div class="cic-type-bar">
           <span class="badge-category" data-tag-title="CYCLIC FIRE RATE" data-tag-tooltip="${g.rpm} Rounds Per Minute deliver instantaneous snapshot burst density.">${g.rpm} RPM</span>
           <span class="badge-mass" data-tag-title="MECHANISM WEIGHT" data-tag-tooltip="+${g.mass} kg deadweight added to forward airframe.">+${g.mass} kg</span>
-          <span class="badge-category" style="color:#00f5a0;" data-tag-title="BURST DAMAGE" data-tag-tooltip="Inflicts ${(g.damagePerSec || 2.5).toFixed(1)} HP per second of continuous fire.">${(g.damagePerSec || 2.5).toFixed(1)} HP/s</span>
+          <span class="badge-category" style="color:#00f5a0;" data-tag-title="BURST DAMAGE" data-tag-tooltip="Inflicts ${(g.damagePerBurst || g.damagePerPulse || 0.85).toFixed(2)} HP per burst with ${g.burstCooldown || 1.0}s cooling.">${(g.damagePerBurst || g.damagePerPulse || 0.85).toFixed(2)} HP/burst</span>
         </div>
         <div class="cic-desc">${g.desc}</div>
         <div style="display:flex;gap:6px;margin-top:4px;">
@@ -185,24 +185,30 @@ class ProcurementShelf {
 
     Object.values(window.WEAPONS_CATALOG || {}).forEach(wpn => {
       if (filterCat === 'UTILITY') {
-        if (wpn.category !== 'POD' && wpn.category !== 'GUN' && !wpn.isJammerPod && !wpn.isDecoy && !wpn.isLaser) return;
+        if (wpn.category !== 'POD' && wpn.category !== 'GUN' && !wpn.isJammerPod && !wpn.isDecoy && !wpn.isLaser && !wpn.isGunpod) return;
+      } else if (filterCat === 'A2A') {
+        if (wpn.category !== 'A2A' && !wpn.isGunpod) return;
+      } else if (filterCat === 'A2G') {
+        if (wpn.category !== 'A2G' && !wpn.isGunpod && !wpn.isBunkerCracker) return;
       } else if (filterCat && filterCat !== 'ALL' && wpn.category !== filterCat) return;
 
       const card = document.createElement('div');
       card.className = 'catalog-item-card';
       const isRestricted = Boolean(wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId));
       const wpnSlotWord = wpn.slots === 1 ? 'SLOT' : 'SLOTS';
+      const typeBadge = wpn.isGunpod ? '<span class="badge-category" style="color:#fde047;border-color:#ca8a04;">GUN POD</span>' : '';
 
       card.innerHTML = `
         <div class="cic-top"><span class="cic-title">${wpn.name}</span><span class="cic-cost">$${Number(wpn.cost || 0).toFixed(1)}M</span></div>
         <div class="cic-type-bar">
           <span class="badge-slots" data-tag-title="HARDPOINT REQUIREMENT" data-tag-tooltip="Requires ${wpn.slots} open pylon station${wpn.slots === 1 ? '' : 's'} (${wpn.minRating || 'Type S'} minimum).">${wpn.slots} ${wpnSlotWord}</span>
           <span class="badge-mass" data-tag-title="ORDNANCE WEIGHT" data-tag-tooltip="+${wpn.mass} kg total carriage weight.">+${wpn.mass} kg</span>
+          ${typeBadge}
           <span class="badge-category" style="color:#00f0ff;" data-tag-title="SEEKER HOMING" data-tag-tooltip="Guidance: ${wpn.seeker || 'GUIDED'} &bull; ${wpn.behaviorDesc || wpn.desc || ''}">${wpn.seeker || 'GUIDED'}</span>
         </div>
         <div class="cic-specs">
           <div data-tag-title="EFFECTIVE RANGE" data-tag-tooltip="Maximum engagement basket: ${wpn.rangeKm || 0} km.">RNG: <b>${wpn.rangeKm || 0}km</b></div>
-          <div data-tag-title="SPEED & WARHEAD" data-tag-tooltip="Speed: Mach ${wpn.speedMach || '1.0'}, Warhead Damage: ${wpn.damage || 0} HP.">SPD: <b>M ${wpn.speedMach || '1.0'}</b> &bull; DMG: <b>${wpn.damage || 0} HP</b></div>
+          <div data-tag-title="SPEED & WARHEAD" data-tag-tooltip="Speed: Mach ${wpn.speedMach || '1.0'}, Warhead Damage: ${wpn.damagePerBurst || wpn.damage || 0} HP.">SPD: <b>M ${wpn.speedMach || '1.0'}</b> &bull; DMG: <b>${wpn.damagePerBurst || wpn.damage || 0} HP</b></div>
         </div>
         <div class="cic-desc">${wpn.behaviorDesc || wpn.desc || ''}</div>
         <div style="display:flex;gap:6px;margin-top:4px;">

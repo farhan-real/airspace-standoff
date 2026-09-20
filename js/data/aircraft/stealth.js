@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Category: STEALTH & 5TH/6TH-GEN AIR DOMINANCE
+ * AIRSPACE STANDOFF: Category: Stealth & 5th/6th-Gen Air Dominance
  */
 
 window.AIRCRAFT_STEALTH = {
@@ -23,12 +23,12 @@ window.AIRCRAFT_STEALTH = {
     isDrone: false,
     thrustVector: true,
     builtInGun: 'M61A2',
-    allowedGuns: ['M61A2', 'GAU-22', 'DE-PULSE'],
-    gunRounds: 3200,
+    allowedGuns: ['M61A2', 'GAU-22', 'DE-PULSE', 'PLSL_LIGHT'],
+    gunRounds: 480,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Benchmark 5th-gen air dominance. Unmatched frontal VLO signature (0.0001m2), 2D pitch thrust vectoring, and Mach 1.06 supercruise.'
+    desc: 'Benchmark 5th-gen air dominance. Unmatched frontal VLO signature (0.0001m2), 2D pitch thrust vectoring, Mach 1.06 supercruise, with weak pulse laser option.'
   },
   'YF-23': {
     id: 'YF-23',
@@ -50,12 +50,12 @@ window.AIRCRAFT_STEALTH = {
     isDrone: false,
     thrustVector: false,
     builtInGun: 'M61A2',
-    allowedGuns: ['M61A2', 'GAU-22', 'DE-PULSE'],
-    gunRounds: 3200,
+    allowedGuns: ['M61A2', 'GAU-22', 'DE-PULSE', 'PLSL_LIGHT'],
+    gunRounds: 480,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Fastest stealth supercruiser in class (Mach 1.15). Diamond wing planform offers ghost stealth (0.0001m2) and superior launch energy.'
+    desc: 'Fastest stealth supercruiser in class (Mach 1.15). Diamond wing planform offers ghost stealth (0.0001m2) and weak pulse laser option.'
   },
   'F-35A': {
     id: 'F-35A',
@@ -77,12 +77,12 @@ window.AIRCRAFT_STEALTH = {
     isDrone: false,
     thrustVector: false,
     builtInGun: 'GAU-22',
-    allowedGuns: ['GAU-22', 'M61A2'],
-    gunRounds: 2600,
+    allowedGuns: ['GAU-22', 'M61A2', 'PLSL_LIGHT'],
+    gunRounds: 182,
     totalSlots: 6,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Supreme battlespace sensor fusion ($38.0M). 95km AESA reach with +45% look-down clutter filter to detect terrain-masking contacts.'
+    desc: 'Supreme battlespace sensor fusion ($38.0M). 95km AESA reach with clutter filter, armed with 25mm Gatling or weak pulse laser.'
   },
   'Su-57': {
     id: 'Su-57',
@@ -104,12 +104,12 @@ window.AIRCRAFT_STEALTH = {
     isDrone: false,
     thrustVector: true,
     builtInGun: 'GSH-30-1',
-    allowedGuns: ['GSH-30-1', 'GSH-23L', 'DE-PULSE'],
-    gunRounds: 1800,
+    allowedGuns: ['GSH-30-1', 'GSH-23L', 'DE-PULSE', 'PLSL_LIGHT'],
+    gunRounds: 150,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: '3D all-axis thrust vectoring paired with cheek radar arrays (140 deg cone). Post-stall Pugachev Cobra agility with internal heavy ordnance.'
+    desc: '3D all-axis thrust vectoring paired with cheek radar arrays. Post-stall Pugachev Cobra agility with weak pulse laser option.'
   },
   'J-20': {
     id: 'J-20',
@@ -131,12 +131,12 @@ window.AIRCRAFT_STEALTH = {
     isDrone: false,
     thrustVector: true,
     builtInGun: 'GSH-30-1',
-    allowedGuns: ['GSH-30-1', 'DE-PULSE'],
-    gunRounds: 1800,
+    allowedGuns: ['GSH-30-1', 'DE-PULSE', 'PLSL_LIGHT'],
+    gunRounds: 150,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Heavy long-range stealth interceptor. Canard delta layout provides high Mach sprint stability for deep BVR missile strikes.'
+    desc: 'Heavy long-range stealth interceptor. Canard delta layout provides high Mach sprint stability with weak pulse laser option.'
   },
   'Su-75': {
     id: 'Su-75',
@@ -158,12 +158,12 @@ window.AIRCRAFT_STEALTH = {
     isDrone: false,
     thrustVector: true,
     builtInGun: 'GSH-30-1',
-    allowedGuns: ['GSH-30-1', 'GSH-23L'],
-    gunRounds: 1800,
+    allowedGuns: ['GSH-30-1', 'GSH-23L', 'PLSL_LIGHT'],
+    gunRounds: 150,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Accessible 5th-gen stealth fighter ($24.0M). Features low RCS (0.007m2) and 3D TVC at half the cost of flagship airframes.'
+    desc: 'Accessible 5th-gen stealth fighter ($24.0M). Features low RCS (0.007m2), 3D TVC, and weak pulse laser option.'
   },
   'FC-31': {
     id: 'FC-31',
@@ -185,12 +185,12 @@ window.AIRCRAFT_STEALTH = {
     isDrone: false,
     thrustVector: false,
     builtInGun: 'GSH-23L',
-    allowedGuns: ['GSH-23L', 'GSH-30-1', 'DE-PULSE'],
-    gunRounds: 2800,
+    allowedGuns: ['GSH-23L', 'GSH-30-1', 'DE-PULSE', 'PLSL_LIGHT'],
+    gunRounds: 250,
     totalSlots: 6,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Twin-engine naval stealth platform balancing internal weapon bay depth with low radar observability.'
+    desc: 'Twin-engine naval stealth platform balancing internal weapon bay depth with low radar observability and weak pulse laser.'
   },
   'J-35': {
     id: 'J-35',
@@ -212,11 +212,11 @@ window.AIRCRAFT_STEALTH = {
     isDrone: false,
     thrustVector: false,
     builtInGun: 'GSH-23L',
-    allowedGuns: ['GSH-23L', 'M61A2'],
-    gunRounds: 2800,
+    allowedGuns: ['GSH-23L', 'M61A2', 'PLSL_LIGHT'],
+    gunRounds: 250,
     totalSlots: 6,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Naval carrier stealth strike jet equipped with high-resolution AESA and anti-surface strike targeting.'
+    desc: 'Naval carrier stealth strike jet equipped with high-resolution AESA, anti-surface targeting, and weak pulse laser.'
   }
 };

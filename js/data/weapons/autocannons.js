@@ -1,22 +1,27 @@
 /**
- * AIRSPACE STANDOFF // Built-In & Podded Aircraft Autocannons
- * Calibrated merge ranges (3.6km - 9.5km), realistic cyclic rates, and ballistic envelopes.
+ * AIRSPACE STANDOFF: Conventional Aircraft Autocannons & Machine Guns
  */
 
-window.AUTOCANNONS_CATALOG = {
+window.AUTOCANNONS_BALLISTIC = {
   'M61A2': {
     id: 'M61A2',
     name: 'M61A2 Vulcan 20mm Gatling',
     caliber: '20mm Rotary',
     rpm: 6000,
     rangeKm: 4.6,
-    damagePerSec: 2.5,
+    damagePerSec: 2.8,
+    damagePerBurst: 0.85,
+    burstCooldown: 1.0,
+    ammoPerBurst: 25,
     coneAngleDeg: 55,
     mass: 115,
     tracerColor: '#fbbf24',
-    badge: '20MM ROTARY CANNON',
-    defaultAmmo: 3200,
-    desc: 'High-cyclic 6-barrel hydraulic Gatling cannon. Wide 55-degree boresight cone excels in high-G snapshot deflection merges.'
+    badge: '55 DEG SNAPSHOT CONE',
+    defaultAmmo: 510,
+    kineticConcussion: 0.30,
+    thermalBloom: 1.0,
+    cloudScattering: 0.0,
+    desc: 'High-cyclic 20mm Gatling. Wide 55-degree snapshot cone excels in high-G turns. Zero thermal bloom preserves VLO stealth; 100% cloud penetration.'
   },
   'GSH-30-1': {
     id: 'GSH-30-1',
@@ -25,12 +30,18 @@ window.AUTOCANNONS_CATALOG = {
     rpm: 1800,
     rangeKm: 5.2,
     damagePerSec: 3.4,
-    coneAngleDeg: 35,
+    damagePerBurst: 1.20,
+    burstCooldown: 1.4,
+    ammoPerBurst: 15,
+    coneAngleDeg: 38,
     mass: 46,
     tracerColor: '#f97316',
     badge: '30MM HIGH-EXPLOSIVE',
-    defaultAmmo: 1800,
-    desc: 'Extremely lightweight recoil-operated 30mm cannon (46 kg). Heavy high-explosive fragmentation shells deliver lethal burst damage.'
+    defaultAmmo: 150,
+    kineticConcussion: 0.35,
+    thermalBloom: 1.0,
+    cloudScattering: 0.0,
+    desc: 'Heavy 30mm cannon firing high-explosive shells. Heavy kinetic knockback drains target energy; completely unaffected by weather clouds.'
   },
   'BK-27': {
     id: 'BK-27',
@@ -38,13 +49,19 @@ window.AUTOCANNONS_CATALOG = {
     caliber: '27mm Revolver',
     rpm: 1700,
     rangeKm: 5.0,
-    damagePerSec: 2.9,
-    coneAngleDeg: 40,
+    damagePerSec: 3.0,
+    damagePerBurst: 1.00,
+    burstCooldown: 1.2,
+    ammoPerBurst: 15,
+    coneAngleDeg: 42,
     mass: 100,
     tracerColor: '#facc15',
     badge: '27MM REVOLVER CANNON',
-    defaultAmmo: 2400,
-    desc: 'Gas-operated revolver cannon. High muzzle velocity and tight projectile dispersion balance single-shot damage with accuracy.'
+    defaultAmmo: 150,
+    kineticConcussion: 0.32,
+    thermalBloom: 1.0,
+    cloudScattering: 0.0,
+    desc: 'Revolver cannon balancing high muzzle velocity with tight projectile dispersion. Zero thermal signature and 100% all-weather penetration.'
   },
   'GAU-8': {
     id: 'GAU-8',
@@ -52,14 +69,20 @@ window.AUTOCANNONS_CATALOG = {
     caliber: '30mm Heavy Gatling',
     rpm: 3900,
     rangeKm: 5.8,
-    damagePerSec: 5.2,
-    coneAngleDeg: 38,
+    damagePerSec: 4.8,
+    damagePerBurst: 1.60,
+    burstCooldown: 1.8,
+    ammoPerBurst: 40,
+    coneAngleDeg: 42,
     mass: 281,
     tracerColor: '#ef4444',
     badge: '30MM ARMOR-PIERCING',
     lockedTo: ['A-10C', 'Su-34', 'Su-25SM3'],
-    defaultAmmo: 4800,
-    desc: '7-barrel hydraulic Gatling firing depleted-uranium armor-piercing incendiary shells. Heavy recoil; shreds armor and fortified installations.'
+    defaultAmmo: 1174,
+    kineticConcussion: 0.45,
+    thermalBloom: 1.0,
+    cloudScattering: 0.0,
+    desc: '7-barrel hydraulic Gatling firing depleted-uranium shells. Devastating kinetic shock drains 25% target energy and shreds surface armor.'
   },
   'GAU-22': {
     id: 'GAU-22',
@@ -67,13 +90,19 @@ window.AUTOCANNONS_CATALOG = {
     caliber: '25mm 4-Barrel',
     rpm: 3300,
     rangeKm: 4.8,
-    damagePerSec: 2.8,
-    coneAngleDeg: 45,
+    damagePerSec: 2.9,
+    damagePerBurst: 0.95,
+    burstCooldown: 1.1,
+    ammoPerBurst: 20,
+    coneAngleDeg: 48,
     mass: 105,
     tracerColor: '#38bdf8',
-    badge: '25MM 4-BARREL GATLING',
-    defaultAmmo: 2600,
-    desc: '4-barrel lightweight Gatling engineered for internal stealth weapon bays. Delivers higher impact energy per shell than 20mm.'
+    badge: 'STEALTH BORESIGHT 25MM',
+    defaultAmmo: 180,
+    kineticConcussion: 0.32,
+    thermalBloom: 1.0,
+    cloudScattering: 0.0,
+    desc: '4-barrel Gatling engineered for stealth bays. Zero thermal emission preserves F-35 stealth; wide 48-degree cone with heavy kinetic concussion.'
   },
   'GSH-23L': {
     id: 'GSH-23L',
@@ -81,13 +110,19 @@ window.AUTOCANNONS_CATALOG = {
     caliber: '23mm Twin',
     rpm: 3400,
     rangeKm: 4.2,
-    damagePerSec: 2.3,
-    coneAngleDeg: 50,
+    damagePerSec: 2.4,
+    damagePerBurst: 0.80,
+    burstCooldown: 0.9,
+    ammoPerBurst: 20,
+    coneAngleDeg: 52,
     mass: 50,
     tracerColor: '#fb923c',
-    badge: '23MM GAST-PRINCIPLE TWIN',
-    defaultAmmo: 2800,
-    desc: 'Gast-principle twin-barrel cannon firing alternating bursts. Extremely compact mechanism with generous spread for close dogfights.'
+    badge: '52 DEG TWIN SNAPSHOT',
+    defaultAmmo: 250,
+    kineticConcussion: 0.25,
+    thermalBloom: 1.0,
+    cloudScattering: 0.0,
+    desc: 'Gast-principle twin 23mm cannon. Generous 52-degree spread for close dogfights; fast 0.9s cooling cycle with zero thermal bloom.'
   },
   'MICRO_GUN': {
     id: 'MICRO_GUN',
@@ -95,42 +130,23 @@ window.AUTOCANNONS_CATALOG = {
     caliber: '12.7mm Lightweight',
     rpm: 2600,
     rangeKm: 3.6,
-    damagePerSec: 1.6,
+    damagePerSec: 1.8,
+    damagePerBurst: 0.55,
+    burstCooldown: 0.8,
+    ammoPerBurst: 20,
     coneAngleDeg: 60,
     mass: 35,
     tracerColor: '#a855f7',
-    badge: '12.7MM UCAV GUN',
-    defaultAmmo: 3600,
-    desc: 'Lightweight low-recoil machine gun engineered for unmanned combat drones with minimal aerodynamic drag.'
-  },
-  'DE-PULSE': {
-    id: 'DE-PULSE',
-    name: 'Solid-State Tactical Laser (80 kW)',
-    caliber: 'Directed Energy (DEW)',
-    rpm: 9999,
-    rangeKm: 7.5,
-    damagePerSec: 4.2,
-    coneAngleDeg: 40,
-    mass: 220,
-    tracerColor: '#00f0ff',
-    badge: 'DIRECTED ENERGY (HITSCAN)',
-    lockedTo: ['F-22A', 'Su-57', 'X-02S', 'B-21', 'J-20', 'F-15EX', 'FC-31', 'YF-23', 'ADF-11F', 'DARKSTAR', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'CFA-44'],
-    defaultAmmo: 300,
-    desc: '80 kW solid-state pulsed fiber laser. Provides instantaneous speed-of-light thermal damage out to 7.5 km. Beam is scattered by weather clouds.'
-  },
-  'EML_GUN': {
-    id: 'EML_GUN',
-    name: 'EML Hyper-Velocity Railgun',
-    caliber: 'Hyper-Velocity Kinetic',
-    rpm: 120,
-    rangeKm: 9.5,
-    damagePerSec: 4.8,
-    coneAngleDeg: 25,
-    mass: 320,
-    tracerColor: '#38bdf8',
-    badge: 'HYPER-VELOCITY RAILGUN',
-    lockedTo: ['CFA-44', 'X-02S', 'ADF-11F'],
-    defaultAmmo: 120,
-    desc: 'Electromagnetic accelerator firing hyper-velocity kinetic penetrators. Out-ranges conventional cannons with heavy penetrative damage.'
+    badge: '60 DEG UCAV SNAPSHOT',
+    defaultAmmo: 350,
+    kineticConcussion: 0.20,
+    thermalBloom: 1.0,
+    cloudScattering: 0.0,
+    desc: 'Ultra-wide 60-degree cone machine gun for unmanned drones. Instantaneous snapshot coverage with zero electrical generator drain.'
   }
 };
+
+window.AUTOCANNONS_CATALOG = Object.assign(
+  window.AUTOCANNONS_CATALOG || {},
+  window.AUTOCANNONS_BALLISTIC
+);

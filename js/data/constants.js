@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // 150km x 100km Theater Constants, Budget Tiers & Flight Lead Modifications
+ * AIRSPACE STANDOFF: 150km x 100km Theater Constants, Budget Tiers & Flight Lead Modifications
  * Realistic aerospace specifications, radar signatures, and rebalanced combat scoring.
  */
 
@@ -31,7 +31,7 @@ window.CONFIG = {
   VP_CIVILIAN_DESTROYED_PENALTY: 800,
   VP_UNIDENTIFIED_FIRE_PENALTY: 250,
   VP_ACE_FIGHTER_BOUNTY: 850,
-  AUTO_GUN_MAX_RANGE_KM: 9.5,
+  AUTO_GUN_MAX_RANGE_KM: 18.0,
   AUTO_GUN_COOLDOWN: 0.35,
   MIN_ALT_FT: 5000,
   MAX_ALT_FT: 65000,
@@ -42,7 +42,7 @@ window.CONFIG = {
   SALVO_PK_BONUS_PER_EXTRA_MISSILE: 0.12,
   SALVO_MAX_PK_BONUS: 0.30,
   SALVO_EVASION_DEGRADATION_PER_EXTRA: 0.25,
-  MIXED_SEEKER_SYNERGY_BONUS: 0.10,
+  MIXED_SEEKER_SYNERGY_BONUS: 0.25,
   RADAR_IDENTIFY_BASE_SEC: 5.5,
   MISSILE_IDENTIFY_BASE_SEC: 3.2,
   STEALTH_IDENTIFY_PENALTY_MULT: 2.0,
@@ -111,10 +111,10 @@ window.CIVILIAN_FLIGHTS = [
 ];
 
 window.AI_DIFFICULTIES = {
-  CADET: { name: 'Permissive Sector', budgetCap: 180.0, scoreMultiplier: 0.60, reactionCooldown: 5.2, attentionSpanSec: 5.0, engagementRangeRatio: 0.50, evasionSkill: 0.20, blunderChance: 0.45, usesDopplerNotch: false, aceCount: 0, multiTarget: false, useAdvancedManeuvers: false },
-  VETERAN: { name: 'Contested Airspace', budgetCap: 260.0, scoreMultiplier: 1.00, reactionCooldown: 3.8, attentionSpanSec: 4.0, engagementRangeRatio: 0.70, evasionSkill: 0.40, blunderChance: 0.28, usesDopplerNotch: true, aceCount: 1, multiTarget: false, useAdvancedManeuvers: false },
-  ELITE: { name: 'Active Combat Zone', budgetCap: 360.0, scoreMultiplier: 1.40, reactionCooldown: 2.2, attentionSpanSec: 2.8, engagementRangeRatio: 0.82, evasionSkill: 0.65, blunderChance: 0.12, usesDopplerNotch: true, aceCount: 1, multiTarget: true, useAdvancedManeuvers: true },
-  ACE: { name: 'High-Threat Grid', budgetCap: 450.0, scoreMultiplier: 1.80, reactionCooldown: 1.4, attentionSpanSec: 1.8, engagementRangeRatio: 0.92, evasionSkill: 0.82, blunderChance: 0.04, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true },
-  MASTER: { name: 'Air Denial Zone', budgetCap: 550.0, scoreMultiplier: 2.20, reactionCooldown: 0.90, attentionSpanSec: 1.3, engagementRangeRatio: 0.98, evasionSkill: 0.92, blunderChance: 0.01, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true },
-  LEGEND: { name: 'Fortress Airspace', budgetCap: 650.0, scoreMultiplier: 2.80, reactionCooldown: 0.45, attentionSpanSec: 0.8, engagementRangeRatio: 1.00, evasionSkill: 0.98, blunderChance: 0.00, usesDopplerNotch: true, aceCount: 3, multiTarget: true, useAdvancedManeuvers: true }
+  CADET: { name: 'Permissive Sector', budgetCap: 180.0, scoreMultiplier: 0.60, reactionCooldown: 7.2, attentionSpanSec: 5.5, engagementRangeRatio: 0.45, evasionSkill: 0.16, blunderChance: 0.62, usesDopplerNotch: false, aceCount: 0, multiTarget: false, useAdvancedManeuvers: false },
+  VETERAN: { name: 'Contested Airspace', budgetCap: 260.0, scoreMultiplier: 1.00, reactionCooldown: 5.8, attentionSpanSec: 4.8, engagementRangeRatio: 0.55, evasionSkill: 0.24, blunderChance: 0.46, usesDopplerNotch: false, aceCount: 1, multiTarget: false, useAdvancedManeuvers: false },
+  ELITE: { name: 'Active Combat Zone', budgetCap: 360.0, scoreMultiplier: 1.40, reactionCooldown: 4.4, attentionSpanSec: 4.0, engagementRangeRatio: 0.65, evasionSkill: 0.34, blunderChance: 0.35, usesDopplerNotch: false, aceCount: 1, multiTarget: false, useAdvancedManeuvers: false },
+  ACE: { name: 'High-Threat Grid', budgetCap: 450.0, scoreMultiplier: 1.80, reactionCooldown: 3.4, attentionSpanSec: 3.2, engagementRangeRatio: 0.74, evasionSkill: 0.44, blunderChance: 0.26, usesDopplerNotch: false, aceCount: 2, multiTarget: true, useAdvancedManeuvers: false },
+  MASTER: { name: 'Air Denial Zone', budgetCap: 550.0, scoreMultiplier: 2.20, reactionCooldown: 2.8, attentionSpanSec: 2.6, engagementRangeRatio: 0.82, evasionSkill: 0.52, blunderChance: 0.18, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true },
+  LEGEND: { name: 'Fortress Airspace', budgetCap: 650.0, scoreMultiplier: 2.80, reactionCooldown: 2.2, attentionSpanSec: 2.0, engagementRangeRatio: 0.90, evasionSkill: 0.60, blunderChance: 0.12, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true }
 };

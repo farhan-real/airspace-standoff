@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Category: AIR SUPERIORITY & HEAVY INTERCEPTORS
+ * AIRSPACE STANDOFF: Category: Air Superiority & Heavy Interceptors
  */
 
 window.AIRCRAFT_SUPERIORITY = {
@@ -24,7 +24,7 @@ window.AIRCRAFT_SUPERIORITY = {
     thrustVector: false,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
-    gunRounds: 1800,
+    gunRounds: 260,
     totalSlots: 8,
     maxPylonRating: 'Type X',
     upgradeSockets: 3,
@@ -50,12 +50,12 @@ window.AIRCRAFT_SUPERIORITY = {
     isDrone: false,
     thrustVector: false,
     builtInGun: 'M61A2',
-    allowedGuns: ['M61A2', 'DE-PULSE'],
-    gunRounds: 3200,
+    allowedGuns: ['M61A2', 'DE-PULSE', 'PLSL_LIGHT'],
+    gunRounds: 500,
     totalSlots: 14,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Heavy missile truck carrying up to 14 ordnance rails and 13,500 kg payload. Designed for fleet-wide BVR salvo saturation.'
+    desc: 'Heavy missile truck carrying up to 14 ordnance rails and 13,500 kg payload. Designed for fleet-wide BVR salvo saturation with weak pulse laser option.'
   },
   'Su-35S': {
     id: 'Su-35S',
@@ -78,7 +78,7 @@ window.AIRCRAFT_SUPERIORITY = {
     thrustVector: true,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
-    gunRounds: 1800,
+    gunRounds: 150,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -105,7 +105,7 @@ window.AIRCRAFT_SUPERIORITY = {
     thrustVector: true,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
-    gunRounds: 1800,
+    gunRounds: 150,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -132,7 +132,7 @@ window.AIRCRAFT_SUPERIORITY = {
     thrustVector: false,
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27', 'M61A2'],
-    gunRounds: 2400,
+    gunRounds: 150,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -159,7 +159,7 @@ window.AIRCRAFT_SUPERIORITY = {
     thrustVector: false,
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27', 'M61A2'],
-    gunRounds: 2400,
+    gunRounds: 125,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
@@ -186,7 +186,7 @@ window.AIRCRAFT_SUPERIORITY = {
     thrustVector: false,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
-    gunRounds: 1800,
+    gunRounds: 150,
     totalSlots: 12,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -213,7 +213,7 @@ window.AIRCRAFT_SUPERIORITY = {
     thrustVector: false,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2'],
-    gunRounds: 3200,
+    gunRounds: 675,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,

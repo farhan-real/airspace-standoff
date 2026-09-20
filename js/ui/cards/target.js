@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Pylon Target Solution Submodule
+ * AIRSPACE STANDOFF: Pylon Target Solution Submodule
  * Displays verified target telemetry and ground/civilian classification.
  */
 
@@ -39,18 +39,19 @@ class PylonTargetSolution {
       } else if (validTarget.isDecoyDrone) {
         rawTgtName = `DECOY [${validTarget.mirroredModel || 'SPOOF'}]`;
         classification = 'TACTICAL DECOY DRONE';
-        armorText = `${Math.round(validTarget.hp)} HP`;
+        armorText = `${Math.max(1, Math.round(validTarget.hp))} HP`;
       } else if (validTarget.isCivilian) {
         rawTgtName = validTarget.flightCode || 'CIVILIAN AIRLINER';
         classification = `CIVILIAN: ${validTarget.model || 'AIRLINER'}`;
-        armorText = `${Math.round(validTarget.hp)}/${validTarget.maxHp} HP`;
+        armorText = `${Math.max(1, Math.round(validTarget.hp))}/${validTarget.maxHp} HP`;
       } else if (validTarget.type) {
         rawTgtName = validTarget.name || validTarget.type;
         classification = `GROUND INSTALLATION: ${validTarget.type}`;
-        armorText = validTarget.isIndestructible ? 'INDESTRUCTIBLE' : `${Math.round(validTarget.hp)}/${validTarget.maxHp} HP`;
+        armorText = validTarget.isIndestructible ? 'INDESTRUCTIBLE' : `${Math.max(1, Math.round(validTarget.hp))}/${validTarget.maxHp} HP`;
       } else {
         rawTgtName = validTarget.spec ? validTarget.spec.id : (validTarget.callsign || 'TARGET');
-        armorText = `${Math.round(validTarget.hp)}/${validTarget.maxHp} HP`;
+        const dispHp = validTarget.hp > 0.05 ? Math.max(1, Math.round(validTarget.hp)) : 0;
+        armorText = `${dispHp}/${validTarget.maxHp} HP`;
         classification = validTarget.spec && validTarget.spec.role ? `${validTarget.spec.role} (${validTarget.callsign || 'PILOT'})` : 'COMBAT AIRCRAFT';
       }
 

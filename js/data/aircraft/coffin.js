@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Category: COFFIN SYNTHETIC VISION AIRFRAMES
+ * AIRSPACE STANDOFF: Category: COFFIN Synthetic Vision Airframes
  */
 
 window.AIRCRAFT_COFFIN = {
@@ -23,15 +23,15 @@ window.AIRCRAFT_COFFIN = {
     isDrone: false,
     isAutonomous: false,
     isCoffin: true,
-    coffinDodgeBonus: 0.08,
+    coffinDodgeBonus: 0.24,
     thrustVector: true,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'BK-27', 'DE-PULSE'],
-    gunRounds: 3200,
+    gunRounds: 510,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual COFFIN enclosed-cockpit conversion. Eliminates pilot G-fatigue limits and grants +8% evasive dodge bonus.'
+    desc: 'Manual COFFIN enclosed-cockpit conversion of real F-15. Eliminates pilot G-fatigue limits, provides 16G structural tolerance, and grants +24% neural evasive dodge bonus.'
   },
   'Su-37-COFFIN': {
     id: 'Su-37-COFFIN',
@@ -53,15 +53,15 @@ window.AIRCRAFT_COFFIN = {
     isDrone: false,
     isAutonomous: false,
     isCoffin: true,
-    coffinDodgeBonus: 0.08,
+    coffinDodgeBonus: 0.26,
     thrustVector: true,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L', 'DE-PULSE'],
-    gunRounds: 1800,
+    gunRounds: 150,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual enclosed-cockpit modification. Enables continuous 16G post-stall turns without G-LOC blackout and grants +8% evasion.'
+    desc: 'Manual enclosed-cockpit modification of real Su-37. Enables continuous 16G post-stall turns without G-LOC blackout and grants +26% neural evasion against missile salvos.'
   },
   'F-22C-COFFIN': {
     id: 'F-22C-COFFIN',
@@ -83,15 +83,15 @@ window.AIRCRAFT_COFFIN = {
     isDrone: false,
     isAutonomous: false,
     isCoffin: true,
-    coffinDodgeBonus: 0.08,
+    coffinDodgeBonus: 0.28,
     thrustVector: true,
     builtInGun: 'DE-PULSE',
-    allowedGuns: ['DE-PULSE', 'M61A2', 'GAU-22'],
-    gunRounds: 300,
+    allowedGuns: ['DE-PULSE', 'M61A2', 'GAU-22', 'PLSL_LIGHT'],
+    gunRounds: 120,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Advanced stealth airframe with enclosed synthetic vision cockpit ($62.0M). 0.00005m2 RCS, 18G envelope, and +8% evasive dodge bonus.'
+    desc: 'Real F-22 airframe with enclosed synthetic vision cockpit ($62.0M). 0.00005m2 RCS, 18G envelope, weak pulse laser option, and +28% neural evasive dodge bonus.'
   },
   'ADF-11F': {
     id: 'ADF-11F',
@@ -113,14 +113,14 @@ window.AIRCRAFT_COFFIN = {
     isDrone: false,
     isAutonomous: false,
     isCoffin: true,
-    coffinDodgeBonus: 0.08,
+    coffinDodgeBonus: 0.30,
     thrustVector: true,
-    builtInGun: 'DE-PULSE',
-    allowedGuns: ['DE-PULSE', 'M61A2', 'BK-27', 'EML_GUN'],
-    gunRounds: 300,
+    builtInGun: 'PLSL_HEAVY',
+    allowedGuns: ['PLSL_HEAVY', 'PLSL_MED', 'PLSL_LIGHT', 'DE-PULSE', 'M61A2', 'BK-27', 'EML_GUN'],
+    gunRounds: 140,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual COFFIN enclosed-cockpit prototype. 20.0G structural limit with directed energy pulse gun, zero G-LOC, and +8% evasive dodge bonus.'
+    desc: 'Advanced fictional superfighter with manual COFFIN interface. 20.0G structural limit, certified for all pulse laser tiers, railgun, zero G-LOC blackout, and supreme +30% neural evasive dodge bonus.'
   }
 };

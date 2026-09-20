@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Category: UNMANNED COMBAT AIR VEHICLES (UCAVs) & SWARM DRONES
+ * AIRSPACE STANDOFF: Category: Unmanned Combat Air Vehicles & Swarm Drones
  */
 
 window.AIRCRAFT_DRONES = {
@@ -23,13 +23,13 @@ window.AIRCRAFT_DRONES = {
     isDrone: true,
     isAutonomous: true,
     thrustVector: false,
-    builtInGun: 'MICRO_GUN',
-    allowedGuns: ['MICRO_GUN'],
-    gunRounds: 3600,
+    builtInGun: 'PLSL_LIGHT',
+    allowedGuns: ['PLSL_LIGHT', 'PLSL_MED', 'MICRO_GUN'],
+    gunRounds: 200,
     totalSlots: 2,
     maxPylonRating: 'Type S',
     upgradeSockets: 2,
-    desc: 'Ultra-low cost ($3.5M) 18G swarm drone. Designed to fly ahead of manned fighters, soak incoming BVR salvos, and execute point saturation strikes.'
+    desc: 'Low-cost 18G fictional swarm drone ($3.5M). Armed with a pulse laser by default with weak to medium pulse laser options for saturation harassment.'
   },
   'MQ-101': {
     id: 'MQ-101',
@@ -51,13 +51,13 @@ window.AIRCRAFT_DRONES = {
     isDrone: true,
     isAutonomous: true,
     thrustVector: true,
-    builtInGun: 'MICRO_GUN',
-    allowedGuns: ['MICRO_GUN'],
-    gunRounds: 3600,
+    builtInGun: 'PLSL_LIGHT',
+    allowedGuns: ['PLSL_LIGHT', 'PLSL_MED', 'MICRO_GUN'],
+    gunRounds: 200,
     totalSlots: 2,
     maxPylonRating: 'Type S',
     upgradeSockets: 2,
-    desc: 'Lightweight supersonic interceptor drone. Boasts Mach 1.15 dash velocity, 20G structural maneuvering limits, and thrust vectoring.'
+    desc: 'Lightweight supersonic fictional interceptor drone (Mach 1.15). Equipped with pulse laser as primary armament with weak to medium pulse laser options.'
   },
   'XQ-58A': {
     id: 'XQ-58A',
@@ -81,11 +81,11 @@ window.AIRCRAFT_DRONES = {
     thrustVector: false,
     builtInGun: 'MICRO_GUN',
     allowedGuns: ['MICRO_GUN', 'GSH-23L'],
-    gunRounds: 3600,
+    gunRounds: 350,
     totalSlots: 4,
     maxPylonRating: 'Type M',
     upgradeSockets: 2,
-    desc: 'Cost-effective stealth loyal wingman ($7.5M). Extends the flight sensor network and carries internal medium BVR missiles.'
+    desc: 'Cost-effective real-world stealth loyal wingman ($7.5M). Extends the flight sensor network and carries internal medium BVR missiles.'
   },
   'Kizilelma': {
     id: 'Kizilelma',
@@ -109,7 +109,7 @@ window.AIRCRAFT_DRONES = {
     thrustVector: false,
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27', 'MICRO_GUN'],
-    gunRounds: 2400,
+    gunRounds: 150,
     totalSlots: 4,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
@@ -137,7 +137,7 @@ window.AIRCRAFT_DRONES = {
     thrustVector: false,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'MICRO_GUN'],
-    gunRounds: 1800,
+    gunRounds: 150,
     totalSlots: 6,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -165,7 +165,7 @@ window.AIRCRAFT_DRONES = {
     thrustVector: false,
     builtInGun: 'MICRO_GUN',
     allowedGuns: ['MICRO_GUN', 'BK-27'],
-    gunRounds: 3600,
+    gunRounds: 350,
     totalSlots: 4,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
@@ -193,7 +193,7 @@ window.AIRCRAFT_DRONES = {
     thrustVector: false,
     builtInGun: 'MICRO_GUN',
     allowedGuns: ['MICRO_GUN'],
-    gunRounds: 3600,
+    gunRounds: 350,
     totalSlots: 2,
     maxPylonRating: 'Type S',
     upgradeSockets: 4,

@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Simulation Scoring & Engagement Logging
- * Rebalanced kill scoring formula and salvo composition breakdown.
+ * Synchronized pilot scoring, exact math parity, and engagement event tracking.
  */
 
 class SimulationScoring {
@@ -77,6 +77,10 @@ class SimulationScoring {
     const rawTgt = targetEntity ? (targetEntity.callsign || targetEntity.name || 'BOGEY [?]') : 'BOGEY [?]';
     const tgtName = String(rawTgt).replace(/<[^>]*>/g, '');
 
+    if (sourceUnit && sourceUnit.scorePoints !== undefined) {
+      sourceUnit.scorePoints = Math.max(0, (sourceUnit.scorePoints || 0) - penalty);
+    }
+
     this.timelineEvents.push({
       time: this.getElapsedTimeString(),
       type: 'roe_penalty',
@@ -110,7 +114,6 @@ class SimulationScoring {
     const salvoCount = details.salvoCount || (isSalvo ? 2 : 1);
     const salvoBreakdown = details.salvoBreakdown || (isSalvo ? `x${salvoCount}` : '');
     const dmg = details.damage || 2;
-    const pts = dmg * 25;
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(),
@@ -124,8 +127,7 @@ class SimulationScoring {
       damage: dmg,
       isSalvo: isSalvo,
       salvoCount: salvoCount,
-      salvoBreakdown: salvoBreakdown,
-      points: pts
+      salvoBreakdown: salvoBreakdown
     });
   }
 
@@ -182,8 +184,11 @@ class SimulationScoring {
     if (targetEntity.isFlightLead) pts = Math.round(pts * 1.5);
     if (isAce) pts += (cfg.VP_ACE_FIGHTER_BOUNTY || 850);
 
-    if (firingSource && firingSource.kills !== undefined && !isDecoy) {
-      firingSource.kills++;
+    if (firingSource) {
+      if (firingSource.kills !== undefined && !isDecoy) firingSource.kills++;
+      if (firingSource.scorePoints !== undefined && !isDecoy) {
+        firingSource.scorePoints = (firingSource.scorePoints || 0) + pts;
+      }
     }
 
     const logDesc = `${srcName} (${srcType}) destroyed ${tgtName} (${tgtType}) using ${wpnName}${salvoTag}`.trim();
@@ -212,8 +217,12 @@ class SimulationScoring {
     });
   }
 
-  recordCivilianShootdown(firingTeam, civilianFlight) {
+  recordCivilianShootdown(firingTeam, civilianFlight, firingSource) {
     const penalty = (window.CONFIG && window.CONFIG.VP_CIVILIAN_DESTROYED_PENALTY) || 800;
+
+    if (firingSource && firingSource.scorePoints !== undefined) {
+      firingSource.scorePoints = Math.max(0, (firingSource.scorePoints || 0) - penalty);
+    }
 
     if (firingTeam === 'friendly') {
       this.logScoreEvent('friendly', -penalty, 'ROE VIOLATION: Civilian flight destroyed (' + civilianFlight.flightCode + ')');

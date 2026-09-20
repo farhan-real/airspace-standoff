@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Flight Kinematics, RF Detection Envelopes & Countermeasure Calculations
+ * AIRSPACE STANDOFF: Flight Kinematics, RF Detection Envelopes & Countermeasure Calculations
  */
 
 const Physics = {
@@ -149,14 +149,13 @@ const Physics = {
     } else {
       aspectDiff = Math.abs((target.heading !== undefined ? target.heading : angleToTarget) - angleToTarget);
       while (aspectDiff > Math.PI) aspectDiff = Math.abs(aspectDiff - Math.PI * 2);
-      if (target.isNotching && (weapon.seeker === 'ARH' || weapon.seeker === 'PASSIVE_RADAR')) aspectScore = attacker.hasIRST ? 0.65 : 0.25;
+      if (target.isNotching && (weapon.seeker === 'ARH' || weapon.seeker === 'PASSIVE_RADAR')) aspectScore = attacker.hasIRST ? 0.75 : 0.45;
       else if (aspectDiff > 2.2) aspectScore = 1.00;
       else if (aspectDiff < 0.8) aspectScore = 0.85;
     }
 
     const weatherPenalty = (weatherClouds && (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT') && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
     const afterburnerBonus = ((weapon.seeker === 'IIR' || weapon.seeker === 'EO') && target.engineAlpha > 0.85) ? 0.15 : 0.0;
-    const targetAgi = target.spec ? (target.spec.AGI_0 || 0.85) : (target.isCivilian ? 0.20 : 0.0);
     const heavyBonus = weapon.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
 
     let jammerPenalty = 0.0;
@@ -170,21 +169,49 @@ const Physics = {
     let salvoBonus = 0.0;
     let salvoCount = 0;
     let hasMixedSeekers = false;
+    const mixedBonusVal = (window.CONFIG && window.CONFIG.MIXED_SEEKER_SYNERGY_BONUS) || 0.25;
+
     if (window.Game && window.Game.missiles) {
       const inbounds = window.Game.missiles.filter(m => m.active && m.target && m.target.id === target.id);
       salvoCount = inbounds.length;
       if (salvoCount >= 1) {
         salvoBonus = Math.min(0.30, salvoCount * 0.12);
-        const seekers = new Set(inbounds.map(m => m.weapon ? m.weapon.seeker : ''));
-        if (weapon.seeker && !seekers.has(weapon.seeker) && seekers.size > 0) { hasMixedSeekers = true; salvoBonus += 0.10; }
+        const isRf = (s) => (s === 'ARH' || s === 'PASSIVE_RADAR' || s === 'INS_RADAR');
+        const isOpt = (s) => (s === 'IIR' || s === 'EO' || s === 'OPT');
+        const thisRf = isRf(weapon.seeker);
+        const thisOpt = isOpt(weapon.seeker);
+
+        const hasOtherRf = inbounds.some(m => m.weapon && isRf(m.weapon.seeker));
+        const hasOtherOpt = inbounds.some(m => m.weapon && isOpt(m.weapon.seeker));
+
+        if ((thisRf && hasOtherOpt) || (thisOpt && hasOtherRf)) {
+          hasMixedSeekers = true;
+          salvoBonus += mixedBonusVal;
+        }
       }
     }
 
-    const shooterStressPenalty = (attacker.stress >= 0.65 && !attacker.isCoffin && !attacker.spec.isDrone) ? 0.15 : 0.0;
-    const coffinDeduction = (target.isCoffin || target.coffinDodgeBonus) ? (target.coffinDodgeBonus || 0.08) : 0.0;
-    const leadDeduction = (target.isFlightLead && target.leadEvasionBonus) ? target.leadEvasionBonus : 0.0;
+    const activeEvasion = Math.max(
+      (target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? target.activeManeuverBonus : 0.0,
+      target.isNotching ? 0.28 : 0.0,
+      target.cmTimer > 0 ? 0.30 : 0.0
+    );
+    const passiveBaseline = Math.max(
+      target.isCoffin ? (target.coffinDodgeBonus || 0.25) : 0.0,
+      target.isAce ? (target.aceEvasionBonus || 0.08) : 0.0,
+      target.isFlightLead ? (target.leadEvasionBonus || 0.08) : 0.0
+    );
 
-    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - (targetAgi * 0.10) + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty - coffinDeduction - leadDeduction;
+    const targetEnergy = Math.max(0.20, Math.min(1.0, target.energy !== undefined ? target.energy : 1.0));
+    let effectiveDefenseEstimate = Math.min(0.50, Math.max(activeEvasion, passiveBaseline) + 0.15 * Math.min(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
+    if (hasMixedSeekers) {
+      effectiveDefenseEstimate *= 0.55;
+    }
+
+    const energyBleedBonus = (1.0 - targetEnergy) * 0.25;
+    const shooterStressPenalty = (attacker.stress >= 0.65 && !attacker.isCoffin && !attacker.spec.isDrone) ? 0.15 : 0.0;
+
+    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty;
     const pkPercent = Math.round(Math.max(15, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = (dist >= sweetMin && dist <= sweetMax) ? (isClosing ? '^' : 'v') : (isClosing ? (dist > sweetMax ? '^' : 'v') : 'v');

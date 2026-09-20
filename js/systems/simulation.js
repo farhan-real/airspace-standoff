@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Simulation System Orchestrator (150km x 100km Theater)
- * Real-time time warp, weather cloud generation, combat physics loop, win evaluations.
+ * AIRSPACE STANDOFF: Simulation System Orchestrator (150km x 100km Theater)
+ * Real-time time warp, weather cloud generation, combat physics loop, victory evaluations.
  */
 
 class SimulationSystem {
@@ -29,7 +29,7 @@ class SimulationSystem {
 
   logScoreEvent(team, pts, reason) { this.scoring.logScoreEvent(team, pts, reason); }
   recordKillEvent(team, tgt, src, details) { this.scoring.recordKillEvent(team, tgt, src, details); }
-  recordCivilianShootdown(team, civ) { this.scoring.recordCivilianShootdown(team, civ); }
+  recordCivilianShootdown(team, civ, src) { this.scoring.recordCivilianShootdown(team, civ, src); }
   getElapsedTimeString() { return this.scoring.getElapsedTimeString(); }
 
   setTimeWarp(multiplier) {
@@ -217,11 +217,13 @@ class SimulationSystem {
     const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0);
     const friendlyBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'friendly' && s.hp <= 0);
     const hostileBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'hostile' && s.hp <= 0);
-    const winThreshold = (window.CONFIG && window.CONFIG.VP_WIN_THRESHOLD) || 3000;
 
-    if (this.game.vpAlly >= winThreshold || allHostilesDead || hostileBunkerDestroyed) {
-      this.game.triggerGameOver(true, hostileBunkerDestroyed ? 'HOSTILE COMMAND BUNKER DESTROYED' : 'BLUE FORCES SECURED AIR SUPERIORITY');
-    } else if (this.game.vpHostile >= winThreshold || allAlliesDead || friendlyBunkerDestroyed) {
+    if (allHostilesDead) {
+      const winReason = hostileBunkerDestroyed
+        ? 'HOSTILE AIR FLEET NEUTRALIZED & COMMAND BUNKER DESTROYED'
+        : 'ALL HOSTILE AIR ASSETS NEUTRALIZED - AIR SUPERIORITY SECURED';
+      this.game.triggerGameOver(true, winReason);
+    } else if (allAlliesDead || friendlyBunkerDestroyed) {
       this.game.triggerGameOver(false, friendlyBunkerDestroyed ? 'FRIENDLY COMMAND BUNKER DESTROYED' : 'ALL ALLIED AIR ASSETS NEUTRALIZED');
     }
   }

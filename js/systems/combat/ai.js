@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Tactical AI Commander
- * Multi-missile salvo execution, difficulty-scaled Ace blunders, and autonomous RTB.
+ * AIRSPACE STANDOFF: Tactical AI Commander
+ * Scaled difficulty curves; notching and advanced movement restricted to very high difficulties.
  */
 
 class TacticalAICommander {
@@ -8,7 +8,7 @@ class TacticalAICommander {
     this.game = gameEngine;
     this.focusUnitId = null;
     this.focusTimer = 0.0;
-    this.actionCooldown = 1.4;
+    this.actionCooldown = 1.6;
     this.defensiveReactionCooldown = 0.0;
     this.aceSalvoTimer = 0.0;
   }
@@ -23,7 +23,7 @@ class TacticalAICommander {
 
     const diffKey = this.game.aiDifficulty || 'VETERAN';
     const profile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) || {
-      reactionCooldown: 3.8, attentionSpanSec: 4.0, engagementRangeRatio: 0.70, evasionSkill: 0.40, blunderChance: 0.28, usesDopplerNotch: true, multiTarget: false, useAdvancedManeuvers: false
+      reactionCooldown: 5.8, attentionSpanSec: 4.8, engagementRangeRatio: 0.55, evasionSkill: 0.24, blunderChance: 0.46, usesDopplerNotch: false, multiTarget: false, useAdvancedManeuvers: false
     };
 
     const aliveHostiles = (this.game.hostileAircraft || []).filter(a => a.hp > 0);
@@ -42,8 +42,8 @@ class TacticalAICommander {
 
     for (const h of aliveHostiles) {
       if (!h.isAce) {
-        this.handleDefensiveBehavior(h, profile, dt);
-        this.handleNavigation(h, candidateAirTargets, visibleBunkers, profile, dt);
+        this.handleDefensiveBehavior(h, profile, diffKey, dt);
+        this.handleNavigation(h, candidateAirTargets, visibleBunkers, profile, diffKey, dt);
       }
     }
 
@@ -64,7 +64,7 @@ class TacticalAICommander {
     if (!focus || this.focusTimer <= 0) {
       focus = aliveHostiles.find(h => !h.isRTB) || aliveHostiles[0];
       this.focusUnitId = focus ? focus.id : null;
-      this.focusTimer = profile.attentionSpanSec || 3.5;
+      this.focusTimer = profile.attentionSpanSec || 4.8;
     }
     return focus;
   }
@@ -75,8 +75,8 @@ class TacticalAICommander {
 
     if (res.isBingo && !shooter.isRTB) {
       const rtbRoll = Math.random();
-      const rtbChance = diffKey === 'CADET' ? 0.20 : (diffKey === 'VETERAN' ? 0.40 : (diffKey === 'ELITE' ? 0.75 : 0.95));
-      if (rtbRoll < rtbChance) {
+      const rtbChances = { CADET: 0.20, VETERAN: 0.35, ELITE: 0.55, ACE: 0.75, MASTER: 0.85, LEGEND: 0.95 };
+      if (rtbRoll < (rtbChances[diffKey] || 0.40)) {
         shooter.orderRTB();
         if (this.game.radar) this.game.radar.spawnCombatText(shooter.x, shooter.y, 'BINGO AMMO: RTB REARM', '#f59e0b');
       }
@@ -91,7 +91,7 @@ class TacticalAICommander {
       if (this.game.tokenBucketRed < tokenCost || pylon.item.ammo <= 0) break;
       pylon.item.ammo--;
       this.game.tokenBucketRed = Math.max(0, this.game.tokenBucketRed - tokenCost);
-      this.actionCooldown = profile.reactionCooldown || 3.0;
+      this.actionCooldown = profile.reactionCooldown || 5.0;
 
       if (pylon.weapon.isLaser) {
         if (typeof AudioSys !== 'undefined') AudioSys.playLaser();
@@ -111,9 +111,9 @@ class TacticalAICommander {
   coordinateAceTactics(aces, candidateTargets, clouds, allMissiles, profile, diffKey, dt) {
     if (!aces || aces.length === 0) return;
 
-    // Difficulty-scaled Ace blunder and evasion rates
-    const aceBlunders = { CADET: 0.35, VETERAN: 0.25, ELITE: 0.08, ACE: 0.03, MASTER: 0.01, LEGEND: 0.00 };
-    const aceBlunderChance = aceBlunders[diffKey] !== undefined ? aceBlunders[diffKey] : 0.12;
+    const aceBlunders = { CADET: 0.65, VETERAN: 0.50, ELITE: 0.38, ACE: 0.28, MASTER: 0.20, LEGEND: 0.15 };
+    const aceBlunderChance = aceBlunders[diffKey] !== undefined ? aceBlunders[diffKey] : 0.40;
+    const isVeryHighDiff = (diffKey === 'MASTER' || diffKey === 'LEGEND');
 
     for (const ace of aces) {
       if (ace.hp <= 0) continue;
@@ -122,73 +122,54 @@ class TacticalAICommander {
       if (incoming.length > 0) {
         const nearest = incoming.reduce((min, m) => m.distanceToTarget < min.distanceToTarget ? m : min, incoming[0]);
         const isRadar = Boolean(nearest.weapon && (nearest.weapon.seeker === 'ARH' || nearest.weapon.seeker === 'PASSIVE_RADAR'));
+        const isStealth = Boolean(nearest.isStealthMissile || (nearest.rcs <= 0.005));
         const blunderedDefense = Math.random() < aceBlunderChance;
+        const triggerDist = isStealth ? (blunderedDefense ? 4.5 : 6.5) : (blunderedDefense ? 7.5 : 11.0);
 
-        if (nearest.distanceToTarget < (blunderedDefense ? 20.0 : 36.0)) {
-          if (isRadar) {
-            const notchOffset = blunderedDefense ? (Math.PI / 2.6) : (Math.PI / 2);
-            const perpHeading = nearest.heading + notchOffset;
+        if (nearest.distanceToTarget < triggerDist) {
+          // Doppler notching is strictly reserved for very high difficulties
+          if (isVeryHighDiff && isRadar && !blunderedDefense) {
+            const perpHeading = nearest.heading + Math.PI / 2;
             let dAngle = perpHeading - ace.heading;
             while (dAngle < -Math.PI) dAngle += Math.PI * 2;
             while (dAngle > Math.PI) dAngle -= Math.PI * 2;
-            ace.heading += Math.max(-2.8 * dt, Math.min(2.8 * dt, dAngle));
-            if (!blunderedDefense || Math.random() < 0.60) {
+            ace.heading += Math.max(-1.10 * dt, Math.min(1.10 * dt, dAngle));
+            if (Math.abs(dAngle) < 0.18) {
               ace.isNotching = true;
+              ace.activeManeuverId = 'DOPPLER_NOTCH';
+              ace.activeManeuverTimer = 6.0;
+              ace.activeManeuverBonus = 0.48;
               if (ace.chaff > 0 && ace.cmTimer <= 0) ace.deployCountermeasures();
             }
           } else {
-            ace.engineAlpha = blunderedDefense ? 0.60 : 0.40;
-          }
-        }
-
-        if (nearest.distanceToTarget < 14.0 && ace.activeManeuverTimer <= 0) {
-          const failBreak = blunderedDefense && Math.random() < 0.40;
-          if (!failBreak) {
-            if (ace.thrustVector) {
-              ace.activeManeuverTimer = 2.8;
-              ace.activeManeuverBonus = diffKey === 'VETERAN' ? 0.28 : 0.38;
-              ace.speed = Math.max(0.18, ace.speed * 0.45);
-              if (this.game.radar) {
-                this.game.radar.spawnCombatText(ace.x, ace.y, 'ACE COBRA (+38% EVASION)', '#ffd700');
-                this.game.radar.spawnShockwave(ace.x, ace.y, '#ffd700', 35);
-              }
-            } else {
-              ace.activeManeuverTimer = 3.0;
-              ace.activeManeuverBonus = diffKey === 'VETERAN' ? 0.20 : 0.28;
-              ace.speed = Math.max(0.25, ace.speed - 0.14);
-              if (this.game.radar) {
-                this.game.radar.spawnCombatText(ace.x, ace.y, 'ACE BREAK TURN (+28% EVASION)', '#ffd700');
-                this.game.radar.spawnShockwave(ace.x, ace.y, '#ffd700', 25);
-              }
-            }
+            // Standard break turn for all other difficulties
+            const awayHeading = nearest.heading + (Math.random() < 0.5 ? 0.75 : -0.75);
+            let dAngle = awayHeading - ace.heading;
+            while (dAngle < -Math.PI) dAngle += Math.PI * 2;
+            while (dAngle > Math.PI) dAngle -= Math.PI * 2;
+            const turnRateCap = (diffKey === 'CADET' ? 0.70 : (diffKey === 'VETERAN' ? 0.85 : 1.10));
+            ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, dAngle));
+            ace.isNotching = false;
+            ace.activeManeuverId = 'BREAK_TURN';
+            ace.activeManeuverTimer = 5.0;
+            ace.activeManeuverBonus = 0.38;
+            ace.engineAlpha = blunderedDefense ? 0.75 : 0.50;
+            if (ace.chaff > 0 && ace.cmTimer <= 0 && Math.random() < 0.45) ace.deployCountermeasures();
           }
         }
       }
 
       if (typeof AIMissileTactics !== 'undefined') {
         const acePlan = AIMissileTactics.selectAceTargetAndSalvo(ace, candidateTargets, clouds, allMissiles, diffKey);
-
-        if (!acePlan && ace.equippedWeapons.every(p => !p || p.ammo <= 0) && !ace.isRTB) {
-          const rtbChance = diffKey === 'VETERAN' ? 0.40 : (diffKey === 'ELITE' ? 0.75 : 0.95);
-          if (Math.random() < rtbChance) {
-            ace.orderRTB();
-            if (this.game.radar) this.game.radar.spawnCombatText(ace.x, ace.y, 'ACE RTB REARM', '#ffd700');
-          }
-          continue;
-        }
-
         if (acePlan && acePlan.target) {
           const tgt = acePlan.target;
           ace.radarLockedTarget = tgt;
-
           const interceptAngle = Physics.calcLeadInterceptAngle(ace.x, ace.y, ace.speed || 0.9, tgt.x, tgt.y, tgt.heading || 0, tgt.speed || 0);
           let diff = interceptAngle - ace.heading;
           while (diff < -Math.PI) diff += Math.PI * 2;
           while (diff > Math.PI) diff -= Math.PI * 2;
-          ace.heading += Math.max(-2.6 * dt, Math.min(2.6 * dt, diff));
-
-          const dToTgt = Math.hypot(tgt.x - ace.x, tgt.y - ace.y);
-          ace.engineAlpha = dToTgt > 25.0 ? 0.95 : 0.65;
+          const turnRateCap = (diffKey === 'CADET' ? 0.70 : (diffKey === 'VETERAN' ? 0.85 : 1.10));
+          ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, diff));
 
           if (this.aceSalvoTimer <= 0 && this.game.tokenBucketRed >= 0.70 && !ace.isRTB) {
             for (const pylon of acePlan.pylonsToFire) {
@@ -199,48 +180,74 @@ class TacticalAICommander {
               if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
             }
             ace.recalculateWeight();
-            this.aceSalvoTimer = diffKey === 'VETERAN' ? 4.2 : 3.0;
+            this.aceSalvoTimer = isVeryHighDiff ? 3.4 : 5.2;
           }
         }
       }
     }
   }
 
-  handleDefensiveBehavior(hostile, profile, dt) {
+  handleDefensiveBehavior(hostile, profile, diffKey, dt) {
     if (!hostile || !this.game.missiles || hostile.hp <= 0) return;
     const incoming = this.game.missiles.filter(m => m.active && m.target && m.target.id === hostile.id);
     if (incoming.length === 0) return;
 
     const nearestMsl = incoming.reduce((min, m) => (m.distanceToTarget < min.distanceToTarget ? m : min), incoming[0]);
-    if (nearestMsl.distanceToTarget < (profile.multiTarget ? 35.0 : 28.0)) {
-      if (Math.random() < (profile.blunderChance || 0.28)) return;
+    const isStealth = Boolean(nearestMsl.isStealthMissile || (nearestMsl.rcs <= 0.005));
+    const isVeryHighDiff = (diffKey === 'MASTER' || diffKey === 'LEGEND');
 
-      if (hostile.hasMaldDecoy && hostile.maldDecoyCharges > 0 && Math.random() < 0.75) {
-        hostile.deployDecoyDrone();
-      }
+    const defTiers = {
+      CADET:   { reactDist: 5.5, stealthDist: 3.5, blunderChance: 0.58, cmChance: 0.18, turnMult: 0.52, bonus: 0.28 },
+      VETERAN: { reactDist: 6.8, stealthDist: 4.2, blunderChance: 0.46, cmChance: 0.26, turnMult: 0.62, bonus: 0.35 },
+      ELITE:   { reactDist: 8.0, stealthDist: 5.0, blunderChance: 0.35, cmChance: 0.36, turnMult: 0.72, bonus: 0.40 },
+      ACE:     { reactDist: 9.2, stealthDist: 5.8, blunderChance: 0.26, cmChance: 0.45, turnMult: 0.80, bonus: 0.45 },
+      MASTER:  { reactDist: 10.0, stealthDist: 6.2, blunderChance: 0.18, cmChance: 0.52, turnMult: 0.86, bonus: 0.48 },
+      LEGEND:  { reactDist: 10.8, stealthDist: 6.8, blunderChance: 0.12, cmChance: 0.60, turnMult: 0.92, bonus: 0.52 }
+    };
 
-      const hasCm = (hostile.chaff > 0 || hostile.countermeasures > 0);
-      if (nearestMsl.distanceToTarget < 20.0 && hasCm && hostile.cmTimer <= 0) {
-        if (Math.random() < (profile.evasionSkill || 0.40)) hostile.deployCountermeasures();
-      }
+    const tier = defTiers[diffKey] || defTiers.VETERAN;
+    const reactDistance = isStealth ? tier.stealthDist : tier.reactDist;
+    if (nearestMsl.distanceToTarget > reactDistance) return;
 
-      if (profile.usesDopplerNotch && nearestMsl.weapon && (nearestMsl.weapon.seeker === 'ARH' || nearestMsl.weapon.seeker === 'PASSIVE_RADAR')) {
-        const desiredPerp = nearestMsl.heading + Math.PI / 2;
-        let diff = desiredPerp - hostile.heading;
-        while (diff < -Math.PI) diff += Math.PI * 2;
-        while (diff > Math.PI) diff -= Math.PI * 2;
-        const agi = (hostile.spec && hostile.spec.AGI_0) ? hostile.spec.AGI_0 : 0.85;
-        hostile.heading += Math.max(-agi * 1.8 * dt, Math.min(agi * 1.8 * dt, diff));
-        if (Math.abs(diff) < 0.30) {
-          hostile.isNotching = true;
-          hostile.activeManeuverTimer = 2.8;
-          hostile.activeManeuverBonus = 0.30 * (profile.evasionSkill || 0.40);
-        }
+    if (Math.random() < tier.blunderChance) return;
+
+    const hasCm = (hostile.chaff > 0 || hostile.countermeasures > 0);
+    if (nearestMsl.distanceToTarget < 5.0 && hasCm && hostile.cmTimer <= 0) {
+      if (Math.random() < tier.cmChance) hostile.deployCountermeasures();
+    }
+
+    // Notching and advanced movement restricted strictly to very high difficulties
+    if (!isVeryHighDiff || !profile.usesDopplerNotch) {
+      const awayHeading = nearestMsl.heading + (Math.random() < 0.5 ? 0.75 : -0.75);
+      let diff = awayHeading - hostile.heading;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      const turnCap = (hostile.spec && hostile.spec.AGI_0 ? hostile.spec.AGI_0 : 0.8) * tier.turnMult;
+      hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
+      hostile.activeManeuverTimer = 5.0;
+      hostile.activeManeuverBonus = tier.bonus;
+      hostile.activeManeuverId = 'BREAK_TURN';
+      hostile.isNotching = false;
+      return;
+    }
+
+    if (isVeryHighDiff && profile.usesDopplerNotch && nearestMsl.weapon && (nearestMsl.weapon.seeker === 'ARH' || nearestMsl.weapon.seeker === 'PASSIVE_RADAR')) {
+      const desiredPerp = nearestMsl.heading + Math.PI / 2;
+      let diff = desiredPerp - hostile.heading;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      const agi = (hostile.spec && hostile.spec.AGI_0) ? hostile.spec.AGI_0 : 0.85;
+      hostile.heading += Math.max(-agi * tier.turnMult * dt, Math.min(agi * tier.turnMult * dt, diff));
+      if (Math.abs(diff) < 0.20) {
+        hostile.isNotching = true;
+        hostile.activeManeuverTimer = 6.0;
+        hostile.activeManeuverBonus = tier.bonus;
+        hostile.activeManeuverId = 'DOPPLER_NOTCH';
       }
     }
   }
 
-  handleNavigation(hostile, candidateAirTargets, visibleBunkers, profile, dt) {
+  handleNavigation(hostile, candidateAirTargets, visibleBunkers, profile, diffKey, dt) {
     if (!hostile || hostile.activeManeuverTimer > 0 || hostile.isRTB || hostile.hp <= 0) return;
 
     let target = null;
@@ -250,19 +257,43 @@ class TacticalAICommander {
       target = candidateAirTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), candidateAirTargets[0]);
     }
 
+    const navTiers = {
+      CADET:   { turnMult: 0.44, throttle: 0.50, overshootDist: 7.0, overshootChance: 0.60 },
+      VETERAN: { turnMult: 0.54, throttle: 0.55, overshootDist: 6.5, overshootChance: 0.45 },
+      ELITE:   { turnMult: 0.65, throttle: 0.60, overshootDist: 5.5, overshootChance: 0.32 },
+      ACE:     { turnMult: 0.75, throttle: 0.70, overshootDist: 4.8, overshootChance: 0.22 },
+      MASTER:  { turnMult: 0.82, throttle: 0.75, overshootDist: 4.2, overshootChance: 0.16 },
+      LEGEND:  { turnMult: 0.88, throttle: 0.80, overshootDist: 3.8, overshootChance: 0.10 }
+    };
+
+    const tier = navTiers[diffKey] || navTiers.VETERAN;
+
     if (!target) {
       hostile.heading = Math.PI;
-      hostile.engineAlpha = 0.60;
+      hostile.engineAlpha = tier.throttle;
       return;
     }
 
     hostile.radarLockedTarget = target;
+    const dist = Math.hypot(target.x - hostile.x, target.y - hostile.y);
+
+    if (dist < tier.overshootDist) {
+      const closingDiff = Math.abs(hostile.heading - (target.heading || 0));
+      if (closingDiff > 1.8 && Math.random() < tier.overshootChance) {
+        hostile.engineAlpha = tier.throttle;
+        return;
+      }
+    }
+
     const targetHeading = Math.atan2(target.y - hostile.y, target.x - hostile.x);
     let diff = targetHeading - hostile.heading;
     while (diff < -Math.PI) diff += Math.PI * 2;
     while (diff > Math.PI) diff -= Math.PI * 2;
+
     const agi = (hostile.spec && hostile.spec.AGI_0) ? hostile.spec.AGI_0 : 0.85;
-    hostile.heading += Math.max(-agi * (profile.multiTarget ? 1.8 : 1.5) * dt, Math.min(agi * (profile.multiTarget ? 1.8 : 1.5) * dt, diff));
+    const turnCap = agi * tier.turnMult;
+    hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
+    hostile.engineAlpha = tier.throttle;
   }
 }
 

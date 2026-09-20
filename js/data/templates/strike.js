@@ -10,7 +10,7 @@ window.TEMPLATES_STRIKE = {
     chosenGunId: 'GAU-8',
     weapons: ['GPU-5A', 'GBU-39', 'AIM-9X-2', 'AN-ALQ-184'],
     upgrades: ['TITANIUM_COCKPIT', 'EXPANDED_CM_DISPENSER'],
-    desc: 'Armored titanium bathtub cockpit (7 HP). 4,800 rounds of 30mm GAU-8 Avenger (5.2 DPS) and secondary 30mm gunpod.'
+    desc: 'Armored titanium bathtub cockpit (7 HP). 1,174 rounds of 30mm GAU-8 Avenger (4.8 DPS) and secondary 30mm gunpod.'
   },
   'A-10C Battlefield Interdiction': {
     name: 'A-10C Battlefield Interdiction',

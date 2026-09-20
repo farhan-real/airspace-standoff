@@ -1,7 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Guided Missile Kinematics & Multi-Stage Propulsion
- * Calibrated relative speeds, initial booster separation impulse, ProNav guidance,
- * explicit stages (BOOST, SUSTAIN, MIDCOURSE, COAST, PULSE 2, LOFT, DIVE, TERMINAL), and AoE.
+ * AIRSPACE STANDOFF: Guided Missile Kinematics & Terminal Impact Resolution
+ * ProNav guidance with maneuver vulnerability, Doppler notch evasion, and impact-time hit resolution.
  */
 
 class MissileKinetics {
@@ -15,45 +14,26 @@ class MissileKinetics {
     const category = weapon.category || 'A2A';
     const range = weapon.rangeKm || 40;
 
-    if (category === 'A2A' && range <= 35) {
-      return { boostDuration: 1.4, accelMultiplier: 3.2, hasSustainedThrust: false };
-    }
-    if (trait === 'SWARM_RIPPLE' || trait === 'ALL_ASPECT_BURST') {
-      return { boostDuration: 1.2, accelMultiplier: 2.8, hasSustainedThrust: false };
-    }
-    if (trait === 'RAMJET_SUSTAINED' || trait === 'EXTREME_STANDOFF') {
-      return { boostDuration: 2.4, accelMultiplier: 2.2, hasSustainedThrust: true };
-    }
-    if (trait === 'STEALTH_CRUISE') {
-      return { boostDuration: 1.4, accelMultiplier: 1.8, hasSustainedThrust: true };
-    }
-    if (trait === 'GLIDE_SATURATION') {
-      return { boostDuration: 0.0, accelMultiplier: 1.0, hasSustainedThrust: false };
-    }
-    if (trait === 'DUAL_PULSE_SURGE') {
-      return { boostDuration: 2.6, accelMultiplier: 2.2, hasSustainedThrust: false };
-    }
-    if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') {
-      return { boostDuration: 3.6, accelMultiplier: 2.4, hasSustainedThrust: false };
-    }
+    if (category === 'A2A' && range <= 35) return { boostDuration: 1.4, accelMultiplier: 3.2, hasSustainedThrust: false };
+    if (trait === 'SWARM_RIPPLE' || trait === 'ALL_ASPECT_BURST') return { boostDuration: 1.2, accelMultiplier: 2.8, hasSustainedThrust: false };
+    if (trait === 'RAMJET_SUSTAINED' || trait === 'EXTREME_STANDOFF') return { boostDuration: 2.4, accelMultiplier: 2.2, hasSustainedThrust: true };
+    if (trait === 'STEALTH_CRUISE') return { boostDuration: 1.4, accelMultiplier: 1.8, hasSustainedThrust: true };
+    if (trait === 'GLIDE_SATURATION') return { boostDuration: 0.0, accelMultiplier: 1.0, hasSustainedThrust: false };
+    if (trait === 'DUAL_PULSE_SURGE') return { boostDuration: 2.6, accelMultiplier: 2.2, hasSustainedThrust: false };
+    if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') return { boostDuration: 3.6, accelMultiplier: 2.4, hasSustainedThrust: false };
     return { boostDuration: 2.8, accelMultiplier: 2.0, hasSustainedThrust: false };
   }
 
   static getMaxTurnRate(missile) {
     const w = missile.weapon || {};
     const trait = w.trait || '';
-    const category = w.category || 'A2A';
-
     if (trait === 'SNAP_TURN') return 3.4;
     if (trait === 'HOBS_VANE') return 3.0;
-    if (category === 'A2A' && (w.rangeKm || 40) <= 35) return 2.6;
-
+    if (w.category === 'A2A' && (w.rangeKm || 40) <= 35) return 2.6;
     if (trait === 'RAMJET_SUSTAINED' || trait === 'STEALTH_SEEKER' || trait === 'DUAL_PULSE_SURGE') return 1.8;
-    if (category === 'A2A') return 1.4;
-
+    if (w.category === 'A2A') return 1.4;
     if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') return 0.75;
     if (trait === 'STEALTH_CRUISE' || trait === 'GLIDE_SATURATION') return 0.60;
-
     return 1.3;
   }
 
@@ -78,7 +58,6 @@ class MissileKinetics {
     missile.initialAlt = source ? (source.alt || 0.5) : 0.5;
 
     missile.stage = (w.trait === 'GLIDE_SATURATION') ? 'GLIDE' : 'BOOST';
-
     missile.isPassiveRadar = Boolean(w.seeker === 'PASSIVE_RADAR');
     missile.launchStealthDuration = missile.isPassiveRadar ? 3.2 : 0.0;
     missile.pathRevealDistance = missile.isPassiveRadar ? 20.0 : 999.0;
@@ -110,16 +89,26 @@ class MissileKinetics {
     const losRate = (dx * vry - dy * vrx) / Math.max(0.04, dist * dist);
     const closingVel = -((dx * vrx + dy * vry) / Math.max(0.1, dist));
 
-    const N = 3.8;
-    let turnRate = 0;
+    let N = 3.8;
 
+    if (tgt.activeManeuverTimer > 0) {
+      if (tgt.isNotching && missile.weapon && (missile.weapon.seeker === 'ARH' || missile.weapon.seeker === 'PASSIVE_RADAR')) {
+        N = 0.6;
+      } else if (tgt.activeManeuverId === 'BARREL_ROLL') {
+        N = 1.2;
+      } else if (tgt.activeManeuverId === 'BREAK_TURN') {
+        N = 2.4;
+      }
+    }
+
+    let turnRate = 0;
     if (closingVel > 0 && dist > 1.0) {
       turnRate = N * (closingVel / vm) * losRate;
     } else {
       let diff = los - missile.heading;
       while (diff < -Math.PI) diff += Math.PI * 2;
       while (diff > Math.PI) diff -= Math.PI * 2;
-      turnRate = diff * 2.4;
+      turnRate = diff * (tgt.activeManeuverTimer > 0 ? 1.0 : 2.4);
     }
 
     const maxRate = MissileKinetics.getMaxTurnRate(missile);
@@ -131,10 +120,9 @@ class MissileKinetics {
     const dist = missile.distanceToTarget;
     const prevDist = missile.prevDistanceToTarget;
 
-    if (dist <= 0.45) return { shouldTrigger: true, isHitCandidate: true };
-    if (prevDist <= 0.85 && dist > prevDist) return { shouldTrigger: true, isHitCandidate: true };
-    if (prevDist <= 2.8 && dist > prevDist && dist > 1.2) {
-      return { shouldTrigger: true, isHitCandidate: false, reason: 'KINETIC OVERSHOOT' };
+    if (dist <= 0.55) return { shouldTrigger: true, isHitCandidate: true };
+    if (prevDist <= 1.0 && dist > prevDist) {
+      return { shouldTrigger: true, isHitCandidate: true };
     }
     return { shouldTrigger: false };
   }
@@ -142,7 +130,6 @@ class MissileKinetics {
   static updateSpeedAndFlight(missile, dt, distToTarget) {
     const w = missile.weapon || {};
 
-    // 1. Initial booster burn stage for all rocket-boosted weapons
     if (missile.age <= missile.boostDuration) {
       missile.stage = 'BOOST';
       const needed = Math.max(0.1, missile.peakSpeed - missile.launchSpeed);
@@ -151,7 +138,6 @@ class MissileKinetics {
       return;
     }
 
-    // 2. Dual-pulse second stage ignition (PL-15E)
     if (w.trait === 'DUAL_PULSE_SURGE') {
       if (!missile.hasIgnitedPulseTwo && distToTarget <= 22.0) {
         missile.hasIgnitedPulseTwo = true;
@@ -161,7 +147,6 @@ class MissileKinetics {
           window.Game.radar.spawnShockwave(missile.x, missile.y, '#00f0ff', 24);
         }
       }
-
       if (missile.pulseTwoTimer > 0) {
         missile.pulseTwoTimer -= dt;
         missile.stage = 'PULSE 2';
@@ -170,7 +155,6 @@ class MissileKinetics {
       }
     }
 
-    // 3. Lofted hypersonic aero-ballistic profile (R-37M, Kinzhal)
     if (missile.isLofting) {
       if (distToTarget > 28.0) {
         missile.stage = 'LOFT';
@@ -185,14 +169,12 @@ class MissileKinetics {
       return;
     }
 
-    // 4. Ramjet continuous sustained thrust
     if (w.trait === 'RAMJET_SUSTAINED' || w.trait === 'EXTREME_STANDOFF') {
       missile.stage = (distToTarget <= 16.0) ? 'TERMINAL' : 'RAMJET';
       missile.speed = Math.max(missile.peakSpeed, missile.speed);
       return;
     }
 
-    // 5. Stealth cruise & glide munitions
     if (w.trait === 'STEALTH_CRUISE') {
       missile.stage = (distToTarget <= 15.0) ? 'TERMINAL' : 'CRUISE';
       missile.speed = Math.max(missile.peakSpeed, missile.speed);
@@ -204,32 +186,82 @@ class MissileKinetics {
       return;
     }
 
-    // 6. Boost-sustain long-range stealth BVR (AIM-260 JATM)
     if (w.trait === 'STEALTH_SEEKER') {
-      if (distToTarget <= 20.0) {
-        missile.stage = 'TERMINAL';
-      } else if (missile.age <= (missile.boostDuration + 14.0)) {
+      if (distToTarget <= 20.0) missile.stage = 'TERMINAL';
+      else if (missile.age <= (missile.boostDuration + 14.0)) {
         missile.stage = 'SUSTAIN';
         missile.speed = Math.max(missile.peakSpeed * 0.95, missile.speed);
         return;
-      } else {
-        missile.stage = 'COAST';
-      }
-    } else if (distToTarget <= 18.0) {
-      missile.stage = 'TERMINAL';
-    } else if (w.seeker === 'PASSIVE_RADAR') {
-      missile.stage = 'HOMING';
-    } else if (w.trait === 'DUAL_PULSE_SURGE') {
-      missile.stage = 'MIDCOURSE';
-    } else if (w.category === 'A2A') {
-      missile.stage = (w.rangeKm <= 35) ? 'TERMINAL' : (missile.age < 12.0 ? 'MIDCOURSE' : 'COAST');
-    } else {
-      missile.stage = 'COAST';
-    }
+      } else missile.stage = 'COAST';
+    } else if (distToTarget <= 18.0) missile.stage = 'TERMINAL';
+    else if (w.seeker === 'PASSIVE_RADAR') missile.stage = 'HOMING';
+    else if (w.trait === 'DUAL_PULSE_SURGE') missile.stage = 'MIDCOURSE';
+    else if (w.category === 'A2A') missile.stage = (w.rangeKm <= 35) ? 'TERMINAL' : (missile.age < 12.0 ? 'MIDCOURSE' : 'COAST');
+    else missile.stage = 'COAST';
 
     const minSustain = (w.category === 'A2A' && (w.rangeKm || 40) <= 35) ? 1.85 : 2.05;
     const decayRate = 0.045;
     missile.speed = Math.max(minSustain, missile.speed - decayRate * dt);
+  }
+
+  static resolveHitProbability(missile, target, weatherClouds, salvoCount) {
+    const w = missile.weapon || {};
+    const basePk = (w.T_0 || 0.80);
+
+    const isManeuvering = (target.activeManeuverTimer > 0 && target.glocTimer <= 0);
+    const activeManeuver = isManeuvering ? (target.activeManeuverBonus || 0.45) : 0.0;
+
+    const angleToTarget = Math.atan2(target.y - missile.y, target.x - missile.x);
+    let aspectDiff = Math.abs((target.heading !== undefined ? target.heading : angleToTarget) - angleToTarget);
+    while (aspectDiff > Math.PI) aspectDiff = Math.abs(aspectDiff - Math.PI * 2);
+
+    let aspectScore = 0.90;
+    if (aspectDiff > 2.2) aspectScore = 1.00;
+    else if (aspectDiff < 0.8) aspectScore = 0.85;
+
+    const notchBonus = (target.isNotching && (w.seeker === 'ARH' || w.seeker === 'PASSIVE_RADAR'))
+      ? (missile.source && missile.source.hasIRST ? 0.16 : 0.38 * (1.0 - (w.antiNotchBonus || 0)))
+      : 0.0;
+    const chaffBonus = (target.cmTimer > 0)
+      ? (w.seeker === 'ARH' ? 0.34 * (1.0 - (w.decoyResistance || w.flareResistance || 0)) : 0.18)
+      : 0.0;
+
+    const primaryActiveEvasion = Math.max(activeManeuver, notchBonus, chaffBonus);
+    const primaryPassiveBaseline = Math.max(
+      target.isCoffin ? (target.coffinDodgeBonus || 0.25) : 0.0,
+      target.isAce ? (target.aceEvasionBonus || 0.08) : 0.0,
+      target.isFlightLead ? (target.leadEvasionBonus || 0.08) : 0.0
+    );
+
+    let hasMixedSeekers = false;
+    const mixedBonusVal = (window.CONFIG && window.CONFIG.MIXED_SEEKER_SYNERGY_BONUS) || 0.25;
+    if (window.Game && window.Game.missiles) {
+      const inbounds = window.Game.missiles.filter(m => (m.active || m.id === missile.id) && m.target && m.target.id === target.id);
+      const isRf = (s) => (s === 'ARH' || s === 'PASSIVE_RADAR' || s === 'INS_RADAR');
+      const isOpt = (s) => (s === 'IIR' || s === 'EO' || s === 'OPT');
+      const hasRf = inbounds.some(m => m.weapon && isRf(m.weapon.seeker));
+      const hasOpt = inbounds.some(m => m.weapon && isOpt(m.weapon.seeker));
+      if (hasRf && hasOpt) {
+        hasMixedSeekers = true;
+      }
+    }
+
+    let effectiveDefense = Math.min(0.72, primaryActiveEvasion + 0.30 * primaryPassiveBaseline);
+    if (hasMixedSeekers) {
+      effectiveDefense *= 0.55;
+    }
+
+    const salvoBonus = Math.min(0.30, Math.max(0, (salvoCount || 1) - 1) * 0.12);
+    const weatherPenalty = (weatherClouds && (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT') && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
+    const afterburnerBonus = ((w.seeker === 'IIR' || w.seeker === 'EO') && target.engineAlpha > 0.85) ? 0.15 : 0.0;
+    const mixedSynergyBonus = hasMixedSeekers ? mixedBonusVal : 0.0;
+
+    const rawProb = (basePk * aspectScore) - effectiveDefense + salvoBonus + mixedSynergyBonus + afterburnerBonus - weatherPenalty;
+    if (isManeuvering) {
+      return Math.max(0.12, Math.min(0.95, rawProb));
+    }
+    const floor = (target.isAce ? 0.16 : (target.isCoffin ? 0.08 : (target.isFlightLead ? 0.10 : 0.14)));
+    return Math.max(floor, Math.min(0.95, rawProb));
   }
 
   static applyThermobaricAoE(missile, primaryTarget, directDamage, game) {
@@ -255,15 +287,9 @@ class MissileKinetics {
         other.hp = Math.max(0, other.hp - aoeDamage);
         if (typeof other.applyActionStress === 'function') other.applyActionStress(0.30);
 
-        if (game.radar) {
-          game.radar.spawnCombatText(other.x, other.y, `BLAST -${aoeDamage}HP`, '#f59e0b');
-        }
-
+        if (game.radar) game.radar.spawnCombatText(other.x, other.y, `BLAST -${aoeDamage}HP`, '#f59e0b');
         if (wasAlive && other.hp <= 0 && game.simulation) {
-          game.simulation.recordKillEvent(firingTeam, other, sourceUnit, {
-            weapon: missile.weapon, isSalvo: false, salvoCount: 1,
-            salvoBreakdown: 'MPBM Secondary Blast'
-          });
+          game.simulation.recordKillEvent(firingTeam, other, sourceUnit, { weapon: missile.weapon, isSalvo: false, salvoCount: 1, salvoBreakdown: 'MPBM Secondary Blast' });
         }
       }
     }

@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Guided Missile Entity & Engagement Resolution
- * Enforces ProNav guidance, multi-stage exhaust modulation, and momentum-preserving overshoots.
+ * Enforces ProNav guidance, impact-time hit resolution, and contextual maneuver deflection reasons.
  */
 
 class MissileEntity {
@@ -105,10 +105,7 @@ class MissileEntity {
       MissileKinetics.updateSpeedAndFlight(this, dt, dist);
       MissileKinetics.computeGuidance(this, dt);
     } else {
-      const desiredLead = Physics.calcLeadInterceptAngle(
-        this.x, this.y, this.speed, this.target.x, this.target.y,
-        this.target.heading || 0, this.target.speed || 0
-      );
+      const desiredLead = Physics.calcLeadInterceptAngle(this.x, this.y, this.speed, this.target.x, this.target.y, this.target.heading || 0, this.target.speed || 0);
       let diff = desiredLead - this.heading;
       while (diff < -Math.PI) diff += Math.PI * 2;
       while (diff > Math.PI) diff -= Math.PI * 2;
@@ -139,11 +136,7 @@ class MissileEntity {
     if (typeof MissileKinetics !== 'undefined') {
       const trig = MissileKinetics.checkTerminalTrigger(this);
       if (trig.shouldTrigger) {
-        if (trig.isHitCandidate) {
-          this.resolveTerminalEngagement(weatherClouds);
-        } else {
-          this.triggerLostTrack(trig.reason || 'KINETIC OVERSHOOT');
-        }
+        this.resolveTerminalEngagement(weatherClouds);
       }
     } else if (dist <= 0.8) {
       this.resolveTerminalEngagement(weatherClouds);
@@ -157,6 +150,9 @@ class MissileEntity {
     this.stage = 'COAST';
     this.heading += (Math.random() * 0.3 - 0.15);
     if (this.target && this.target.missilesEvadedCount !== undefined) this.target.missilesEvadedCount++;
+    if (this.target && this.target.energy !== undefined) {
+      this.target.energy = Math.max(0.20, this.target.energy - 0.15);
+    }
     if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
     if (window.Game && window.Game.radar) window.Game.radar.spawnCombatText(this.x, this.y, `${reason}`, '#f97316');
   }
@@ -164,7 +160,7 @@ class MissileEntity {
   resolveTerminalEngagement(weatherClouds) {
     const tgt = this.target;
     const w = this.weapon;
-    if (!tgt || tgt.hp <= 0) { this.active = false; this.isDead = true; return; }
+    if (!tgt || tgt.hp <= 0.05) { this.active = false; this.isDead = true; return; }
 
     let concurrent = 1;
     let salvoDetails = '';
@@ -209,13 +205,9 @@ class MissileEntity {
       tgt.takeDamage(dmg, w.isBunkerCracker);
       this.isDead = true;
       if (!wasDead && tgt.hp <= 0 && window.Game && window.Game.simulation) {
-        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, {
-          weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails
-        });
+        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       } else if (!wasDead && tgt.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
-        window.Game.simulation.scoring.recordHitEvent(this.team, tgt, this.source, {
-          weapon: w, damage: dmg, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails
-        });
+        window.Game.simulation.scoring.recordHitEvent(this.team, tgt, this.source, { weapon: w, damage: dmg, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       }
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, true);
@@ -230,59 +222,22 @@ class MissileEntity {
       return;
     }
 
-    const pkData = Physics.calcPk(w, this.source, tgt, weatherClouds);
-    const basePk = pkData.pk / 100.0;
-    const suppression = Math.max(0.35, 1.0 - Math.max(0, concurrent - 1) * 0.25);
-    let deductions = 0.0;
-
-    if (tgt.isNotching && (w.seeker === 'ARH' || w.seeker === 'PASSIVE_RADAR')) {
-      deductions += (this.source && this.source.hasIRST ? 0.20 : 0.45 * (1.0 - (w.antiNotchBonus || 0))) * suppression;
-    }
-
-    if (tgt.cmTimer > 0) {
-      deductions += (w.seeker === 'ARH' ? 0.35 * (1.0 - (w.decoyResistance || w.flareResistance || 0)) : 0.20) * (tgt.isAce ? 1.45 : 1.0) * suppression;
-    }
-
-    if (tgt.activeManeuverBonus > 0 && tgt.glocTimer <= 0) {
-      deductions += tgt.activeManeuverBonus * 0.40 * suppression;
-    }
-
-    if (tgt.isCoffin || tgt.coffinDodgeBonus) {
-      deductions += (tgt.coffinDodgeBonus || 0.08) * suppression;
-    }
-
-    if (tgt.isAce || tgt.aceEvasionBonus) {
-      deductions += (tgt.aceEvasionBonus || 0.32) * suppression;
-    }
-
-    if (tgt.isFlightLead && tgt.leadEvasionBonus) {
-      deductions += tgt.leadEvasionBonus * suppression;
-    }
-
-    if (tgt.glocTimer > 0) deductions = 0.0;
-    else if (tgt.stress >= 0.65 && !tgt.isCoffin && !tgt.spec.isDrone) deductions *= 0.50;
-
-    const floor = tgt.isAce ? 0.04 : (tgt.isFlightLead ? 0.05 : 0.10);
-    const hitChance = Math.max(floor, Math.min(0.95, basePk - deductions));
+    const hitChance = (typeof MissileKinetics !== 'undefined')
+      ? MissileKinetics.resolveHitProbability(this, tgt, weatherClouds, concurrent)
+      : 0.65;
 
     if (Math.random() <= hitChance) {
       this.isDead = true;
       let finalDamage = w.damage;
-      if (tgt.isFlightLead && tgt.missileDamageReduction) {
-        finalDamage = Math.max(1, finalDamage - tgt.missileDamageReduction);
-      }
+      if (tgt.isFlightLead && tgt.missileDamageReduction) finalDamage = Math.max(1, finalDamage - tgt.missileDamageReduction);
       tgt.hp = Math.max(0, tgt.hp - finalDamage);
+      if (tgt.hp < 0.05) tgt.hp = 0;
       if (typeof tgt.applyActionStress === 'function') tgt.applyActionStress(0.35);
-      if (this.source) this.source.scorePoints = (this.source.scorePoints || 0) + (finalDamage * 25);
 
       if (tgt.hp <= 0 && window.Game && window.Game.simulation) {
-        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, {
-          weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails
-        });
+        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       } else if (tgt.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
-        window.Game.simulation.scoring.recordHitEvent(this.team, tgt, this.source, {
-          weapon: w, damage: finalDamage, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails
-        });
+        window.Game.simulation.scoring.recordHitEvent(this.team, tgt, this.source, { weapon: w, damage: finalDamage, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       }
 
       if (w.trait === 'SHOCKWAVE_DETONATION' && typeof MissileKinetics !== 'undefined') {
@@ -295,14 +250,17 @@ class MissileEntity {
         }
       }
     } else {
-      let reason = 'KINETIC MISS';
-      const aceBreakRate = tgt.aceEvasionBonus ? Math.min(0.85, tgt.aceEvasionBonus * 2.2) : 0.60;
-      if (tgt.isAce && Math.random() < aceBreakRate) reason = 'ACE BREAK TURN';
-      else if (tgt.isFlightLead && tgt.leadEvasionBonus && Math.random() < 0.75) reason = 'LEAD EVASION BREAK';
-      else if (tgt.isCoffin) reason = 'COFFIN DODGE';
-      else if (tgt.isNotching) reason = 'DOPPLER NOTCH';
-      else if (tgt.cmTimer > 0) reason = 'CHAFF SPOOF';
-      else if (tgt.activeManeuverBonus > 0) reason = 'EVASION';
+      let reason = 'KINETIC OVERSHOOT';
+      if (tgt.activeManeuverId === 'DOPPLER_NOTCH' || tgt.isNotching) reason = 'DOPPLER NOTCH (GATE LOSS)';
+      else if (tgt.activeManeuverId === 'PUSH_COBRA') reason = 'COBRA BRAKE (OVERSHOOT)';
+      else if (tgt.activeManeuverId === 'BARREL_ROLL') reason = 'BARREL ROLL (LEAD LOSS)';
+      else if (tgt.activeManeuverId === 'SPLIT_S') reason = 'SPLIT-S (KINETIC ESCAPE)';
+      else if (tgt.activeManeuverId === 'EMERGENCY_CM' || tgt.cmTimer > 0) reason = 'CHAFF DECOY SEDUCTION';
+      else if (tgt.activeManeuverId === 'ZOOM_CLIMB') reason = 'ENERGY PERCH (GRAVITY DEFICIT)';
+      else if (tgt.activeManeuverId === 'BREAK_TURN') reason = 'STANDARD DEFENSIVE BREAK';
+      else if (tgt.isCoffin) reason = 'COFFIN NEURAL DODGE';
+      else if (tgt.isAce) reason = 'ACE DEFENSIVE BREAK';
+      else if (tgt.activeManeuverBonus > 0) reason = 'STANDARD DEFENSIVE BREAK';
       this.triggerLostTrack(reason);
     }
   }

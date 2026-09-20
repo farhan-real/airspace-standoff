@@ -1,49 +1,49 @@
 /**
- * AIRSPACE STANDOFF // Preconfigured Loadouts: UCAVs & Collaborative Combat Drones
+ * AIRSPACE STANDOFF: Preconfigured Loadouts: UCAVs & Collaborative Combat Drones
  */
 
 window.TEMPLATES_DRONES = {
-  // MQ-99 Swarm Drone
+  // MQ-99 Swarm Drone (Fictional)
   'MQ-99 Expendable Decoy & Recon': {
     name: 'MQ-99 Expendable Decoy & Recon',
     specId: 'MQ-99',
     roleCategory: 'SWARM & DRONES',
-    chosenGunId: 'MICRO_GUN',
+    chosenGunId: 'PLSL_LIGHT',
     weapons: ['MAM'],
     upgrades: ['SWARM_AI_COPROCESSOR'],
-    desc: 'Low-cost 18G swarm drone ($3.5M). Flies ahead of manned formations to draw hostile fire and map enemy radar positions.'
+    desc: 'Low-cost 18G fictional swarm drone ($3.5M). Armed with PLSL-10 pulse laser and MAM micro-missiles to draw hostile fire.'
   },
   'MQ-99 Tactical Micro-Missile Swarm': {
     name: 'MQ-99 Tactical Micro-Missile Swarm',
     specId: 'MQ-99',
     roleCategory: 'SWARM & DRONES',
-    chosenGunId: 'MICRO_GUN',
+    chosenGunId: 'PLSL_LIGHT',
     weapons: ['MAM', 'MAM'],
     upgrades: ['SWARM_AI_COPROCESSOR'],
-    desc: 'Double-capacity micro-missile saturation payload (16x micro-missiles) to overwhelm hostile CIWS point defenses.'
+    desc: 'Pulse laser armed fictional drone with double micro-missile saturation payload (16x) to overwhelm hostile defenses.'
   },
 
-  // MQ-101 Agile Swarm Drone
+  // MQ-101 Agile Swarm Drone (Fictional)
   'MQ-101 Collaborative Combat Aircraft (CCA)': {
     name: 'MQ-101 Collaborative Combat Aircraft (CCA)',
     specId: 'MQ-101',
     roleCategory: 'SWARM & DRONES',
-    chosenGunId: 'MICRO_GUN',
+    chosenGunId: 'PLSL_LIGHT',
     weapons: ['MAM'],
     upgrades: ['SWARM_AI_COPROCESSOR'],
-    desc: 'Supersonic interceptor drone (Mach 1.15, $4.5M). 20G structural maneuvering limits with thrust vectoring.'
+    desc: 'Supersonic fictional interceptor drone (Mach 1.15). Armed with PLSL-10 pulse laser and 20G structural limits.'
   },
   'MQ-101 High-G Intercept Drone': {
     name: 'MQ-101 High-G Intercept Drone',
     specId: 'MQ-101',
     roleCategory: 'SWARM & DRONES',
-    chosenGunId: 'MICRO_GUN',
+    chosenGunId: 'PLSL_MED',
     weapons: ['MAM', 'MAM'],
     upgrades: ['SWARM_AI_COPROCESSOR', 'SUPERCRUISE_VCE'],
-    desc: 'High-speed 20G autonomous interceptor designed to merge instantly with enemy formations and deploy micro-swarms.'
+    desc: 'High-speed 20G autonomous interceptor mounting the PLSL-20 medium pulse laser for medium-range directed-energy fire.'
   },
 
-  // XQ-58A Valkyrie
+  // XQ-58A Valkyrie (Real)
   'XQ-58A Loyal Wingman Escort': {
     name: 'XQ-58A Loyal Wingman Escort',
     specId: 'XQ-58A',
@@ -51,7 +51,7 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'MICRO_GUN',
     weapons: ['AIM-120D', 'ADM-160B'],
     upgrades: ['SWARM_AI_COPROCESSOR', 'MALD_DECOY_SYSTEM'],
-    desc: 'Cost-effective stealth wingman ($7.5M). Carries internal BVR missiles and launches MALD decoy drones to seduce enemy radar.'
+    desc: 'Cost-effective stealth wingman ($7.5M). Carries internal BVR missiles and launches MALD decoy drones.'
   },
   'XQ-58A Forward Missile Magazine': {
     name: 'XQ-58A Forward Missile Magazine',
@@ -63,7 +63,7 @@ window.TEMPLATES_DRONES = {
     desc: 'Collaborative combat aircraft fielding 8 internal AMRAAM missiles to extend the squadron missile magazine.'
   },
 
-  // Bayraktar Kizilelma
+  // Bayraktar Kizilelma (Real)
   'Kizilelma Carrier Combat UCAV': {
     name: 'Kizilelma Carrier Combat UCAV',
     specId: 'Kizilelma',
@@ -83,7 +83,7 @@ window.TEMPLATES_DRONES = {
     desc: 'Ramjet Meteor armed autonomous carrier fighter capable of 16G maneuvers without biological pilot fatigue.'
   },
 
-  // Sukhoi S-70 Okhotnik
+  // Sukhoi S-70 Okhotnik (Real)
   'S-70 Heavy Strike UCAV': {
     name: 'S-70 Heavy Strike UCAV',
     specId: 'S-70',
@@ -103,7 +103,7 @@ window.TEMPLATES_DRONES = {
     desc: 'Internal carriage of stealth cruise missiles to penetrate heavy enemy air defenses and destroy command nodes.'
   },
 
-  // MQ-28 Ghost Bat & RQ-180 White Bat
+  // MQ-28 Ghost Bat & RQ-180 White Bat (Real)
   'MQ-28 Collaborative Air Combat Node': {
     name: 'MQ-28 Collaborative Air Combat Node',
     specId: 'MQ-28',

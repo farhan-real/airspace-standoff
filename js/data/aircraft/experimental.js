@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Category: EXPERIMENTAL SUPERFIGHTERS & DEMONSTRATORS
+ * AIRSPACE STANDOFF: Category: Experimental Superfighters & Demonstrators
  */
 
 window.AIRCRAFT_EXPERIMENTAL = {
@@ -26,7 +26,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     thrustVector: true,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'BK-27'],
-    gunRounds: 3200,
+    gunRounds: 510,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
@@ -55,7 +55,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     thrustVector: true,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
-    gunRounds: 1800,
+    gunRounds: 150,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -84,7 +84,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     thrustVector: true,
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
-    gunRounds: 1800,
+    gunRounds: 150,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
@@ -113,7 +113,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     thrustVector: false,
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'BK-27'],
-    gunRounds: 2400,
+    gunRounds: 450,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
@@ -141,12 +141,12 @@ window.AIRCRAFT_EXPERIMENTAL = {
     isCoffin: false,
     thrustVector: true,
     builtInGun: 'M61A2',
-    allowedGuns: ['M61A2', 'BK-27', 'DE-PULSE', 'EML_GUN'],
-    gunRounds: 3200,
+    allowedGuns: ['M61A2', 'BK-27', 'DE-PULSE', 'EML_GUN', 'PLSL_LIGHT', 'PLSL_MED', 'PLSL_HEAVY'],
+    gunRounds: 510,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Variable-geometry stealth prototype airframe with variable wing sweep for transition between sprint and turn regimes.'
+    desc: 'Variable-geometry fictional stealth superfighter. Certified for all pulse laser tiers, kinetic railgun, and directed energy weapons.'
   },
   'ADFX-01': {
     id: 'ADFX-01',
@@ -170,12 +170,12 @@ window.AIRCRAFT_EXPERIMENTAL = {
     isCoffin: false,
     thrustVector: true,
     builtInGun: 'M61A2',
-    allowedGuns: ['M61A2', 'DE-PULSE', 'EML_GUN'],
-    gunRounds: 3200,
+    allowedGuns: ['M61A2', 'DE-PULSE', 'EML_GUN', 'PLSL_LIGHT', 'PLSL_MED', 'PLSL_HEAVY'],
+    gunRounds: 510,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Forward-canted canard prototype airframe configured to mount TLS tactical laser pods and MPBM burst munitions.'
+    desc: 'Forward-canted canard prototype airframe configured to mount TLS tactical laser pods, MPBM burst munitions, and all pulse laser tiers.'
   },
   'CFA-44': {
     id: 'CFA-44',
@@ -199,12 +199,12 @@ window.AIRCRAFT_EXPERIMENTAL = {
     isCoffin: false,
     thrustVector: true,
     builtInGun: 'EML_GUN',
-    allowedGuns: ['EML_GUN', 'M61A2', 'DE-PULSE'],
-    gunRounds: 120,
+    allowedGuns: ['EML_GUN', 'M61A2', 'DE-PULSE', 'PLSL_LIGHT', 'PLSL_MED', 'PLSL_HEAVY'],
+    gunRounds: 24,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Heavy interceptor featuring an integrated EML kinetic railgun (120 rounds) and ADMM micro-missile arrays.'
+    desc: 'Heavy fictional carrier interceptor featuring integrated EML railgun, ADMM micro-missiles, and all pulse laser tiers.'
   },
   'DARKSTAR': {
     id: 'DARKSTAR',
@@ -227,12 +227,12 @@ window.AIRCRAFT_EXPERIMENTAL = {
     isAutonomous: false,
     isCoffin: false,
     thrustVector: false,
-    builtInGun: 'DE-PULSE',
-    allowedGuns: ['DE-PULSE', 'GAU-22'],
-    gunRounds: 300,
+    builtInGun: 'PLSL_HEAVY',
+    allowedGuns: ['PLSL_HEAVY', 'PLSL_MED', 'PLSL_LIGHT', 'DE-PULSE', 'GAU-22'],
+    gunRounds: 140,
     totalSlots: 6,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Scramjet penetrator cruising at Mach 1.45+ above FL580, outside standard surface-to-air missile envelopes.'
+    desc: 'Advanced fictional scramjet penetrator cruising at Mach 3.20 above FL580. Certified for heavy pulse lasers and directed energy.'
   }
 };

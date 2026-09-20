@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Aircraft Subsystem Upgrades, Components, AI Cores & ECCM Defenses
+ * AIRSPACE STANDOFF: Aircraft Subsystem Upgrades, Components, AI Cores & ECCM Defenses
  */
 
 window.UPGRADES_CATALOG = {
@@ -183,13 +183,14 @@ window.UPGRADES_CATALOG = {
     cost: 2.4,
     mass: 45,
     category: 'DATALINK',
-    desc: 'Armored enclosed cockpit with multi-camera synthetic vision for 100% manual player flight. Eliminates pilot G-fatigue blackout, grants +15% turn rate authority, and provides +8% high-rate evasive dodge bonus.',
+    desc: 'Armored enclosed cockpit with multi-camera synthetic vision for 100% manual player flight. Eliminates pilot G-fatigue blackout, grants +15% turn rate authority, and provides +25% high-rate neural evasive dodge bonus.',
     apply: function(unit) {
       if (unit.spec && unit.spec.AGI_0) unit.spec.AGI_0 *= 1.15;
       unit.glocThreshold = 999.0;
       unit.isCoffin = true;
       unit.isAutonomous = false;
-      unit.coffinDodgeBonus = 0.08;
+      unit.coffinDodgeBonus = 0.25;
+      unit.turnBonus = (unit.turnBonus || 0) + 0.20;
     },
     isAllowed: function(spec) { return spec.isDrone || spec.isAutonomous || spec.isCoffin || spec.category === 'EXPERIMENTAL'; }
   },

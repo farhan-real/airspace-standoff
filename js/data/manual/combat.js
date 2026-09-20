@@ -99,27 +99,27 @@ window.MANUAL_COMBAT = [
         </table>
       </div>
 
-      <div class="ge-subhead">3. GUIDANCE LAW: PROPORTIONAL NAVIGATION &amp; G-LIMITS</div>
+      <div class="ge-subhead">3. NON-STACKING EVASIONS &amp; KINETIC ENERGY BLEED</div>
       <div class="ge-desc">
-        Guided weapons employ <b>Proportional Navigation (ProNav)</b> rather than simple lead extrapolation:
+        Defense against guided weapons is governed by two fundamental physical principles:
         <ul>
-          <li><b>Collision Course Pursuit:</b> ProNav commands turn rates proportional to the Line of Sight (LOS) angular rate, steering the missile along smooth, natural pursuit arcs that do not oscillate or jitter.</li>
-          <li><b>Physical G-Limits:</b> Missiles have realistic structural turn rate limits:
-            <ul>
-              <li><b>Dogfight Missiles (WVR):</b> Pull up to 45&ndash;50G (turn rate 2.6&ndash;3.4 rad/s) via jet vanes and gas-vane thrust vectoring.</li>
-              <li><b>Medium BVR Rockets:</b> Pull 25&ndash;35G (turn rate 1.3&ndash;1.8 rad/s).</li>
-              <li><b>Heavy Hypersonic Missiles (R-37M, Kinzhal):</b> High forward momentum limits lateral turn rate to 0.75 rad/s. A sharp 90&deg; break turn forces heavy missiles to overshoot cleanly.</li>
-            </ul>
-          </li>
+          <li><b>Non-Stacking Evasions:</b> Evasion bonuses do not add linearly. Activating a Doppler notch, dropping chaff, and pulling a barrel roll simultaneously uses your <b>single strongest active defense</b> rather than compounding into immunity.</li>
+          <li><b>Kinetic Energy Bleed:</b> Hard turns, banking, and high-G maneuvers induce aerodynamic drag that drains aircraft kinetic energy. An aircraft that bleeds energy (below 100%) suffers reduced turn capability and grants a direct <b>hit probability bonus (+up to 30% P_k)</b> to subsequent inbound missiles!</li>
+          <li><b>Subsequent Missile Vulnerability:</b> Successfully evading a missile costs an immediate 25% energy drain, making chaining multi-missile salvos lethal against evasive targets.</li>
         </ul>
       </div>
 
-      <div class="ge-subhead">4. PROXIMITY FUSING VS. KINETIC OVERSHOOTS</div>
+      <div class="ge-subhead">4. LAUNCH ESTIMATE VS. IMPACT RESOLUTION</div>
+      <div class="ge-desc">
+        The probability displayed on the cockpit HUD and weapon buttons (e.g. <code>EST. 72%</code>) is a real-time firing estimate based on launch geometry and target energy. The <b>true hit probability is resolved at the moment of impact</b>, calculating the target's current speed, energy deficit, non-stacking defenses, and terminal aspect.
+      </div>
+
+      <div class="ge-subhead">5. PROXIMITY FUSING VS. KINETIC OVERSHOOTS</div>
       <div class="ge-desc">
         Warheads detonate when the missile closes within <b>450 meters</b> or reaches its Closest Point of Approach (CPA &le; 850m). If an aircraft breaks hard outside the missile's turn radius, the missile does not prematurely detonate&mdash;it executes a realistic <b>Kinetic Overshoot</b>, streaking past the target on kinetic momentum before fuel exhaustion.
       </div>
 
-      <div class="ge-subhead">5. PASSIVE RADAR HOMING &amp; CONCEALMENT (AGM-88G)</div>
+      <div class="ge-subhead">6. PASSIVE RADAR HOMING &amp; CONCEALMENT (AGM-88G)</div>
       <div class="ge-desc">
         Anti-Radiation Missiles (e.g. AGM-88G AARGM-ER) passively track enemy RF radar emissions without transmitting active radar:
         <ul>
@@ -130,7 +130,7 @@ window.MANUAL_COMBAT = [
         </ul>
       </div>
 
-      <div class="ge-subhead">6. RADAR TELEMETRY READOUT &amp; THERMOBARIC BLAST (MPBM)</div>
+      <div class="ge-subhead">7. RADAR TELEMETRY READOUT &amp; THERMOBARIC BLAST (MPBM)</div>
       <div class="ge-desc">
         Missiles display comprehensive two-line telemetry on the radar scope:
         <ul>
@@ -138,16 +138,6 @@ window.MANUAL_COMBAT = [
           <li><b>Line 2:</b> Real-time Mach velocity, active propulsion stage, and target range in telemetry accent colors (e.g. <code>M 3.2 [PULSE 2] [18km]</code>).</li>
           <li><b>Thermobaric Area of Effect (MPBM):</b> The Multi-Purpose Burst Missile detonates in an expansive thermobaric shockwave, inflicting 7 HP direct damage on the target and secondary blast damage (1&ndash;5 HP) across an <b>8.5 km radius</b>.</li>
         </ul>
-      </div>
-
-      <div class="ge-subhead">7. PROBABILITY OF KILL (P_k) &amp; SALVO SATURATION FORMULA</div>
-      <div class="ge-formula-card">
-        <span style="color:#94a3b8;font-size:0.62rem;">TACTICAL HIT PROBABILITY EQUATION:</span>
-        <div class="ge-formula-code">P_k = Base P_k &times; Range Score &times; Aspect Score - Target Agility - CMs + Salvo Bonus + Seeker Synergy</div>
-      </div>
-
-      <div class="ge-callout">
-        <b>Salvo Saturation:</b> When multiple missiles are in flight against the same target, target defensive agility is degraded by <b>25% per additional missile</b>, while firing systems gain <b>+12% P_k per extra missile (up to +30%)</b>. Combining an ARH radar missile with an IIR optical missile grants an extra <b>+10% Mixed-Seeker Synergy Bonus</b>.
       </div>
     `
   },
@@ -213,37 +203,37 @@ window.MANUAL_COMBAT = [
             <tr>
               <td style="color:#00f0ff;font-weight:800;">Doppler Notch &amp; Chaff</td>
               <td>0.7 TOK</td>
-              <td>+30%</td>
+              <td>+35%</td>
               <td>Trigger on active radar (ARH) lock. Beams radar 90&deg;, cuts closure rate, and pops chaff.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">High-G Barrel Roll</td>
               <td>0.7 TOK</td>
-              <td>+25%</td>
+              <td>+32%</td>
               <td>Trigger on inbound missile within 25 km. High-G 3D spiral disrupts proportional lead pursuit.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">Pugachev Push Cobra</td>
               <td>0.8 TOK</td>
-              <td>+38%</td>
+              <td>+45%</td>
               <td>Requires TVC. Pitch up to 110&deg; creates an immediate closure rate mismatch against tailgaters.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Split-S Kinetic Escape</td>
               <td>0.7 TOK</td>
-              <td>+28%</td>
+              <td>+35%</td>
               <td>Requires altitude &gt; FL150. Inverts aircraft and dives to recover Mach speed out of envelope.</td>
             </tr>
             <tr>
               <td style="color:#ffb830;font-weight:800;">Emergency Chaff Salvo</td>
               <td>0.7 TOK</td>
-              <td>+30%</td>
+              <td>+35%</td>
               <td>Dispenses dense chaff cloud to disrupt radar tracking locks. Costs 1 countermeasure charge.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">Zoom Climb to Perch</td>
               <td>0.7 TOK</td>
-              <td>+20%</td>
+              <td>+25%</td>
               <td>Requires Mach 0.70+. Converts airspeed into +8,500 ft high-altitude perch.</td>
             </tr>
           </tbody>

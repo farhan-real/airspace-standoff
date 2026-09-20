@@ -21,7 +21,7 @@ class RadarContactsRenderer {
     const mainCol = isBlue ? '#00f0ff' : '#ef4444';
     const isMobile = (cssWidth < 800);
 
-    const liveEnemies = list.filter(a => a && a.hp > 0);
+    const liveEnemies = list.filter(a => a && a.hp > 0.05);
     const uplinkThreshold = (window.CONFIG && window.CONFIG.UPLINK_THRESHOLD_FIGHTERS !== undefined) ? window.CONFIG.UPLINK_THRESHOLD_FIGHTERS : 3;
     const isLastFew = (!is2P && isEnemy && liveEnemies.length > 0 && liveEnemies.length <= uplinkThreshold);
 
@@ -32,7 +32,7 @@ class RadarContactsRenderer {
     }
 
     for (const a of list) {
-      if (!a || a.hp <= 0 || typeof a.x !== 'number' || typeof a.y !== 'number' || isNaN(a.x) || isNaN(a.y)) continue;
+      if (!a || a.hp <= 0.05 || typeof a.x !== 'number' || typeof a.y !== 'number' || isNaN(a.x) || isNaN(a.y)) continue;
       const pos = cam.toScreen(a.x, a.y);
       const px = Math.round(pos.x);
       const py = Math.round(pos.y);
@@ -41,7 +41,7 @@ class RadarContactsRenderer {
       const isIdentified = is2P || isBlue || (typeof a.isIdentifiedBy === 'function' ? a.isIdentifiedBy(commanderTeam) : a.isIdentified);
       const isAce = Boolean(a.isAce);
 
-      const relDistKm = (activeUnit && activeUnit.hp > 0 && activeUnit.id !== a.id)
+      const relDistKm = (activeUnit && activeUnit.hp > 0.05 && activeUnit.id !== a.id)
         ? Math.round(Math.hypot(a.x - activeUnit.x, a.y - activeUnit.y)) : null;
       const rangeTag = (relDistKm !== null) ? (' R:' + relDistKm + 'km') : '';
 
@@ -149,7 +149,8 @@ class RadarContactsRenderer {
           ctx.fillStyle = '#8494ab';
           ctx.fillText(cleanFn(mch + ' ' + fl), labelX, labelY + 10);
         } else {
-          const hpText = Math.round(a.hp) + '/' + a.maxHp + ' HP';
+          const displayHp = a.hp > 0.05 ? Math.max(1, Math.round(a.hp)) : 0;
+          const hpText = displayHp + '/' + a.maxHp + ' HP';
 
           ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = isAce ? '#ffd700' : (isSelected ? '#ffffff' : (isBlue ? '#00f0ff' : '#ef4444'));
@@ -160,7 +161,7 @@ class RadarContactsRenderer {
           ctx.fillText(cleanFn(safeCallsign + ' ' + cat), labelX, labelY + 10);
 
           ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-          ctx.fillStyle = a.hp <= 1 ? '#ef4444' : (isBlue ? '#00f5a0' : '#f87171');
+          ctx.fillStyle = displayHp <= 1 ? '#ef4444' : (isBlue ? '#00f5a0' : '#f87171');
           ctx.fillText(cleanFn(mch + ' ' + fl + ' ' + hpText), labelX, labelY + 20);
         }
       }
