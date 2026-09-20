@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Procurement Orchestrator
+ * AIRSPACE STANDOFF: Procurement Orchestrator
  */
 
 class ProcurementManager {
@@ -38,11 +38,11 @@ class ProcurementManager {
       label: 'BUDGET',
       value: this.game.playerBudgetId || 'BUDGET_400',
       options: [
-        { value: 'BUDGET_200', text: '200M (1.50x)' },
-        { value: 'BUDGET_300', text: '300M (1.25x)' },
+        { value: 'BUDGET_200', text: '200M (1.75x)' },
+        { value: 'BUDGET_300', text: '300M (1.30x)' },
         { value: 'BUDGET_400', text: '400M (1.00x)' },
-        { value: 'BUDGET_500', text: '500M (0.85x)' },
-        { value: 'BUDGET_650', text: '650M (0.70x)' }
+        { value: 'BUDGET_500', text: '500M (0.80x)' },
+        { value: 'BUDGET_650', text: '650M (0.60x)' }
       ],
       onChange: (val) => this.game.setPlayerBudgetTier(val)
     });
@@ -51,12 +51,12 @@ class ProcurementManager {
       label: 'DIFFICULTY',
       value: this.game.aiDifficulty || 'VETERAN',
       options: [
-        { value: 'CADET', text: 'PERMISSIVE SECTOR (0.6x)' },
-        { value: 'VETERAN', text: 'CONTESTED AIRSPACE (1.0x)' },
-        { value: 'ELITE', text: 'ACTIVE COMBAT ZONE (1.4x)' },
-        { value: 'ACE', text: 'HIGH-THREAT GRID (1.8x)' },
-        { value: 'MASTER', text: 'AIR DENIAL ZONE (2.2x)' },
-        { value: 'LEGEND', text: 'FORTRESS AIRSPACE (2.8x)' }
+        { value: 'CADET', text: 'PERMISSIVE SECTOR (0.50x)' },
+        { value: 'VETERAN', text: 'CONTESTED AIRSPACE (1.00x)' },
+        { value: 'ELITE', text: 'ACTIVE COMBAT ZONE (1.50x)' },
+        { value: 'ACE', text: 'HIGH-THREAT GRID (2.00x)' },
+        { value: 'MASTER', text: 'AIR DENIAL ZONE (2.60x)' },
+        { value: 'LEGEND', text: 'FORTRESS AIRSPACE (3.20x)' }
       ],
       onChange: (val) => {
         this.game.aiDifficulty = val;

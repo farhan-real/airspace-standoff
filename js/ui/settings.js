@@ -182,6 +182,9 @@ class SettingsManager {
       'THROTTLE_UP': 'Advance Engine Throttle (+10% Military / Afterburner)',
       'THROTTLE_DOWN': 'Reduce Engine Throttle (-10% Cruise Economy)',
       'PAUSE_TIME': 'Pause / Resume Combat Simulation [P]',
+      'TIME_WARP_1X': 'Set Simulation Time Warp to 1X (Normal Speed)',
+      'TIME_WARP_2X': 'Set Simulation Time Warp to 2X (High Speed)',
+      'TIME_WARP_4X': 'Set Simulation Time Warp to 4X (Ultra-Fast Speed)',
       'CAMERA_TRACK': 'Center & Track Currently Selected Craft',
       'CAMERA_RESET': 'Reset Radar Viewport Pan & Zoom Level',
       'OPEN_SETTINGS': 'Open Settings & Configuration',
@@ -243,7 +246,11 @@ class SettingsManager {
       .replace('Space', 'SPACE')
       .replace('BracketLeft', '[')
       .replace('BracketRight', ']')
-      .replace('Backspace', 'BKSP');
+      .replace('Backspace', 'BKSP')
+      .replace('Comma', ',')
+      .replace('Period', '.')
+      .replace('Slash', '/')
+      .replace('Backquote', '`');
   }
 
   renderAudioTab(container) {
@@ -338,7 +345,7 @@ class SettingsManager {
       <div class="settings-form-row">
         <div class="settings-label-group">
           <label>RESET RADAR VIEWPORT</label>
-          <span class="settings-hint">Restore default panoramic 150km × 100km view</span>
+          <span class="settings-hint">Restore default panoramic 150km Ã— 100km view</span>
         </div>
         <button type="button" id="btn-cfg-reset-cam" class="hud-btn small">RESET [0]</button>
       </div>
@@ -364,4 +371,5 @@ class SettingsManager {
   }
 }
 
+window.formatKeyLabel = (code) => SettingsManager.prototype.formatKeyLabel(code);
 window.SettingsManager = SettingsManager;

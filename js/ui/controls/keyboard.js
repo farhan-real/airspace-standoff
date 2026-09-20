@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Keyboard Controls
- * Number keys 1-9 directly fire missile stores on Pylons 1-9.
+ * AIRSPACE STANDOFF: Keyboard Controls
+ * Direct pylon firing, simulation time warp triggers, and configurable keybind bindings.
  */
 
 class KeyboardControlsHandler {
@@ -48,7 +48,22 @@ class KeyboardControlsHandler {
         return;
       }
 
-      // Keys 1 through 9 are reserved for direct missile pylon discharges
+      if (key === binds.TIME_WARP_1X || key === 'KeyJ') {
+        e.preventDefault();
+        this.sys.setTimeWarp(1);
+        return;
+      }
+      if (key === binds.TIME_WARP_2X || key === 'KeyK') {
+        e.preventDefault();
+        this.sys.setTimeWarp(2);
+        return;
+      }
+      if (key === binds.TIME_WARP_4X || key === 'KeyL') {
+        e.preventDefault();
+        this.sys.setTimeWarp(4);
+        return;
+      }
+
       for (let p = 1; p <= 9; p++) {
         const bindCode = binds['FIRE_PYLON_' + p] || ('Digit' + p);
         if (key === bindCode || e.key === String(p) || key === ('Digit' + p)) {

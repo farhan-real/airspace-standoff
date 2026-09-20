@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Master Game Orchestrator (150km x 100km Arena & Full Persistence)
+ * AIRSPACE STANDOFF: Master Game Orchestrator (150km x 100km Arena & Full Persistence)
  * Flight Lead spawns in formation center; mutual full detection in 2P mode.
  */
 
@@ -101,16 +101,22 @@ class AirspaceStandoffGame {
     const ind = document.getElementById('theater-mode-indicator');
     if (!ind) return;
     const diffMap = {
-      CADET: 'Permissive Sector (0.6x)',
-      VETERAN: 'Contested Airspace (1.0x)',
-      ELITE: 'Active Combat Zone (1.4x)',
-      ACE: 'High-Threat Grid (1.8x)',
-      MASTER: 'Air Denial Zone (2.2x)',
-      LEGEND: 'Fortress Airspace (2.8x)'
+      CADET: 'Permissive Sector (0.50x)',
+      VETERAN: 'Contested Airspace (1.00x)',
+      ELITE: 'Active Combat Zone (1.50x)',
+      ACE: 'High-Threat Grid (2.00x)',
+      MASTER: 'Air Denial Zone (2.60x)',
+      LEGEND: 'Fortress Airspace (3.20x)'
     };
-    const bMap = { BUDGET_200: '200M (1.5x)', BUDGET_300: '300M (1.25x)', BUDGET_400: '400M (1.0x)', BUDGET_500: '500M (0.85x)', BUDGET_650: '650M (0.7x)' };
+    const bMap = {
+      BUDGET_200: '200M (1.75x)',
+      BUDGET_300: '300M (1.30x)',
+      BUDGET_400: '400M (1.00x)',
+      BUDGET_500: '500M (0.80x)',
+      BUDGET_650: '650M (0.60x)'
+    };
     const diffTag = diffMap[this.aiDifficulty] || this.aiDifficulty;
-    const bTag = bMap[this.playerBudgetId] || '400M';
+    const bTag = bMap[this.playerBudgetId] || '400M (1.00x)';
     const modeTag = this.playerMode === '1P' ? (`1P VS AI [${diffTag}] [${bTag}]`) : '2P VERSUS';
     const scenarioTag = this.scenarioMode === 'DYNAMIC_THEATER' ? 'DYNAMIC SQUADRON THEATER' : 'SKIRMISH';
     ind.textContent = `${modeTag} ${scenarioTag}`;

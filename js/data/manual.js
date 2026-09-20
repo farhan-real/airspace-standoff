@@ -15,13 +15,6 @@ window.initTacticalManual = function() {
   const searchInput = document.getElementById('manual-search-filter');
   const modal = document.getElementById('glossary-modal');
 
-  window.TACTICAL_FLIGHT_MANUAL = [
-    ...(window.MANUAL_BASICS || []),
-    ...(window.MANUAL_SENSORS || []),
-    ...(window.MANUAL_COMBAT || []),
-    ...(window.MANUAL_THEATER || [])
-  ];
-
   const chapters = [
     { id: 'ch1_quickstart', label: '01: DOCTRINE & ROE' },
     { id: 'ch2_kinematics', label: '02: KINEMATICS & POWER' },
@@ -57,9 +50,17 @@ window.initTacticalManual = function() {
     if (!container) return;
     const q = filterQuery.trim().toLowerCase();
 
+    window.TACTICAL_FLIGHT_MANUAL = [
+      ...(window.MANUAL_BASICS || []),
+      ...(window.MANUAL_SENSORS || []),
+      ...(window.MANUAL_COMBAT || []),
+      ...(window.MANUAL_THEATER || [])
+    ];
+
     const filtered = window.TACTICAL_FLIGHT_MANUAL.filter(ch => {
+      const descContent = typeof ch.getDesc === 'function' ? ch.getDesc() : ch.desc;
       if (!q) return true;
-      const haystack = (ch.title + ' ' + ch.desc).replace(/<[^>]*>/g, '').toLowerCase();
+      const haystack = (ch.title + ' ' + descContent).replace(/<[^>]*>/g, '').toLowerCase();
       return haystack.includes(q);
     });
 
@@ -73,15 +74,18 @@ window.initTacticalManual = function() {
       return;
     }
 
-    container.innerHTML = filtered.map(ch => `
-      <div class="glossary-entry" id="${ch.id}">
-        <div class="ge-title">
-          <span>${ch.title}</span>
-          <span class="manual-classified-badge">CLASSIFIED</span>
+    container.innerHTML = filtered.map(ch => {
+      const descContent = typeof ch.getDesc === 'function' ? ch.getDesc() : ch.desc;
+      return `
+        <div class="glossary-entry" id="${ch.id}">
+          <div class="ge-title">
+            <span>${ch.title}</span>
+            <span class="manual-classified-badge">CLASSIFIED</span>
+          </div>
+          <div class="ge-content">${descContent}</div>
         </div>
-        <div class="ge-content">${ch.desc}</div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   };
 
   renderChapters();
@@ -102,6 +106,7 @@ window.initTacticalManual = function() {
 
   const openModal = (e) => {
     if (e) e.preventDefault();
+    renderChapters(searchInput ? searchInput.value : '');
     if (modal) modal.classList.add('active');
     if (window.Game && window.Game.controls) {
       window.Game.controls.autoPauseOnDialogOpen();

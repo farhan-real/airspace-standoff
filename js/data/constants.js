@@ -57,11 +57,11 @@ window.CONFIG = {
 };
 
 window.BUDGET_TIERS = {
-  BUDGET_200: { id: 'BUDGET_200', name: 'Austerity (200M CR)', budget: 200.0, multiplier: 1.50, desc: 'Restricted defense allocation requiring lightweight packages.' },
-  BUDGET_300: { id: 'BUDGET_300', name: 'Restricted (300M CR)', budget: 300.0, multiplier: 1.25, desc: 'Constrained operational defense allocation.' },
+  BUDGET_200: { id: 'BUDGET_200', name: 'Austerity (200M CR)', budget: 200.0, multiplier: 1.75, desc: 'Restricted defense allocation requiring lightweight packages.' },
+  BUDGET_300: { id: 'BUDGET_300', name: 'Restricted (300M CR)', budget: 300.0, multiplier: 1.30, desc: 'Constrained operational defense allocation.' },
   BUDGET_400: { id: 'BUDGET_400', name: 'Standard (400M CR)', budget: 400.0, multiplier: 1.00, desc: 'Standard theater squadron allocation.' },
-  BUDGET_500: { id: 'BUDGET_500', name: 'Expanded (500M CR)', budget: 500.0, multiplier: 0.85, desc: 'Expanded coalition defense funding.' },
-  BUDGET_650: { id: 'BUDGET_650', name: 'Full Readiness (650M CR)', budget: 650.0, multiplier: 0.70, desc: 'Maximum coalition expenditure allowance.' }
+  BUDGET_500: { id: 'BUDGET_500', name: 'Expanded (500M CR)', budget: 500.0, multiplier: 0.80, desc: 'Expanded coalition defense funding.' },
+  BUDGET_650: { id: 'BUDGET_650', name: 'Full Readiness (650M CR)', budget: 650.0, multiplier: 0.60, desc: 'Maximum coalition expenditure allowance.' }
 };
 
 window.DEFAULT_KEYBINDS = {
@@ -90,6 +90,9 @@ window.DEFAULT_KEYBINDS = {
   'THROTTLE_UP': 'BracketRight',
   'THROTTLE_DOWN': 'BracketLeft',
   'PAUSE_TIME': 'KeyP',
+  'TIME_WARP_1X': 'KeyJ',
+  'TIME_WARP_2X': 'KeyK',
+  'TIME_WARP_4X': 'KeyL',
   'CAMERA_RESET': 'Digit0',
   'CAMERA_TRACK': 'KeyC',
   'OPEN_SETTINGS': 'KeyO',
@@ -111,10 +114,10 @@ window.CIVILIAN_FLIGHTS = [
 ];
 
 window.AI_DIFFICULTIES = {
-  CADET: { name: 'Permissive Sector', budgetCap: 180.0, scoreMultiplier: 0.60, reactionCooldown: 7.2, attentionSpanSec: 5.5, engagementRangeRatio: 0.45, evasionSkill: 0.16, blunderChance: 0.62, usesDopplerNotch: false, aceCount: 0, multiTarget: false, useAdvancedManeuvers: false },
+  CADET: { name: 'Permissive Sector', budgetCap: 180.0, scoreMultiplier: 0.50, reactionCooldown: 7.2, attentionSpanSec: 5.5, engagementRangeRatio: 0.45, evasionSkill: 0.16, blunderChance: 0.62, usesDopplerNotch: false, aceCount: 0, multiTarget: false, useAdvancedManeuvers: false },
   VETERAN: { name: 'Contested Airspace', budgetCap: 260.0, scoreMultiplier: 1.00, reactionCooldown: 5.8, attentionSpanSec: 4.8, engagementRangeRatio: 0.55, evasionSkill: 0.24, blunderChance: 0.46, usesDopplerNotch: false, aceCount: 1, multiTarget: false, useAdvancedManeuvers: false },
-  ELITE: { name: 'Active Combat Zone', budgetCap: 360.0, scoreMultiplier: 1.40, reactionCooldown: 4.4, attentionSpanSec: 4.0, engagementRangeRatio: 0.65, evasionSkill: 0.34, blunderChance: 0.35, usesDopplerNotch: false, aceCount: 1, multiTarget: false, useAdvancedManeuvers: false },
-  ACE: { name: 'High-Threat Grid', budgetCap: 450.0, scoreMultiplier: 1.80, reactionCooldown: 3.4, attentionSpanSec: 3.2, engagementRangeRatio: 0.74, evasionSkill: 0.44, blunderChance: 0.26, usesDopplerNotch: false, aceCount: 2, multiTarget: true, useAdvancedManeuvers: false },
-  MASTER: { name: 'Air Denial Zone', budgetCap: 550.0, scoreMultiplier: 2.20, reactionCooldown: 2.8, attentionSpanSec: 2.6, engagementRangeRatio: 0.82, evasionSkill: 0.52, blunderChance: 0.18, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true },
-  LEGEND: { name: 'Fortress Airspace', budgetCap: 650.0, scoreMultiplier: 2.80, reactionCooldown: 2.2, attentionSpanSec: 2.0, engagementRangeRatio: 0.90, evasionSkill: 0.60, blunderChance: 0.12, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true }
+  ELITE: { name: 'Active Combat Zone', budgetCap: 360.0, scoreMultiplier: 1.50, reactionCooldown: 4.4, attentionSpanSec: 4.0, engagementRangeRatio: 0.65, evasionSkill: 0.34, blunderChance: 0.35, usesDopplerNotch: false, aceCount: 1, multiTarget: false, useAdvancedManeuvers: false },
+  ACE: { name: 'High-Threat Grid', budgetCap: 450.0, scoreMultiplier: 2.00, reactionCooldown: 3.4, attentionSpanSec: 3.2, engagementRangeRatio: 0.74, evasionSkill: 0.44, blunderChance: 0.26, usesDopplerNotch: false, aceCount: 2, multiTarget: true, useAdvancedManeuvers: false },
+  MASTER: { name: 'Air Denial Zone', budgetCap: 550.0, scoreMultiplier: 2.60, reactionCooldown: 2.8, attentionSpanSec: 2.6, engagementRangeRatio: 0.82, evasionSkill: 0.52, blunderChance: 0.18, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true },
+  LEGEND: { name: 'Fortress Airspace', budgetCap: 650.0, scoreMultiplier: 3.20, reactionCooldown: 2.2, attentionSpanSec: 2.0, engagementRangeRatio: 0.90, evasionSkill: 0.60, blunderChance: 0.12, usesDopplerNotch: true, aceCount: 3, multiTarget: true, useAdvancedManeuvers: true }
 };
