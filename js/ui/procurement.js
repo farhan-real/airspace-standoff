@@ -280,7 +280,7 @@ class ProcurementManager {
     } else if (itemData.type === 'upgrade') {
       const specU = (window.AIRCRAFT_CATALOG || {})[item.specId];
       if (item.upgrades.length >= (specU.upgradeSockets || 3)) {
-        this.showAlertModal('SLOTS FULL', `All component slots on Aircraft #${sIdx + 1} are occupied.`);
+        this.showAlertModal('SLOTS FULL', `All component sockets on Aircraft #${sIdx + 1} are occupied.`);
         return;
       }
       if (item.upgrades.includes(itemData.id)) {
@@ -338,6 +338,10 @@ class ProcurementManager {
 
     const dispSqName = document.getElementById('display-squadron-name');
     if (dispSqName) dispSqName.textContent = this.game.squadronName || 'Wardog Squadron';
+
+    if (this.shelf) {
+      this.shelf.syncActiveAircraft();
+    }
 
     if (window.Persistence && this.game.procurementSquadron.length > 0) {
       window.Persistence.saveLastSquadron(this.game.procurementSquadron);

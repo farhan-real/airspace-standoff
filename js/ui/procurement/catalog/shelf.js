@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Armory Catalog Shelf
- * Single-tap equipping on '+ EQUIP'; tags are clickable with tooltips.
+ * Real-time active aircraft synchronization and dynamic equip actions.
  */
 
 class ProcurementShelf {
@@ -33,7 +33,8 @@ class ProcurementShelf {
   getActiveBaySummary() {
     const squadron = this.pm.game.procurementSquadron || [];
     if (squadron.length === 0) return null;
-    const sIdx = this.pm.activeBayIndex || 0;
+    const sIdx = (this.pm.activeBayIndex !== undefined && this.pm.activeBayIndex < squadron.length)
+      ? this.pm.activeBayIndex : 0;
     const item = squadron[sIdx] || squadron[0];
     const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
     return {
@@ -55,14 +56,53 @@ class ProcurementShelf {
       return;
     }
     if (!active) {
-      el.innerHTML = `<span style="color:#f97316;">NO ACTIVE SQUADRON BAYS &bull; ADD AN AIRFRAME FIRST</span>`;
+      el.innerHTML = `<span style="color:#f97316;">NO ACTIVE AIRCRAFT SELECTED &bull; ADD AN AIRFRAME FIRST</span>`;
       return;
     }
+    const remSlots = Math.max(0, active.totalSlots - active.usedSlots);
+    const slotText = remSlots === 1 ? 'SLOT' : 'SLOTS';
     if (tab === 'upgrades') {
-      el.innerHTML = `OUTFITTING BAY #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">SOCKETS: ${active.usedSockets}/${active.totalSockets}</span>`;
+      const remSockets = Math.max(0, active.totalSockets - active.usedSockets);
+      const sockText = remSockets === 1 ? 'SOCKET' : 'SOCKETS';
+      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSockets} ${sockText} AVAILABLE</span>`;
     } else {
-      el.innerHTML = `OUTFITTING BAY #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">PYLONS: ${active.usedSlots}/${active.totalSlots} SLOTS</span>`;
+      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSlots} ${slotText} AVAILABLE</span>`;
     }
+  }
+
+  syncActiveAircraft() {
+    const active = this.getActiveBaySummary();
+    this.updateInstructionHeader(this.pm.currentTab);
+
+    const catalogEl = document.getElementById('armory-catalog');
+    if (!catalogEl) return;
+    const activeSpec = active ? (window.AIRCRAFT_CATALOG || {})[active.specId] : null;
+
+    catalogEl.querySelectorAll('.btn-equip-gun').forEach(btn => {
+      const gunId = btn.getAttribute('data-gun-id');
+      const gun = (window.AUTOCANNONS_CATALOG || {})[gunId];
+      if (!gun) {
+        btn.textContent = active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP';
+        return;
+      }
+      const isComp = activeSpec && window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
+        ? window.AircraftRegistry.isGunCompatible(activeSpec, gun)
+        : (!gun.lockedTo || (active && gun.lockedTo.includes(active.specId)));
+      btn.disabled = !isComp;
+      btn.textContent = !isComp ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP');
+    });
+
+    catalogEl.querySelectorAll('.btn-equip-upgrade').forEach(btn => {
+      btn.textContent = active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP';
+    });
+
+    catalogEl.querySelectorAll('.btn-equip-wpn').forEach(btn => {
+      const wpnId = btn.getAttribute('data-wpn-id');
+      const wpn = (window.WEAPONS_CATALOG || {})[wpnId];
+      const isRestricted = Boolean(wpn && wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId));
+      btn.disabled = isRestricted;
+      btn.textContent = isRestricted ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP');
+    });
   }
 
   renderGunsTab(container) {
@@ -91,8 +131,8 @@ class ProcurementShelf {
         <div class="cic-desc">${g.desc}</div>
         <div style="display:flex;gap:6px;margin-top:4px;">
           <button type="button" class="spec-inspect-btn" data-inspect-type="gun" data-inspect-id="${g.id}">[SPECS]</button>
-          <button type="button" class="btn-quick-equip btn-equip-gun" style="flex:1;" ${isLocked ? 'disabled' : ''}>
-            ${isLocked ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO BAY #${active.index}` : '+ EQUIP')}
+          <button type="button" class="btn-quick-equip btn-equip-gun" data-gun-id="${g.id}" style="flex:1;" ${isLocked ? 'disabled' : ''}>
+            ${isLocked ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP')}
           </button>
         </div>`;
 
@@ -124,8 +164,8 @@ class ProcurementShelf {
         <div class="cic-desc">${upg.desc}</div>
         <div style="display:flex;gap:6px;margin-top:4px;">
           <button type="button" class="spec-inspect-btn" data-inspect-type="upgrade" data-inspect-id="${upg.id}">[SPECS]</button>
-          <button type="button" class="btn-quick-equip btn-equip-upgrade" style="flex:1;">
-            ${active ? `+ EQUIP TO BAY #${active.index}` : '+ EQUIP'}
+          <button type="button" class="btn-quick-equip btn-equip-upgrade" data-upg-id="${upg.id}" style="flex:1;">
+            ${active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP'}
           </button>
         </div>`;
 
@@ -150,12 +190,13 @@ class ProcurementShelf {
 
       const card = document.createElement('div');
       card.className = 'catalog-item-card';
-      const isRestricted = wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId);
+      const isRestricted = Boolean(wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId));
+      const wpnSlotWord = wpn.slots === 1 ? 'SLOT' : 'SLOTS';
 
       card.innerHTML = `
         <div class="cic-top"><span class="cic-title">${wpn.name}</span><span class="cic-cost">$${Number(wpn.cost || 0).toFixed(1)}M</span></div>
         <div class="cic-type-bar">
-          <span class="badge-slots" data-tag-title="HARDPOINT REQUIREMENT" data-tag-tooltip="Requires ${wpn.slots} open pylon stations (${wpn.minRating || 'Type S'} minimum).">${wpn.slots} SLOTS</span>
+          <span class="badge-slots" data-tag-title="HARDPOINT REQUIREMENT" data-tag-tooltip="Requires ${wpn.slots} open pylon station${wpn.slots === 1 ? '' : 's'} (${wpn.minRating || 'Type S'} minimum).">${wpn.slots} ${wpnSlotWord}</span>
           <span class="badge-mass" data-tag-title="ORDNANCE WEIGHT" data-tag-tooltip="+${wpn.mass} kg total carriage weight.">+${wpn.mass} kg</span>
           <span class="badge-category" style="color:#00f0ff;" data-tag-title="SEEKER HOMING" data-tag-tooltip="Guidance: ${wpn.seeker || 'GUIDED'} &bull; ${wpn.behaviorDesc || wpn.desc || ''}">${wpn.seeker || 'GUIDED'}</span>
         </div>
@@ -166,8 +207,8 @@ class ProcurementShelf {
         <div class="cic-desc">${wpn.behaviorDesc || wpn.desc || ''}</div>
         <div style="display:flex;gap:6px;margin-top:4px;">
           <button type="button" class="spec-inspect-btn" data-inspect-type="weapon" data-inspect-id="${wpn.id}">[SPECS]</button>
-          <button type="button" class="btn-quick-equip btn-equip-wpn" style="flex:1;" ${isRestricted ? 'disabled' : ''}>
-            ${isRestricted ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO BAY #${active.index}` : '+ EQUIP')}
+          <button type="button" class="btn-quick-equip btn-equip-wpn" data-wpn-id="${wpn.id}" style="flex:1;" ${isRestricted ? 'disabled' : ''}>
+            ${isRestricted ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP')}
           </button>
         </div>`;
 

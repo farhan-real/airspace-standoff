@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Squadron Roster Display
- * Clear military aviation labels and layout.
+ * Clear military aviation labels, layout, and right-aligned ordnance specs.
  */
 
 class ProcurementRoster {
@@ -22,12 +22,10 @@ class ProcurementRoster {
     squadron.forEach(item => {
       if (!item) return;
       if (aircraftMap[item.specId]) spent += Number(aircraftMap[item.specId].cost || 0);
-
       (item.weapons || []).forEach(wItem => {
         const wId = (typeof wItem === 'object' && wItem !== null) ? (wItem.id || wItem.specId) : wItem;
         if (weaponsMap[wId]) spent += Number(weaponsMap[wId].cost || 0);
       });
-
       (item.upgrades || []).forEach(uItem => {
         const uId = (typeof uItem === 'object' && uItem !== null) ? (uItem.id || uItem.specId) : uItem;
         if (upgradesMap[uId]) spent += Number(upgradesMap[uId].cost || 0);
@@ -44,17 +42,14 @@ class ProcurementRoster {
       budgetCounterEl.innerHTML = `
         <span class="spent-val ${isOver ? 'overbudget' : ''}">$${spent.toFixed(1)}M</span>
         <span style="color:#64748b;">/ $${budgetMax.toFixed(1)}M</span>
-        <span class="rem-val" style="color:${isOver ? '#ff3366' : '#00f5a0'};">(${remStatus})</span>
-      `;
+        <span class="rem-val" style="color:${isOver ? '#ff3366' : '#00f5a0'};">(${remStatus})</span>`;
       budgetCounterEl.classList.toggle('overbudget', isOver);
     }
 
     const maxUnits = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
     if (fleetCountEl) fleetCountEl.textContent = `${squadron.length} / ${maxUnits} AIRCRAFT`;
-
     const mobRosterCount = document.getElementById('mob-roster-count');
     if (mobRosterCount) mobRosterCount.textContent = squadron.length;
-
     const quickStatEl = document.getElementById('roster-quick-stat');
     if (quickStatEl) quickStatEl.textContent = `${squadron.length} AIRCRAFT ASSIGNED`;
 
@@ -105,11 +100,8 @@ class ProcurementRoster {
         item.callsign = pool[(sIdx * 3) % pool.length] || `Wardog ${sIdx + 1}`;
       }
 
-      let totalMass = 100;
+      let totalMass = 100, usedSlots = 0, totalCost = Number(spec.cost || 0);
       const totalSlots = spec.totalSlots || 6;
-      let usedSlots = 0;
-      let totalCost = Number(spec.cost || 0);
-
       const activeGun = gunsMap[item.chosenGunId] || gunsMap[spec.builtInGun] || gunsMap['M61A2'];
       if (activeGun) totalMass += activeGun.mass || 0;
 
@@ -127,11 +119,9 @@ class ProcurementRoster {
 
       const maxMass = spec.M_max || 5000;
       const wrPercent = Math.round(Math.min(1.0, totalMass / maxMass) * 100);
-
       const gunOptsList = Object.values(gunsMap).map(g => {
         const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
-          ? window.AircraftRegistry.isGunCompatible(spec, g)
-          : (!g.lockedTo || g.lockedTo.includes(spec.id));
+          ? window.AircraftRegistry.isGunCompatible(spec, g) : (!g.lockedTo || g.lockedTo.includes(spec.id));
         const isSelected = item.chosenGunId === g.id;
         return `<button type="button" class="custom-dropdown-opt ${isSelected ? 'active' : ''}" data-gun-id="${g.id}" ${isComp ? '' : 'disabled'}>
           ${isComp ? g.name + ' (' + (g.damagePerSec || 2.5) + ' HP/s)' : '[INCOMPATIBLE] ' + g.name}
@@ -162,19 +152,34 @@ class ProcurementRoster {
       }
 
       const remainingSlots = totalSlots - usedSlots;
+      const remSlotLabel = remainingSlots === 1 ? 'SLOT' : 'SLOTS';
       const weaponsHtml = (item.weapons.length === 0)
-        ? `<div class="empty-bay-indicator" data-sidx="${sIdx}">EMPTY HARDPOINTS (${remainingSlots} SLOTS AVAILABLE)</div>`
+        ? `<div class="empty-bay-indicator" data-sidx="${sIdx}">EMPTY HARDPOINTS (${remainingSlots} ${remSlotLabel} AVAILABLE)</div>`
         : item.weapons.map((wItem, wIdx) => {
           const wId = (typeof wItem === 'object' && wItem !== null) ? (wItem.id || wItem.specId) : wItem;
           const w = weaponsMap[wId];
           const damageHP = w ? (w.damage !== undefined ? w.damage : 2) : 2;
+          const slots = w ? (w.slots || 1) : 1;
+          const itemSlotWord = slots === 1 ? 'SLOT' : 'SLOTS';
+          const seeker = w ? (w.seeker || 'GUIDED') : 'ARH';
+          let seekerTag = seeker;
+          if (w) {
+            if (w.isJammerPod) seekerTag = 'ECM';
+            else if (w.isDecoyDrone) seekerTag = 'MALD';
+            else if (w.isDecoy) seekerTag = 'DECOY';
+            else if (w.isLaser) seekerTag = 'LASER';
+            else if (seeker === 'PASSIVE_RADAR') seekerTag = 'ARM';
+            else if (seeker === 'GPS_INS') seekerTag = 'GPS/INS';
+            else if (seeker === 'INS_RADAR') seekerTag = 'RADAR';
+            else if (seeker === 'DIRECT_FIRE') seekerTag = 'DIRECT';
+          }
           return `
             <div class="installed-item-card">
-              <div class="iic-info" style="min-width:0;overflow:hidden;">
-                <span class="iic-title">${w ? w.name : wId}</span>
-                <span class="iic-sub">${w ? w.slots : 1} SLOTS &bull; <b style="color:#ffb830;">${damageHP} HP</b> &bull; ${w ? (w.seeker || 'GUIDED') : 'ARH'}</span>
+              <div class="iic-title-group">
+                <span class="iic-title" title="${w ? w.name : wId}">${w ? w.name : wId}</span>
               </div>
-              <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+              <div class="iic-right-group">
+                <span class="iic-details"><span class="iic-slots">${slots}<span class="iic-slots-word"> ${itemSlotWord}</span><span class="iic-slots-short">S</span></span> &bull; <b class="iic-hp">${damageHP} HP</b> &bull; <span class="iic-seeker">${seekerTag}</span></span>
                 <button type="button" class="spec-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w ? w.id : wId}">SPECS</button>
                 <button class="btn-dismount-item" data-sidx="${sIdx}" data-widx="${wIdx}" title="Dismount weapon">[X]</button>
               </div>
@@ -182,9 +187,7 @@ class ProcurementRoster {
         }).join('');
 
       const addWeaponSlotBtn = (remainingSlots > 0 && item.weapons.length > 0)
-        ? `<button type="button" class="slot-action-btn btn-add-weapon-slot" data-sidx="${sIdx}">+ ADD WEAPONS (${remainingSlots} SLOTS REMAINING)</button>`
-        : '';
-
+        ? `<button type="button" class="slot-action-btn btn-add-weapon-slot" data-sidx="${sIdx}">+ ADD WEAPONS (${remainingSlots} ${remSlotLabel} REMAINING)</button>` : '';
       const category = spec.category || 'MULTIROLE';
       const activeGunDmg = activeGun ? (activeGun.damagePerSec || 2.5) : 2.5;
 
@@ -216,16 +219,14 @@ class ProcurementRoster {
               <span class="cdd-val">${activeGun ? activeGun.name : 'Gun'}</span>
               <span class="cdd-arrow">▾</span>
             </button>
-            <div class="custom-dropdown-menu gun-menu">
-              ${gunOptsList}
-            </div>
+            <div class="custom-dropdown-menu gun-menu">${gunOptsList}</div>
           </div>
           <span class="gun-dmg-badge" style="color:#ffb830;font-size:0.64rem;font-weight:800;font-family:var(--font-mono);">${activeGunDmg} HP/s</span>
           <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${activeGun ? activeGun.id : 'M61A2'}">[SPECS]</button>
         </div>
         <div class="unit-metric-strip">
           <div class="metric-block">
-            <div class="metric-meta"><span>HARDPOINTS:</span><span>${usedSlots}/${totalSlots} SLOTS</span></div>
+            <div class="metric-meta"><span>HARDPOINTS:</span><span>${usedSlots}/${totalSlots} ${totalSlots === 1 ? 'SLOT' : 'SLOTS'}</span></div>
             <div class="capacity-pips-bar">${pipsHtml}</div>
           </div>
           <div class="metric-block">
@@ -256,7 +257,14 @@ class ProcurementRoster {
       card.querySelector('.btn-toggle-lead').onclick = (e) => { e.stopPropagation(); this.pm.setLeadAirframe(sIdx); };
       card.querySelector('.btn-save-config').onclick = (e) => { e.stopPropagation(); this.pm.saveSquadronBayConfig(sIdx); };
       card.querySelector('.btn-clone-jet').onclick = (e) => { e.stopPropagation(); this.pm.cloneAirframe(sIdx); };
-      card.querySelector('.btn-remove-airframe').onclick = (e) => { e.stopPropagation(); squadron.splice(sIdx, 1); this.pm.updateUI(); };
+      card.querySelector('.btn-remove-airframe').onclick = (e) => {
+        e.stopPropagation();
+        squadron.splice(sIdx, 1);
+        if (this.pm.activeBayIndex >= squadron.length) {
+          this.pm.activeBayIndex = Math.max(0, squadron.length - 1);
+        }
+        this.pm.updateUI();
+      };
 
       const gunCdd = card.querySelector(`#cdd-gun-${sIdx}`);
       if (gunCdd) {
@@ -275,8 +283,7 @@ class ProcurementRoster {
             const gunId = opt.getAttribute('data-gun-id');
             const gun = gunsMap[gunId];
             const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
-              ? window.AircraftRegistry.isGunCompatible(spec, gun)
-              : (!gun.lockedTo || gun.lockedTo.includes(spec.id));
+              ? window.AircraftRegistry.isGunCompatible(spec, gun) : (!gun.lockedTo || gun.lockedTo.includes(spec.id));
 
             if (gunId && isComp) {
               item.chosenGunId = gunId;
@@ -308,21 +315,17 @@ class ProcurementRoster {
 
       const emptyBay = card.querySelector('.empty-bay-indicator');
       if (emptyBay) emptyBay.onclick = (e) => { e.stopPropagation(); goToWeapons(); };
-
       const addWpnSlot = card.querySelector('.btn-add-weapon-slot');
       if (addWpnSlot) addWpnSlot.onclick = (e) => { e.stopPropagation(); goToWeapons(); };
-
       const quickUpg = card.querySelector('.btn-quick-to-upgrades');
       if (quickUpg) quickUpg.onclick = (e) => { e.stopPropagation(); goToUpgrades(); };
 
       card.querySelectorAll('.upgrade-socket.empty').forEach(el => {
         el.onclick = (e) => { e.stopPropagation(); goToUpgrades(); };
       });
-
       card.querySelectorAll('.btn-dismount-item').forEach(b => {
         b.onclick = (e) => { e.stopPropagation(); item.weapons.splice(parseInt(b.dataset.widx, 10), 1); this.pm.updateUI(); };
       });
-
       card.querySelectorAll('.btn-socket-dismount').forEach(b => {
         b.onclick = (e) => { e.stopPropagation(); item.upgrades.splice(parseInt(b.dataset.uidx, 10), 1); this.pm.updateUI(); };
       });

@@ -139,6 +139,14 @@
   color: #818cf8;
 }
 
+.upgrade-socket span {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .upgrade-socket.filled {
   border-style: solid;
   border-color: #6366f1;
@@ -179,20 +187,56 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   font-family: var(--font-mono);
   box-sizing: border-box;
+  min-width: 0;
+}
+
+.iic-title-group {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .iic-title {
   font-size: 0.68rem;
   font-weight: 700;
   color: #f8fafc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
 }
 
-.iic-sub {
+.iic-right-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.iic-details {
   font-size: 0.58rem;
   color: #8494ab;
-  margin-left: 6px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.iic-details .iic-hp {
+  color: #ffb830;
+  font-weight: 800;
+}
+
+.iic-details .iic-seeker {
+  color: #00f0ff;
+  font-weight: 800;
+}
+
+.iic-slots-short {
+  display: none;
 }
 
 .btn-dismount-item {
@@ -253,13 +297,28 @@
 @media (max-width: 1024px) {
   .installed-item-card {
     padding: 3px 5px;
+    gap: 5px;
   }
 
   .iic-title {
-    max-width: 140px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
+    font-size: 0.64rem;
+  }
+
+  .iic-right-group {
+    gap: 4px;
+  }
+
+  .iic-details {
+    font-size: 0.54rem;
+    gap: 2px;
+  }
+}
+
+@media (max-width: 440px) {
+  .iic-slots-word {
+    display: none;
+  }
+  .iic-slots-short {
+    display: inline;
   }
 }
