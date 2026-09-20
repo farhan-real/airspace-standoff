@@ -1,6 +1,5 @@
 /**
  * AIRSPACE STANDOFF // Procurement Orchestrator
- * Professional military terminology for squadron management.
  */
 
 class ProcurementManager {
@@ -17,6 +16,7 @@ class ProcurementManager {
     this.roster = new ProcurementRoster(this);
     this.customLoadouts = new CustomLoadoutsManager();
     this.preconfigModal = new PreconfigModalController(this);
+    this.equipHandler = (typeof ProcurementEquipHandler !== 'undefined') ? new ProcurementEquipHandler(this) : null;
 
     window.openSystemInspectModal = (t, id) => this.inspector.openInspectModal(t, id);
     this.initInspectListeners();
@@ -207,91 +207,19 @@ class ProcurementManager {
   }
 
   equipItemDirectly(itemData) {
-    if (this.game.procurementSquadron.length === 0) {
-      this.showAlertModal('NO AIRCRAFT', 'Add an aircraft to your squadron before equipping weapons or systems.');
-      return;
-    }
-    const sIdx = (this.activeBayIndex !== undefined && this.activeBayIndex < this.game.procurementSquadron.length) ? this.activeBayIndex : 0;
-    this.equipItemDataToSquadron(sIdx, itemData);
+    if (this.equipHandler) this.equipHandler.equipItemDirectly(itemData);
   }
 
   addAirframe(specId) {
-    const spec = (window.AIRCRAFT_CATALOG || {})[specId];
-    if (!spec) return;
-    if (this.game.budgetRemaining < (spec.cost || 0)) {
-      this.showAlertModal('INSUFFICIENT FUNDS', `Adding ${spec.name} ($${Number(spec.cost).toFixed(1)}M) exceeds available budget.`);
-      return;
-    }
-    const maxUnits = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
-    if (this.game.procurementSquadron.length >= maxUnits) {
-      this.showAlertModal('LIMIT REACHED', `Maximum squadron capacity of ${maxUnits} aircraft reached.`);
-      return;
-    }
-    const isFirst = (this.game.procurementSquadron.length === 0);
-    this.game.procurementSquadron.push({
-      specId: specId, chosenGunId: spec.builtInGun || 'M61A2', weapons: [], upgrades: [], isLead: isFirst
-    });
-    this.activeBayIndex = this.game.procurementSquadron.length - 1;
-    this.updateUI();
-    this.renderCatalog();
+    if (this.equipHandler) this.equipHandler.addAirframe(specId);
   }
 
   cloneAirframe(sIdx) {
-    const item = this.game.procurementSquadron[sIdx];
-    if (!item) return;
-    const maxUnits = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
-    if (this.game.procurementSquadron.length >= maxUnits) {
-      this.showAlertModal('LIMIT REACHED', `Maximum squadron capacity of ${maxUnits} aircraft reached.`);
-      return;
-    }
-    this.game.procurementSquadron.push({
-      specId: item.specId, chosenGunId: item.chosenGunId, weapons: [...item.weapons], upgrades: [...item.upgrades], isLead: false
-    });
-    this.activeBayIndex = this.game.procurementSquadron.length - 1;
-    this.updateUI();
+    if (this.equipHandler) this.equipHandler.cloneAirframe(sIdx);
   }
 
   equipItemDataToSquadron(sIdx, itemData) {
-    const item = this.game.procurementSquadron[sIdx];
-    if (!item) return;
-
-    if (itemData.type === 'gun') {
-      const spec = (window.AIRCRAFT_CATALOG || {})[item.specId];
-      const gun = (window.AUTOCANNONS_CATALOG || {})[itemData.id];
-      const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
-        ? window.AircraftRegistry.isGunCompatible(spec, gun)
-        : (spec && spec.allowedGuns ? spec.allowedGuns.includes(itemData.id) : true);
-
-      if (!isComp) {
-        this.showAlertModal('INCOMPATIBLE', `${itemData.name} is not compatible with this aircraft.`);
-        return;
-      }
-      item.chosenGunId = itemData.id;
-    } else if (itemData.type === 'weapon') {
-      const wpn = (window.WEAPONS_CATALOG || {})[itemData.id];
-      const spec = (window.AIRCRAFT_CATALOG || {})[item.specId];
-      if (!wpn || !spec) return;
-      const curSlots = item.weapons.reduce((sum, wId) => sum + ((window.WEAPONS_CATALOG[wId] || {}).slots || 1), 0);
-      if (curSlots + (wpn.slots || 1) > (spec.totalSlots || 6)) {
-        this.showAlertModal('HARDPOINTS FULL', `Mounting ${wpn.name} exceeds remaining hardpoint capacity on Aircraft #${sIdx + 1}.`);
-        return;
-      }
-      item.weapons.push(itemData.id);
-    } else if (itemData.type === 'upgrade') {
-      const specU = (window.AIRCRAFT_CATALOG || {})[item.specId];
-      if (item.upgrades.length >= (specU.upgradeSockets || 3)) {
-        this.showAlertModal('SLOTS FULL', `All component sockets on Aircraft #${sIdx + 1} are occupied.`);
-        return;
-      }
-      if (item.upgrades.includes(itemData.id)) {
-        this.showAlertModal('ALREADY INSTALLED', 'This component is already installed on this aircraft.');
-        return;
-      }
-      item.upgrades.push(itemData.id);
-    }
-    if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-    this.updateUI();
-    this.renderCatalog();
+    if (this.equipHandler) this.equipHandler.equipItemDataToSquadron(sIdx, itemData);
   }
 
   applyBuiltinPreset(type) {

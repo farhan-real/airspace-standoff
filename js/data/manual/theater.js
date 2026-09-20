@@ -1,12 +1,12 @@
 /**
- * AIRSPACE STANDOFF // Flight Manual Submodule: Chapters 8 to 9
+ * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 8 to 9
  * Covers: Ace Pilots, Difficulties, Central Depots, Time Warp, Scoring & Keybinds
  */
 
 window.MANUAL_THEATER = [
   {
     id: 'ch8_aces_difficulties',
-    title: 'SECTION 08 // ADVERSARY ACE SQUADRONS & THEATER ENGAGEMENT TIERS',
+    title: 'SECTION 08: ADVERSARY ACE SQUADRONS & THEATER ENGAGEMENT TIERS',
     desc: `
       <div class="ge-subhead">DESIGNATED ACE FIGHTERS (★ ACE ★)</div>
       <div class="ge-desc">
@@ -77,7 +77,7 @@ window.MANUAL_THEATER = [
   },
   {
     id: 'ch9_logistics_scoring',
-    title: 'SECTION 09 // THEATER IADS, INDESTRUCTIBLE DEPOTS, SCORING & KEYBINDS',
+    title: 'SECTION 09: THEATER IADS, INDESTRUCTIBLE DEPOTS, SCORING & KEYBINDS',
     desc: `
       <div class="ge-subhead">CENTRAL INDESTRUCTIBLE AMMO DEPOTS</div>
       <div class="ge-desc">

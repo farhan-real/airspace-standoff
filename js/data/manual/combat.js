@@ -1,12 +1,12 @@
 /**
- * AIRSPACE STANDOFF // Flight Manual Submodule: Chapters 6 to 7
+ * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 6 to 7
  * Covers: Guided Munitions, Seekers, Salvos, Electronic Warfare & Doppler Notching
  */
 
 window.MANUAL_COMBAT = [
   {
     id: 'ch6_weapons_salvos',
-    title: 'SECTION 06 // GUIDED MISSILES, HOMING SEEKERS & SALVO SATURATION DOCTRINE',
+    title: 'SECTION 06: GUIDED MISSILES, HOMING SEEKERS & SALVO SATURATION DOCTRINE',
     desc: `
       <div class="ge-subhead">MISSILE SEEKER TYPES &amp; COUNTERMEASURES</div>
       <div class="table-scroll-wrapper">
@@ -78,7 +78,7 @@ window.MANUAL_COMBAT = [
   },
   {
     id: 'ch7_defense_ew',
-    title: 'SECTION 07 // ELECTRONIC WARFARE, DOPPLER NOTCHING & DEFENSIVE MANEUVERS',
+    title: 'SECTION 07: ELECTRONIC WARFARE, DOPPLER NOTCHING & DEFENSIVE MANEUVERS',
     desc: `
       <div class="ge-subhead">HOW TO EXECUTE A DOPPLER NOTCH (BEAMING 90°)</div>
       <div class="ge-desc">

@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Master Flight Manual Orchestrator & Live Search
+ * AIRSPACE STANDOFF: Master Flight Manual Orchestrator & Live Search
  */
 
 window.TACTICAL_FLIGHT_MANUAL = [
@@ -23,15 +23,15 @@ window.initTacticalManual = function() {
   ];
 
   const chapters = [
-    { id: 'ch1_quickstart', label: '01 // DOCTRINE & ROE' },
-    { id: 'ch2_kinematics', label: '02 // KINEMATICS & POWER' },
-    { id: 'ch3_stress_coffin', label: '03 // G-STRESS & COFFIN' },
-    { id: 'ch4_radar_physics', label: '04 // RADAR & STEALTH RCS' },
-    { id: 'ch5_classification_uplink', label: '05 // TRACKS & SATELLITE' },
-    { id: 'ch6_weapons_salvos', label: '06 // MISSILES & SALVOS' },
-    { id: 'ch7_defense_ew', label: '07 // EW & NOTCH DEFENSE' },
-    { id: 'ch8_aces_difficulties', label: '08 // ACES & THREAT TIERS' },
-    { id: 'ch9_logistics_scoring', label: '09 // THEATER IADS & DEPOTS' }
+    { id: 'ch1_quickstart', label: '01: DOCTRINE & ROE' },
+    { id: 'ch2_kinematics', label: '02: KINEMATICS & POWER' },
+    { id: 'ch3_stress_coffin', label: '03: G-STRESS & COFFIN' },
+    { id: 'ch4_radar_physics', label: '04: RADAR & STEALTH RCS' },
+    { id: 'ch5_classification_uplink', label: '05: TRACKS & SATELLITE' },
+    { id: 'ch6_weapons_salvos', label: '06: MISSILES & SALVOS' },
+    { id: 'ch7_defense_ew', label: '07: EW & NOTCH DEFENSE' },
+    { id: 'ch8_aces_difficulties', label: '08: ACES & THREAT TIERS' },
+    { id: 'ch9_logistics_scoring', label: '09: THEATER IADS & DEPOTS' }
   ];
 
   if (navContainer) {

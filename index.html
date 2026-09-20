@@ -20,9 +20,9 @@
   <link rel="stylesheet" href="css/hud/banner.css">
   <link rel="stylesheet" href="css/hud/workspace.css">
   <link rel="stylesheet" href="css/hud/radar.css">
-  <link rel="stylesheet" href="css/hud/flight/hud-tape.css">
+  <link rel="stylesheet" href="css/hud/flight/tape.css">
   <link rel="stylesheet" href="css/hud/flight/mfd.css">
-  <link rel="stylesheet" href="css/hud/flight/roster-pane.css">
+  <link rel="stylesheet" href="css/hud/flight/roster.css">
   <link rel="stylesheet" href="css/hud/tactical/sms.css">
   <link rel="stylesheet" href="css/hud/tactical/deck.css">
 
@@ -31,10 +31,10 @@
   <link rel="stylesheet" href="css/procurement/header.css">
   <link rel="stylesheet" href="css/procurement/presets.css">
   <link rel="stylesheet" href="css/procurement/catalog/armory.css">
-  <link rel="stylesheet" href="css/procurement/catalog/airframe-cards.css">
+  <link rel="stylesheet" href="css/procurement/catalog/cards.css">
   <link rel="stylesheet" href="css/procurement/catalog/preconfig.css">
   <link rel="stylesheet" href="css/procurement/squadron/loadout.css">
-  <link rel="stylesheet" href="css/procurement/squadron/loadout-hardware.css">
+  <link rel="stylesheet" href="css/procurement/squadron/hardware.css">
 </head>
 <body>
 
@@ -588,8 +588,10 @@
 <script src="js/data/aircraft/ew.js"></script>
 <script src="js/data/aircraft/drones.js"></script>
 <script src="js/data/aircraft/experimental.js"></script>
+<script src="js/data/aircraft/coffin.js"></script>
 <script src="js/data/aircraft.js"></script>
 <script src="js/data/weapons/a2a.js"></script>
+<script src="js/data/weapons/wvr.js"></script>
 <script src="js/data/weapons/a2g.js"></script>
 <script src="js/data/weapons/pods.js"></script>
 <script src="js/data/weapons.js"></script>
@@ -608,6 +610,7 @@
 
 <!-- Engine Systems -->
 <script src="js/systems/engine/persistence.js"></script>
+<script src="js/systems/engine/rwr.js"></script>
 <script src="js/systems/engine/audio.js"></script>
 <script src="js/systems/engine/physics.js"></script>
 
@@ -616,7 +619,7 @@
 <script src="js/systems/entities/civilian.js"></script>
 <script src="js/systems/entities/ghost.js"></script>
 <script src="js/systems/entities/decoy.js"></script>
-<script src="js/systems/entities/lead-buffs.js"></script>
+<script src="js/systems/entities/buffs.js"></script>
 <script src="js/systems/entities/aircraft.js"></script>
 <script src="js/systems/entities/missile.js"></script>
 <script src="js/systems/entities/surface.js"></script>
@@ -626,17 +629,20 @@
 <script src="js/systems/radar/camera.js"></script>
 <script src="js/systems/radar/effects.js"></script>
 <script src="js/systems/radar/environment.js"></script>
+<script src="js/systems/radar/auxcontacts.js"></script>
 <script src="js/systems/radar/contacts.js"></script>
+<script src="js/systems/radar/surfacezones.js"></script>
 <script src="js/systems/radar/tactical.js"></script>
 <script src="js/systems/radar/renderer.js"></script>
 <script src="js/systems/radar.js"></script>
 
 <!-- Combat & Simulation Systems -->
 <script src="js/systems/combat/combat.js"></script>
-<script src="js/systems/combat/fleet-generator.js"></script>
-<script src="js/systems/combat/ai-tactics.js"></script>
+<script src="js/systems/combat/fleet.js"></script>
+<script src="js/systems/combat/tactics.js"></script>
 <script src="js/systems/combat/ai.js"></script>
 <script src="js/systems/simulation/scoring.js"></script>
+<script src="js/systems/simulation/timeline.js"></script>
 <script src="js/systems/simulation/aar.js"></script>
 <script src="js/systems/simulation/detection.js"></script>
 <script src="js/systems/simulation.js"></script>
@@ -645,14 +651,16 @@
 <script src="js/ui/settings.js"></script>
 <script src="js/ui/avionics/roster.js"></script>
 <script src="js/ui/avionics/avionics.js"></script>
+<script src="js/ui/controls/targeting.js"></script>
 <script src="js/ui/controls/keyboard.js"></script>
 <script src="js/ui/controls/pointer.js"></script>
 <script src="js/ui/controls/fullscreen.js"></script>
-<script src="js/ui/custom-dropdown.js"></script>
+<script src="js/ui/dropdown.js"></script>
 <script src="js/ui/controls.js"></script>
-<script src="js/ui/cards/maneuver-deck.js"></script>
+<script src="js/ui/cards/deck.js"></script>
 <script src="js/ui/cards/target.js"></script>
-<script src="js/ui/cards/pylon-bay.js"></script>
+<script src="js/ui/cards/autocannon.js"></script>
+<script src="js/ui/cards/pylons.js"></script>
 <script src="js/ui/cards.js"></script>
 
 <!-- Procurement Subsystems -->
@@ -660,12 +668,15 @@
 <script src="js/ui/procurement/inspector/views.js"></script>
 <script src="js/ui/procurement/inspector/modal.js"></script>
 <script src="js/ui/procurement/inspector/inspector.js"></script>
-<script src="js/ui/procurement/squadron/custom-loadouts.js"></script>
+<script src="js/ui/procurement/squadron/loadouts.js"></script>
 <script src="js/ui/procurement/catalog/presets.js"></script>
-<script src="js/ui/procurement/dialogs/preconfig-modal.js"></script>
+<script src="js/ui/procurement/dialogs/cards.js"></script>
+<script src="js/ui/procurement/dialogs/preconfig.js"></script>
 <script src="js/ui/procurement/catalog/airframes.js"></script>
 <script src="js/ui/procurement/catalog/shelf.js"></script>
+<script src="js/ui/procurement/squadron/card.js"></script>
 <script src="js/ui/procurement/squadron/roster.js"></script>
+<script src="js/ui/procurement/equip.js"></script>
 <script src="js/ui/procurement/dialogs/dialog.js"></script>
 <script src="js/ui/procurement.js"></script>
 

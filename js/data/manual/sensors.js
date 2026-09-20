@@ -1,12 +1,12 @@
 /**
- * AIRSPACE STANDOFF // Flight Manual Submodule: Chapters 4 to 5
+ * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 4 to 5
  * Covers: Radar Physics, Observability (RCS), Progressive Classification & Satellite Uplink
  */
 
 window.MANUAL_SENSORS = [
   {
     id: 'ch4_radar_physics',
-    title: 'SECTION 04 // RADAR DETECTION EQUATION, CLUTTER FILTERS & STEALTH RCS',
+    title: 'SECTION 04: RADAR DETECTION EQUATION, CLUTTER FILTERS & STEALTH RCS',
     desc: `
       <div class="ge-subhead">THE RADAR RANGE EQUATION IN COMBAT</div>
       <div class="ge-desc">
@@ -89,7 +89,7 @@ window.MANUAL_SENSORS = [
   },
   {
     id: 'ch5_classification_uplink',
-    title: 'SECTION 05 // TARGET CLASSIFICATION PIPELINE & ORBITAL SATELLITE UPLINK',
+    title: 'SECTION 05: TARGET CLASSIFICATION PIPELINE & ORBITAL SATELLITE UPLINK',
     desc: `
       <div class="ge-desc">
         AIRSPACE STANDOFF simulates an authentic multi-stage radar signal intelligence pipeline rather than displaying omniscient contact data.

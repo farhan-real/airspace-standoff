@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Advanced Web Audio Synthesizer (Realistic Combat SFX & Pleasant Mil-Spec RWR)
+ * AIRSPACE STANDOFF // Advanced Web Audio Synthesizer Core
  */
 
 class TacticalAudioEngine {
@@ -9,9 +9,8 @@ class TacticalAudioEngine {
     this.masterVolume = 1.0;
     this.rwrVolume = 0.70;
     this.fxVolume = 0.85;
-    this.lastRwrState = 'clean';
-    this.rwrPulseTimer = null;
     this.compressor = null;
+    this.rwr = (typeof TacticalRWRAudio !== 'undefined') ? new TacticalRWRAudio() : null;
   }
 
   ensureContext() {
@@ -40,10 +39,7 @@ class TacticalAudioEngine {
   toggle() {
     this.ensureContext();
     this.enabled = !this.enabled;
-    if (!this.enabled && this.rwrPulseTimer) {
-      clearInterval(this.rwrPulseTimer);
-      this.rwrPulseTimer = null;
-    }
+    if (!this.enabled && this.rwr) this.rwr.stop();
     return this.enabled;
   }
 
@@ -321,74 +317,11 @@ class TacticalAudioEngine {
     } catch (e) {}
   }
 
-  // Pleasant, mil-spec RWR warble (NOT abrasive/harsh, comfortable to ears)
   updateRWR(threatState) {
     if (!this.enabled || this.masterVolume <= 0 || this.rwrVolume <= 0) return;
-    if (threatState === this.lastRwrState) return;
-    this.lastRwrState = threatState;
-
     this.ensureContext();
-    if (!this.ctx) return;
-
-    if (this.rwrPulseTimer) {
-      clearInterval(this.rwrPulseTimer);
-      this.rwrPulseTimer = null;
-    }
-
-    if (threatState === 'lock') {
-      // Pleasant mil-spec soft warble pulse: warm sine/soft-triangle dual tone
-      const playMilLockPulse = () => {
-        if (!this.enabled || this.lastRwrState !== 'lock') return;
-        try {
-          const now = this.ctx.currentTime;
-          const osc1 = this.ctx.createOscillator();
-          const osc2 = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-
-          osc1.type = 'sine';
-          osc2.type = 'triangle';
-          osc1.frequency.setValueAtTime(1400, now);
-          osc1.frequency.exponentialRampToValueAtTime(1150, now + 0.06);
-          osc2.frequency.setValueAtTime(920, now);
-          osc2.frequency.exponentialRampToValueAtTime(800, now + 0.06);
-
-          const vol = 0.045 * this.masterVolume * this.rwrVolume;
-          gain.gain.setValueAtTime(vol, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
-
-          osc1.connect(gain);
-          osc2.connect(gain);
-          gain.connect(this.getMasterDestination());
-
-          osc1.start(now);
-          osc2.start(now);
-          osc1.stop(now + 0.075);
-          osc2.stop(now + 0.075);
-        } catch (e) {}
-      };
-
-      playMilLockPulse();
-      this.rwrPulseTimer = setInterval(playMilLockPulse, 320); // Comfortable cadence
-    } else if (threatState === 'sweep') {
-      try {
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(1250, now);
-        osc.frequency.exponentialRampToValueAtTime(1050, now + 0.045);
-
-        const vol = 0.035 * this.masterVolume * this.rwrVolume;
-        gain.gain.setValueAtTime(vol, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-
-        osc.connect(gain);
-        gain.connect(this.getMasterDestination());
-        osc.start(now);
-        osc.stop(now + 0.055);
-      } catch (e) {}
-    }
+    if (!this.ctx || !this.rwr) return;
+    this.rwr.update(threatState, this.ctx, this.getMasterDestination(), this.masterVolume, this.rwrVolume);
   }
 }
 

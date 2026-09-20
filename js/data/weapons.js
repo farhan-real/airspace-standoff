@@ -1,10 +1,11 @@
 /**
- * APEX VECTOR // Master Weapons Catalog Aggregator
+ * AIRSPACE STANDOFF // Master Weapons Catalog Aggregator
  */
 
 window.WEAPONS_CATALOG = Object.assign(
   {},
   window.WEAPONS_A2A || {},
+  window.WEAPONS_A2A_WVR || {},
   window.WEAPONS_A2G || {},
   window.WEAPONS_PODS || {}
 );

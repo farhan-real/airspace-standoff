@@ -1,17 +1,17 @@
 /**
- * APEX VECTOR // Master Aircraft Catalog Aggregator & Query Engine
+ * AIRSPACE STANDOFF // Master Aircraft Catalog Aggregator & Query Engine
  */
 
 window.AIRCRAFT_CATALOG = Object.assign(
   {},
   window.AIRCRAFT_STEALTH || {},
-  window.AIRCRAFT_FIGHTERS || {},
   window.AIRCRAFT_SUPERIORITY || {},
   window.AIRCRAFT_MULTIROLE || {},
   window.AIRCRAFT_STRIKE || {},
   window.AIRCRAFT_EW || {},
   window.AIRCRAFT_DRONES || {},
-  window.AIRCRAFT_EXPERIMENTAL || {}
+  window.AIRCRAFT_EXPERIMENTAL || {},
+  window.AIRCRAFT_COFFIN || {}
 );
 
 window.AircraftRegistry = {
@@ -27,5 +27,15 @@ window.AircraftRegistry = {
   },
   count() {
     return Object.keys(window.AIRCRAFT_CATALOG).length;
+  },
+  isGunCompatible(spec, gun) {
+    if (!spec || !gun) return false;
+    if (gun.lockedTo && gun.lockedTo.length > 0) {
+      return gun.lockedTo.includes(spec.id);
+    }
+    if (spec.allowedGuns && spec.allowedGuns.length > 0) {
+      return spec.allowedGuns.includes(gun.id);
+    }
+    return true;
   }
 };

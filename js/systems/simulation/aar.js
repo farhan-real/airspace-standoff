@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF // After Action Report System
- * Standard military mission debrief format with collapsible timeline and roster table.
+ * AIRSPACE STANDOFF // After Action Report System: Mission Debrief
  */
 
 class AfterActionReportSystem {
@@ -12,10 +11,9 @@ class AfterActionReportSystem {
     const dEl = document.getElementById('game-over-desc');
     const sEl = document.getElementById('game-over-stats');
     const podiumEl = document.getElementById('ace-podium-cards');
-    const timelineListEl = document.getElementById('aar-timeline-list');
     const fullRosterContainer = document.getElementById('aar-full-roster-content');
 
-    const durSec = Math.max(1, Math.round((performance.now() - game.matchStartTime) / 1000));
+    const durSec = Math.max(1, Math.round((performance.now() - (game.matchStartTime || performance.now())) / 1000));
     const min = Math.floor(durSec / 60);
     const sec = durSec % 60;
     const timeStr = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
@@ -38,18 +36,18 @@ class AfterActionReportSystem {
         const teamColor = p.isAce ? '#ffd700' : (p.team === 'friendly' ? '#00f0ff' : '#ff3366');
         const teamTag = p.isAce ? `${teamName} ACE` : teamName;
 
-        return (
-          `<div class="ace-card ${rankClass}">` +
-            `<div class="ace-rank-title"><span>#${idx + 1} - ${rankNames[idx]}</span> <b style="color:${teamColor}">[${teamTag}]</b></div>` +
-            `<div class="ace-callsign">${p.callsign || 'PILOT'}</div>` +
-            `<div class="ace-sub">${p.spec ? p.spec.name : 'AIRCRAFT'} - ${p.squadronName || (p.team === 'friendly' ? 'Allied Fleet' : 'Hostile Fleet')}</div>` +
-            `<div class="ace-stats">` +
-              `<span>HITS: <b>${p.kills || 0}</b></span>` +
-              `<span>EVADED: <b>${p.missilesEvadedCount || 0}</b></span>` +
-              `<span>POINTS: <b>${p.scorePoints || 0}</b></span>` +
-            `</div>` +
-          `</div>`
-        );
+        return `
+          <div class="ace-card ${rankClass}">
+            <div class="ace-rank-title"><span>#${idx + 1} - ${rankNames[idx]}</span> <b style="color:${teamColor}">[${teamTag}]</b></div>
+            <div class="ace-callsign">${p.callsign || 'PILOT'}</div>
+            <div class="ace-sub">${p.spec ? p.spec.name : 'AIRCRAFT'} - ${p.squadronName || (p.team === 'friendly' ? 'Allied Fleet' : 'Hostile Fleet')}</div>
+            <div class="ace-stats">
+              <span>HITS: <b>${p.kills || 0}</b></span>
+              <span>EVADED: <b>${p.missilesEvadedCount || 0}</b></span>
+              <span>POINTS: <b>${p.scorePoints || 0}</b></span>
+            </div>
+          </div>
+        `;
       }).join('');
     }
 
@@ -133,68 +131,8 @@ class AfterActionReportSystem {
       `;
     }
 
-    if (timelineListEl && game.simulation && game.simulation.timelineEvents) {
-      timelineListEl.innerHTML = game.simulation.timelineEvents.map(ev => {
-        const isKill = ev.type === 'kill' || ev.type === 'ace-kill';
-        const isRoe = ev.type === 'roe_penalty';
-        const col = ev.type === 'ace-kill' ? '#ffd700' : (isKill ? (ev.team === 'friendly' ? '#00f0ff' : '#ff3366') : (isRoe ? '#f97316' : '#94a3b8'));
-        const teamStr = ev.type === 'ace-kill' ? 'LEADER DOWN' : (ev.team ? (ev.team === 'friendly' ? 'BLUE' : 'RED') : '');
-
-        if (isKill) {
-          const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge" style="color:#00f0ff;font-size:0.56rem;margin-left:4px;">[Salvo: ${ev.salvoBreakdown || ('x' + ev.salvoCount)}]</span>` : '';
-          return (
-            `<div class="timeline-entry ${ev.type === 'ace-kill' ? 'ace-kill' : 'kill'}">` +
-              `<div class="timeline-main-info">` +
-                `<span class="timeline-time">[${ev.time}]</span> ` +
-                `<b style="color:${col};">[${teamStr}]</b> ` +
-                `<span class="timeline-combatant"><b>${ev.source}</b> (${ev.sourceType || 'AIRCRAFT'})</span> ` +
-                `<span>destroyed</span> ` +
-                `<span class="timeline-combatant"><b>${ev.target}</b> (${ev.targetType || 'TARGET'})</span> ` +
-                `<span class="timeline-weapon-tag">using <b>${ev.weapon || 'Missile'}</b></span>` +
-                salvoBadge +
-              `</div>` +
-              `<b style="color:${col};white-space:nowrap;">+${ev.points} VP</b>` +
-            `</div>`
-          );
-        } else if (isRoe) {
-          return (
-            `<div class="timeline-entry roe">` +
-              `<div class="timeline-main-info">` +
-                `<span class="timeline-time">[${ev.time}]</span> ` +
-                `<b style="color:#f97316;">[ROE VIOLATION]</b> ` +
-                `<span>Civilian aircraft <b>${ev.target}</b> destroyed</span>` +
-              `</div>` +
-              `<b style="color:#ff3366;white-space:nowrap;">${ev.points} VP</b>` +
-            `</div>`
-          );
-        } else {
-          return (
-            `<div class="timeline-entry">` +
-              `<span>[${ev.time}] ${ev.target}</span>` +
-              `<b>${ev.points || 0} VP</b>` +
-            `</div>`
-          );
-        }
-      }).join('');
-    }
-
-    const toggleTimelineBtn = document.getElementById('btn-toggle-aar-timeline');
-    if (toggleTimelineBtn && timelineListEl) {
-      timelineListEl.classList.add('hidden');
-      toggleTimelineBtn.textContent = 'EXPAND TIMELINE';
-      toggleTimelineBtn.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const isCurrentlyHidden = timelineListEl.classList.contains('hidden');
-        if (isCurrentlyHidden) {
-          timelineListEl.classList.remove('hidden');
-          toggleTimelineBtn.textContent = 'COLLAPSE TIMELINE';
-        } else {
-          timelineListEl.classList.add('hidden');
-          toggleTimelineBtn.textContent = 'EXPAND TIMELINE';
-        }
-        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-      };
+    if (typeof AfterActionReportTimeline !== 'undefined') {
+      AfterActionReportTimeline.renderTimeline(game);
     }
 
     const toggleRosterBtn = document.getElementById('btn-toggle-aar-roster');
@@ -204,14 +142,9 @@ class AfterActionReportSystem {
       toggleRosterBtn.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const isCurrentlyHidden = fullRosterContainer.classList.contains('hidden');
-        if (isCurrentlyHidden) {
-          fullRosterContainer.classList.remove('hidden');
-          toggleRosterBtn.textContent = 'COLLAPSE';
-        } else {
-          fullRosterContainer.classList.add('hidden');
-          toggleRosterBtn.textContent = 'EXPAND';
-        }
+        const isHidden = fullRosterContainer.classList.contains('hidden');
+        fullRosterContainer.classList.toggle('hidden', !isHidden);
+        toggleRosterBtn.textContent = isHidden ? 'COLLAPSE' : 'EXPAND';
         if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       };
     }
