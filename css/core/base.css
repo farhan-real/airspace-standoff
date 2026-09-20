@@ -130,11 +130,32 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 6px;
   letter-spacing: 0.4px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 5px rgba(0, 0, 0, 0.4);
   transition: all 0.12s ease;
   white-space: nowrap;
+}
+
+.hud-btn .btn-vector-ico {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.hud-btn:hover:not(:disabled) .btn-vector-ico {
+  transform: scale(1.10);
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+.modal-title-ico {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  margin-right: 8px;
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.45));
 }
 
 .hud-btn:hover:not(:disabled) {
@@ -160,6 +181,7 @@ html, body {
   padding: 3px 8px;
   font-size: 0.65rem;
   height: 26px;
+  gap: 5px;
 }
 
 .hud-btn.alert {

@@ -74,6 +74,7 @@
   justify-content: center;
   box-sizing: border-box;
   transition: all 0.14s ease;
+  gap: 6px;
 }
 
 .squad-callsign-tag {
@@ -273,6 +274,7 @@
     padding: 4px 9px;
     font-size: 0.70rem;
     height: 28px;
+    gap: 4px;
   }
 
   .mode-and-ai-controls {
