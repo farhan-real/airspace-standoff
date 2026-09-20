@@ -273,7 +273,8 @@ class MissileEntity {
       }
     } else {
       let reason = 'KINETIC MISS';
-      if (tgt.isAce && Math.random() < 0.70) reason = 'ACE BREAK TURN';
+      const aceBreakRate = tgt.aceEvasionBonus ? Math.min(0.85, tgt.aceEvasionBonus * 2.2) : 0.60;
+      if (tgt.isAce && Math.random() < aceBreakRate) reason = 'ACE BREAK TURN';
       else if (tgt.isFlightLead && tgt.leadEvasionBonus && Math.random() < 0.75) reason = 'LEAD EVASION BREAK';
       else if (tgt.isCoffin) reason = 'COFFIN DODGE';
       else if (tgt.isNotching) reason = 'DOPPLER NOTCH';

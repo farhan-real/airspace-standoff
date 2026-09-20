@@ -111,10 +111,10 @@ window.CIVILIAN_FLIGHTS = [
 ];
 
 window.AI_DIFFICULTIES = {
-  CADET: { name: 'Cadet', budgetCap: 180.0, scoreMultiplier: 0.60, reactionCooldown: 4.8, attentionSpanSec: 4.5, engagementRangeRatio: 0.55, evasionSkill: 0.25, blunderChance: 0.40, usesDopplerNotch: false, aceCount: 0, multiTarget: false, useAdvancedManeuvers: false },
-  VETERAN: { name: 'Veteran', budgetCap: 260.0, scoreMultiplier: 1.00, reactionCooldown: 3.0, attentionSpanSec: 3.5, engagementRangeRatio: 0.75, evasionSkill: 0.50, blunderChance: 0.20, usesDopplerNotch: true, aceCount: 1, multiTarget: false, useAdvancedManeuvers: false },
-  ELITE: { name: 'Elite', budgetCap: 360.0, scoreMultiplier: 1.40, reactionCooldown: 1.8, attentionSpanSec: 2.5, engagementRangeRatio: 0.88, evasionSkill: 0.72, blunderChance: 0.08, usesDopplerNotch: true, aceCount: 1, multiTarget: true, useAdvancedManeuvers: true },
-  ACE: { name: 'Theater Ace', budgetCap: 450.0, scoreMultiplier: 1.80, reactionCooldown: 1.0, attentionSpanSec: 1.8, engagementRangeRatio: 0.95, evasionSkill: 0.88, blunderChance: 0.03, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true },
-  MASTER: { name: 'Supreme Master', budgetCap: 550.0, scoreMultiplier: 2.20, reactionCooldown: 0.65, attentionSpanSec: 1.3, engagementRangeRatio: 1.00, evasionSkill: 0.94, blunderChance: 0.01, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true },
-  LEGEND: { name: 'Apex Legend', budgetCap: 650.0, scoreMultiplier: 2.80, reactionCooldown: 0.35, attentionSpanSec: 0.9, engagementRangeRatio: 1.00, evasionSkill: 0.99, blunderChance: 0.00, usesDopplerNotch: true, aceCount: 3, multiTarget: true, useAdvancedManeuvers: true }
+  CADET: { name: 'Cadet', budgetCap: 180.0, scoreMultiplier: 0.60, reactionCooldown: 5.2, attentionSpanSec: 5.0, engagementRangeRatio: 0.50, evasionSkill: 0.20, blunderChance: 0.45, usesDopplerNotch: false, aceCount: 0, multiTarget: false, useAdvancedManeuvers: false },
+  VETERAN: { name: 'Veteran', budgetCap: 260.0, scoreMultiplier: 1.00, reactionCooldown: 3.8, attentionSpanSec: 4.0, engagementRangeRatio: 0.70, evasionSkill: 0.40, blunderChance: 0.28, usesDopplerNotch: true, aceCount: 1, multiTarget: false, useAdvancedManeuvers: false },
+  ELITE: { name: 'Elite', budgetCap: 360.0, scoreMultiplier: 1.40, reactionCooldown: 2.2, attentionSpanSec: 2.8, engagementRangeRatio: 0.82, evasionSkill: 0.65, blunderChance: 0.12, usesDopplerNotch: true, aceCount: 1, multiTarget: true, useAdvancedManeuvers: true },
+  ACE: { name: 'Theater Ace', budgetCap: 450.0, scoreMultiplier: 1.80, reactionCooldown: 1.4, attentionSpanSec: 1.8, engagementRangeRatio: 0.92, evasionSkill: 0.82, blunderChance: 0.04, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true },
+  MASTER: { name: 'Supreme Master', budgetCap: 550.0, scoreMultiplier: 2.20, reactionCooldown: 0.90, attentionSpanSec: 1.3, engagementRangeRatio: 0.98, evasionSkill: 0.92, blunderChance: 0.01, usesDopplerNotch: true, aceCount: 2, multiTarget: true, useAdvancedManeuvers: true },
+  LEGEND: { name: 'Apex Legend', budgetCap: 650.0, scoreMultiplier: 2.80, reactionCooldown: 0.45, attentionSpanSec: 0.8, engagementRangeRatio: 1.00, evasionSkill: 0.98, blunderChance: 0.00, usesDopplerNotch: true, aceCount: 3, multiTarget: true, useAdvancedManeuvers: true }
 };

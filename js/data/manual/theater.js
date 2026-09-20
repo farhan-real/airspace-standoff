@@ -16,6 +16,7 @@ window.MANUAL_THEATER = [
           <li><b>Coordinated Pincer Tactics:</b> Aces coordinate with wingmen to bracket your fighters from opposing angles.</li>
           <li><b>Synchronized Volleys:</b> Aces fire synchronized multi-missile salvos to maximize saturation hit bonuses.</li>
           <li><b>Extreme Evasion:</b> Aces deploy chaff/flares with disciplined timing and perform post-stall breaks (+32% evasion bonus).</li>
+          <li><b>Difficulty-Scaled Errors:</b> On Normal (Veteran), Aces occasionally misjudge merges, allowing tactical counterplay; on Master and Legend, they execute with zero blunder margin.</li>
           <li><b>High-Value Bounty:</b> Eliminating an Ace fighter awards a massive <b>+850 Victory Point bounty</b>!</li>
         </ul>
       </div>
@@ -32,42 +33,42 @@ window.MANUAL_THEATER = [
               <td>0.60x VP</td>
               <td>180.0M CR</td>
               <td>0</td>
-              <td>4.8s reaction cooldown, 40% blunder rate, basic flight logic, no Doppler notching.</td>
+              <td>5.2s reaction cooldown, 45% blunder rate, 20% evasion skill, basic flight logic, no Doppler notching.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">VETERAN</td>
               <td>1.00x VP</td>
               <td>260.0M CR</td>
               <td>1</td>
-              <td>3.0s reaction cooldown, 20% blunder rate, active Doppler notching, disciplined merges.</td>
+              <td>3.8s reaction cooldown, 28% blunder rate, 40% evasion skill, active Doppler notching, disciplined merges.</td>
             </tr>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">ELITE</td>
               <td>1.40x VP</td>
               <td>360.0M CR</td>
               <td>1</td>
-              <td>1.8s reaction cooldown, 8% blunder rate, multi-unit coordination, BVR salvos.</td>
+              <td>2.2s reaction cooldown, 12% blunder rate, 65% evasion skill, multi-unit coordination, BVR salvos.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">THEATER ACE</td>
               <td>1.80x VP</td>
               <td>450.0M CR</td>
               <td>2</td>
-              <td>1.0s reaction cooldown, 3% blunder rate, coordinated pincer attacks, lethal salvos.</td>
+              <td>1.4s reaction cooldown, 4% blunder rate, 82% evasion skill, coordinated pincer attacks, lethal salvos.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">SUPREME MASTER</td>
               <td>2.20x VP</td>
               <td>550.0M CR</td>
               <td>2</td>
-              <td>0.65s reaction cooldown, 1% blunder rate, rapid countermeasure and notch responses.</td>
+              <td>0.90s reaction cooldown, 1% blunder rate, 92% evasion skill, rapid countermeasure and notch responses.</td>
             </tr>
             <tr>
               <td style="color:#ff3366;font-weight:800;">APEX LEGEND</td>
               <td>2.80x VP</td>
               <td>650.0M CR</td>
               <td>3</td>
-              <td>0.35s reaction cooldown, 0% blunder rate, energy fighting, TVC cobras, ruthless merges.</td>
+              <td>0.45s reaction cooldown, 0% blunder rate, 98% evasion skill, energy fighting, TVC cobras, ruthless merges.</td>
             </tr>
           </tbody>
         </table>

@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Fleet Generator (150km x 100km Theater Adaptation)
- * High-entropy time-seeded hostiles, Aces, dynamic formations, and loadouts.
+ * Restored defense budgets, difficulty-tuned squadron sizes, and dynamic Ace loadouts.
  */
 
 const FleetGenerator = {
@@ -19,7 +19,7 @@ const FleetGenerator = {
 
     const targetBudget = diffProfile.budgetCap || 260.0;
     const basePlanes = diff === 'CADET' ? 5 : (diff === 'VETERAN' ? 8 : (diff === 'ELITE' ? 10 : 12));
-    const maxPlanes = Math.max(3, basePlanes + Math.floor(rng() * 3 - 1));
+    const maxPlanes = Math.max(3, basePlanes + Math.floor(rng() * 2));
     const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : 1;
 
     const catalog = window.AIRCRAFT_CATALOG || {};

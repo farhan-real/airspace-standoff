@@ -532,8 +532,11 @@
       </div>
 
       <div class="aar-full-roster-box">
-        <div class="strip-subhead" style="color:#00f0ff; margin-bottom: 4px;">PARTICIPATING AIRCRAFT &bull; STATUS REPORT</div>
-        <div id="aar-full-roster-content" style="max-height: 180px; overflow-y: auto;"></div>
+        <div class="aar-roster-toggle-row">
+          <span class="strip-subhead" style="color:#00f0ff;margin:0;">PARTICIPATING AIRCRAFT &bull; STATUS REPORT</span>
+          <button type="button" id="btn-toggle-aar-roster" class="hud-btn small">COLLAPSE</button>
+        </div>
+        <div id="aar-full-roster-content" class="aar-roster-content" style="max-height: 180px; overflow-y: auto;"></div>
       </div>
 
       <div id="game-over-stats"></div>
@@ -614,6 +617,7 @@
 <!-- Combat & Simulation Systems -->
 <script src="js/systems/combat/combat.js"></script>
 <script src="js/systems/combat/fleet-generator.js"></script>
+<script src="js/systems/combat/ai-tactics.js"></script>
 <script src="js/systems/combat/ai.js"></script>
 <script src="js/systems/simulation/scoring.js"></script>
 <script src="js/systems/simulation/aar.js"></script>
