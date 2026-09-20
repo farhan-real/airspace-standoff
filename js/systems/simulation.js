@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Simulation System Orchestrator (150km x 100km Theater)
- * Lean randomized weather pockets, sensor tracking, and win states.
+ * Time-seeded RNG cloud generator (Min 2, Max 5, peak at 3), sensor tracking, and win states.
  */
 
 class SimulationSystem {
@@ -48,25 +48,44 @@ class SimulationSystem {
 
   initWeatherClouds() {
     this.weatherClouds = [];
-    const count = 2 + Math.floor(Math.random() * 2);
+    // High-resolution time-seeded PRNG (Mulberry32)
+    let s = (Date.now() ^ ((performance.now() * 1000) | 0) ^ ((Math.random() * 0x7FFFFFFF) | 0)) >>> 0;
+    const rng = () => {
+      s = (s + 0x6D2B79F5) | 0;
+      let t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+
+    // Min 2, Max 5 (3 is most common: 2=15%, 3=55%, 4=22%, 5=8%)
+    const r = rng();
+    const count = r < 0.15 ? 2 : (r < 0.70 ? 3 : (r < 0.92 ? 4 : 5));
     const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
 
-    const corridors = [
-      { minX: 35, maxX: 65, minY: 20, maxY: 48 },
-      { minX: 85, maxX: 115, minY: 20, maxY: 50 },
-      { minX: 55, maxX: 95, minY: 52, maxY: 80 }
-    ].sort(() => Math.random() - 0.5);
+    const sizeProfiles = [
+      { rxMin: 25, rxMax: 32, ryMin: 16, ryMax: 22 },
+      { rxMin: 24, rxMax: 32, ryMin: 12, ryMax: 16 },
+      { rxMin: 18, rxMax: 25, ryMin: 13, ryMax: 18 }
+    ].sort(() => rng() - 0.5);
+
+    const sectors = [
+      { minX: 25, maxX: 65, minY: 18, maxY: 45 },
+      { minX: 85, maxX: 125, minY: 18, maxY: 45 },
+      { minX: 55, maxX: 95, minY: 35, maxY: 65 },
+      { minX: 25, maxX: 65, minY: 55, maxY: 82 },
+      { minX: 85, maxX: 125, minY: 55, maxY: 82 }
+    ].sort(() => rng() - 0.5);
 
     for (let i = 0; i < count; i++) {
-      const c = corridors[i % corridors.length];
-      const cx = c.minX + Math.random() * (c.maxX - c.minX);
-      const cy = c.minY + Math.random() * (c.maxY - c.minY);
-      const isSquall = Math.random() < 0.35;
-      const rx = isSquall ? (14.0 + Math.random() * 6.0) : (10.0 + Math.random() * 5.0);
-      const ry = isSquall ? (7.0 + Math.random() * 3.0) : (8.0 + Math.random() * 4.0);
-      const angle = Math.random() * Math.PI * 2;
-      const spd = 0.20 + Math.random() * 0.35;
+      const sec = sectors[i % sectors.length];
+      const profile = sizeProfiles[i % sizeProfiles.length];
+      const cx = sec.minX + rng() * (sec.maxX - sec.minX);
+      const cy = sec.minY + rng() * (sec.maxY - sec.minY);
+      const rx = profile.rxMin + rng() * (profile.rxMax - profile.rxMin);
+      const ry = profile.ryMin + rng() * (profile.ryMax - profile.ryMin);
+      const angle = rng() * Math.PI * 2;
+      const spd = 0.15 + rng() * 0.25;
 
       this.weatherClouds.push(new WeatherCloud(cx, cy, rx, ry, Math.cos(angle) * spd, Math.sin(angle) * spd * 0.6));
     }
