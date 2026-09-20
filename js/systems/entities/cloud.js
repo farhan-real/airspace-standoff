@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Tactical Weather Cloud Entity
+ * AIRSPACE STANDOFF // Tactical Weather Cloud Entity
  */
 
 class WeatherCloud {
@@ -15,8 +15,8 @@ class WeatherCloud {
   update(dt) {
     this.x += this.vx * dt;
     this.y += this.vy * dt;
-    var w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) ? window.CONFIG.THEATER_WIDTH_KM : 200.0;
-    var h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) ? window.CONFIG.THEATER_HEIGHT_KM : 130.0;
+    const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) ? window.CONFIG.THEATER_WIDTH_KM : 150.0;
+    const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) ? window.CONFIG.THEATER_HEIGHT_KM : 100.0;
     if (this.x < -this.rx) this.x = w + this.rx;
     if (this.x > w + this.rx) this.x = -this.rx;
     if (this.y < -this.ry) this.y = h + this.ry;
@@ -24,8 +24,8 @@ class WeatherCloud {
   }
 
   containsPoint(px, py) {
-    var dx = (px - this.x) / this.rx;
-    var dy = (py - this.y) / this.ry;
+    const dx = (px - this.x) / this.rx;
+    const dy = (py - this.y) / this.ry;
     return (dx * dx + dy * dy) <= 1.0;
   }
 }

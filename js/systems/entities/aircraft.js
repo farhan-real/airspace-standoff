@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Aircraft Entity
- * Rebalanced COFFIN evasion, flight lead bonuses, and manual avionics.
+ * AIRSPACE STANDOFF // Aircraft Entity & Kinematics Engine
  */
 
 class Aircraft {
@@ -118,15 +117,6 @@ class Aircraft {
     this.recalculateWeight();
   }
 
-  setAltitude(altFt) {
-    this.altFt = Math.max(5000, Math.min(65000, altFt));
-    this.targetAltFt = this.altFt;
-    this.vsiFpm = 0;
-    this.alt = this.altFt / 65000.0;
-    this.prevAltFt = this.altFt;
-    this.altTrend = '--';
-  }
-
   isIdentifiedBy(team) {
     if (window.Game && window.Game.playerMode === '2P') return true;
     if (this.team === team) return true;
@@ -199,8 +189,6 @@ class Aircraft {
     if (this.equippedUpgrades.length >= this.upgradeSockets || this.equippedUpgrades.includes(upgradeId)) return false;
     const upg = (window.UPGRADES_CATALOG || {})[upgradeId];
     if (!upg || (upg.isAllowed && !upg.isAllowed(this.spec))) return false;
-    const hasCat = this.equippedUpgrades.some(id => ((window.UPGRADES_CATALOG || {})[id] || {}).category === upg.category);
-    if (hasCat) return false;
     this.equippedUpgrades.push(upgradeId);
     upg.apply(this);
     if (upgradeId === 'DAS_360_OPTIC') this.hasDAS = true;
@@ -249,7 +237,7 @@ class Aircraft {
     this.effectiveRcs = Number(this.spec ? (this.spec.sigma_0 || 1.0) : 1.0) + extraRcs;
     const baseSpeed = Number(this.spec ? (this.spec.S_0 || 0.95) : 0.95);
     this.effectiveMaxSpeed = baseSpeed * (1.0 - 0.22 * this.Wr);
-    let baseAccel = 0.24 + (this.accelBonus || 0);
+    const baseAccel = 0.24 + (this.accelBonus || 0);
     this.effectiveAcceleration = baseAccel / (1.0 + 0.70 * this.Wr);
   }
 
@@ -319,13 +307,14 @@ class Aircraft {
         this.heading = isBlue ? 0.0 : Math.PI;
         this.engineAlpha = 0.70;
         if (window.Game && window.Game.radar) {
-          window.Game.radar.spawnCombatText(this.x, this.y, 'RE-ARMED & REFUELED', isBlue ? '#00f5a0' : '#ef4444');
+          window.Game.radar.spawnCombatText(this.x, this.y, 'RE-ARMED & REPAIRED', isBlue ? '#00f5a0' : '#ef4444');
         }
       }
     }
   }
 
   rearmStandardPackage() {
+    this.hp = this.maxHp;
     const baseCm = this.isAce ? 8 : (this.isFlightLead ? (this.leadExtraCm ? 4 + this.leadExtraCm : 6) : 4);
     this.chaff = baseCm;
     this.countermeasures = baseCm;
@@ -334,8 +323,12 @@ class Aircraft {
     for (const item of this.equippedWeapons) item.ammo = item.maxAmmo || item.ammo;
     if (this.hasMaldDecoy) this.maldDecoyCharges = 2;
     if (this.equippedWeapons.length === 0) {
-      this.installWeapon('AIM-120D');
-      this.installWeapon('AIM-9X-2');
+      if (this.maxPylonRating === 'Type S') {
+        this.installWeapon('MAM');
+      } else {
+        this.installWeapon('AIM-120D');
+        this.installWeapon('AIM-9X-2');
+      }
     }
     this.recalculateWeight();
   }

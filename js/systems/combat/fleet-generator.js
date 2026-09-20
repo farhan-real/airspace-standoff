@@ -1,18 +1,16 @@
 /**
  * AIRSPACE STANDOFF // Fleet Formation Generator (150km x 100km Theater)
- * Tight horizontal spacing, vertical role-based placement (Lead/Heavy center,
- * cheap/older at corners, drones always at last), organic randomization for both teams.
  */
 
 const FleetGenerator = {
   getFormationRank(spec, isLead, isAce) {
-    if (isLead || isAce) return 0; // Center
-    if (spec.isDrone || spec.category === 'DRONES') return 4; // Always at last (extremities)
+    if (isLead || isAce) return 0;
+    if (spec.isDrone || spec.category === 'DRONES') return 4;
     const cheaperOlder = ['Mirage-2000', 'Tejas-MK2', 'F-16V', 'MiG-29K', 'Tornado-ECR', 'X-29A', 'EF-111A'];
-    if (cheaperOlder.includes(spec.id) || (spec.cost <= 15.0 && spec.category !== 'STRIKE')) return 3; // Near corners
+    if (cheaperOlder.includes(spec.id) || (spec.cost <= 15.0 && spec.category !== 'STRIKE')) return 3;
     const heavySpecs = ['B-1B', 'Tu-160M', 'B-21', 'B-2A', 'Su-34', 'A-10C', 'Su-25SM3', 'MiG-31BM', 'F-15EX', 'CFA-44', 'DARKSTAR', 'F-15-SMT-COFFIN'];
-    if (heavySpecs.includes(spec.id) || spec.category === 'STRIKE' || (spec.M_max >= 8000) || (spec.hp >= 6)) return 1; // Near center
-    return 2; // Standard mid-flank fighters
+    if (heavySpecs.includes(spec.id) || spec.category === 'STRIKE' || (spec.M_max >= 8000) || (spec.hp >= 6)) return 1;
+    return 2;
   },
 
   calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rngFn) {
@@ -85,7 +83,7 @@ const FleetGenerator = {
     const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : 1;
     const catalog = window.AIRCRAFT_CATALOG || {};
 
-    let candidateAirframes = (diff === 'CADET')
+    const candidateAirframes = (diff === 'CADET')
       ? ['F-16V', 'JAS-39E', 'Mirage-2000', 'Tejas-MK2', 'MQ-99', 'MiG-29K']
       : (doctrine === 'STANDOFF')
       ? ['MiG-31BM', 'F-15EX', 'J-16', 'Su-57', 'J-20', 'Eurofighter', 'J-16D', 'EA-18G', 'Kizilelma', 'XQ-58A', 'KF-21']
@@ -145,7 +143,15 @@ const FleetGenerator = {
       );
 
       if (unit.isAce) {
-        const aceLoadouts = [['AIM-260', 'METEOR', 'AIM-9X-2'], ['ADMM', 'AIM-260', 'PYTHON-5'], ['R-37M', 'PL-15E', 'R-73'], ['PL-21', 'AIM-260', 'IRIS-T']];
+        const admmAllowed = (window.WEAPONS_CATALOG && window.WEAPONS_CATALOG['ADMM'] && window.WEAPONS_CATALOG['ADMM'].allowedAirframes)
+          ? window.WEAPONS_CATALOG['ADMM'].allowedAirframes.includes(unit.spec.id)
+          : false;
+        const aceLoadouts = [
+          ['AIM-260', 'METEOR', 'AIM-9X-2'],
+          admmAllowed ? ['ADMM', 'AIM-260', 'PYTHON-5'] : ['AIM-260', 'METEOR', 'AIM-9X-2'],
+          ['R-37M', 'PL-15E', 'R-73'],
+          ['PL-21', 'AIM-260', 'IRIS-T']
+        ];
         const chosen = aceLoadouts[Math.floor(rng() * aceLoadouts.length)];
         chosen.forEach(wId => unit.installWeapon(wId));
         if (unit.upgradeSockets >= 2) unit.installUpgrade('GAN_AESA_CORE');
@@ -179,7 +185,7 @@ const FleetGenerator = {
     const plans = this.calculateFormationSpawns(items, team, theaterWidth, theaterHeight);
     return plans.map(p => {
       const heading = isBlue ? (Math.random() * 0.16 - 0.08) : (Math.PI + (Math.random() * 0.16 - 0.08));
-      const ac = new Aircraft(p.item.specId, team, p.x, p.y, heading, null, p.item.callsign, sqName, p.isLead, p.isAce, 28000);
+      const ac = new Aircraft(p.item.specId, team, p.x, p.y, heading, null, p.item.callsign, sqName, p.item.isLead, p.item.isAce, 28000);
       ac.installWeapon('AIM-120D');
       ac.installWeapon('AIM-9X-2');
       return ac;

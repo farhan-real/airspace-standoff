@@ -1,6 +1,5 @@
 /**
- * APEX VECTOR // Flight Kinematics, RF Detection Envelopes & Countermeasure Calculations
- * Includes Flight Lead beam spike mitigation and damage reduction logic.
+ * AIRSPACE STANDOFF // Flight Kinematics, RF Detection Envelopes & Countermeasure Calculations
  */
 
 const Physics = {
@@ -35,7 +34,7 @@ const Physics = {
 
   getRadarMaxDetectionRange(sensorUnit, targetUnit, weatherClouds) {
     if (!sensorUnit || !targetUnit || sensorUnit.hp <= 0 || targetUnit.hp <= 0) return 0.0;
-    let baseR0 = sensorUnit.spec ? (sensorUnit.spec.R_0 || 75.0) : (sensorUnit.rangeKm || 48.0);
+    const baseR0 = sensorUnit.spec ? (sensorUnit.spec.R_0 || 75.0) : (sensorUnit.rangeKm || 48.0);
 
     if (sensorUnit.heading !== undefined && sensorUnit.spec && sensorUnit.spec.radarConeDeg < 360) {
       let angleDiff = Math.abs(sensorUnit.heading - Math.atan2(targetUnit.y - sensorUnit.y, targetUnit.x - sensorUnit.x));
@@ -52,8 +51,10 @@ const Physics = {
         let spike = 3.2;
         if (targetUnit.beamSpikeReduction) spike = 1.0 + (spike - 1.0) * (1.0 - targetUnit.beamSpikeReduction);
         aspectMultiplier = spike;
-      } else if (aspectOffNose < 1.0) {
-        aspectMultiplier = 1.9;
+      } else if (aspectOffNose > 2.1) {
+        aspectMultiplier = 1.8;
+      } else {
+        aspectMultiplier = 1.0;
       }
     }
 
@@ -118,7 +119,7 @@ const Physics = {
     const dist = Math.hypot(target.x - attacker.x, target.y - attacker.y);
     if (weapon.isLaser || weapon.seeker === 'DIRECT_ENERGY') {
       if (dist > (weapon.rangeKm || 9.0)) return { pk: 0, label: 'OUT OF RANGE', color: '#64748b', arrow: '--', desc: `${Math.round(dist)}km > ${weapon.rangeKm || 9.0}km`, salvoCount: 0, hasMixedSeekers: false };
-      let inClouds = weatherClouds && weatherClouds.some(c => c.containsPoint(target.x, target.y) || c.containsPoint(attacker.x, attacker.y));
+      const inClouds = weatherClouds && weatherClouds.some(c => c.containsPoint(target.x, target.y) || c.containsPoint(attacker.x, attacker.y));
       if (inClouds) return { pk: 25, label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: 'Thermal beam scattered in moisture clouds', salvoCount: 0, hasMixedSeekers: false };
       return { pk: 95, label: 'HITSCAN', color: '#00f0ff', arrow: '--', desc: 'Speed-of-light directed energy beam', salvoCount: 0, hasMixedSeekers: false };
     }
@@ -137,7 +138,7 @@ const Physics = {
 
     const sweetMin = weapon.sweetSpotMin || (weapon.rangeKm * 0.15);
     const sweetMax = weapon.sweetSpotMax || (weapon.rangeKm * 0.70);
-    let rangeScore = (dist < sweetMin) ? (0.70 + 0.30 * (dist / sweetMin)) : ((dist > sweetMax) ? Math.max(0.35, 1.0 - (dist - sweetMax) / (weapon.rangeKm - sweetMax)) : 1.0);
+    const rangeScore = (dist < sweetMin) ? (0.70 + 0.30 * (dist / sweetMin)) : ((dist > sweetMax) ? Math.max(0.35, 1.0 - (dist - sweetMax) / (weapon.rangeKm - sweetMax)) : 1.0);
 
     const angleToTarget = Math.atan2(target.y - attacker.y, target.x - attacker.x);
     let aspectScore = 0.90;
@@ -153,10 +154,10 @@ const Physics = {
       else if (aspectDiff < 0.8) aspectScore = 0.85;
     }
 
-    let weatherPenalty = (weatherClouds && (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT') && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
-    let afterburnerBonus = ((weapon.seeker === 'IIR' || weapon.seeker === 'EO') && target.engineAlpha > 0.85) ? 0.15 : 0.0;
-    let targetAgi = target.spec ? (target.spec.AGI_0 || 0.85) : (target.isCivilian ? 0.20 : 0.0);
-    let heavyBonus = weapon.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
+    const weatherPenalty = (weatherClouds && (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT') && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
+    const afterburnerBonus = ((weapon.seeker === 'IIR' || weapon.seeker === 'EO') && target.engineAlpha > 0.85) ? 0.15 : 0.0;
+    const targetAgi = target.spec ? (target.spec.AGI_0 || 0.85) : (target.isCivilian ? 0.20 : 0.0);
+    const heavyBonus = weapon.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
 
     let jammerPenalty = 0.0;
     if (weapon.seeker === 'ARH') {
@@ -179,11 +180,11 @@ const Physics = {
       }
     }
 
-    let shooterStressPenalty = (attacker.stress >= 0.65 && !attacker.isCoffin && !attacker.spec.isDrone) ? 0.15 : 0.0;
-    let coffinDeduction = (target.isCoffin || target.coffinDodgeBonus) ? (target.coffinDodgeBonus || 0.25) : 0.0;
-    let leadDeduction = (target.isFlightLead && target.leadEvasionBonus) ? target.leadEvasionBonus : 0.0;
+    const shooterStressPenalty = (attacker.stress >= 0.65 && !attacker.isCoffin && !attacker.spec.isDrone) ? 0.15 : 0.0;
+    const coffinDeduction = (target.isCoffin || target.coffinDodgeBonus) ? (target.coffinDodgeBonus || 0.08) : 0.0;
+    const leadDeduction = (target.isFlightLead && target.leadEvasionBonus) ? target.leadEvasionBonus : 0.0;
 
-    let basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - (targetAgi * 0.10) + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty - coffinDeduction - leadDeduction;
+    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - (targetAgi * 0.10) + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty - coffinDeduction - leadDeduction;
     const pkPercent = Math.round(Math.max(15, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = (dist >= sweetMin && dist <= sweetMax) ? (isClosing ? '^' : 'v') : (isClosing ? (dist > sweetMax ? '^' : 'v') : 'v');

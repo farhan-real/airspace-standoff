@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Preconfigured Loadouts: UCAVs & Collaborative Combat Drones
+ * AIRSPACE STANDOFF // Preconfigured Loadouts: UCAVs & Collaborative Combat Drones
  */
 
 window.TEMPLATES_DRONES = {
@@ -118,7 +118,7 @@ window.TEMPLATES_DRONES = {
     specId: 'RQ-180',
     roleCategory: 'SWARM & DRONES',
     chosenGunId: 'MICRO_GUN',
-    weapons: ['AIM-120D'],
+    weapons: ['ADM-160B', 'MAM'],
     upgrades: ['GAN_AESA_CORE', 'MADL_BATTLE_LINK'],
     desc: 'Stratospheric flying-wing drone (0.0001m2 RCS, $16.0M). Operates as an invisible squadron sensor gateway.'
   }

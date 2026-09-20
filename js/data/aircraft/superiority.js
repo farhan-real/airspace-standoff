@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Category: AIR SUPERIORITY & HEAVY INTERCEPTORS
+ * AIRSPACE STANDOFF // Category: AIR SUPERIORITY & HEAVY INTERCEPTORS
  */
 
 window.AIRCRAFT_SUPERIORITY = {
@@ -26,7 +26,7 @@ window.AIRCRAFT_SUPERIORITY = {
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
     gunRounds: 1800,
     totalSlots: 8,
-    maxPylonRating: 'Type H',
+    maxPylonRating: 'Type X',
     upgradeSockets: 3,
     desc: 'Stratospheric high-speed interceptor (Mach 1.34 cruise / Mach 2.83 dash). Zaslon-M phased array burns through enemy stealth to launch hypersonic R-37M salvos.'
   },

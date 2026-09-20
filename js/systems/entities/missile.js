@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Missile Entity
- * Clean hit resolution with multi-missile salvo composition tracking.
+ * AIRSPACE STANDOFF // Guided Missile Entity & Engagement Resolution
  */
 
 class MissileEntity {
@@ -112,10 +111,10 @@ class MissileEntity {
     while (diff < -Math.PI) diff += Math.PI * 2;
     while (diff > Math.PI) diff -= Math.PI * 2;
 
-    let rate = ((this.weapon.trait === 'SNAP_TURN' || this.weapon.trait === 'HOBS_VANE') ? 6.0 : 4.2) * dt;
+    const rate = ((this.weapon.trait === 'SNAP_TURN' || this.weapon.trait === 'HOBS_VANE') ? 6.0 : 4.2) * dt;
     this.heading += Math.max(-rate, Math.min(rate, diff));
 
-    let inCloud = weatherClouds && weatherClouds.some(c => c.containsPoint(this.x, this.y) || c.containsPoint(this.target.x, this.target.y));
+    const inCloud = weatherClouds && weatherClouds.some(c => c.containsPoint(this.x, this.y) || c.containsPoint(this.target.x, this.target.y));
     if (inCloud) {
       this.cloudObscureTimer += dt;
       if ((this.weapon.seeker === 'IIR' || this.weapon.seeker === 'EO' || this.weapon.seeker === 'OPT') && this.cloudObscureTimer >= ((window.CONFIG && window.CONFIG.CLOUD_IR_TIME_TO_LOSE_SEC) || 8.0)) {
@@ -154,8 +153,25 @@ class MissileEntity {
   resolveTerminalEngagement(weatherClouds) {
     const tgt = this.target;
     const w = this.weapon;
+    if (!tgt || tgt.hp <= 0) { this.active = false; this.isDead = true; return; }
+
+    let concurrent = 1;
+    let salvoDetails = '';
+    if (window.Game && window.Game.missiles) {
+      const inbounds = window.Game.missiles.filter(m => (m.active || m.id === this.id) && m.target && m.target.id === tgt.id);
+      concurrent = Math.max(1, inbounds.length);
+      if (concurrent > 1) {
+        const counts = {};
+        for (const m of inbounds) {
+          const rawName = (m.weapon && (m.weapon.name || m.weapon.id)) ? (m.weapon.name || m.weapon.id) : 'Missile';
+          const clean = rawName.replace(/\s*\(\d+x\)/gi, '').replace(/\s*\(pack of \d+\)/gi, '').trim();
+          counts[clean] = (counts[clean] || 0) + 1;
+        }
+        salvoDetails = Object.entries(counts).map(([name, count]) => `${name} x${count}`).join(', ');
+      }
+    }
+    const isSalvo = (concurrent > 1);
     this.active = false;
-    if (!tgt || tgt.hp <= 0) { this.isDead = true; return; }
 
     if (tgt.isGhost) {
       this.isDead = true;
@@ -175,25 +191,8 @@ class MissileEntity {
       return;
     }
 
-    let concurrent = 1;
-    let salvoDetails = '';
-    if (window.Game && window.Game.missiles) {
-      const inbounds = window.Game.missiles.filter(m => m.active && m.target && m.target.id === tgt.id);
-      concurrent = inbounds.length;
-      if (concurrent > 1) {
-        const counts = {};
-        for (const m of inbounds) {
-          const rawName = (m.weapon && (m.weapon.name || m.weapon.id)) ? (m.weapon.name || m.weapon.id) : 'Missile';
-          const clean = rawName.replace(/\s*\(\d+x\)/gi, '').replace(/\s*\(pack of \d+\)/gi, '').trim();
-          counts[clean] = (counts[clean] || 0) + 1;
-        }
-        salvoDetails = Object.entries(counts).map(([name, count]) => `${name} x${count}`).join(', ');
-      }
-    }
-    const isSalvo = (concurrent > 1);
-
     if (typeof SurfaceUnit !== 'undefined' && tgt instanceof SurfaceUnit) {
-      let dmg = w.damage * ((w.trait === 'EMITTER_KILLER' && (tgt.type === 'S-400' || tgt.type === 'RADAR_ARRAY')) ? 3 : 1);
+      const dmg = w.damage * ((w.trait === 'EMITTER_KILLER' && (tgt.type === 'S-400' || tgt.type === 'RADAR_ARRAY')) ? 3 : 1);
       const wasDead = tgt.hp <= 0;
       tgt.takeDamage(dmg, w.isBunkerCracker);
       this.isDead = true;
@@ -216,8 +215,8 @@ class MissileEntity {
     }
 
     const pkData = Physics.calcPk(w, this.source, tgt, weatherClouds);
-    let basePk = pkData.pk / 100.0;
-    const suppression = Math.max(0.35, 1.0 - (concurrent - 1) * 0.25);
+    const basePk = pkData.pk / 100.0;
+    const suppression = Math.max(0.35, 1.0 - Math.max(0, concurrent - 1) * 0.25);
     let deductions = 0.0;
 
     if (tgt.isNotching && (w.seeker === 'ARH' || w.seeker === 'PASSIVE_RADAR')) {

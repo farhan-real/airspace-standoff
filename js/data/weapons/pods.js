@@ -1,6 +1,5 @@
 /**
  * AIRSPACE STANDOFF // Electronic Warfare Pods, Gunpods, Decoy Drones & Tactical Lasers
- * Rebalanced ranges and durations for 150km theater scale.
  */
 
 window.WEAPONS_PODS = {
@@ -133,7 +132,7 @@ window.WEAPONS_PODS = {
     isLaser: true,
     sigmaPylon: 0.25,
     category: 'GUN',
-    allowedAirframes: ['X-02S', 'Su-35S', 'Su-57', 'F-22A', 'B-21', 'F-15EX', 'J-20', 'FC-31', 'ADF-11F', 'CFA-44', 'DARKSTAR', 'F-22C-COFFIN', 'Su-37-COFFIN'],
+    allowedAirframes: ['X-02S', 'Su-35S', 'Su-57', 'F-22A', 'B-21', 'F-15EX', 'J-20', 'FC-31', 'ADF-11F', 'CFA-44', 'DARKSTAR', 'F-22C-COFFIN', 'Su-37-COFFIN', 'ADFX-01'],
     desc: 'High-energy chemical laser pod providing instantaneous thermal damage out to 9 km (24 charges).'
   }
 };

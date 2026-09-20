@@ -1,6 +1,5 @@
 /**
  * AIRSPACE STANDOFF // Fleet Presets & Preconfigured Aircraft Toolbar
- * Clean military operational designations.
  */
 
 class ProcurementPresets {
@@ -20,7 +19,7 @@ class ProcurementPresets {
         { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] }
       ],
       sead: [
-        { specId: 'EA-18G', chosenGunId: 'M61A2', weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-120D', 'ALE-55'], upgrades: ['GAN_AESA_CORE', 'ESM_PASSIVE_SUITE'] },
+        { specId: 'EA-18G', chosenGunId: 'M61A2', weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-120D', 'ADM-160B'], upgrades: ['GAN_AESA_CORE', 'ESM_PASSIVE_SUITE'] },
         { specId: 'Su-34', chosenGunId: 'GAU-8', weapons: ['AGM-158B', 'AGM-88G', 'AIM-9X-2', 'AN-ALQ-99'], upgrades: ['TITANIUM_COCKPIT'] },
         { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['AGM-88G', 'AIM-260', 'AIM-120D', 'AIM-9X-2', 'ALE-55'], upgrades: ['MADL_BATTLE_LINK'] },
         { specId: 'A-10C', chosenGunId: 'GAU-8', weapons: ['GPU-5A', 'GBU-39', 'AIM-9X-2', 'AN-ALQ-184'], upgrades: ['TITANIUM_COCKPIT'] },
@@ -35,7 +34,7 @@ class ProcurementPresets {
         { specId: 'MQ-99', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] }
       ],
       interceptor: [
-        { specId: 'MiG-31BM', chosenGunId: 'GSH-30-1', weapons: ['R-37M', 'R-37M', 'PL-21'], upgrades: ['SUPERCRUISE_VCE', 'ESM_PASSIVE_SUITE'] },
+        { specId: 'MiG-31BM', chosenGunId: 'GSH-30-1', weapons: ['R-37M', 'PL-21', 'AIM-120D'], upgrades: ['SUPERCRUISE_VCE', 'ESM_PASSIVE_SUITE'] },
         { specId: 'Su-35S', chosenGunId: 'GSH-30-1', weapons: ['R-37M', 'PL-15E', 'PYTHON-5', 'AN-ALQ-99'], upgrades: ['THRUST_VECTOR'] },
         { specId: 'Eurofighter', chosenGunId: 'BK-27', weapons: ['METEOR', 'METEOR', 'IRIS-T'], upgrades: ['EOTS_DUAL_OPTICS', 'GAN_AESA_CORE'] },
         { specId: 'Rafale-C', chosenGunId: 'BK-27', weapons: ['METEOR', 'METEOR', 'PYTHON-5'], upgrades: ['EOTS_DUAL_OPTICS', 'DAS_360_OPTIC'] },

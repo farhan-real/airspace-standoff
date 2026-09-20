@@ -1,6 +1,5 @@
 /**
  * AIRSPACE STANDOFF // Controls System Coordinator
- * Standardized dialogs, touch steering, pause overlay, and application exit.
  */
 
 class ControlsSystem {
@@ -9,6 +8,7 @@ class ControlsSystem {
     this.keyboard = new KeyboardControlsHandler(this);
     this.pointer = new PointerControlsHandler(this);
     this.fullscreen = (typeof FullscreenHandler !== 'undefined') ? new FullscreenHandler(this) : null;
+    this._wasAutoPaused = false;
   }
 
   init() {
@@ -90,6 +90,10 @@ class ControlsSystem {
   }
 
   autoUnpauseOnDialogClose() {
+    const pauseModal = document.getElementById('pause-modal');
+    if (pauseModal && pauseModal.classList.contains('active')) {
+      return;
+    }
     if (this._wasAutoPaused && this.game.simulation) {
       this.game.simulation.setTimeWarp(1);
       this._wasAutoPaused = false;

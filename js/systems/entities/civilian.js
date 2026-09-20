@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Commercial Civilian Airliners & Rules of Engagement (RoE)
+ * AIRSPACE STANDOFF // Commercial Civilian Airliners & Rules of Engagement (RoE)
  */
 
 class CivilianAirliner {
@@ -15,7 +15,7 @@ class CivilianAirliner {
     this.heading = heading;
 
     this.altFt = flightData.altFt || 36000;
-    this.alt = this.altFt / 60000.0;
+    this.alt = this.altFt / 65000.0;
     this.speed = flightData.speedMach || 0.78;
     this.effectiveRcs = flightData.rcs || 25.0;
     this.desc = flightData.desc || 'Commercial passenger transit flight.';
@@ -49,8 +49,8 @@ class CivilianAirliner {
     this.x += Math.cos(this.heading) * kmPerSec * dt;
     this.y += Math.sin(this.heading) * kmPerSec * dt;
 
-    const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 100.0;
-    const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 70.0;
+    const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
+    const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
 
     if (this.x < -15 || this.x > w + 15 || this.y < -15 || this.y > h + 15) {
       this.hp = 0;

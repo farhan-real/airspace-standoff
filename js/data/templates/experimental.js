@@ -1,6 +1,5 @@
 /**
  * AIRSPACE STANDOFF // Preconfigured Loadouts: Experimental Superfighters & Manual COFFIN Units
- * Professional military test & operational nomenclature.
  */
 
 window.TEMPLATES_EXPERIMENTAL = {
@@ -54,7 +53,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     specId: 'ADF-11F',
     roleCategory: 'SEAD & EW',
     chosenGunId: 'DE-PULSE',
-    weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-260', 'ALE-55'],
+    weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-260', 'ADM-160B'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'ADAPTIVE_ECCM_SUITE', 'ESM_PASSIVE_SUITE', 'GAN_AESA_CORE'],
     desc: 'Suppression of Enemy Air Defenses escort. High-power GaN AESA jamming pod and AGM-88G anti-radiation missiles to blind and eliminate SAM radars.'
   },

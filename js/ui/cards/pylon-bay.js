@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Weapon Pylon Bay
- * Displays missile homing seeker type instead of duplicate P_k badge.
+ * AIRSPACE STANDOFF // Weapon Pylon Bay & Stores Management System
  */
 
 class PylonBayRenderer {
@@ -182,7 +181,7 @@ class PylonBayRenderer {
       if (ammoEl) ammoEl.textContent = `${activeUnit.gunAmmo || 0} RDS`;
       if (indicatorEl) { indicatorEl.textContent = inGunRange ? 'IN RANGE' : 'ARMED'; indicatorEl.style.color = inGunRange ? '#00f5a0' : '#00f0ff'; }
       if (cannonBtn) {
-        cannonBtn.disabled = ((activeUnit.gunAmmo || 0) <= 0);
+        cannonBtn.disabled = ((activeUnit.gunAmmo || 0) <= 0 || (activeUnit.gunCooldown || 0) > 0);
         cannonBtn.textContent = ((activeUnit.gunAmmo || 0) <= 0) ? 'EMPTY' : (inGunRange ? 'BURST' : 'STRAFE');
       }
     }
@@ -280,8 +279,11 @@ class PylonBayRenderer {
 
   fireAutocannonManual(unit, target) {
     if (!unit || unit.hp <= 0 || (unit.gunAmmo || 0) <= 0) return;
+    if (unit.gunCooldown > 0) return;
+
     const gun = unit.gun || (window.AUTOCANNONS_CATALOG && window.AUTOCANNONS_CATALOG['M61A2']) || { rangeKm: 4.6, damagePerSec: 2.5, tracerColor: '#00f0ff' };
     unit.gunAmmo = Math.max(0, unit.gunAmmo - Math.min(unit.gunAmmo, 30));
+    unit.gunCooldown = (window.CONFIG && window.CONFIG.AUTO_GUN_COOLDOWN) || 0.35;
 
     const validTarget = (target && target.hp > 0 && typeof target.x === 'number' && typeof target.y === 'number' && !isNaN(target.x) && !isNaN(target.y)) ? target : null;
 

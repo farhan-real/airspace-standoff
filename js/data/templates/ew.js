@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Preconfigured Loadouts: Electronic Warfare & SEAD Escorts
+ * AIRSPACE STANDOFF // Preconfigured Loadouts: Electronic Warfare & SEAD Escorts
  */
 
 window.TEMPLATES_EW = {
@@ -9,7 +9,7 @@ window.TEMPLATES_EW = {
     specId: 'EA-18G',
     roleCategory: 'SEAD & EW',
     chosenGunId: 'M61A2',
-    weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-120D', 'ALE-55'],
+    weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-120D', 'ADM-160B'],
     upgrades: ['ADAPTIVE_ECCM_SUITE', 'ESM_PASSIVE_SUITE'],
     desc: 'Fleet electronic attack escort. GaN AESA jamming umbrella blinds hostile radar while AGM-88G HARMs crack SAM emitters.'
   },

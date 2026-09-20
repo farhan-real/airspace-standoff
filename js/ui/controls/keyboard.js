@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF // Keyboard Controls
- * Removed hotkeys and slash delimiters from feedback text; RTB expanded to RETURN TO BASE.
+ * Number keys 1-9 directly fire missile stores on Pylons 1-9.
  */
 
 class KeyboardControlsHandler {
@@ -48,9 +48,15 @@ class KeyboardControlsHandler {
         return;
       }
 
-      if (e.key === '1') { this.sys.setTimeWarp(1); return; }
-      if (e.key === '2') { this.sys.setTimeWarp(2); return; }
-      if (e.key === '3' || e.key === '4') { this.sys.setTimeWarp(4); return; }
+      // Keys 1 through 9 are reserved for direct missile pylon discharges
+      for (let p = 1; p <= 9; p++) {
+        const bindCode = binds['FIRE_PYLON_' + p] || ('Digit' + p);
+        if (key === bindCode || e.key === String(p) || key === ('Digit' + p)) {
+          e.preventDefault();
+          this.sys.firePylonByIndex(p - 1);
+          return;
+        }
+      }
 
       if (key === binds.TOGGLE_DECLUTTER || key === 'KeyV') {
         e.preventDefault();
@@ -112,13 +118,6 @@ class KeyboardControlsHandler {
           this.game.avionics.updateActiveUnitMFD();
         }
         return;
-      }
-
-      for (let p = 1; p <= 9; p++) {
-        const bindCode = binds['FIRE_PYLON_' + p] || ('Digit' + p);
-        if (key === bindCode || e.key === String(p) || key === ('Digit' + p)) {
-          e.preventDefault(); this.sys.firePylonByIndex(p - 1); return;
-        }
       }
 
       if (key === binds.COUNTERMEASURES || key === 'KeyF') {
