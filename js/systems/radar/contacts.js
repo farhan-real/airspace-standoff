@@ -1,8 +1,18 @@
-/**
- * AIRSPACE STANDOFF // Radar Aircraft Contacts Sub-Renderer
- */
+/* AIRSPACE STANDOFF: Radar Aircraft Contacts Sub-Renderer */
 
 class RadarContactsRenderer {
+  static drawGhostContacts(...args) {
+    if (typeof RadarContactsAuxRenderer !== 'undefined') {
+      RadarContactsAuxRenderer.drawGhostContacts(...args);
+    }
+  }
+
+  static drawDecoyDrones(...args) {
+    if (typeof RadarContactsAuxRenderer !== 'undefined') {
+      RadarContactsAuxRenderer.drawDecoyDrones(...args);
+    }
+  }
+
   static drawAircraft(ctx, cam, list, team, activeUnit, selectedTarget, commanderTeam, detectedSet, cssWidth, declutterMode, cleanFn) {
     if (!list || list.length === 0) return;
     const isBlue = (team === 'friendly');

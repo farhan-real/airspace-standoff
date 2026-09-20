@@ -1,8 +1,4 @@
-/**
- * AIRSPACE STANDOFF // Tactical Radar Viewport Renderer (Optimized 60-120 FPS Engine)
- * Smooth 2.0x Retina scaling without mobile overdraw or gradient garbage collection lag.
- * Rotating visual radar sweep removed. RWR electronic sweep detection preserved.
- */
+/* AIRSPACE STANDOFF: Tactical Radar Viewport Renderer Engine */
 
 class TacticalRadarRenderer {
   constructor(canvasId) {
@@ -206,17 +202,29 @@ class TacticalRadarRenderer {
       RadarEnvironmentRenderer.drawClouds(ctx, this.cam, clouds, w, h);
     }
 
-    if (typeof RadarTacticalRenderer !== 'undefined') {
+    if (typeof RadarTacticalSurfaceRenderer !== 'undefined') {
+      RadarTacticalSurfaceRenderer.drawSurface(ctx, this.cam, surface, commanderTeam, detectedSet, activeUnit, this.selectedTarget, w, this.declutterMode, this.cleanCanvasText.bind(this));
+      RadarTacticalSurfaceRenderer.drawCivilianTraffic(ctx, this.cam, civilians, detectedSet, activeUnit, this.declutterMode, w, this.cleanCanvasText.bind(this));
+    } else if (typeof RadarTacticalRenderer !== 'undefined') {
       RadarTacticalRenderer.drawSurface(ctx, this.cam, surface, commanderTeam, detectedSet, activeUnit, this.selectedTarget, w, this.declutterMode, this.cleanCanvasText.bind(this));
       RadarTacticalRenderer.drawCivilianTraffic(ctx, this.cam, civilians, detectedSet, activeUnit, this.declutterMode, w, this.cleanCanvasText.bind(this));
+    }
+
+    if (typeof RadarTacticalRenderer !== 'undefined') {
       RadarTacticalRenderer.drawRadarLocks(ctx, this.cam, allied.concat(hostiles), activeUnit, commanderTeam, detectedSet);
       RadarTacticalRenderer.drawSalvoCoordinations(ctx, this.cam, missiles);
       RadarTacticalRenderer.drawMissiles(ctx, this.cam, missiles, commanderTeam, detectedSet, this.declutterMode, this.cleanCanvasText.bind(this));
     }
 
-    if (typeof RadarContactsRenderer !== 'undefined') {
+    if (typeof RadarContactsAuxRenderer !== 'undefined') {
+      RadarContactsAuxRenderer.drawGhostContacts(ctx, this.cam, ghosts, detectedSet, this.selectedTarget, activeUnit, this.zoom, this.cleanCanvasText.bind(this));
+      RadarContactsAuxRenderer.drawDecoyDrones(ctx, this.cam, decoys, detectedSet, commanderTeam, activeUnit, this.cleanCanvasText.bind(this));
+    } else if (typeof RadarContactsRenderer !== 'undefined') {
       RadarContactsRenderer.drawGhostContacts(ctx, this.cam, ghosts, detectedSet, this.selectedTarget, activeUnit, this.zoom, this.cleanCanvasText.bind(this));
       RadarContactsRenderer.drawDecoyDrones(ctx, this.cam, decoys, detectedSet, commanderTeam, activeUnit, this.cleanCanvasText.bind(this));
+    }
+
+    if (typeof RadarContactsRenderer !== 'undefined') {
       RadarContactsRenderer.drawAircraft(ctx, this.cam, hostiles, 'hostile', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode, this.cleanCanvasText.bind(this));
       RadarContactsRenderer.drawAircraft(ctx, this.cam, allied, 'friendly', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode, this.cleanCanvasText.bind(this));
     }

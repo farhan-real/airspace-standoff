@@ -1,8 +1,18 @@
-/**
- * AIRSPACE STANDOFF // Radar Tactical Sub-Renderer: Radar Locks & Missile Volleys
- */
+/* AIRSPACE STANDOFF: Radar Tactical Sub-Renderer: Radar Locks & Missile Volleys */
 
 class RadarTacticalRenderer {
+  static drawSurface(...args) {
+    if (typeof RadarTacticalSurfaceRenderer !== 'undefined') {
+      RadarTacticalSurfaceRenderer.drawSurface(...args);
+    }
+  }
+
+  static drawCivilianTraffic(...args) {
+    if (typeof RadarTacticalSurfaceRenderer !== 'undefined') {
+      RadarTacticalSurfaceRenderer.drawCivilianTraffic(...args);
+    }
+  }
+
   static drawRadarLocks(ctx, cam, allCraft, activeUnit, team, detectedSet) {
     for (const source of allCraft) {
       if (!source || source.hp <= 0 || !source.radarLockedTarget || typeof source.x !== 'number') continue;
@@ -171,7 +181,7 @@ class RadarTacticalRenderer {
     ctx.beginPath();
     ctx.moveTo(px - s, py - s + 4); ctx.lineTo(px - s, py - s); ctx.lineTo(px - s + 4, py - s);
     ctx.moveTo(px + s - 4, py - s); ctx.lineTo(px + s, py - s); ctx.lineTo(px + s, py - s + 4);
-    ctx.moveTo(px + s, py + s - 4); ctx.lineTo(px + s, py + s); ctx.lineTo(px + s - 4, py + s);
+    ctx.moveTo(px + s, py + s - 4); ctx.lineTo(px + s, py + s); ctx.lineTo(px - s + 4, py + s);
     ctx.moveTo(px - s + 4, py + s); ctx.lineTo(px - s, py + s); ctx.lineTo(px - s, py + s - 4);
     ctx.stroke();
     ctx.restore();
