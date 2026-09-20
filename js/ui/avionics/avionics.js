@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Avionics UI
+ * AIRSPACE STANDOFF: Avionics UI
  * Displays telemetry, compass tape, and full names (RETURN TO BASE).
  */
 
@@ -235,6 +235,10 @@ class AvionicsUI {
       for (let i = 0; i < this.game.missiles.length; i++) {
         const m = this.game.missiles[i];
         if (m.active && m.team !== commanderTeam && m.target && m.target.team === commanderTeam) {
+          // Passive radar missiles do not radiate active radar locks until terminal approach (<= 20km)
+          if (m.isPassiveRadar && m.distanceToTarget > (m.pathRevealDistance || 20.0)) {
+            continue;
+          }
           lockingThreats.push(m);
         }
       }
@@ -245,9 +249,13 @@ class AvionicsUI {
       const nearest = lockingThreats.reduce((min, m) => m.distanceToTarget < min.distanceToTarget ? m : min, lockingThreats[0]);
       rwrState = nearest.distanceToTarget < 30 ? 'lock' : 'sweep';
       if (detailEl) {
-        detailEl.textContent = nearest.isStealthMissile
-          ? `STEALTH MSL: ${Math.round(nearest.distanceToTarget)}km`
-          : `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km`;
+        if (nearest.isPassiveRadar) {
+          detailEl.textContent = `PASSIVE RADAR HOMING: ${Math.round(nearest.distanceToTarget)}km`;
+        } else if (nearest.isStealthMissile) {
+          detailEl.textContent = `STEALTH MSL: ${Math.round(nearest.distanceToTarget)}km`;
+        } else {
+          detailEl.textContent = `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km`;
+        }
       }
     } else {
       let hasSweeps = false;

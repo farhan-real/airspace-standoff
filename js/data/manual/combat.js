@@ -1,74 +1,149 @@
 /**
  * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 6 to 7
- * Covers: Guided Munitions, Seekers, Salvos, Electronic Warfare & Doppler Notching
+ * Covers: Guided Munitions, Propulsion Stages, ProNav Guidance, Electronic Warfare & Doppler Notching
  */
 
 window.MANUAL_COMBAT = [
   {
     id: 'ch6_weapons_salvos',
-    title: 'SECTION 06: GUIDED MISSILES, HOMING SEEKERS & SALVO SATURATION DOCTRINE',
+    title: 'SECTION 06: GUIDED MISSILES, PROPULSION STAGES & GUIDANCE KINEMATICS',
     desc: `
-      <div class="ge-subhead">MISSILE SEEKER TYPES &amp; COUNTERMEASURES</div>
+      <div class="ge-subhead">1. MISSILE SEEKER HEADS &amp; DEFENSIVE COUNTERMEASURES</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>SEEKER</th><th>GUIDANCE METHOD</th><th>TACTICAL ADVANTAGE</th><th>DEFENSIVE COUNTERMEASURE</th></tr>
+            <tr><th>SEEKER</th><th>HOMING METHOD</th><th>TACTICAL PROFILE</th><th>DEFENSIVE COUNTERMEASURE</th></tr>
           </thead>
           <tbody>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">ARH</td>
               <td>Active Radar Homing (AIM-120D, Meteor, R-37M, PL-15E, AIM-260)</td>
-              <td>Autonomous internal radar seeker. Fire-and-forget; long BVR reach (72–130 km).</td>
-              <td><b>Doppler Notch (Beam 90°) + Chaff / ECM Pod / MALD Decoys.</b> Cuts radial closure velocity and creates zero-Doppler false echoes.</td>
+              <td>Internal nose radar transmitter. Autonomous fire-and-forget; long BVR reach (72&ndash;130 km).</td>
+              <td><b>Doppler Notch (Beam 90&deg;) + Chaff / ECM Pod / Decoys.</b> Cuts radial closure velocity to zero and drops tracking lock.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">IIR / EO</td>
               <td>Imaging Infrared / Optical (AIM-9X, R-73, Python-5, IRIS-T)</td>
-              <td>Tracks exhaust heat plume and 3D silhouette. Immune to RF radar jamming and Doppler notching.</td>
-              <td><b>Throttle to Idle / Dive into Weather Clouds / Break Line of Sight.</b> Clouds scatter infrared tracking; idle reduces thermal exhaust bloom.</td>
+              <td>Tracks thermal exhaust plume and 3D silhouette. Immune to RF radar jamming and Doppler notching.</td>
+              <td><b>Throttle to Idle / Dive into Weather Clouds / Break Line of Sight.</b> Clouds scatter infrared tracking; idle cuts thermal signature.</td>
             </tr>
             <tr>
               <td style="color:#ffb830;font-weight:800;">PASSIVE RADAR</td>
               <td>Anti-Radiation Homing (AGM-88G AARGM-ER)</td>
-              <td>Homes directly on active radar emissions. Deals <b>3× damage</b> to SAM radar batteries.</td>
-              <td>Power down emitter radar array, deactivate jammer pods, or intercept with CIWS.</td>
+              <td>Homes directly on hostile radar emissions. Inflicts <b>3&times; damage</b> to SAM radar arrays and EW jammers.</td>
+              <td>Power down emitting radar arrays, deactivate airborne jammer pods, or intercept with CIWS.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">DIRECT ENERGY</td>
               <td>Hitscan Chemical Laser / Railgun (DE-Pulse, TLS, EML)</td>
               <td>Instantaneous speed-of-light kinetic or thermal impact. Zero lead time required.</td>
-              <td>Dive into weather clouds (scatters thermal laser beam) or maintain standoff beyond 9.0 km.</td>
+              <td>Dive into moisture clouds (scatters thermal laser beam) or maintain standoff beyond 9.0 km.</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="ge-subhead">PROPULSION SYSTEMS: RAMJET &amp; DUAL-PULSE</div>
-      <div class="ge-grid-3">
-        <div class="ge-card">
-          <b style="color:#00f0ff;">RAMJET SUSTAINED</b>
-          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            MBDA Meteor and PL-21 draw atmospheric air continually, maintaining Mach 4.6+ with <b>zero speed decay</b> out to maximum range.
-          </div>
-        </div>
-        <div class="ge-card">
-          <b style="color:#00f5a0;">DUAL-PULSE ROCKET</b>
-          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            PL-15E carries two propellant grains. Second pulse ignites 22 km from target, delivering a <b>+1.5 Mach terminal speed surge</b> to defeat evasions.
-          </div>
-        </div>
-        <div class="ge-card">
-          <b style="color:#f97316;">HYPERSONIC AERO-BALLISTIC</b>
-          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            R-37M and Kh-47M2 Kinzhal sprint at Mach 6.2–8.5 in the stratosphere before diving downward with crushing kinetic shock.
-          </div>
-        </div>
+      <div class="ge-subhead">2. MULTI-STAGE PROPULSION &amp; RADAR FLIGHT STATES</div>
+      <div class="ge-desc">
+        Missiles feature authentic multi-stage propulsion physics. Speed scales proportionally relative to combat aircraft (from subsonic cruise at Mach 0.90 up to hypersonic plunges at Mach 5.0). The active stage is displayed in real time on the radar scope:
+      </div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>STAGE TAG</th><th>PROPULSION PHASE</th><th>KINEMATIC CHARACTERISTICS</th><th>TACTICAL APPLICATION</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#00f0ff;font-weight:800;">[BOOST]</td>
+              <td>Initial Rocket Burn</td>
+              <td>Separation impulse kicks missile forward off the rail; solid rocket booster burns intensely, accelerating to peak speed.</td>
+              <td>Leaves host aircraft behind immediately in a trail of smoke; high energy and acceleration.</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">[SUSTAIN]</td>
+              <td>Midcourse Sustainer</td>
+              <td>Sustainer grain (e.g. AIM-260 JATM) continues burning for 14s, maintaining high Mach 3.6 cruise across long distances.</td>
+              <td>Extends effective BVR reach without the kinetic decay of pure booster rockets.</td>
+            </tr>
+            <tr>
+              <td style="color:#00f5a0;font-weight:800;">[RAMJET]</td>
+              <td>Continuous Ramjet</td>
+              <td>Solid-fuel variable-flow ramjet (Meteor, PL-21) maintains continuous thrust at Mach 3.2&ndash;3.6 with <b>zero speed decay</b> out to maximum range.</td>
+              <td>Hits distant targets at full sprint speed, denying the kinetic escape window.</td>
+            </tr>
+            <tr>
+              <td style="color:#8494ab;font-weight:800;">[COAST]</td>
+              <td>Unpowered Glide</td>
+              <td>Rocket motor has burned out. Aerodynamic drag causes velocity to gradually bleed over extended ranges.</td>
+              <td>Missiles arriving in coast phase have reduced kinetic energy, making evasion easier for evasive targets.</td>
+            </tr>
+            <tr>
+              <td style="color:#ffd700;font-weight:800;">[PULSE 2]</td>
+              <td>Terminal Reignition</td>
+              <td>At 22 km from target, PL-15E second pulse rocket grain ignites, surging velocity by <b>+1.1 Mach</b> into the terminal basket.</td>
+              <td>Defeats midcourse defensive notches with a dramatic burst of speed and renewed turn authority.</td>
+            </tr>
+            <tr>
+              <td style="color:#f97316;font-weight:800;">[LOFT] / [DIVE]</td>
+              <td>Aero-Ballistic Trajectory</td>
+              <td>R-37M and Kinzhal loft into the stratosphere (FL550&ndash;FL600) in thin air, then plunge in a terminal hypersonic dive (Mach 4.2&ndash;5.0).</td>
+              <td>Devastating kinetic energy against heavy aircraft and bunkers; wide turn radius allows perpendicular evasion breaks.</td>
+            </tr>
+            <tr>
+              <td style="color:#c084fc;font-weight:800;">[TERMINAL]</td>
+              <td>Active Terminal Homing</td>
+              <td>Missile enters the endgame engagement basket; seeker transitions to high-frequency target tracking.</td>
+              <td>Final closure phase prior to proximity fuse detonation.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="ge-subhead">PROBABILITY OF KILL (P_k) &amp; SALVO SATURATION FORMULA</div>
+      <div class="ge-subhead">3. GUIDANCE LAW: PROPORTIONAL NAVIGATION &amp; G-LIMITS</div>
+      <div class="ge-desc">
+        Guided weapons employ <b>Proportional Navigation (ProNav)</b> rather than simple lead extrapolation:
+        <ul>
+          <li><b>Collision Course Pursuit:</b> ProNav commands turn rates proportional to the Line of Sight (LOS) angular rate, steering the missile along smooth, natural pursuit arcs that do not oscillate or jitter.</li>
+          <li><b>Physical G-Limits:</b> Missiles have realistic structural turn rate limits:
+            <ul>
+              <li><b>Dogfight Missiles (WVR):</b> Pull up to 45&ndash;50G (turn rate 2.6&ndash;3.4 rad/s) via jet vanes and gas-vane thrust vectoring.</li>
+              <li><b>Medium BVR Rockets:</b> Pull 25&ndash;35G (turn rate 1.3&ndash;1.8 rad/s).</li>
+              <li><b>Heavy Hypersonic Missiles (R-37M, Kinzhal):</b> High forward momentum limits lateral turn rate to 0.75 rad/s. A sharp 90&deg; break turn forces heavy missiles to overshoot cleanly.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="ge-subhead">4. PROXIMITY FUSING VS. KINETIC OVERSHOOTS</div>
+      <div class="ge-desc">
+        Warheads detonate when the missile closes within <b>450 meters</b> or reaches its Closest Point of Approach (CPA &le; 850m). If an aircraft breaks hard outside the missile's turn radius, the missile does not prematurely detonate&mdash;it executes a realistic <b>Kinetic Overshoot</b>, streaking past the target on kinetic momentum before fuel exhaustion.
+      </div>
+
+      <div class="ge-subhead">5. PASSIVE RADAR HOMING &amp; CONCEALMENT (AGM-88G)</div>
+      <div class="ge-desc">
+        Anti-Radiation Missiles (e.g. AGM-88G AARGM-ER) passively track enemy RF radar emissions without transmitting active radar:
+        <ul>
+          <li><b>Launch Concealment:</b> The missile icon remains hidden from enemy radar for the first 3.2 seconds of motor burn.</li>
+          <li><b>Trajectory Path Gating:</b> The missile's path to target is suppressed on enemy radar until within <b>20 km</b> of the target.</li>
+          <li><b>Full Commander Telemetry:</b> You always see the complete flight path and telemetry of your own missiles!</li>
+          <li><b>No Active Lock Warning:</b> Targets receive no active ARH lock tones prior to terminal proximity.</li>
+        </ul>
+      </div>
+
+      <div class="ge-subhead">6. RADAR TELEMETRY READOUT &amp; THERMOBARIC BLAST (MPBM)</div>
+      <div class="ge-desc">
+        Missiles display comprehensive two-line telemetry on the radar scope:
+        <ul>
+          <li><b>Line 1:</b> Missile designation and salvo count in team/identification color (e.g. <code>AIM-120D x2</code>).</li>
+          <li><b>Line 2:</b> Real-time Mach velocity, active propulsion stage, and target range in telemetry accent colors (e.g. <code>M 3.2 [PULSE 2] [18km]</code>).</li>
+          <li><b>Thermobaric Area of Effect (MPBM):</b> The Multi-Purpose Burst Missile detonates in an expansive thermobaric shockwave, inflicting 7 HP direct damage on the target and secondary blast damage (1&ndash;5 HP) across an <b>8.5 km radius</b>.</li>
+        </ul>
+      </div>
+
+      <div class="ge-subhead">7. PROBABILITY OF KILL (P_k) &amp; SALVO SATURATION FORMULA</div>
       <div class="ge-formula-card">
         <span style="color:#94a3b8;font-size:0.62rem;">TACTICAL HIT PROBABILITY EQUATION:</span>
-        <div class="ge-formula-code">P_k = Base P_k × Range Score × Aspect Score - Target Agility - CMs + Salvo Bonus + Seeker Synergy</div>
+        <div class="ge-formula-code">P_k = Base P_k &times; Range Score &times; Aspect Score - Target Agility - CMs + Salvo Bonus + Seeker Synergy</div>
       </div>
 
       <div class="ge-callout">
@@ -80,11 +155,11 @@ window.MANUAL_COMBAT = [
     id: 'ch7_defense_ew',
     title: 'SECTION 07: ELECTRONIC WARFARE, DOPPLER NOTCHING & DEFENSIVE MANEUVERS',
     desc: `
-      <div class="ge-subhead">HOW TO EXECUTE A DOPPLER NOTCH (BEAMING 90°)</div>
+      <div class="ge-subhead">HOW TO EXECUTE A DOPPLER NOTCH (BEAMING 90&deg;)</div>
       <div class="ge-desc">
-        Pulse-Doppler radars detect targets by filtering for frequency shifts caused by closure velocity:
+        Pulse-Doppler radars detect targets by filtering for frequency shifts caused by radial closure velocity:
         <br><br>
-        <b>To notch:</b> Turn your aircraft exactly <b>90° perpendicular</b> to the threat's radar vector (beam aspect). Your relative radial closure speed drops to zero relative to ground clutter. The hostile radar mistakes you for stationary background terrain and drops lock. Dispensing chaff creates an artificial zero-Doppler false echo, breaking missile homing.
+        <b>To notch:</b> Turn your aircraft exactly <b>90&deg; perpendicular</b> to the threat's radar vector (beam aspect). Your relative radial closure speed drops to zero relative to ground clutter. The hostile radar filters your return as background clutter and drops lock. Dispensing chaff creates an artificial zero-Doppler false echo, breaking missile homing.
       </div>
 
       <div class="ge-subhead">ACTIVE ELECTRONIC WARFARE (EW) PODS &amp; DECOYS</div>
@@ -98,7 +173,7 @@ window.MANUAL_COMBAT = [
               <td style="color:#38bdf8;font-weight:800;">AN/ALQ-184</td>
               <td>1-Slot Self Pod</td>
               <td>30% Lock Degradation</td>
-              <td>Compact self-protection jammer. Emits directional RF pulse noise against active locks.</td>
+              <td>Compact self-protection jammer. Emits directional RF pulse noise against active radar locks.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">AN/ALQ-99</td>
@@ -139,7 +214,7 @@ window.MANUAL_COMBAT = [
               <td style="color:#00f0ff;font-weight:800;">Doppler Notch &amp; Chaff</td>
               <td>0.7 TOK</td>
               <td>+30%</td>
-              <td>Trigger on active radar (ARH) lock. Beams radar 90°, cuts closure rate, and pops chaff.</td>
+              <td>Trigger on active radar (ARH) lock. Beams radar 90&deg;, cuts closure rate, and pops chaff.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">High-G Barrel Roll</td>
@@ -151,13 +226,13 @@ window.MANUAL_COMBAT = [
               <td style="color:#c084fc;font-weight:800;">Pugachev Push Cobra</td>
               <td>0.8 TOK</td>
               <td>+38%</td>
-              <td>Requires TVC. Pitch up to 110° creates an immediate closure rate mismatch against tailgaters.</td>
+              <td>Requires TVC. Pitch up to 110&deg; creates an immediate closure rate mismatch against tailgaters.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Split-S Kinetic Escape</td>
               <td>0.7 TOK</td>
               <td>+28%</td>
-              <td>Requires altitude > FL150. Inverts aircraft and dives to recover Mach speed out of envelope.</td>
+              <td>Requires altitude &gt; FL150. Inverts aircraft and dives to recover Mach speed out of envelope.</td>
             </tr>
             <tr>
               <td style="color:#ffb830;font-weight:800;">Emergency Chaff Salvo</td>

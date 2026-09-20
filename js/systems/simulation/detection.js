@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Radar Signal Intelligence, Target Detection & Satellite Reveal Pipeline
- * Calibrated classification rates and permanent satellite beacon uplink for remaining threats.
+ * AIRSPACE STANDOFF: Radar Signal Intelligence, Target Detection & Satellite Reveal Pipeline
+ * Calibrated classification rates, mutual detection fairness, and passive radar launch concealment.
  */
 
 class SimulationDetectionSystem {
@@ -91,7 +91,7 @@ class SimulationDetectionSystem {
       if (!this.sim._satelliteUplinkAnnouncedBlue) {
         this.sim._satelliteUplinkAnnouncedBlue = true;
         if (this.game.radar) {
-          this.game.radar.spawnCombatText(liveHostiles[0].x, liveHostiles[0].y, `SATELLITE UPLINK ACTIVE - ${liveHostiles.length} TARGETS PINPOINTED`, '#00f0ff');
+          this.game.radar.spawnCombatText(liveHostiles[0].x, liveHostiles[0].y, `SATELLITE UPLINK ACTIVE: ${liveHostiles.length} TARGETS PINPOINTED`, '#00f0ff');
         }
         this.sim.logScoreEvent('friendly', 0, `SATELLITE UPLINK: ${liveHostiles.length} target(s) remaining - radar broadcast active`);
         if (typeof AudioSys !== 'undefined') AudioSys.playClick();
@@ -117,7 +117,7 @@ class SimulationDetectionSystem {
       }
     }
 
-    this.processAuxiliaryContacts(baseAirIdTime, baseMslIdTime, dt, blueSensors, is2P);
+    this.processAuxiliaryContacts(baseAirIdTime, baseMslIdTime, dt, blueSensors, redSensors, is2P);
   }
 
   revealMutuallyAllCombatants() {
@@ -135,7 +135,7 @@ class SimulationDetectionSystem {
     }
   }
 
-  processAuxiliaryContacts(baseAirIdTime, baseMslIdTime, dt, blueSensors, is2P) {
+  processAuxiliaryContacts(baseAirIdTime, baseMslIdTime, dt, blueSensors, redSensors, is2P) {
     for (const ghost of this.sim.ghostContacts) {
       if (ghost.hp <= 0 || ghost.isDissolved) continue;
       this.game.detectedByBlue.add(ghost.id);
@@ -161,21 +161,48 @@ class SimulationDetectionSystem {
         m.identifiedByBlue = true; m.identifiedByRed = true;
         continue;
       }
-      if (m.team !== 'hostile') continue;
-      let detected = false;
-      for (const sensor of blueSensors) {
-        const maxDist = Physics.getRadarMaxDetectionRange(sensor, m, this.sim.weatherClouds);
-        if (maxDist > 0.0 && Math.hypot(m.x - sensor.x, m.y - sensor.y) <= maxDist) { detected = true; break; }
-      }
-      if (detected) {
-        m.trackHoldBlue = 3.5;
-        m.trackDurationBlue = (m.trackDurationBlue || 0.0) + dt;
-        if (m.trackDurationBlue >= baseMslIdTime) m.identifiedByBlue = true;
-      } else if (m.trackHoldBlue && m.trackHoldBlue > 0) {
-        m.trackHoldBlue -= dt;
-      }
-      if (detected || (m.trackHoldBlue && m.trackHoldBlue > 0)) {
+
+      // Friendly missiles are always tracked by Blue
+      if (m.team === 'friendly') {
         this.game.detectedByBlue.add(m.id);
+        m.identifiedByBlue = true;
+      } else {
+        const isConcealedForBlue = m.isPassiveRadar && (m.age < (m.launchStealthDuration || 3.2)) && (m.distanceToTarget > (m.pathRevealDistance || 20.0));
+        if (!isConcealedForBlue) {
+          let detected = false;
+          for (const sensor of blueSensors) {
+            const maxDist = Physics.getRadarMaxDetectionRange(sensor, m, this.sim.weatherClouds);
+            if (maxDist > 0.0 && Math.hypot(m.x - sensor.x, m.y - sensor.y) <= maxDist) { detected = true; break; }
+          }
+          if (detected) {
+            m.trackHoldBlue = 3.5;
+            m.trackDurationBlue = (m.trackDurationBlue || 0.0) + dt;
+            if (m.trackDurationBlue >= baseMslIdTime) m.identifiedByBlue = true;
+          } else if (m.trackHoldBlue && m.trackHoldBlue > 0) {
+            m.trackHoldBlue -= dt;
+          }
+          if (detected || (m.trackHoldBlue && m.trackHoldBlue > 0)) {
+            this.game.detectedByBlue.add(m.id);
+          }
+        }
+      }
+
+      // Hostile missiles are always tracked by Red
+      if (m.team === 'hostile') {
+        this.game.detectedByRed.add(m.id);
+        m.identifiedByRed = true;
+      } else {
+        const isConcealedForRed = m.isPassiveRadar && (m.age < (m.launchStealthDuration || 3.2)) && (m.distanceToTarget > (m.pathRevealDistance || 20.0));
+        if (!isConcealedForRed) {
+          let detectedRed = false;
+          for (const sensor of redSensors) {
+            const maxDist = Physics.getRadarMaxDetectionRange(sensor, m, this.sim.weatherClouds);
+            if (maxDist > 0.0 && Math.hypot(m.x - sensor.x, m.y - sensor.y) <= maxDist) { detectedRed = true; break; }
+          }
+          if (detectedRed) {
+            this.game.detectedByRed.add(m.id);
+          }
+        }
       }
     }
 

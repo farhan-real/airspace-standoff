@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // After Action Report System: Mission Debrief
+ * AIRSPACE STANDOFF: Mission Debrief and After Action Report Orchestrator
  */
 
 class AfterActionReportSystem {
@@ -13,6 +13,7 @@ class AfterActionReportSystem {
     const podiumEl = document.getElementById('ace-podium-cards');
     const fullRosterContainer = document.getElementById('aar-full-roster-content');
 
+    // Compute duration in mm:ss format
     const durSec = Math.max(1, Math.round((performance.now() - (game.matchStartTime || performance.now())) / 1000));
     const min = Math.floor(durSec / 60);
     const sec = durSec % 60;
@@ -24,6 +25,7 @@ class AfterActionReportSystem {
     }
     if (dEl) dEl.textContent = msg || 'AFTER ACTION REPORT';
 
+    // Sort participating air assets by combat contribution
     const allPilots = [...game.alliedAircraft, ...game.hostileAircraft];
     allPilots.sort((a, b) => (b.kills * 100 + (b.scorePoints || 0)) - (a.kills * 100 + (a.scorePoints || 0)));
 
@@ -131,20 +133,30 @@ class AfterActionReportSystem {
       `;
     }
 
+    // Render timeline and pass outcome status to control initial expansion
     if (typeof AfterActionReportTimeline !== 'undefined') {
-      AfterActionReportTimeline.renderTimeline(game);
+      AfterActionReportTimeline.renderTimeline(game, blueWon);
     }
 
+    // Handle collapsible roster drawer
     const toggleRosterBtn = document.getElementById('btn-toggle-aar-roster');
     if (toggleRosterBtn && fullRosterContainer) {
       fullRosterContainer.classList.remove('hidden');
+      fullRosterContainer.style.display = 'block';
       toggleRosterBtn.textContent = 'COLLAPSE';
       toggleRosterBtn.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const isHidden = fullRosterContainer.classList.contains('hidden');
-        fullRosterContainer.classList.toggle('hidden', !isHidden);
-        toggleRosterBtn.textContent = isHidden ? 'COLLAPSE' : 'EXPAND';
+        const isHidden = fullRosterContainer.classList.contains('hidden') || fullRosterContainer.style.display === 'none';
+        if (isHidden) {
+          fullRosterContainer.classList.remove('hidden');
+          fullRosterContainer.style.display = 'block';
+          toggleRosterBtn.textContent = 'COLLAPSE';
+        } else {
+          fullRosterContainer.classList.add('hidden');
+          fullRosterContainer.style.display = 'none';
+          toggleRosterBtn.textContent = 'EXPAND';
+        }
         if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       };
     }

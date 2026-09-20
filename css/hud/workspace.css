@@ -1,6 +1,4 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Cockpit Workspace
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Cockpit Workspace Layout */
 
 .hud-container {
   display: flex;
@@ -12,6 +10,11 @@
   overflow: hidden;
   padding-bottom: env(safe-area-inset-bottom, 0);
   box-sizing: border-box;
+}
+
+body.safe-zone-on .hud-container {
+  padding-left: var(--safe-zone-inset, 0px);
+  padding-right: var(--safe-zone-inset, 0px);
 }
 
 .cockpit-workspace {

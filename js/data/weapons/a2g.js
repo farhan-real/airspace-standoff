@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Air-to-Ground, Anti-Radiation (SEAD) & Hardened Installation Penetrators
- * Standardized 4x, 2x, etc. nomenclature and anti-surface guidance models.
+ * AIRSPACE STANDOFF: Air-to-Ground, Anti-Radiation (SEAD) & Hardened Installation Penetrators
  */
 
 window.WEAPONS_A2G = {
@@ -12,12 +11,12 @@ window.WEAPONS_A2G = {
     mass: 700,
     cost: 1.6,
     rangeKm: 90.0,
-    speedMach: 4.0,
+    speedMach: 2.85,
     seeker: 'PASSIVE_RADAR',
     rcs: 0.06,
     trait: 'EMITTER_KILLER',
     traitBadge: '3x SAM DAMAGE',
-    behaviorDesc: 'Passive RF seeker locks onto active radar emissions. Deals 3x damage against surface SAM radar arrays.',
+    behaviorDesc: 'Passive RF seeker locks onto active radar emissions without active illumination. Deals 3x damage against SAM radars and EW jammers. Trajectory hidden until within 20 km.',
     damage: 5,
     ammoCount: 4,
     minRangeKm: 5.0,
@@ -29,7 +28,7 @@ window.WEAPONS_A2G = {
     isAntiRadiation: true,
     sigmaPylon: 0.12,
     category: 'A2G',
-    desc: 'Extended-range anti-radiation missile (4x) designed to neutralize hostile early warning radars and SAM batteries.'
+    desc: 'Extended-range anti-radiation missile (4x). Passive radar homing inflicts 3x damage on hostile radar arrays and jammers.'
   },
   'GBU-39': {
     id: 'GBU-39',
@@ -39,12 +38,12 @@ window.WEAPONS_A2G = {
     mass: 780,
     cost: 0.9,
     rangeKm: 55.0,
-    speedMach: 0.75,
+    speedMach: 0.90,
     seeker: 'GPS_INS',
     rcs: 0.005,
     trait: 'GLIDE_SATURATION',
     traitBadge: 'STANDOFF DISPERSAL',
-    behaviorDesc: 'Gliding wing dispensers release 8 GPS penetrators simultaneously for facility saturation.',
+    behaviorDesc: 'Gliding wing dispensers release 8 GPS penetrators simultaneously for standoff facility saturation at Mach 0.90.',
     damage: 3,
     ammoCount: 8,
     minRangeKm: 4.0,
@@ -56,7 +55,7 @@ window.WEAPONS_A2G = {
     isBunkerCracker: true,
     sigmaPylon: 0.14,
     category: 'A2G',
-    desc: 'Precision stand-off glide bomb (8x) designed for bunker cracking and airfield facility neutralization.'
+    desc: 'Precision stand-off glide bomb (8x) designed for bunker cracking and airfield facility neutralization at Mach 0.90.'
   },
   'AGM-158B': {
     id: 'AGM-158B',
@@ -66,13 +65,13 @@ window.WEAPONS_A2G = {
     mass: 2200,
     cost: 2.6,
     rangeKm: 110.0,
-    speedMach: 0.88,
+    speedMach: 1.15,
     seeker: 'IIR',
     rcs: 0.0005,
     isStealthMissile: true,
     trait: 'STEALTH_CRUISE',
     traitBadge: '0.0005m2 STEALTH CRUISE',
-    behaviorDesc: 'Low-observable cruise body penetrates surface SAM rings undetected until terminal descent.',
+    behaviorDesc: 'Low-observable cruise body penetrates surface SAM rings undetected at Mach 1.15 until terminal descent.',
     damage: 10,
     ammoCount: 2,
     minRangeKm: 10.0,
@@ -84,7 +83,7 @@ window.WEAPONS_A2G = {
     isBunkerCracker: true,
     sigmaPylon: 0.35,
     category: 'A2G',
-    desc: 'Long-range stealth cruise missiles (2x) designed to penetrate deep contested airspace and destroy command bunkers.'
+    desc: 'Long-range stealth cruise missiles (2x) cruising at Mach 1.15 to penetrate deep contested airspace and destroy command bunkers.'
   },
   'KINZHAL': {
     id: 'KINZHAL',
@@ -94,12 +93,12 @@ window.WEAPONS_A2G = {
     mass: 4300,
     cost: 4.2,
     rangeKm: 135.0,
-    speedMach: 8.5,
+    speedMach: 5.0,
     seeker: 'INS_RADAR',
     rcs: 0.25,
     trait: 'HYPERSONIC_IMPACT',
-    traitBadge: 'MACH 8.5 KINETIC SHOCK',
-    behaviorDesc: 'Mach 8.5 aero-ballistic trajectory with extreme kinetic impact that neutralizes heavy bunkers in 1-2 hits.',
+    traitBadge: 'MACH 5.0 KINETIC SHOCK',
+    behaviorDesc: 'Mach 5.0 aero-ballistic trajectory with extreme kinetic impact that neutralizes heavy bunkers in 1-2 hits.',
     damage: 16,
     ammoCount: 2,
     minRangeKm: 15.0,
@@ -112,6 +111,6 @@ window.WEAPONS_A2G = {
     sigmaPylon: 0.80,
     category: 'A2G',
     allowedAirframes: ['MiG-31BM', 'Tu-160M', 'Su-34', 'F-15EX', 'J-16', 'B-1B'],
-    desc: 'Hypersonic aero-ballistic heavy missile (2x) capable of penetrating deeply reinforced theater structures.'
+    desc: 'Hypersonic aero-ballistic heavy missile (2x) delivering Mach 5.0 kinetic shock to penetrate deeply reinforced theater structures.'
   }
 };

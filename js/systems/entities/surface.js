@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Surface Air Defense Batteries, Radars & Logistics Depots
+ * AIRSPACE STANDOFF: Surface Air Defense Batteries, Radars & Logistics Depots
  * Ground targets are pre-briefed: always revealed and fully identified.
  */
 

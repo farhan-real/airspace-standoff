@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Air-to-Air Guided Missiles: Beyond-Visual-Range (BVR)
+ * AIRSPACE STANDOFF: Air-to-Air Guided Missiles: Beyond-Visual-Range (BVR)
  */
 
 window.WEAPONS_A2A = {
@@ -11,12 +11,12 @@ window.WEAPONS_A2A = {
     mass: 324,
     cost: 1.2,
     rangeKm: 72.0,
-    speedMach: 4.2,
+    speedMach: 2.85,
     seeker: 'ARH',
     rcs: 0.04,
     trait: 'NETWORKED_LOAL',
     traitBadge: 'DATALINK LOAL',
-    behaviorDesc: 'Standard medium BVR missile. Can launch without radar lock; receives mid-course datalink updates from any friendly aircraft.',
+    behaviorDesc: 'Standard medium BVR missile. Solid booster accelerates to Mach 2.85 before coasting; receives mid-course datalink updates from friendly aircraft.',
     damage: 3,
     ammoCount: 4,
     minRangeKm: 4.0,
@@ -27,7 +27,7 @@ window.WEAPONS_A2A = {
     T_0: 0.75,
     sigmaPylon: 0.06,
     category: 'A2A',
-    desc: 'Fleet standard medium BVR active radar homing missile (4x). Affordable workhorse balancing cost, range, and accuracy.'
+    desc: 'Fleet standard medium BVR active radar homing missile (4x). Reaches Mach 2.85 on booster burn with reliable midcourse datalink guidance.'
   },
   'PL-15E': {
     id: 'PL-15E',
@@ -37,12 +37,12 @@ window.WEAPONS_A2A = {
     mass: 380,
     cost: 1.5,
     rangeKm: 78.0,
-    speedMach: 4.8,
+    speedMach: 3.2,
     seeker: 'ARH',
     rcs: 0.04,
     trait: 'DUAL_PULSE_SURGE',
-    traitBadge: 'TERMINAL BOOST (+1.5M)',
-    behaviorDesc: 'Dual-pulse rocket motor. Second pulse ignites at 22km from target (+1.5 Mach terminal speed surge) to defeat evasions.',
+    traitBadge: 'TERMINAL BOOST (+1.1M)',
+    behaviorDesc: 'Dual-pulse rocket motor. Pulse 1 boosts to Mach 2.85, then coast; second pulse ignites at 22km from target (+1.1 Mach terminal surge to Mach 3.4+) to defeat evasions.',
     damage: 3,
     ammoCount: 4,
     minRangeKm: 5.0,
@@ -53,7 +53,7 @@ window.WEAPONS_A2A = {
     T_0: 0.78,
     sigmaPylon: 0.08,
     category: 'A2A',
-    desc: 'Dual-pulse rocket maintaining high terminal kinetic energy against maneuvering targets at medium BVR range (4x).'
+    desc: 'Dual-pulse rocket maintaining high terminal kinetic energy. Re-ignites at 22 km to surge speed and defeat defensive breaks (4x).'
   },
   'METEOR': {
     id: 'METEOR',
@@ -63,12 +63,12 @@ window.WEAPONS_A2A = {
     mass: 380,
     cost: 1.9,
     rangeKm: 85.0,
-    speedMach: 4.6,
+    speedMach: 3.2,
     seeker: 'ARH',
     rcs: 0.04,
     trait: 'RAMJET_SUSTAINED',
     traitBadge: 'NO SPEED DECAY',
-    behaviorDesc: 'Solid-fuel variable-flow ramjet maintains continuous thrust with zero speed decay out to maximum engagement range.',
+    behaviorDesc: 'Solid-fuel variable-flow ramjet maintains continuous thrust at Mach 3.2 with zero speed decay out to maximum engagement range.',
     damage: 3,
     ammoCount: 4,
     minRangeKm: 5.0,
@@ -79,7 +79,7 @@ window.WEAPONS_A2A = {
     T_0: 0.84,
     sigmaPylon: 0.08,
     category: 'A2A',
-    desc: 'Ramjet-powered BVR missile (4x). Continuous acceleration delivers an unmatched no-escape zone out to 72 km.'
+    desc: 'Ramjet-powered BVR missile (4x). Continuous propulsion sustains Mach 3.2 with zero drag decay across the entire 85 km envelope.'
   },
   'AIM-260': {
     id: 'AIM-260',
@@ -89,13 +89,13 @@ window.WEAPONS_A2A = {
     mass: 360,
     cost: 3.4,
     rangeKm: 115.0,
-    speedMach: 5.2,
+    speedMach: 3.6,
     seeker: 'ARH',
     rcs: 0.0005,
     isStealthMissile: true,
     trait: 'STEALTH_SEEKER',
     traitBadge: 'LOW-RCS STEALTH BVR',
-    behaviorDesc: 'Advanced low-observable casing (0.0005m2 RCS). Delivers 115 km deep BVR reach and denies early RWR warning.',
+    behaviorDesc: 'Advanced low-observable casing (0.0005m2 RCS) with boost-sustain motor. Delivers 115 km deep BVR reach at Mach 3.6 and denies early RWR warning.',
     damage: 3,
     ammoCount: 4,
     minRangeKm: 7.0,
@@ -107,7 +107,7 @@ window.WEAPONS_A2A = {
     antiNotchBonus: 0.35,
     sigmaPylon: 0.04,
     category: 'A2A',
-    desc: 'Next-generation air dominance stealth missile (4x). Substantially outranges standard AMRAAMs with minimal radar observability.'
+    desc: 'Next-generation air dominance stealth missile (4x). Sustains Mach 3.6 cruise across 115 km with minimal radar observability.'
   },
   'R-37M': {
     id: 'R-37M',
@@ -117,12 +117,12 @@ window.WEAPONS_A2A = {
     mass: 1020,
     cost: 2.8,
     rangeKm: 125.0,
-    speedMach: 6.2,
+    speedMach: 4.2,
     seeker: 'ARH',
     rcs: 0.18,
     trait: 'LOFTED_HYPERSONIC',
     traitBadge: 'STRATOSPHERE DIVE',
-    behaviorDesc: 'Hypersonic aero-ballistic trajectory. Lofting to high altitude preserves Mach 6.2 dive speed; deals +50% damage against heavy aircraft.',
+    behaviorDesc: 'Hypersonic aero-ballistic trajectory. Lofts to stratosphere at Mach 3.2 before plunging in a terminal dive at Mach 4.2; deals +50% damage against heavy aircraft.',
     damage: 6,
     ammoCount: 2,
     minRangeKm: 10.0,
@@ -134,7 +134,7 @@ window.WEAPONS_A2A = {
     heavyTargetBonus: true,
     sigmaPylon: 0.20,
     category: 'A2A',
-    desc: 'Heavy hypersonic deep interceptor (2x). Extreme range and warhead power designed to neutralize heavy airframes.'
+    desc: 'Heavy hypersonic deep interceptor (2x). Lofts into high altitude and dives at Mach 4.2 to neutralize bombers and high-value aircraft.'
   },
   'PL-21': {
     id: 'PL-21',
@@ -144,12 +144,12 @@ window.WEAPONS_A2A = {
     mass: 950,
     cost: 3.0,
     rangeKm: 130.0,
-    speedMach: 5.8,
+    speedMach: 3.6,
     seeker: 'ARH',
     rcs: 0.06,
     trait: 'EXTREME_STANDOFF',
     traitBadge: '130KM STANDOFF REACH',
-    behaviorDesc: 'Ultra-long-range ramjet missile providing theater-wide perimeter interception against high-value targets.',
+    behaviorDesc: 'Ultra-long-range ramjet missile providing theater-wide perimeter interception at sustained Mach 3.6 against high-value targets.',
     damage: 5,
     ammoCount: 2,
     minRangeKm: 12.0,
@@ -160,7 +160,7 @@ window.WEAPONS_A2A = {
     T_0: 0.75,
     sigmaPylon: 0.18,
     category: 'A2A',
-    desc: 'Extreme standoff ramjet interceptor (2x) fielding 130 km range to secure theater air perimeters.'
+    desc: 'Extreme standoff ramjet interceptor (2x) fielding 130 km range and continuous Mach 3.6 cruise to secure theater perimeters.'
   },
   'MPBM': {
     id: 'MPBM',
@@ -170,12 +170,12 @@ window.WEAPONS_A2A = {
     mass: 890,
     cost: 3.2,
     rangeKm: 70.0,
-    speedMach: 4.0,
+    speedMach: 2.85,
     seeker: 'ARH',
     rcs: 0.08,
     trait: 'SHOCKWAVE_DETONATION',
     traitBadge: 'AREA SHOCKWAVE (AOE)',
-    behaviorDesc: 'High-yield thermobaric warhead detonates on terminal intercept, inflicting severe blast damage across adjacent aircraft.',
+    behaviorDesc: 'High-yield thermobaric warhead detonates on terminal intercept (7 HP damage), inflicting secondary blast damage across an 8.5 km radius.',
     damage: 7,
     ammoCount: 2,
     minRangeKm: 6.0,
@@ -187,6 +187,6 @@ window.WEAPONS_A2A = {
     sigmaPylon: 0.16,
     category: 'A2A',
     allowedAirframes: ['ADFX-01', 'CFA-44', 'X-02S', 'F-15EX', 'F-22C-COFFIN'],
-    desc: 'Multi-Purpose Burst Missile (2x) providing standoff area-of-effect shockwave destruction against tight formations.'
+    desc: 'Multi-Purpose Burst Missile (2x) providing standoff area-of-effect shockwave destruction (8.5 km radius) against tight formations.'
   }
 };

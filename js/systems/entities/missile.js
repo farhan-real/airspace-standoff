@@ -1,5 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Guided Missile Entity & Engagement Resolution
+ * AIRSPACE STANDOFF: Guided Missile Entity & Engagement Resolution
+ * Enforces ProNav guidance, multi-stage exhaust modulation, and momentum-preserving overshoots.
  */
 
 class MissileEntity {
@@ -12,7 +13,6 @@ class MissileEntity {
     this.x = sourceUnit.x;
     this.y = sourceUnit.y;
     this.alt = sourceUnit.alt || 0.5;
-    this.speed = weapon.speedMach || 4.0;
     this.distanceTraveled = 0.0;
     this.distanceToTarget = Math.hypot(targetUnit.x - sourceUnit.x, targetUnit.y - sourceUnit.y);
     this.prevDistanceToTarget = this.distanceToTarget;
@@ -21,6 +21,8 @@ class MissileEntity {
     this.isStealthMissile = weapon.isStealthMissile || (this.rcs <= 0.005);
     this.active = true;
     this.isDead = false;
+    this.age = 0.0;
+    this.stage = 'BOOST';
 
     this.trackDurationBlue = 0.0;
     this.trackDurationRed = 0.0;
@@ -33,7 +35,6 @@ class MissileEntity {
     this.lostTimer = 0.0;
     this.lostReason = '';
     this.cloudObscureTimer = 0.0;
-    this.hasIgnitedPulseTwo = false;
 
     if (sourceUnit && sourceUnit.missilesLaunchedCount !== undefined) {
       sourceUnit.missilesLaunchedCount++;
@@ -50,6 +51,14 @@ class MissileEntity {
       while (snapDiff < -Math.PI) snapDiff += Math.PI * 2;
       while (snapDiff > Math.PI) snapDiff -= Math.PI * 2;
       this.heading += Math.max(-1.15, Math.min(1.15, snapDiff));
+    }
+
+    if (typeof MissileKinetics !== 'undefined') {
+      MissileKinetics.initMissile(this);
+    } else {
+      this.speed = 2.4;
+      this.isPassiveRadar = Boolean(weapon.seeker === 'PASSIVE_RADAR');
+      this.pathRevealDistance = this.isPassiveRadar ? 20.0 : 999.0;
     }
   }
 
@@ -68,12 +77,14 @@ class MissileEntity {
 
   update(dt, weatherClouds) {
     if (this.isDead) return;
+    this.age += dt;
 
     if (this.state === 'LOST_TRACK') {
       this.lostTimer += dt;
-      this.x += Math.cos(this.heading) * (this.speed * 0.20) * dt;
-      this.y += Math.sin(this.heading) * (this.speed * 0.20) * dt;
-      if (this.lostTimer >= 1.4) this.isDead = true;
+      const coastStep = (this.speed * 0.35) * dt;
+      this.x += Math.cos(this.heading) * coastStep;
+      this.y += Math.sin(this.heading) * coastStep;
+      if (this.lostTimer >= 2.2) this.isDead = true;
       return;
     }
 
@@ -82,37 +93,27 @@ class MissileEntity {
       return;
     }
 
-    this.trail.unshift({ x: this.x, y: this.y, alpha: 1.0 });
-    if (this.trail.length > 10) this.trail.pop();
-    for (const p of this.trail) p.alpha -= dt * 1.4;
+    const isPowered = (this.stage === 'BOOST' || this.stage === 'PULSE 2' || this.stage === 'RAMJET' || this.stage === 'SUSTAIN' || this.stage === 'DIVE');
+    this.trail.unshift({ x: this.x, y: this.y, alpha: isPowered ? 1.0 : 0.45 });
+    const maxTrail = isPowered ? 12 : 6;
+    while (this.trail.length > maxTrail) this.trail.pop();
+    for (const p of this.trail) p.alpha -= dt * 1.3;
 
-    const dx = this.target.x - this.x;
-    const dy = this.target.y - this.y;
-    const dist = Math.hypot(dx, dy);
-    this.prevDistanceToTarget = this.distanceToTarget;
-    this.distanceToTarget = dist;
+    const dist = Math.hypot(this.target.x - this.x, this.target.y - this.y);
 
-    if (this.weapon.trait === 'DUAL_PULSE_SURGE' && !this.hasIgnitedPulseTwo && dist <= 22.0) {
-      this.hasIgnitedPulseTwo = true;
-      this.speed += 1.5;
-      if (window.Game && window.Game.radar) window.Game.radar.spawnCombatText(this.x, this.y, 'PULSE 2 (+1.5M)', '#00f0ff');
+    if (typeof MissileKinetics !== 'undefined') {
+      MissileKinetics.updateSpeedAndFlight(this, dt, dist);
+      MissileKinetics.computeGuidance(this, dt);
+    } else {
+      const desiredLead = Physics.calcLeadInterceptAngle(
+        this.x, this.y, this.speed, this.target.x, this.target.y,
+        this.target.heading || 0, this.target.speed || 0
+      );
+      let diff = desiredLead - this.heading;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      this.heading += Math.max(-2.5 * dt, Math.min(2.5 * dt, diff));
     }
-
-    if (this.weapon.trait === 'RAMJET_SUSTAINED') {
-      this.speed = Math.max(this.speed, this.weapon.speedMach || 4.6);
-    }
-
-    const desiredLead = Physics.calcLeadInterceptAngle(
-      this.x, this.y, this.speed, this.target.x, this.target.y,
-      this.target.heading || 0, this.target.speed || 0
-    );
-
-    let diff = desiredLead - this.heading;
-    while (diff < -Math.PI) diff += Math.PI * 2;
-    while (diff > Math.PI) diff -= Math.PI * 2;
-
-    const rate = ((this.weapon.trait === 'SNAP_TURN' || this.weapon.trait === 'HOBS_VANE') ? 6.0 : 4.2) * dt;
-    this.heading += Math.max(-rate, Math.min(rate, diff));
 
     const inCloud = weatherClouds && weatherClouds.some(c => c.containsPoint(this.x, this.y) || c.containsPoint(this.target.x, this.target.y));
     if (inCloud) {
@@ -135,7 +136,16 @@ class MissileEntity {
       return;
     }
 
-    if (dist <= 3.8 || (this.prevDistanceToTarget < 4.8 && dist > this.prevDistanceToTarget)) {
+    if (typeof MissileKinetics !== 'undefined') {
+      const trig = MissileKinetics.checkTerminalTrigger(this);
+      if (trig.shouldTrigger) {
+        if (trig.isHitCandidate) {
+          this.resolveTerminalEngagement(weatherClouds);
+        } else {
+          this.triggerLostTrack(trig.reason || 'KINETIC OVERSHOOT');
+        }
+      }
+    } else if (dist <= 0.8) {
       this.resolveTerminalEngagement(weatherClouds);
     }
   }
@@ -144,10 +154,11 @@ class MissileEntity {
     this.state = 'LOST_TRACK';
     this.active = false;
     this.lostReason = reason;
-    this.heading += (Math.random() * 0.8 - 0.4);
+    this.stage = 'COAST';
+    this.heading += (Math.random() * 0.3 - 0.15);
     if (this.target && this.target.missilesEvadedCount !== undefined) this.target.missilesEvadedCount++;
     if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
-    if (window.Game && window.Game.radar) window.Game.radar.spawnCombatText(this.x, this.y, `LOST: ${reason}`, '#f97316');
+    if (window.Game && window.Game.radar) window.Game.radar.spawnCombatText(this.x, this.y, `${reason}`, '#f97316');
   }
 
   resolveTerminalEngagement(weatherClouds) {
@@ -192,13 +203,18 @@ class MissileEntity {
     }
 
     if (typeof SurfaceUnit !== 'undefined' && tgt instanceof SurfaceUnit) {
-      const dmg = w.damage * ((w.trait === 'EMITTER_KILLER' && (tgt.type === 'S-400' || tgt.type === 'RADAR_ARRAY')) ? 3 : 1);
+      const isEmitter = (tgt.type === 'S-400' || tgt.type === 'RADAR_ARRAY' || tgt.type === 'EW_JAMMER' || tgt.type === 'RADAR_VAN');
+      const dmg = w.damage * ((w.trait === 'EMITTER_KILLER' && isEmitter) ? 3 : 1);
       const wasDead = tgt.hp <= 0;
       tgt.takeDamage(dmg, w.isBunkerCracker);
       this.isDead = true;
       if (!wasDead && tgt.hp <= 0 && window.Game && window.Game.simulation) {
         window.Game.simulation.recordKillEvent(this.team, tgt, this.source, {
           weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails
+        });
+      } else if (!wasDead && tgt.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
+        window.Game.simulation.scoring.recordHitEvent(this.team, tgt, this.source, {
+          weapon: w, damage: dmg, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails
         });
       }
       if (window.Game && window.Game.radar) {
@@ -263,12 +279,20 @@ class MissileEntity {
         window.Game.simulation.recordKillEvent(this.team, tgt, this.source, {
           weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails
         });
+      } else if (tgt.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
+        window.Game.simulation.scoring.recordHitEvent(this.team, tgt, this.source, {
+          weapon: w, damage: finalDamage, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails
+        });
       }
 
-      if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(finalDamage >= 4);
-      if (window.Game && window.Game.radar) {
-        window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, finalDamage >= 4);
-        window.Game.radar.spawnCombatText(tgt.x, tgt.y, isSalvo ? `SALVO HIT -${finalDamage}HP` : `HIT -${finalDamage}HP`, '#ff3366');
+      if (w.trait === 'SHOCKWAVE_DETONATION' && typeof MissileKinetics !== 'undefined') {
+        MissileKinetics.applyThermobaricAoE(this, tgt, finalDamage, window.Game);
+      } else {
+        if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(finalDamage >= 4);
+        if (window.Game && window.Game.radar) {
+          window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, finalDamage >= 4);
+          window.Game.radar.spawnCombatText(tgt.x, tgt.y, isSalvo ? `SALVO HIT -${finalDamage}HP` : `HIT -${finalDamage}HP`, '#ff3366');
+        }
       }
     } else {
       let reason = 'KINETIC MISS';

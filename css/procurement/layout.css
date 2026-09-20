@@ -1,6 +1,4 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Procurement Hangar Window & Layout
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Procurement Hangar Window & Layout */
 
 .procurement-window {
   width: 98vw;
@@ -22,6 +20,12 @@
   overflow: hidden;
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
   transform: translateZ(0);
+  box-sizing: border-box;
+}
+
+body.safe-zone-on .procurement-window {
+  padding-left: max(12px, var(--safe-zone-inset, 0px)) !important;
+  padding-right: max(12px, var(--safe-zone-inset, 0px)) !important;
 }
 
 .procurement-mobile-tabs {
@@ -103,6 +107,11 @@
     box-sizing: border-box;
     overflow-x: hidden;
     box-shadow: none;
+  }
+
+  body.safe-zone-on .procurement-window {
+    padding-left: max(6px, var(--safe-zone-inset, 0px)) !important;
+    padding-right: max(6px, var(--safe-zone-inset, 0px)) !important;
   }
 
   .procurement-footer {

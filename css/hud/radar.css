@@ -1,6 +1,4 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Radar Viewport: Ultra-Smooth Panning, Swapped Controls
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Radar Viewport Controls & Overlays */
 
 .radar-viewport {
   position: relative;
@@ -11,7 +9,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  touch-action: none !important; /* Required to prevent touch-pan freeze */
+  touch-action: none !important;
 }
 
 #radar-canvas {
@@ -19,12 +17,11 @@
   height: 100%;
   display: block;
   cursor: crosshair;
-  touch-action: none !important; /* Bypasses Android WebView gesture interception */
+  touch-action: none !important;
   will-change: transform;
   transform: translateZ(0);
 }
 
-/* RWR THREAT WARNING */
 .rwr-warning-box {
   position: absolute;
   top: 8px;
@@ -41,6 +38,10 @@
   padding: 3px 7px;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+body.safe-zone-on .rwr-warning-box {
+  right: max(10px, var(--safe-zone-inset, 0px)) !important;
 }
 
 .rwr-warning-box:hover { border-color: var(--color-cyan); }
@@ -71,7 +72,6 @@
   color: #8494ab;
 }
 
-/* CIVILIAN CORRIDOR BANNER */
 .civilian-alert-banner {
   position: absolute;
   bottom: 10px;
@@ -109,17 +109,11 @@
   white-space: nowrap;
 }
 
-/* CANVAS IS COMPLETELY FREE OF CAMERA CONTROLS (THEY ARE IN THE TOP BANNER) */
-.radar-cam-left-bar {
-  display: none !important;
-}
-
-/* RADAR LAYER TOGGLES (DOCKED TO BOTTOM-LEFT) */
 .radar-floating-cam-bar {
   display: flex;
   position: absolute;
   bottom: 10px;
-  left: max(16px, env(safe-area-inset-left, 16px));
+  left: 16px;
   right: auto;
   z-index: 10;
   background: rgba(4, 10, 20, 0.92);
@@ -129,6 +123,10 @@
   gap: 4px;
   align-items: center;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+body.safe-zone-on .radar-floating-cam-bar {
+  left: max(16px, var(--safe-zone-inset, 0px)) !important;
 }
 
 .radar-floating-cam-bar .cam-btn {
@@ -170,7 +168,6 @@
   min-width: 80px;
 }
 
-/* STEERING BUTTONS (DOCKED TO BOTTOM-RIGHT FOR RIGHT-THUMB CONTROL) */
 .mobile-steering-overlay {
   display: flex;
   position: absolute;
@@ -180,6 +177,10 @@
   gap: 8px;
   z-index: 15;
   pointer-events: none;
+}
+
+body.safe-zone-on .mobile-steering-overlay {
+  right: max(12px, var(--safe-zone-inset, 0px)) !important;
 }
 
 .mobile-steer-btn {
@@ -201,12 +202,15 @@
   color: #fff;
 }
 
-/* Portrait mobile styling */
 @media (max-width: 1024px) and (orientation: portrait) {
   .rwr-warning-box {
     top: 4px;
     right: 4px;
     padding: 2px 5px;
+  }
+
+  body.safe-zone-on .rwr-warning-box {
+    right: max(4px, var(--safe-zone-inset, 0px)) !important;
   }
 
   .rwr-status { font-size: 0.54rem; padding: 0 3px; }
@@ -229,14 +233,21 @@
     right: auto;
   }
 
+  body.safe-zone-on .radar-floating-cam-bar {
+    left: max(8px, var(--safe-zone-inset, 0px)) !important;
+  }
+
   .mobile-steering-overlay {
     bottom: 8px;
     right: 8px;
     left: auto;
   }
+
+  body.safe-zone-on .mobile-steering-overlay {
+    right: max(8px, var(--safe-zone-inset, 0px)) !important;
+  }
 }
 
-/* Landscape mobile styling */
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
   .rwr-warning-box {
     top: 6px !important;
@@ -244,6 +255,10 @@
     padding: 2px 5px !important;
     z-index: 9 !important;
     max-width: 95px !important;
+  }
+
+  body.safe-zone-on .rwr-warning-box {
+    right: max(8px, var(--safe-zone-inset, 0px)) !important;
   }
 
   .rwr-status { font-size: 0.52rem !important; padding: 1px 3px !important; }
@@ -256,7 +271,7 @@
     position: absolute !important;
     top: auto !important;
     bottom: 8px !important;
-    left: max(16px, env(safe-area-inset-left, 16px)) !important;
+    left: 16px !important;
     right: auto !important;
     gap: 4px !important;
     padding: 3px !important;
@@ -264,6 +279,10 @@
     border: 1px solid #14243b !important;
     border-radius: 4px !important;
     z-index: 10 !important;
+  }
+
+  body.safe-zone-on .radar-floating-cam-bar {
+    left: max(16px, var(--safe-zone-inset, 0px)) !important;
   }
 
   .radar-floating-cam-bar .cam-btn {
@@ -290,6 +309,10 @@
     gap: 8px !important;
     z-index: 15 !important;
     pointer-events: none !important;
+  }
+
+  body.safe-zone-on .mobile-steering-overlay {
+    right: max(12px, var(--safe-zone-inset, 0px)) !important;
   }
 
   .mobile-steer-btn {

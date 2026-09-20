@@ -1,6 +1,4 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Header Banner: C4ISR Status Console
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Header Banner C4ISR Status Console */
 
 .tactical-banner {
   height: 44px;
@@ -17,6 +15,11 @@
   overflow: hidden;
   z-index: 20;
   position: relative;
+}
+
+body.safe-zone-on .tactical-banner {
+  padding-left: max(10px, var(--safe-zone-inset, 0px));
+  padding-right: max(10px, var(--safe-zone-inset, 0px));
 }
 
 .tactical-banner::after {
@@ -67,7 +70,6 @@
   box-shadow: 0 0 8px var(--color-red);
 }
 
-/* Time and Mission Speed Cluster */
 .banner-time-coords-cluster {
   display: flex;
   align-items: center;
@@ -144,7 +146,6 @@
   box-shadow: 0 0 8px rgba(0, 240, 255, 0.45);
 }
 
-/* Tactical Command Token Bucket Cluster */
 .command-token-cluster {
   display: flex;
   flex-direction: column;
@@ -203,7 +204,6 @@
   transition: width 0.12s ease;
 }
 
-/* Score Board */
 .banner-score-controls-cluster {
   display: flex;
   align-items: center;
@@ -266,7 +266,6 @@
   font-weight: 800;
 }
 
-/* Navigation Cluster */
 .banner-nav-cluster {
   display: flex;
   align-items: center;
@@ -333,7 +332,6 @@
   box-shadow: 0 0 8px var(--color-cyan);
 }
 
-/* Quick Actions */
 .top-quick-actions {
   display: flex;
   align-items: center;
@@ -353,6 +351,11 @@
     height: 40px !important;
     padding: 0 8px !important;
     gap: 6px !important;
+  }
+
+  body.safe-zone-on .tactical-banner {
+    padding-left: max(8px, var(--safe-zone-inset, 0px)) !important;
+    padding-right: max(8px, var(--safe-zone-inset, 0px)) !important;
   }
 
   .timer-digits {

@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Category: DEDICATED STRIKE, CAS & STRATEGIC BOMBERS
+ * AIRSPACE STANDOFF: Category: Dedicated Strike, Close Air Support & Strategic Bombers
  */
 
 window.AIRCRAFT_STRIKE = {
@@ -28,7 +28,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Heavily armored titanium bathtub cockpit (7 HP, 50% autocannon damage reduction). Built around the 30mm GAU-8 Gatling (4.8 DPS) with 4,800 rounds.'
+    desc: 'Heavily armored titanium bathtub cockpit (7 HP, 50% autocannon damage reduction). Built around the 30mm GAU-8 Gatling (5.2 DPS) with 4,800 rounds.'
   },
   'Su-25SM3': {
     id: 'Su-25SM3',

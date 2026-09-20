@@ -1,6 +1,4 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Tactical Flight Manual & Operational Reference Theme
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Tactical Flight Manual & Operational Reference Theme */
 
 .glossary-window {
   background: #040814;
@@ -134,39 +132,48 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 1.0rem;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
   font-weight: 900;
   color: #00f0ff;
   font-family: var(--font-mono);
   letter-spacing: 0.6px;
   border-bottom: 1.5px solid rgba(0, 240, 255, 0.3);
-  padding-bottom: 6px;
-  margin-bottom: 2px;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 /* Tactical Military Classified Security Badge */
 .manual-classified-badge {
-  font-size: 0.58rem;
+  font-size: 0.64rem;
   font-family: var(--font-mono);
-  font-weight: 900;
-  letter-spacing: 1.2px;
-  color: #ff3366;
-  background: linear-gradient(180deg, rgba(255, 51, 102, 0.16) 0%, rgba(159, 18, 57, 0.28) 100%);
-  border: 1px solid #ff3366;
-  padding: 2px 8px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  color: #ffb830;
+  background: linear-gradient(180deg, rgba(255, 184, 48, 0.14) 0%, rgba(180, 83, 9, 0.24) 100%);
+  border: 1px solid rgba(255, 184, 48, 0.55);
+  padding: 3px 10px;
   border-radius: 3px;
   text-transform: uppercase;
-  box-shadow: 0 0 10px rgba(255, 51, 102, 0.35);
+  box-shadow: 0 0 10px rgba(255, 184, 48, 0.22);
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  line-height: 1;
+  gap: 6px;
+  line-height: 1.2;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .manual-classified-badge::before {
-  content: '◆';
-  font-size: 0.50rem;
-  color: #ff3366;
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: #ffb830;
+  transform: rotate(45deg);
+  box-shadow: 0 0 5px rgba(255, 184, 48, 0.8);
+  flex-shrink: 0;
 }
 
 .ge-subhead {
@@ -300,7 +307,7 @@
     border-radius: 0;
   }
   .glossary-content { padding: 10px 12px; gap: 14px; }
-  .ge-title { font-size: 0.88rem; }
+  .ge-title { font-size: 0.86rem; gap: 8px; }
   .ge-subhead { font-size: 0.72rem; }
   .ge-content, .ge-desc { font-size: 0.74rem; }
   .ge-grid-2, .ge-grid-3 { grid-template-columns: 1fr; }

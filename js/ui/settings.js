@@ -1,13 +1,11 @@
-/**
- * AIRSPACE STANDOFF // Settings, Rebinding & Audio Configuration Engine
- * Includes Declutter [V] and Ground targets [B] keybinding configuration.
- */
+/* AIRSPACE STANDOFF: Settings, Rebinding & Safe Zone Configuration */
 
 class SettingsManager {
   constructor(gameEngine) {
     this.game = gameEngine;
     this.currentTab = 'keybinds';
     this.keybinds = Object.assign({}, window.DEFAULT_KEYBINDS || {});
+    this.safeZone = false;
     this.recordingAction = null;
     this.isRecordingKey = false;
     this.loadFromStorage();
@@ -24,16 +22,23 @@ class SettingsManager {
         if (parsed.volumes && typeof AudioSys !== 'undefined') {
           AudioSys.setVolumes(parsed.volumes.master, parsed.volumes.rwr, parsed.volumes.fx);
         }
+        if (parsed.safeZone !== undefined) {
+          this.safeZone = Boolean(parsed.safeZone);
+        } else {
+          this.safeZone = false;
+        }
       }
     } catch (e) {
       console.warn('Could not load settings from storage:', e);
     }
+    this.applySafeZone();
   }
 
   saveToStorage() {
     try {
       const data = {
         keybinds: this.keybinds,
+        safeZone: Boolean(this.safeZone),
         volumes: {
           master: AudioSys.masterVolume,
           rwr: AudioSys.rwrVolume,
@@ -46,20 +51,36 @@ class SettingsManager {
     }
   }
 
+  applySafeZone() {
+    const active = Boolean(this.safeZone);
+    if (document && document.documentElement) {
+      document.documentElement.classList.toggle('safe-zone-on', active);
+    }
+    if (document && document.body) {
+      document.body.classList.toggle('safe-zone-on', active);
+    }
+    window.dispatchEvent(new Event('resize'));
+    if (this.game && this.game.radar && typeof this.game.radar.resize === 'function') {
+      this.game.radar.resize();
+    }
+  }
+
   initUI() {
     const openBtn = document.getElementById('btn-open-settings');
+    const procSettingsBtn = document.getElementById('btn-proc-settings');
     const closeBtn = document.getElementById('btn-close-settings');
     const saveBtn = document.getElementById('btn-save-settings');
     const resetBtn = document.getElementById('btn-reset-keybinds');
     const modal = document.getElementById('settings-modal');
 
-    if (openBtn) {
-      openBtn.onclick = () => {
-        this.renderTabContent();
-        if (modal) modal.classList.add('active');
-        if (this.game.controls) this.game.controls.autoPauseOnDialogOpen();
-      };
-    }
+    const handleOpen = () => {
+      this.renderTabContent();
+      if (modal) modal.classList.add('active');
+      if (this.game.controls) this.game.controls.autoPauseOnDialogOpen();
+    };
+
+    if (openBtn) openBtn.onclick = handleOpen;
+    if (procSettingsBtn) procSettingsBtn.onclick = handleOpen;
 
     if (closeBtn) {
       closeBtn.onclick = () => {
@@ -81,6 +102,9 @@ class SettingsManager {
     if (resetBtn) {
       resetBtn.onclick = () => {
         this.keybinds = Object.assign({}, window.DEFAULT_KEYBINDS || {});
+        this.safeZone = false;
+        this.applySafeZone();
+        this.saveToStorage();
         this.renderTabContent();
       };
     }
@@ -137,7 +161,7 @@ class SettingsManager {
       'STEER_RIGHT': 'Continuous Aerodynamic Bank Right',
       'NEXT_UNIT': 'Select Next Aircraft in Active Squadron',
       'PREV_UNIT': 'Select Previous Aircraft in Active Squadron',
-      'CYCLE_TARGET': 'Cycle Next Detected Threat [T] / [Tab]',
+      'CYCLE_TARGET': 'Cycle Next Detected Threat [T] or [Tab]',
       'AUTO_LOCK': 'Instant-Lock Nearest High-Threat Contact [Space]',
       'FIRE_GUN': 'Fire Manual Autocannon Burst [G]',
       'FIRE_PYLON_1': 'Discharge Station 1 Ordnance Pack',
@@ -212,10 +236,10 @@ class SettingsManager {
     return code
       .replace('Key', '')
       .replace('Digit', '')
-      .replace('ArrowLeft', 'â†  LEFT')
-      .replace('ArrowRight', 'RIGHT â†’')
-      .replace('ArrowUp', 'â–² UP')
-      .replace('ArrowDown', 'â–¼ DOWN')
+      .replace('ArrowLeft', '← LEFT')
+      .replace('ArrowRight', 'RIGHT →')
+      .replace('ArrowUp', '▲ UP')
+      .replace('ArrowDown', '▼ DOWN')
       .replace('Space', 'SPACE')
       .replace('BracketLeft', '[')
       .replace('BracketRight', ']')
@@ -290,6 +314,15 @@ class SettingsManager {
     container.innerHTML = `
       <div class="settings-form-row">
         <div class="settings-label-group">
+          <label>CAMERA CUTOUT &amp; SAFE ZONE</label>
+          <span class="settings-hint">Pad UI inwards on left and right to prevent phone camera notch or punch-hole overlap</span>
+        </div>
+        <button type="button" id="btn-toggle-safe-zone" class="hud-btn ${this.safeZone ? 'highlight' : ''}">
+          ${this.safeZone ? 'SAFE ZONE: ON' : 'SAFE ZONE: OFF'}
+        </button>
+      </div>
+      <div class="settings-form-row">
+        <div class="settings-label-group">
           <label>VIEWPORT MAGNIFICATION</label>
           <span class="settings-hint">Current radar zoom level scale factor</span>
         </div>
@@ -305,11 +338,23 @@ class SettingsManager {
       <div class="settings-form-row">
         <div class="settings-label-group">
           <label>RESET RADAR VIEWPORT</label>
-          <span class="settings-hint">Restore default panoramic 150km Ã— 100km view</span>
+          <span class="settings-hint">Restore default panoramic 150km × 100km view</span>
         </div>
         <button type="button" id="btn-cfg-reset-cam" class="hud-btn small">RESET [0]</button>
       </div>
     `;
+
+    const szBtn = container.querySelector('#btn-toggle-safe-zone');
+    if (szBtn) {
+      szBtn.onclick = () => {
+        this.safeZone = !this.safeZone;
+        this.applySafeZone();
+        this.saveToStorage();
+        szBtn.className = 'hud-btn ' + (this.safeZone ? 'highlight' : '');
+        szBtn.textContent = this.safeZone ? 'SAFE ZONE: ON' : 'SAFE ZONE: OFF';
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+      };
+    }
 
     const cBtn = container.querySelector('#btn-cfg-center');
     const rBtn = container.querySelector('#btn-cfg-reset-cam');

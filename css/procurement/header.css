@@ -1,6 +1,4 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Hangar Operations Header Stylesheet
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Hangar Operations Header Stylesheet */
 
 .procurement-header {
   flex-shrink: 0;
@@ -60,6 +58,7 @@
 
 .squad-callsign-tag,
 .proc-manual-btn,
+.proc-settings-btn,
 .proc-exit-btn {
   font-size: 0.76rem;
   font-family: var(--font-mono);
@@ -82,6 +81,12 @@
   color: #ffb830;
 }
 
+.proc-settings-btn {
+  background-color: #08172c;
+  border: 1px solid #0284c7;
+  color: #7dd3fc;
+}
+
 .proc-manual-btn {
   background-color: #08172c;
   border: 1px solid #0284c7;
@@ -95,6 +100,7 @@
 }
 
 .squad-callsign-tag:hover,
+.proc-settings-btn:hover,
 .proc-manual-btn:hover {
   background-color: #0284c7;
   color: #ffffff;
@@ -252,6 +258,7 @@
   }
 
   .squad-callsign-tag,
+  .proc-settings-btn,
   .proc-manual-btn,
   .proc-exit-btn {
     padding: 4px 9px;

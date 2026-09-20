@@ -1,6 +1,4 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Core Dialogs & System Inspection Window
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Core Dialogs & System Inspection Window */
 
 #tactical-dialog-modal { z-index: 3500 !important; }
 #system-inspect-modal { z-index: 3200 !important; }
@@ -116,6 +114,20 @@
   gap: 9px;
 }
 
+.inspect-sec-head {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #7dd3fc;
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .inspect-type-banner {
   display: flex;
   align-items: center;
@@ -170,12 +182,16 @@
 
 .inspect-desc-box {
   background: #030712;
+  border: 1px solid #14243b;
   border-left: 3px solid #00f0ff;
   padding: 8px 12px;
   border-radius: 3px;
   font-size: 0.70rem;
   color: #cbd5e1;
-  line-height: 1.45;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .inspect-action-bar {

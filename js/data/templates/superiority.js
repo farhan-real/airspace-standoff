@@ -1,10 +1,8 @@
 /**
- * APEX VECTOR // Preconfigured Loadouts: Air Superiority Interceptors
- * Professional military designations and diversified weapon loadouts
+ * AIRSPACE STANDOFF: Preconfigured Loadouts: Air Superiority Interceptors
  */
 
 window.TEMPLATES_SUPERIORITY = {
-  // MiG-31BM Foxhound
   'MiG-31BM Long-Range Intercept': {
     name: 'MiG-31BM Long-Range Intercept',
     specId: 'MiG-31BM',
@@ -21,10 +19,8 @@ window.TEMPLATES_SUPERIORITY = {
     chosenGunId: 'GSH-30-1',
     weapons: ['KINZHAL', 'R-37M'],
     upgrades: ['EXTENDED_RANGE_TURBO', 'TITANIUM_COCKPIT'],
-    desc: 'Heavy strategic strike configuration armed with the Mach 8.5 Kh-47M2 Kinzhal aero-ballistic bunker penetrator.'
+    desc: 'Heavy strategic strike configuration armed with the Mach 5.0 Kh-47M2 Kinzhal aero-ballistic bunker penetrator.'
   },
-
-  // F-15EX Eagle II
   'F-15EX Heavy Air Superiority (CAP)': {
     name: 'F-15EX Heavy Air Superiority (CAP)',
     specId: 'F-15EX',
@@ -43,8 +39,6 @@ window.TEMPLATES_SUPERIORITY = {
     upgrades: ['TITANIUM_COCKPIT', 'EXTENDED_RANGE_TURBO'],
     desc: 'Heavy strike loadout combining stealth JASSM-ER cruise missiles, anti-radiation HARMs, and SDB glide bombs.'
   },
-
-  // Su-35S Flanker-E
   'Su-35S Tactical Air Superiority': {
     name: 'Su-35S Tactical Air Superiority',
     specId: 'Su-35S',
@@ -63,8 +57,6 @@ window.TEMPLATES_SUPERIORITY = {
     upgrades: ['THRUST_VECTOR', 'GAN_AESA_CORE'],
     desc: 'Deep beyond-visual-range loadout pairing hypersonic R-37M missiles with dual-pulse PL-15E volleys.'
   },
-
-  // Eurofighter Typhoon
   'Eurofighter Air Dominance Sweep': {
     name: 'Eurofighter Air Dominance Sweep',
     specId: 'Eurofighter',
@@ -72,7 +64,7 @@ window.TEMPLATES_SUPERIORITY = {
     chosenGunId: 'BK-27',
     weapons: ['METEOR', 'AIM-120D', 'IRIS-T'],
     upgrades: ['EOTS_DUAL_OPTICS', 'GAN_AESA_CORE'],
-    desc: 'Canard-delta air defense fighter. Ramjet Meteor missiles maintain Mach 4.6 with zero speed decay across the engagement envelope.'
+    desc: 'Canard-delta air defense fighter. Ramjet Meteor missiles maintain Mach 3.2 with zero speed decay across the engagement envelope.'
   },
   'Eurofighter Multi-Role Strike': {
     name: 'Eurofighter Multi-Role Strike',
@@ -83,8 +75,6 @@ window.TEMPLATES_SUPERIORITY = {
     upgrades: ['EXPANDED_CM_DISPENSER', 'EXTENDED_RANGE_TURBO'],
     desc: 'Balanced swing-role package pairing BVR air dominance with 8 standoff bunker-buster glide bombs.'
   },
-
-  // Dassault Rafale C
   'Rafale C Omnirole Air Defense': {
     name: 'Rafale C Omnirole Air Defense',
     specId: 'Rafale-C',
@@ -103,8 +93,6 @@ window.TEMPLATES_SUPERIORITY = {
     upgrades: ['TITANIUM_COCKPIT', 'ESM_PASSIVE_SUITE'],
     desc: 'Long-range strike configuration mounting low-observable cruise missiles and passive ESM sensors.'
   },
-
-  // Su-30SM, J-16 & F-14D
   'Su-30SM Multi-Mission Interceptor': {
     name: 'Su-30SM Multi-Mission Interceptor',
     specId: 'Su-30SM',

@@ -1,6 +1,4 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Mission Debrief & After Action Report Stylesheet
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Mission Debrief and After Action Report Stylesheet */
 
 .game-over-dialog {
   background: #050b16;
@@ -60,14 +58,16 @@
   z-index: 5;
 }
 
-.ace-podium-section {
+.ace-podium-section,
+.aar-full-roster-box,
+.aar-timeline-container {
   display: flex;
   flex-direction: column;
   gap: 6px;
   background: #02060f;
   border: 1px solid #142236;
   border-radius: 4px;
-  padding: 10px 12px;
+  padding: 8px 12px;
 }
 
 .ace-podium-grid {
@@ -97,16 +97,8 @@
   justify-content: space-between;
 }
 
-.ace-callsign {
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #ffffff;
-}
-
-.ace-sub {
-  font-size: 0.62rem;
-  color: #8494ab;
-}
+.ace-callsign { font-size: 0.85rem; font-weight: 800; color: #ffffff; }
+.ace-sub { font-size: 0.62rem; color: #8494ab; }
 
 .ace-stats {
   display: flex;
@@ -118,14 +110,17 @@
   margin-top: 2px;
 }
 
-.aar-full-roster-box {
-  background: #02060f;
-  border: 1px solid #142236;
-  border-radius: 4px;
-  padding: 8px 12px;
+.aar-roster-toggle-row,
+.aar-timeline-toggle-row {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.aar-roster-content.hidden,
+.aar-timeline-content.hidden {
+  display: none !important;
 }
 
 .debrief-table {
@@ -219,15 +214,8 @@
   border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
 }
 
-.aar-metric-row span {
-  color: #8494ab;
-  font-weight: 700;
-}
-
-.aar-metric-row b {
-  color: #f8fafc;
-  font-weight: 800;
-}
+.aar-metric-row span { color: #8494ab; font-weight: 700; }
+.aar-metric-row b { color: #f8fafc; font-weight: 800; }
 
 .aar-score-banner {
   display: flex;
@@ -259,20 +247,9 @@
   letter-spacing: 0.6px;
 }
 
-.aar-score-banner.defeat .aar-banner-status {
-  color: #ff3366;
-}
-
-.aar-banner-sub {
-  font-size: 0.58rem;
-  color: #94a3b8;
-}
-
-.aar-banner-score {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
+.aar-score-banner.defeat .aar-banner-status { color: #ff3366; }
+.aar-banner-sub { font-size: 0.58rem; color: #94a3b8; }
+.aar-banner-score { display: flex; align-items: baseline; gap: 6px; }
 
 .aar-score-num {
   font-size: 1.45rem;
@@ -282,25 +259,8 @@
   letter-spacing: 0.8px;
 }
 
-.aar-score-banner.defeat .aar-score-num {
-  text-shadow: 0 0 12px rgba(255, 51, 102, 0.85);
-}
-
-.aar-score-unit {
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: #00f5a0;
-}
-
-.aar-timeline-container {
-  background: #02060f;
-  border: 1px solid #142236;
-  border-radius: 4px;
-  padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+.aar-score-banner.defeat .aar-score-num { text-shadow: 0 0 12px rgba(255, 51, 102, 0.85); }
+.aar-score-unit { font-size: 0.68rem; font-weight: 800; color: #00f5a0; }
 
 .aar-timeline-content {
   max-height: 200px;
@@ -326,6 +286,11 @@
   border-left: 2px solid #00f0ff;
 }
 
+.timeline-entry.hit {
+  background: rgba(56, 189, 248, 0.06);
+  border-left: 2px solid #38bdf8;
+}
+
 .timeline-entry.ace-kill {
   background: rgba(255, 215, 0, 0.12);
   border-left: 2px solid #ffd700;
@@ -336,10 +301,13 @@
   border-left: 2px solid #ff3366;
 }
 
+.timeline-entry.victory-entry {
+  background: rgba(0, 240, 255, 0.12);
+  border-left: 2px solid #00f0ff;
+}
+
 @media (max-width: 768px) {
-  .aar-report-grid {
-    grid-template-columns: 1fr;
-  }
+  .aar-report-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 1024px) {

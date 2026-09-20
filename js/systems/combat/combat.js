@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Tactical Combat Engine & Pylon Discharge Bus
- * Enforces verified ROE; in 2P mode all aircraft are mutually identified from start.
+ * AIRSPACE STANDOFF: Tactical Combat Engine & Pylon Discharge Bus
+ * Enforces verified ROE, prevents passive radar beam leakage, and coordinates salvos.
  */
 
 class CombatSystem {
@@ -60,11 +60,16 @@ class CombatSystem {
       )
     );
 
+    // Apply and log penalty when firing on unverified bogey tracks
     if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !targetEntity.isCivilian) {
       const penalty = (window.CONFIG && window.CONFIG.VP_UNIDENTIFIED_FIRE_PENALTY) || 150;
       if (sourceUnit.team === 'friendly') {
         if (this.game.simulation) {
-          this.game.simulation.logScoreEvent('friendly', -penalty, 'RECKLESS ENGAGEMENT: Fired on unverified track [BOGEY ?]');
+          const reason = 'RECKLESS ENGAGEMENT: Fired on unverified track [BOGEY ?]';
+          this.game.simulation.logScoreEvent('friendly', -penalty, reason);
+          if (this.game.simulation.scoring && typeof this.game.simulation.scoring.recordBogeyFirePenalty === 'function') {
+            this.game.simulation.scoring.recordBogeyFirePenalty('friendly', sourceUnit, targetEntity, w, penalty);
+          }
         }
       }
       if (this.game.radar) {

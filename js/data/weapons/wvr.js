@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Air-to-Air Guided Missiles: Within-Visual-Range (WVR) & Dogfight
+ * AIRSPACE STANDOFF: Air-to-Air Guided Missiles: Within-Visual-Range (WVR) & Dogfight
  */
 
 window.WEAPONS_A2A_WVR = {
@@ -11,12 +11,12 @@ window.WEAPONS_A2A_WVR = {
     mass: 170,
     cost: 0.6,
     rangeKm: 34.0,
-    speedMach: 3.4,
+    speedMach: 2.8,
     seeker: 'IIR',
     rcs: 0.03,
     trait: 'HOBS_VANE',
     traitBadge: '90 DEG OFF-BORESIGHT',
-    behaviorDesc: 'Thrust-vectored jet vanes allow 90 degree high-off-boresight snap shots. High tracking agility against evasive targets; immune to RF radar jamming and Doppler notching.',
+    behaviorDesc: 'Thrust-vectored jet vanes snap to 90 degree high-off-boresight angles; fast booster accelerates to Mach 2.8 in 1.4s. Immune to RF radar jamming and Doppler notching.',
     damage: 2,
     ammoCount: 4,
     minRangeKm: 0.6,
@@ -28,7 +28,7 @@ window.WEAPONS_A2A_WVR = {
     decoyResistance: 0.65,
     sigmaPylon: 0.02,
     category: 'A2A',
-    desc: 'High off-boresight infrared dogfight missile (4x). Extremely light (170 kg), low drag, and deadly inside 26 km where BVR missiles cannot track.'
+    desc: 'High off-boresight infrared dogfight missile (4x). Accelerates rapidly to Mach 2.8 with 90-degree off-boresight cueing.'
   },
   'R-73': {
     id: 'R-73',
@@ -38,12 +38,12 @@ window.WEAPONS_A2A_WVR = {
     mass: 190,
     cost: 0.5,
     rangeKm: 30.0,
-    speedMach: 3.0,
+    speedMach: 2.8,
     seeker: 'IIR',
     rcs: 0.03,
     trait: 'SNAP_TURN',
     traitBadge: '60 DEG RAIL SNAP-TURN',
-    behaviorDesc: 'Gas-vane thrust vectoring executes an immediate 60 degree turn off the rail. Immune to RF countermeasures.',
+    behaviorDesc: 'Gas-vane thrust vectoring executes an immediate 60 degree turn off the rail, accelerating to Mach 2.8 in 1.4s. Immune to RF countermeasures.',
     damage: 2,
     ammoCount: 4,
     minRangeKm: 0.6,
@@ -54,7 +54,7 @@ window.WEAPONS_A2A_WVR = {
     T_0: 0.88,
     sigmaPylon: 0.02,
     category: 'A2A',
-    desc: 'Gas-vane short-range dogfight missile (4x) with immediate turn acceleration and low weight penalty.'
+    desc: 'Gas-vane short-range dogfight missile (4x) with immediate 60-degree snap turns and Mach 2.8 sprint velocity.'
   },
   'PYTHON-5': {
     id: 'PYTHON-5',
@@ -64,12 +64,12 @@ window.WEAPONS_A2A_WVR = {
     mass: 210,
     cost: 0.7,
     rangeKm: 32.0,
-    speedMach: 3.8,
+    speedMach: 3.0,
     seeker: 'EO',
     rcs: 0.03,
     trait: 'REAR_ENGAGE',
     traitBadge: '180 DEG REAR ENGAGE',
-    behaviorDesc: 'Full-sphere optical matrix seeker allows launching 180 degrees backwards at pursuing fighters without turning.',
+    behaviorDesc: 'Full-sphere optical matrix seeker allows launching 180 degrees backwards at pursuing fighters, accelerating to Mach 3.0 without turning.',
     damage: 2,
     ammoCount: 4,
     minRangeKm: 0.8,
@@ -80,7 +80,7 @@ window.WEAPONS_A2A_WVR = {
     T_0: 0.90,
     sigmaPylon: 0.03,
     category: 'A2A',
-    desc: 'Electro-optical matrix seeker capable of rearward over-the-shoulder launches (4x). Completely immune to RF jamming.'
+    desc: 'Electro-optical matrix seeker capable of rearward over-the-shoulder launches (4x) reaching Mach 3.0. Immune to RF jamming.'
   },
   'IRIS-T': {
     id: 'IRIS-T',
@@ -90,12 +90,12 @@ window.WEAPONS_A2A_WVR = {
     mass: 180,
     cost: 0.6,
     rangeKm: 35.0,
-    speedMach: 3.4,
+    speedMach: 2.8,
     seeker: 'IIR',
     rcs: 0.03,
     trait: 'IMAGE_RECOGNITION',
     traitBadge: 'SILHOUETTE FILTER',
-    behaviorDesc: 'Image recognition seeker filters false decoys by matching 3D aircraft silhouette. High terminal turn rate.',
+    behaviorDesc: 'Image recognition seeker filters false decoys by matching 3D aircraft silhouettes. Reaches Mach 2.8 with high terminal turn rate.',
     damage: 2,
     ammoCount: 4,
     minRangeKm: 0.8,
@@ -107,7 +107,7 @@ window.WEAPONS_A2A_WVR = {
     decoyResistance: 0.80,
     sigmaPylon: 0.02,
     category: 'A2A',
-    desc: 'Advanced European dogfight missile (4x) with optical image processing to defeat flare decoys.'
+    desc: 'Advanced European dogfight missile (4x) with optical image processing and Mach 2.8 agility to defeat flare decoys.'
   },
   'MAM': {
     id: 'MAM',
@@ -117,12 +117,12 @@ window.WEAPONS_A2A_WVR = {
     mass: 88,
     cost: 0.4,
     rangeKm: 20.0,
-    speedMach: 2.6,
+    speedMach: 2.2,
     seeker: 'OPT',
     rcs: 0.01,
     trait: 'SWARM_RIPPLE',
     traitBadge: 'SWARM SATURATION',
-    behaviorDesc: 'High-density ripple salvos bypass point defenses to saturate close-range targets.',
+    behaviorDesc: 'High-density ripple salvos accelerate to Mach 2.2 to bypass point defenses and saturate close-range targets.',
     damage: 1,
     ammoCount: 8,
     minRangeKm: 0.6,
@@ -134,7 +134,7 @@ window.WEAPONS_A2A_WVR = {
     sigmaPylon: 0.01,
     category: 'A2A',
     allowedAirframes: ['MQ-99', 'MQ-101', 'XQ-58A', 'Kizilelma', 'S-70', 'MQ-28', 'JAS-39E', 'F-16V', 'Tejas-MK2', 'Mirage-2000', 'CFA-44', 'RQ-180'],
-    desc: 'Ultra-lightweight micro-missile (8x) designed to overwhelm enemy defenses through volume of fire.'
+    desc: 'Ultra-lightweight micro-missile (8x) sprinting at Mach 2.2 to overwhelm enemy defenses through volume of fire.'
   },
   'ADMM': {
     id: 'ADMM',
@@ -144,12 +144,12 @@ window.WEAPONS_A2A_WVR = {
     mass: 620,
     cost: 2.6,
     rangeKm: 36.0,
-    speedMach: 3.5,
+    speedMach: 2.8,
     seeker: 'OPT',
     rcs: 0.02,
     trait: 'ALL_ASPECT_BURST',
     traitBadge: 'ALL-ASPECT VOLLEY (12x)',
-    behaviorDesc: 'Omni-directional micro-missiles launched in a spherical 360-degree pattern to engage multiple nearby targets simultaneously.',
+    behaviorDesc: 'Omni-directional micro-missiles launched in a spherical 360-degree pattern at Mach 2.8 to engage multiple nearby targets simultaneously.',
     damage: 2,
     ammoCount: 12,
     minRangeKm: 1.0,
@@ -161,6 +161,6 @@ window.WEAPONS_A2A_WVR = {
     sigmaPylon: 0.08,
     category: 'A2A',
     allowedAirframes: ['CFA-44', 'ADF-11F', 'ADFX-01', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'X-02S'],
-    desc: 'All-Direction Multi-Purpose Missile pod designed for experimental superfighters (12x). Overwhelms defensive evasions.'
+    desc: 'All-Direction Multi-Purpose Missile pod designed for experimental superfighters (12x). Mach 2.8 omni-directional burst.'
   }
 };

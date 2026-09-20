@@ -1,6 +1,4 @@
-/**
- * AIRSPACE STANDOFF // Controls System Coordinator
- */
+/* AIRSPACE STANDOFF: Controls System Coordinator */
 
 class ControlsSystem {
   constructor(gameEngine) {

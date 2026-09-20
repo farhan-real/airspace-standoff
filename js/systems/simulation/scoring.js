@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Simulation Scoring & Engagement Logging
+ * AIRSPACE STANDOFF: Simulation Scoring & Engagement Logging
  * Rebalanced kill scoring formula and salvo composition breakdown.
  */
 
@@ -69,6 +69,66 @@ class SimulationScoring {
     }).join('');
   }
 
+  recordBogeyFirePenalty(team, sourceUnit, targetEntity, weapon, penalty) {
+    const srcName = sourceUnit ? (sourceUnit.callsign || sourceUnit.id || 'PILOT') : 'PILOT';
+    const srcType = (sourceUnit && sourceUnit.spec) ? (sourceUnit.spec.id || sourceUnit.spec.name) : 'AIRCRAFT';
+    const rawWpn = weapon ? (weapon.name || weapon.id || 'Missile') : 'Missile';
+    const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
+    const rawTgt = targetEntity ? (targetEntity.callsign || targetEntity.name || 'BOGEY [?]') : 'BOGEY [?]';
+    const tgtName = String(rawTgt).replace(/<[^>]*>/g, '');
+
+    this.timelineEvents.push({
+      time: this.getElapsedTimeString(),
+      type: 'roe_penalty',
+      team: team,
+      source: srcName,
+      sourceType: srcType,
+      target: tgtName,
+      targetType: 'UNVERIFIED',
+      weapon: wpnName,
+      points: -penalty,
+      reason: `RECKLESS ENGAGEMENT: Fired on unverified track (${tgtName})`
+    });
+  }
+
+  recordHitEvent(firingTeam, targetEntity, firingSource, details = {}) {
+    if (!targetEntity || targetEntity.isGhost) return;
+
+    const isDecoy = Boolean(targetEntity.isDecoyDrone);
+    const rawTgtName = targetEntity.callsign || (targetEntity.spec ? targetEntity.spec.name : (targetEntity.name || 'TARGET'));
+    const tgtName = String(rawTgtName).replace(/<[^>]*>/g, '');
+    const tgtType = isDecoy ? 'DECOY DRONE' : (targetEntity.spec ? (targetEntity.spec.id || targetEntity.spec.name) : (targetEntity.type || 'SURFACE'));
+
+    const rawSrcName = firingSource ? (firingSource.callsign || firingSource.name || firingSource.id || 'BASE') : 'BASE';
+    const srcName = String(rawSrcName).replace(/<[^>]*>/g, '');
+    const srcType = (firingSource && firingSource.spec) ? (firingSource.spec.id || firingSource.spec.name) : (firingSource && firingSource.name ? firingSource.name : 'AIRCRAFT');
+
+    const rawWpnName = details.weapon ? (details.weapon.name || details.weapon.id) : (details.weaponName || 'Missile');
+    const wpnName = String(rawWpnName).replace(/\s*\(\d+x\)/gi, '').replace(/\s*\(pack of \d+\)/gi, '').trim();
+
+    const isSalvo = Boolean(details.isSalvo || (details.salvoCount > 1));
+    const salvoCount = details.salvoCount || (isSalvo ? 2 : 1);
+    const salvoBreakdown = details.salvoBreakdown || (isSalvo ? `x${salvoCount}` : '');
+    const dmg = details.damage || 2;
+    const pts = dmg * 25;
+
+    this.timelineEvents.push({
+      time: this.getElapsedTimeString(),
+      type: 'hit',
+      team: firingTeam,
+      source: srcName,
+      sourceType: srcType,
+      target: tgtName,
+      targetType: tgtType,
+      weapon: wpnName,
+      damage: dmg,
+      isSalvo: isSalvo,
+      salvoCount: salvoCount,
+      salvoBreakdown: salvoBreakdown,
+      points: pts
+    });
+  }
+
   recordKillEvent(firingTeam, targetEntity, firingSource, details = {}) {
     if (!targetEntity || targetEntity.isGhost) return;
 
@@ -81,9 +141,9 @@ class SimulationScoring {
     const tgtName = String(rawTgtName).replace(/<[^>]*>/g, '');
     const tgtType = isDecoy ? 'DECOY DRONE' : (targetEntity.spec ? (targetEntity.spec.id || targetEntity.spec.name) : (targetEntity.type || 'SURFACE'));
 
-    const rawSrcName = firingSource ? (firingSource.callsign || firingSource.id || 'BASE') : 'BASE';
+    const rawSrcName = firingSource ? (firingSource.callsign || firingSource.name || firingSource.id || 'BASE') : 'BASE';
     const srcName = String(rawSrcName).replace(/<[^>]*>/g, '');
-    const srcType = (firingSource && firingSource.spec) ? (firingSource.spec.id || firingSource.spec.name) : 'AIRCRAFT';
+    const srcType = (firingSource && firingSource.spec) ? (firingSource.spec.id || firingSource.spec.name) : (firingSource && firingSource.name ? firingSource.name : 'AIRCRAFT');
 
     const rawWpnName = details.weapon ? (details.weapon.name || details.weapon.id) : (details.weaponName || 'Missile');
     const wpnName = String(rawWpnName).replace(/\s*\(\d+x\)/gi, '').replace(/\s*\(pack of \d+\)/gi, '').trim();

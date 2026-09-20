@@ -1,9 +1,8 @@
 /**
- * APEX VECTOR // Preconfigured Loadouts: Dedicated Strike & CAS Bombers
+ * AIRSPACE STANDOFF: Preconfigured Loadouts: Dedicated Strike & CAS Bombers
  */
 
 window.TEMPLATES_STRIKE = {
-  // A-10C Warthog
   'A-10C Close Air Support (Anti-Armor)': {
     name: 'A-10C Close Air Support (Anti-Armor)',
     specId: 'A-10C',
@@ -11,7 +10,7 @@ window.TEMPLATES_STRIKE = {
     chosenGunId: 'GAU-8',
     weapons: ['GPU-5A', 'GBU-39', 'AIM-9X-2', 'AN-ALQ-184'],
     upgrades: ['TITANIUM_COCKPIT', 'EXPANDED_CM_DISPENSER'],
-    desc: 'Armored titanium bathtub cockpit (7 HP). 4,800 rounds of 30mm GAU-8 Avenger (4.8 DPS) and secondary 30mm gunpod.'
+    desc: 'Armored titanium bathtub cockpit (7 HP). 4,800 rounds of 30mm GAU-8 Avenger (5.2 DPS) and secondary 30mm gunpod.'
   },
   'A-10C Battlefield Interdiction': {
     name: 'A-10C Battlefield Interdiction',
@@ -22,8 +21,6 @@ window.TEMPLATES_STRIKE = {
     upgrades: ['TITANIUM_COCKPIT', 'EXTENDED_RANGE_TURBO'],
     desc: 'Maximum close air support bomb loadout with 16 GBU-39 SDB penetrators to level enemy forward positions.'
   },
-
-  // Su-25SM3 Frogfoot
   'Su-25SM3 Armored Ground Attack': {
     name: 'Su-25SM3 Armored Ground Attack',
     specId: 'Su-25SM3',
@@ -42,8 +39,6 @@ window.TEMPLATES_STRIKE = {
     upgrades: ['TITANIUM_COCKPIT', 'ESM_PASSIVE_SUITE'],
     desc: 'Low-altitude SAM radar suppression loadout carrying anti-radiation missiles under an armored titanium tub.'
   },
-
-  // Su-34 Fullback
   'Su-34 Tactical Strike Bomber': {
     name: 'Su-34 Tactical Strike Bomber',
     specId: 'Su-34',
@@ -62,8 +57,6 @@ window.TEMPLATES_STRIKE = {
     upgrades: ['TITANIUM_COCKPIT', 'SUPERCRUISE_VCE'],
     desc: 'Massive strategic strike loadout carrying dual stealth JASSM-ER cruise missiles and 8 glide bombs.'
   },
-
-  // B-1B Lancer & Tu-160M
   'B-1B Low-Altitude Heavy Bombardment': {
     name: 'B-1B Low-Altitude Heavy Bombardment',
     specId: 'B-1B',
@@ -80,10 +73,8 @@ window.TEMPLATES_STRIKE = {
     chosenGunId: 'GSH-30-1',
     weapons: ['KINZHAL', 'KINZHAL', 'R-37M'],
     upgrades: ['SUPERCRUISE_VCE', 'TITANIUM_COCKPIT'],
-    desc: '9 HP supersonic strategic bomber with 16 stations fielding dual Mach 8.5 Kh-47M2 Kinzhal aero-ballistic bunker penetrators.'
+    desc: '9 HP supersonic strategic bomber with 16 stations fielding dual Mach 5.0 Kh-47M2 Kinzhal aero-ballistic bunker penetrators.'
   },
-
-  // B-21 Raider & B-2A Spirit
   'B-21 Long-Range Strike Bomber (LRS-B)': {
     name: 'B-21 Long-Range Strike Bomber (LRS-B)',
     specId: 'B-21',

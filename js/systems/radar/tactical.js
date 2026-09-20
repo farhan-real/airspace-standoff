@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Radar Tactical Sub-Renderer: Radar Locks & Missile Volleys */
+/* AIRSPACE STANDOFF: Radar Tactical Sub-Renderer: Radar Locks, Paths & Missile Volleys */
 
 class RadarTacticalRenderer {
   static drawSurface(...args) {
@@ -18,40 +18,86 @@ class RadarTacticalRenderer {
       if (!source || source.hp <= 0 || !source.radarLockedTarget || typeof source.x !== 'number') continue;
       const tgt = source.radarLockedTarget;
       if (!tgt || tgt.hp <= 0 || typeof tgt.x !== 'number') continue;
+
+      if (source.isPassiveRadarOnlyEngagement) continue;
+
       const p1 = cam.toScreen(source.x, source.y);
       const p2 = cam.toScreen(tgt.x, tgt.y);
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(Math.round(p1.x), Math.round(p1.y));
       ctx.lineTo(Math.round(p2.x), Math.round(p2.y));
-      ctx.strokeStyle = (activeUnit && activeUnit.id === source.id) ? '#00f0ff' : (source.team !== team && tgt.team === team ? '#ef4444' : 'rgba(0, 240, 255, 0.35)');
-      ctx.lineWidth = 1.4; ctx.setLineDash([3, 4]); ctx.stroke(); ctx.restore();
+      ctx.strokeStyle = (activeUnit && activeUnit.id === source.id)
+        ? '#00f0ff'
+        : (source.team !== team && tgt.team === team ? '#ef4444' : 'rgba(0, 240, 255, 0.35)');
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([3, 4]);
+      ctx.stroke();
+      ctx.restore();
     }
   }
 
-  static drawSalvoCoordinations(ctx, cam, missiles) {
-    const salvos = {};
+  static drawSalvoCoordinations(ctx, cam, missiles, commanderTeam) {
+    const team = commanderTeam || (window.Game && window.Game.currentPvpCommander) || 'friendly';
+    const targets = {};
+
     for (const m of missiles) {
       if (!m || !m.active || !m.target || m.target.hp <= 0 || typeof m.target.x !== 'number') continue;
-      if (!salvos[m.target.id]) salvos[m.target.id] = [];
-      salvos[m.target.id].push(m);
+      if (!targets[m.target.id]) targets[m.target.id] = [];
+      targets[m.target.id].push(m);
     }
-    Object.keys(salvos).forEach(tid => {
-      const group = salvos[tid];
-      if (group.length > 1 && group[0].target) {
-        const pT = cam.toScreen(group[0].target.x, group[0].target.y);
-        const tx = Math.round(pT.x);
-        const ty = Math.round(pT.y);
-        ctx.save(); ctx.strokeStyle = '#00f0ff'; ctx.lineWidth = 1.0; ctx.setLineDash([2, 4]);
-        for (const m of group) {
-          if (typeof m.x === 'number') {
-            const pM = cam.toScreen(m.x, m.y);
-            ctx.beginPath(); ctx.moveTo(Math.round(pM.x), Math.round(pM.y)); ctx.lineTo(tx, ty); ctx.stroke();
-          }
+
+    Object.keys(targets).forEach(tid => {
+      const group = targets[tid];
+      if (group.length === 0 || !group[0].target) return;
+      const tgt = group[0].target;
+      const pT = cam.toScreen(tgt.x, tgt.y);
+      const tx = Math.round(pT.x);
+      const ty = Math.round(pT.y);
+
+      let friendlyCount = 0;
+      let enemyCount = 0;
+
+      for (const m of group) {
+        if (typeof m.x !== 'number' || typeof m.y !== 'number') continue;
+
+        const isOwn = (m.team === team);
+
+        if (!isOwn && m.isPassiveRadar && m.distanceToTarget > (m.pathRevealDistance || 20.0)) {
+          continue;
         }
+
+        if (!isOwn && window.Game) {
+          const detectedSet = (team === 'friendly') ? window.Game.detectedByBlue : window.Game.detectedByRed;
+          if (detectedSet && !detectedSet.has(m.id)) continue;
+        }
+
+        const pM = cam.toScreen(m.x, m.y);
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(Math.round(pM.x), Math.round(pM.y));
+        ctx.lineTo(tx, ty);
+        ctx.strokeStyle = isOwn ? '#00f0ff' : '#ef4444';
+        ctx.lineWidth = isOwn ? 1.3 : 1.0;
+        ctx.setLineDash(isOwn ? [3, 3] : [2, 4]);
+        ctx.stroke();
+        ctx.restore();
+
+        if (isOwn) friendlyCount++;
+        else enemyCount++;
+      }
+
+      if (friendlyCount > 1) {
+        ctx.save();
         ctx.font = '700 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#00f0ff';
-        ctx.fillText('SALVO x' + group.length, tx - 22, ty - 14);
+        ctx.fillText('SALVO x' + friendlyCount, tx - 22, ty - 14);
+        ctx.restore();
+      } else if (enemyCount > 1) {
+        ctx.save();
+        ctx.font = '700 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+        ctx.fillStyle = '#ef4444';
+        ctx.fillText('INBOUND x' + enemyCount, tx - 22, ty - 14);
         ctx.restore();
       }
     });
@@ -65,7 +111,16 @@ class RadarTacticalRenderer {
     const visibleMissiles = [];
 
     for (const m of missiles) {
-      if (!m || m.isDead || typeof m.x !== 'number' || (m.team !== team && !detectedSet.has(m.id))) continue;
+      if (!m || m.isDead || typeof m.x !== 'number') continue;
+
+      const isOwn = (m.team === team);
+
+      if (!isOwn && m.isPassiveRadar && m.age < (m.launchStealthDuration || 3.2) && m.distanceToTarget > (m.pathRevealDistance || 20.0)) {
+        continue;
+      }
+
+      if (!isOwn && !detectedSet.has(m.id)) continue;
+
       const pos = cam.toScreen(m.x, m.y);
       const px = Math.round(pos.x);
       const py = Math.round(pos.y);
@@ -76,8 +131,14 @@ class RadarTacticalRenderer {
           if (m.trail[t] && m.trail[t + 1]) {
             const p1 = cam.toScreen(m.trail[t].x, m.trail[t].y);
             const p2 = cam.toScreen(m.trail[t + 1].x, m.trail[t + 1].y);
-            ctx.strokeStyle = m.team === 'friendly' ? ('rgba(0, 240, 255, ' + m.trail[t].alpha + ')') : ('rgba(239, 68, 68, ' + m.trail[t].alpha + ')');
-            ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(Math.round(p1.x), Math.round(p1.y)); ctx.lineTo(Math.round(p2.x), Math.round(p2.y)); ctx.stroke();
+            ctx.strokeStyle = m.team === 'friendly'
+              ? ('rgba(0, 240, 255, ' + m.trail[t].alpha + ')')
+              : ('rgba(239, 68, 68, ' + m.trail[t].alpha + ')');
+            ctx.lineWidth = 1.6;
+            ctx.beginPath();
+            ctx.moveTo(Math.round(p1.x), Math.round(p1.y));
+            ctx.lineTo(Math.round(p2.x), Math.round(p2.y));
+            ctx.stroke();
           }
         }
       }
@@ -91,7 +152,9 @@ class RadarTacticalRenderer {
       ctx.lineWidth = 0.8;
       ctx.beginPath();
       ctx.moveTo(8, 0); ctx.lineTo(2, -2.5); ctx.lineTo(-5, -2.5); ctx.lineTo(-6, 0); ctx.lineTo(-5, 2.5); ctx.lineTo(2, 2.5);
-      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
       ctx.restore();
     }
 
@@ -107,6 +170,8 @@ class RadarTacticalRenderer {
         const sourceId = (m.source && m.source.id) ? m.source.id : 'src';
         const weaponId = (m.weapon && m.weapon.id) ? m.weapon.id : 'MSL';
         const distVal = (typeof m.distanceToTarget === 'number' && !isNaN(m.distanceToTarget)) ? Math.round(m.distanceToTarget) : 0;
+        const mSpeed = (typeof m.speed === 'number' && !isNaN(m.speed)) ? m.speed : 2.4;
+        const mStage = m.stage || 'BOOST';
 
         let cluster = null;
         for (const cl of clusters) {
@@ -117,8 +182,10 @@ class RadarTacticalRenderer {
 
         if (cluster) {
           cluster.count++;
-          if (distVal < cluster.minDist) {
-            cluster.minDist = distVal;
+          if (distVal < cluster.minDist) cluster.minDist = distVal;
+          if (mSpeed > cluster.speed) {
+            cluster.speed = mSpeed;
+            cluster.stage = mStage;
           }
         } else {
           clusters.push({
@@ -127,21 +194,31 @@ class RadarTacticalRenderer {
             weaponName: (m.weapon && (m.weapon.id || m.weapon.name)) ? (m.weapon.id || m.weapon.name) : 'MSL',
             isBlue: isBlue,
             isIdentified: isIdentified,
+            isPassiveRadar: Boolean(m.isPassiveRadar),
             count: 1,
             minDist: distVal,
+            speed: mSpeed,
+            stage: mStage,
             px: px,
             py: py
           });
         }
       }
 
-      ctx.font = '700 9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
       for (const cl of clusters) {
-        ctx.fillStyle = cl.isBlue ? '#7dd3fc' : '#ef4444';
         const countTag = cl.count > 1 ? ` x${cl.count}` : '';
         const mslLabel = cl.isIdentified ? cleanFn(cl.weaponName) : 'FAST TRACK [?]';
-        const distTag = declutterMode ? '' : ` [${cl.minDist}km]`;
-        ctx.fillText(cleanFn(`${mslLabel}${countTag}${distTag}`), cl.px + 8, cl.py - 2);
+        const hideDist = (!cl.isBlue && cl.isPassiveRadar && cl.minDist > 20);
+        const distTag = (declutterMode || hideDist) ? '' : ` [${cl.minDist}km]`;
+        const speedTag = `M ${cl.speed.toFixed(1)} [${cl.stage}]`;
+
+        ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+        ctx.fillStyle = cl.isBlue ? '#00f0ff' : (cl.isIdentified ? '#ef4444' : '#f97316');
+        ctx.fillText(cleanFn(`${mslLabel}${countTag}`), cl.px + 8, cl.py - 5);
+
+        ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+        ctx.fillStyle = cl.isBlue ? '#00f5a0' : (cl.isIdentified ? '#fca5a5' : '#fed7aa');
+        ctx.fillText(cleanFn(`${speedTag}${distTag}`), cl.px + 8, cl.py + 6);
       }
     }
     ctx.restore();
@@ -152,8 +229,14 @@ class RadarTacticalRenderer {
     const pos = cam.toScreen(contact.x, contact.y);
     const px = Math.round(pos.x);
     const py = Math.round(pos.y);
-    ctx.save(); ctx.strokeStyle = '#00f0ff'; ctx.lineWidth = 1.4; ctx.setLineDash([3, 3]);
-    ctx.beginPath(); ctx.arc(px, py, 16, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+    ctx.save();
+    ctx.strokeStyle = '#00f0ff';
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.arc(px, py, 16, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
   }
 
   static drawTargetReticle(ctx, cam, target) {

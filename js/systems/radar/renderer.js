@@ -212,7 +212,7 @@ class TacticalRadarRenderer {
 
     if (typeof RadarTacticalRenderer !== 'undefined') {
       RadarTacticalRenderer.drawRadarLocks(ctx, this.cam, allied.concat(hostiles), activeUnit, commanderTeam, detectedSet);
-      RadarTacticalRenderer.drawSalvoCoordinations(ctx, this.cam, missiles);
+      RadarTacticalRenderer.drawSalvoCoordinations(ctx, this.cam, missiles, commanderTeam);
       RadarTacticalRenderer.drawMissiles(ctx, this.cam, missiles, commanderTeam, detectedSet, this.declutterMode, this.cleanCanvasText.bind(this));
     }
 
