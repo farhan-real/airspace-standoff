@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Mission Debrief and After Action Report Orchestrator
- * Mathematical parity between participating aircraft points, event timeline, and sortie final score.
+ * Mathematical parity between participating aircraft points, event timeline, time bonus, and sortie final score.
  */
 
 class AfterActionReportSystem {
@@ -86,8 +86,13 @@ class AfterActionReportSystem {
       ? game.simulation.scoring.getScoreMultipliers()
       : { diffKey: game.aiDifficulty, diffMult: 1.0, budgetCap: 400.0, budgetMult: 1.0, totalMult: 1.0 };
 
+    const timeBonus = (game.simulation && game.simulation.scoring)
+      ? game.simulation.scoring.calcTimeBonus(durSec, blueWon)
+      : 0;
+
     const rawBlueScore = game.vpAlly || 0;
-    const finalSortieScore = Math.round(rawBlueScore * scoreData.totalMult);
+    const adjustedRawScore = rawBlueScore + timeBonus;
+    const finalSortieScore = Math.round(adjustedRawScore * scoreData.totalMult);
 
     if (sEl) {
       sEl.innerHTML = `
@@ -100,6 +105,7 @@ class AfterActionReportSystem {
               </div>
               <div class="aar-metrics-table">
                 <div class="aar-metric-row"><span>MISSION DURATION:</span><b style="color:#00f0ff;">${timeStr}</b></div>
+                <div class="aar-metric-row"><span>SPEED TIME BONUS:</span><b style="color:#00f5a0;">+${timeBonus.toLocaleString()} VP</b></div>
                 <div class="aar-metric-row"><span>ORDNANCE EXPENDED:</span><b style="color:#f8fafc;">${game.stats.missilesLaunched}</b></div>
                 <div class="aar-metric-row"><span>FRIENDLY LOSSES (BLUE):</span><b style="color:${game.stats.blueLosses > 0 ? '#ff3366' : '#00f5a0'};">${game.stats.blueLosses}</b></div>
                 <div class="aar-metric-row"><span>HOSTILE LOSSES (RED):</span><b style="color:#38bdf8;">${game.stats.redLosses}</b></div>
@@ -112,7 +118,8 @@ class AfterActionReportSystem {
                 <span class="aar-card-badge highlight">ASSESSMENT</span>
               </div>
               <div class="aar-metrics-table">
-                <div class="aar-metric-row"><span>RAW POINTS:</span><b><span style="color:#38bdf8;">BLUE ${game.vpAlly}</span> : <span style="color:#ff3366;">RED ${game.vpHostile}</span></b></div>
+                <div class="aar-metric-row"><span>BASE COMBAT VP:</span><b><span style="color:#38bdf8;">BLUE ${rawBlueScore.toLocaleString()}</span> : <span style="color:#ff3366;">RED ${game.vpHostile.toLocaleString()}</span></b></div>
+                <div class="aar-metric-row"><span>ADJUSTED BASE VP:</span><b style="color:#00f5a0;">${adjustedRawScore.toLocaleString()} VP</b></div>
                 <div class="aar-metric-row"><span>DIFFICULTY (${scoreData.diffKey}):</span><b style="color:#7dd3fc;">x${scoreData.diffMult.toFixed(2)} MULTIPLIER</b></div>
                 <div class="aar-metric-row"><span>BUDGET TIER (${scoreData.budgetCap}M):</span><b style="color:#ffb830;">x${scoreData.budgetMult.toFixed(2)} MULTIPLIER</b></div>
                 <div class="aar-metric-row"><span>FINAL MULTIPLIER:</span><b style="color:#00f5a0;">x${scoreData.totalMult.toFixed(2)} MULTIPLIER</b></div>
@@ -123,7 +130,7 @@ class AfterActionReportSystem {
           <div class="aar-score-banner ${blueWon ? 'victory' : 'defeat'}">
             <div class="aar-banner-lead">
               <span class="aar-banner-status">${blueWon ? 'MISSION SUCCESSFUL - OBJECTIVES COMPLETED' : 'MISSION ABORTED'}</span>
-              <span class="aar-banner-sub">Final Performance Score (${game.vpAlly} x ${scoreData.totalMult.toFixed(2)})</span>
+              <span class="aar-banner-sub">Final Performance Score (${adjustedRawScore.toLocaleString()} x ${scoreData.totalMult.toFixed(2)})</span>
             </div>
             <div class="aar-banner-score">
               <span class="aar-score-num">${finalSortieScore.toLocaleString()}</span>
@@ -136,6 +143,42 @@ class AfterActionReportSystem {
 
     if (typeof AfterActionReportTimeline !== 'undefined') {
       AfterActionReportTimeline.renderTimeline(game, blueWon);
+    }
+
+    const topPilot = allPilots.find(p => p.team === 'friendly') || allPilots[0] || null;
+    if (window.Persistence && window.Persistence.saveTopSortie) {
+      window.Persistence.saveTopSortie({
+        id: 'SORTIE_' + Date.now(),
+        date: new Date().toLocaleDateString(),
+        timeStr: timeStr,
+        durationSec: durSec,
+        squadronName: game.squadronName || 'Wardog Squadron',
+        outcome: blueWon ? 'VICTORY' : 'ABORTED',
+        blueWon: blueWon,
+        rawScore: rawBlueScore,
+        timeBonus: timeBonus,
+        totalScore: finalSortieScore,
+        difficulty: scoreData.diffKey,
+        diffMult: scoreData.diffMult,
+        budgetTier: scoreData.budgetCap,
+        budgetMult: scoreData.budgetMult,
+        totalMult: scoreData.totalMult,
+        blueLosses: game.stats.blueLosses,
+        redLosses: game.stats.redLosses,
+        topPilot: {
+          callsign: topPilot ? topPilot.callsign : 'Pilot',
+          model: topPilot && topPilot.spec ? topPilot.spec.id : 'JET',
+          kills: topPilot ? topPilot.kills : 0,
+          points: topPilot ? topPilot.scorePoints : 0
+        },
+        pilots: allPilots.filter(p => p.team === 'friendly').map(p => ({
+          callsign: p.callsign || 'Pilot',
+          model: p.spec ? p.spec.id : 'JET',
+          kills: p.kills || 0,
+          scorePoints: p.scorePoints || 0,
+          survived: p.hp > 0.05
+        }))
+      });
     }
 
     const toggleRosterBtn = document.getElementById('btn-toggle-aar-roster');

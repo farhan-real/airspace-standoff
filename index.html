@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="css/core/manual.css">
   <link rel="stylesheet" href="css/core/dialogs/dialogs.css">
   <link rel="stylesheet" href="css/core/dialogs/settings.css">
+  <link rel="stylesheet" href="css/core/dialogs/leaderboard.css">
   <link rel="stylesheet" href="css/core/dialogs/debrief.css">
 
   <!-- HUD & Cockpit Displays -->
@@ -120,6 +121,25 @@
   </div>
 </div>
 
+<!-- SQUADRON LEADERBOARD MODAL -->
+<div id="leaderboard-modal" class="modal-backdrop">
+  <div class="inspect-window leaderboard-window">
+    <div class="inspect-header">
+      <div class="modal-title-row">
+        <h2>SQUADRON LEADERBOARD</h2>
+        <span class="subtext" style="color:#00f0ff;font-family:var(--font-mono);font-size:0.64rem;margin-left:8px;">TOP 10 HISTORICAL SORTIES BY FINAL SCORE</span>
+      </div>
+      <button id="btn-close-leaderboard" class="hud-btn small">CLOSE</button>
+    </div>
+    <div class="leaderboard-body">
+      <div class="leaderboard-table-pane">
+        <div id="leaderboard-list-table"></div>
+      </div>
+      <div class="leaderboard-detail-pane" id="leaderboard-detail-view"></div>
+    </div>
+  </div>
+</div>
+
 <!-- SYSTEM INSPECTION MODAL -->
 <div id="system-inspect-modal" class="modal-backdrop">
   <div class="inspect-window" style="max-width: 860px;">
@@ -215,6 +235,7 @@
         </h1>
         <div class="title-right-group">
           <button id="btn-proc-exit" class="hud-btn alert proc-exit-btn" title="Exit Application">EXIT</button>
+          <button id="btn-proc-leaderboard" class="hud-btn proc-leaderboard-btn" title="Top 10 High Scores">LEADERBOARD</button>
           <button id="btn-proc-settings" class="hud-btn proc-settings-btn" title="Settings &amp; Controls">SETTINGS</button>
           <button id="btn-open-glossary" class="hud-btn proc-manual-btn">MANUAL</button>
           <button id="btn-edit-squadron-name" class="squad-callsign-tag" title="Click to rename squadron">
@@ -367,6 +388,7 @@
       <button id="btn-fullscreen-toggle" class="hud-btn small" title="Toggle Fullscreen">FULLSCREEN</button>
       <button id="btn-audio-toggle" class="hud-btn small" title="Toggle Audio">AUDIO: ON</button>
       <button id="btn-hud-glossary" class="hud-btn small">MANUAL</button>
+      <button id="btn-hud-leaderboard" class="hud-btn small highlight" title="Sortie Hall of Fame">LEADERBOARD</button>
       <button id="btn-open-settings" class="hud-btn small">SETTINGS</button>
       <button id="btn-abort-match" class="hud-btn small alert">ABORT</button>
     </div>
@@ -653,6 +675,7 @@
 
 <!-- User Interface Systems -->
 <script src="js/ui/settings.js"></script>
+<script src="js/ui/leaderboard.js"></script>
 <script src="js/ui/avionics/roster.js"></script>
 <script src="js/ui/avionics/avionics.js"></script>
 <script src="js/ui/controls/targeting.js"></script>

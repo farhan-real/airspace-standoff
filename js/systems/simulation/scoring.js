@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Simulation Scoring & Engagement Logging
- * Synchronized pilot scoring, exact math parity, and engagement event tracking.
+ * Synchronized pilot scoring, exact math parity, mission time bonuses, and timeline tracking.
  */
 
 class SimulationScoring {
@@ -20,6 +20,15 @@ class SimulationScoring {
     const m = Math.floor(durSec / 60);
     const s = durSec % 60;
     return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  }
+
+  calcTimeBonus(durSec, blueWon) {
+    if (!blueWon) return 0;
+    const parTimeSec = 360;
+    if (durSec < parTimeSec) {
+      return Math.max(0, Math.round((parTimeSec - durSec) * 2.5));
+    }
+    return 0;
   }
 
   getScoreMultipliers() {

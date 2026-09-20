@@ -1,7 +1,7 @@
 /**
- * AIRSPACE STANDOFF // Persistence Engine
- * Saves and loads: Sortie Match History, Full Debriefing Records, Last Squadron Used,
- * Custom Aircraft Templates, Custom Loadouts, Squadron Designation, and Tactical Keybinds.
+ * AIRSPACE STANDOFF: Persistence Engine
+ * Saves and loads: Sortie Match History, Top 10 High Scores, Full Debriefing Records,
+ * Last Squadron Used, Custom Aircraft Templates, Custom Loadouts, Squadron Designation.
  */
 
 class PersistenceEngine {
@@ -31,6 +31,24 @@ class PersistenceEngine {
       console.warn('Persistence write error:', key, e);
       return false;
     }
+  }
+
+  saveTopSortie(sortieData) {
+    if (!sortieData) return [];
+    let list = this.get('TOP_10_SORTIES', []);
+    list.push(sortieData);
+    list.sort((a, b) => {
+      const diff = (b.totalScore || 0) - (a.totalScore || 0);
+      if (diff !== 0) return diff;
+      return (a.durationSec || 999) - (b.durationSec || 999);
+    });
+    if (list.length > 10) list = list.slice(0, 10);
+    this.set('TOP_10_SORTIES', list);
+    return list;
+  }
+
+  getTopSorties() {
+    return this.get('TOP_10_SORTIES', []);
   }
 
   recordSortie(matchRecord) {

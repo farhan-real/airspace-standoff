@@ -58,6 +58,7 @@
 
 .squad-callsign-tag,
 .proc-manual-btn,
+.proc-leaderboard-btn,
 .proc-settings-btn,
 .proc-exit-btn {
   font-size: 0.76rem;
@@ -81,6 +82,12 @@
   color: #ffb830;
 }
 
+.proc-leaderboard-btn {
+  background-color: #08172c;
+  border: 1px solid #00f0ff;
+  color: #00f0ff;
+}
+
 .proc-settings-btn {
   background-color: #08172c;
   border: 1px solid #0284c7;
@@ -100,6 +107,7 @@
 }
 
 .squad-callsign-tag:hover,
+.proc-leaderboard-btn:hover,
 .proc-settings-btn:hover,
 .proc-manual-btn:hover {
   background-color: #0284c7;
@@ -258,6 +266,7 @@
   }
 
   .squad-callsign-tag,
+  .proc-leaderboard-btn,
   .proc-settings-btn,
   .proc-manual-btn,
   .proc-exit-btn {

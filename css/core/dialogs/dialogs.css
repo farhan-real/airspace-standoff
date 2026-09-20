@@ -2,6 +2,7 @@
 
 #tactical-dialog-modal { z-index: 3500 !important; }
 #system-inspect-modal { z-index: 3200 !important; }
+#leaderboard-modal { z-index: 3000 !important; }
 #settings-modal { z-index: 3000 !important; }
 #glossary-modal { z-index: 3000 !important; }
 #rwr-briefing-modal { z-index: 2900 !important; }

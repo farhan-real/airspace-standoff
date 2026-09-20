@@ -1,0 +1,169 @@
+/* AIRSPACE STANDOFF: Squadron Leaderboard & Archived Sortie Dossier Styles */
+
+#leaderboard-modal {
+  z-index: 3000 !important;
+}
+
+.leaderboard-window {
+  width: 95vw;
+  max-width: 1080px;
+  height: 88vh;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  background: #050b16;
+  border: 1px solid #00f0ff;
+  border-top: 3px solid #00f0ff;
+  border-radius: 6px;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.leaderboard-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 45% 55%;
+  gap: 12px;
+  padding: 14px 16px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.leaderboard-table-pane,
+.leaderboard-detail-pane {
+  background: #020610;
+  border: 1px solid #14243b;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.leaderboard-table-pane {
+  padding: 6px 8px;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.66rem;
+}
+
+.leaderboard-table th {
+  text-align: left;
+  padding: 7px 8px;
+  background: #081426;
+  color: #00f0ff;
+  border-bottom: 1.5px solid #162c46;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+}
+
+.leaderboard-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+}
+
+.leaderboard-row {
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.leaderboard-row:hover {
+  background: rgba(0, 240, 255, 0.08);
+}
+
+.leaderboard-row.selected {
+  background: rgba(0, 240, 255, 0.16);
+  border-left: 3px solid #00f0ff;
+}
+
+.leaderboard-rank-tag {
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 2px;
+  display: inline-block;
+  font-size: 0.62rem;
+}
+
+.rank-gold { background: #78350f; color: #ffd700; border: 1px solid #f59e0b; }
+.rank-silver { background: #082846; color: #7dd3fc; border: 1px solid #0284c7; }
+.rank-bronze { background: #334155; color: #cbd5e1; border: 1px solid #64748b; }
+.rank-standard { background: #0a1728; color: #94a3b8; border: 1px solid #172c44; }
+
+.leaderboard-detail-pane {
+  padding: 12px 14px;
+  gap: 10px;
+}
+
+.dossier-header-box {
+  background: linear-gradient(90deg, #071930 0%, #030a16 100%);
+  border: 1.5px solid #00f0ff;
+  border-radius: 4px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dossier-title {
+  font-size: 0.90rem;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.dossier-score-num {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #00f0ff;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+}
+
+.dossier-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.dossier-card {
+  background: #030814;
+  border: 1px solid #14243b;
+  border-left: 3px solid #0284c7;
+  border-radius: 3px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dossier-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.62rem;
+  color: #8494ab;
+  padding: 2px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
+}
+
+.dossier-row b {
+  color: #f8fafc;
+}
+
+.time-bonus-tag {
+  color: #00f5a0 !important;
+  font-weight: 800;
+}
+
+@media (max-width: 900px) {
+  .leaderboard-body {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 8px;
+  }
+}

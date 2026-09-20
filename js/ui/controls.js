@@ -17,6 +17,7 @@ class ControlsSystem {
     this.initTimeWarpControls();
     this.initPauseScreenModal();
     this.initExitButtons();
+    this.initLeaderboardModal();
     if (this.fullscreen && this.fullscreen.init) {
       this.fullscreen.init();
     }
@@ -25,6 +26,12 @@ class ControlsSystem {
   initExitButtons() {
     const procExit = document.getElementById('btn-proc-exit');
     if (procExit) procExit.onclick = () => this.exitGame();
+  }
+
+  initLeaderboardModal() {
+    if (window.LeaderboardUI && typeof window.LeaderboardUI.init === 'function') {
+      window.LeaderboardUI.init();
+    }
   }
 
   exitGame() {
@@ -182,7 +189,7 @@ class ControlsSystem {
     const slider = document.getElementById('engine-slider');
     if (slider) {
       slider.oninput = (e) => {
-        if (!this.game.activeUnit || this.game.activeUnit.hp <= 0) return;
+        if (!this.game.activeUnit || this.game.activeUnit.hp <= 0.05) return;
         this.game.activeUnit.engineAlpha = parseInt(e.target.value, 10) / 100.0;
         this.game.avionics.updateActiveUnitMFD();
       };
@@ -231,7 +238,7 @@ class ControlsSystem {
 
   executeDive() {
     const u = this.game.activeUnit;
-    if (!u || u.hp <= 0) return;
+    if (!u || u.hp <= 0.05) return;
     if (this.game.consumeCurrentCommanderTokens(0.4)) {
       u.dive();
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
@@ -242,7 +249,7 @@ class ControlsSystem {
 
   executeZoomClimb() {
     const u = this.game.activeUnit;
-    if (!u || u.hp <= 0) return;
+    if (!u || u.hp <= 0.05) return;
     if (u.speed < 0.45) {
       if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'SPEED TOO LOW FOR CLIMB', '#ff3366');
       return;
@@ -257,14 +264,14 @@ class ControlsSystem {
 
   adjustActiveThrottle(delta) {
     const u = this.game.activeUnit;
-    if (!u || u.hp <= 0) return;
+    if (!u || u.hp <= 0.05) return;
     u.engineAlpha = Math.max(0.20, Math.min(1.0, (u.engineAlpha || 0.60) + delta));
     this.game.avionics.updateActiveUnitMFD();
   }
 
   cycleFriendlyUnit(direction) {
     const roster = (this.game.currentPvpCommander === 'friendly') ? this.game.alliedAircraft : this.game.hostileAircraft;
-    const live = roster.filter(a => a.hp > 0);
+    const live = roster.filter(a => a.hp > 0.05);
     if (live.length === 0) return;
     const curIdx = live.findIndex(a => this.game.activeUnit && this.game.activeUnit.id === a.id);
     const nextIdx = (curIdx + direction + live.length) % live.length;
@@ -289,7 +296,7 @@ class ControlsSystem {
 
   firePylonByIndex(pIdx) {
     const u = this.game.activeUnit;
-    if (!u || u.hp <= 0) return;
+    if (!u || u.hp <= 0.05) return;
     if (u.equippedWeapons && u.equippedWeapons[pIdx]) {
       this.game.firePylon(u, pIdx, this.game.selectedTarget);
     }
@@ -339,7 +346,7 @@ class ControlsSystem {
       btnBlue.onclick = () => {
         this.game.currentPvpCommander = 'friendly';
         btnBlue.classList.add('active'); btnRed.classList.remove('active');
-        this.game.activeUnit = this.game.alliedAircraft.find(a => a.hp > 0) || null;
+        this.game.activeUnit = this.game.alliedAircraft.find(a => a.hp > 0.05) || null;
         this.game.selectedTarget = null;
         this.game.avionics.renderFlightRoster();
         this.game.avionics.updateActiveUnitMFD();
@@ -347,7 +354,7 @@ class ControlsSystem {
       btnRed.onclick = () => {
         this.game.currentPvpCommander = 'hostile';
         btnRed.classList.add('active'); btnBlue.classList.remove('active');
-        this.game.activeUnit = this.game.hostileAircraft.find(a => a.hp > 0) || null;
+        this.game.activeUnit = this.game.hostileAircraft.find(a => a.hp > 0.05) || null;
         this.game.selectedTarget = null;
         this.game.avionics.renderFlightRoster();
         this.game.avionics.updateActiveUnitMFD();
