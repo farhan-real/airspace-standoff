@@ -65,7 +65,11 @@ class AvionicsUI {
     return altFt >= 10000 ? '#38bdf8' : '#ff3366';
   }
 
-  getTurnColor(et) { return et >= 0.88 ? '#00f0ff' : (et >= 0.75 ? '#00f5a0' : (et >= 0.60 ? '#38bdf8' : '#ff3366')); }
+  getTurnColor(et, isCoffin = false) {
+    if (isCoffin) return '#c7d2fe';
+    return et >= 0.88 ? '#00f0ff' : (et >= 0.75 ? '#00f5a0' : (et >= 0.60 ? '#38bdf8' : '#ff3366'));
+  }
+
   getLoadColor(wr) { return wr <= 0.35 ? '#00f0ff' : (wr <= 0.60 ? '#00f5a0' : (wr <= 0.80 ? '#f97316' : '#ff3366')); }
   getStressColor(s) { return s <= 0.30 ? '#00f5a0' : (s <= 0.65 ? '#f97316' : '#ff3366'); }
 
@@ -120,7 +124,12 @@ class AvionicsUI {
       if (hudModel) hudModel.textContent = '--';
       if (hudCardinal) hudCardinal.textContent = 'N';
       if (hudDeg) hudDeg.textContent = '000°';
-      if (hudEturn) hudEturn.textContent = 'TURN: --%';
+      if (hudEturn) {
+        hudEturn.textContent = 'TURN: --%';
+        hudEturn.className = 'rfh-pill';
+        hudEturn.title = '';
+        hudEturn.style.color = '#7dd3fc';
+      }
       if (hudWr) hudWr.textContent = 'LOAD: --%';
 
       if (this.game.deckManager) {
@@ -190,10 +199,24 @@ class AvionicsUI {
     if (hudModel) hudModel.textContent = `${callsignText} - ${u.spec ? u.spec.role : ''}`;
     if (hudCardinal) { hudCardinal.textContent = cardStr; hudCardinal.style.color = (cardStr === 'E') ? '#00f0ff' : (cardStr === 'W' ? '#00f5a0' : '#f8fafc'); }
     if (hudDeg) hudDeg.textContent = String(deg).padStart(3, '0') + '°';
-    if (hudEturn) { hudEturn.textContent = 'TURN: ' + Math.round(eturn * 100) + '%' + (eturn >= 0.88 ? ' OPT' : ''); hudEturn.style.color = this.getTurnColor(eturn); }
+
+    if (hudEturn) {
+      if (u.isCoffin) {
+        hudEturn.textContent = 'TURN: 100% LOCKED';
+        hudEturn.className = 'rfh-pill coffin-turn';
+        hudEturn.title = 'COFFIN Interface: Turn rate locked at 100% efficiency across all speed regimes (immune to G-fatigue).';
+        hudEturn.style.color = '#c7d2fe';
+      } else {
+        hudEturn.className = 'rfh-pill';
+        hudEturn.title = 'Instantaneous Turn Efficiency based on Corner Speed (OPT = 65% top speed)';
+        hudEturn.textContent = 'TURN: ' + Math.round(eturn * 100) + '%' + (eturn >= 0.88 ? ' OPT' : '');
+        hudEturn.style.color = this.getTurnColor(eturn, false);
+      }
+    }
+
     if (hudWr) {
       const pPct = Math.round((u.Wr || 0) * 100);
-      hudWr.textContent = 'LOAD: ' + pPct + '% ' + (pPct <= 35 ? 'CLEAN' : (pPct <= 60 ? 'NORM' : (pPct <= 80 ? 'HEAVY' : 'OVERLOAD')));
+      hudWr.textContent = 'LOAD: ' + pPct + '% ' + (pPct <= 35 ? 'LIGHT' : (pPct <= 60 ? 'NORM' : (pPct <= 80 ? 'HEAVY' : 'OVERLOAD')));
       hudWr.style.color = this.getLoadColor(u.Wr || 0);
     }
 
@@ -235,7 +258,6 @@ class AvionicsUI {
       for (let i = 0; i < this.game.missiles.length; i++) {
         const m = this.game.missiles[i];
         if (m.active && m.team !== commanderTeam && m.target && m.target.team === commanderTeam) {
-          // Passive radar missiles do not radiate active radar locks until terminal approach (<= 20km)
           if (m.isPassiveRadar && m.distanceToTarget > (m.pathRevealDistance || 20.0)) {
             continue;
           }

@@ -144,6 +144,13 @@
   font-weight: 800;
 }
 
+.rfh-pill.coffin-turn {
+  background: rgba(99, 102, 241, 0.22) !important;
+  border: 1px solid #6366f1 !important;
+  color: #c7d2fe !important;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.45);
+}
+
 @media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
   .radar-flight-hud {
     position: absolute !important;
@@ -233,4 +240,5 @@
   .rfh-cardinal { font-size: 0.70rem !important; }
   .rfh-deg { font-size: 0.66rem !important; }
   .rfh-pill { font-size: 0.48rem !important; padding: 1px 4px !important; }
+  .rfh-pill.coffin-turn { font-size: 0.48rem !important; padding: 1px 4px !important; }
 }
