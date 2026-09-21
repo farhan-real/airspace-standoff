@@ -154,6 +154,33 @@ const Physics = {
       else if (aspectDiff < 0.8) aspectScore = 0.85;
     }
 
+    let offBoresightPenalty = 0.0;
+    let isRearShot = false;
+    if (!isSurface && typeof attacker.heading === 'number') {
+      let offBoresight = Math.abs(attacker.heading - angleToTarget);
+      while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
+
+      const trait = weapon.trait || '';
+      if (trait === 'REAR_ENGAGE') {
+        isRearShot = true;
+        offBoresightPenalty = 0.0;
+      } else if (trait === 'ALL_ASPECT_BURST') {
+        offBoresightPenalty = 0.0;
+      } else if (trait === 'HOBS_VANE' || weapon.id === 'IRIS-T') {
+        if (offBoresight > Math.PI * 0.5) {
+          offBoresightPenalty = (offBoresight - Math.PI * 0.5) * 0.16;
+        }
+      } else if (trait === 'SNAP_TURN' || trait === 'SWARM_RIPPLE') {
+        if (offBoresight > 1.05) {
+          offBoresightPenalty = (offBoresight - 1.05) * 0.20;
+        }
+      } else {
+        if (offBoresight > 0.6) {
+          offBoresightPenalty = (offBoresight - 0.6) * 0.18;
+        }
+      }
+    }
+
     const weatherPenalty = (weatherClouds && (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT') && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
     const afterburnerBonus = ((weapon.seeker === 'IIR' || weapon.seeker === 'EO') && target.engineAlpha > 0.85) ? 0.15 : 0.0;
     const heavyBonus = weapon.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
@@ -211,18 +238,19 @@ const Physics = {
     const energyBleedBonus = (1.0 - targetEnergy) * 0.25;
     const shooterStressPenalty = (attacker.stress >= 0.65 && !attacker.isCoffin && !attacker.spec.isDrone) ? 0.15 : 0.0;
 
-    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty;
+    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty - offBoresightPenalty;
     const pkPercent = Math.round(Math.max(15, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = (dist >= sweetMin && dist <= sweetMax) ? (isClosing ? '^' : 'v') : (isClosing ? (dist > sweetMax ? '^' : 'v') : 'v');
 
     let label = 'MARGINAL';
     let color = '#f59e0b';
-    if (pkPercent >= 70) { label = 'KILL SHOT'; color = '#10b981'; }
+    if (isRearShot) { label = 'REAR SHOT'; color = '#00f5a0'; }
+    else if (pkPercent >= 70) { label = 'KILL SHOT'; color = '#10b981'; }
     else if (pkPercent >= 45) { label = 'GOOD'; color = '#38bdf8'; }
     else { label = 'POOR'; color = '#f43f5e'; }
 
-    return { pk: pkPercent, label: label, color: color, arrow: arrow, desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : 'Target solution locked', salvoCount: salvoCount, hasMixedSeekers: hasMixedSeekers };
+    return { pk: pkPercent, label: label, color: color, arrow: arrow, desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Over-the-shoulder lock' : 'Target solution locked'), salvoCount: salvoCount, hasMixedSeekers: hasMixedSeekers };
   }
 };
 

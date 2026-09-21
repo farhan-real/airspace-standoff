@@ -27,14 +27,24 @@ class MissileKinetics {
   static getMaxTurnRate(missile) {
     const w = missile.weapon || {};
     const trait = w.trait || '';
-    if (trait === 'SNAP_TURN') return 3.4;
-    if (trait === 'HOBS_VANE') return 3.0;
-    if (w.category === 'A2A' && (w.rangeKm || 40) <= 35) return 2.6;
-    if (trait === 'RAMJET_SUSTAINED' || trait === 'STEALTH_SEEKER' || trait === 'DUAL_PULSE_SURGE') return 1.8;
-    if (w.category === 'A2A') return 1.4;
-    if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') return 0.75;
-    if (trait === 'STEALTH_CRUISE' || trait === 'GLIDE_SATURATION') return 0.60;
-    return 1.3;
+    let baseRate = 1.6;
+
+    if (trait === 'SNAP_TURN') baseRate = 3.6;
+    else if (trait === 'HOBS_VANE') baseRate = 3.4;
+    else if (trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST') baseRate = 3.6;
+    else if (w.category === 'A2A' && (w.rangeKm || 40) <= 35) baseRate = 3.0;
+    else if (trait === 'RAMJET_SUSTAINED' || trait === 'STEALTH_SEEKER' || trait === 'DUAL_PULSE_SURGE') baseRate = 2.2;
+    else if (w.category === 'A2A') baseRate = 2.0;
+    else if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') baseRate = 1.1;
+    else if (trait === 'STEALTH_CRUISE' || trait === 'GLIDE_SATURATION') baseRate = 0.8;
+
+    if (missile.distanceToTarget && missile.distanceToTarget <= 3.5) {
+      baseRate = Math.max(baseRate, 3.2);
+    } else if (!missile.hasStartedClosing && missile.age <= 2.5) {
+      baseRate = Math.max(baseRate, 2.6);
+    }
+
+    return baseRate;
   }
 
   static initMissile(missile) {
@@ -72,8 +82,12 @@ class MissileKinetics {
     const dist = Math.hypot(dx, dy);
     missile.prevDistanceToTarget = missile.distanceToTarget;
     missile.distanceToTarget = dist;
+    missile.minDistanceReached = Math.min(missile.minDistanceReached || dist, dist);
 
     const los = Math.atan2(dy, dx);
+    let headingDiffToLos = Math.abs(missile.heading - los);
+    while (headingDiffToLos > Math.PI) headingDiffToLos = Math.abs(headingDiffToLos - Math.PI * 2);
+
     const vm = Math.max(0.45, missile.speed * 0.35);
 
     const tgtSpeedKm = (tgt.speed || 0.8) * 0.35;
@@ -89,8 +103,13 @@ class MissileKinetics {
     const losRate = (dx * vry - dy * vrx) / Math.max(0.04, dist * dist);
     const closingVel = -((dx * vrx + dy * vry) / Math.max(0.1, dist));
 
-    let N = 3.8;
+    if (!missile.hasStartedClosing) {
+      if (headingDiffToLos < Math.PI * 0.55 && (closingVel > 0.1 || dist < missile.prevDistanceToTarget)) {
+        missile.hasStartedClosing = true;
+      }
+    }
 
+    let N = 4.0;
     if (tgt.activeManeuverTimer > 0) {
       if (tgt.isNotching && missile.weapon && (missile.weapon.seeker === 'ARH' || missile.weapon.seeker === 'PASSIVE_RADAR')) {
         N = 0.6;
@@ -102,28 +121,43 @@ class MissileKinetics {
     }
 
     let turnRate = 0;
-    if (closingVel > 0 && dist > 1.0) {
+    if (closingVel > 0 && dist > 1.2) {
       turnRate = N * (closingVel / vm) * losRate;
     } else {
       let diff = los - missile.heading;
       while (diff < -Math.PI) diff += Math.PI * 2;
       while (diff > Math.PI) diff -= Math.PI * 2;
-      turnRate = diff * (tgt.activeManeuverTimer > 0 ? 1.0 : 2.4);
+      const terminalGain = (dist <= 1.2) ? 4.5 : (tgt.activeManeuverTimer > 0 ? 1.5 : 3.0);
+      turnRate = diff * terminalGain;
     }
 
     const maxRate = MissileKinetics.getMaxTurnRate(missile);
     const clampedRate = Math.max(-maxRate, Math.min(maxRate, turnRate));
     missile.heading += clampedRate * dt;
+    while (missile.heading < 0) missile.heading += Math.PI * 2;
+    while (missile.heading >= Math.PI * 2) missile.heading -= Math.PI * 2;
+
+    missile.cumulativeTurn = (missile.cumulativeTurn || 0) + Math.abs(clampedRate * dt);
+    if (missile.hasStartedClosing && missile.cumulativeTurn > Math.PI * 2.2) {
+      missile.triggerLostTrack('KINETIC OVERSHOOT');
+    }
   }
 
   static checkTerminalTrigger(missile) {
     const dist = missile.distanceToTarget;
     const prevDist = missile.prevDistanceToTarget;
 
-    if (dist <= 0.55) return { shouldTrigger: true, isHitCandidate: true };
-    if (prevDist <= 1.0 && dist > prevDist) {
+    if (dist <= 0.65) {
       return { shouldTrigger: true, isHitCandidate: true };
     }
+
+    if (missile.hasStartedClosing && dist > prevDist) {
+      if (prevDist <= 0.95) {
+        return { shouldTrigger: true, isHitCandidate: true };
+      }
+      return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
+    }
+
     return { shouldTrigger: false };
   }
 
@@ -256,7 +290,15 @@ class MissileKinetics {
     const afterburnerBonus = ((w.seeker === 'IIR' || w.seeker === 'EO') && target.engineAlpha > 0.85) ? 0.15 : 0.0;
     const mixedSynergyBonus = hasMixedSeekers ? mixedBonusVal : 0.0;
 
-    const rawProb = (basePk * aspectScore) - effectiveDefense + salvoBonus + mixedSynergyBonus + afterburnerBonus - weatherPenalty;
+    let energyTurnPenalty = 0.0;
+    if (missile.cumulativeTurn && missile.cumulativeTurn > Math.PI) {
+      const trait = w.trait || '';
+      if (trait !== 'REAR_ENGAGE' && trait !== 'ALL_ASPECT_BURST') {
+        energyTurnPenalty = Math.min(0.18, (missile.cumulativeTurn - Math.PI) * 0.08);
+      }
+    }
+
+    const rawProb = (basePk * aspectScore) - effectiveDefense + salvoBonus + mixedSynergyBonus + afterburnerBonus - weatherPenalty - energyTurnPenalty;
     if (isManeuvering) {
       return Math.max(0.12, Math.min(0.95, rawProb));
     }

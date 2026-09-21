@@ -16,6 +16,9 @@ class MissileEntity {
     this.distanceTraveled = 0.0;
     this.distanceToTarget = Math.hypot(targetUnit.x - sourceUnit.x, targetUnit.y - sourceUnit.y);
     this.prevDistanceToTarget = this.distanceToTarget;
+    this.minDistanceReached = this.distanceToTarget;
+    this.hasStartedClosing = false;
+    this.cumulativeTurn = 0.0;
 
     this.rcs = weapon.rcs !== undefined ? weapon.rcs : 0.04;
     this.isStealthMissile = weapon.isStealthMissile || (this.rcs <= 0.005);
@@ -40,18 +43,26 @@ class MissileEntity {
       sourceUnit.missilesLaunchedCount++;
     }
 
-    if (weapon.trait === 'REAR_ENGAGE') {
-      this.heading = Math.atan2(targetUnit.y - sourceUnit.y, targetUnit.x - sourceUnit.x);
+    const angleToTarget = Math.atan2(targetUnit.y - sourceUnit.y, targetUnit.x - sourceUnit.x);
+    let offBoresight = angleToTarget - sourceUnit.heading;
+    while (offBoresight < -Math.PI) offBoresight += Math.PI * 2;
+    while (offBoresight > Math.PI) offBoresight -= Math.PI * 2;
+
+    const trait = weapon.trait || '';
+    if (trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST') {
+      this.heading = angleToTarget;
+    } else if (trait === 'HOBS_VANE' || weapon.id === 'IRIS-T') {
+      this.heading = sourceUnit.heading + Math.max(-Math.PI * 0.5, Math.min(Math.PI * 0.5, offBoresight));
+    } else if (trait === 'SNAP_TURN' || trait === 'SWARM_RIPPLE') {
+      this.heading = sourceUnit.heading + Math.max(-1.05, Math.min(1.05, offBoresight));
+    } else if (weapon.category === 'A2A') {
+      this.heading = sourceUnit.heading + Math.max(-0.80, Math.min(0.80, offBoresight));
     } else {
       this.heading = sourceUnit.heading;
     }
 
-    if (weapon.trait === 'SNAP_TURN') {
-      let snapDiff = Math.atan2(targetUnit.y - sourceUnit.y, targetUnit.x - sourceUnit.x) - this.heading;
-      while (snapDiff < -Math.PI) snapDiff += Math.PI * 2;
-      while (snapDiff > Math.PI) snapDiff -= Math.PI * 2;
-      this.heading += Math.max(-1.15, Math.min(1.15, snapDiff));
-    }
+    while (this.heading < 0) this.heading += Math.PI * 2;
+    while (this.heading >= Math.PI * 2) this.heading -= Math.PI * 2;
 
     if (typeof MissileKinetics !== 'undefined') {
       MissileKinetics.initMissile(this);
@@ -84,7 +95,7 @@ class MissileEntity {
       const coastStep = (this.speed * 0.35) * dt;
       this.x += Math.cos(this.heading) * coastStep;
       this.y += Math.sin(this.heading) * coastStep;
-      if (this.lostTimer >= 2.2) this.isDead = true;
+      if (this.lostTimer >= 2.0) this.isDead = true;
       return;
     }
 
@@ -112,6 +123,8 @@ class MissileEntity {
       this.heading += Math.max(-2.5 * dt, Math.min(2.5 * dt, diff));
     }
 
+    if (this.state === 'LOST_TRACK') return;
+
     const inCloud = weatherClouds && weatherClouds.some(c => c.containsPoint(this.x, this.y) || c.containsPoint(this.target.x, this.target.y));
     if (inCloud) {
       this.cloudObscureTimer += dt;
@@ -136,7 +149,25 @@ class MissileEntity {
     if (typeof MissileKinetics !== 'undefined') {
       const trig = MissileKinetics.checkTerminalTrigger(this);
       if (trig.shouldTrigger) {
-        this.resolveTerminalEngagement(weatherClouds);
+        if (trig.isOvershoot) {
+          let reason = 'KINETIC OVERSHOOT';
+          const tgt = this.target;
+          if (tgt) {
+            if (tgt.activeManeuverId === 'DOPPLER_NOTCH' || tgt.isNotching) reason = 'DOPPLER NOTCH (GATE LOSS)';
+            else if (tgt.activeManeuverId === 'PUSH_COBRA') reason = 'COBRA BRAKE (OVERSHOOT)';
+            else if (tgt.activeManeuverId === 'BARREL_ROLL') reason = 'BARREL ROLL (LEAD LOSS)';
+            else if (tgt.activeManeuverId === 'SPLIT_S') reason = 'SPLIT-S (KINETIC ESCAPE)';
+            else if (tgt.activeManeuverId === 'EMERGENCY_CM' || tgt.cmTimer > 0) reason = 'CHAFF DECOY SEDUCTION';
+            else if (tgt.activeManeuverId === 'ZOOM_CLIMB') reason = 'ENERGY PERCH (GRAVITY DEFICIT)';
+            else if (tgt.activeManeuverId === 'BREAK_TURN') reason = 'STANDARD DEFENSIVE BREAK';
+            else if (tgt.isCoffin) reason = 'COFFIN NEURAL DODGE';
+            else if (tgt.isAce) reason = 'ACE DEFENSIVE BREAK';
+            else if (tgt.activeManeuverBonus > 0) reason = 'STANDARD DEFENSIVE BREAK';
+          }
+          this.triggerLostTrack(reason);
+        } else {
+          this.resolveTerminalEngagement(weatherClouds);
+        }
       }
     } else if (dist <= 0.8) {
       this.resolveTerminalEngagement(weatherClouds);
@@ -144,11 +175,12 @@ class MissileEntity {
   }
 
   triggerLostTrack(reason) {
+    if (this.state === 'LOST_TRACK') return;
     this.state = 'LOST_TRACK';
     this.active = false;
     this.lostReason = reason;
     this.stage = 'COAST';
-    this.heading += (Math.random() * 0.3 - 0.15);
+    this.heading += (Math.random() * 0.2 - 0.1);
     if (this.target && this.target.missilesEvadedCount !== undefined) this.target.missilesEvadedCount++;
     if (this.target && this.target.energy !== undefined) {
       this.target.energy = Math.max(0.20, this.target.energy - 0.15);
