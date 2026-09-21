@@ -23,7 +23,7 @@ class PreconfigCardsRenderer {
       if (!w) return '';
       totalCost += Number(w.cost || 0);
       totalMass += Number(w.mass || 0);
-      return `<span class="pc-item-pill wpn" data-tag-title="${w.name}" data-tag-tooltip="${w.rangeKm}km range • ${w.damage} HP damage • ${w.seeker || 'GUIDED'} • ${w.ammoCount || 4}x count">${w.name.split(' ')[0]} (${w.ammoCount || 4}x)</span>`;
+      return `<span class="pc-item-pill wpn" data-tag-title="${w.name}" data-tag-tooltip="${w.rangeKm}km range &bull; ${w.damage} HP damage &bull; ${w.seeker || 'GUIDED'} &bull; ${w.ammoCount || 4}x count">${w.name.split(' ')[0]} (${w.ammoCount || 4}x)</span>`;
     }).join('');
 
     const upgradesListHtml = (tpl.upgrades || []).map(uId => {
@@ -34,9 +34,36 @@ class PreconfigCardsRenderer {
       return `<span class="pc-item-pill upg" data-tag-title="${u.name}" data-tag-tooltip="${u.desc}">[${u.category || 'SYSTEM'}] ${u.name.split(' ')[0]}</span>`;
     }).join('');
 
-    const gunHtml = gun ? `<span class="pc-item-pill gun" data-tag-title="${gun.name}" data-tag-tooltip="${gun.rpm} RPM • ${gun.damagePerSec} HP/s">${gun.name.split(' ')[0]}</span>` : '';
+    const gunHtml = gun ? `<span class="pc-item-pill gun" data-tag-title="${gun.name}" data-tag-tooltip="${gun.rpm} RPM &bull; ${gun.damagePerSec} HP/s">${gun.name.split(' ')[0]}</span>` : '';
     const maxMass = spec.M_max || 5000;
     const wrPercent = Math.round(Math.min(1.0, totalMass / maxMass) * 100);
+
+    let weightCategory = 'NORMAL';
+    let weightColor = '#00f5a0';
+    let weightBg = 'rgba(0, 245, 160, 0.12)';
+    let weightBorder = '#10b981';
+
+    if (wrPercent <= 35) {
+      weightCategory = 'LIGHT';
+      weightColor = '#00f0ff';
+      weightBg = 'rgba(0, 240, 255, 0.12)';
+      weightBorder = '#0284c7';
+    } else if (wrPercent <= 60) {
+      weightCategory = 'NORMAL';
+      weightColor = '#00f5a0';
+      weightBg = 'rgba(0, 245, 160, 0.12)';
+      weightBorder = '#10b981';
+    } else if (wrPercent <= 80) {
+      weightCategory = 'HEAVY';
+      weightColor = '#ffb830';
+      weightBg = 'rgba(255, 184, 48, 0.12)';
+      weightBorder = '#f59e0b';
+    } else {
+      weightCategory = 'OVERLOAD';
+      weightColor = '#ff3366';
+      weightBg = 'rgba(255, 51, 102, 0.14)';
+      weightBorder = '#ef4444';
+    }
 
     const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
       ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
@@ -54,7 +81,7 @@ class PreconfigCardsRenderer {
       <div class="pc-top-row">
         <div class="pc-title-group">
           <div class="pc-template-name">${tpl.name}</div>
-          <div class="pc-spec-name">${spec.name} • ${spec.role}</div>
+          <div class="pc-spec-name">${spec.name} &bull; ${spec.role}</div>
         </div>
         <div class="pc-cost-badge ${rCost.colorClass}">$${totalCost.toFixed(1)}M</div>
       </div>
@@ -63,7 +90,7 @@ class PreconfigCardsRenderer {
         ${isCustom ? '<span class="adc-badge" style="background:#78350f;border:1px solid #f59e0b;color:#fef08a;">USER PRESET</span>' : ''}
         <span class="adc-badge badge-cat-${category.toLowerCase()}">${category}</span>
         <span class="adc-badge" style="background:#091e36;border:1px solid #0284c7;color:#7dd3fc;">${tvcLabel}</span>
-        <span class="adc-badge" style="background:#051424;border:1px solid #162a42;color:#94a3b8;">LOAD: ${wrPercent}%</span>
+        <span class="adc-badge" style="background:${weightBg};border:1px solid ${weightBorder};color:${weightColor};" data-tag-title="PAYLOAD STATUS" data-tag-tooltip="Airframe payload carriage: ${totalMass}kg / ${maxMass}kg (${wrPercent}%). Weight tier: ${weightCategory}.">LOAD: ${wrPercent}% ${weightCategory}</span>
       </div>
       <div class="pc-stats-strip">
         <div class="pc-stat-cell"><span>SPEED</span><b class="${rSpeed.colorClass}">M ${(spec.S_0 || 0.9).toFixed(2)}</b></div>

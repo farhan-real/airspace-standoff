@@ -44,6 +44,23 @@ class RosterCardBuilder {
 
     const maxMass = spec.M_max || 5000;
     const wrPercent = Math.round(Math.min(1.0, totalMass / maxMass) * 100);
+
+    let weightCategory = 'NORMAL';
+    let weightColor = '#00f5a0';
+    if (wrPercent <= 35) {
+      weightCategory = 'LIGHT';
+      weightColor = '#00f0ff';
+    } else if (wrPercent <= 60) {
+      weightCategory = 'NORMAL';
+      weightColor = '#00f5a0';
+    } else if (wrPercent <= 80) {
+      weightCategory = 'HEAVY';
+      weightColor = '#ffb830';
+    } else {
+      weightCategory = 'OVERLOAD';
+      weightColor = '#ff3366';
+    }
+
     const gunOptsList = Object.values(gunsMap).map(g => {
       const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
         ? window.AircraftRegistry.isGunCompatible(spec, g) : (!g.lockedTo || g.lockedTo.includes(spec.id));
@@ -132,7 +149,7 @@ class RosterCardBuilder {
           <span class="squad-unit-badge badge-cat-${category.toLowerCase()}">${category}</span>
           <span class="squad-unit-cost">$${totalCost.toFixed(1)}M</span>
           ${isActiveBay ? '<span class="active-bay-badge">SELECTED</span>' : ''}
-          <button type="button" class="spec-inspect-btn small" data-inspect-type="airframe" data-inspect-id="${spec.id}">[SPECS]</button>
+          <button type="button" class="spec-inspect-btn small" data-inspect-type="airframe" data-inspect-id="${spec.id}">SPECS</button>
         </div>
         <div class="squad-unit-actions">
           ${leadButtonHtml}
@@ -151,7 +168,7 @@ class RosterCardBuilder {
           <div class="custom-dropdown-menu gun-menu">${gunOptsList}</div>
         </div>
         <span class="gun-dmg-badge" style="color:#ffb830;font-size:0.64rem;font-weight:800;font-family:var(--font-mono);">${activeGunDmg} HP/s</span>
-        <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${activeGun ? activeGun.id : 'M61A2'}">[SPECS]</button>
+        <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${activeGun ? activeGun.id : 'M61A2'}">SPECS</button>
       </div>
       <div class="unit-metric-strip">
         <div class="metric-block">
@@ -159,8 +176,8 @@ class RosterCardBuilder {
           <div class="capacity-pips-bar">${pipsHtml}</div>
         </div>
         <div class="metric-block">
-          <div class="metric-meta"><span>PAYLOAD WEIGHT:</span><span>${wrPercent}% (${totalMass}kg)</span></div>
-          <div class="weight-bar-bg"><div class="weight-bar-fill ${wrPercent > 80 ? 'overload' : (wrPercent > 50 ? 'heavy' : '')}" style="width:${wrPercent}%;"></div></div>
+          <div class="metric-meta"><span>PAYLOAD WEIGHT:</span><span><b style="color:${weightColor};">${weightCategory}</b> ${wrPercent}% (${totalMass}kg)</span></div>
+          <div class="weight-bar-bg"><div class="weight-bar-fill ${wrPercent > 80 ? 'overload' : (wrPercent > 60 ? 'heavy' : '')}" style="width:${Math.min(100, wrPercent)}%;"></div></div>
         </div>
       </div>
       <div class="upgrades-socket-row">
