@@ -173,7 +173,7 @@ class AutocannonBayRenderer {
         if (validTarget.isGhost) { validTarget.takeDamage(finalDmg); }
         else if (validTarget.isDecoyDrone) { validTarget.takeDamage(finalDmg); }
         else if (typeof SurfaceUnit !== 'undefined' && validTarget instanceof SurfaceUnit) { validTarget.takeDamage(finalDmg, false); }
-        else if (validTarget.isCivilian && typeof validTarget.takeDamage === 'function') { validTarget.takeDamage(finalDmg, unit); }
+        else if (validTarget.isCivilian && typeof validTarget.takeDamage === 'function') { validTarget.takeDamage(finalDmg, unit, gun); }
         else {
           if (validTarget.spec && validTarget.spec.category === 'STRIKE') finalDmg *= 0.60;
           validTarget.hp = Math.max(0, validTarget.hp - finalDmg);
@@ -201,9 +201,8 @@ class AutocannonBayRenderer {
           else AudioSys.playGunBurst();
         }
 
-        if (wasAlive && validTarget.hp <= 0 && game && game.simulation) {
-          if (validTarget.isCivilian) game.simulation.recordCivilianShootdown(unit.team, validTarget, unit);
-          else game.simulation.recordKillEvent(unit.team, validTarget, unit, { weapon: gun, isSalvo: mountedPods.length > 0, salvoCount: mountedPods.length + 1 });
+        if (wasAlive && validTarget.hp <= 0 && game && game.simulation && !validTarget.isCivilian) {
+          game.simulation.recordKillEvent(unit.team, validTarget, unit, { weapon: gun, isSalvo: mountedPods.length > 0, salvoCount: mountedPods.length + 1 });
         }
         return;
       }

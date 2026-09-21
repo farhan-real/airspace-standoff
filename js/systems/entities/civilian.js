@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Commercial Civilian Airliners & Rules of Engagement (RoE)
+ * AIRSPACE STANDOFF: Commercial Civilian Airliners & Rules of Engagement (RoE)
  */
 
 class CivilianAirliner {
@@ -57,12 +57,17 @@ class CivilianAirliner {
     }
   }
 
-  takeDamage(amount, firingSource) {
+  takeDamage(amount, firingSource, weapon) {
+    const wasAlive = this.hp > 0.05;
     this.hp = Math.max(0, this.hp - amount);
+    const firingTeam = (firingSource && firingSource.team) || 'friendly';
 
-    if (this.hp <= 0 && window.Game && window.Game.simulation) {
-      const firingTeam = (firingSource && firingSource.team) || 'friendly';
-      window.Game.simulation.recordCivilianShootdown(firingTeam, this);
+    if (window.Game && window.Game.simulation) {
+      if (wasAlive && this.hp > 0.05) {
+        window.Game.simulation.recordCivilianHit(firingTeam, this, firingSource, weapon);
+      } else if (wasAlive && this.hp <= 0.05) {
+        window.Game.simulation.recordCivilianShootdown(firingTeam, this, firingSource, weapon);
+      }
     }
   }
 }

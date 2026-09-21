@@ -29,7 +29,8 @@ class SimulationSystem {
 
   logScoreEvent(team, pts, reason) { this.scoring.logScoreEvent(team, pts, reason); }
   recordKillEvent(team, tgt, src, details) { this.scoring.recordKillEvent(team, tgt, src, details); }
-  recordCivilianShootdown(team, civ, src) { this.scoring.recordCivilianShootdown(team, civ, src); }
+  recordCivilianHit(team, civ, src, wpn) { this.scoring.recordCivilianHit(team, civ, src, wpn); }
+  recordCivilianShootdown(team, civ, src, wpn) { this.scoring.recordCivilianShootdown(team, civ, src, wpn); }
   getElapsedTimeString() { return this.scoring.getElapsedTimeString(); }
 
   setTimeWarp(multiplier) {

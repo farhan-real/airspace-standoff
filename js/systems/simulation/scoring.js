@@ -226,30 +226,63 @@ class SimulationScoring {
     });
   }
 
-  recordCivilianShootdown(firingTeam, civilianFlight, firingSource) {
-    const penalty = (window.CONFIG && window.CONFIG.VP_CIVILIAN_DESTROYED_PENALTY) || 800;
+  recordCivilianHit(firingTeam, civilianFlight, firingSource, weapon) {
+    const penalty = (window.CONFIG && window.CONFIG.VP_CIVILIAN_HIT_PENALTY) || 500;
+    const srcName = firingSource ? (firingSource.callsign || firingSource.name || firingSource.id || 'PILOT') : 'PILOT';
+    const rawWpn = weapon ? (weapon.name || weapon.id || 'Weapon') : 'Weapon';
+    const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
 
     if (firingSource && firingSource.scorePoints !== undefined) {
       firingSource.scorePoints = Math.max(0, (firingSource.scorePoints || 0) - penalty);
     }
 
-    if (firingTeam === 'friendly') {
-      this.logScoreEvent('friendly', -penalty, 'ROE VIOLATION: Civilian flight destroyed (' + civilianFlight.flightCode + ')');
-    } else {
-      this.logScoreEvent('hostile', -penalty, 'Civilian flight destroyed (' + civilianFlight.flightCode + ')');
-    }
+    const logMsg = `ROE VIOLATION: Civilian flight struck (${civilianFlight.flightCode}) by ${srcName} [${wpnName}]`;
+    this.logScoreEvent(firingTeam, -penalty, logMsg);
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(),
       type: 'roe_penalty',
       team: firingTeam,
+      source: srcName,
       target: civilianFlight.flightCode,
       targetType: 'Airliner',
-      points: -penalty
+      weapon: wpnName,
+      points: -penalty,
+      reason: logMsg
     });
 
     if (window.Game && window.Game.radar) {
-      window.Game.radar.spawnCombatText(civilianFlight.x, civilianFlight.y, 'ROE VIOLATION: -' + penalty + ' VP', '#ff3366');
+      window.Game.radar.spawnCombatText(civilianFlight.x, civilianFlight.y, `ROE VIOLATION: CIVILIAN STRUCK (-${penalty} VP)`, '#f97316');
+    }
+  }
+
+  recordCivilianShootdown(firingTeam, civilianFlight, firingSource, weapon) {
+    const penalty = (window.CONFIG && window.CONFIG.VP_CIVILIAN_DESTROYED_PENALTY) || 2000;
+    const srcName = firingSource ? (firingSource.callsign || firingSource.name || firingSource.id || 'PILOT') : 'PILOT';
+    const rawWpn = weapon ? (weapon.name || weapon.id || 'Weapon') : 'Weapon';
+    const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
+
+    if (firingSource && firingSource.scorePoints !== undefined) {
+      firingSource.scorePoints = Math.max(0, (firingSource.scorePoints || 0) - penalty);
+    }
+
+    const logMsg = `ROE VIOLATION: Civilian airliner destroyed (${civilianFlight.flightCode}) by ${srcName}`;
+    this.logScoreEvent(firingTeam, -penalty, logMsg);
+
+    this.timelineEvents.push({
+      time: this.getElapsedTimeString(),
+      type: 'roe_penalty',
+      team: firingTeam,
+      source: srcName,
+      target: civilianFlight.flightCode,
+      targetType: 'Airliner',
+      weapon: wpnName,
+      points: -penalty,
+      reason: logMsg
+    });
+
+    if (window.Game && window.Game.radar) {
+      window.Game.radar.spawnCombatText(civilianFlight.x, civilianFlight.y, `ROE VIOLATION: AIRLINER DESTROYED (-${penalty} VP)`, '#ff3366');
     }
   }
 }

@@ -99,7 +99,7 @@ class CombatSystem {
         const wasAlive = targetEntity.hp > 0.05;
         if (targetEntity.isGhost || targetEntity.isDecoyDrone) targetEntity.takeDamage(dmg);
         else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(dmg, false);
-        else if (targetEntity.isCivilian) targetEntity.takeDamage(dmg, sourceUnit);
+        else if (targetEntity.isCivilian) targetEntity.takeDamage(dmg, sourceUnit, w);
         else {
           targetEntity.hp = Math.max(0, targetEntity.hp - dmg);
           if (targetEntity.hp < 0.05) targetEntity.hp = 0;
@@ -110,9 +110,8 @@ class CombatSystem {
           this.game.radar.spawnGunTracer(sourceUnit.x, sourceUnit.y, targetEntity.x, targetEntity.y, w.tracerColor || '#fbbf24');
           this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `POD BURST -${dmg.toFixed(1)}HP`, '#fbbf24');
         }
-        if (wasAlive && targetEntity.hp <= 0 && this.game.simulation) {
-          if (targetEntity.isCivilian) this.game.simulation.recordCivilianShootdown(sourceUnit.team, targetEntity, sourceUnit);
-          else this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
+        if (wasAlive && targetEntity.hp <= 0 && this.game.simulation && !targetEntity.isCivilian) {
+          this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
         }
       } else {
         const hdg = sourceUnit.heading || 0;
@@ -129,7 +128,7 @@ class CombatSystem {
         const dmg = w.damagePerBurst || w.damage || 3;
         if (targetEntity.isGhost || targetEntity.isDecoyDrone) targetEntity.takeDamage(dmg);
         else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(dmg, true);
-        else if (targetEntity.isCivilian) targetEntity.takeDamage(dmg, sourceUnit);
+        else if (targetEntity.isCivilian) targetEntity.takeDamage(dmg, sourceUnit, w);
         else {
           targetEntity.hp = Math.max(0, targetEntity.hp - dmg);
           if (targetEntity.hp < 0.05) targetEntity.hp = 0;
@@ -140,9 +139,8 @@ class CombatSystem {
           this.game.radar.spawnExplosionFX(targetEntity.x, targetEntity.y, false);
           this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `LASER -${dmg}HP`, '#00f0ff');
         }
-        if (wasAlive && targetEntity.hp <= 0 && this.game.simulation) {
-          if (targetEntity.isCivilian) this.game.simulation.recordCivilianShootdown(sourceUnit.team, targetEntity, sourceUnit);
-          else this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
+        if (wasAlive && targetEntity.hp <= 0 && this.game.simulation && !targetEntity.isCivilian) {
+          this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
         }
       }
     } else {

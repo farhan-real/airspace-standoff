@@ -78,7 +78,8 @@ function getManualChapter9Content() {
           <tr><td><b>Early Warning Radar</b></td><td>5 HP</td><td>65.0 km reach</td><td><b>+250 VP</b> (Destruction blinds long-range SAMs)</td></tr>
           <tr><td><b>EW Jammer Station</b></td><td>6 HP</td><td>36.0 km umbrella</td><td><b>+250 VP</b> (Degrades enemy radar locks by 50%)</td></tr>
           <tr><td><b>Pantsir / Phalanx CIWS</b></td><td>6 HP</td><td>16.0 km defense</td><td><b>+200 VP</b> (+40 VP per missile intercept)</td></tr>
-          <tr><td><b style="color:#ff3366;">Civilian Shootdown</b></td><td>6 HP</td><td>Airliner</td><td><b style="color:#ff3366;">-800 VP Penalty</b> (Strict RoE violation)</td></tr>
+          <tr><td><b style="color:#f97316;">Civilian Air Strike</b></td><td>6 HP</td><td>Airliner</td><td><b style="color:#f97316;">-500 VP Penalty</b> (Striking neutral commercial traffic)</td></tr>
+          <tr><td><b style="color:#ff3366;">Civilian Shootdown</b></td><td>6 HP</td><td>Airliner</td><td><b style="color:#ff3366;">-2000 VP Penalty</b> (Catastrophic RoE violation)</td></tr>
         </tbody>
       </table>
     </div>
