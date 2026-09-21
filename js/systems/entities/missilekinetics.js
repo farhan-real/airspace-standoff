@@ -298,7 +298,10 @@ class MissileKinetics {
       }
     }
 
-    const rawProb = (basePk * aspectScore) - effectiveDefense + salvoBonus + mixedSynergyBonus + afterburnerBonus - weatherPenalty - energyTurnPenalty;
+    const heavyTargetAccuracyBonus = w.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
+    const energyDeficitBonus = (1.0 - (target.energy !== undefined ? target.energy : 1.0)) * 0.25;
+
+    const rawProb = (basePk * aspectScore) - effectiveDefense + salvoBonus + mixedSynergyBonus + afterburnerBonus + heavyTargetAccuracyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
     if (isManeuvering) {
       return Math.max(0.12, Math.min(0.95, rawProb));
     }

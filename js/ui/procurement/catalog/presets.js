@@ -20,14 +20,14 @@ class ProcurementPresets {
       ],
       sead: [
         { specId: 'EA-18G', chosenGunId: 'M61A2', weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-120D', 'ADM-160B'], upgrades: ['GAN_AESA_CORE', 'ESM_PASSIVE_SUITE'] },
-        { specId: 'Su-34', chosenGunId: 'GAU-8', weapons: ['AGM-158B', 'AGM-88G', 'AIM-9X-2', 'AN-ALQ-99'], upgrades: ['TITANIUM_COCKPIT'] },
-        { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['AGM-88G', 'AIM-260', 'AIM-120D', 'AIM-9X-2', 'ALE-55'], upgrades: ['MADL_BATTLE_LINK'] },
+        { specId: 'Su-34', chosenGunId: 'GAU-8', weapons: ['AGM-158B', 'AGM-88G', 'GBU-39', 'AN-ALQ-99', 'R-73'], upgrades: ['TITANIUM_COCKPIT'] },
+        { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['AGM-158B', 'AGM-88G', 'GBU-39', 'AIM-120D', 'AN-ALQ-184', 'AIM-9X-2', 'AIM-9X-2'], upgrades: ['MADL_BATTLE_LINK'] },
         { specId: 'A-10C', chosenGunId: 'GAU-8', weapons: ['GPU-5A', 'GBU-39', 'AIM-9X-2', 'AN-ALQ-184'], upgrades: ['TITANIUM_COCKPIT'] },
         { specId: 'Tornado-ECR', chosenGunId: 'BK-27', weapons: ['AGM-88G', 'AIM-120D', 'ALE-55'], upgrades: ['ESM_PASSIVE_SUITE'] }
       ],
       swarm: [
         { specId: 'F-22C-COFFIN', chosenGunId: 'DE-PULSE', weapons: ['AIM-260', 'AIM-120D', 'AIM-9X-2'], upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'] },
-        { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['AIM-260', 'AIM-120D', 'AIM-9X-2', 'ADM-160B'], upgrades: ['MADL_BATTLE_LINK', 'GAN_AESA_CORE'] },
+        { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['AIM-260', 'AIM-260', 'AIM-120D', 'AIM-120D', 'METEOR', 'AIM-9X-2', 'AIM-9X-2'], upgrades: ['MADL_BATTLE_LINK', 'GAN_AESA_CORE'] },
         { specId: 'S-70', chosenGunId: 'GSH-30-1', weapons: ['PL-15E', 'AIM-120D'], upgrades: ['SWARM_AI_COPROCESSOR'] },
         { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] },
         { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] },
@@ -38,7 +38,7 @@ class ProcurementPresets {
         { specId: 'Su-35S', chosenGunId: 'GSH-30-1', weapons: ['R-37M', 'PL-15E', 'PYTHON-5', 'AN-ALQ-99'], upgrades: ['THRUST_VECTOR'] },
         { specId: 'Eurofighter', chosenGunId: 'BK-27', weapons: ['METEOR', 'METEOR', 'IRIS-T'], upgrades: ['EOTS_DUAL_OPTICS', 'GAN_AESA_CORE'] },
         { specId: 'Rafale-C', chosenGunId: 'BK-27', weapons: ['METEOR', 'METEOR', 'PYTHON-5'], upgrades: ['EOTS_DUAL_OPTICS', 'DAS_360_OPTIC'] },
-        { specId: 'Su-37', chosenGunId: 'GSH-30-1', weapons: ['PL-15E', 'R-73'], upgrades: ['THRUST_VECTOR'] }
+        { specId: 'Su-37', chosenGunId: 'GSH-30-1', weapons: ['PL-15E', 'R-73', 'R-73'], upgrades: ['THRUST_VECTOR'] }
       ]
     };
 

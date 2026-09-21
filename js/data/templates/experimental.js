@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Preconfigured Loadouts: Experimental Superfighters & Manual COFFIN Units
+ * AIRSPACE STANDOFF: Preconfigured Loadouts: Experimental Superfighters & Manual COFFIN Units
  */
 
 window.TEMPLATES_EXPERIMENTAL = {
@@ -10,7 +10,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'DE-PULSE',
     weapons: ['AIM-260', 'AIM-120D', 'METEOR', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'ZOE_NEURAL_PROCESSOR', 'GAN_AESA_CORE', 'RAM_NANO_COATING'],
-    desc: 'Apex air superiority testbed ($60.0M). 20.0G structural envelope, hitscan DE-Pulse laser, diverse BVR and dogfight missiles with zero pilot stress and +8% evasive dodge bonus.'
+    desc: 'Apex air superiority testbed ($60.0M). 20.0G structural envelope, hitscan DE-Pulse laser, diverse BVR and dogfight missiles with zero pilot stress and +25% evasive dodge bonus.'
   },
   'ADF-11F Tactical Swarm Suppression': {
     name: 'ADF-11F Tactical Swarm Suppression',
@@ -37,7 +37,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'EML_GUN',
     weapons: ['PL-21', 'AIM-260', 'AIM-9X-2', 'ALE-55'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'ZOE_NEURAL_PROCESSOR', 'SUPERCRUISE_VCE', 'RAM_NANO_COATING'],
-    desc: 'High-velocity electromagnetic kinetic railgun (120 slugs) paired with extreme standoff PL-21 hypersonic missiles and towed decoys.'
+    desc: 'High-velocity electromagnetic kinetic railgun (24 slugs) paired with extreme standoff PL-21 hypersonic missiles and towed decoys.'
   },
   'ADF-11F Deep Precision Interdiction': {
     name: 'ADF-11F Deep Precision Interdiction',
@@ -62,9 +62,18 @@ window.TEMPLATES_EXPERIMENTAL = {
     specId: 'CFA-44',
     roleCategory: 'COFFIN & FLAGSHIPS',
     chosenGunId: 'EML_GUN',
-    weapons: ['ADMM', 'AIM-260', 'AIM-120D', 'AIM-9X-2'],
+    weapons: ['ADMM', 'AIM-260', 'AIM-120D', 'PYTHON-5', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'Heavy carrier air defense package. Built-in EML hyper-velocity railgun (120 slugs), an ADMM micro-missile pod (12x), and long-range BVR missiles.'
+    desc: 'Carrier defense package using 9 of 10 stations (~3,670 kg • 47% NORMAL) combining EML railgun, ADMM pod (12x), BVR missiles, and rearward Python-5.'
+  },
+  'CFA-44 Thermobaric Area Denial': {
+    name: 'CFA-44 Thermobaric Area Denial',
+    specId: 'CFA-44',
+    roleCategory: 'COFFIN & FLAGSHIPS',
+    chosenGunId: 'EML_GUN',
+    weapons: ['MPBM', 'ADMM', 'AIM-260', 'PYTHON-5'],
+    upgrades: ['COFFIN_OPTICAL_BUS', 'THRUST_VECTOR', 'TITANIUM_COCKPIT'],
+    desc: 'Thermobaric area denial utilizing 9 of 10 stations (~3,920 kg • 50% NORMAL) pairing MPBM shockwave missiles with ADMM 360° volleys.'
   },
   'CFA-44 Thermobaric Standoff Attack': {
     name: 'CFA-44 Thermobaric Standoff Attack',
@@ -80,9 +89,9 @@ window.TEMPLATES_EXPERIMENTAL = {
     specId: 'CFA-44',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'DE-PULSE',
-    weapons: ['AIM-260', 'METEOR', 'PL-15E', 'AIM-9X-2'],
+    weapons: ['AIM-260', 'METEOR', 'PL-15E', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'],
-    desc: 'Balanced long-range carrier interceptor pairing AIM-260 stealth BVR volleys with ramjet Meteor and dual-pulse rockets.'
+    desc: 'Balanced long-range carrier interceptor using 9 of 10 stations pairing AIM-260 stealth BVR volleys with ramjet Meteor and dual-pulse rockets.'
   },
   'ADFX-01 Standoff Multi-Mission Prototype': {
     name: 'ADFX-01 Standoff Multi-Mission Prototype',
@@ -107,18 +116,27 @@ window.TEMPLATES_EXPERIMENTAL = {
     specId: 'X-02S',
     roleCategory: 'COFFIN & FLAGSHIPS',
     chosenGunId: 'M61A2',
-    weapons: ['AIM-260', 'AIM-120D', 'AIM-9X-2'],
+    weapons: ['AIM-260', 'AIM-120D', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'THRUST_VECTOR'],
-    desc: 'Variable-geometry stealth superfighter ($46.0M). Transitions from high-speed dash to forward-swept dogfight configuration.'
+    desc: 'Variable-geometry stealth superfighter using 7 of 8 stations (~2,780 kg • 45% NORMAL) deploying 12 BVR missiles and Sidewinders.'
+  },
+  'X-02S Stealth Strike Wyvern': {
+    name: 'X-02S Stealth Strike Wyvern',
+    specId: 'X-02S',
+    roleCategory: 'STRIKE',
+    chosenGunId: 'M61A2',
+    weapons: ['AGM-158B', 'AIM-260', 'AIM-9X-2'],
+    upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
+    desc: 'Low-observable deep penetrator using 7 of 8 stations (~3,860 kg • 62% HEAVY) pairing stealth JASSM-ER cruise missiles with BVR defense.'
   },
   'X-02S Kinetic Standoff Intercept': {
     name: 'X-02S Kinetic Standoff Intercept',
     specId: 'X-02S',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'EML_GUN',
-    weapons: ['AIM-260', 'METEOR', 'AIM-9X-2'],
+    weapons: ['AIM-260', 'METEOR', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['SUPERCRUISE_VCE', 'GAN_AESA_CORE'],
-    desc: 'Extreme-speed railgun interceptor pairing EML kinetic slugs with ramjet Meteor missiles.'
+    desc: 'Extreme-speed railgun interceptor using 7 of 8 stations pairing EML kinetic slugs with ramjet Meteor and AMRAAM missiles.'
   },
   'F-22C [COFFIN] Advanced Air Superiority': {
     name: 'F-22C [COFFIN] Advanced Air Superiority',
@@ -127,25 +145,25 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'DE-PULSE',
     weapons: ['AIM-260', 'METEOR', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'],
-    desc: 'Apex 6th-Gen manual COFFIN conversion ($62.0M). Optical shell yields 0.00005m2 ghost RCS, 18.0G envelope, hitscan DE-Pulse laser, and +8% evasive dodge bonus.'
+    desc: 'Apex 6th-Gen manual COFFIN conversion ($62.0M). Optical shell yields 0.00005m2 ghost RCS, 18.0G envelope, hitscan DE-Pulse laser, and +28% evasive dodge bonus.'
   },
   'Su-37 [COFFIN] Tactical Interceptor': {
     name: 'Su-37 [COFFIN] Tactical Interceptor',
     specId: 'Su-37-COFFIN',
     roleCategory: 'COFFIN & FLAGSHIPS',
     chosenGunId: 'DE-PULSE',
-    weapons: ['R-37M', 'PL-15E', 'R-73'],
+    weapons: ['R-37M', 'PL-15E', 'PL-15E', 'PYTHON-5', 'R-73'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'RAM_NANO_COATING'],
-    desc: 'Optical shell eliminates G-LOC, granting sustained 16G post-stall turns, reduced radar signature, and +8% evasive dodge bonus.'
+    desc: 'COFFIN airframe using 9 of 10 stations (~4,060 kg • 46% NORMAL) fielding hypersonic R-37M, dual-pulse PL-15E, and rearward Python-5s.'
   },
   'F-15 S/MT [COFFIN] Strike Interceptor': {
     name: 'F-15 S/MT [COFFIN] Strike Interceptor',
     specId: 'F-15-SMT-COFFIN',
     roleCategory: 'COFFIN & FLAGSHIPS',
     chosenGunId: 'M61A2',
-    weapons: ['AIM-260', 'AGM-88G', 'AIM-120D', 'AIM-9X-2'],
+    weapons: ['GPU-5A', 'AGM-158B', 'AGM-88G', 'AIM-260'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'MADL_BATTLE_LINK'],
-    desc: 'Heavy strike superiority with armored COFFIN shell ($45.0M). 16.0G structural limit with reduced radar cross-section.'
+    desc: 'Heavy strike superiority with armored COFFIN shell ($45.0M). Uses all 10 stations (~6,870 kg • 65% HEAVY) pairing 30mm gunpod with cruise missiles.'
   },
   'DARKSTAR Hypersonic High-Altitude Penetrator': {
     name: 'DARKSTAR Hypersonic High-Altitude Penetrator',
@@ -161,35 +179,35 @@ window.TEMPLATES_EXPERIMENTAL = {
     specId: 'F-15-SMTD',
     roleCategory: 'DOGFIGHT',
     chosenGunId: 'M61A2',
-    weapons: ['AIM-120D', 'AIM-9X-2', 'AIM-9X-2'],
+    weapons: ['AIM-120D', 'AIM-120D', 'METEOR', 'AIM-9X-2', 'AIM-9X-2'],
     upgrades: ['THRUST_VECTOR', 'SUPERCRUISE_VCE'],
-    desc: 'Canard foreplanes paired with 2D rectangular TVC nozzles for exceptional pitch response.'
+    desc: 'Canard 2D TVC demonstrator using 8 of 10 stations (~3,260 kg • 36% NORMAL) deploying 12 BVR missiles and 8 Sidewinders.'
   },
   'Su-47 High-AoA Technology Demonstrator': {
     name: 'Su-47 High-AoA Technology Demonstrator',
     specId: 'Su-47',
     roleCategory: 'DOGFIGHT',
     chosenGunId: 'GSH-30-1',
-    weapons: ['R-73', 'PYTHON-5', 'AIM-120D'],
+    weapons: ['PL-15E', 'PL-15E', 'AIM-120D', 'R-73'],
     upgrades: ['THRUST_VECTOR', 'TITANIUM_COCKPIT'],
-    desc: 'Forward-swept carbon composite wings providing instantaneous 0.99 turn agility for close-in gun merges.'
+    desc: 'Forward-swept wing demonstrator using 7 of 8 stations (~3,040 kg • 41% NORMAL) delivering 0.99 turn agility and 12 BVR missiles.'
   },
   'Su-37 Thrust Vectoring Demonstrator': {
     name: 'Su-37 Thrust Vectoring Demonstrator',
     specId: 'Su-37',
     roleCategory: 'DOGFIGHT',
     chosenGunId: 'GSH-30-1',
-    weapons: ['PL-15E', 'R-73', 'R-73'],
+    weapons: ['R-37M', 'PL-15E', 'PL-15E', 'R-73'],
     upgrades: ['THRUST_VECTOR', 'EOTS_DUAL_OPTICS'],
-    desc: 'Canard foreplanes and 3D TVC nozzles optimized for post-stall 360-degree Kulbit loops.'
+    desc: 'Canard 3D TVC Kulbit loop demonstrator using 8 of 10 stations (~3,560 kg • 45% NORMAL) pairing hypersonic R-37M with dual-pulse rockets.'
   },
   'X-29A Forward-Swept Wing Demonstrator': {
     name: 'X-29A Forward-Swept Wing Demonstrator',
     specId: 'X-29A',
     roleCategory: 'DOGFIGHT',
     chosenGunId: 'M61A2',
-    weapons: ['AIM-9X-2', 'PYTHON-5'],
+    weapons: ['AIM-120D', 'AIM-9X-2', 'PYTHON-5'],
     upgrades: ['TITANIUM_COCKPIT', 'EOTS_DUAL_OPTICS'],
-    desc: 'Lightweight forward-swept technology demonstrator with extreme high-AoA pitch authority.'
+    desc: 'Lightweight forward-swept technology demonstrator using 4 of 6 stations (~1,700 kg • 40% NORMAL) with extreme high-AoA pitch authority.'
   }
 };
