@@ -14,7 +14,7 @@ window.MANUAL_BASICS = [
 
       <div class="ge-subhead">1. DEFENSE ALLOCATION ($400.0M BUDGET) &amp; FLIGHT LEAD SELECTION</div>
       <div class="ge-desc">
-        Your squadron can deploy up to <b>16 combat airframes</b> within your defense budget. Designate one aircraft as your <b>[FLIGHT LEAD]</b> <img src="icons/star.svg" width="11" height="11" alt="Lead" class="manual-inline-ico"> in the Hangar. The Lead always flies in the <b>central formation slot</b> and receives tactical upgrades tailored to airframe role and survivability.
+        Your squadron can deploy up to <b>16 combat airframes</b> within your defense budget. Designate one aircraft as your <b>[FLIGHT LEAD]</b> <img src="icons/star.svg" width="11" height="11" alt="Lead" class="manual-inline-ico"> in the Hangar. The Lead always flies in the <b>central formation slot</b> and receives tactical upgrades tailored to airframe role and survivability:
       </div>
 
       <div class="ge-grid-2">

@@ -107,6 +107,17 @@
   font-weight: 900;
 }
 
+.manual-nav-btn.special {
+  border-color: #38bdf8;
+  color: #7dd3fc;
+  background: #061e38;
+}
+
+.manual-nav-btn.special.active {
+  background: #38bdf8;
+  color: #000000;
+}
+
 .glossary-content {
   padding: 16px 20px;
   overflow-y: auto;
@@ -144,18 +155,15 @@
   margin-bottom: 4px;
 }
 
-.manual-classified-badge {
+.manual-classified-badge,
+.manual-ref-badge {
   font-size: 0.64rem;
   font-family: var(--font-mono);
   font-weight: 800;
   letter-spacing: 1.4px;
-  color: #ffb830;
-  background: linear-gradient(180deg, rgba(255, 184, 48, 0.14) 0%, rgba(180, 83, 9, 0.24) 100%);
-  border: 1px solid rgba(255, 184, 48, 0.55);
   padding: 3px 10px;
   border-radius: 3px;
   text-transform: uppercase;
-  box-shadow: 0 0 10px rgba(255, 184, 48, 0.22);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -164,15 +172,18 @@
   white-space: nowrap;
 }
 
-.manual-classified-badge::before {
-  content: '';
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  background: #ffb830;
-  transform: rotate(45deg);
-  box-shadow: 0 0 5px rgba(255, 184, 48, 0.8);
-  flex-shrink: 0;
+.manual-classified-badge {
+  color: #ffb830;
+  background: linear-gradient(180deg, rgba(255, 184, 48, 0.14) 0%, rgba(180, 83, 9, 0.24) 100%);
+  border: 1px solid rgba(255, 184, 48, 0.55);
+  box-shadow: 0 0 10px rgba(255, 184, 48, 0.22);
+}
+
+.manual-ref-badge {
+  color: #00f0ff;
+  background: linear-gradient(180deg, rgba(0, 240, 255, 0.14) 0%, rgba(2, 132, 199, 0.24) 100%);
+  border: 1px solid rgba(0, 240, 255, 0.55);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.22);
 }
 
 .ge-subhead {

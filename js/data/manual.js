@@ -6,7 +6,8 @@ window.TACTICAL_FLIGHT_MANUAL = [
   ...(window.MANUAL_BASICS || []),
   ...(window.MANUAL_SENSORS || []),
   ...(window.MANUAL_COMBAT || []),
-  ...(window.MANUAL_THEATER || [])
+  ...(window.MANUAL_THEATER || []),
+  ...(window.MANUAL_CONTROLS || [])
 ];
 
 window.initTacticalManual = function() {
@@ -24,12 +25,13 @@ window.initTacticalManual = function() {
     { id: 'ch6_weapons_salvos', label: '06: MISSILES & SALVOS' },
     { id: 'ch7_defense_ew', label: '07: EW & NOTCH DEFENSE' },
     { id: 'ch8_aces_difficulties', label: '08: ACES & THREAT TIERS' },
-    { id: 'ch9_logistics_scoring', label: '09: THEATER IADS & DEPOTS' }
+    { id: 'ch9_logistics_scoring', label: '09: THEATER IADS & SCORING' },
+    { id: 'ref_controls', label: 'CONTROLS & KEYBINDS', isSpecial: true }
   ];
 
   if (navContainer) {
     navContainer.innerHTML = chapters.map(ch => `
-      <button type="button" class="manual-nav-btn" data-target="${ch.id}">${ch.label}</button>
+      <button type="button" class="manual-nav-btn ${ch.isSpecial ? 'special' : ''}" data-target="${ch.id}">${ch.label}</button>
     `).join('');
 
     navContainer.querySelectorAll('.manual-nav-btn').forEach(btn => {
@@ -54,7 +56,8 @@ window.initTacticalManual = function() {
       ...(window.MANUAL_BASICS || []),
       ...(window.MANUAL_SENSORS || []),
       ...(window.MANUAL_COMBAT || []),
-      ...(window.MANUAL_THEATER || [])
+      ...(window.MANUAL_THEATER || []),
+      ...(window.MANUAL_CONTROLS || [])
     ];
 
     const filtered = window.TACTICAL_FLIGHT_MANUAL.filter(ch => {
@@ -68,7 +71,7 @@ window.initTacticalManual = function() {
       container.innerHTML = `
         <div style="text-align:center;padding:40px;color:#8494ab;font-family:var(--font-mono);font-size:0.80rem;">
           <b style="color:#00f0ff;">NO OPERATIONAL PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
-          <p style="margin-top:6px;font-size:0.72rem;">Try searching for terms like "Notch", "RCS", "COFFIN", "Datalink", "Satellite", or "Lead".</p>
+          <p style="margin-top:6px;font-size:0.72rem;">Try searching for terms like "Notch", "RCS", "COFFIN", "Datalink", "Satellite", "Depots", or "Controls".</p>
         </div>
       `;
       return;
@@ -76,11 +79,15 @@ window.initTacticalManual = function() {
 
     container.innerHTML = filtered.map(ch => {
       const descContent = typeof ch.getDesc === 'function' ? ch.getDesc() : ch.desc;
+      const badgeHtml = ch.isSpecial
+        ? '<span class="manual-ref-badge"><img src="icons/settings.svg" width="10" height="10" alt="Ref" class="manual-inline-ico"> FLIGHT SYSTEMS REFERENCE</span>'
+        : '<span class="manual-classified-badge">CLASSIFIED</span>';
+
       return `
         <div class="glossary-entry" id="${ch.id}">
           <div class="ge-title">
             <span>${ch.title}</span>
-            <span class="manual-classified-badge">CLASSIFIED</span>
+            ${badgeHtml}
           </div>
           <div class="ge-content">${descContent}</div>
         </div>

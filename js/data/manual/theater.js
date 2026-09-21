@@ -1,121 +1,7 @@
 /**
  * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 8 to 9
- * Dynamic keybind resolution, active threat tiers, and theater logistics.
+ * Threat tiers, adversary ace cadre, theater IADS, depots & scoring formulas.
  */
-
-function getManualAssignedKey(action) {
-  const binds = (window.Settings && window.Settings.keybinds)
-    ? window.Settings.keybinds
-    : (window.DEFAULT_KEYBINDS || {});
-  const raw = binds[action] || (window.DEFAULT_KEYBINDS ? window.DEFAULT_KEYBINDS[action] : '');
-  if (typeof window.formatKeyLabel === 'function') {
-    return window.formatKeyLabel(raw);
-  }
-  return String(raw || '').replace('Key', '').replace('Digit', '');
-}
-
-function getManualChapter9Content() {
-  const kPause = getManualAssignedKey('PAUSE_TIME');
-  const kWarp1 = getManualAssignedKey('TIME_WARP_1X');
-  const kWarp2 = getManualAssignedKey('TIME_WARP_2X');
-  const kWarp4 = getManualAssignedKey('TIME_WARP_4X');
-  const kSteerL = getManualAssignedKey('STEER_LEFT');
-  const kSteerR = getManualAssignedKey('STEER_RIGHT');
-  const kPrevU = getManualAssignedKey('PREV_UNIT');
-  const kNextU = getManualAssignedKey('NEXT_UNIT');
-  const kTarget = getManualAssignedKey('CYCLE_TARGET');
-  const kLock = getManualAssignedKey('AUTO_LOCK');
-  const kGun = getManualAssignedKey('FIRE_GUN');
-  const kPylon1 = getManualAssignedKey('FIRE_PYLON_1');
-  const kPylon9 = getManualAssignedKey('FIRE_PYLON_9');
-  const kCM = getManualAssignedKey('COUNTERMEASURES');
-  const kDive = getManualAssignedKey('DIVE');
-  const kZoom = getManualAssignedKey('ZOOM');
-  const kRTB = getManualAssignedKey('RTB');
-  const kDec = getManualAssignedKey('TOGGLE_DECLUTTER');
-  const kGnd = getManualAssignedKey('TOGGLE_GROUND');
-  const kThrotD = getManualAssignedKey('THROTTLE_DOWN');
-  const kThrotU = getManualAssignedKey('THROTTLE_UP');
-  const kCamTrk = getManualAssignedKey('CAMERA_TRACK');
-  const kCamRst = getManualAssignedKey('CAMERA_RESET');
-  const kSettings = getManualAssignedKey('OPEN_SETTINGS');
-  const kManual = getManualAssignedKey('OPEN_MANUAL');
-
-  return `
-    <div class="ge-subhead">CENTRAL INDESTRUCTIBLE AMMO DEPOTS</div>
-    <div class="ge-desc">
-      Hardened forward ammunition depots are positioned closer to the center arena (X=32km):
-      <ul style="list-style:none;padding-left:0;margin-top:6px;">
-        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Indestructible (999 HP):</b> Cannot be damaged or destroyed by any weapon.</li>
-        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Rapid Turnaround Refueling:</b> Entering sanctuary or staging near depots replenishes full gun ammunition, chaff countermeasures, and standard missiles for free!</li>
-      </ul>
-    </div>
-
-    <div class="ge-subhead">SIMULATION SPEED CONTROLS (TIME WARP)</div>
-    <div class="ge-grid-2">
-      <div class="ge-card">
-        <b style="color:#38bdf8;"><img src="icons/pause.svg" width="11" height="11" alt="Pause" class="manual-inline-ico"> PAUSE / RESUME [${kPause}]</b>
-        <div style="font-size:0.72rem;color:#cbd5e1;">Suspends combat simulation instantly. Opening modals automatically pauses.</div>
-      </div>
-      <div class="ge-card">
-        <b style="color:#00f5a0;">TIME WARP [Keys ${kWarp1}, ${kWarp2}, ${kWarp4}]</b>
-        <div style="font-size:0.72rem;color:#cbd5e1;">1X Realtime (Key ${kWarp1}), 2X High Speed (Key ${kWarp2}), or 4X Ultra-Fast (Key ${kWarp4}).</div>
-      </div>
-    </div>
-
-    <div class="ge-subhead">INTEGRATED AIR DEFENSE SYSTEMS (IADS) &amp; REBALANCED SCORING</div>
-    <div class="table-scroll-wrapper">
-      <table class="ge-table">
-        <thead>
-          <tr><th>THEATER ASSET</th><th>INTEGRITY</th><th>ENGAGEMENT RANGE</th><th>VICTORY POINTS (VP)</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><b>Command Bunker</b></td><td>24 HP</td><td>Passive Target</td><td><b>+800 VP</b> (Requires bunker penetrators)</td></tr>
-          <tr><td><b>Ace Fighter Kill</b></td><td>5&ndash;7 HP</td><td>Superfighter <img src="icons/diamond.svg" width="10" height="10" alt="Ace" class="manual-inline-ico"></td><td><b>Base Kill VP + 850 VP Bounty</b> (Elite bounty)</td></tr>
-          <tr><td><b>Standard Combat Aircraft</b></td><td>3&ndash;6 HP</td><td>Fighter / Bomber</td><td><b>150 + (Cost &times; 10) VP</b> (e.g. F-16: 285 VP, F-22: 630 VP; Lead: 1.5&times;)</td></tr>
-          <tr><td><b>Combat Drone / UCAV</b></td><td>1&ndash;4 HP</td><td>Unmanned</td><td><b>80 + (Cost &times; 12) VP</b> (e.g. MQ-99: 122 VP, S-70: 248 VP)</td></tr>
-          <tr><td><b>S-400 / Patriot SAM</b></td><td>8 HP</td><td>52.0 km reach</td><td><b>+300 VP</b> (Requires active Radar Array to fire)</td></tr>
-          <tr><td><b>Early Warning Radar</b></td><td>5 HP</td><td>65.0 km reach</td><td><b>+250 VP</b> (Destruction blinds long-range SAMs)</td></tr>
-          <tr><td><b>EW Jammer Station</b></td><td>6 HP</td><td>36.0 km umbrella</td><td><b>+250 VP</b> (Degrades enemy radar locks by 50%)</td></tr>
-          <tr><td><b>Pantsir / Phalanx CIWS</b></td><td>6 HP</td><td>16.0 km defense</td><td><b>+200 VP</b> (+40 VP per missile intercept)</td></tr>
-          <tr><td><b style="color:#f97316;">Reckless Bogey Engagement</b></td><td>Track [?]</td><td>Unverified</td><td><b style="color:#f97316;">-600 VP Penalty</b> (Firing on unverified track [BOGEY ?] prior to positive ID)</td></tr>
-          <tr><td><b style="color:#f97316;">Civilian Air Strike</b></td><td>6 HP</td><td>Airliner</td><td><b style="color:#f97316;">-500 VP Penalty</b> (Striking neutral commercial traffic)</td></tr>
-          <tr><td><b style="color:#ff3366;">Civilian Shootdown</b></td><td>6 HP</td><td>Airliner</td><td><b style="color:#ff3366;">-2000 VP Penalty</b> (Catastrophic RoE violation)</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="ge-subhead">TACTICAL KEYBINDINGS REFERENCE (CURRENTLY ASSIGNED)</div>
-    <div class="table-scroll-wrapper">
-      <table class="ge-table">
-        <thead>
-          <tr><th>ACTION</th><th>ASSIGNED KEY</th><th>FUNCTION</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><b>Steer Left / Right</b></td><td><span class="manual-key-badge">${kSteerL}</span> / <span class="manual-key-badge">${kSteerR}</span></td><td>Bank aircraft heading vector</td></tr>
-          <tr><td><b>Cycle Active Unit</b></td><td><span class="manual-key-badge">${kPrevU}</span> / <span class="manual-key-badge">${kNextU}</span></td><td>Select previous / next aircraft in squadron</td></tr>
-          <tr><td><b>Cycle Target</b></td><td><span class="manual-key-badge">${kTarget}</span></td><td>Cycle target lock across detected hostile contacts</td></tr>
-          <tr><td><b>Auto-Lock Nearest</b></td><td><span class="manual-key-badge">${kLock}</span></td><td>Search forward radar cone and lock nearest threat</td></tr>
-          <tr><td><b>Fire Autocannon</b></td><td><span class="manual-key-badge">${kGun}</span></td><td>Fire manual strafe burst with active cannon</td></tr>
-          <tr><td><b>Fire Pylons 1&ndash;9</b></td><td><span class="manual-key-badge">${kPylon1}</span> through <span class="manual-key-badge">${kPylon9}</span></td><td>Discharge weapon pack at station index</td></tr>
-          <tr><td><b>Deploy Countermeasures</b></td><td><span class="manual-key-badge">${kCM}</span></td><td>Dispense emergency chaff decoy salvo</td></tr>
-          <tr><td><b>Kinetic Dive</b></td><td><span class="manual-key-badge">${kDive}</span></td><td>Drop 7,500 ft altitude to regain Mach speed</td></tr>
-          <tr><td><b>Zoom Climb</b></td><td><span class="manual-key-badge">${kZoom}</span></td><td>Climb 8,500 ft into high-altitude perch</td></tr>
-          <tr><td><b>Toggle RTB Re-Arm</b></td><td><span class="manual-key-badge">${kRTB}</span></td><td>Order aircraft to return to base or cancel reload</td></tr>
-          <tr><td><b>Toggle Declutter</b></td><td><span class="manual-key-badge">${kDec}</span></td><td>Toggle radar declutter mode on/off</td></tr>
-          <tr><td><b>Toggle Ground Targets</b></td><td><span class="manual-key-badge">${kGnd}</span></td><td>Toggle ground and surface installation markers</td></tr>
-          <tr><td><b>Throttle Adjust</b></td><td><span class="manual-key-badge">${kThrotD}</span> and <span class="manual-key-badge">${kThrotU}</span></td><td>Decrease / increase throttle power</td></tr>
-          <tr><td><b>Pause / Resume</b></td><td><span class="manual-key-badge"><img src="icons/pause.svg" width="10" height="10" alt="Pause" class="manual-inline-ico"> ${kPause}</span></td><td>Toggle simulation pause overlay</td></tr>
-          <tr><td><b>Time Warp 1X / 2X / 4X</b></td><td><span class="manual-key-badge">${kWarp1}</span>, <span class="manual-key-badge">${kWarp2}</span>, <span class="manual-key-badge">${kWarp4}</span></td><td>Set simulation speed multiplier (1X, 2X, 4X)</td></tr>
-          <tr><td><b>Track Camera</b></td><td><span class="manual-key-badge">${kCamTrk}</span></td><td>Lock radar camera tracking on active aircraft</td></tr>
-          <tr><td><b>Reset Camera</b></td><td><span class="manual-key-badge">${kCamRst}</span></td><td>Restore default panoramic theater view</td></tr>
-          <tr><td><b>Open Settings</b></td><td><span class="manual-key-badge"><img src="icons/settings.svg" width="11" height="11" alt="Settings" class="manual-inline-ico"> ${kSettings}</span></td><td>Configure audio volume, radar zoom, and keybinds</td></tr>
-          <tr><td><b>Open Flight Manual</b></td><td><span class="manual-key-badge"><img src="icons/manual.svg" width="11" height="11" alt="Manual" class="manual-inline-ico"> ${kManual}</span></td><td>Open complete tactical manual and combat codex</td></tr>
-        </tbody>
-      </table>
-    </div>
-  `;
-}
 
 window.MANUAL_THEATER = [
   {
@@ -190,10 +76,108 @@ window.MANUAL_THEATER = [
   },
   {
     id: 'ch9_logistics_scoring',
-    title: 'SECTION 09: THEATER IADS, INDESTRUCTIBLE DEPOTS, SCORING & KEYBINDS',
-    getDesc: getManualChapter9Content,
-    get desc() {
-      return getManualChapter9Content();
-    }
+    title: 'SECTION 09: THEATER IADS, INDESTRUCTIBLE DEPOTS, LOGISTICS & SCORING',
+    desc: `
+      <div class="ge-desc">
+        The 150 km &times; 100 km theater features an interconnected network of Integrated Air Defense Systems (IADS), hardened logistics hubs, and balanced operational mission debrief scoring formulas.
+      </div>
+
+      <div class="ge-subhead">1. INTEGRATED AIR DEFENSE SYSTEM (IADS) ARCHITECTURE</div>
+      <div class="ge-desc">
+        Surface installations operate in mutual electronic synergy:
+      </div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>INSTALLATION</th><th>HP</th><th>ENVELOPE</th><th>TACTICAL INTERACTION &amp; SEAD PROCEDURE</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#00f0ff;font-weight:800;">S-400 / Patriot Battery</td>
+              <td>8 HP</td>
+              <td>52.0 km</td>
+              <td>Fires Mach 4.8 radar-guided SAM volleys. <b>Requires an active Early Warning Radar Array</b> to detect and track targets; destroying the radar blinds the battery!</td>
+            </tr>
+            <tr>
+              <td style="color:#00f5a0;font-weight:800;">Early Warning Radar Array</td>
+              <td>5 HP</td>
+              <td>65.0 km</td>
+              <td>Provides high-altitude target cueing to SAM batteries. Vulnerable to anti-radiation missiles (AGM-88G inflicts 3&times; damage).</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">Pantsir / Phalanx CIWS</td>
+              <td>6 HP</td>
+              <td>16.0 km</td>
+              <td>Autonomous rapid-fire close-in defense. Intercepts incoming anti-radiation and cruise missiles (+40 VP per missile intercept).</td>
+            </tr>
+            <tr>
+              <td style="color:#c084fc;font-weight:800;">EW Jammer Station</td>
+              <td>6 HP</td>
+              <td>36.0 km</td>
+              <td>Projects a high-power microwave jamming umbrella that degrades hostile radar locks and reduces detection ranges by 50%.</td>
+            </tr>
+            <tr>
+              <td style="color:#f97316;font-weight:800;">Subterranean Command Bunker</td>
+              <td>24 HP</td>
+              <td>HQ</td>
+              <td>Heavily fortified subterranean command nexus. <b>Immune to standard air-to-air missiles and light autocannons</b>; requires specialized bunker penetrators (AGM-158B, Kinzhal, GBU-39 SDB).</td>
+            </tr>
+            <tr>
+              <td style="color:#ffb830;font-weight:800;">Fuel Farm &amp; Depots</td>
+              <td>8 HP</td>
+              <td>Strategic</td>
+              <td>Stores strategic theater fuel reserves. Destroying enemy fuel farms awards +200 VP and weakens theater logistics.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ge-subhead">2. INDESTRUCTIBLE FORWARD AMMUNITION DEPOTS (X=32km)</div>
+      <div class="ge-desc">
+        Hardened underground logistics repositories are positioned near the center combat grid (X = 32 km for Blue, X = 118 km for Red):
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Indestructible (999 HP):</b> Cannot be damaged or eliminated by any bomb, missile, or orbital strike.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Instant Turnaround Re-Arming:</b> Crossing into sanctuary or staging near the forward depot replenishes all spent cannon ammunition, defensive chaff charges, and standard missile racks for free!</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Fast RTB Routing:</b> Aircraft ordered to Return to Base (RTB) automatically navigate to depot sanctuary corridors at maximum sprint speed.</li>
+        </ul>
+      </div>
+
+      <div class="ge-subhead">3. VICTORY POINTS (VP) &amp; MISSION SCORING MATH</div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>TACTICAL EVENT</th><th>BASE VP REWARD</th><th>FORMULA &amp; OPERATIONAL NOTES</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Command Bunker Destroyed</b></td><td style="color:#00f0ff;">+800 VP</td><td>Primary strategic victory condition.</td></tr>
+            <tr><td><b>Ace Pilot Bounty</b></td><td style="color:#ffd700;">+850 VP</td><td>Added on top of airframe kill points.</td></tr>
+            <tr><td><b>Combat Aircraft Kill</b></td><td style="color:#00f5a0;">150 + (Cost &times; 10) VP</td><td>F-16: 285 VP &bull; F-22: 630 VP (Flight Lead: 1.5&times;).</td></tr>
+            <tr><td><b>UCAV / Drone Kill</b></td><td style="color:#00f5a0;">80 + (Cost &times; 12) VP</td><td>MQ-99: 122 VP &bull; S-70: 248 VP.</td></tr>
+            <tr><td><b>SAM Battery Destroyed</b></td><td style="color:#38bdf8;">+300 VP</td><td>Neutralizes long-range surface threats.</td></tr>
+            <tr><td><b>Radar Array Destroyed</b></td><td style="color:#38bdf8;">+250 VP</td><td>Blinds long-range SAM guidance.</td></tr>
+            <tr><td><b>EW Jammer Neutralized</b></td><td style="color:#38bdf8;">+250 VP</td><td>Clears sector microwave radar noise.</td></tr>
+            <tr><td><b>CIWS Battery Destroyed</b></td><td style="color:#38bdf8;">+200 VP</td><td>Removes point-defense missile interceptors.</td></tr>
+            <tr><td><b>CIWS Missile Intercept</b></td><td style="color:#38bdf8;">+40 VP</td><td>Awarded per missile intercepted.</td></tr>
+            <tr><td><b style="color:#f97316;">Reckless Bogey Engagement</b></td><td style="color:#f97316;">-600 VP</td><td>Deducted immediately upon firing on unverified bogeys.</td></tr>
+            <tr><td><b style="color:#f97316;">Civilian Air Strike</b></td><td style="color:#f97316;">-500 VP</td><td>Deducted per non-lethal strike on civilian flights.</td></tr>
+            <tr><td><b style="color:#ff3366;">Civilian Shootdown</b></td><td style="color:#ff3366;">-2000 VP</td><td>Catastrophic penalty for destroying an airliner.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ge-subhead">4. TIME BONUS &amp; MULTIPLIER STACKING</div>
+      <div class="ge-desc">
+        Mission score rewards tactical efficiency and high-threat operations:
+      </div>
+      <div class="ge-formula-card">
+        <span style="color:#94a3b8;font-size:0.62rem;">FINAL SCORE FORMULATION:</span>
+        <div class="ge-formula-code">Final Score = (Base Combat VP + Speed Time Bonus) &times; (Difficulty Multiplier &times; Budget Multiplier)</div>
+      </div>
+      <div class="ge-callout">
+        <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Speed Time Bonus:</b> Par time is <b>360 seconds (6:00)</b>. For successful sorties completed under par time, every second remaining awards <b>+2.5 VP</b>.<br>
+        <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Difficulty Multiplier:</b> Scales from <b>0.50&times;</b> (Permissive Sector) up to <b>3.20&times;</b> (Fortress Airspace).<br>
+        <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Budget Multiplier:</b> Austerity budgets award up to <b>1.75&times;</b>; high funding budgets scale down to <b>0.60&times;</b>.
+      </div>
+    `
   }
 ];
