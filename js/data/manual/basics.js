@@ -14,44 +14,44 @@ window.MANUAL_BASICS = [
 
       <div class="ge-subhead">1. DEFENSE ALLOCATION ($400.0M BUDGET) &amp; FLIGHT LEAD SELECTION</div>
       <div class="ge-desc">
-        Your squadron can deploy up to <b>16 combat airframes</b> within your defense budget. Designate one aircraft as your <b>[FLIGHT LEAD]</b> in the Hangar. The Lead always flies in the <b>central formation slot</b> and receives tactical upgrades tailored to airframe role and survivability.
+        Your squadron can deploy up to <b>16 combat airframes</b> within your defense budget. Designate one aircraft as your <b>[FLIGHT LEAD]</b> <img src="icons/star.svg" width="11" height="11" alt="Lead" class="manual-inline-ico"> in the Hangar. The Lead always flies in the <b>central formation slot</b> and receives tactical upgrades tailored to airframe role and survivability.
       </div>
 
       <div class="ge-grid-2">
         <div class="ge-card">
           <b style="color:#00f0ff;">STEALTH LEAD SUITE</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            &bull; Conformal RAM edge-treatment cuts 90&deg; beam radar spike by <b>50%</b>.<br>
-            &bull; <b>+15%</b> missile evasion via low-observable seeker spoofing.<br>
-            &bull; <b>+15.0 km</b> active radar reach via high-power GaN AESA transmitters.<br>
-            &bull; <b>+1 HP</b> structural armor bulkhead reinforcement.
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> Conformal RAM edge-treatment cuts 90&deg; beam radar spike by <b>50%</b>.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+15%</b> missile evasion via low-observable seeker spoofing.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+15.0 km</b> active radar reach via high-power GaN AESA transmitters.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+1 HP</b> structural armor bulkhead reinforcement.
           </div>
         </div>
         <div class="ge-card">
           <b style="color:#00f5a0;">AIR SUPERIORITY LEAD SUITE</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            &bull; <b>-40%</b> clean airframe radar cross-section via leading-edge coatings.<br>
-            &bull; Pressurized cockpit environmental systems delay pilot G-fatigue by <b>50%</b>.<br>
-            &bull; <b>+18%</b> defensive break-turn evasion &amp; <b>+12%</b> missile P_k accuracy.<br>
-            &bull; <b>+2 HP</b> titanium-alloy framework reinforcement.
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>-40%</b> clean airframe radar cross-section via leading-edge coatings.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> Pressurized cockpit environmental systems delay pilot G-fatigue by <b>50%</b>.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+18%</b> defensive break-turn evasion &amp; <b>+12%</b> missile P_k accuracy.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+2 HP</b> titanium-alloy framework reinforcement.
           </div>
         </div>
         <div class="ge-card">
           <b style="color:#38bdf8;">MULTIROLE LEAD SUITE</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            &bull; <b>+2 Max HP</b> composite armor durability.<br>
-            &bull; Optimized fly-by-wire gain provides <b>+20%</b> instantaneous turn authority.<br>
-            &bull; <b>-40%</b> base turnaround duration for accelerated replenishment.<br>
-            &bull; <b>+18%</b> missile evasion &amp; <b>+3</b> emergency chaff charges.
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+2 Max HP</b> composite armor durability.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> Optimized fly-by-wire gain provides <b>+20%</b> instantaneous turn authority.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>-40%</b> base turnaround duration for accelerated replenishment.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+18%</b> missile evasion &amp; <b>+3</b> emergency chaff charges.
           </div>
         </div>
         <div class="ge-card">
           <b style="color:#f97316;">ARMORED STRIKE LEAD SUITE</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            &bull; <b>+3 Max HP</b> armor with welded titanium cockpit bathtub.<br>
-            &bull; <b>-1 Damage</b> structural reduction per missile impact.<br>
-            &bull; <b>60%</b> cannon fire deflection against enemy close-in strafes.<br>
-            &bull; <b>-40%</b> ordnance drag penalty elimination.
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+3 Max HP</b> armor with welded titanium cockpit bathtub.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>-1 Damage</b> structural reduction per missile impact.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>60%</b> cannon fire deflection against enemy close-in strafes.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>-40%</b> ordnance drag penalty elimination.
           </div>
         </div>
       </div>
@@ -64,21 +64,21 @@ window.MANUAL_BASICS = [
         <div class="ge-card" style="border-left:3px solid #00f5a0;">
           <b style="color:#00f5a0;">BALLISTIC ROTARY CANNONS (M61A2, GAU-22, BK-27)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            &bull; <b>Zero Thermal Bloom:</b> Firing draws no generator power and creates no thermal spike, preserving F-22 and F-35 VLO stealth.<br>
-            &bull; <b>Wide Snapshot Cone (48&deg;&ndash;55&deg;):</b> Massive high-G boresight authority allows scoring snapshot deflection hits during hard turns.<br>
-            &bull; <b>100% All-Weather Penetration:</b> Tungsten shells pierce moisture clouds with zero damage degradation.<br>
-            &bull; <b>Kinetic Concussion:</b> Shell impacts induce pilot stress (+30%) and drain target kinetic energy (-15%), setting up follow-up missile kills.<br>
-            &bull; <b>Fast 1.0s Cooling Cycle:</b> Rapid recharge with over 20 bursts of ammo.
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Zero Thermal Bloom:</b> Firing draws no generator power and creates no thermal spike, preserving F-22 and F-35 VLO stealth.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Wide Snapshot Cone (48&deg;&ndash;55&deg;):</b> Massive high-G boresight authority allows scoring snapshot deflection hits during hard turns.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>100% All-Weather Penetration:</b> Tungsten shells pierce moisture clouds with zero damage degradation.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Kinetic Concussion:</b> Shell impacts induce pilot stress (+30%) and drain target kinetic energy (-15%), setting up follow-up missile kills.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Fast 1.0s Cooling Cycle:</b> Rapid recharge with over 20 bursts of ammo.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
           <b style="color:#00f0ff;">DIRECTED ENERGY WEAPONS (DE-PULSE, PLSL, EML)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            &bull; <b>Speed-of-Light Hitscan:</b> Instantaneous thermal beam impact out to 7.5&ndash;15.0 km with zero projectile travel time.<br>
-            &bull; <b>Narrow Pencil Beam (25&deg;&ndash;28&deg;):</b> Demands precise nose-pointing alignment; maneuvering bandits easily evade off-angle bursts.<br>
-            &bull; <b>Heavy Thermal Bloom:</b> 80 kW capacitor discharge heats the fuselage (+60% IR signature for 4s), compromising stealth against enemy seekers.<br>
-            &bull; <b>Scattered in Clouds:</b> Cloud vapor scatters optical beams, inflicting a 75% damage penalty.<br>
-            &bull; <b>2.5s Recharge Cooldown:</b> Overheated capacitors disable bursts for 2.5s with limited pulse reserves.
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Speed-of-Light Hitscan:</b> Instantaneous thermal beam impact out to 7.5&ndash;15.0 km with zero projectile travel time.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Narrow Pencil Beam (25&deg;&ndash;28&deg;):</b> Demands precise nose-pointing alignment; maneuvering bandits easily evade off-angle bursts.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Heavy Thermal Bloom:</b> 80 kW capacitor discharge heats the fuselage (+60% IR signature for 4s), compromising stealth against enemy seekers.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Scattered in Clouds:</b> Cloud vapor scatters optical beams, inflicting a 75% damage penalty.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>2.5s Recharge Cooldown:</b> Overheated capacitors disable bursts for 2.5s with limited pulse reserves.
           </div>
         </div>
       </div>
@@ -146,13 +146,13 @@ window.MANUAL_BASICS = [
       <div class="ge-subhead">KINETIC ENERGY CONVERSIONS: DIVE &amp; ZOOM</div>
       <div class="ge-grid-2">
         <div class="ge-card">
-          <b style="color:#38bdf8;">KINETIC DIVE [Key X]</b>
+          <b style="color:#38bdf8;">KINETIC DIVE <span class="manual-key-badge">[Key X]</span></b>
           <div style="font-size:0.74rem;color:#cbd5e1;line-height:1.5;">
             Trades <b>7,500 ft</b> of altitude to gain <b>+0.32 Mach</b> in escape velocity. Recommended for defensive disengagement from long-range missile envelopes and escaping high-G merges. Costs 0.40 TOK.
           </div>
         </div>
         <div class="ge-card">
-          <b style="color:#00f5a0;">ZOOM CLIMB [Key Z]</b>
+          <b style="color:#00f5a0;">ZOOM CLIMB <span class="manual-key-badge">[Key Z]</span></b>
           <div style="font-size:0.74rem;color:#cbd5e1;line-height:1.5;">
             Converts kinetic airspeed (<b>-0.28 Mach</b>) into <b>+8,500 ft</b> of altitude perch (FL380&ndash;FL580), where thinner air expands radar line-of-sight and missile kinematic launch range. Requires at least Mach 0.45. Costs 0.40 TOK.
           </div>
@@ -232,10 +232,10 @@ window.MANUAL_BASICS = [
       <div class="ge-subhead">COFFIN SYNTHETIC VISION (MANUAL FLIGHT INTERFACE)</div>
       <div class="ge-desc">
         <b>COFFIN (Connection For Flight Interface)</b> airframes replace the traditional transparent canopy with an armored enclosed cockpit and spherical digital camera feeds:
-        <ul>
-          <li><b>Direct Manual Flight:</b> Piloted directly by the user with instantaneous electro-neural control responsiveness (+20% roll/pitch rate).</li>
-          <li><b>Zero Pilot Physiological Limits:</b> Enclosed pressurized crew capsule eliminates G-LOC blackout, allowing sustained <b>16G&ndash;20G</b> structural turns.</li>
-          <li><b>+24% to +30% Neural Evasive Dodge:</b> High-bandwidth neural flight controls and 360-degree sensor fusion provide an innate <b>+24% to +30% missile evasion bonus</b> with strong resistance against multi-missile salvo saturation.</li>
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Direct Manual Flight:</b> Piloted directly by the user with instantaneous electro-neural control responsiveness (+20% roll/pitch rate).</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Zero Pilot Physiological Limits:</b> Enclosed pressurized crew capsule eliminates G-LOC blackout, allowing sustained <b>16G&ndash;20G</b> structural turns.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+24% to +30% Neural Evasive Dodge:</b> High-bandwidth neural flight controls and 360-degree sensor fusion provide an innate <b>+24% to +30% missile evasion bonus</b> with strong resistance against multi-missile salvo saturation.</li>
         </ul>
       </div>
     `

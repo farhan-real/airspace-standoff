@@ -45,16 +45,16 @@ function getManualChapter9Content() {
     <div class="ge-subhead">CENTRAL INDESTRUCTIBLE AMMO DEPOTS</div>
     <div class="ge-desc">
       Hardened forward ammunition depots are positioned closer to the center arena (X=32km):
-      <ul>
-        <li><b>Indestructible (999 HP):</b> Cannot be damaged or destroyed by any weapon.</li>
-        <li><b>Rapid Turnaround Refueling:</b> Entering sanctuary or staging near depots replenishes full gun ammunition, chaff countermeasures, and standard missiles for free!</li>
+      <ul style="list-style:none;padding-left:0;margin-top:6px;">
+        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Indestructible (999 HP):</b> Cannot be damaged or destroyed by any weapon.</li>
+        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Rapid Turnaround Refueling:</b> Entering sanctuary or staging near depots replenishes full gun ammunition, chaff countermeasures, and standard missiles for free!</li>
       </ul>
     </div>
 
     <div class="ge-subhead">SIMULATION SPEED CONTROLS (TIME WARP)</div>
     <div class="ge-grid-2">
       <div class="ge-card">
-        <b style="color:#38bdf8;">PAUSE / RESUME [${kPause}]</b>
+        <b style="color:#38bdf8;"><img src="icons/pause.svg" width="11" height="11" alt="Pause" class="manual-inline-ico"> PAUSE / RESUME [${kPause}]</b>
         <div style="font-size:0.72rem;color:#cbd5e1;">Suspends combat simulation instantly. Opening modals automatically pauses.</div>
       </div>
       <div class="ge-card">
@@ -71,7 +71,7 @@ function getManualChapter9Content() {
         </thead>
         <tbody>
           <tr><td><b>Command Bunker</b></td><td>24 HP</td><td>Passive Target</td><td><b>+800 VP</b> (Requires bunker penetrators)</td></tr>
-          <tr><td><b>Ace Fighter Kill</b></td><td>5&ndash;7 HP</td><td>Superfighter</td><td><b>Base Kill VP + 850 VP Bounty</b> (Elite bounty)</td></tr>
+          <tr><td><b>Ace Fighter Kill</b></td><td>5&ndash;7 HP</td><td>Superfighter <img src="icons/diamond.svg" width="10" height="10" alt="Ace" class="manual-inline-ico"></td><td><b>Base Kill VP + 850 VP Bounty</b> (Elite bounty)</td></tr>
           <tr><td><b>Standard Combat Aircraft</b></td><td>3&ndash;6 HP</td><td>Fighter / Bomber</td><td><b>150 + (Cost &times; 10) VP</b> (e.g. F-16: 285 VP, F-22: 630 VP; Lead: 1.5&times;)</td></tr>
           <tr><td><b>Combat Drone / UCAV</b></td><td>1&ndash;4 HP</td><td>Unmanned</td><td><b>80 + (Cost &times; 12) VP</b> (e.g. MQ-99: 122 VP, S-70: 248 VP)</td></tr>
           <tr><td><b>S-400 / Patriot SAM</b></td><td>8 HP</td><td>52.0 km reach</td><td><b>+300 VP</b> (Requires active Radar Array to fire)</td></tr>
@@ -92,25 +92,25 @@ function getManualChapter9Content() {
           <tr><th>ACTION</th><th>ASSIGNED KEY</th><th>FUNCTION</th></tr>
         </thead>
         <tbody>
-          <tr><td><b>Steer Left / Right</b></td><td>${kSteerL} / ${kSteerR}</td><td>Bank aircraft heading vector</td></tr>
-          <tr><td><b>Cycle Active Unit</b></td><td>${kPrevU} / ${kNextU}</td><td>Select previous / next aircraft in squadron</td></tr>
-          <tr><td><b>Cycle Target</b></td><td>${kTarget}</td><td>Cycle target lock across detected hostile contacts</td></tr>
-          <tr><td><b>Auto-Lock Nearest</b></td><td>${kLock}</td><td>Search forward radar cone and lock nearest threat</td></tr>
-          <tr><td><b>Fire Autocannon</b></td><td>${kGun}</td><td>Fire manual strafe burst with active cannon</td></tr>
-          <tr><td><b>Fire Pylons 1&ndash;9</b></td><td>${kPylon1} through ${kPylon9}</td><td>Discharge weapon pack at station index</td></tr>
-          <tr><td><b>Deploy Countermeasures</b></td><td>${kCM}</td><td>Dispense emergency chaff decoy salvo</td></tr>
-          <tr><td><b>Kinetic Dive</b></td><td>${kDive}</td><td>Drop 7,500 ft altitude to regain Mach speed</td></tr>
-          <tr><td><b>Zoom Climb</b></td><td>${kZoom}</td><td>Climb 8,500 ft into high-altitude perch</td></tr>
-          <tr><td><b>Toggle RTB Re-Arm</b></td><td>${kRTB}</td><td>Order aircraft to return to base or cancel reload</td></tr>
-          <tr><td><b>Toggle Declutter</b></td><td>${kDec}</td><td>Toggle radar declutter mode on/off</td></tr>
-          <tr><td><b>Toggle Ground Targets</b></td><td>${kGnd}</td><td>Toggle ground and surface installation markers</td></tr>
-          <tr><td><b>Throttle Adjust</b></td><td>${kThrotD} and ${kThrotU}</td><td>Decrease / increase throttle power</td></tr>
-          <tr><td><b>Pause / Resume</b></td><td>${kPause}</td><td>Toggle simulation pause overlay</td></tr>
-          <tr><td><b>Time Warp 1X / 2X / 4X</b></td><td>${kWarp1}, ${kWarp2}, ${kWarp4}</td><td>Set simulation speed multiplier (1X, 2X, 4X)</td></tr>
-          <tr><td><b>Track Camera</b></td><td>${kCamTrk}</td><td>Lock radar camera tracking on active aircraft</td></tr>
-          <tr><td><b>Reset Camera</b></td><td>${kCamRst}</td><td>Restore default panoramic theater view</td></tr>
-          <tr><td><b>Open Settings</b></td><td>${kSettings}</td><td>Configure audio volume, radar zoom, and keybinds</td></tr>
-          <tr><td><b>Open Flight Manual</b></td><td>${kManual}</td><td>Open complete tactical manual and combat codex</td></tr>
+          <tr><td><b>Steer Left / Right</b></td><td><span class="manual-key-badge">${kSteerL}</span> / <span class="manual-key-badge">${kSteerR}</span></td><td>Bank aircraft heading vector</td></tr>
+          <tr><td><b>Cycle Active Unit</b></td><td><span class="manual-key-badge">${kPrevU}</span> / <span class="manual-key-badge">${kNextU}</span></td><td>Select previous / next aircraft in squadron</td></tr>
+          <tr><td><b>Cycle Target</b></td><td><span class="manual-key-badge">${kTarget}</span></td><td>Cycle target lock across detected hostile contacts</td></tr>
+          <tr><td><b>Auto-Lock Nearest</b></td><td><span class="manual-key-badge">${kLock}</span></td><td>Search forward radar cone and lock nearest threat</td></tr>
+          <tr><td><b>Fire Autocannon</b></td><td><span class="manual-key-badge">${kGun}</span></td><td>Fire manual strafe burst with active cannon</td></tr>
+          <tr><td><b>Fire Pylons 1&ndash;9</b></td><td><span class="manual-key-badge">${kPylon1}</span> through <span class="manual-key-badge">${kPylon9}</span></td><td>Discharge weapon pack at station index</td></tr>
+          <tr><td><b>Deploy Countermeasures</b></td><td><span class="manual-key-badge">${kCM}</span></td><td>Dispense emergency chaff decoy salvo</td></tr>
+          <tr><td><b>Kinetic Dive</b></td><td><span class="manual-key-badge">${kDive}</span></td><td>Drop 7,500 ft altitude to regain Mach speed</td></tr>
+          <tr><td><b>Zoom Climb</b></td><td><span class="manual-key-badge">${kZoom}</span></td><td>Climb 8,500 ft into high-altitude perch</td></tr>
+          <tr><td><b>Toggle RTB Re-Arm</b></td><td><span class="manual-key-badge">${kRTB}</span></td><td>Order aircraft to return to base or cancel reload</td></tr>
+          <tr><td><b>Toggle Declutter</b></td><td><span class="manual-key-badge">${kDec}</span></td><td>Toggle radar declutter mode on/off</td></tr>
+          <tr><td><b>Toggle Ground Targets</b></td><td><span class="manual-key-badge">${kGnd}</span></td><td>Toggle ground and surface installation markers</td></tr>
+          <tr><td><b>Throttle Adjust</b></td><td><span class="manual-key-badge">${kThrotD}</span> and <span class="manual-key-badge">${kThrotU}</span></td><td>Decrease / increase throttle power</td></tr>
+          <tr><td><b>Pause / Resume</b></td><td><span class="manual-key-badge"><img src="icons/pause.svg" width="10" height="10" alt="Pause" class="manual-inline-ico"> ${kPause}</span></td><td>Toggle simulation pause overlay</td></tr>
+          <tr><td><b>Time Warp 1X / 2X / 4X</b></td><td><span class="manual-key-badge">${kWarp1}</span>, <span class="manual-key-badge">${kWarp2}</span>, <span class="manual-key-badge">${kWarp4}</span></td><td>Set simulation speed multiplier (1X, 2X, 4X)</td></tr>
+          <tr><td><b>Track Camera</b></td><td><span class="manual-key-badge">${kCamTrk}</span></td><td>Lock radar camera tracking on active aircraft</td></tr>
+          <tr><td><b>Reset Camera</b></td><td><span class="manual-key-badge">${kCamRst}</span></td><td>Restore default panoramic theater view</td></tr>
+          <tr><td><b>Open Settings</b></td><td><span class="manual-key-badge"><img src="icons/settings.svg" width="11" height="11" alt="Settings" class="manual-inline-ico"> ${kSettings}</span></td><td>Configure audio volume, radar zoom, and keybinds</td></tr>
+          <tr><td><b>Open Flight Manual</b></td><td><span class="manual-key-badge"><img src="icons/manual.svg" width="11" height="11" alt="Manual" class="manual-inline-ico"> ${kManual}</span></td><td>Open complete tactical manual and combat codex</td></tr>
         </tbody>
       </table>
     </div>
@@ -124,13 +124,13 @@ window.MANUAL_THEATER = [
     desc: `
       <div class="ge-subhead">DESIGNATED ACE FIGHTERS</div>
       <div class="ge-desc">
-        Hostile formations deploy legendary Ace pilots (e.g. <b>Yellow 13, Pixy, Mihaly</b>) flying specialized air superiority fighters:
-        <ul>
-          <li><b>Realistic Flight Kinematics:</b> Aces maneuver with aerodynamic bank rates (0.70 to 1.15 rad/s) and bleed kinetic energy during prolonged hard turns rather than snapping erratically.</li>
-          <li><b>Airframe Scaling:</b> In Contested Airspace (VETERAN / Normal), Aces fly top-tier 4.5-gen fighters (Su-35S, Su-37, Eurofighter, Rafale, F-15EX). Experimental superfighters (ADF-11F, CFA-44, Darkstar) are reserved for high-threat combat zones.</li>
-          <li><b>Standard vs. Advanced Movement:</b> On standard difficulties (Cadet through Ace), all hostile aircraft and flight leads employ standard aerodynamic break turns only. Doppler notching and advanced 3D TVC maneuvers are exclusively reserved for very high difficulties (Air Denial Zone and Fortress Airspace).</li>
-          <li><b>Human Blunder Margins:</b> Aces make human errors (12% to 65% blunder rate based on difficulty). Under pressure or in multi-missile salvos, their defense fails and allows clean hits.</li>
-          <li><b>High-Value Bounty:</b> Eliminating an Ace fighter awards an immediate <b>+850 Victory Point bounty</b>!</li>
+        Hostile formations deploy legendary Ace pilots <img src="icons/diamond.svg" width="11" height="11" alt="Ace" class="manual-inline-ico"> (e.g. <b>Yellow 13, Pixy, Mihaly</b>) flying specialized air superiority fighters:
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Realistic Flight Kinematics:</b> Aces maneuver with aerodynamic bank rates (0.70 to 1.15 rad/s) and bleed kinetic energy during prolonged hard turns rather than snapping erratically.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Airframe Scaling:</b> In Contested Airspace (VETERAN / Normal), Aces fly top-tier 4.5-gen fighters (Su-35S, Su-37, Eurofighter, Rafale, F-15EX). Experimental superfighters (ADF-11F, CFA-44, Darkstar) are reserved for high-threat combat zones.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Standard vs. Advanced Movement:</b> On standard difficulties (Cadet through Ace), all hostile aircraft and flight leads employ standard aerodynamic break turns only. Doppler notching and advanced 3D TVC maneuvers are exclusively reserved for very high difficulties (Air Denial Zone and Fortress Airspace).</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Human Blunder Margins:</b> Aces make human errors (12% to 65% blunder rate based on difficulty). Under pressure or in multi-missile salvos, their defense fails and allows clean hits.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>High-Value Bounty:</b> Eliminating an Ace fighter awards an immediate <b>+850 Victory Point bounty</b> <img src="icons/star.svg" width="11" height="11" alt="Star" class="manual-inline-ico">!</li>
         </ul>
       </div>
 

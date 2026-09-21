@@ -20,7 +20,7 @@ window.initTacticalManual = function() {
     { id: 'ch2_kinematics', label: '02: KINEMATICS & POWER' },
     { id: 'ch3_stress_coffin', label: '03: G-STRESS & COFFIN' },
     { id: 'ch4_radar_physics', label: '04: RADAR & STEALTH RCS' },
-    { id: 'ch5_classification_uplink', label: '05: TRACKS & SATELLITE' },
+    { id: 'ch5_classification_uplink', label: '05: DATALINK & SATELLITE' },
     { id: 'ch6_weapons_salvos', label: '06: MISSILES & SALVOS' },
     { id: 'ch7_defense_ew', label: '07: EW & NOTCH DEFENSE' },
     { id: 'ch8_aces_difficulties', label: '08: ACES & THREAT TIERS' },
@@ -68,7 +68,7 @@ window.initTacticalManual = function() {
       container.innerHTML = `
         <div style="text-align:center;padding:40px;color:#8494ab;font-family:var(--font-mono);font-size:0.80rem;">
           <b style="color:#00f0ff;">NO OPERATIONAL PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
-          <p style="margin-top:6px;font-size:0.72rem;">Try searching for terms like "Notch", "RCS", "COFFIN", "Salvo", or "Lead".</p>
+          <p style="margin-top:6px;font-size:0.72rem;">Try searching for terms like "Notch", "RCS", "COFFIN", "Datalink", "Satellite", or "Lead".</p>
         </div>
       `;
       return;

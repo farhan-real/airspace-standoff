@@ -144,7 +144,6 @@
   margin-bottom: 4px;
 }
 
-/* Tactical Military Classified Security Badge */
 .manual-classified-badge {
   font-size: 0.64rem;
   font-family: var(--font-mono);
@@ -190,8 +189,7 @@
   gap: 6px;
 }
 
-.ge-content,
-.ge-desc {
+.ge-content, .ge-desc {
   font-size: 0.80rem;
   color: #cbd5e1;
   line-height: 1.65;
@@ -296,6 +294,36 @@
 
 .ge-table tr:hover td {
   background: rgba(0, 240, 255, 0.04);
+}
+
+.manual-inline-ico {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 3px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 3px rgba(0, 240, 255, 0.4));
+}
+
+.manual-chevron-ico {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 5px;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 0 2px rgba(0, 240, 255, 0.4));
+}
+
+.manual-key-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #081628;
+  border: 1px solid #1c3558;
+  border-radius: 3px;
+  padding: 2px 6px;
+  color: #00f0ff;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 800;
 }
 
 @media (max-width: 1024px) {

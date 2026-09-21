@@ -102,10 +102,10 @@ window.MANUAL_COMBAT = [
       <div class="ge-subhead">3. NON-STACKING EVASIONS &amp; KINETIC ENERGY BLEED</div>
       <div class="ge-desc">
         Defense against guided weapons is governed by two fundamental physical principles:
-        <ul>
-          <li><b>Non-Stacking Evasions:</b> Evasion bonuses do not add linearly. Activating a Doppler notch, dropping chaff, and pulling a barrel roll simultaneously uses your <b>single strongest active defense</b> rather than compounding into immunity.</li>
-          <li><b>Kinetic Energy Bleed:</b> Hard turns, banking, and high-G maneuvers induce aerodynamic drag that drains aircraft kinetic energy. An aircraft that bleeds energy (below 100%) suffers reduced turn capability and grants a direct <b>hit probability bonus (+up to 30% P_k)</b> to subsequent inbound missiles!</li>
-          <li><b>Subsequent Missile Vulnerability:</b> Successfully evading a missile costs an immediate 25% energy drain, making chaining multi-missile salvos lethal against evasive targets.</li>
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Non-Stacking Evasions:</b> Evasion bonuses do not add linearly. Activating a Doppler notch, dropping chaff, and pulling a barrel roll simultaneously uses your <b>single strongest active defense</b> rather than compounding into immunity.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Kinetic Energy Bleed:</b> Hard turns, banking, and high-G maneuvers induce aerodynamic drag that drains aircraft kinetic energy. An aircraft that bleeds energy (below 100%) suffers reduced turn capability and grants a direct <b>hit probability bonus (+up to 30% P_k)</b> to subsequent inbound missiles!</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Subsequent Missile Vulnerability:</b> Successfully evading a missile costs an immediate 25% energy drain, making chaining multi-missile salvos lethal against evasive targets.</li>
         </ul>
       </div>
 
@@ -116,27 +116,27 @@ window.MANUAL_COMBAT = [
 
       <div class="ge-subhead">5. PROXIMITY FUSING VS. KINETIC OVERSHOOTS</div>
       <div class="ge-desc">
-        Warheads detonate when the missile closes within <b>450 meters</b> or reaches its Closest Point of Approach (CPA &le; 850m). If an aircraft breaks hard outside the missile's turn radius, the missile does not prematurely detonate&mdash;it executes a realistic <b>Kinetic Overshoot</b>, streaking past the target on kinetic momentum before fuel exhaustion.
+        Warheads detonate when the missile closes within <b>650 meters</b> or reaches its Closest Point of Approach (CPA &le; 950m). If an aircraft breaks hard outside the missile's turn radius, the missile does not prematurely detonate or enter a circle; it executes a realistic <b>Kinetic Overshoot</b>, streaking past the target on kinetic momentum before expiration.
       </div>
 
       <div class="ge-subhead">6. PASSIVE RADAR HOMING &amp; CONCEALMENT (AGM-88G)</div>
       <div class="ge-desc">
         Anti-Radiation Missiles (e.g. AGM-88G AARGM-ER) passively track enemy RF radar emissions without transmitting active radar:
-        <ul>
-          <li><b>Launch Concealment:</b> The missile icon remains hidden from enemy radar for the first 3.2 seconds of motor burn.</li>
-          <li><b>Trajectory Path Gating:</b> The missile's path to target is suppressed on enemy radar until within <b>20 km</b> of the target.</li>
-          <li><b>Full Commander Telemetry:</b> You always see the complete flight path and telemetry of your own missiles!</li>
-          <li><b>No Active Lock Warning:</b> Targets receive no active ARH lock tones prior to terminal proximity.</li>
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Launch Concealment:</b> The missile icon remains hidden from enemy radar for the first 3.2 seconds of motor burn.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Trajectory Path Gating:</b> The missile's path to target is suppressed on enemy radar until within <b>20 km</b> of the target.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Full Commander Telemetry:</b> You always see the complete flight path and telemetry of your own missiles!</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>No Active Lock Warning:</b> Targets receive no active ARH lock tones prior to terminal proximity.</li>
         </ul>
       </div>
 
       <div class="ge-subhead">7. RADAR TELEMETRY READOUT &amp; THERMOBARIC BLAST (MPBM)</div>
       <div class="ge-desc">
         Missiles display comprehensive two-line telemetry on the radar scope:
-        <ul>
-          <li><b>Line 1:</b> Missile designation and salvo count in team/identification color (e.g. <code>AIM-120D x2</code>).</li>
-          <li><b>Line 2:</b> Real-time Mach velocity, active propulsion stage, and target range in telemetry accent colors (e.g. <code>M 3.2 [PULSE 2] [18km]</code>).</li>
-          <li><b>Thermobaric Area of Effect (MPBM):</b> The Multi-Purpose Burst Missile detonates in an expansive thermobaric shockwave, inflicting 7 HP direct damage on the target and secondary blast damage (1&ndash;5 HP) across an <b>8.5 km radius</b>.</li>
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Line 1:</b> Missile designation and salvo count in team/identification color (e.g. <code>AIM-120D x2</code>).</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Line 2:</b> Real-time Mach velocity, active propulsion stage, and target range in telemetry accent colors (e.g. <code>M 3.2 [PULSE 2] [18km]</code>).</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Thermobaric Area of Effect (MPBM):</b> The Multi-Purpose Burst Missile detonates in an expansive thermobaric shockwave, inflicting 7 HP direct damage on the target and secondary blast damage (1&ndash;5 HP) across an <b>8.5 km radius</b>.</li>
         </ul>
       </div>
     `

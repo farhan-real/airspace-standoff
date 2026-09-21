@@ -14,7 +14,7 @@ class SettingsManager {
 
   loadFromStorage() {
     try {
-      let saved = localStorage.getItem('AIRSPACE_STANDOFF_SETTINGS') || localStorage.getItem('APEX_VECTOR_SETTINGS');
+      let saved = localStorage.getItem('AIRSPACE_STANDOFF_SETTINGS');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed.keybinds) this.keybinds = Object.assign(this.keybinds, parsed.keybinds);
@@ -165,8 +165,10 @@ class SettingsManager {
   formatKeyLabel(code) {
     if (!code) return 'NONE';
     return code.replace('Key', '').replace('Digit', '')
-      .replace('ArrowLeft', '← LEFT').replace('ArrowRight', 'RIGHT →')
-      .replace('ArrowUp', '▲ UP').replace('ArrowDown', '▼ DOWN')
+      .replace('ArrowLeft', '<img src="icons/arrowleft.svg" width="10" height="10" alt="Left" class="btn-vector-ico"> LEFT')
+      .replace('ArrowRight', 'RIGHT <img src="icons/arrowright.svg" width="10" height="10" alt="Right" class="btn-vector-ico">')
+      .replace('ArrowUp', '<img src="icons/arrowup.svg" width="10" height="10" alt="Up" class="btn-vector-ico"> UP')
+      .replace('ArrowDown', '<img src="icons/arrowdown.svg" width="10" height="10" alt="Down" class="btn-vector-ico"> DOWN')
       .replace('Space', 'SPACE').replace('BracketLeft', '[').replace('BracketRight', ']');
   }
 
@@ -245,7 +247,7 @@ class SettingsManager {
       <div class="settings-form-row">
         <div class="settings-label-group">
           <label>RESET VIEWPORT</label>
-          <span class="settings-hint">Restore default panoramic 150km × 100km theater view</span>
+          <span class="settings-hint">Restore default panoramic 150km &times; 100km theater view</span>
         </div>
         <button type="button" id="btn-cfg-reset-cam" class="hud-btn small">RESET [0]</button>
       </div>`;
