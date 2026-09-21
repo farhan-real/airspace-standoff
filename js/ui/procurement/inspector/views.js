@@ -20,7 +20,20 @@ class InspectorSubsystemViews {
     const rCost = rate('cost_weapon', w.cost || 1.0);
 
     const category = w.category || 'WEAPON';
-    const seekerText = w.seeker || (w.isJammerPod ? 'Broadband Microwave ECM' : (w.isDecoy ? 'Fiber-Optic RF Decoy' : (w.isDecoyDrone ? 'Autonomous Radar Mirror' : (w.isLaser ? 'Directed Energy Thermal Beam' : 'Direct-Fire Gunpod'))));
+
+    let seekerText = w.seeker || 'GUIDED';
+    if (w.seeker === 'INS') seekerText = 'INS (Inertial Navigation & Terminal Radar)';
+    else if (w.seeker === 'GPS_INS') seekerText = 'GPS / INS (Satellite Assisted Inertial)';
+    else if (w.seeker === 'ARH') seekerText = 'ARH (Active Radar Homing)';
+    else if (w.seeker === 'IIR') seekerText = 'IIR (Imaging Infrared)';
+    else if (w.seeker === 'EO') seekerText = 'EO (Electro-Optical Matrix)';
+    else if (w.seeker === 'OPT') seekerText = 'OPT (Optical Swarm Tracker)';
+    else if (w.seeker === 'PASSIVE_RADAR') seekerText = 'Passive Radar (Anti-Radiation)';
+    else if (w.isJammerPod) seekerText = 'Broadband Microwave ECM';
+    else if (w.isDecoy) seekerText = 'Fiber-Optic RF Decoy';
+    else if (w.isDecoyDrone) seekerText = 'Autonomous Radar Mirror';
+    else if (w.isLaser) seekerText = 'Directed Energy Thermal Beam';
+    else if (w.isGunpod) seekerText = 'Direct-Fire Gunpod';
 
     let counterHint = '';
     if (w.isJammerPod) counterHint = 'Anti-Radiation Missiles (HOJ tracking) or IR/Optical seekers';
@@ -30,6 +43,8 @@ class InspectorSubsystemViews {
     else if (w.seeker === 'ARH') counterHint = 'Beam 90° (Doppler Notch), deploy Chaff or ECM jammer pods';
     else if (w.seeker === 'IIR' || w.seeker === 'EO') counterHint = 'Throttle to Idle or Cruise to cut thermal exhaust, or dive into clouds';
     else if (w.seeker === 'PASSIVE_RADAR') counterHint = 'Deactivate airborne ECM jammer pods and power down emitting radar arrays';
+    else if (w.seeker === 'INS') counterHint = 'Break 90° perpendicular to dive angle to exploit hypersonic turn radius, or intercept with CIWS';
+    else if (w.seeker === 'GPS_INS') counterHint = 'Intercept glide bombs with CIWS air-defense batteries';
     else counterHint = 'Execute high-G defensive break turns, Split-S kinetic dives, or deploy countermeasures';
 
     const traitLabel = w.traitBadge || 'STANDARD';

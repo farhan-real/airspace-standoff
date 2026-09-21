@@ -28,6 +28,18 @@ window.MANUAL_COMBAT = [
               <td><b>Throttle to Idle / Dive into Weather Clouds / Break Line of Sight.</b> Clouds scatter infrared tracking; idle cuts thermal signature.</td>
             </tr>
             <tr>
+              <td style="color:#ffd700;font-weight:800;">INS</td>
+              <td>Inertial Navigation System with Terminal Radar (Kh-47M2 Kinzhal)</td>
+              <td>Internal solid-state gyroscopes and accelerometers dead-reckon the high-altitude stratospheric cruise. Switches to active radar terrain/target correlation upon terminal hypersonic dive (Mach 5.0). Completely immune to midcourse RF jamming.</td>
+              <td><b>Perpendicular Break Turn / CIWS Point Defense.</b> Hypersonic momentum creates a wide turning radius; break hard 90&deg; perpendicular to the dive vector, or intercept with Phalanx / Pantsir CIWS batteries.</td>
+            </tr>
+            <tr>
+              <td style="color:#94a3b8;font-weight:800;">GPS / INS</td>
+              <td>Satellite Uplink &amp; Inertial Dead-Reckoning (GBU-39 SDB)</td>
+              <td>Coordinates aerodynamic glide trajectory via satellite constellation and internal INS dead-reckoning against surface command bunkers and air defense nodes.</td>
+              <td><b>CIWS Point Defense / Platform Neutralization.</b> Intercept glide weapons with CIWS batteries or neutralize launch aircraft before weapon release.</td>
+            </tr>
+            <tr>
               <td style="color:#ffb830;font-weight:800;">PASSIVE RADAR</td>
               <td>Anti-Radiation Homing (AGM-88G AARGM-ER)</td>
               <td>Homes directly on hostile radar emissions. Inflicts <b>3&times; damage</b> to SAM radar arrays and EW jammers.</td>
@@ -85,8 +97,8 @@ window.MANUAL_COMBAT = [
             </tr>
             <tr>
               <td style="color:#f97316;font-weight:800;">[LOFT] / [DIVE]</td>
-              <td>Aero-Ballistic Trajectory</td>
-              <td>R-37M and Kinzhal loft into the stratosphere (FL550&ndash;FL600) in thin air, then plunge in a terminal hypersonic dive (Mach 4.2&ndash;5.0).</td>
+              <td>Aero-Ballistic Trajectory (INS / ARH)</td>
+              <td>R-37M and Kinzhal loft into the stratosphere (FL550&ndash;FL600) in thin air, then plunge in a terminal hypersonic dive (Mach 4.2&ndash;5.0) onto radar-correlated target coordinates.</td>
               <td>Devastating kinetic energy against heavy aircraft and bunkers; wide turn radius allows perpendicular evasion breaks.</td>
             </tr>
             <tr>

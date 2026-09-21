@@ -94,11 +94,11 @@ window.WEAPONS_A2G = {
     cost: 4.2,
     rangeKm: 135.0,
     speedMach: 5.0,
-    seeker: 'INS_RADAR',
+    seeker: 'INS',
     rcs: 0.25,
     trait: 'HYPERSONIC_IMPACT',
     traitBadge: 'MACH 5.0 KINETIC SHOCK',
-    behaviorDesc: 'Mach 5.0 aero-ballistic trajectory with extreme kinetic impact that neutralizes heavy bunkers in 1-2 hits.',
+    behaviorDesc: 'Inertial Navigation System (INS) with active radar terminal correlation. Lofts into the stratosphere, then dives at Mach 5.0 with extreme kinetic impact that neutralizes heavy bunkers in 1-2 hits.',
     damage: 16,
     ammoCount: 2,
     minRangeKm: 15.0,
@@ -111,6 +111,6 @@ window.WEAPONS_A2G = {
     sigmaPylon: 0.80,
     category: 'A2G',
     allowedAirframes: ['MiG-31BM', 'Tu-160M', 'Su-34', 'F-15EX', 'J-16', 'B-1B'],
-    desc: 'Hypersonic aero-ballistic heavy missile (2x) delivering Mach 5.0 kinetic shock to penetrate deeply reinforced theater structures.'
+    desc: 'Hypersonic aero-ballistic heavy missile (2x) guided by Inertial Navigation System (INS) with active radar terminal correlation, delivering Mach 5.0 kinetic shock to penetrate deeply reinforced theater structures.'
   }
 };

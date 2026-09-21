@@ -271,7 +271,7 @@ class MissileKinetics {
     const mixedBonusVal = (window.CONFIG && window.CONFIG.MIXED_SEEKER_SYNERGY_BONUS) || 0.25;
     if (window.Game && window.Game.missiles) {
       const inbounds = window.Game.missiles.filter(m => (m.active || m.id === missile.id) && m.target && m.target.id === target.id);
-      const isRf = (s) => (s === 'ARH' || s === 'PASSIVE_RADAR' || s === 'INS_RADAR');
+      const isRf = (s) => (s === 'ARH' || s === 'PASSIVE_RADAR' || s === 'INS' || s === 'INS_RADAR');
       const isOpt = (s) => (s === 'IIR' || s === 'EO' || s === 'OPT');
       const hasRf = inbounds.some(m => m.weapon && isRf(m.weapon.seeker));
       const hasOpt = inbounds.some(m => m.weapon && isOpt(m.weapon.seeker));

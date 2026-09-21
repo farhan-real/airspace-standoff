@@ -114,7 +114,7 @@ class RosterCardBuilder {
           else if (w.isLaser) seekerTag = 'LASER';
           else if (seeker === 'PASSIVE_RADAR') seekerTag = 'ARM';
           else if (seeker === 'GPS_INS') seekerTag = 'GPS/INS';
-          else if (seeker === 'INS_RADAR') seekerTag = 'RADAR';
+          else if (seeker === 'INS' || seeker === 'INS_RADAR') seekerTag = 'INS';
           else if (seeker === 'DIRECT_FIRE') seekerTag = 'DIRECT';
         }
         return `

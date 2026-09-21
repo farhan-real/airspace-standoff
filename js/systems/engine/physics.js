@@ -203,7 +203,7 @@ const Physics = {
       salvoCount = inbounds.length;
       if (salvoCount >= 1) {
         salvoBonus = Math.min(0.30, salvoCount * 0.12);
-        const isRf = (s) => (s === 'ARH' || s === 'PASSIVE_RADAR' || s === 'INS_RADAR');
+        const isRf = (s) => (s === 'ARH' || s === 'PASSIVE_RADAR' || s === 'INS' || s === 'INS_RADAR');
         const isOpt = (s) => (s === 'IIR' || s === 'EO' || s === 'OPT');
         const thisRf = isRf(weapon.seeker);
         const thisOpt = isOpt(weapon.seeker);

@@ -184,7 +184,7 @@ class PylonBayRenderer {
           pkTag.textContent = isMobile ? `[${seeker}]${mixedTag}` : `HOMING: [${seeker}]${mixedTag}`;
           const seekerColors = {
             'ARH': '#00f0ff', 'IIR': '#00f5a0', 'EO': '#38bdf8', 'OPT': '#38bdf8',
-            'PASSIVE_RADAR': '#ffb830', 'GPS_INS': '#94a3b8', 'INS_RADAR': '#ffd700', 'DIRECT_FIRE': '#fbbf24'
+            'PASSIVE_RADAR': '#ffb830', 'GPS_INS': '#94a3b8', 'INS': '#ffd700', 'INS_RADAR': '#ffd700', 'DIRECT_FIRE': '#fbbf24'
           };
           pkTag.style.color = pkResult.hasMixedSeekers ? '#00f5a0' : (seekerColors[seeker] || '#7dd3fc');
         }
