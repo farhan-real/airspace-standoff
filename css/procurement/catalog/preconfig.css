@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AIRSPACE STANDOFF // Preconfigured Combat Loadouts Modal Stylesheet
+   AIRSPACE STANDOFF: Preconfigured Combat Loadouts Modal Stylesheet
    ========================================================================== */
 
 .inspect-window.preconfig-window {
@@ -135,7 +135,6 @@
   gap: 4px;
 }
 
-/* Enlarged Tags */
 .pc-role-badge {
   font-size: 0.64rem;
   font-family: var(--font-mono);
@@ -211,9 +210,9 @@
 .pc-item-pill.gun { background: rgba(234, 179, 8, 0.18); border: 1px solid #eab308; color: #fef08a; }
 
 .pc-desc-box {
-  font-size: 0.60rem;
-  color: #cbd5e1;
-  line-height: 1.4;
+  font-size: 0.72rem;
+  color: #e2e8f0;
+  line-height: 1.45;
   border-left: 2px solid #0284c7;
   padding-left: 6px;
 }
