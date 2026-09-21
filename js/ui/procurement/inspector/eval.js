@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // 5-Tier Color Classification Engine
+ * AIRSPACE STANDOFF: 5-Tier Color Classification Engine
  * Calibrated against 150km theater weapon ranges and acquisition costs.
  */
 
@@ -68,10 +68,10 @@ class StatEvaluator {
       case 'ordnance_mass':
       case 'component_mass':
       case 'deadweight':
-        if (val <= 100)  return { tier: 1, colorClass: 'stat-tier-1' };
-        if (val <= 300)  return { tier: 2, colorClass: 'stat-tier-2' };
-        if (val <= 600)  return { tier: 3, colorClass: 'stat-tier-3' };
-        if (val <= 1200) return { tier: 4, colorClass: 'stat-tier-4' };
+        if (val <= 250)  return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val <= 600)  return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val <= 1100) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val <= 2200) return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'payload_capacity':
