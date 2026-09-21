@@ -102,6 +102,29 @@
   background-color: #091a30;
 }
 
+.catalog-item-card[draggable="true"],
+.airframe-dense-card[draggable="true"] {
+  cursor: grab;
+  -webkit-user-drag: element;
+}
+
+.catalog-item-card[draggable="true"]:active,
+.airframe-dense-card[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.catalog-item-card.dragging,
+.airframe-dense-card.dragging {
+  opacity: 0.55;
+  border-color: #00f0ff;
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.45);
+}
+
+.catalog-item-card button,
+.airframe-dense-card button {
+  -webkit-user-drag: none;
+}
+
 .cic-top {
   display: flex;
   justify-content: space-between;

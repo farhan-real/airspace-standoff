@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Shelf Airframes Sub-Renderer
- * Single-tap purchasing on '+ ADD'; tags are interactive with tactical tooltips.
+ * Single-tap purchasing on '+ ADD'; cards support desktop drag-and-drop.
  */
 
 class ShelfAirframesRenderer {
@@ -61,7 +61,7 @@ class ShelfAirframesRenderer {
       : () => ({ tier: 3, colorClass: 'stat-tier-3' });
 
     const catDescriptions = {
-      STEALTH: 'Very Low Observable airframe designed to evade early radar detection (RCS ≤ 0.005 m²).',
+      STEALTH: 'Very Low Observable airframe designed to evade early radar detection (RCS <= 0.005 m²).',
       SUPERIORITY: 'Air superiority fighter engineered for high-altitude BVR intercept and energy merges.',
       MULTIROLE: 'Versatile tactical fighter balancing BVR missile combat with close-in dogfight agility.',
       STRIKE: 'Armored ground-attack or strategic penetrator carrying heavy payloads against surface bases.',
@@ -73,6 +73,11 @@ class ShelfAirframesRenderer {
     all.forEach(spec => {
       const card = document.createElement('div');
       card.className = 'airframe-dense-card';
+
+      card.setAttribute('draggable', 'true');
+      card.dataset.dragType = 'airframe';
+      card.dataset.dragId = spec.id;
+      card.dataset.dragName = spec.name;
 
       const rSpeed = rate('speed', spec.S_0 || 0.90);
       const rAgi = rate('agility', spec.AGI_0 || 0.85);

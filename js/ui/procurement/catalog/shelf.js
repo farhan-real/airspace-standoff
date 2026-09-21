@@ -52,7 +52,7 @@ class ProcurementShelf {
     const active = this.getActiveBaySummary();
 
     if (tab === 'airframes') {
-      el.innerHTML = `CLICK "+ ADD" TO DEPLOY AN AIRFRAME (${(this.pm.game.procurementSquadron || []).length}/16) &bull; TAP TAGS FOR SPEC DETAILS`;
+      el.innerHTML = `CLICK "+ ADD" OR DRAG AIRFRAME TO SQUADRON (${(this.pm.game.procurementSquadron || []).length}/16) &bull; TAP TAGS FOR SPEC DETAILS`;
       return;
     }
     if (!active) {
@@ -64,9 +64,9 @@ class ProcurementShelf {
     if (tab === 'upgrades') {
       const remSockets = Math.max(0, active.totalSockets - active.usedSockets);
       const sockText = remSockets === 1 ? 'SOCKET' : 'SOCKETS';
-      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSockets} ${sockText} AVAILABLE</span>`;
+      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSockets} ${sockText} AVAILABLE &bull; DRAG OR CLICK TO EQUIP</span>`;
     } else {
-      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSlots} ${slotText} AVAILABLE</span>`;
+      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSlots} ${slotText} AVAILABLE &bull; DRAG OR CLICK TO EQUIP</span>`;
     }
   }
 
@@ -121,6 +121,11 @@ class ProcurementShelf {
         : (!g.lockedTo || (active && g.lockedTo.includes(active.specId)));
       const isLocked = !isComp;
 
+      card.setAttribute('draggable', isLocked ? 'false' : 'true');
+      card.dataset.dragType = 'gun';
+      card.dataset.dragId = g.id;
+      card.dataset.dragName = g.name;
+
       card.innerHTML = `
         <div class="cic-top"><span class="cic-title">${g.name}</span><span class="cic-cost" style="color:#7dd3fc;">${g.caliber}</span></div>
         <div class="cic-type-bar">
@@ -154,6 +159,12 @@ class ProcurementShelf {
     Object.values(window.UPGRADES_CATALOG || {}).forEach(upg => {
       const card = document.createElement('div');
       card.className = 'catalog-item-card';
+
+      card.setAttribute('draggable', 'true');
+      card.dataset.dragType = 'upgrade';
+      card.dataset.dragId = upg.id;
+      card.dataset.dragName = upg.name;
+
       card.innerHTML = `
         <div class="cic-top"><span class="cic-title">${upg.name}</span><span class="cic-cost">$${Number(upg.cost || 0).toFixed(1)}M</span></div>
         <div class="cic-type-bar">
@@ -197,6 +208,11 @@ class ProcurementShelf {
       const isRestricted = Boolean(wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId));
       const wpnSlotWord = wpn.slots === 1 ? 'SLOT' : 'SLOTS';
       const typeBadge = wpn.isGunpod ? '<span class="badge-category" style="color:#fde047;border-color:#ca8a04;">GUN POD</span>' : '';
+
+      card.setAttribute('draggable', isRestricted ? 'false' : 'true');
+      card.dataset.dragType = 'weapon';
+      card.dataset.dragId = wpn.id;
+      card.dataset.dragName = wpn.name;
 
       card.innerHTML = `
         <div class="cic-top"><span class="cic-title">${wpn.name}</span><span class="cic-cost">$${Number(wpn.cost || 0).toFixed(1)}M</span></div>

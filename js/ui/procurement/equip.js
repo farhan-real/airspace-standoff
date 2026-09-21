@@ -1,10 +1,146 @@
 /**
- * AIRSPACE STANDOFF // Procurement Equipment Actions & Hardpoint Mounting Submodule
+ * AIRSPACE STANDOFF: Procurement Equipment Actions, Desktop Drag-and-Drop & Hardpoint Mounting
  */
 
 class ProcurementEquipHandler {
   constructor(procurementManager) {
     this.pm = procurementManager;
+    this.initDragAndDrop();
+  }
+
+  initDragAndDrop() {
+    const catalogEl = document.getElementById('armory-catalog');
+    const rosterEl = document.getElementById('squadron-list');
+    if (!catalogEl || !rosterEl) return;
+
+    catalogEl.addEventListener('dragstart', (e) => {
+      const card = e.target.closest('[data-drag-type]');
+      if (!card || card.getAttribute('draggable') === 'false') {
+        e.preventDefault();
+        return;
+      }
+
+      const type = card.dataset.dragType;
+      const id = card.dataset.dragId;
+      const name = card.dataset.dragName || id;
+
+      this.pm.draggedItem = { type, id, name };
+
+      try {
+        e.dataTransfer.setData('application/json', JSON.stringify(this.pm.draggedItem));
+        e.dataTransfer.setData('text/plain', id);
+        e.dataTransfer.effectAllowed = 'copy';
+      } catch (err) {}
+
+      card.classList.add('dragging');
+    });
+
+    catalogEl.addEventListener('dragend', (e) => {
+      const card = e.target.closest('[data-drag-type]');
+      if (card) card.classList.remove('dragging');
+      this.clearDropHighlights();
+      this.pm.draggedItem = null;
+    });
+
+    rosterEl.addEventListener('dragover', (e) => {
+      if (!this.pm.draggedItem) return;
+      e.preventDefault();
+
+      const unitCard = e.target.closest('.squad-unit-card');
+      this.clearDropHighlights(unitCard);
+
+      if (unitCard) {
+        const sIdx = parseInt(unitCard.dataset.sidx, 10);
+        const isValid = this.validateDrop(sIdx, this.pm.draggedItem);
+        unitCard.classList.toggle('drag-target-valid', isValid);
+        unitCard.classList.toggle('drag-target-invalid', !isValid);
+        e.dataTransfer.dropEffect = isValid ? 'copy' : 'none';
+      } else if (this.pm.draggedItem.type === 'airframe') {
+        e.dataTransfer.dropEffect = 'copy';
+      } else {
+        e.dataTransfer.dropEffect = 'none';
+      }
+    });
+
+    rosterEl.addEventListener('dragleave', (e) => {
+      const related = e.relatedTarget;
+      if (!related || !rosterEl.contains(related)) {
+        this.clearDropHighlights();
+      }
+    });
+
+    rosterEl.addEventListener('drop', (e) => {
+      if (!this.pm.draggedItem) return;
+      e.preventDefault();
+
+      const itemData = this.pm.draggedItem;
+      const unitCard = e.target.closest('.squad-unit-card');
+      this.clearDropHighlights();
+      this.pm.draggedItem = null;
+
+      if (unitCard) {
+        const sIdx = parseInt(unitCard.dataset.sidx, 10);
+        if (!isNaN(sIdx)) {
+          if (itemData.type === 'airframe') {
+            this.addAirframe(itemData.id);
+          } else {
+            this.equipItemDataToSquadron(sIdx, itemData);
+          }
+        }
+      } else if (itemData.type === 'airframe') {
+        this.addAirframe(itemData.id);
+      } else if (this.pm.game.procurementSquadron.length > 0) {
+        this.equipItemDirectly(itemData);
+      }
+    });
+  }
+
+  validateDrop(sIdx, itemData) {
+    if (!itemData) return false;
+    const item = this.pm.game.procurementSquadron[sIdx];
+    if (!item) return false;
+    const spec = (window.AIRCRAFT_CATALOG || {})[item.specId];
+    if (!spec) return false;
+
+    if (itemData.type === 'gun') {
+      const gun = (window.AUTOCANNONS_CATALOG || {})[itemData.id];
+      if (!gun) return false;
+      return window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
+        ? window.AircraftRegistry.isGunCompatible(spec, gun)
+        : (!gun.lockedTo || gun.lockedTo.includes(spec.id));
+    }
+
+    if (itemData.type === 'weapon') {
+      const wpn = (window.WEAPONS_CATALOG || {})[itemData.id];
+      if (!wpn) return false;
+      const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
+      if (ratings.indexOf(wpn.minRating) > ratings.indexOf(spec.maxPylonRating || 'Type M')) return false;
+      if (wpn.allowedAirframes && !wpn.allowedAirframes.includes(spec.id)) return false;
+      const curSlots = (item.weapons || []).reduce((sum, wId) => sum + (((window.WEAPONS_CATALOG || {})[wId] || {}).slots || 1), 0);
+      return (curSlots + (wpn.slots || 1) <= (spec.totalSlots || 6));
+    }
+
+    if (itemData.type === 'upgrade') {
+      const upg = (window.UPGRADES_CATALOG || {})[itemData.id];
+      if (!upg) return false;
+      if ((item.upgrades || []).length >= (spec.upgradeSockets || 3)) return false;
+      if ((item.upgrades || []).includes(itemData.id)) return false;
+      return !upg.isAllowed || upg.isAllowed(spec);
+    }
+
+    if (itemData.type === 'airframe') {
+      return (this.pm.game.procurementSquadron.length < 16);
+    }
+
+    return false;
+  }
+
+  clearDropHighlights(exceptCard = null) {
+    document.querySelectorAll('.squad-unit-card').forEach(c => {
+      if (c !== exceptCard) {
+        c.classList.remove('drag-target-valid', 'drag-target-invalid');
+      }
+    });
   }
 
   equipItemDirectly(itemData) {

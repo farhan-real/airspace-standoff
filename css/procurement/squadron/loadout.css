@@ -59,6 +59,18 @@
   background-color: #0d121c;
 }
 
+.squad-unit-card.drag-target-valid {
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.5) !important;
+  background-color: #0b182b !important;
+}
+
+.squad-unit-card.drag-target-invalid {
+  border-color: #ff3366 !important;
+  box-shadow: 0 0 16px rgba(255, 51, 102, 0.5) !important;
+  background-color: #200810 !important;
+}
+
 .squad-unit-card:has(.custom-dropdown.open) {
   z-index: 100;
 }
