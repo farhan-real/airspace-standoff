@@ -1,13 +1,11 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Roster Hardware & Weapon Stations
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Roster Hardware & Weapon Stations */
 
 .su-gun-selector-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  background-color: #020610;
-  border: 1px solid #132236;
+  background-color: #050608;
+  border: 1px solid #18202e;
   border-radius: 3px;
   padding: 4px 7px;
   box-sizing: border-box;
@@ -38,8 +36,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
-  background-color: #020610;
-  border: 1px solid #111e30;
+  background-color: #050608;
+  border: 1px solid #18202e;
   border-radius: 3px;
   padding: 5px 8px;
   box-sizing: border-box;
@@ -63,14 +61,14 @@
   display: flex;
   height: 6px;
   gap: 2px;
-  background-color: #08111e;
+  background-color: #0d1017;
   border-radius: 1px;
   padding: 1px;
 }
 
 .slot-pip {
   flex: 1;
-  background-color: #142338;
+  background-color: #1a2232;
   border-radius: 1px;
 }
 
@@ -80,7 +78,7 @@
 
 .weight-bar-bg {
   height: 6px;
-  background-color: #08111e;
+  background-color: #0d1017;
   border-radius: 1px;
   overflow: hidden;
 }
@@ -103,8 +101,8 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
-  background-color: #020610;
-  border: 1px solid #111e30;
+  background-color: #050608;
+  border: 1px solid #18202e;
   padding: 5px 8px;
   border-radius: 3px;
   box-sizing: border-box;
@@ -113,7 +111,7 @@
 .upgrades-label-row {
   font-size: 0.62rem;
   font-family: var(--font-mono);
-  color: #8494ab;
+  color: #94a3b8;
   font-weight: 700;
   display: flex;
   justify-content: space-between;
@@ -127,8 +125,8 @@
 }
 
 .upgrade-socket {
-  background-color: #060c18;
-  border: 1px dashed #162a44;
+  background-color: #0a0d14;
+  border: 1px dashed #1c2638;
   padding: 3px 6px;
   border-radius: 2px;
   display: flex;
@@ -150,7 +148,7 @@
 .upgrade-socket.filled {
   border-style: solid;
   border-color: #6366f1;
-  background-color: #0f1026;
+  background-color: #121028;
   color: #e0e7ff;
 }
 
@@ -171,6 +169,8 @@
   font-weight: 800;
   cursor: pointer;
   padding: 0 3px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .installed-weapons-grid {
@@ -180,8 +180,8 @@
 }
 
 .installed-item-card {
-  background-color: #030712;
-  border: 1px solid #14243b;
+  background-color: #050608;
+  border: 1px solid #18202e;
   border-radius: 2px;
   padding: 4px 6px;
   display: flex;
@@ -218,7 +218,7 @@
 
 .iic-details {
   font-size: 0.58rem;
-  color: #8494ab;
+  color: #94a3b8;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
@@ -248,6 +248,8 @@
   cursor: pointer;
   font-size: 0.62rem;
   font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn-dismount-item:hover {
@@ -261,7 +263,7 @@
   font-size: 0.62rem;
   font-family: var(--font-mono);
   color: #64748b;
-  border: 1px dashed #142338;
+  border: 1px dashed #18202e;
   border-radius: 3px;
   cursor: pointer;
   transition: all 0.12s ease;

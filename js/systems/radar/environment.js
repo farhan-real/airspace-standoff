@@ -1,13 +1,12 @@
 /**
- * AIRSPACE STANDOFF // Radar Environment Sub-Renderer (150km x 100km Theater)
+ * AIRSPACE STANDOFF: Radar Environment Sub-Renderer (150km x 100km Theater)
  * Grid, boundary corridor, weather clouds, and orbital uplink status banner.
- * Rotating visual radar sweep removed per directive.
  */
 
 class RadarEnvironmentRenderer {
   static drawGrid(ctx, cam, cssWidth, cssHeight) {
     ctx.save();
-    ctx.strokeStyle = '#081424';
+    ctx.strokeStyle = '#081324';
     ctx.lineWidth = 1;
     const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
     for (let kmX = 0; kmX <= cfg.THEATER_WIDTH_KM; kmX += 25) {
@@ -57,9 +56,9 @@ class RadarEnvironmentRenderer {
       ctx.save();
       ctx.beginPath();
       ctx.ellipse(Math.round(pos.x), Math.round(pos.y), Math.max(4, rx), Math.max(4, ry), 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(51, 65, 85, 0.16)';
+      ctx.fillStyle = 'rgba(40, 56, 80, 0.16)';
       ctx.fill();
-      ctx.strokeStyle = 'rgba(100, 116, 139, 0.28)';
+      ctx.strokeStyle = 'rgba(80, 110, 150, 0.30)';
       ctx.lineWidth = 1;
       ctx.setLineDash([4, 6]);
       ctx.stroke();
@@ -75,7 +74,7 @@ class RadarEnvironmentRenderer {
     const x = Math.round((cssWidth - textWidth) / 2);
     const y = cssHeight - 16;
 
-    ctx.fillStyle = 'rgba(2, 6, 23, 0.92)';
+    ctx.fillStyle = 'rgba(3, 9, 20, 0.94)';
     ctx.strokeStyle = '#00f0ff';
     ctx.lineWidth = 1.4;
     ctx.fillRect(x - 10, y - 14, textWidth + 20, 20);

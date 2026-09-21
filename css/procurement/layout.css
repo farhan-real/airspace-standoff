@@ -6,11 +6,9 @@
   height: 98vh;
   max-height: 98vh;
   min-height: 500px;
-  background-color: #040916;
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.08) 0%, transparent 40%),
-    linear-gradient(180deg, #050c1b 0%, #030712 100%);
-  border: 1px solid #162f52;
+  background-color: #000000;
+  background-image: none;
+  border: 1px solid #1c2436;
   border-top: 3px solid #00f0ff;
   border-radius: 6px;
   display: flex;
@@ -48,8 +46,8 @@ body.safe-zone-on .procurement-window {
   flex-direction: column;
   min-height: 0;
   height: 100%;
-  border: 1px solid #142338;
-  background-color: #030712;
+  border: 1px solid #18202e;
+  background-color: #06070a;
   border-radius: 5px;
   padding: 6px;
   overflow: hidden;
@@ -58,7 +56,7 @@ body.safe-zone-on .procurement-window {
 
 .procurement-footer {
   flex-shrink: 0;
-  border-top: 1px solid #16273e;
+  border-top: 1px solid #1a2232;
   padding-top: 4px;
   display: flex;
   justify-content: flex-end;
@@ -87,8 +85,8 @@ body.safe-zone-on .procurement-window {
 }
 
 .scramble-btn:disabled {
-  background-color: #0a111c;
-  border-color: #17263b;
+  background-color: #0d1016;
+  border-color: #1a202c;
   color: #64748b;
   cursor: not-allowed;
 }

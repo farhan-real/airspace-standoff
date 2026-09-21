@@ -1,14 +1,12 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Tactical Maneuver Deck Stylesheet
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Tactical Maneuver Deck Stylesheet */
 
 .tactical-deck-bay {
   height: 120px;
   min-height: 120px;
   max-height: 120px;
   flex-shrink: 0;
-  background: #040814;
-  border-top: 1px solid var(--border-color);
+  background: #030712;
+  border-top: 1px solid #132237;
   display: flex;
   flex-direction: column;
   padding: 4px 10px 5px 10px;
@@ -22,7 +20,7 @@
   font-size: 0.64rem;
   font-family: var(--font-mono);
   font-weight: 800;
-  color: #8494ab;
+  color: #8fa0b5;
   flex-shrink: 0;
   line-height: 1.2;
 }
@@ -50,8 +48,8 @@
   height: 94px;
   min-height: 94px;
   max-height: 94px;
-  background: #07101e;
-  border: 1px solid #162b48;
+  background: #060e1b;
+  border: 1px solid #142742;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -115,8 +113,8 @@
 }
 
 .mcard-hint-box {
-  background: #020610;
-  border: 1px solid #111d2e;
+  background: #02050e;
+  border: 1px solid #0f1c2e;
   border-radius: 2px;
   padding: 2px 5px;
   font-size: 0.52rem;

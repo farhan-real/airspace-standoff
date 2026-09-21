@@ -1,12 +1,12 @@
 /* AIRSPACE STANDOFF: Core Theme & Base Styling */
 
 :root {
-  --bg-dark: #02050b;
-  --bg-panel: rgba(5, 11, 22, 0.94);
-  --bg-panel-alt: rgba(9, 18, 34, 0.90);
-  --bg-card: #060d19;
-  --border-color: #12223a;
-  --border-highlight: #1e3a60;
+  --bg-dark: #000000;
+  --bg-panel: rgba(8, 10, 15, 0.96);
+  --bg-panel-alt: rgba(12, 15, 22, 0.94);
+  --bg-card: #0a0c12;
+  --border-color: #1a2230;
+  --border-highlight: #28354a;
   --border-focus: #00f0ff;
 
   --color-cyan: #00f0ff;
@@ -22,9 +22,9 @@
   --color-purple: #c084fc;
   --color-gold: #ffd700;
 
-  --text-main: #f1f5f9;
-  --text-muted: #8494ab;
-  --text-dim: #4d5e75;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
 
   --glow-cyan: 0 0 12px rgba(0, 240, 255, 0.35);
   --glow-green: 0 0 12px rgba(0, 245, 160, 0.35);
@@ -52,15 +52,13 @@ body.safe-zone-on {
   -webkit-user-select: none;
   touch-action: manipulation;
   scrollbar-width: thin;
-  scrollbar-color: #1a3354 #02050b;
+  scrollbar-color: #1e2636 #000000;
   -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
   background-color: var(--bg-dark);
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.08) 0%, transparent 60%),
-    linear-gradient(180deg, #02050b 0%, #030814 100%);
+  background-image: none;
   color: var(--text-main);
   font-family: var(--font-sans);
   overflow: hidden;
@@ -82,12 +80,12 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #02050b;
-  border-left: 1px solid #0a1424;
+  background: #000000;
+  border-left: 1px solid #121722;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #172c48;
+  background: #1c2436;
   border-radius: 2px;
 }
 
@@ -99,7 +97,7 @@ html, body {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(1, 4, 10, 0.88);
+  background: rgba(0, 0, 0, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 100;
@@ -217,6 +215,6 @@ html, body {
   .modal-backdrop {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    background: rgba(2, 5, 12, 0.98) !important;
+    background: rgba(0, 0, 0, 0.98) !important;
   }
 }

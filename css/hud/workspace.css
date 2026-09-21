@@ -22,20 +22,20 @@ body.safe-zone-on .hud-container {
   min-height: 0;
   display: grid;
   grid-template-columns: 210px 1fr 300px;
-  background-color: #02050e;
+  background-color: #020408;
   overflow: hidden;
-  border-bottom: 1.5px solid #14243b;
+  border-bottom: 1.5px solid #142032;
   position: relative;
 }
 
 .strip-header {
-  background: linear-gradient(90deg, #09172c 0%, #060e1b 100%);
+  background: linear-gradient(90deg, #0b172a 0%, #050b14 100%);
   padding: 6px 10px;
   font-size: 0.66rem;
   font-weight: 800;
   font-family: var(--font-mono);
   color: #e2e8f0;
-  border-bottom: 1px solid #142742;
+  border-bottom: 1px solid #162840;
   border-left: 3px solid #00f0ff;
   letter-spacing: 0.6px;
   flex-shrink: 0;
@@ -44,10 +44,10 @@ body.safe-zone-on .hud-container {
 .strip-subhead {
   font-size: 0.60rem;
   font-weight: 800;
-  color: #8494ab;
+  color: #849cb5;
   font-family: var(--font-mono);
   padding: 3px 0;
-  border-bottom: 1px dashed #14243b;
+  border-bottom: 1px dashed #142236;
   margin-bottom: 2px;
   letter-spacing: 0.4px;
   flex-shrink: 0;
@@ -74,7 +74,7 @@ body.safe-zone-on .hud-container {
 
 .mobile-steer-btn {
   pointer-events: auto;
-  background-color: rgba(6, 14, 28, 0.94);
+  background-color: rgba(6, 14, 26, 0.94);
   border: 1.5px solid #0284c7;
   color: #7dd3fc;
   font-family: var(--font-mono);
@@ -84,7 +84,7 @@ body.safe-zone-on .hud-container {
   height: 36px;
   border-radius: 4px;
   touch-action: manipulation;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
   transition: all 0.12s ease;
 }
 
@@ -164,7 +164,7 @@ body.has-touch .mobile-steering-overlay {
     width: 100%;
     border-left: none;
     border-top: 1px solid var(--border-color);
-    background-color: #060c18;
+    background-color: #050a14;
     padding: 2px 4px;
     gap: 2px;
     z-index: 2;
@@ -175,7 +175,7 @@ body.has-touch .mobile-steering-overlay {
     position: fixed;
     inset: 0;
     z-index: 1200;
-    background-color: rgba(3, 7, 18, 0.97);
+    background-color: rgba(3, 7, 16, 0.98);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     flex-direction: column;
@@ -226,7 +226,7 @@ body.has-touch .mobile-steering-overlay {
     height: 100%;
     border-left: 1px solid var(--border-color);
     border-top: none;
-    background-color: #060c18;
+    background-color: #050a14;
     padding: 3px 5px;
     gap: 2px;
     overflow-y: auto;
@@ -239,7 +239,7 @@ body.has-touch .mobile-steering-overlay {
     position: fixed;
     inset: 0;
     z-index: 1200;
-    background-color: rgba(3, 7, 18, 0.98);
+    background-color: rgba(3, 7, 16, 0.98);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     padding: 8px 12px;
@@ -262,7 +262,7 @@ body.has-touch .mobile-steering-overlay {
     justify-content: space-between !important;
     width: 100% !important;
     padding: 4px 8px !important;
-    background-color: #081426 !important;
+    background-color: #0a1424 !important;
     border-radius: 3px !important;
     flex-shrink: 0 !important;
   }
