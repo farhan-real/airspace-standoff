@@ -26,6 +26,8 @@ class CivilianAirliner {
     this.identifiedByBlue = false;
     this.identifiedByRed = false;
     this.trackDuration = 0.0;
+    this.trackDurationBlue = 0.0;
+    this.trackDurationRed = 0.0;
   }
 
   isIdentifiedBy(team) {

@@ -162,7 +162,6 @@ class SimulationDetectionSystem {
         continue;
       }
 
-      // Friendly missiles are always tracked by Blue
       if (m.team === 'friendly') {
         this.game.detectedByBlue.add(m.id);
         m.identifiedByBlue = true;
@@ -187,7 +186,6 @@ class SimulationDetectionSystem {
         }
       }
 
-      // Hostile missiles are always tracked by Red
       if (m.team === 'hostile') {
         this.game.detectedByRed.add(m.id);
         m.identifiedByRed = true;
@@ -213,10 +211,72 @@ class SimulationDetectionSystem {
 
     for (const civ of this.sim.civilianTraffic) {
       if (civ.hp <= 0) continue;
-      this.game.detectedByBlue.add(civ.id); this.game.detectedByRed.add(civ.id);
-      civ.trackDuration = (civ.trackDuration || 0) + dt;
-      if (civ.trackDuration >= 3.2 || is2P) {
-        civ.identifiedByBlue = true; civ.identifiedByRed = true;
+      this.game.detectedByBlue.add(civ.id);
+      this.game.detectedByRed.add(civ.id);
+
+      if (is2P) {
+        civ.identifiedByBlue = true;
+        civ.identifiedByRed = true;
+        civ.isIdentified = true;
+        continue;
+      }
+
+      let closestBlueDist = 999.0;
+      let highestBlueRate = 0.0;
+      let hasBlueDirectTrack = false;
+
+      for (const sensor of blueSensors) {
+        const maxDist = Physics.getRadarMaxDetectionRange(sensor, civ, this.sim.weatherClouds);
+        if (maxDist <= 0.0) continue;
+        const d = Math.hypot(civ.x - sensor.x, civ.y - sensor.y);
+        if (d < closestBlueDist) closestBlueDist = d;
+
+        if (d <= maxDist) {
+          hasBlueDirectTrack = true;
+          let sensorRate = Math.max(0.20, 1.0 - (d / Math.max(maxDist, 100.0)));
+          if (sensor.hasGaNAESA) sensorRate *= 1.4;
+          if (sensor.hasIRST && d <= 32.0) sensorRate *= 1.5;
+          if (sensorRate > highestBlueRate) highestBlueRate = sensorRate;
+        }
+      }
+
+      const isEnemySide = (civ.x > 75.0);
+      let requiredTimeBlue = 5.5;
+
+      if (closestBlueDist > 95.0 || (isEnemySide && closestBlueDist > 65.0)) {
+        requiredTimeBlue = 20.0;
+      } else if (closestBlueDist > 65.0 || isEnemySide) {
+        requiredTimeBlue = 14.0;
+      } else if (closestBlueDist > 35.0) {
+        requiredTimeBlue = 8.5;
+      } else {
+        requiredTimeBlue = 4.5;
+      }
+
+      if (hasBlueDirectTrack) {
+        civ.trackDurationBlue = (civ.trackDurationBlue || 0.0) + dt * Math.max(0.25, highestBlueRate);
+        if (civ.trackDurationBlue >= requiredTimeBlue) {
+          civ.identifiedByBlue = true;
+        }
+      } else {
+        civ.trackDurationBlue = Math.max(0.0, (civ.trackDurationBlue || 0.0) - dt * 0.15);
+      }
+
+      let closestRedDist = 999.0;
+      let hasRedTrack = false;
+      for (const sensor of redSensors) {
+        const d = Math.hypot(civ.x - sensor.x, civ.y - sensor.y);
+        if (d < closestRedDist) closestRedDist = d;
+        if (Physics.canRadarDetect(sensor, civ, this.sim.weatherClouds)) {
+          hasRedTrack = true;
+        }
+      }
+      const requiredTimeRed = (closestRedDist < 50.0 || civ.x > 75.0) ? 5.0 : 14.0;
+      if (hasRedTrack) {
+        civ.trackDurationRed = (civ.trackDurationRed || 0.0) + dt;
+        if (civ.trackDurationRed >= requiredTimeRed) {
+          civ.identifiedByRed = true;
+        }
       }
     }
   }

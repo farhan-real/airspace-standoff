@@ -176,7 +176,7 @@ class InspectorSubsystemViews {
     return `
       <div class="inspect-type-banner">
         <span class="inspect-badge" style="background:#065f46;color:#a7f3d0;">NEUTRAL NON-COMBATANT</span>
-        <span class="inspect-cost-tag" style="color:#ff3366;">ROE PENALTIES: STRIKE -500 VP &bull; DESTRUCTION -2000 VP</span>
+        <span class="inspect-cost-tag" style="color:#ff3366;">ROE PENALTIES: UNVERIFIED FIRE -600 VP &bull; STRIKE -500 VP &bull; DESTRUCTION -2000 VP</span>
       </div>
       <div class="inspect-sec-head">CIVILIAN TRANSIT FLIGHT SPECIFICATIONS</div>
       <div class="inspect-stat-grid">
@@ -189,7 +189,7 @@ class InspectorSubsystemViews {
       </div>
       <div class="inspect-desc-box" style="border-left-color:#f97316;">
         <div class="inspect-sec-head" style="color:#f97316;margin-top:0;">RULES OF ENGAGEMENT (ROE) DIRECTIVE:</div>
-        <div style="color:#f8fafc;margin-top:2px;">${c.desc || 'Scheduled commercial airliner transiting civilian flight corridor. Strictly protected under international aerospace law. Striking this aircraft incurs an immediate -500 VP penalty; destroying it incurs a catastrophic -2000 Victory Point penalty.'}</div>
+        <div style="color:#f8fafc;margin-top:2px;">${c.desc || 'Scheduled commercial airliner transiting civilian flight corridor. Strictly protected under international aerospace law. Firing upon an unverified bogey incurs -600 VP; striking this aircraft incurs -500 VP; destroying it incurs a catastrophic -2000 Victory Point penalty.'}</div>
       </div>
       <div class="inspect-action-bar">
         <button type="button" class="inspect-action-btn close-btn" onclick="document.getElementById('system-inspect-modal').classList.remove('active');">CLOSE</button>

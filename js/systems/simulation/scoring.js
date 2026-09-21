@@ -83,7 +83,7 @@ class SimulationScoring {
     const srcType = (sourceUnit && sourceUnit.spec) ? (sourceUnit.spec.id || sourceUnit.spec.name) : 'AIRCRAFT';
     const rawWpn = weapon ? (weapon.name || weapon.id || 'Missile') : 'Missile';
     const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
-    const rawTgt = targetEntity ? (targetEntity.callsign || targetEntity.name || 'BOGEY [?]') : 'BOGEY [?]';
+    const rawTgt = targetEntity ? (targetEntity.callsign || targetEntity.flightCode || targetEntity.name || 'BOGEY [?]') : 'BOGEY [?]';
     const tgtName = String(rawTgt).replace(/<[^>]*>/g, '');
 
     if (sourceUnit && sourceUnit.scorePoints !== undefined) {
@@ -100,7 +100,7 @@ class SimulationScoring {
       targetType: 'UNVERIFIED',
       weapon: wpnName,
       points: -penalty,
-      reason: `RECKLESS ENGAGEMENT: Fired on unverified track (${tgtName})`
+      reason: `RECKLESS ENGAGEMENT: Fired on unverified track [BOGEY ?] (${tgtName})`
     });
   }
 

@@ -64,8 +64,8 @@ class CombatSystem {
       )
     );
 
-    if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !w.isGunpod && targetEntity && !targetEntity.isCivilian) {
-      const penalty = (window.CONFIG && window.CONFIG.VP_UNIDENTIFIED_FIRE_PENALTY) || 150;
+    if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !w.isGunpod && targetEntity) {
+      const penalty = (window.CONFIG && window.CONFIG.VP_UNIDENTIFIED_FIRE_PENALTY) || 600;
       if (sourceUnit.team === 'friendly' && this.game.simulation) {
         this.game.simulation.logScoreEvent('friendly', -penalty, 'RECKLESS ENGAGEMENT: Fired on unverified track [BOGEY ?]');
         if (this.game.simulation.scoring) {
