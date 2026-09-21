@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Tactical Custom Dropdown Engine
- * Replaces all native OS <select> boxes with styled, accessible tactical dropdowns.
+ * AIRSPACE STANDOFF: Tactical Custom Dropdown Engine
+ * Replaces native select elements with accessible tactical dropdowns.
  */
 
 class CustomDropdown {
@@ -48,7 +48,7 @@ class CustomDropdown {
     trigger.innerHTML = `
       ${labelHtml}
       <span class="cdd-val">${valText}</span>
-      <span class="cdd-arrow">▾</span>
+      <span class="cdd-arrow"><img src="icons/chevron.svg" width="8" height="8" alt="v"></span>
     `;
 
     const menu = document.createElement('div');

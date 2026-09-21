@@ -114,9 +114,19 @@ class RadarContactsRenderer {
         }
 
         if (isAce) {
-          ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI * 2); ctx.stroke();
+          ctx.strokeStyle = '#ffd700';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(0, -11);
+          ctx.lineTo(11, 0);
+          ctx.lineTo(0, 11);
+          ctx.lineTo(-11, 0);
+          ctx.closePath();
+          ctx.stroke();
         } else if (a.isFlightLead) {
-          ctx.strokeStyle = isBlue ? '#00f0ff' : '#ef4444'; ctx.lineWidth = 1.5; ctx.strokeRect(-8, -8, 16, 16);
+          ctx.strokeStyle = isBlue ? '#00f0ff' : '#ef4444';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(-8, -8, 16, 16);
         }
       }
       ctx.restore();
@@ -128,7 +138,7 @@ class RadarContactsRenderer {
       const mch = 'M ' + (a.speed || 0.8).toFixed(2);
 
       const rtbTag = a.isRTB ? ' [RETURN TO BASE]' : '';
-      const leadTag = (isAce && isIdentified) ? ' ACE' : ((a.isFlightLead && isIdentified) ? ' LEAD' : '');
+      const leadTag = (isAce && isIdentified) ? ' [ACE]' : ((a.isFlightLead && isIdentified) ? ' LEAD' : '');
       const pinpointTag = (isLastFew && isIdentified) ? ' PINPOINTED' : '';
 
       if (declutterMode && !isSelected && !isTgt) {

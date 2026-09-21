@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Fleet Presets & Preconfigured Aircraft Toolbar
+ * AIRSPACE STANDOFF: Fleet Presets & Preconfigured Aircraft Toolbar
  */
 
 class ProcurementPresets {
@@ -86,8 +86,8 @@ class ProcurementPresets {
         <button class="preset-btn custom-load-btn ${isAct ? 'active' : ''}" title="Load ${name}">
           ${name}
         </button>
-        <button class="preset-icon-btn btn-rename" title="Rename preset">[R]</button>
-        <button class="preset-icon-btn btn-delete alert" title="Delete preset">[X]</button>
+        <button class="preset-icon-btn btn-rename" title="Rename preset"><img src="icons/edit.svg" width="11" height="11" alt="Rename"></button>
+        <button class="preset-icon-btn btn-delete alert" title="Delete preset"><img src="icons/trash.svg" width="11" height="11" alt="Delete"></button>
       `;
 
       chip.querySelector('.custom-load-btn').onclick = () => {

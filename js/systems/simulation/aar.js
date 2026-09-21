@@ -58,10 +58,11 @@ class AfterActionReportSystem {
         const isAlive = p.hp > 0.05;
         const displayHp = isAlive ? Math.max(1, Math.round(p.hp)) : 0;
         const statusStr = isAlive ? `<b style="color:#00f5a0;">SURVIVED (${displayHp} HP)</b>` : `<span style="color:#ef4444;">DESTROYED</span>`;
+        const aceBadge = p.isAce ? `<img src="icons/diamond.svg" width="10" height="10" alt="Ace" style="vertical-align:middle;margin-left:3px;" title="Ace Pilot">` : '';
         return `
           <tr>
             <td>#${i + 1}</td>
-            <td style="color:${col};font-weight:800;">${p.callsign || 'PILOT'} ${p.isAce ? '★' : ''}</td>
+            <td style="color:${col};font-weight:800;">${p.callsign || 'PILOT'}${aceBadge}</td>
             <td>${p.spec ? p.spec.id : 'AIRCRAFT'}</td>
             <td><b style="color:${col};">[${p.team === 'friendly' ? 'BLUE' : 'RED'}]</b></td>
             <td><b>${p.kills || 0}</b></td>

@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Shelf Airframes Sub-Renderer
- * Single-tap purchasing on '+ ADD'; tags are clickable with tooltips.
+ * AIRSPACE STANDOFF: Shelf Airframes Sub-Renderer
+ * Single-tap purchasing on '+ ADD'; tags are interactive with tactical tooltips.
  */
 
 class ShelfAirframesRenderer {
@@ -114,11 +114,10 @@ class ShelfAirframesRenderer {
         </div>
         <div class="adc-desc">${spec.desc || ''}</div>
         <div class="adc-footer">
-          <button type="button" class="spec-inspect-btn" data-inspect-type="airframe" data-inspect-id="${spec.id}">[SPECS]</button>
+          <button type="button" class="spec-inspect-btn" data-inspect-type="airframe" data-inspect-id="${spec.id}">SPECS</button>
           <button type="button" class="adc-btn-add">+ ADD</button>
         </div>`;
 
-      // Single-tap purchase on '+ ADD' button only
       const addBtn = card.querySelector('.adc-btn-add');
       if (addBtn) {
         addBtn.onclick = (e) => {

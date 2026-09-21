@@ -55,11 +55,11 @@
       <div style="display: flex; flex-direction: column; gap: 8px;">
         <button id="btn-resume-sortie" class="scramble-btn" style="width: 100%; padding: 8px;">RESUME</button>
         <button id="btn-pause-settings" class="hud-btn" style="width: 100%;">
-          <svg class="btn-vector-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <img src="icons/settings.svg" class="btn-vector-ico" width="13" height="13" alt="Settings">
           <span>SETTINGS</span>
         </button>
         <button id="btn-pause-manual" class="hud-btn" style="width: 100%;">
-          <svg class="btn-vector-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 2v17.5A2.5 2.5 0 0 0 8.5 22H20"/><path d="M10 2v7.5l2.5-1.5L15 9.5V2Z" fill="currentColor" fill-opacity="0.25"/></svg>
+          <img src="icons/manual.svg" class="btn-vector-ico" width="13" height="13" alt="Manual">
           <span>FLIGHT MANUAL</span>
         </button>
         <button id="btn-pause-abort" class="hud-btn alert" style="width: 100%;">ABORT MISSION</button>
@@ -73,7 +73,9 @@
   <div class="inspect-window" style="max-width: 500px;">
     <div class="inspect-header">
       <div class="modal-title-row"><h2 id="tactical-dialog-title">CONFIRMATION</h2></div>
-      <button id="btn-tactical-dialog-close" class="hud-btn small">X</button>
+      <button id="btn-tactical-dialog-close" class="hud-btn small">
+        <img src="icons/close.svg" width="10" height="10" alt="Close">
+      </button>
     </div>
     <div class="inspect-body" style="padding: 16px 18px; gap: 12px;">
       <p id="tactical-dialog-msg" style="font-size: 0.80rem; color: #cbd5e1; line-height: 1.5;"></p>
@@ -97,7 +99,9 @@
         <h2>AIRCRAFT LOADOUT PRESETS</h2>
         <span class="subtext" style="color:#00f0ff;font-family:var(--font-mono);font-size:0.64rem;margin-left:8px;">STANDARD &amp; CUSTOM CONFIGURATIONS</span>
       </div>
-      <button id="btn-close-preconfig" class="hud-btn small">X</button>
+      <button id="btn-close-preconfig" class="hud-btn small">
+        <img src="icons/close.svg" width="10" height="10" alt="Close">
+      </button>
     </div>
 
     <!-- CONTROLS & FILTER TOOLBAR -->
@@ -132,7 +136,7 @@
   <div class="inspect-window leaderboard-window">
     <div class="inspect-header">
       <div class="modal-title-row">
-        <svg class="modal-title-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M6 3h12v7a6 6 0 0 1-12 0V3Z"/><path d="M9 21h6"/><path d="M12 16v5"/><path d="m12 6.5.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3.9-1.8Z" fill="#00f0ff" stroke="none"/></svg>
+        <img src="icons/leaderboard.svg" class="modal-title-ico" width="16" height="16" alt="Leaderboard">
         <h2>SQUADRON LEADERBOARD</h2>
         <span class="subtext" style="color:#00f0ff;font-family:var(--font-mono);font-size:0.64rem;margin-left:8px;">TOP 10 HISTORICAL SORTIES BY FINAL SCORE</span>
       </div>
@@ -183,7 +187,7 @@
   <div class="glossary-window">
     <div class="glossary-header">
       <div class="modal-title-row">
-        <svg class="modal-title-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 2v17.5A2.5 2.5 0 0 0 8.5 22H20"/><path d="M10 2v7.5l2.5-1.5L15 9.5V2Z" fill="#00f0ff" fill-opacity="0.25"/></svg>
+        <img src="icons/manual.svg" class="modal-title-ico" width="16" height="16" alt="Manual">
         <h2>FLIGHT MANUAL &amp; OPERATIONAL REFERENCE</h2>
       </div>
       <button id="btn-close-glossary" class="hud-btn small">CLOSE</button>
@@ -203,7 +207,7 @@
   <div class="settings-window">
     <div class="settings-header">
       <div class="modal-title-row">
-        <svg class="modal-title-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <img src="icons/settings.svg" class="modal-title-ico" width="16" height="16" alt="Settings">
         <h2>SETTINGS &amp; CONTROLS</h2>
       </div>
       <button id="btn-close-settings" class="hud-btn small">CLOSE</button>
@@ -247,15 +251,15 @@
         <div class="title-right-group">
           <button id="btn-proc-exit" class="hud-btn alert proc-exit-btn" title="Exit Application">EXIT</button>
           <button id="btn-proc-leaderboard" class="hud-btn proc-leaderboard-btn" title="Top 10 High Scores">
-            <svg class="btn-vector-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M6 3h12v7a6 6 0 0 1-12 0V3Z"/><path d="M9 21h6"/><path d="M12 16v5"/><path d="m12 6.5.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3.9-1.8Z" fill="#00f0ff" stroke="none"/></svg>
+            <img src="icons/leaderboard.svg" class="btn-vector-ico" width="13" height="13" alt="Leaderboard">
             <span>LEADERBOARD</span>
           </button>
           <button id="btn-proc-settings" class="hud-btn proc-settings-btn" title="Settings &amp; Controls">
-            <svg class="btn-vector-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <img src="icons/settings.svg" class="btn-vector-ico" width="13" height="13" alt="Settings">
             <span>SETTINGS</span>
           </button>
           <button id="btn-open-glossary" class="hud-btn proc-manual-btn">
-            <svg class="btn-vector-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 2v17.5A2.5 2.5 0 0 0 8.5 22H20"/><path d="M10 2v7.5l2.5-1.5L15 9.5V2Z" fill="currentColor" fill-opacity="0.25"/></svg>
+            <img src="icons/manual.svg" class="btn-vector-ico" width="13" height="13" alt="Manual">
             <span>MANUAL</span>
           </button>
           <button id="btn-edit-squadron-name" class="squad-callsign-tag" title="Click to rename squadron">
@@ -354,10 +358,7 @@
 
       <div class="time-warp-controls" id="time-warp-controls">
         <button type="button" id="btn-time-pause" class="time-btn" title="Pause Simulation">
-          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor" style="display:inline-block;vertical-align:middle;">
-            <rect x="2" y="1" width="3" height="10" rx="0.5"/>
-            <rect x="7" y="1" width="3" height="10" rx="0.5"/>
-          </svg>
+          <img src="icons/pause.svg" width="10" height="10" alt="Pause">
         </button>
         <button type="button" id="btn-time-1x" class="time-btn active">1X</button>
         <button type="button" id="btn-time-2x" class="time-btn">2X</button>
@@ -389,8 +390,12 @@
     <!-- SQUADRON CYCLER & FLEET BUTTON -->
     <div class="banner-nav-cluster">
       <div class="mob-craft-cycler">
-        <button type="button" id="btn-mobile-prev-unit" class="hud-btn small">&#x25C0;</button>
-        <button type="button" id="btn-mobile-next-unit" class="hud-btn small">&#x25B6;</button>
+        <button type="button" id="btn-mobile-prev-unit" class="hud-btn small">
+          <img src="icons/arrowleft.svg" width="11" height="11" alt="Prev">
+        </button>
+        <button type="button" id="btn-mobile-next-unit" class="hud-btn small">
+          <img src="icons/arrowright.svg" width="11" height="11" alt="Next">
+        </button>
       </div>
       <button type="button" id="btn-mobile-open-fleet" class="hud-btn small highlight fleet-btn">ROSTER</button>
     </div>
@@ -408,15 +413,15 @@
       <button id="btn-fullscreen-toggle" class="hud-btn small" title="Toggle Fullscreen">FULLSCREEN</button>
       <button id="btn-audio-toggle" class="hud-btn small" title="Toggle Audio">AUDIO: ON</button>
       <button id="btn-hud-glossary" class="hud-btn small">
-        <svg class="btn-vector-ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 2v17.5A2.5 2.5 0 0 0 8.5 22H20"/><path d="M10 2v7.5l2.5-1.5L15 9.5V2Z" fill="currentColor" fill-opacity="0.25"/></svg>
+        <img src="icons/manual.svg" class="btn-vector-ico" width="11" height="11" alt="Manual">
         <span>MANUAL</span>
       </button>
       <button id="btn-hud-leaderboard" class="hud-btn small highlight" title="Sortie Hall of Fame">
-        <svg class="btn-vector-ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M6 3h12v7a6 6 0 0 1-12 0V3Z"/><path d="M9 21h6"/><path d="M12 16v5"/><path d="m12 6.5.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3.9-1.8Z" fill="#00f0ff" stroke="none"/></svg>
+        <img src="icons/leaderboard.svg" class="btn-vector-ico" width="11" height="11" alt="Leaderboard">
         <span>LEADERBOARD</span>
       </button>
       <button id="btn-open-settings" class="hud-btn small">
-        <svg class="btn-vector-ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <img src="icons/settings.svg" class="btn-vector-ico" width="11" height="11" alt="Settings">
         <span>SETTINGS</span>
       </button>
       <button id="btn-abort-match" class="hud-btn small alert">ABORT</button>
@@ -521,7 +526,7 @@
           <span>CALLSIGN: <b id="mfd-callsign-val">--</b></span>
           <div style="display:flex;gap:4px;align-items:center;">
             <span id="mfd-lead-tag" class="lead-indicator hidden">FLIGHT LEAD</span>
-            <span id="mfd-ace-tag" class="ace-indicator hidden">LEAD PILOT</span>
+            <span id="mfd-ace-tag" class="ace-indicator hidden"><img src="icons/diamond.svg" width="9" height="9" alt="Ace" style="vertical-align:middle;margin-right:2px;">LEAD PILOT</span>
           </div>
         </div>
 

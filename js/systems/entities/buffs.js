@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Flight Lead Modifications & Tactical Dossier Registry
+ * AIRSPACE STANDOFF: Flight Lead Modifications & Tactical Dossier Registry
  * Modular application of category flight lead enhancements.
  */
 

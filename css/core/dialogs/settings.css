@@ -1,19 +1,21 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Settings & Controls Window Stylesheet
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Settings & Controls Window Stylesheet */
 
 .settings-window {
   background: #060c18;
   border: 1px solid #00f0ff;
+  border-top: 3px solid #00f0ff;
   border-radius: 6px;
   width: 95%;
   max-width: 780px;
-  max-height: 88vh;
+  height: 82vh;
+  min-height: 500px;
+  max-height: 650px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.95);
   overflow: hidden;
   font-family: var(--font-mono);
+  box-sizing: border-box;
 }
 
 .settings-header {
@@ -72,8 +74,10 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 .settings-footer {
@@ -140,25 +144,42 @@
   justify-content: space-between;
   background: #030712;
   border: 1px solid #142338;
-  border-radius: 3px;
-  padding: 8px 12px;
+  border-radius: 4px;
+  padding: 10px 14px;
+  gap: 16px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.settings-label-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .settings-label-group label {
-  font-size: 0.72rem;
-  font-weight: 700;
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 800;
   color: #f8fafc;
+  letter-spacing: 0.4px;
+  line-height: 1.2;
 }
 
 .settings-hint {
-  font-size: 0.60rem;
+  display: block;
+  font-size: 0.62rem;
   color: #8494ab;
+  line-height: 1.35;
 }
 
 .slider-val-box {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .slider-num {
@@ -176,4 +197,21 @@
   background: #142338;
   outline: none;
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .settings-window {
+    width: 98vw;
+    height: 92vh;
+    max-height: 92vh;
+    min-height: 0;
+  }
+  .settings-body {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .settings-form-row {
+    padding: 8px 10px;
+    gap: 10px;
+  }
 }

@@ -143,6 +143,7 @@ html, body {
   flex-shrink: 0;
   pointer-events: none;
   transition: transform 0.15s ease, filter 0.15s ease;
+  object-fit: contain;
 }
 
 .hud-btn:hover:not(:disabled) .btn-vector-ico {
@@ -156,6 +157,7 @@ html, body {
   flex-shrink: 0;
   margin-right: 8px;
   filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.45));
+  object-fit: contain;
 }
 
 .hud-btn:hover:not(:disabled) {

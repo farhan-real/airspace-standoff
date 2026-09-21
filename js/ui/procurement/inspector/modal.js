@@ -1,6 +1,6 @@
 /**
- * APEX VECTOR // Inspector Modal Renderer (Subfolder Module)
- * Renders airframe dossiers with interactive top metric tags and hover tooltips
+ * AIRSPACE STANDOFF: Inspector Modal Renderer
+ * Renders airframe dossiers with interactive top metric tags and tooltips.
  */
 
 class InspectorModalRenderer {

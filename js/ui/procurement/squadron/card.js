@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Squadron Roster Bay Card DOM Builder
+ * AIRSPACE STANDOFF: Squadron Roster Bay Card DOM Builder
  */
 
 class RosterCardBuilder {
@@ -69,7 +69,9 @@ class RosterCardBuilder {
           <div class="upgrade-socket filled">
             <span>[${upg.category || 'SYSTEM'}] ${upg.name || upgId}</span>
             <button type="button" class="spec-inspect-btn small" data-inspect-type="upgrade" data-inspect-id="${upg.id}">SPECS</button>
-            <button class="btn-socket-dismount" data-sidx="${sIdx}" data-uidx="${u}" title="Remove component">[X]</button>
+            <button class="btn-socket-dismount" data-sidx="${sIdx}" data-uidx="${u}" title="Remove component">
+              <img src="icons/close.svg" width="8" height="8" alt="Remove">
+            </button>
           </div>`;
       } else {
         upgradesHtml += `<div class="upgrade-socket empty" data-sidx="${sIdx}" title="Click to install system"><span>+ [EMPTY SLOT]</span></div>`;
@@ -106,7 +108,9 @@ class RosterCardBuilder {
             <div class="iic-right-group">
               <span class="iic-details"><span class="iic-slots">${slots}<span class="iic-slots-word"> ${itemSlotWord}</span><span class="iic-slots-short">S</span></span> &bull; <b class="iic-hp">${damageHP} HP</b> &bull; <span class="iic-seeker">${seekerTag}</span></span>
               <button type="button" class="spec-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w ? w.id : wId}">SPECS</button>
-              <button class="btn-dismount-item" data-sidx="${sIdx}" data-widx="${wIdx}" title="Dismount weapon">[X]</button>
+              <button class="btn-dismount-item" data-sidx="${sIdx}" data-widx="${wIdx}" title="Dismount weapon">
+                <img src="icons/close.svg" width="8" height="8" alt="Remove">
+              </button>
             </div>
           </div>`;
       }).join('');
@@ -117,7 +121,7 @@ class RosterCardBuilder {
     const activeGunDmg = activeGun ? (activeGun.damagePerSec || 2.5) : 2.5;
 
     const leadButtonHtml = item.isLead
-      ? `<button type="button" class="hud-btn small btn-toggle-lead active-lead" data-sidx="${sIdx}" data-inspect-type="lead" data-inspect-id="${spec.id}">★ FLIGHT LEAD</button>`
+      ? `<button type="button" class="hud-btn small btn-toggle-lead active-lead" data-sidx="${sIdx}" data-inspect-type="lead" data-inspect-id="${spec.id}"><img src="icons/star.svg" width="11" height="11" alt="Lead" style="vertical-align:middle;margin-right:3px;">FLIGHT LEAD</button>`
       : `<button type="button" class="hud-btn small btn-toggle-lead" data-sidx="${sIdx}" data-inspect-type="lead" data-inspect-id="${spec.id}">SET LEAD</button>`;
 
     card.innerHTML = `
@@ -142,7 +146,7 @@ class RosterCardBuilder {
         <div class="custom-dropdown su-gun-dropdown" id="cdd-gun-${sIdx}">
           <button type="button" class="custom-dropdown-trigger gun-sel-trigger">
             <span class="cdd-val">${activeGun ? activeGun.name : 'Gun'}</span>
-            <span class="cdd-arrow">▾</span>
+            <span class="cdd-arrow"><img src="icons/chevron.svg" width="8" height="8" alt="v"></span>
           </button>
           <div class="custom-dropdown-menu gun-menu">${gunOptsList}</div>
         </div>

@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Inspector Coordinator & Tag-Only Tooltip Engine
+ * AIRSPACE STANDOFF: Inspector Coordinator & Tag-Only Tooltip Engine
  * Mobile inspection is strictly for tags and badges; aircraft cards do not trigger mobile tooltips.
  */
 
@@ -24,7 +24,6 @@ class ProcurementInspector {
       document.body.classList.add('has-touch');
     }
 
-    // Tap on tag/badge displays its tooltip; tapping anywhere outside closes it
     document.addEventListener('click', (e) => {
       const tagTarget = e.target.closest('[data-tag-tooltip]');
       if (tagTarget) {
@@ -33,7 +32,10 @@ class ProcurementInspector {
         const desc = tagTarget.getAttribute('data-tag-tooltip');
         if (desc) {
           const html = `
-            <div class="tt-touch-close-bar"><span class="tt-touch-title">TACTICAL DATA</span><button type="button" class="tt-touch-close-btn">[✕ CLOSE]</button></div>
+            <div class="tt-touch-close-bar">
+              <span class="tt-touch-title">TACTICAL DATA</span>
+              <button type="button" class="tt-touch-close-btn"><img src="icons/close.svg" width="9" height="9" alt="Close" style="vertical-align:middle;margin-right:2px;"> CLOSE</button>
+            </div>
             <div class="tt-header-row"><span class="tt-title">${title}</span></div>
             <div class="tt-footer-desc">${desc}</div>
           `;
@@ -47,7 +49,6 @@ class ProcurementInspector {
       }
     });
 
-    // Desktop hover events (Mouse Only)
     document.addEventListener('mouseover', (e) => {
       if (document.body.classList.contains('has-touch') && this.tooltipEl.classList.contains('touch-pinned')) return;
       const tagTarget = e.target.closest('[data-tag-tooltip]');

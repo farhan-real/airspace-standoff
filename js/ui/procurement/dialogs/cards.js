@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Preconfigured Aircraft Preset Card Builder
+ * AIRSPACE STANDOFF: Preconfigured Aircraft Preset Card Builder
  */
 
 class PreconfigCardsRenderer {

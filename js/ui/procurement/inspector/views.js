@@ -27,7 +27,7 @@ class InspectorSubsystemViews {
     else if (w.isDecoy || w.isDecoyDrone) counterHint = 'Imaging Infrared/Optical seekers, close-in visual NCTR, or CIWS';
     else if (w.isLaser) counterHint = 'Dive into Weather Clouds (liquid moisture scatters beam) or maintain standoff beyond 9.0 km';
     else if (w.isGunpod) counterHint = 'Maintain BVR standoff beyond 5.0 km to exploit carrier weight';
-    else if (w.seeker === 'ARH') counterHint = 'Beam 90&deg; (Doppler Notch), deploy Chaff or ECM jammer pods';
+    else if (w.seeker === 'ARH') counterHint = 'Beam 90° (Doppler Notch), deploy Chaff or ECM jammer pods';
     else if (w.seeker === 'IIR' || w.seeker === 'EO') counterHint = 'Throttle to Idle or Cruise to cut thermal exhaust, or dive into clouds';
     else if (w.seeker === 'PASSIVE_RADAR') counterHint = 'Deactivate airborne ECM jammer pods and power down emitting radar arrays';
     else counterHint = 'Execute high-G defensive break turns, Split-S kinetic dives, or deploy countermeasures';
@@ -61,7 +61,7 @@ class InspectorSubsystemViews {
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>GUIDANCE &amp; SEEKER HEAD:</span><b style="color:#00f0ff;">${seekerText}</b></div>
         <div class="inspect-stat-item"><span>SPECIAL TRAIT:</span><b style="color:#ffd700;">[${traitLabel}]</b></div>
-        <div class="inspect-stat-item"><span>MISSILE STEALTH RCS:</span><b class="${w.isStealthMissile ? 'stat-tier-1' : 'stat-tier-3'}">${w.rcs || 0.04} m&sup2;</b></div>
+        <div class="inspect-stat-item"><span>MISSILE STEALTH RCS:</span><b class="${w.isStealthMissile ? 'stat-tier-1' : 'stat-tier-3'}">${w.rcs || 0.04} m²</b></div>
         <div class="inspect-stat-item"><span>COMPATIBLE AIRFRAMES:</span><b style="color:#fef08a;text-align:right;font-size:0.62rem;">${airframesText}</b></div>
         <div class="inspect-stat-item"><span>EVASION COUNTER:</span><b style="color:#7dd3fc;text-align:right;font-size:0.64rem;">${counterHint}</b></div>
       </div>
@@ -116,7 +116,7 @@ class InspectorSubsystemViews {
 
       <div class="inspect-sec-head">2. TACTICAL ADVANTAGES &amp; DOCTRINE</div>
       <div class="inspect-stat-grid">
-        <div class="inspect-stat-item"><span>BORESIGHT CONE AUTHORITY:</span><b style="color:${coneDeg >= 48 ? '#00f5a0' : '#f97316'};">${coneDeg}&deg; Boresight Cone (${coneDeg >= 48 ? 'Forgiving High-G Snapshot' : 'Narrow Pinpoint Beam'})</b></div>
+        <div class="inspect-stat-item"><span>BORESIGHT CONE AUTHORITY:</span><b style="color:${coneDeg >= 48 ? '#00f5a0' : '#f97316'};">${coneDeg}° Boresight Cone (${coneDeg >= 48 ? 'Forgiving High-G Snapshot' : 'Narrow Pinpoint Beam'})</b></div>
         <div class="inspect-stat-item"><span>THERMAL STEALTH IMPACT:</span><b style="color:${g.thermalBloom > 1 ? '#f97316' : '#00f5a0'};">${stealthImpact}</b></div>
         <div class="inspect-stat-item"><span>WEATHER CLOUD INTEGRITY:</span><b style="color:${g.cloudScattering ? '#f97316' : '#00f5a0'};">${cloudPenetration}</b></div>
         <div class="inspect-stat-item"><span>KINETIC IMPACT DISRUPTION:</span><b style="color:#7dd3fc;">${concussionText}</b></div>
@@ -184,7 +184,7 @@ class InspectorSubsystemViews {
         <div class="inspect-stat-item"><span>AIRCRAFT MODEL:</span><b>${c.model || c.name || 'Commercial Airliner'}</b></div>
         <div class="inspect-stat-item"><span>CRUISE AIRSPEED:</span><b>Mach ${(c.speedMach || 0.78).toFixed(2)} (~${Math.round((c.speedMach || 0.78) * 1225)} km/h)</b></div>
         <div class="inspect-stat-item"><span>FLIGHT LEVEL ALTITUDE:</span><b>FL${Math.round((c.altFt || 36000) / 100)} (${(c.altFt || 36000).toLocaleString()} ft)</b></div>
-        <div class="inspect-stat-item"><span>RADAR CROSS SECTION:</span><b>${c.effectiveRcs || c.rcs || 25.0} m&sup2; (Heavy Widebody Return)</b></div>
+        <div class="inspect-stat-item"><span>RADAR CROSS SECTION:</span><b>${c.effectiveRcs || c.rcs || 25.0} m² (Heavy Widebody Return)</b></div>
         <div class="inspect-stat-item"><span>PASSENGER INTEGRITY:</span><b>${c.hp || 6} / ${c.maxHp || 6} HP</b></div>
       </div>
       <div class="inspect-desc-box" style="border-left-color:#f97316;">
