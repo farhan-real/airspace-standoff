@@ -111,7 +111,24 @@ window.MANUAL_COMBAT = [
         </table>
       </div>
 
-      <div class="ge-subhead">3. NON-STACKING EVASIONS &amp; KINETIC ENERGY BLEED</div>
+      <div class="ge-subhead">3. PROPORTIONAL NAVIGATION (PRONAV) GUIDANCE LAW</div>
+      <div class="ge-desc">
+        Guided missiles in AIRSPACE STANDOFF steer using real <b>Proportional Navigation (ProNav)</b> rather than primitive pure pursuit (flying straight at the target's current position, which causes severe lagging):
+      </div>
+      <div class="ge-formula-card">
+        <span style="color:#94a3b8;font-size:0.62rem;">PRONAV COMMAND TURN RATE FORMULATION:</span>
+        <div class="ge-formula-code">&omega;_m = N &times; (V_c / V_m) &times; &lambda;_dot</div>
+      </div>
+      <div class="ge-desc">
+        <ul style="list-style:none;padding-left:0;margin-top:4px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Constant Bearing, Decreasing Range (CBDR):</b> The seeker continuously tracks the rotation rate of the Line of Sight (&lambda;_dot) and closure velocity (V_c). The missile turns ahead of the target along a predictive collision triangle, maintaining a constant bearing to intercept with minimal control surface drag.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Navigation Ratio (N = 4.0):</b> A baseline navigation constant of N = 4.0 ensures rapid intercept stabilization against non-maneuvering targets while preserving rocket kinetic energy.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Defeating ProNav via High-G Breaks:</b> A late, sudden break turn forces a rapid spike in &lambda;_dot. Because the missile travels at Mach 2.8&ndash;5.0, matching this rotation rate demands more lateral acceleration than its fins can aerodynamically deliver (exceeding maximum turn rate limits). The missile cannot pull the required lead, resulting in a <b>Kinetic Overshoot</b> as it streaks harmlessly past the target.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Disrupting Guidance Gain (N):</b> Active defensive maneuvers (such as Doppler Notching, Barrel Rolls, and Cobras) degrade the missile's effective navigation gain from N = 4.0 down to 0.6&ndash;1.2, breaking its ability to calculate an intercept lead point.</li>
+        </ul>
+      </div>
+
+      <div class="ge-subhead">4. NON-STACKING EVASIONS &amp; KINETIC ENERGY BLEED</div>
       <div class="ge-desc">
         Defense against guided weapons is governed by two fundamental physical principles:
         <ul style="list-style:none;padding-left:0;margin-top:6px;">
@@ -121,17 +138,17 @@ window.MANUAL_COMBAT = [
         </ul>
       </div>
 
-      <div class="ge-subhead">4. LAUNCH ESTIMATE VS. IMPACT RESOLUTION</div>
+      <div class="ge-subhead">5. LAUNCH ESTIMATE VS. IMPACT RESOLUTION</div>
       <div class="ge-desc">
         The probability displayed on the cockpit HUD and weapon buttons (e.g. <code>EST. 72%</code>) is a real-time firing estimate based on launch geometry and target energy. The <b>true hit probability is resolved at the moment of impact</b>, calculating the target's current speed, energy deficit, non-stacking defenses, and terminal aspect.
       </div>
 
-      <div class="ge-subhead">5. PROXIMITY FUSING VS. KINETIC OVERSHOOTS</div>
+      <div class="ge-subhead">6. PROXIMITY FUSING VS. KINETIC OVERSHOOTS</div>
       <div class="ge-desc">
         Warheads detonate when the missile closes within <b>650 meters</b> or reaches its Closest Point of Approach (CPA &le; 950m). If an aircraft breaks hard outside the missile's turn radius, the missile does not prematurely detonate or enter a circle; it executes a realistic <b>Kinetic Overshoot</b>, streaking past the target on kinetic momentum before expiration.
       </div>
 
-      <div class="ge-subhead">6. PASSIVE RADAR HOMING &amp; CONCEALMENT (AGM-88G)</div>
+      <div class="ge-subhead">7. PASSIVE RADAR HOMING &amp; CONCEALMENT (AGM-88G)</div>
       <div class="ge-desc">
         Anti-Radiation Missiles (e.g. AGM-88G AARGM-ER) passively track enemy RF radar emissions without transmitting active radar:
         <ul style="list-style:none;padding-left:0;margin-top:6px;">
@@ -142,7 +159,7 @@ window.MANUAL_COMBAT = [
         </ul>
       </div>
 
-      <div class="ge-subhead">7. RADAR TELEMETRY READOUT &amp; THERMOBARIC BLAST (MPBM)</div>
+      <div class="ge-subhead">8. RADAR TELEMETRY READOUT &amp; THERMOBARIC BLAST (MPBM)</div>
       <div class="ge-desc">
         Missiles display comprehensive two-line telemetry on the radar scope:
         <ul style="list-style:none;padding-left:0;margin-top:6px;">
