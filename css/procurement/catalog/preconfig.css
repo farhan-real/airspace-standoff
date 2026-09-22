@@ -1,6 +1,4 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF: Preconfigured Combat Loadouts Modal Stylesheet
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Preconfigured Combat Loadouts Modal Stylesheet */
 
 .inspect-window.preconfig-window {
   width: 95vw !important;
@@ -163,10 +161,16 @@
 .pc-stat-cell {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   color: #8494ab;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  gap: 4px;
+}
+
+.pc-stat-cell .dual-val {
+  font-size: 0.60rem;
 }
 
 .pc-stat-cell b { color: #f1f5f9; }

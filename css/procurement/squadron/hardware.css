@@ -35,7 +35,7 @@
 .unit-metric-strip {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 5px 8px;
   background-color: #050608;
   border: 1px solid #18202e;
   border-radius: 3px;
@@ -47,14 +47,21 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .metric-meta {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   font-size: 0.64rem;
   font-family: var(--font-mono);
   color: #cbd5e1;
+  gap: 4px;
+}
+
+.metric-meta .dual-val {
+  font-size: 0.62rem;
 }
 
 .capacity-pips-bar {
@@ -297,6 +304,19 @@
 }
 
 @media (max-width: 1024px) {
+  .unit-metric-strip {
+    gap: 4px 6px;
+    padding: 4px 6px;
+  }
+
+  .metric-meta {
+    font-size: 0.58rem;
+  }
+
+  .metric-meta .dual-val {
+    font-size: 0.58rem;
+  }
+
   .installed-item-card {
     padding: 3px 5px;
     gap: 5px;

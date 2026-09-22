@@ -25,41 +25,20 @@ class RosterCardBuilder {
       item.callsign = pool[(sIdx * 3) % pool.length] || `Wardog ${sIdx + 1}`;
     }
 
-    let totalMass = 100, usedSlots = 0, totalCost = Number(spec.cost || 0);
-    const totalSlots = spec.totalSlots || 6;
+    const metrics = (typeof LoadoutMetrics !== 'undefined')
+      ? LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead)
+      : null;
+
+    const totalSlots = metrics ? metrics.totalSlots : (spec.totalSlots || 6);
+    const usedSlots = metrics ? metrics.usedSlots : 0;
+    const totalCost = metrics ? metrics.totalCost : Number(spec.cost || 0);
+    const wrPercent = metrics ? metrics.wrPercent : 50;
+    const weightCategory = metrics ? metrics.weightCategory : 'NORMAL';
+    const weightColor = metrics ? metrics.weightColor : '#00f5a0';
+    const totalMass = metrics ? metrics.totalMass : 100;
+    const remainingSlots = metrics ? metrics.remainingSlots : (totalSlots - usedSlots);
+
     const activeGun = gunsMap[item.chosenGunId] || gunsMap[spec.builtInGun] || gunsMap['M61A2'];
-    if (activeGun) totalMass += activeGun.mass || 0;
-
-    item.weapons.forEach(wItem => {
-      const wId = (typeof wItem === 'object' && wItem !== null) ? (wItem.id || wItem.specId) : wItem;
-      const w = weaponsMap[wId];
-      if (w) { totalMass += w.mass || 0; usedSlots += w.slots || 1; totalCost += Number(w.cost || 0); }
-    });
-
-    item.upgrades.forEach(uItem => {
-      const uId = (typeof uItem === 'object' && uItem !== null) ? (uItem.id || uItem.specId) : uItem;
-      const u = upgradesMap[uId];
-      if (u) { totalMass += u.mass || 0; totalCost += Number(u.cost || 0); }
-    });
-
-    const maxMass = spec.M_max || 5000;
-    const wrPercent = Math.round(Math.min(1.0, totalMass / maxMass) * 100);
-
-    let weightCategory = 'NORMAL';
-    let weightColor = '#00f5a0';
-    if (wrPercent <= 35) {
-      weightCategory = 'LIGHT';
-      weightColor = '#00f0ff';
-    } else if (wrPercent <= 60) {
-      weightCategory = 'NORMAL';
-      weightColor = '#00f5a0';
-    } else if (wrPercent <= 80) {
-      weightCategory = 'HEAVY';
-      weightColor = '#ffb830';
-    } else {
-      weightCategory = 'OVERLOAD';
-      weightColor = '#ff3366';
-    }
 
     const gunOptsList = Object.values(gunsMap).map(g => {
       const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
@@ -95,7 +74,6 @@ class RosterCardBuilder {
       }
     }
 
-    const remainingSlots = totalSlots - usedSlots;
     const remSlotLabel = remainingSlots === 1 ? 'SLOT' : 'SLOTS';
     const weaponsHtml = (item.weapons.length === 0)
       ? `<div class="empty-bay-indicator" data-sidx="${sIdx}">EMPTY HARDPOINTS (${remainingSlots} ${remSlotLabel} AVAILABLE)</div>`
@@ -172,11 +150,29 @@ class RosterCardBuilder {
       </div>
       <div class="unit-metric-strip">
         <div class="metric-block">
-          <div class="metric-meta"><span>HARDPOINTS:</span><span>${usedSlots}/${totalSlots} ${totalSlots === 1 ? 'SLOT' : 'SLOTS'}</span></div>
+          <div class="metric-meta">
+            <span>RCS:</span>
+            ${metrics ? metrics.rcsDualHtml : `<b>${spec.sigma_0 || 1.0}m²</b>`}
+          </div>
+        </div>
+        <div class="metric-block">
+          <div class="metric-meta">
+            <span>SPEED:</span>
+            ${metrics ? metrics.speedDualHtml : `<b>M ${(spec.S_0 || 0.9).toFixed(2)}</b>`}
+          </div>
+        </div>
+        <div class="metric-block">
+          <div class="metric-meta">
+            <span>HARDPOINTS:</span>
+            ${metrics ? metrics.slotsDualHtml : `<span>${usedSlots}/${totalSlots} SLOTS</span>`}
+          </div>
           <div class="capacity-pips-bar">${pipsHtml}</div>
         </div>
         <div class="metric-block">
-          <div class="metric-meta"><span>PAYLOAD WEIGHT:</span><span><b style="color:${weightColor};">${weightCategory}</b> ${wrPercent}% (${totalMass}kg)</span></div>
+          <div class="metric-meta">
+            <span>PAYLOAD:</span>
+            <span><b style="color:${weightColor};">${weightCategory}</b> ${wrPercent}% (${totalMass}kg)</span>
+          </div>
           <div class="weight-bar-bg"><div class="weight-bar-fill ${wrPercent > 80 ? 'overload' : (wrPercent > 60 ? 'heavy' : '')}" style="width:${Math.min(100, wrPercent)}%;"></div></div>
         </div>
       </div>

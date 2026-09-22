@@ -1,6 +1,4 @@
-/* ==========================================================================
-   AIRSPACE STANDOFF // Universal 5-Tier Evaluation Spectrum & Inspector Codex
-   ========================================================================== */
+/* AIRSPACE STANDOFF: Universal 5-Tier Evaluation Spectrum & Inspector Codex */
 
 :root {
   --stat-tier-1: #00f0ff; /* T1: EXCELLENT / VERY LOW COST */
@@ -34,6 +32,29 @@
 .stat-badge-tier.tier-3 { background: rgba(255, 184, 48, 0.12); border: 1px solid #ffb830; color: #ffb830; }
 .stat-badge-tier.tier-4 { background: rgba(249, 115, 22, 0.12); border: 1px solid #f97316; color: #fed7aa; }
 .stat-badge-tier.tier-5 { background: rgba(255, 51, 102, 0.14); border: 1px solid #ff3366; color: #fecdd3; }
+
+/* Universal Dual-Value Stat Presentation for Loadout Variations */
+.dual-val {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.val-sep {
+  color: #64748b;
+  font-weight: 700;
+  font-size: 0.58rem;
+  padding: 0 1px;
+}
+
+.val-unit {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.56rem;
+  margin-left: 1px;
+}
 
 /* 2-Line Spectrum Legend Box */
 .inspect-spectrum-legend {
