@@ -9,7 +9,7 @@ window.MANEUVER_CARDS = [
     name: 'Doppler Notch & Chaff',
     badge: 'RADAR BREAK',
     whenToUse: 'TRIGGER: Active radar (ARH) lock',
-    whyToUse: 'BENEFIT: Beams 90°, cuts closure & pops chaff (8s)',
+    whyToUse: 'BENEFIT: Beams threat 90 degrees, cuts radial closure & deploys chaff (8s)',
     evasionBonus: 0.48,
     cost: 0.7,
     isRecommended: function(unit, game) {
@@ -60,7 +60,7 @@ window.MANEUVER_CARDS = [
     name: 'High-G Barrel Roll',
     badge: 'KINETIC DODGE',
     whenToUse: 'TRIGGER: Inbound missile < 25km',
-    whyToUse: 'BENEFIT: High-G roll disrupts lead pursuit (7s)',
+    whyToUse: 'BENEFIT: 3D spiral displacement disrupts proportional lead pursuit (7s)',
     evasionBonus: 0.45,
     cost: 0.7,
     isRecommended: function(unit, game) {
@@ -96,8 +96,8 @@ window.MANEUVER_CARDS = [
     id: 'PUSH_COBRA',
     name: 'Pugachev Push Cobra',
     badge: 'SUPER-MANEUVER',
-    whenToUse: 'TRIGGER: Tailgater / close launch < 15km',
-    whyToUse: 'BENEFIT: High-alpha brake forces overshoot (6s)',
+    whenToUse: 'TRIGGER: Tailgater < 15km',
+    whyToUse: 'BENEFIT: High-alpha aerodynamic brake creates closure-rate mismatch (6s)',
     evasionBonus: 0.55,
     cost: 0.8,
     isRecommended: function(unit, game) {
@@ -132,8 +132,8 @@ window.MANEUVER_CARDS = [
     id: 'SPLIT_S',
     name: 'Split-S Kinetic Escape',
     badge: 'DIVE ESCAPE',
-    whenToUse: 'TRIGGER: High altitude missile volley',
-    whyToUse: 'BENEFIT: Invert & dive to escape envelope (7.5s)',
+    whenToUse: 'TRIGGER: High-altitude volley',
+    whyToUse: 'BENEFIT: Invert 180 degrees, dive to break line-of-sight & regain speed (7.5s)',
     evasionBonus: 0.45,
     cost: 0.7,
     isRecommended: function(unit, game) {
@@ -167,8 +167,8 @@ window.MANEUVER_CARDS = [
     id: 'EMERGENCY_CM',
     name: 'Emergency Chaff Salvo',
     badge: 'CHAFF DECOY',
-    whenToUse: 'TRIGGER: Active threat or lock tracking',
-    whyToUse: 'BENEFIT: Dense chaff corridor decoys seekers (8s)',
+    whenToUse: 'TRIGGER: Active missile lock',
+    whyToUse: 'BENEFIT: Dense chaff corridor disrupts radar tracking & active seekers (8s)',
     evasionBonus: 0.42,
     cost: 0.7,
     isRecommended: function(unit, game) {
@@ -198,8 +198,8 @@ window.MANEUVER_CARDS = [
     id: 'ZOOM_CLIMB',
     name: 'Zoom Climb to Perch',
     badge: 'ENERGY PERCH',
-    whenToUse: 'TRIGGER: Speed > M 0.70 level flight',
-    whyToUse: 'BENEFIT: +8,500ft perch; starves inbounds (8s)',
+    whenToUse: 'TRIGGER: Speed > Mach 0.7 in level flight',
+    whyToUse: 'BENEFIT: Converts airspeed into +8,500ft perch; starves inbounds of energy (8s)',
     evasionBonus: 0.38,
     cost: 0.7,
     isRecommended: function(unit, game) {

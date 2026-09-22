@@ -129,7 +129,6 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  line-height: 1.15;
 }
 
 .mcard-when {
@@ -139,14 +138,20 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
+  line-height: 1.15;
 }
 
 .mcard-why {
   color: var(--color-moon-mist);
-  white-space: nowrap;
+  line-height: 1.25;
+  max-height: 2.5em;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: block;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .mcard-status-bar {
