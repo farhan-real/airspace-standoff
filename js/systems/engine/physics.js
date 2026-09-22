@@ -48,7 +48,8 @@ const Physics = {
       while (aspectOffNose > Math.PI) aspectOffNose = Math.abs(aspectOffNose - Math.PI * 2);
 
       if (aspectOffNose >= 1.0 && aspectOffNose <= 2.1) {
-        let spike = 3.2;
+        let baseSpike = (targetUnit.spec && targetUnit.spec.beamSpike !== undefined) ? targetUnit.spec.beamSpike : 3.2;
+        let spike = baseSpike;
         if (targetUnit.beamSpikeReduction) spike = 1.0 + (spike - 1.0) * (1.0 - targetUnit.beamSpikeReduction);
         aspectMultiplier = spike;
       } else if (aspectOffNose > 2.1) {

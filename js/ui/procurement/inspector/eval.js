@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: 5-Tier Color Classification Engine
- * Calibrated against 150km theater weapon ranges and acquisition costs.
+ * Calibrated against 150km theater weapon ranges, acquisition costs & radar beam spikes.
  */
 
 class StatEvaluator {
@@ -63,6 +63,13 @@ class StatEvaluator {
         if (val <= 0.01)   return { tier: 2, colorClass: 'stat-tier-2' };
         if (val <= 0.80)   return { tier: 3, colorClass: 'stat-tier-3' };
         if (val <= 3.50)   return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'beam_spike':
+        if (val <= 1.8) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val <= 2.4) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val <= 3.2) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val <= 3.8) return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'ordnance_mass':

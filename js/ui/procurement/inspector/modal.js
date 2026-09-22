@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Inspector Modal Renderer
- * Renders airframe dossiers with interactive top metric tags and tooltips.
+ * Renders airframe dossiers with individual beam exposure spikes and evaluated color tiers.
  */
 
 class InspectorModalRenderer {
@@ -47,6 +47,10 @@ class InspectorModalRenderer {
     const rCone = rate('radar_cone', a.radarConeDeg || 120);
     const rClutter = rate('clutter', a.lookDownBonus || 0.20);
     const rRcs = rate('rcs', a.sigma_0 || 1.0);
+    const baseSpike = (a.beamSpike !== undefined) ? a.beamSpike : 3.2;
+    const rBeamSpike = rate('beam_spike', baseSpike);
+    const spikePct = Math.round((baseSpike - 1.0) * 100);
+
     const rSlots = rate('pylon_slots', a.totalSlots || 6);
     const rMass = rate('payload_capacity', a.M_max || 5000);
     const rUpg = rate('upgrade_sockets', a.upgradeSockets || 3);
@@ -91,7 +95,7 @@ class InspectorModalRenderer {
         <div class="inspect-stat-item"><span>GIMBAL SCAN CONE:</span><b class="${rCone.colorClass}">±${Math.round((a.radarConeDeg || 120) / 2)}°</b></div>
         <div class="inspect-stat-item"><span>LOOK-DOWN CLUTTER FILTER:</span><b class="${rClutter.colorClass}">+${Math.round((a.lookDownBonus || 0.20) * 100)}%</b></div>
         <div class="inspect-stat-item"><span>BASE RCS (NOSE-ON):</span><b class="${rRcs.colorClass}">${a.sigma_0 || 1.0} m² (${stealthClass})</b></div>
-        <div class="inspect-stat-item"><span>BEAM EXPOSURE SPIKE:</span><b class="stat-tier-4">3.2× (+220% signature increase when turning broadside)</b></div>
+        <div class="inspect-stat-item"><span>BEAM EXPOSURE SPIKE:</span><b class="${rBeamSpike.colorClass}">${baseSpike.toFixed(1)}× (+${spikePct}% signature increase when turning broadside)</b></div>
         <div class="inspect-stat-item"><span>COFFIN NEURAL FLIGHT:</span><b class="${a.isCoffin ? 'stat-tier-1' : 'stat-tier-3'}">${a.isCoffin ? 'MANUAL COFFIN (Zero stress, immune to G-LOC, +25% dodge bonus)' : 'HUMAN CREWED (Standard stress limits)'}</b></div>
       </div>
 
