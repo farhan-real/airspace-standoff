@@ -51,11 +51,11 @@ class MissileKinetics {
     const w = missile.weapon || {};
     const source = missile.source;
 
-    const launchCraftSpeed = source ? Math.max(0.70, Math.min(1.35, source.speed || 0.85)) : 0.85;
-    const initialKick = (w.trait === 'GLIDE_SATURATION') ? 0.0 : 0.55;
+    const launchCraftSpeed = source ? Math.max(0.70, Number(source.speed || 0.85)) : 0.85;
+    const initialKick = (w.trait === 'GLIDE_SATURATION') ? 0.0 : 0.75;
     missile.launchSpeed = (w.trait === 'GLIDE_SATURATION') ? 0.90 : (launchCraftSpeed + initialKick);
+    missile.peakSpeed = Math.max(missile.launchSpeed, MissileKinetics.getRelativePeakSpeed(w));
     missile.speed = missile.launchSpeed;
-    missile.peakSpeed = MissileKinetics.getRelativePeakSpeed(w);
 
     const profile = MissileKinetics.getAccelerationProfile(w);
     missile.boostDuration = profile.boostDuration;
@@ -120,15 +120,16 @@ class MissileKinetics {
       }
     }
 
+    let diff = los - missile.heading;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    while (diff > Math.PI) diff -= Math.PI * 2;
+
     let turnRate = 0;
-    if (closingVel > 0 && dist > 1.2) {
+    if (closingVel > 0.1 && dist > 1.5) {
       turnRate = N * (closingVel / vm) * losRate;
     } else {
-      let diff = los - missile.heading;
-      while (diff < -Math.PI) diff += Math.PI * 2;
-      while (diff > Math.PI) diff -= Math.PI * 2;
-      const terminalGain = (dist <= 1.2) ? 4.5 : (tgt.activeManeuverTimer > 0 ? 1.5 : 3.0);
-      turnRate = diff * terminalGain;
+      const pursuitGain = (dist <= 1.5) ? 4.5 : (tgt.activeManeuverTimer > 0 ? 1.5 : 2.5);
+      turnRate = diff * pursuitGain;
     }
 
     const maxRate = MissileKinetics.getMaxTurnRate(missile);
@@ -138,7 +139,7 @@ class MissileKinetics {
     while (missile.heading >= Math.PI * 2) missile.heading -= Math.PI * 2;
 
     missile.cumulativeTurn = (missile.cumulativeTurn || 0) + Math.abs(clampedRate * dt);
-    if (missile.hasStartedClosing && missile.cumulativeTurn > Math.PI * 2.2 && dist <= 2.2) {
+    if (missile.hasStartedClosing && missile.cumulativeTurn > Math.PI * 2.2 && dist <= 1.8 && missile.age > 1.5) {
       missile.triggerLostTrack('KINETIC OVERSHOOT');
     }
   }
@@ -146,17 +147,28 @@ class MissileKinetics {
   static checkTerminalTrigger(missile) {
     const dist = missile.distanceToTarget;
     const prevDist = missile.prevDistanceToTarget;
+    const tgt = missile.target;
+
+    if (missile.age < 1.0) {
+      return { shouldTrigger: false };
+    }
 
     if (dist <= 0.65) {
       return { shouldTrigger: true, isHitCandidate: true };
     }
 
-    if (missile.hasStartedClosing && dist > prevDist) {
+    if (missile.minDistanceReached <= 1.8 && dist > prevDist) {
       if (prevDist <= 0.95) {
         return { shouldTrigger: true, isHitCandidate: true };
       }
-      if (prevDist <= 2.2) {
-        return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
+
+      if (tgt && typeof tgt.x === 'number') {
+        const toTgtX = tgt.x - missile.x;
+        const toTgtY = tgt.y - missile.y;
+        const forwardDot = toTgtX * Math.cos(missile.heading) + toTgtY * Math.sin(missile.heading);
+        if (forwardDot <= 0) {
+          return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
+        }
       }
     }
 
