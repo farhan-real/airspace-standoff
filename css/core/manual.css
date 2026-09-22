@@ -1,9 +1,7 @@
 /* AIRSPACE STANDOFF: Tactical Flight Manual Theme */
 
 .glossary-window {
-  background: var(--glass-bg-modal);
-  -webkit-backdrop-filter: var(--glass-filter);
-  backdrop-filter: var(--glass-filter);
+  background: rgba(3, 7, 18, 0.96);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-modal);
   width: 96vw;
@@ -12,7 +10,7 @@
   max-height: 92vh;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--glass-shadow);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8);
   overflow: hidden;
   font-family: var(--font-untitled-sans);
 }
@@ -209,18 +207,21 @@ mark.manual-search-hl.current {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .glossary-entry {
-  background: var(--glass-bg);
+  background: var(--liquid-glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
   padding: 16px 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  box-shadow: var(--glass-shadow);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  content-visibility: auto;
+  contain-intrinsic-size: 400px;
+  contain: layout style paint;
 }
 
 .ge-title {
@@ -291,6 +292,7 @@ mark.manual-search-hl.current {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  contain: layout style;
 }
 
 .ge-grid-2 {
@@ -328,6 +330,7 @@ mark.manual-search-hl.current {
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
   background: rgba(0, 0, 0, 0.5);
+  contain: paint;
 }
 
 .ge-table {

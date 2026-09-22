@@ -6,8 +6,6 @@
   max-height: 120px;
   flex-shrink: 0;
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
   border-top: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
@@ -50,8 +48,6 @@
   min-height: 94px;
   max-height: 94px;
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
@@ -64,6 +60,7 @@
   box-sizing: border-box;
   flex-shrink: 0;
   box-shadow: var(--glass-shadow);
+  overflow: hidden;
 }
 
 .maneuver-card:hover:not(.locked) {
@@ -127,10 +124,12 @@
   font-family: var(--font-untitled-sans);
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 1px;
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
+  line-height: 1.15;
 }
 
 .mcard-when {
@@ -139,14 +138,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
 }
 
 .mcard-why {
   color: var(--color-moon-mist);
-  line-height: 1.25;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal;
+  display: block;
 }
 
 .mcard-status-bar {
@@ -156,13 +156,14 @@
   font-size: 0.62rem;
   font-family: var(--font-dotdigital);
   border-top: 1px solid var(--glass-border);
-  padding-top: 3px;
+  padding-top: 2px;
   margin-top: 2px;
   gap: 4px;
   width: 100%;
   box-sizing: border-box;
   flex-shrink: 0;
-  min-height: 18px;
+  min-height: 16px;
+  height: 16px;
 }
 
 .bonus-tag {
@@ -178,8 +179,8 @@
   background: var(--theme-primary);
   color: #ffffff;
   font-weight: 600;
-  font-size: 0.52rem;
-  padding: 1px 5px;
+  font-size: 0.50rem;
+  padding: 1px 4px;
   border-radius: var(--radius-badge);
   white-space: nowrap;
   flex-shrink: 0;

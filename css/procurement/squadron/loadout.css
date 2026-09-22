@@ -33,6 +33,8 @@
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 8px;
   padding-right: 4px;
+  -webkit-overflow-scrolling: touch;
+  contain: content;
 }
 
 .squad-unit-card {
@@ -48,6 +50,7 @@
   position: relative;
   overflow: visible;
   box-shadow: var(--glass-shadow);
+  contain: layout style;
 }
 
 .squad-unit-card:hover {
@@ -163,6 +166,8 @@
   .squad-unit-card {
     padding: 8px 10px;
     gap: 4px;
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.14) !important;
+    background: #030816 !important;
   }
 
   .squad-unit-header {

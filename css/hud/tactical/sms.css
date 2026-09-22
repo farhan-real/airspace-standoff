@@ -17,8 +17,6 @@
 
 .target-solution-box.no-target {
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px dashed var(--glass-border);
   color: var(--color-fog-veil);
   font-size: 0.58rem;
@@ -27,8 +25,6 @@
 
 .target-solution-box.active-target {
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
   border: 1px solid var(--theme-primary);
   border-top: 1px solid var(--theme-accent);
   box-shadow: var(--glass-shadow), 0 0 12px var(--theme-primary-dim);
@@ -71,8 +67,6 @@
 
 .autocannon-status-card {
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
@@ -107,8 +101,6 @@
 
 .pylon-item-card {
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
@@ -217,8 +209,6 @@
 .mob-compact-cannon {
   grid-column: 1 / -1;
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
@@ -237,8 +227,6 @@
 
 .mob-compact-pylon {
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);

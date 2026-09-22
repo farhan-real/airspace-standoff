@@ -3,8 +3,6 @@
 .tactical-banner {
   height: 44px;
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   display: flex;
@@ -13,7 +11,7 @@
   padding: 0 12px;
   gap: 8px;
   flex-shrink: 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   white-space: nowrap;
   overflow: hidden;
   z-index: 20;
@@ -239,7 +237,7 @@ body.safe-zone-on .tactical-banner {
   font-weight: 600;
 }
 
-/* Hide mobile unit cycler on desktop to prevent banner overflow */
+/* Hide mobile controls on desktop to prevent horizontal banner blowout */
 @media (min-width: 1025px) {
   .banner-nav-cluster {
     display: none !important;

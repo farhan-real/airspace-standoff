@@ -1,5 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Squadron Roster Display Coordinator
+ * AIRSPACE STANDOFF: Squadron Roster Display Coordinator
+ * Efficient DOM batching with DocumentFragment to eliminate mobile layout recalculation latency.
  */
 
 class ProcurementRoster {
@@ -61,7 +62,7 @@ class ProcurementRoster {
       this.lastRenderKey = 'EMPTY';
       container.innerHTML = `
         <div class="empty-roster-prompt" style="text-align:center;padding:32px 14px;color:#8494ab;font-family:var(--font-mono);font-size:0.72rem;">
-          <div style="color:#00f0ff;font-weight:800;font-size:0.88rem;margin-bottom:6px;">NO AIRCRAFT IN SQUADRON</div>
+          <div style="color:var(--theme-accent);font-weight:800;font-size:0.88rem;margin-bottom:6px;">NO AIRCRAFT IN SQUADRON</div>
           <p>Select aircraft from the catalog or choose a preset configuration above.</p>
         </div>`;
       return;
@@ -81,10 +82,12 @@ class ProcurementRoster {
     container.innerHTML = '';
 
     if (typeof RosterCardBuilder !== 'undefined') {
+      const fragment = document.createDocumentFragment();
       squadron.forEach((item, sIdx) => {
         const card = RosterCardBuilder.build(this.pm, item, sIdx);
-        if (card) container.appendChild(card);
+        if (card) fragment.appendChild(card);
       });
+      container.appendChild(fragment);
     }
   }
 }

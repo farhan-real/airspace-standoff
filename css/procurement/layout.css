@@ -7,8 +7,8 @@
   max-height: 98vh;
   min-height: 500px;
   background-color: var(--glass-bg-modal);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-modal);
@@ -50,8 +50,6 @@ body.safe-zone-on .procurement-window {
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
   border-radius: var(--radius-card);
   padding: 8px;
   overflow: hidden;
@@ -100,6 +98,7 @@ body.safe-zone-on .procurement-window {
   box-shadow: none;
 }
 
+/* Mobile GPU optimization: eliminate nested blur lag */
 @media (max-width: 1024px) {
   .procurement-window {
     width: 100vw;
@@ -112,6 +111,16 @@ body.safe-zone-on .procurement-window {
     padding: 6px 8px;
     gap: 4px;
     overflow-x: hidden;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: #02050f !important;
+  }
+
+  .hanger-shelf,
+  .flight-roster {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: #030816 !important;
   }
 
   .scramble-btn {

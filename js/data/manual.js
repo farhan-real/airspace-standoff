@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Master Flight Manual Orchestrator & Live Search
+ * AIRSPACE STANDOFF: Master Flight Manual Orchestrator & High-Performance Search
  */
 
 window.TACTICAL_FLIGHT_MANUAL = [
@@ -32,6 +32,7 @@ window.initTacticalManual = function() {
 
   let currentMatches = [];
   let currentMatchIndex = 0;
+  let lastQuery = null;
 
   let searchActions = document.getElementById('manual-search-actions');
   if (!searchActions && searchRow) {
@@ -91,7 +92,7 @@ window.initTacticalManual = function() {
   const highlightMatches = (query) => {
     currentMatches = [];
     currentMatchIndex = 0;
-    if (!query || !container) return;
+    if (!query || query.length < 2 || !container) return;
 
     const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
     const textNodes = [];
@@ -104,7 +105,8 @@ window.initTacticalManual = function() {
     const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`(${escaped})`, 'gi');
 
-    textNodes.forEach(node => {
+    for (let i = 0; i < textNodes.length; i++) {
+      const node = textNodes[i];
       const text = node.nodeValue;
       if (regex.test(text)) {
         const span = document.createElement('span');
@@ -114,7 +116,7 @@ window.initTacticalManual = function() {
           node.parentNode.replaceChild(span, node);
         }
       }
-    });
+    }
 
     if (currentMatches.length > 0) {
       if (searchActions) searchActions.classList.add('active');
@@ -128,17 +130,12 @@ window.initTacticalManual = function() {
   const renderChapters = (filterQuery = '') => {
     if (!container) return;
     const q = filterQuery.trim().toLowerCase();
+    if (lastQuery === q && container.children.length > 0) return;
+    lastQuery = q;
 
-    window.TACTICAL_FLIGHT_MANUAL = [
-      ...(window.MANUAL_BASICS || []),
-      ...(window.MANUAL_SENSORS || []),
-      ...(window.MANUAL_COMBAT || []),
-      ...(window.MANUAL_THEATER || []),
-      ...(window.MANUAL_CONTROLS || [])
-    ];
-
+    const sourceData = window.TACTICAL_FLIGHT_MANUAL;
     const matchingIds = new Set();
-    const filtered = window.TACTICAL_FLIGHT_MANUAL.filter(ch => {
+    const filtered = sourceData.filter(ch => {
       const descContent = typeof ch.getDesc === 'function' ? ch.getDesc() : ch.desc;
       if (!q) return true;
       const haystack = (ch.title + ' ' + descContent).replace(/<[^>]*>/g, '').toLowerCase();
@@ -153,8 +150,8 @@ window.initTacticalManual = function() {
       if (countEl) countEl.textContent = '0 matches';
       container.innerHTML = `
         <div style="text-align:center;padding:40px;color:#8494ab;font-family:var(--font-mono);font-size:0.80rem;">
-          <b style="color:#00f0ff;">NO OPERATIONAL PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
-          <p style="margin-top:6px;font-size:0.72rem;">Try searching for terms like "ProNav", "Notch", "RCS", "COFFIN", "Datalink", "Satellite", "Depots", or "Controls".</p>
+          <b style="color:var(--theme-accent);">NO OPERATIONAL PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
+          <p style="margin-top:6px;font-size:0.72rem;">Try searching for terms like "ProNav", "Notch", "RCS", "COFFIN", "Datalink", "Depots", or "Controls".</p>
         </div>
       `;
       return;
@@ -179,7 +176,7 @@ window.initTacticalManual = function() {
       `;
     }).join('');
 
-    if (q) {
+    if (q.length >= 2) {
       highlightMatches(q);
     } else {
       if (searchActions) searchActions.classList.remove('active');
@@ -196,7 +193,7 @@ window.initTacticalManual = function() {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         renderChapters(e.target.value || '');
-      }, 60);
+      }, 180);
     };
 
     searchInput.onkeydown = (e) => {
@@ -230,7 +227,11 @@ window.initTacticalManual = function() {
 
   const openModal = (e) => {
     if (e) e.preventDefault();
-    renderChapters(searchInput ? searchInput.value : '');
+    if (searchInput && searchInput.value) {
+      renderChapters(searchInput.value);
+    } else if (container.children.length === 0) {
+      renderChapters('');
+    }
     if (modal) modal.classList.add('active');
     if (window.Game && window.Game.controls) {
       window.Game.controls.autoPauseOnDialogOpen();

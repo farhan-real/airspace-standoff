@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Shelf Airframes Sub-Renderer
- * Single-tap purchasing on '+ ADD'; cards support desktop drag-and-drop.
+ * Optimized batch DOM injection with DocumentFragment and responsive filtering.
  */
 
 class ShelfAirframesRenderer {
@@ -28,9 +28,13 @@ class ShelfAirframesRenderer {
 
     const inputEl = searchBox.querySelector('#ac-search-input');
     if (inputEl) {
+      let debounceTimer = null;
       inputEl.oninput = (e) => {
-        shelfInstance.pm.searchQuery = (e.target.value || '').toLowerCase();
-        ShelfAirframesRenderer.renderFilteredAirframesGrid(shelfInstance, container, shelfInstance.pm.currentAirframeCategory, shelfInstance.pm.searchQuery);
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          shelfInstance.pm.searchQuery = (e.target.value || '').toLowerCase();
+          ShelfAirframesRenderer.renderFilteredAirframesGrid(shelfInstance, container, shelfInstance.pm.currentAirframeCategory, shelfInstance.pm.searchQuery);
+        }, 100);
       };
     }
 
@@ -69,6 +73,9 @@ class ShelfAirframesRenderer {
       DRONES: 'Unmanned Combat Air Vehicle (UCAV) executing high-G maneuvers (up to 20G) without pilot G-LOC.',
       EXPERIMENTAL: 'Advanced superfighter prototype featuring 3D TVC, directed-energy weapons, or COFFIN systems.'
     };
+
+    // Use DocumentFragment to batch DOM operations into a single GPU composite
+    const fragment = document.createDocumentFragment();
 
     all.forEach(spec => {
       const card = document.createElement('div');
@@ -132,8 +139,10 @@ class ShelfAirframesRenderer {
         };
       }
 
-      grid.appendChild(card);
+      fragment.appendChild(card);
     });
+
+    grid.appendChild(fragment);
   }
 }
 

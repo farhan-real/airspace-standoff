@@ -19,22 +19,19 @@ body.safe-zone-on .hud-container {
 }
 
 .cockpit-workspace {
-  flex: 1 1 auto;
+  flex: 1 1 0%;
   min-height: 0;
+  height: 0;
   display: grid;
   grid-template-columns: 215px 1fr 310px;
   background-color: var(--color-pitch-black);
   overflow: hidden;
   position: relative;
-  height: calc(100vh - 44px - 120px);
-  height: calc(100dvh - 44px - 120px);
   border-bottom: 1px solid var(--glass-border);
 }
 
 .strip-header {
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
   padding: 6px 10px;
   font-size: 0.66rem;
   font-weight: 600;
@@ -81,8 +78,6 @@ body.safe-zone-on .hud-container {
 .mobile-steer-btn {
   pointer-events: auto;
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   color: var(--theme-accent);
@@ -120,42 +115,40 @@ body.has-touch .mobile-steering-overlay {
 
 @media (max-width: 1024px) and (orientation: portrait) {
   .cockpit-workspace {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: hidden;
-    position: relative;
-    height: calc(100vh - 40px - 56px);
-    height: calc(100dvh - 40px - 56px);
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    position: relative !important;
   }
 
   #pane-radar.radar-viewport {
     display: flex !important;
-    position: relative;
-    flex: 1 1 auto;
-    min-height: 180px;
-    width: 100%;
-    z-index: 1;
+    position: relative !important;
+    flex: 1 1 0% !important;
+    min-height: 180px !important;
+    width: 100% !important;
+    height: auto !important;
+    z-index: 1 !important;
   }
 
   #pane-mfd.active-unit-mfd {
     display: flex !important;
-    position: static;
-    flex: 0 0 auto;
-    max-height: 32vh;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    width: 100%;
-    border-left: none;
-    border-top: 1px solid var(--border-color);
-    background: var(--liquid-glass-bg);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
-    padding: 2px 4px;
-    gap: 2px;
-    z-index: 2;
+    position: static !important;
+    flex: 0 0 auto !important;
+    max-height: 30vh !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    border-left: none !important;
+    border-top: 1px solid var(--border-color) !important;
+    background: var(--liquid-glass-bg) !important;
+    padding: 3px 5px !important;
+    gap: 2px !important;
+    z-index: 2 !important;
   }
 
   #pane-fleet.squadron-flight-data {
@@ -164,8 +157,6 @@ body.has-touch .mobile-steering-overlay {
     inset: 0;
     z-index: 1200;
     background: rgba(0, 0, 0, 0.96);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
     flex-direction: column;
     padding: 8px;
     overflow-y: auto;
@@ -185,40 +176,37 @@ body.has-touch .mobile-steering-overlay {
   .cockpit-workspace {
     display: flex !important;
     flex-direction: row !important;
-    flex: 1 1 auto;
-    min-height: 0;
-    height: calc(100vh - 40px - 54px) !important;
-    height: calc(100dvh - 40px - 54px) !important;
-    overflow: hidden;
-    position: relative;
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    position: relative !important;
   }
 
   #pane-radar.radar-viewport {
     display: flex !important;
-    position: relative;
-    flex: 1 1 auto;
-    height: 100%;
-    min-width: 0;
-    z-index: 1;
+    position: relative !important;
+    flex: 1 1 0% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    z-index: 1 !important;
   }
 
   #pane-mfd.active-unit-mfd {
     display: flex !important;
-    position: static;
-    flex: 0 0 280px;
-    width: 280px;
-    max-height: 100%;
-    height: 100%;
-    border-left: 1px solid var(--border-color);
-    border-top: none;
-    background: var(--liquid-glass-bg);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
-    padding: 3px 5px;
-    gap: 2px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    z-index: 2;
+    position: static !important;
+    flex: 0 0 280px !important;
+    width: 280px !important;
+    max-height: 100% !important;
+    height: 100% !important;
+    border-left: 1px solid var(--border-color) !important;
+    border-top: none !important;
+    background: var(--liquid-glass-bg) !important;
+    padding: 3px 5px !important;
+    gap: 2px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    z-index: 2 !important;
   }
 
   #pane-fleet.squadron-flight-data {
@@ -227,8 +215,6 @@ body.has-touch .mobile-steering-overlay {
     inset: 0;
     z-index: 1200;
     background: rgba(0, 0, 0, 0.96);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
     padding: 8px 12px;
     overflow-y: auto;
     box-sizing: border-box;
