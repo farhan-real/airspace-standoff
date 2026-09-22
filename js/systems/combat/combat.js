@@ -29,7 +29,6 @@ class CombatSystem {
     const isSurface = (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) || Boolean(targetEntity.type && !targetEntity.spec && !targetEntity.isCivilian);
     if (isSurface) {
       if (w.category === 'A2A') return false;
-      if (targetEntity.type === 'BUNKER' && !w.isBunkerCracker && w.category !== 'GUN' && !w.isLaser) return false;
       return w.category === 'A2G' || w.isBunkerCracker === true || w.category === 'GUN' || w.isLaser === true;
     }
 
@@ -98,7 +97,7 @@ class CombatSystem {
       if (targetEntity && Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) <= (w.rangeKm || 4.8)) {
         const wasAlive = targetEntity.hp > 0.05;
         if (targetEntity.isGhost || targetEntity.isDecoyDrone) targetEntity.takeDamage(dmg);
-        else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(dmg, false);
+        else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(dmg, true);
         else if (targetEntity.isCivilian) targetEntity.takeDamage(dmg, sourceUnit, w);
         else {
           targetEntity.hp = Math.max(0, targetEntity.hp - dmg);

@@ -120,7 +120,7 @@ window.MANUAL_THEATER = [
               <td style="color:#f97316;font-weight:800;">Subterranean Command Bunker</td>
               <td>24 HP</td>
               <td>HQ</td>
-              <td>Heavily fortified subterranean command nexus. <b>Immune to standard air-to-air missiles and light autocannons</b>; requires specialized bunker penetrators (AGM-158B, Kinzhal, GBU-39 SDB).</td>
+              <td>Heavily fortified subterranean command nexus. Primary strategic theater target; vulnerable to bunker penetrators, cruise missiles, and sustained cannon strafes.</td>
             </tr>
             <tr>
               <td style="color:#ffb830;font-weight:800;">Fuel Farm &amp; Depots</td>

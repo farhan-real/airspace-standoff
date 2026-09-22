@@ -172,7 +172,7 @@ class AutocannonBayRenderer {
 
         if (validTarget.isGhost) { validTarget.takeDamage(finalDmg); }
         else if (validTarget.isDecoyDrone) { validTarget.takeDamage(finalDmg); }
-        else if (typeof SurfaceUnit !== 'undefined' && validTarget instanceof SurfaceUnit) { validTarget.takeDamage(finalDmg, false); }
+        else if (typeof SurfaceUnit !== 'undefined' && validTarget instanceof SurfaceUnit) { validTarget.takeDamage(finalDmg, true); }
         else if (validTarget.isCivilian && typeof validTarget.takeDamage === 'function') { validTarget.takeDamage(finalDmg, unit, gun); }
         else {
           if (validTarget.spec && validTarget.spec.category === 'STRIKE') finalDmg *= 0.60;

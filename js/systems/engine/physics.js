@@ -127,7 +127,6 @@ const Physics = {
     const isSurface = (typeof SurfaceUnit !== 'undefined' && target instanceof SurfaceUnit) || Boolean(target.type && !target.spec && !target.isCivilian);
     if (isSurface) {
       if (weapon.category === 'A2A') return { pk: 0, label: 'AIR ONLY', color: '#64748b', arrow: '--', desc: 'A2A munition requires air target', salvoCount: 0, hasMixedSeekers: false };
-      if (target.type === 'BUNKER' && !weapon.isBunkerCracker && weapon.category !== 'GUN') return { pk: 0, label: 'IMMUNE', color: '#ef4444', arrow: '--', desc: 'Bunker immune to light munitions', salvoCount: 0, hasMixedSeekers: false };
     } else if (!target.isCivilian && !target.isGhost && !target.isDecoyDrone) {
       if (weapon.category === 'A2G' || weapon.isBunkerCracker) return { pk: 0, label: 'GROUND ONLY', color: '#64748b', arrow: '--', desc: 'A2G munition requires ground target', salvoCount: 0, hasMixedSeekers: false };
     }

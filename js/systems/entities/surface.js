@@ -59,7 +59,7 @@ class SurfaceUnit {
       this.maxHp = 24;
       this.rangeKm = 0.0;
       this.cooldownMax = 999.0;
-      this.desc = 'Reinforced subterranean theater command center. Immune to light munitions; requires heavy bunker penetrators.';
+      this.desc = 'Reinforced subterranean theater command center. Primary strategic target.';
     } else if (type === 'FUEL_DEPOT') {
       this.name = team === 'friendly' ? 'Allied Fuel Farm' : 'Strategic Fuel Depot';
       this.hp = 8;
@@ -92,21 +92,15 @@ class SurfaceUnit {
     this.identifiedByRed = Boolean(val);
   }
 
-  takeDamage(amount, isBunkerCracker) {
+  takeDamage(amount) {
     if (this.isIndestructible) {
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnCombatText(this.x, this.y, 'DEPOT INDESTRUCTIBLE', '#00f5a0');
       }
       return;
     }
-    if (this.type === 'BUNKER' && !isBunkerCracker) {
-      if (window.Game && window.Game.radar) {
-        window.Game.radar.spawnCombatText(this.x, this.y, 'BUNKER IMMUNE (CRACKER REQ)', '#8494ab');
-      }
-      return;
-    }
     this.hp = Math.max(0, this.hp - amount);
-    if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(true);
+    if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(this.type === 'BUNKER');
   }
 
   update(dt, enemyAircraftList, enemyMissilesList, spawnedMissiles, radarArrayActive) {
