@@ -226,43 +226,49 @@ window.MANUAL_COMBAT = [
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>MANEUVER</th><th>COST</th><th>EVASION</th><th>TRIGGER CONDITION &amp; TACTICAL EFFECT</th></tr>
+            <tr><th>MANEUVER</th><th>COST</th><th>TIME</th><th>EVASION</th><th>TRIGGER CONDITION &amp; TACTICAL EFFECT</th></tr>
           </thead>
           <tbody>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">Doppler Notch &amp; Chaff</td>
               <td>0.7 TOK</td>
-              <td>+35%</td>
+              <td style="color:#00f5a0;font-weight:700;">8.0s</td>
+              <td>+48%</td>
               <td>Trigger on active radar (ARH) lock. Beams radar 90&deg;, cuts closure rate, and pops chaff.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">High-G Barrel Roll</td>
               <td>0.7 TOK</td>
-              <td>+32%</td>
+              <td style="color:#00f5a0;font-weight:700;">7.0s</td>
+              <td>+45%</td>
               <td>Trigger on inbound missile within 25 km. High-G 3D spiral disrupts proportional lead pursuit.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">Pugachev Push Cobra</td>
               <td>0.8 TOK</td>
-              <td>+45%</td>
+              <td style="color:#00f5a0;font-weight:700;">6.0s</td>
+              <td>+55%</td>
               <td>Requires TVC. Pitch up to 110&deg; creates an immediate closure rate mismatch against tailgaters.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Split-S Kinetic Escape</td>
               <td>0.7 TOK</td>
-              <td>+35%</td>
+              <td style="color:#00f5a0;font-weight:700;">7.5s</td>
+              <td>+45%</td>
               <td>Requires altitude &gt; FL150. Inverts aircraft and dives to recover Mach speed out of envelope.</td>
             </tr>
             <tr>
               <td style="color:#ffb830;font-weight:800;">Emergency Chaff Salvo</td>
               <td>0.7 TOK</td>
-              <td>+35%</td>
+              <td style="color:#00f5a0;font-weight:700;">8.0s</td>
+              <td>+42%</td>
               <td>Dispenses dense chaff cloud to disrupt radar tracking locks. Costs 1 countermeasure charge.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">Zoom Climb to Perch</td>
               <td>0.7 TOK</td>
-              <td>+25%</td>
+              <td style="color:#00f5a0;font-weight:700;">8.0s</td>
+              <td>+38%</td>
               <td>Requires Mach 0.70+. Converts airspeed into +8,500 ft high-altitude perch.</td>
             </tr>
           </tbody>
