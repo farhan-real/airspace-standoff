@@ -104,6 +104,14 @@ class MissileEntity {
       return;
     }
 
+    if (this.target.hp <= 0.05) {
+      this.state = 'LOST_TRACK';
+      this.active = false;
+      this.lostReason = 'TARGET DESTROYED';
+      this.stage = 'COAST';
+      return;
+    }
+
     const isPowered = (this.stage === 'BOOST' || this.stage === 'PULSE 2' || this.stage === 'RAMJET' || this.stage === 'SUSTAIN' || this.stage === 'DIVE');
     this.trail.unshift({ x: this.x, y: this.y, alpha: isPowered ? 1.0 : 0.45 });
     const maxTrail = isPowered ? 12 : 6;
@@ -181,10 +189,39 @@ class MissileEntity {
     this.lostReason = reason;
     this.stage = 'COAST';
     this.heading += (Math.random() * 0.2 - 0.1);
-    if (this.target && this.target.missilesEvadedCount !== undefined) this.target.missilesEvadedCount++;
-    if (this.target && this.target.energy !== undefined) {
-      this.target.energy = Math.max(0.20, this.target.energy - 0.15);
+
+    const isLiveTarget = this.target && this.target.hp > 0.05 && !this.target.isCivilian && !this.target.isGhost && !this.target.isDecoyDrone;
+    const isGenuineEvade = isLiveTarget && (
+      reason === 'KINETIC OVERSHOOT' ||
+      reason.includes('DOPPLER NOTCH') ||
+      reason.includes('COBRA') ||
+      reason.includes('BARREL ROLL') ||
+      reason.includes('SPLIT-S') ||
+      reason.includes('CHAFF') ||
+      reason.includes('PERCH') ||
+      reason.includes('BREAK') ||
+      reason.includes('DODGE') ||
+      reason === 'OBSCURED IN CLOUDS'
+    );
+
+    if (isGenuineEvade) {
+      if (this.target.missilesEvadedCount !== undefined) {
+        const isSwarm = (this.weapon && (this.weapon.trait === 'SWARM_RIPPLE' || this.weapon.trait === 'ALL_ASPECT_BURST'));
+        if (isSwarm) {
+          this.target._swarmEvadeAccum = (this.target._swarmEvadeAccum || 0) + 1;
+          if (this.target._swarmEvadeAccum >= 4) {
+            this.target.missilesEvadedCount++;
+            this.target._swarmEvadeAccum = 0;
+          }
+        } else {
+          this.target.missilesEvadedCount++;
+        }
+      }
+      if (this.target.energy !== undefined) {
+        this.target.energy = Math.max(0.20, this.target.energy - 0.15);
+      }
     }
+
     if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
     if (window.Game && window.Game.radar) window.Game.radar.spawnCombatText(this.x, this.y, `${reason}`, '#f97316');
   }

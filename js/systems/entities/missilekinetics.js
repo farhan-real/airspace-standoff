@@ -138,7 +138,7 @@ class MissileKinetics {
     while (missile.heading >= Math.PI * 2) missile.heading -= Math.PI * 2;
 
     missile.cumulativeTurn = (missile.cumulativeTurn || 0) + Math.abs(clampedRate * dt);
-    if (missile.hasStartedClosing && missile.cumulativeTurn > Math.PI * 2.2) {
+    if (missile.hasStartedClosing && missile.cumulativeTurn > Math.PI * 2.2 && dist <= 2.2) {
       missile.triggerLostTrack('KINETIC OVERSHOOT');
     }
   }
@@ -155,7 +155,9 @@ class MissileKinetics {
       if (prevDist <= 0.95) {
         return { shouldTrigger: true, isHitCandidate: true };
       }
-      return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
+      if (prevDist <= 2.2) {
+        return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
+      }
     }
 
     return { shouldTrigger: false };
