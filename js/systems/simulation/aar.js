@@ -28,10 +28,11 @@ class AfterActionReportSystem {
     const allPilots = [...game.alliedAircraft, ...game.hostileAircraft];
     allPilots.sort((a, b) => (b.scorePoints || 0) - (a.scorePoints || 0));
 
+    const topThree = allPilots.slice(0, 3);
+
     if (podiumEl) {
-      const topThree = allPilots.slice(0, 3);
+      const rankNames = ['TOP SCORING PILOT', '2ND HIGHEST SCORE', '3RD HIGHEST SCORE'];
       podiumEl.innerHTML = topThree.map((p, idx) => {
-        const rankNames = ['TOP SCORING PILOT', '2ND HIGHEST SCORE', '3RD HIGHEST SCORE'];
         const rankClass = 'rank-' + (idx + 1);
         const teamName = p.team === 'friendly' ? 'BLUE' : 'RED';
         const teamColor = p.isAce ? '#ffd700' : (p.team === 'friendly' ? '#00f0ff' : '#ff3366');
@@ -147,6 +148,22 @@ class AfterActionReportSystem {
     }
 
     const topPilot = allPilots.find(p => p.team === 'friendly') || allPilots[0] || null;
+    const archivedTopThree = topThree.map((p, idx) => ({
+      rank: idx + 1,
+      callsign: p.callsign || 'Pilot',
+      model: p.spec ? p.spec.id : 'JET',
+      team: p.team || 'friendly',
+      isAce: Boolean(p.isAce),
+      kills: p.kills || 0,
+      evaded: p.missilesEvadedCount || 0,
+      points: p.scorePoints || 0,
+      survived: p.hp > 0.05
+    }));
+
+    const archivedTimeline = (typeof AfterActionReportTimeline !== 'undefined' && AfterActionReportTimeline.getMergedTimelineEvents)
+      ? AfterActionReportTimeline.getMergedTimelineEvents(game)
+      : ((game.simulation && game.simulation.timelineEvents) ? [...game.simulation.timelineEvents] : []);
+
     if (window.Persistence && window.Persistence.saveTopSortie) {
       window.Persistence.saveTopSortie({
         id: 'SORTIE_' + Date.now(),
@@ -172,6 +189,8 @@ class AfterActionReportSystem {
           kills: topPilot ? topPilot.kills : 0,
           points: topPilot ? topPilot.scorePoints : 0
         },
+        topPilots: archivedTopThree,
+        timeline: archivedTimeline,
         pilots: allPilots.filter(p => p.team === 'friendly').map(p => ({
           callsign: p.callsign || 'Pilot',
           model: p.spec ? p.spec.id : 'JET',

@@ -6,9 +6,9 @@
 
 .leaderboard-window {
   width: 95vw;
-  max-width: 1080px;
-  height: 88vh;
-  max-height: 88vh;
+  max-width: 1180px;
+  height: 90vh;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   background: #050b16;
@@ -25,7 +25,7 @@
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: 45% 55%;
+  grid-template-columns: 40% 60%;
   gap: 12px;
   padding: 14px 16px;
   overflow: hidden;
@@ -145,6 +145,7 @@
 .dossier-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.62rem;
   color: #8494ab;
   padding: 2px 0;
@@ -160,10 +161,91 @@
   font-weight: 800;
 }
 
+/* Dossier Top 3 Pilots Podium */
+.dossier-podium-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.dossier-podium-card {
+  background: #050e1d;
+  border: 1px solid #152945;
+  border-radius: 4px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.dossier-podium-card.rank-1 { border-color: #ffd700; background: #131206; }
+.dossier-podium-card.rank-2 { border-color: #38bdf8; background: #081220; }
+.dossier-podium-card.rank-3 { border-color: #94a3b8; background: #090e18; }
+
+.dossier-podium-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.58rem;
+  font-weight: 800;
+}
+
+.dossier-podium-cs {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dossier-podium-sub {
+  font-size: 0.56rem;
+  color: #8494ab;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dossier-podium-metrics {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.58rem;
+  color: #00f0ff;
+  border-top: 1px dashed #162b46;
+  padding-top: 3px;
+  margin-top: 2px;
+}
+
+/* Historical Timeline Container in Leaderboard Dossier */
+.dossier-timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #030814;
+  border: 1px solid #14243b;
+  border-left: 3px solid #00f0ff;
+  border-radius: 3px;
+  padding: 8px 10px;
+}
+
+.dossier-timeline-list {
+  max-height: 170px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-right: 2px;
+}
+
 @media (max-width: 900px) {
   .leaderboard-body {
     grid-template-columns: 1fr;
     gap: 8px;
     padding: 8px;
+  }
+  .dossier-podium-grid {
+    grid-template-columns: 1fr;
   }
 }
