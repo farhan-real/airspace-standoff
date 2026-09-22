@@ -32,7 +32,15 @@ class RadarContactsRenderer {
     }
 
     for (const a of list) {
-      if (!a || a.hp <= 0.05 || typeof a.x !== 'number' || typeof a.y !== 'number' || isNaN(a.x) || isNaN(a.y)) continue;
+      if (!a || a.hp <= 0.05) continue;
+
+      if (isNaN(a.x) || isNaN(a.y)) {
+        a.x = isBlue ? 20.0 : ((window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) ? window.CONFIG.THEATER_WIDTH_KM - 20.0 : 130.0);
+        a.y = 50.0;
+        a.speed = a.effectiveMaxSpeed || 0.95;
+        a.heading = isBlue ? 0.0 : Math.PI;
+      }
+
       const pos = cam.toScreen(a.x, a.y);
       const px = Math.round(pos.x);
       const py = Math.round(pos.y);
@@ -55,7 +63,7 @@ class RadarContactsRenderer {
       const isOffScreen = (pos.x !== clampedX || pos.y !== clampedY);
 
       if (isOffScreen) {
-        if ((isLastFew || isTgt) && typeof RadarContactsAuxRenderer !== 'undefined') {
+        if (typeof RadarContactsAuxRenderer !== 'undefined') {
           RadarContactsAuxRenderer.drawOffscreenIndicator(ctx, pos, clampedX, clampedY, cssWidth, cssHeight, isIdentified, isAce, isBlue, safeModel, relDistKm);
         }
         continue;

@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 4 to 5
- * Covers: Radar Physics, Observability (RCS), Progressive Classification & Satellite Uplink
+ * Covers: Radar Physics, Observability (RCS), Target Classification & Satellite Uplink
  */
 
 window.MANUAL_SENSORS = [
@@ -33,14 +33,14 @@ window.MANUAL_SENSORS = [
               <td style="color:#00f0ff;font-weight:800;">&le; 0.0005</td>
               <td><b>VLO Ghost Stealth</b></td>
               <td>Insect / Glass Marble</td>
-              <td>Undetectable beyond 10&ndash;18 km nose-on</td>
+              <td>Extreme standoff mitigation nose-on</td>
               <td>F-22A, YF-23, B-21, RQ-180, F-22C [COFFIN]</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">0.001 &ndash; 0.01</td>
               <td><b>Low Observable (LO)</b></td>
               <td>Small Bird</td>
-              <td>Detected at 20&ndash;35 km</td>
+              <td>Suppressed radar acquisition envelope</td>
               <td>Su-57, J-20, F-35A, Kizilelma, Checkmate</td>
             </tr>
             <tr>
@@ -92,27 +92,21 @@ window.MANUAL_SENSORS = [
     title: 'SECTION 05: TARGET CLASSIFICATION, SQUADRON DATALINK & ORBITAL SATELLITE UPLINK',
     desc: `
       <div class="ge-desc">
-        AIRSPACE STANDOFF simulates a full battlefield C4ISR architecture: progressive radar classification, inter-aircraft datalink telemetry sharing, and stratospheric orbital satellite tracking.
+        AIRSPACE STANDOFF simulates a comprehensive battlefield C4ISR architecture: instant radar contact acquisition, progressive NCTR classification, inter-aircraft telemetry sharing, and orbital satellite tracking.
       </div>
 
-      <div class="ge-subhead">1. THE THREE TARGET IDENTIFICATION PHASES</div>
-      <div class="ge-grid-3">
-        <div class="ge-card" style="border-left:3px solid #64748b;">
-          <b style="color:#94a3b8;">PHASE 0: INVISIBLE</b>
-          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Target is outside radar reach, masked in dense clouds, or beyond sensor scan limits. Zero radar return displayed.
-          </div>
-        </div>
+      <div class="ge-subhead">1. THE TWO TARGET CLASSIFICATION PHASES: BOGEY TO POSITIVE ID</div>
+      <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #f97316;">
-          <b style="color:#f97316;">PHASE 1: BOGEY [?]</b>
+          <b style="color:#f97316;">PHASE 1: BOGEY [?] (INITIAL TRACK)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Raw skin return tracked: shows 2D position, altitude (FL), speed, and heading vector, but <b>unconfirmed identity</b>. Firing on unverified bogeys incurs an immediate <b>-600 VP penalty</b>!
+            All airborne contacts in theater immediately populate tactical radar as raw skin tracks. Displays real-time position, altitude (FL), speed, and heading vector, but <b>unverified identity</b>. Firing on unverified bogeys incurs an immediate <b>-600 VP penalty</b>!
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
-          <b style="color:#00f0ff;">PHASE 2: IDENTIFIED</b>
+          <b style="color:#00f0ff;">PHASE 2: IDENTIFIED (POSITIVE ID)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Sensor fusion resolves turbine blade modulation (NCTR) or civil transponders. Full airframe model, weapons, and armor unlock. Cleared for weapons release!
+            Sensor dwell resolves Non-Cooperative Target Recognition (NCTR), transponder codes, or turbine modulation. Full airframe model, pilot callsign, stores, and armor status unlock. Cleared for ROE-compliant missile release!
           </div>
         </div>
       </div>
@@ -137,10 +131,10 @@ window.MANUAL_SENSORS = [
           <img src="icons/star.svg" width="12" height="12" alt="Satellite" class="manual-inline-ico"> ORBITAL RECONNAISSANCE SATELLITE CONSTELLATION OVERRIDE:
         </div>
         <ul style="list-style:none;padding-left:0;margin:6px 0 0 0;font-size:0.74rem;color:#e0f2fe;line-height:1.55;">
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Total Fog-of-War Bypass:</b> Downlink radar permanently illuminates all remaining hostiles across the entire 150 km &times; 100 km theater, completely ignoring stealth coatings (VLO), terrain masking, and clouds.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Persistent Sector Illumination:</b> Satellite radar permanently illuminates all remaining hostiles across the 150 km &times; 100 km theater grid, penetrating weather clouds and terrain masking.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Instant Positive Identification:</b> Hostile airframes, flight lead status, and health states are immediately decoded as friendly combat tracks, eliminating unverified bogey firing risks.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Pulsing Tactical Locator Beacons:</b> A pulsing cyan locator ring surrounds each remaining hostile aircraft on radar tagged with <code>[PINPOINTED]</code>.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Off-Screen Edge Clamp Arrows:</b> If your radar camera pans away, persistent directional arrows at the viewport perimeter point directly toward their bearing and display live distance.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Off-Screen Edge Clamp Arrows:</b> Persistent directional arrows at the viewport perimeter point directly toward their bearing and display live distance.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Instant Auto-Lock:</b> Pressing <span class="manual-key-badge">SPACEBAR</span> or tapping a pinpointed contact immediately acquires an optimal firing solution for rapid mission conclusion!</li>
         </ul>
       </div>

@@ -197,6 +197,6 @@ window.AIRCRAFT_DRONES = {
     totalSlots: 2,
     maxPylonRating: 'Type S',
     upgradeSockets: 4,
-    desc: 'Ultra-low observable stratospheric flying-wing drone ($16M, 0.0001m2 RCS). Acts as an invisible squadron sensor gateway.'
+    desc: 'Ultra-low observable stratospheric flying-wing drone ($16M, 0.0001m2 RCS). Acts as a dedicated high-altitude squadron sensor gateway.'
   }
 };

@@ -85,7 +85,7 @@ window.MANUAL_BASICS = [
 
       <div class="ge-subhead">3. RADAR CROSS SECTION (RCS) &amp; THE 90&deg; BEAM SPIKE</div>
       <div class="ge-desc">
-        Radar stealth is highly directional. A Very Low Observable (VLO) airframe with a frontal RCS of <b>0.0001 m&sup2;</b> is virtually invisible beyond 15 km nose-on. However, turning 90&deg; broadside exposes fuselage surfaces and vertical stabilizers, multiplying radar return by <b>3.2&times; (+220% signature increase)</b>. Approach hostile radars nose-on whenever practical.
+        Radar stealth is highly directional. A Very Low Observable (VLO) airframe with a frontal RCS of <b>0.0001 m&sup2;</b> presents minimal radar return nose-on, significantly delaying hostile classification. However, turning 90&deg; broadside exposes fuselage surfaces and vertical stabilizers, multiplying radar return by <b>3.2&times; (+220% signature increase)</b>. Approach hostile radars nose-on whenever practical.
       </div>
 
       <div class="ge-subhead">4. MULTI-MISSILE SALVO &amp; MIXED-SEEKER SYNERGY (+25% P_K)</div>

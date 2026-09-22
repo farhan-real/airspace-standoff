@@ -12,9 +12,9 @@ class Aircraft {
       builtInGun: 'M61A2', allowedGuns: ['M61A2'], gunRounds: 500, totalSlots: 6, maxPylonRating: 'Type M', upgradeSockets: 3
     };
     this.team = team;
-    this.x = spawnX;
-    this.y = spawnY;
-    this.heading = heading;
+    this.x = (typeof spawnX === 'number' && !isNaN(spawnX)) ? spawnX : 20.0;
+    this.y = (typeof spawnY === 'number' && !isNaN(spawnY)) ? spawnY : 50.0;
+    this.heading = (typeof heading === 'number' && !isNaN(heading)) ? heading : 0.0;
 
     this.isAce = Boolean(isAce);
     this.isFlightLead = Boolean(isFlightLead);
@@ -145,7 +145,7 @@ class Aircraft {
   }
 
   steerLeft(dt) {
-    if (this.hp <= 0 || this.glocTimer > 0) return;
+    if (this.hp <= 0.05 || this.glocTimer > 0) return;
     let agi = (this.spec ? this.spec.AGI_0 : 0.85) * (this.thrustVector ? 1.25 : 1.0);
     if (this.isCoffin) agi *= 1.20;
     if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) agi *= 0.70;
@@ -157,7 +157,7 @@ class Aircraft {
   }
 
   steerRight(dt) {
-    if (this.hp <= 0 || this.glocTimer > 0) return;
+    if (this.hp <= 0.05 || this.glocTimer > 0) return;
     let agi = (this.spec ? this.spec.AGI_0 : 0.85) * (this.thrustVector ? 1.25 : 1.0);
     if (this.isCoffin) agi *= 1.20;
     if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) agi *= 0.70;
@@ -198,7 +198,18 @@ class Aircraft {
   toggleRTB() { if (this.isRTB) { this.cancelRTB(); return false; } else { this.orderRTB(); return true; } }
 
   update(dt, incomingMissiles) {
-    if (this.hp <= 0) return;
+    if (this.hp <= 0.05) {
+      this.hp = 0;
+      return;
+    }
+
+    if (isNaN(this.x) || isNaN(this.y)) {
+      this.x = (this.team === 'friendly') ? 20.0 : ((window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) ? window.CONFIG.THEATER_WIDTH_KM - 20.0 : 130.0);
+      this.y = 50.0;
+    }
+    if (isNaN(this.speed)) this.speed = 0.85;
+    if (isNaN(this.heading)) this.heading = (this.team === 'friendly') ? 0.0 : Math.PI;
+
     if (this.isRTB) this.processRTB(dt);
     if (this.glocTimer > 0) {
       this.glocTimer -= dt;

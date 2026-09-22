@@ -214,6 +214,13 @@ class SimulationSystem {
     if (vpAllyEl) vpAllyEl.textContent = this.game.vpAlly;
     if (vpHostileEl) vpHostileEl.textContent = this.game.vpHostile;
 
+    for (const h of this.game.hostileAircraft) {
+      if (h && h.hp > 0 && h.hp <= 0.05) h.hp = 0;
+    }
+    for (const a of this.game.alliedAircraft) {
+      if (a && a.hp > 0 && a.hp <= 0.05) a.hp = 0;
+    }
+
     const allAlliesDead = this.game.alliedAircraft.length > 0 && this.game.alliedAircraft.every(a => a.hp <= 0);
     const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0);
     const friendlyBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'friendly' && s.hp <= 0);

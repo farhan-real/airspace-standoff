@@ -1,6 +1,7 @@
 /**
  * AIRSPACE STANDOFF: Radar Signal Intelligence, Target Detection & Satellite Reveal Pipeline
- * Calibrated classification rates, mutual detection fairness, and passive radar launch concealment.
+ * All active aircraft are immediately tracked on radar as Phase 1: BOGEY [?].
+ * Progressive NCTR and sensor tracking resolve positive identification into Phase 2: IDENTIFIED.
  */
 
 class SimulationDetectionSystem {
@@ -30,7 +31,7 @@ class SimulationDetectionSystem {
     }
 
     for (const h of this.game.hostileAircraft) {
-      if (h.hp <= 0) continue;
+      if (!h || h.hp <= 0) continue;
       this.game.detectedByBlue.add(h.id);
 
       let inSensorRange = false;
@@ -76,7 +77,7 @@ class SimulationDetectionSystem {
           h.isIdentified = true;
         }
       } else {
-        h.trackDurationBlue = Math.max(0.0, h.trackDurationBlue - dt * 0.20);
+        h.trackDurationBlue = Math.max(0.0, (h.trackDurationBlue || 0.0) - dt * 0.20);
       }
     }
 
@@ -105,7 +106,7 @@ class SimulationDetectionSystem {
     );
 
     for (const a of this.game.alliedAircraft) {
-      if (a.hp <= 0) continue;
+      if (!a || a.hp <= 0) continue;
       this.game.detectedByRed.add(a.id);
       let inRedSensor = false;
       for (const sensor of redSensors) {

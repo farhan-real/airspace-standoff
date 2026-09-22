@@ -120,6 +120,6 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'MICRO_GUN',
     weapons: ['ADM-160B', 'MAM'],
     upgrades: ['GAN_AESA_CORE', 'MADL_BATTLE_LINK'],
-    desc: 'Stratospheric flying-wing drone (0.0001m2 RCS, $16.0M). Operates as an invisible squadron sensor gateway.'
+    desc: 'Stratospheric flying-wing drone (0.0001m2 RCS, $16.0M). Operates as a dedicated high-altitude squadron sensor gateway.'
   }
 };
