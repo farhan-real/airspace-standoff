@@ -1,21 +1,22 @@
 # Airspace Standoff
 
-A browser-based air combat game played entirely from a tactical radar screen. Command fighters and drones in beyond-visual-range (BVR) missile duels across a 150×100 km sector.
+A browser-based tactical air combat simulator played entirely from a top-down radar display. Command fighters, bombers, and autonomous drones in beyond-visual-range (BVR) missile duels across a 150×100 km contested battlespace.
 
 ---
 
-## Key Features
+## Features
 
-- **Sensors & Stealth:** Contacts appear as raw radar blips. Keep radar on them to identify targets, hide behind terrain and clouds, and watch your radar cross-section.
-- **Tactical Missile Duels:** Time your shots so enemies can't escape your missiles, dodge incoming fire using chaff and defensive maneuvers, and manage pilot stamina under high G-forces.
-- **Extensive Loadout Customization:** Build a squadron within a credit budget by picking airframes, weapons, and avionics:
-  - **Hardpoints & Pylons:** Choose between stealth airframes with limited internal bays, or 4th-gen "missile trucks" with massive external pylons.
-  - **Realistic Trade-offs:** Heavy long-range missiles and external drop tanks add deadweight - lowering top speed, climb rates, and turn agility while increasing your radar signature.
-  - **Flight Leads:** Designate a squadron leader with specialized perks, like better missile evasion, faster sensor data-sharing, or reduced radar beam spikes.
-- **Game Modes:** 
-  - **Skirmish:** Quick squadron vs squadron battles.
-  - **Dynamic Theater:** Multi-wave engagements against enemy reinforcements, SAM sites, and radar networks.
-  - **2P Versus:** Local 1v1 on the same device.
+- **Radar & Observability:** All contacts begin as unverified `BOGEY [?]` returns. Detection envelopes model microwave radar physics based on Radar Cross-Section (RCS), 90° broadside beam spikes, and ground clutter filtering.
+- **Authentic Missile Guidance:** Missiles fly using Proportional Navigation (ProNav) with multi-stage solid boosters, continuous ramjets, and terminal surges. Targets that break outside a missile's turn limit force kinetic overshoots rather than scripted misses.
+- **Electronic Warfare:** Break radar locks by beaming 90° (Doppler notching), deploying chaff corridors, trailing towed decoys, or launching autonomous radar-mirroring decoy drones.
+- **Energy Fighting & G-Force Physics:** Balance throttle detents, kinetic dives, and corner turn speeds. Push sustained turns too far and pilots suffer tunnel vision or G-LOC blackouts—or deploy unmanned UCAVs and COFFIN cockpits for high-G immunity.
+- **Deep Hangar & Loadout Customization:** Build squadrons under credit budgets with extensive tactical freedom:
+  - **35+ Airframes Across 8 Categories:** Field stealth fighters, heavy missile trucks, multirole workhorses, armored tank busters, supersonic electronic attack escorts, swarm drones, and experimental superfighters.
+  - **Diverse Ordnance & Weaponry:** Outfit long-range active radar missiles, high-off-boresight heat seekers, hypersonic bunker penetrators, precision glide bombs, thermobaric burst rockets, and standoff jamming pods.
+  - **Gunnery, Lasers & Railguns:** Swap standard rotary Gatlings for heavy 30mm cannons, external gunpods, tactical pulse lasers, speed-of-light chemical lasers, or kinetic railguns.
+  - **Modular Avionics & Components:** Install 3D thrust-vectoring nozzles, variable-cycle supercruise engines, GaN AESA radar arrays, dual-band IRST optics, digital ECCM processors, and RAM stealth coatings.
+  - **Flight Lead Perks & Live Dual-Colored Stats:** Designate a specialized flight lead with formation buffs, and watch real-time dual-colored metrics reveal the exact trade-offs on your radar cross-section, top Mach speed, and turn agility as weapons add carriage weight.
+- **Combat Theaters:** Face adversary flight leads, integrated SAM batteries, and command bunkers across Skirmish, multi-wave Dynamic Theater, and 2-Player Local Versus modes. Watch your fire: commercial airliners transit the sector under strict Rules of Engagement.
 
 ---
 
