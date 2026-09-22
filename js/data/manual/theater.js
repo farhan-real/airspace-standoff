@@ -149,7 +149,7 @@ window.MANUAL_THEATER = [
             <tr><th>TACTICAL EVENT</th><th>BASE VP REWARD</th><th>FORMULA &amp; OPERATIONAL NOTES</th></tr>
           </thead>
           <tbody>
-            <tr><td><b>Command Bunker Destroyed</b></td><td style="color:#00f0ff;">+800 VP</td><td>Primary strategic victory condition.</td></tr>
+            <tr><td><b>Command Bunker Destroyed</b></td><td style="color:#00f0ff;">+800 VP</td><td>High-value strategic objective bonus.</td></tr>
             <tr><td><b>Ace Pilot Bounty</b></td><td style="color:#ffd700;">+850 VP</td><td>Added on top of airframe kill points.</td></tr>
             <tr><td><b>Combat Aircraft Kill</b></td><td style="color:#00f5a0;">150 + (Cost &times; 10) VP</td><td>F-16: 285 VP &bull; F-22: 630 VP (Flight Lead: 1.5&times;).</td></tr>
             <tr><td><b>UCAV / Drone Kill</b></td><td style="color:#00f5a0;">80 + (Cost &times; 12) VP</td><td>MQ-99: 122 VP &bull; S-70: 248 VP.</td></tr>

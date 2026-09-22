@@ -224,8 +224,11 @@ class SimulationSystem {
         ? 'HOSTILE AIR FLEET NEUTRALIZED & COMMAND BUNKER DESTROYED'
         : 'ALL HOSTILE AIR ASSETS NEUTRALIZED - AIR SUPERIORITY SECURED';
       this.game.triggerGameOver(true, winReason);
-    } else if (allAlliesDead || friendlyBunkerDestroyed) {
-      this.game.triggerGameOver(false, friendlyBunkerDestroyed ? 'FRIENDLY COMMAND BUNKER DESTROYED' : 'ALL ALLIED AIR ASSETS NEUTRALIZED');
+    } else if (allAlliesDead) {
+      const loseReason = friendlyBunkerDestroyed
+        ? 'ALL ALLIED AIR ASSETS & COMMAND BUNKER DESTROYED'
+        : 'ALL ALLIED AIR ASSETS NEUTRALIZED';
+      this.game.triggerGameOver(false, loseReason);
     }
   }
 }
