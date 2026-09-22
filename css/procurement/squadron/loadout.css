@@ -5,24 +5,24 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  border-bottom: 1.5px solid #1a2232;
-  padding-bottom: 6px;
-  margin-bottom: 6px;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
 }
 
 .roster-header-bar h3 {
-  font-size: 0.84rem;
-  font-weight: 900;
-  font-family: var(--font-mono);
-  color: #f1f5f9;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: var(--font-aeonikpro);
+  color: var(--color-ice-highlight);
   letter-spacing: 0.5px;
 }
 
 .roster-header-bar .subtext {
   font-size: 0.66rem;
-  color: var(--color-green);
-  font-family: var(--font-mono);
-  font-weight: 800;
+  color: var(--stat-tier-2);
+  font-family: var(--font-dotdigital);
+  font-weight: 600;
 }
 
 .squadron-container {
@@ -36,39 +36,40 @@
 }
 
 .squad-unit-card {
-  background-color: #090b10;
-  border: 1px solid #1c2638;
-  border-radius: 5px;
-  padding: 8px 10px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   transition: all 0.14s ease;
   box-sizing: border-box;
   position: relative;
   overflow: visible;
+  box-shadow: var(--glass-shadow);
 }
 
 .squad-unit-card:hover {
-  border-color: #0284c7;
+  border-color: var(--glass-border-hover);
 }
 
 .squad-unit-card.active-bay {
-  border-color: #00f0ff !important;
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.28);
-  background-color: #0d121c;
+  border-color: var(--theme-accent) !important;
+  box-shadow: var(--glass-shadow), 0 0 16px var(--theme-primary-dim);
+  background: var(--theme-primary-dim);
 }
 
 .squad-unit-card.drag-target-valid {
-  border-color: #00f0ff !important;
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.5) !important;
-  background-color: #0b182b !important;
+  border-color: var(--theme-accent) !important;
+  box-shadow: 0 0 20px var(--theme-primary-glow) !important;
+  background: var(--theme-primary-dim) !important;
 }
 
 .squad-unit-card.drag-target-invalid {
-  border-color: #ff3366 !important;
-  box-shadow: 0 0 16px rgba(255, 51, 102, 0.5) !important;
-  background-color: #200810 !important;
+  border-color: #f43f5e !important;
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.35) !important;
+  background: rgba(244, 63, 94, 0.12) !important;
 }
 
 .squad-unit-card:has(.custom-dropdown.open) {
@@ -77,11 +78,11 @@
 
 .active-bay-badge {
   font-size: 0.56rem;
-  background-color: #0284c7;
+  background: var(--theme-primary);
   color: #ffffff;
-  padding: 1px 6px;
-  border-radius: 2px;
-  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: var(--radius-badge);
+  font-weight: 600;
   letter-spacing: 0.5px;
 }
 
@@ -101,44 +102,47 @@
 }
 
 .squad-unit-name {
-  font-size: 0.88rem;
-  font-weight: 900;
+  font-size: 0.90rem;
+  font-weight: 600;
   color: #ffffff;
+  font-family: var(--font-aeonikpro);
 }
 
 .squad-unit-badge {
-  font-size: 0.62rem;
-  font-family: var(--font-mono);
-  font-weight: 800;
+  font-size: 0.60rem;
+  font-family: var(--font-dotdigital);
+  font-weight: 600;
   padding: 2px 6px;
-  border-radius: 2px;
+  border-radius: var(--radius-badge);
 }
 
 .squad-unit-cost {
   font-size: 0.82rem;
-  font-family: var(--font-mono);
-  font-weight: 800;
-  color: var(--color-green);
+  font-family: var(--font-dotdigital);
+  font-weight: 700;
+  color: var(--stat-tier-2);
 }
 
 .squad-callsign-tag {
-  background-color: #0e121a;
-  border: 1px solid #0284c7;
-  color: #ffb830;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--stat-tier-3);
   font-size: 0.64rem;
-  font-family: var(--font-mono);
-  font-weight: 800;
-  padding: 3px 7px;
-  border-radius: 2px;
+  font-family: var(--font-untitled-sans);
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 3px;
+  transition: all 0.12s ease;
 }
 
 .squad-callsign-tag:hover {
-  background-color: #0284c7;
+  background: var(--glass-bg-hover);
   color: #ffffff;
+  border-color: var(--glass-border-hover);
 }
 
 .squad-unit-actions {
@@ -157,10 +161,8 @@
   }
 
   .squad-unit-card {
-    padding: 6px 8px;
+    padding: 8px 10px;
     gap: 4px;
-    width: 100%;
-    box-sizing: border-box;
   }
 
   .squad-unit-header {
@@ -175,11 +177,6 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: 4px;
-  }
-
-  .squad-unit-name {
-    font-size: 0.82rem;
   }
 
   .squad-unit-actions {
@@ -188,10 +185,5 @@
     justify-content: flex-end;
     gap: 4px;
     width: 100%;
-  }
-
-  .squad-unit-actions .hud-btn {
-    padding: 3px 6px;
-    font-size: 0.56rem;
   }
 }

@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Tactical Cards & Pylon Bay Coordinator
+ * AIRSPACE STANDOFF: Tactical Cards & Pylon Bay Coordinator
  */
 
 class DeckManager {

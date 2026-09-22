@@ -6,24 +6,25 @@
   height: 98vh;
   max-height: 98vh;
   min-height: 500px;
-  background-color: #000000;
-  background-image: none;
-  border: 1px solid #1c2436;
-  border-top: 3px solid #00f0ff;
-  border-radius: 6px;
+  background-color: var(--glass-bg-modal);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-modal);
   display: flex;
   flex-direction: column;
-  padding: 7px 12px;
-  gap: 6px;
+  padding: 10px 14px;
+  gap: 8px;
   overflow: hidden;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
+  box-shadow: var(--glass-shadow);
   transform: translateZ(0);
   box-sizing: border-box;
 }
 
 body.safe-zone-on .procurement-window {
-  padding-left: max(12px, var(--safe-zone-inset, 0px)) !important;
-  padding-right: max(12px, var(--safe-zone-inset, 0px)) !important;
+  padding-left: max(14px, var(--safe-zone-inset, 0px)) !important;
+  padding-right: max(14px, var(--safe-zone-inset, 0px)) !important;
 }
 
 .procurement-mobile-tabs {
@@ -35,7 +36,7 @@ body.safe-zone-on .procurement-window {
   min-height: 0;
   display: grid;
   grid-template-columns: 1.15fr 1fr;
-  gap: 6px;
+  gap: 8px;
   overflow: hidden;
   contain: layout;
 }
@@ -46,49 +47,57 @@ body.safe-zone-on .procurement-window {
   flex-direction: column;
   min-height: 0;
   height: 100%;
-  border: 1px solid #18202e;
-  background-color: #06070a;
-  border-radius: 5px;
-  padding: 6px;
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-radius: var(--radius-card);
+  padding: 8px;
   overflow: hidden;
+  box-shadow: var(--glass-shadow);
   contain: paint;
 }
 
 .procurement-footer {
   flex-shrink: 0;
-  border-top: 1px solid #1a2232;
-  padding-top: 4px;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 6px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 
 .scramble-btn {
-  background: linear-gradient(135deg, #0284c7, #0369a1);
-  border: 1px solid #00f0ff;
+  background: var(--theme-primary);
+  border: 1px solid var(--theme-accent);
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
   color: #ffffff;
-  font-family: var(--font-mono);
+  font-family: var(--font-untitled-sans);
   font-size: 0.82rem;
-  font-weight: 800;
-  padding: 7px 22px;
-  border-radius: 3px;
+  font-weight: 600;
+  padding: 8px 24px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
-  letter-spacing: 0.8px;
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+  letter-spacing: 0.6px;
+  box-shadow: 0 0 16px var(--theme-primary-glow), var(--glass-highlight);
   transition: all 0.14s ease;
 }
 
 .scramble-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #00f0ff, #0284c7);
-  color: #000000;
-  box-shadow: 0 0 24px rgba(0, 240, 255, 0.5);
+  background: var(--theme-primary-hover);
+  color: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 0 24px var(--theme-primary-glow);
+  transform: scale(1.02);
 }
 
 .scramble-btn:disabled {
-  background-color: #0d1016;
-  border-color: #1a202c;
-  color: #64748b;
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  color: var(--color-fog-veil);
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 @media (max-width: 1024px) {
@@ -100,27 +109,14 @@ body.safe-zone-on .procurement-window {
     max-height: 100dvh;
     min-height: 100dvh;
     border-radius: 0;
-    padding: 4px 6px;
-    gap: 3px;
-    box-sizing: border-box;
+    padding: 6px 8px;
+    gap: 4px;
     overflow-x: hidden;
-    box-shadow: none;
-  }
-
-  body.safe-zone-on .procurement-window {
-    padding-left: max(6px, var(--safe-zone-inset, 0px)) !important;
-    padding-right: max(6px, var(--safe-zone-inset, 0px)) !important;
-  }
-
-  .procurement-footer {
-    padding-top: 2px;
-    width: 100%;
-    box-sizing: border-box;
   }
 
   .scramble-btn {
     width: 100%;
-    padding: 6px;
+    padding: 7px;
     font-size: 0.74rem;
   }
 }
@@ -133,15 +129,6 @@ body.safe-zone-on .procurement-window {
   .procurement-body {
     display: grid !important;
     grid-template-columns: 1.15fr 1fr !important;
-    gap: 4px !important;
-    flex: 1 1 auto !important;
-  }
-
-  .hanger-shelf,
-  .flight-roster {
-    display: flex !important;
-    width: 100% !important;
-    height: 100% !important;
-    padding: 4px !important;
+    gap: 6px !important;
   }
 }

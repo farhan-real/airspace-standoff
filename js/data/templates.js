@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Master Templates Aggregator & Query Registry
+ * AIRSPACE STANDOFF: Master Templates Aggregator & Query Registry
  */
 
 window.AIRCRAFT_TEMPLATES = Object.assign(

@@ -1,37 +1,17 @@
-/* AIRSPACE STANDOFF: Core Theme & Base Styling */
+/* AIRSPACE STANDOFF: Core Theme & Pitch-Black Glass Baseline */
 
 :root {
-  --bg-dark: #000000;
-  --bg-panel: rgba(8, 10, 15, 0.96);
-  --bg-panel-alt: rgba(12, 15, 22, 0.94);
-  --bg-card: #0a0c12;
-  --border-color: #1a2230;
-  --border-highlight: #28354a;
-  --border-focus: #00f0ff;
+  --bg-dark: var(--color-pitch-black);
+  --bg-panel: rgba(2, 4, 8, 0.88);
+  --bg-panel-alt: rgba(4, 7, 14, 0.84);
+  --bg-card: var(--glass-bg);
+  --border-color: var(--glass-border);
+  --border-highlight: var(--glass-border-hover);
+  --border-focus: var(--color-frost-glow);
 
-  --color-cyan: #00f0ff;
-  --color-cyan-dim: rgba(0, 240, 255, 0.12);
-  --color-blue: #38bdf8;
-  --color-blue-dim: rgba(56, 189, 248, 0.14);
-  --color-red: #ff3366;
-  --color-red-dim: rgba(255, 51, 102, 0.16);
-  --color-green: #00f5a0;
-  --color-green-dim: rgba(0, 245, 160, 0.12);
-  --color-amber: #ffb830;
-  --color-amber-dim: rgba(255, 184, 48, 0.14);
-  --color-purple: #c084fc;
-  --color-gold: #ffd700;
-
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
-
-  --glow-cyan: 0 0 12px rgba(0, 240, 255, 0.35);
-  --glow-green: 0 0 12px rgba(0, 245, 160, 0.35);
-  --glow-red: 0 0 12px rgba(255, 51, 102, 0.35);
-
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --text-main: var(--color-frost-glow);
+  --text-muted: var(--color-moon-mist);
+  --text-dim: var(--color-fog-veil);
 
   --safe-zone-inset: 0px;
 }
@@ -52,15 +32,18 @@ body.safe-zone-on {
   -webkit-user-select: none;
   touch-action: manipulation;
   scrollbar-width: thin;
-  scrollbar-color: #1e2636 #000000;
+  scrollbar-color: rgba(56, 189, 248, 0.22) var(--color-pitch-black);
   -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
-  background-color: var(--bg-dark);
-  background-image: none;
+  background-color: var(--color-pitch-black);
+  background-image:
+    linear-gradient(rgba(56, 189, 248, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
   color: var(--text-main);
-  font-family: var(--font-sans);
+  font-family: var(--font-untitled-sans);
   overflow: hidden;
   height: 100%;
   width: 100%;
@@ -80,26 +63,26 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
-  border-left: 1px solid #121722;
+  background: var(--color-pitch-black);
+  border-left: 1px solid var(--glass-border);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1c2436;
-  border-radius: 2px;
+  background: rgba(56, 189, 248, 0.22);
+  border-radius: var(--radius-btn);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-cyan);
-  box-shadow: 0 0 8px var(--color-cyan);
+  background: var(--theme-accent);
+  box-shadow: 0 0 8px var(--theme-accent-glow);
 }
 
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.88);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -116,22 +99,25 @@ html, body {
 }
 
 .hud-btn {
-  background: linear-gradient(180deg, #0b182b 0%, #060e1b 100%);
-  border: 1px solid #1c3558;
-  color: #e2e8f0;
-  font-family: var(--font-mono);
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  color: #ffffff;
+  font-family: var(--font-untitled-sans);
   font-size: 0.72rem;
-  font-weight: 800;
-  padding: 6px 12px;
+  font-weight: 500;
+  padding: 6px 14px;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: var(--radius-btn);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  letter-spacing: 0.4px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 5px rgba(0, 0, 0, 0.4);
-  transition: all 0.12s ease;
+  letter-spacing: 0.3px;
+  box-shadow: var(--glass-highlight);
+  transition: all 0.14s ease;
   white-space: nowrap;
 }
 
@@ -154,61 +140,64 @@ html, body {
   vertical-align: middle;
   flex-shrink: 0;
   margin-right: 8px;
-  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.45));
+  filter: drop-shadow(0 0 6px var(--theme-accent-glow));
   object-fit: contain;
 }
 
 .hud-btn:hover:not(:disabled) {
-  background: linear-gradient(180deg, #102542 0%, #08162b 100%);
-  border-color: var(--color-cyan);
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
   color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 12px rgba(0, 240, 255, 0.3);
+  box-shadow: var(--glass-highlight), 0 0 12px var(--theme-primary-dim);
 }
 
 .hud-btn:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  transform: scale(0.98);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hud-btn:disabled {
   opacity: 0.32;
   cursor: not-allowed;
   filter: grayscale(0.6);
-  border-color: #101c2e;
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
 .hud-btn.small {
-  padding: 3px 8px;
+  padding: 3px 10px;
   font-size: 0.65rem;
   height: 26px;
   gap: 5px;
+  border-radius: var(--radius-btn);
 }
 
 .hud-btn.alert {
-  background: linear-gradient(180deg, rgba(185, 28, 28, 0.35) 0%, rgba(127, 29, 29, 0.45) 100%);
-  border-color: #ef4444;
+  background: rgba(244, 63, 94, 0.16);
+  border-color: rgba(244, 63, 94, 0.35);
+  border-top-color: rgba(255, 120, 150, 0.5);
   color: #fecdd3;
 }
 
 .hud-btn.alert:hover:not(:disabled) {
-  background: #dc2626;
-  border-color: #fca5a5;
+  background: rgba(244, 63, 94, 0.32);
+  border-color: #f43f5e;
   color: #ffffff;
-  box-shadow: 0 0 14px rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.45);
 }
 
 .hud-btn.highlight {
-  background: linear-gradient(180deg, #0369a1 0%, #0284c7 100%);
-  border-color: #38bdf8;
+  background: var(--theme-primary-dim);
+  border-color: var(--theme-primary);
+  border-top-color: var(--theme-accent);
   color: #ffffff;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 12px var(--theme-primary-dim);
 }
 
 .hud-btn.highlight:hover:not(:disabled) {
-  background: linear-gradient(180deg, #0284c7 0%, #00f0ff 100%);
-  border-color: #00f0ff;
-  color: #000000;
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.6);
+  background: var(--theme-primary);
+  border-color: var(--theme-accent);
+  color: #ffffff;
+  box-shadow: 0 0 18px var(--theme-primary-glow);
 }
 
 @media (max-width: 1024px) {

@@ -49,7 +49,7 @@ class TacticalRadarRenderer {
   cleanCanvasText(str) {
     if (str === undefined || str === null) return '';
     let s = String(str);
-    s = s.replace(/\u00e2\u20ac\u00a2|•|&bull;|\|/g, ' ');
+    s = s.replace(/\u00e2\u20ac\u00a2|â€¢|&bull;|\|/g, ' ');
     s = s.replace(/\s+/g, ' ');
     if (!s.includes('<') && !s.includes('\\') && !s.includes('{') && !s.includes('katex')) {
       return s.trim();
@@ -193,8 +193,8 @@ class TacticalRadarRenderer {
         ? (window.Game && window.Game.detectedByBlue ? window.Game.detectedByBlue : new Set())
         : (window.Game && window.Game.detectedByRed ? window.Game.detectedByRed : new Set()));
 
-    // Deep tactical radar scope background tone
-    ctx.fillStyle = '#02060e';
+    // Pitch-black tactical radar scope background
+    ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, w, h);
 
     if (typeof RadarEnvironmentRenderer !== 'undefined') {

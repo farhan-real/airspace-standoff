@@ -1,72 +1,96 @@
-/* AIRSPACE STANDOFF: Universal 5-Tier Evaluation Spectrum & Inspector Codex */
+/* AIRSPACE STANDOFF: High-Contrast Spec Evaluation Codex */
 
-:root {
-  --stat-tier-1: #00f0ff; /* T1: EXCELLENT / VERY LOW COST */
-  --stat-tier-2: #00f5a0; /* T2: GOOD / LOW COST */
-  --stat-tier-3: #ffb830; /* T3: AVERAGE / MEDIUM COST */
-  --stat-tier-4: #f97316; /* T4: POOR / HIGH COST */
-  --stat-tier-5: #ff3366; /* T5: VERY POOR / VERY HIGH COST */
+.stat-tier-1,
+b.stat-tier-1,
+span.stat-tier-1 {
+  color: var(--stat-tier-1) !important;
+  font-weight: 700 !important;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
 }
 
-/* Value text color overrides */
-.stat-tier-1 { color: var(--stat-tier-1) !important; font-weight: 800; }
-.stat-tier-2 { color: var(--stat-tier-2) !important; font-weight: 700; }
-.stat-tier-3 { color: var(--stat-tier-3) !important; font-weight: 700; }
-.stat-tier-4 { color: var(--stat-tier-4) !important; font-weight: 700; }
-.stat-tier-5 { color: var(--stat-tier-5) !important; font-weight: 700; }
+.stat-tier-2,
+b.stat-tier-2,
+span.stat-tier-2 {
+  color: var(--stat-tier-2) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 6px rgba(16, 185, 129, 0.25);
+}
 
-/* Micro badge pills next to values in the inspector modal */
+.stat-tier-3,
+b.stat-tier-3,
+span.stat-tier-3 {
+  color: var(--stat-tier-3) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 6px rgba(251, 191, 36, 0.25);
+}
+
+.stat-tier-4,
+b.stat-tier-4,
+span.stat-tier-4 {
+  color: var(--stat-tier-4) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 6px rgba(249, 115, 22, 0.25);
+}
+
+.stat-tier-5,
+b.stat-tier-5,
+span.stat-tier-5 {
+  color: var(--stat-tier-5) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 6px rgba(244, 63, 94, 0.25);
+}
+
 .stat-badge-tier {
   font-size: 0.58rem;
-  font-family: var(--font-mono);
-  padding: 1px 6px;
-  border-radius: 2px;
-  font-weight: 800;
+  font-family: var(--font-dotdigital);
+  padding: 2px 6px;
+  border-radius: var(--radius-badge);
+  font-weight: 700;
   letter-spacing: 0.4px;
   margin-left: 6px;
   display: inline-block;
+  backdrop-filter: blur(8px);
 }
 
-.stat-badge-tier.tier-1 { background: rgba(0, 240, 255, 0.12); border: 1px solid #00f0ff; color: #00f0ff; }
-.stat-badge-tier.tier-2 { background: rgba(0, 245, 160, 0.12); border: 1px solid #00f5a0; color: #00f5a0; }
-.stat-badge-tier.tier-3 { background: rgba(255, 184, 48, 0.12); border: 1px solid #ffb830; color: #ffb830; }
-.stat-badge-tier.tier-4 { background: rgba(249, 115, 22, 0.12); border: 1px solid #f97316; color: #fed7aa; }
-.stat-badge-tier.tier-5 { background: rgba(255, 51, 102, 0.14); border: 1px solid #ff3366; color: #fecdd3; }
+.stat-badge-tier.tier-1 { background: rgba(0, 240, 255, 0.14); border: 1px solid rgba(0, 240, 255, 0.45); color: var(--stat-tier-1); }
+.stat-badge-tier.tier-2 { background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.45); color: var(--stat-tier-2); }
+.stat-badge-tier.tier-3 { background: rgba(251, 191, 36, 0.14); border: 1px solid rgba(251, 191, 36, 0.45); color: var(--stat-tier-3); }
+.stat-badge-tier.tier-4 { background: rgba(249, 115, 22, 0.14); border: 1px solid rgba(249, 115, 22, 0.45); color: var(--stat-tier-4); }
+.stat-badge-tier.tier-5 { background: rgba(244, 63, 94, 0.14); border: 1px solid rgba(244, 63, 94, 0.45); color: var(--stat-tier-5); }
 
-/* Universal Dual-Value Stat Presentation for Loadout Variations */
 .dual-val {
   display: inline-flex;
   align-items: baseline;
   gap: 3px;
-  font-family: var(--font-mono);
+  font-family: var(--font-dotdigital);
   white-space: nowrap;
 }
 
 .val-sep {
-  color: #64748b;
-  font-weight: 700;
+  color: var(--color-fog-veil);
+  font-weight: 600;
   font-size: 0.58rem;
   padding: 0 1px;
 }
 
 .val-unit {
-  color: #94a3b8;
-  font-weight: 600;
+  color: var(--color-moon-mist);
+  font-weight: 500;
   font-size: 0.56rem;
   margin-left: 1px;
 }
 
-/* 2-Line Spectrum Legend Box */
 .inspect-spectrum-legend {
   display: flex;
   flex-direction: column;
-  background: #040914;
-  border: 1px solid #142338;
-  border-radius: 4px;
-  padding: 8px 10px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  padding: 8px 12px;
   gap: 6px;
   font-size: 0.62rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-dotdigital);
+  box-shadow: var(--glass-highlight);
 }
 
 .legend-row {
@@ -79,10 +103,10 @@
 }
 
 .legend-title {
-  color: #94a3b8;
-  font-weight: 800;
+  color: var(--color-moon-mist);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
   min-width: 130px;
 }
 
@@ -95,13 +119,13 @@
 .legend-chip {
   display: inline-flex;
   align-items: center;
-  padding: 2px 6px;
-  border-radius: 2px;
-  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: var(--radius-badge);
+  font-weight: 600;
 }
 
-.legend-chip.tier-1 { background: rgba(0, 240, 255, 0.10); border: 1px solid #00f0ff; color: #00f0ff; }
-.legend-chip.tier-2 { background: rgba(0, 245, 160, 0.10); border: 1px solid #00f5a0; color: #00f5a0; }
-.legend-chip.tier-3 { background: rgba(255, 184, 48, 0.10); border: 1px solid #ffb830; color: #ffb830; }
-.legend-chip.tier-4 { background: rgba(249, 115, 22, 0.10); border: 1px solid #f97316; color: #fed7aa; }
-.legend-chip.tier-5 { background: rgba(255, 51, 102, 0.10); border: 1px solid #ff3366; color: #fecdd3; }
+.legend-chip.tier-1 { background: rgba(0, 240, 255, 0.12); border: 1px solid rgba(0, 240, 255, 0.45); color: var(--stat-tier-1); }
+.legend-chip.tier-2 { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.45); color: var(--stat-tier-2); }
+.legend-chip.tier-3 { background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.45); color: var(--stat-tier-3); }
+.legend-chip.tier-4 { background: rgba(249, 115, 22, 0.12); border: 1px solid rgba(249, 115, 22, 0.45); color: var(--stat-tier-4); }
+.legend-chip.tier-5 { background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.45); color: var(--stat-tier-5); }

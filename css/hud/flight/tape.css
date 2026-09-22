@@ -11,40 +11,33 @@
   gap: 6px;
   z-index: 7;
   pointer-events: none;
-  font-family: var(--font-mono);
+  font-family: var(--font-dotdigital);
   width: auto;
   max-width: 90%;
 }
 
 .rfh-panel {
-  background: rgba(3, 8, 20, 0.90);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1.5px solid rgba(0, 240, 255, 0.45);
-  border-radius: 4px;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-card);
   padding: 4px 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
+  box-shadow: var(--glass-shadow);
   white-space: nowrap;
   overflow: hidden;
 }
 
-.rfh-left,
-.rfh-center,
-.rfh-right {
-  align-items: center;
-  text-align: center;
-  justify-content: center;
-}
-
 .rfh-label {
   font-size: 0.52rem;
-  color: #8fa0b5;
-  font-weight: 800;
+  color: var(--color-moon-mist);
+  font-weight: 600;
   letter-spacing: 0.5px;
 }
 
@@ -57,27 +50,26 @@
 
 .rfh-num {
   font-size: 0.96rem;
-  font-weight: 900;
-  color: #f8fafc;
+  font-weight: 700;
+  color: var(--color-pure-white);
 }
 
 .rfh-arrow {
   font-size: 0.74rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .rfh-sub {
   font-size: 0.56rem;
-  color: #00f0ff;
-  font-weight: 800;
+  color: var(--theme-accent);
+  font-weight: 600;
 }
 
 .rfh-center {
   min-width: 210px;
   max-width: 260px;
   padding: 4px 12px;
-  border-color: #00f0ff;
-  box-shadow: 0 0 14px rgba(0, 240, 255, 0.3);
+  border-color: rgba(56, 189, 248, 0.3);
 }
 
 .rfh-center-top {
@@ -91,15 +83,15 @@
 
 .rfh-cs {
   font-size: 0.76rem;
-  font-weight: 900;
-  color: #00f0ff;
+  font-weight: 700;
+  color: var(--color-ice-highlight);
   letter-spacing: 0.4px;
 }
 
 .rfh-model {
   font-size: 0.54rem;
-  color: #94a3b8;
-  font-weight: 700;
+  color: var(--color-moon-mist);
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -117,14 +109,14 @@
 
 .rfh-cardinal {
   font-size: 0.78rem;
-  font-weight: 900;
-  color: #00f5a0;
+  font-weight: 700;
+  color: var(--stat-tier-2);
 }
 
 .rfh-deg {
   font-size: 0.72rem;
-  font-weight: 800;
-  color: #f8fafc;
+  font-weight: 600;
+  color: var(--color-pure-white);
 }
 
 .rfh-sub-pills {
@@ -137,108 +129,28 @@
 .rfh-pill {
   font-size: 0.52rem;
   padding: 1px 5px;
-  border-radius: 2px;
-  background: rgba(0, 240, 255, 0.12);
-  border: 1px solid rgba(0, 240, 255, 0.3);
-  color: #7dd3fc;
-  font-weight: 800;
+  border-radius: var(--radius-badge);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--theme-accent);
+  font-weight: 600;
 }
 
 .rfh-pill.coffin-turn {
-  background: rgba(99, 102, 241, 0.22) !important;
-  border: 1px solid #6366f1 !important;
-  color: #c7d2fe !important;
-  box-shadow: 0 0 8px rgba(99, 102, 241, 0.45);
+  background: var(--theme-primary-dim) !important;
+  border: 1px solid var(--theme-accent) !important;
+  color: #bae6fd !important;
+  box-shadow: 0 0 8px var(--theme-primary-glow);
 }
 
 @media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
   .radar-flight-hud {
-    position: absolute !important;
     top: 6px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    display: flex !important;
-    align-items: stretch !important;
-    justify-content: center !important;
     gap: 5px !important;
-    z-index: 7 !important;
-    width: auto !important;
-    max-width: 78% !important;
-    pointer-events: none !important;
   }
 
   .rfh-panel {
     padding: 3px 8px !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
     min-height: 48px !important;
   }
-
-  .rfh-left {
-    min-width: 72px !important;
-    max-width: 85px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .rfh-center {
-    min-width: 190px !important;
-    max-width: 240px !important;
-    flex-shrink: 0 !important;
-    padding: 3px 10px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-  }
-
-  .rfh-center-top {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 1px !important;
-    width: 100% !important;
-  }
-
-  .rfh-cs {
-    font-size: 0.72rem !important;
-    font-weight: 900 !important;
-    color: #00f0ff !important;
-  }
-
-  .rfh-model {
-    display: block !important;
-    font-size: 0.50rem !important;
-    color: #94a3b8 !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-    max-width: 100% !important;
-  }
-
-  .rfh-compass-strip {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 6px !important;
-    margin-top: 1px !important;
-  }
-
-  .rfh-right {
-    min-width: 72px !important;
-    max-width: 85px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .rfh-val-box { justify-content: center !important; }
-  .rfh-label { font-size: 0.46rem !important; text-align: center !important; }
-  .rfh-num { font-size: 0.86rem !important; text-align: center !important; }
-  .rfh-arrow { font-size: 0.68rem !important; }
-  .rfh-sub { font-size: 0.50rem !important; text-align: center !important; }
-  .rfh-cardinal { font-size: 0.70rem !important; }
-  .rfh-deg { font-size: 0.66rem !important; }
-  .rfh-pill { font-size: 0.48rem !important; padding: 1px 4px !important; }
-  .rfh-pill.coffin-turn { font-size: 0.48rem !important; padding: 1px 4px !important; }
 }

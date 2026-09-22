@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Squadron Leaderboard & Archived Sortie Dossier Styles */
+/* AIRSPACE STANDOFF: Squadron Leaderboard Dossier */
 
 #leaderboard-modal {
   z-index: 3000 !important;
@@ -11,12 +11,13 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  background: #050b16;
-  border: 1px solid #00f0ff;
-  border-top: 3px solid #00f0ff;
-  border-radius: 6px;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
-  font-family: var(--font-mono);
+  background: var(--glass-bg-modal);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-modal);
+  box-shadow: var(--glass-shadow);
+  font-family: var(--font-untitled-sans);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -34,9 +35,9 @@
 
 .leaderboard-table-pane,
 .leaderboard-detail-pane {
-  background: #020610;
-  border: 1px solid #14243b;
-  border-radius: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -45,7 +46,7 @@
 }
 
 .leaderboard-table-pane {
-  padding: 6px 8px;
+  padding: 8px 10px;
 }
 
 .leaderboard-table {
@@ -56,18 +57,18 @@
 
 .leaderboard-table th {
   text-align: left;
-  padding: 7px 8px;
-  background: #081426;
-  color: #00f0ff;
-  border-bottom: 1.5px solid #162c46;
-  font-weight: 800;
+  padding: 8px 10px;
+  background: var(--glass-bg);
+  color: var(--color-frost-glow);
+  border-bottom: 1px solid var(--glass-border);
+  font-weight: 600;
   letter-spacing: 0.4px;
 }
 
 .leaderboard-table td {
-  padding: 7px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: #cbd5e1;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--color-moon-mist);
 }
 
 .leaderboard-row {
@@ -76,26 +77,27 @@
 }
 
 .leaderboard-row:hover {
-  background: rgba(0, 240, 255, 0.08);
+  background: var(--glass-bg-hover);
 }
 
 .leaderboard-row.selected {
-  background: rgba(0, 240, 255, 0.16);
-  border-left: 3px solid #00f0ff;
+  background: var(--theme-primary-dim);
+  border-left: 2px solid var(--theme-primary);
 }
 
 .leaderboard-rank-tag {
-  font-weight: 900;
+  font-weight: 700;
   padding: 2px 6px;
-  border-radius: 2px;
+  border-radius: var(--radius-badge);
   display: inline-block;
   font-size: 0.62rem;
+  font-family: var(--font-dotdigital);
 }
 
-.rank-gold { background: #78350f; color: #ffd700; border: 1px solid #f59e0b; }
-.rank-silver { background: #082846; color: #7dd3fc; border: 1px solid #0284c7; }
-.rank-bronze { background: #334155; color: #cbd5e1; border: 1px solid #64748b; }
-.rank-standard { background: #0a1728; color: #94a3b8; border: 1px solid #172c44; }
+.rank-gold { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); }
+.rank-silver { background: rgba(56, 189, 248, 0.15); color: #bae6fd; border: 1px solid rgba(56, 189, 248, 0.4); }
+.rank-bronze { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35); }
+.rank-standard { background: var(--glass-bg); color: var(--color-moon-mist); border: 1px solid var(--glass-border); }
 
 .leaderboard-detail-pane {
   padding: 12px 14px;
@@ -103,9 +105,9 @@
 }
 
 .dossier-header-box {
-  background: linear-gradient(90deg, #071930 0%, #030a16 100%);
-  border: 1.5px solid #00f0ff;
-  border-radius: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
   padding: 10px 14px;
   display: flex;
   justify-content: space-between;
@@ -113,16 +115,17 @@
 }
 
 .dossier-title {
-  font-size: 0.90rem;
-  font-weight: 900;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: #ffffff;
+  font-family: var(--font-aeonikpro);
 }
 
 .dossier-score-num {
-  font-size: 1.35rem;
-  font-weight: 900;
-  color: #00f0ff;
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-ice-highlight);
+  font-family: var(--font-dotdigital);
 }
 
 .dossier-meta-grid {
@@ -132,10 +135,9 @@
 }
 
 .dossier-card {
-  background: #030814;
-  border: 1px solid #14243b;
-  border-left: 3px solid #0284c7;
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
   padding: 8px 10px;
   display: flex;
   flex-direction: column;
@@ -146,22 +148,22 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.62rem;
-  color: #8494ab;
-  padding: 2px 0;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
+  font-size: 0.64rem;
+  color: var(--color-moon-mist);
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .dossier-row b {
-  color: #f8fafc;
+  color: var(--color-pure-white);
+  font-family: var(--font-dotdigital);
 }
 
 .time-bonus-tag {
-  color: #00f5a0 !important;
-  font-weight: 800;
+  color: var(--stat-tier-2) !important;
+  font-weight: 700;
 }
 
-/* Dossier Top 3 Pilots Podium */
 .dossier-podium-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -169,30 +171,30 @@
 }
 
 .dossier-podium-card {
-  background: #050e1d;
-  border: 1px solid #152945;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
   padding: 6px 8px;
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
 
-.dossier-podium-card.rank-1 { border-color: #ffd700; background: #131206; }
-.dossier-podium-card.rank-2 { border-color: #38bdf8; background: #081220; }
-.dossier-podium-card.rank-3 { border-color: #94a3b8; background: #090e18; }
+.dossier-podium-card.rank-1 { border-color: rgba(251, 191, 36, 0.4); background: rgba(251, 191, 36, 0.06); }
+.dossier-podium-card.rank-2 { border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.05); }
+.dossier-podium-card.rank-3 { border-color: rgba(148, 163, 184, 0.35); background: rgba(148, 163, 184, 0.04); }
 
 .dossier-podium-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 0.58rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .dossier-podium-cs {
-  font-size: 0.78rem;
-  font-weight: 900;
+  font-size: 0.80rem;
+  font-weight: 600;
   color: #ffffff;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -201,7 +203,7 @@
 
 .dossier-podium-sub {
   font-size: 0.56rem;
-  color: #8494ab;
+  color: var(--color-moon-mist);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -212,21 +214,20 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.58rem;
-  color: #00f0ff;
-  border-top: 1px dashed #162b46;
-  padding-top: 3px;
-  margin-top: 2px;
+  color: var(--color-frost-glow);
+  border-top: 1px solid var(--glass-border);
+  padding-top: 4px;
+  margin-top: 3px;
+  font-family: var(--font-dotdigital);
 }
 
-/* Historical Timeline Container in Leaderboard Dossier */
 .dossier-timeline-container {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: #030814;
-  border: 1px solid #14243b;
-  border-left: 3px solid #00f0ff;
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
   padding: 8px 10px;
 }
 

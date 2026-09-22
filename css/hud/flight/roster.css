@@ -1,13 +1,17 @@
 /* AIRSPACE STANDOFF: Cockpit Squadron Flight Data Roster */
 
 .squadron-flight-data {
-  background: linear-gradient(180deg, #050a14 0%, #03060c 100%);
-  border-right: 1.5px solid #132237;
-  display: flex;
-  flex-direction: column;
   height: 100%;
   min-height: 0;
+  max-height: 100%;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-right: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .units-list {
@@ -27,8 +31,8 @@
   max-height: 220px;
   display: flex;
   flex-direction: column;
-  border-top: 1px solid #132237;
-  background: rgba(3, 7, 16, 0.90);
+  border-top: 1px solid var(--glass-border);
+  background: rgba(0, 0, 0, 0.5);
   padding: 5px 8px;
   box-sizing: border-box;
   overflow: hidden;
@@ -47,21 +51,24 @@
 
 .score-log-entry {
   font-size: 0.58rem;
-  font-family: var(--font-mono);
-  color: #cbd5e1;
+  font-family: var(--font-dotdigital);
+  color: var(--color-moon-mist);
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   padding-bottom: 2px;
   line-height: 1.35;
 }
 
 .flight-card {
-  background-color: #060e1b;
-  border: 1px solid #142642;
-  border-left: 3px solid #1c3558;
-  border-radius: 4px;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-left: 3px solid var(--theme-primary);
+  border-radius: var(--radius-card);
   padding: 6px 8px;
   cursor: pointer;
   display: flex;
@@ -69,24 +76,25 @@
   gap: 4px;
   transition: all 0.14s ease;
   flex-shrink: 0;
+  box-shadow: var(--glass-shadow);
 }
 
 .flight-card:hover {
-  border-color: #38bdf8;
-  background-color: #0c1930;
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
 }
 
 .flight-card.selected {
-  border-color: var(--color-cyan);
-  border-left: 3px solid var(--color-cyan);
-  background-color: rgba(0, 240, 255, 0.09);
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+  border-color: var(--theme-accent);
+  border-left: 3px solid var(--theme-accent);
+  background: var(--theme-primary-dim);
+  box-shadow: 0 0 14px var(--theme-primary-dim);
 }
 
 .flight-card.team-red.selected {
   border-color: var(--color-red);
   border-left: 3px solid var(--color-red);
-  background-color: var(--color-red-dim);
+  background: rgba(244, 63, 94, 0.16);
 }
 
 .flight-card.destroyed {
@@ -103,33 +111,33 @@
 }
 
 .tcard-callsign {
-  color: #00f0ff !important;
-  font-family: var(--font-mono);
+  color: var(--theme-accent) !important;
+  font-family: var(--font-untitled-sans);
   font-size: 0.68rem;
-  font-weight: 800;
+  font-weight: 600;
   display: flex;
   align-items: baseline;
   gap: 4px;
 }
 
 .tcard-model {
-  color: #8fa0b5;
+  color: var(--color-moon-mist);
   font-size: 0.56rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .tcard-hp {
   font-size: 0.62rem;
-  font-family: var(--font-mono);
-  color: var(--color-green);
-  font-weight: 800;
+  font-family: var(--font-dotdigital);
+  color: var(--stat-tier-2);
+  font-weight: 700;
 }
 
 .tcard-hp-bar {
   width: 100%;
   height: 3px;
-  background-color: #020610;
-  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-pill);
   overflow: hidden;
 }
 
@@ -144,10 +152,10 @@
   gap: 2px 4px;
   width: 100%;
   font-size: 0.58rem;
-  font-family: var(--font-mono);
-  background-color: #020610;
-  border: 1px solid #0e1c30;
-  border-radius: 2px;
+  font-family: var(--font-dotdigital);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-badge);
   padding: 3px 5px;
 }
 
@@ -155,15 +163,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #8fa0b5;
+  color: var(--color-moon-mist);
 }
 
 .tcard-metric-cell span {
   font-size: 0.52rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .tcard-metric-cell b {
   font-size: 0.58rem;
-  font-weight: 800;
+  font-weight: 700;
 }

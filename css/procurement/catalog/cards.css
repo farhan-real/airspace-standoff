@@ -3,44 +3,48 @@
 .airframe-filter-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 4px;
+  gap: 5px;
+  margin-bottom: 6px;
   flex-shrink: 0;
 }
 
 .cat-pill-btn {
-  background-color: #070e1a;
-  border: 1px solid #16273e;
-  color: #8494ab;
-  font-family: var(--font-mono);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--color-moon-mist);
+  font-family: var(--font-untitled-sans);
   font-size: 0.64rem;
-  font-weight: 800;
-  padding: 4px 9px;
-  border-radius: 10px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
+  transition: all 0.14s ease;
+  box-shadow: var(--glass-highlight);
 }
 
 .cat-pill-btn.active {
-  background-color: #00f0ff;
-  color: #000000;
-  border-color: #00f0ff;
+  background: var(--theme-primary);
+  color: #ffffff;
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 10px var(--theme-primary-glow);
 }
 
 .airframes-dense-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 4px;
+  gap: 6px;
 }
 
 .airframe-dense-card {
-  background-color: #070e1a;
-  border: 1px solid #16273e;
-  border-radius: 4px;
-  padding: 6px 8px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  transition: border-color 0.12s ease, background 0.12s ease;
+  transition: border-color 0.14s ease, background 0.14s ease;
+  box-shadow: var(--glass-shadow);
 }
 
 .adc-header {
@@ -51,117 +55,117 @@
 }
 
 .adc-name {
-  font-size: 0.82rem;
-  font-weight: 800;
-  color: #f8fafc;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--color-ice-highlight);
+  font-family: var(--font-aeonikpro);
 }
 
 .adc-role {
   font-size: 0.64rem;
-  color: #94a3b8;
-  font-family: var(--font-mono);
+  color: var(--color-moon-mist);
+  font-family: var(--font-untitled-sans);
 }
 
 .adc-cost {
   font-size: 0.82rem;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: var(--color-green);
+  font-weight: 700;
+  font-family: var(--font-dotdigital);
 }
 
 .adc-badges-row {
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
-  margin: 1px 0;
+  margin: 2px 0;
 }
 
 .adc-badge {
-  font-size: 0.64rem;
-  font-family: var(--font-mono);
-  font-weight: 800;
+  font-size: 0.60rem;
+  font-family: var(--font-dotdigital);
+  font-weight: 600;
   padding: 2px 6px;
-  border-radius: 2px;
+  border-radius: var(--radius-badge);
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
 }
 
 .adc-feat {
-  background-color: #032338;
-  border: 1px solid #0284c7;
-  color: #7dd3fc;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--theme-accent);
 }
 
 .badge-cat-stealth {
-  background-color: #3b0764;
-  border: 1px solid #9333ea;
-  color: #e9d5ff;
+  background: rgba(129, 140, 248, 0.18);
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  color: #c7d2fe;
 }
 
 .badge-cat-superiority {
-  background-color: #032338;
-  border: 1px solid #0284c7;
+  background: rgba(2, 132, 199, 0.18);
+  border: 1px solid rgba(2, 132, 199, 0.35);
   color: #bae6fd;
 }
 
 .badge-cat-multirole {
-  background-color: #064e3b;
-  border: 1px solid #10b981;
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.35);
   color: #a7f3d0;
 }
 
 .badge-cat-strike {
-  background-color: #451a03;
-  border: 1px solid #f97316;
+  background: rgba(249, 115, 22, 0.18);
+  border: 1px solid rgba(249, 115, 22, 0.35);
   color: #fed7aa;
 }
 
 .badge-cat-ew {
-  background-color: #312e81;
-  border: 1px solid #6366f1;
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(99, 102, 241, 0.35);
   color: #c7d2fe;
 }
 
 .badge-cat-drones {
-  background-color: #3f123f;
-  border: 1px solid #ec4899;
+  background: rgba(236, 72, 153, 0.18);
+  border: 1px solid rgba(236, 72, 153, 0.35);
   color: #fbcfe8;
 }
 
 .badge-cat-experimental {
-  background-color: #1e1b4b;
-  border: 1px solid #6366f1;
-  color: #e0e7ff;
+  background: rgba(2, 132, 199, 0.22);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: #e0f2fe;
 }
 
 .adc-metrics-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3px 5px;
-  background-color: #020610;
-  border: 1px solid #111e30;
-  border-radius: 3px;
-  padding: 4px 6px;
+  gap: 3px 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-badge);
+  padding: 5px 8px;
   font-size: 0.62rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-dotdigital);
 }
 
 .adc-metric-cell {
   display: flex;
   justify-content: space-between;
-  color: #8494ab;
+  color: var(--color-moon-mist);
   padding: 1px 2px;
-  border-radius: 2px;
 }
 
-.adc-metric-cell b {
-  color: #f1f5f9;
+/* Guard spec evaluation colors so they are never overridden by white */
+.adc-metric-cell b:not([class*="stat-tier"]) {
+  color: var(--color-pure-white);
 }
 
 .adc-desc {
-  font-size: 0.72rem;
-  color: #e2e8f0;
+  font-size: 0.70rem;
+  color: var(--color-moon-mist);
   line-height: 1.45;
 }
 
@@ -169,43 +173,44 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px dashed #16273e;
-  padding-top: 4px;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 5px;
+  margin-top: 2px;
 }
 
 .adc-btn-add {
-  background-color: #0284c7;
-  border: 1px solid #38bdf8;
+  background: var(--theme-primary);
+  border: 1px solid var(--theme-accent);
   color: #ffffff;
-  font-family: var(--font-mono);
+  font-family: var(--font-untitled-sans);
   font-size: 0.68rem;
-  font-weight: 800;
+  font-weight: 500;
   padding: 4px 12px;
-  border-radius: 3px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
   touch-action: manipulation;
+  transition: all 0.12s ease;
 }
 
 .adc-btn-add:active {
-  background-color: #00f0ff;
-  color: #000000;
   transform: scale(0.97);
+  background: var(--theme-primary-hover);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .cat-pill-btn:hover {
-    border-color: #00f0ff;
+    border-color: var(--glass-border-hover);
     color: #ffffff;
   }
 
   .airframe-dense-card:hover {
-    border-color: var(--color-cyan);
-    background-color: #0a1526;
+    border-color: var(--glass-border-hover);
+    background: var(--glass-bg-hover);
   }
 
   .adc-btn-add:hover {
-    background-color: var(--color-cyan);
-    color: #000000;
+    background: var(--theme-primary-hover);
+    box-shadow: 0 0 12px var(--theme-primary-glow);
   }
 }
 
@@ -220,7 +225,7 @@
   }
 
   .cat-pill-btn {
-    padding: 2px 6px;
+    padding: 3px 8px;
     font-size: 0.58rem;
     flex-shrink: 0;
   }

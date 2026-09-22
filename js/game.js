@@ -79,7 +79,7 @@ class AirspaceStandoffGame {
     const dispEl = document.getElementById('display-squadron-name');
     if (dispEl) dispEl.textContent = this.squadronName;
     const headerEl = document.getElementById('header-squadron-name');
-    if (headerEl) headerEl.textContent = `${this.squadronName.toUpperCase()} FLIGHT DATA`;
+    if (headerEl) headerEl.textContent = this.squadronName.toUpperCase();
     if (this.alliedAircraft) this.alliedAircraft.forEach(ac => { ac.squadronName = this.squadronName; });
     if (window.Persistence) window.Persistence.saveSquadronName(this.squadronName);
   }

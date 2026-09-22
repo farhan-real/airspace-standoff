@@ -82,29 +82,29 @@ class LoadoutMetrics {
     const wrPercent = Math.round(Math.min(1.0, totalMass / maxMass) * 100);
 
     let weightCategory = 'NORMAL';
-    let weightColor = '#00f5a0';
-    let weightBg = 'rgba(0, 245, 160, 0.12)';
+    let weightColor = '#34d399';
+    let weightBg = 'rgba(52, 211, 153, 0.12)';
     let weightBorder = '#10b981';
 
     if (wrPercent <= 35) {
       weightCategory = 'LIGHT';
-      weightColor = '#00f0ff';
-      weightBg = 'rgba(0, 240, 255, 0.12)';
+      weightColor = '#38bdf8';
+      weightBg = 'rgba(56, 189, 248, 0.12)';
       weightBorder = '#0284c7';
     } else if (wrPercent <= 60) {
       weightCategory = 'NORMAL';
-      weightColor = '#00f5a0';
-      weightBg = 'rgba(0, 245, 160, 0.12)';
+      weightColor = '#34d399';
+      weightBg = 'rgba(52, 211, 153, 0.12)';
       weightBorder = '#10b981';
     } else if (wrPercent <= 80) {
       weightCategory = 'HEAVY';
-      weightColor = '#ffb830';
-      weightBg = 'rgba(255, 184, 48, 0.12)';
+      weightColor = '#fbbf24';
+      weightBg = 'rgba(251, 191, 36, 0.12)';
       weightBorder = '#f59e0b';
     } else {
       weightCategory = 'OVERLOAD';
-      weightColor = '#ff3366';
-      weightBg = 'rgba(255, 51, 102, 0.14)';
+      weightColor = '#f43f5e';
+      weightBg = 'rgba(244, 63, 94, 0.14)';
       weightBorder = '#ef4444';
     }
 
@@ -112,7 +112,6 @@ class LoadoutMetrics {
     const remainingSlots = Math.max(0, totalSlots - usedSlots);
     const totalCost = Number(spec.cost || 0) + weaponsCost + upgradesCost;
 
-    // RCS calculations
     let baseRcs = Number(spec.sigma_0 !== undefined ? spec.sigma_0 : 1.0);
     if (isLead) {
       if (spec.category === 'STEALTH') baseRcs *= 0.65;
@@ -124,7 +123,6 @@ class LoadoutMetrics {
     const baseRcsRating = rate('rcs', baseRcs);
     const loadedRcsRating = rate('rcs', loadedRcs);
 
-    // Speed calculations
     let baseSpeed = Number(spec.S_0 || 0.95);
     if (isLead && spec.category === 'SUPERIORITY') baseSpeed *= 1.10;
     if (hasSupercruise) baseSpeed *= 1.10;
@@ -134,7 +132,6 @@ class LoadoutMetrics {
     const baseSpeedRating = rate('speed', baseSpeed);
     const loadedSpeedRating = rate('speed', loadedSpeed);
 
-    // Agility calculations
     const baseAgility = Number(spec.AGI_0 || 0.85);
     let loadedAgility = baseAgility;
     if (spec.thrustVector || hasTv) loadedAgility += 0.12;
@@ -149,7 +146,6 @@ class LoadoutMetrics {
     const baseAgiRating = rate('agility', baseAgility);
     const loadedAgiRating = rate('agility', loadedAgility);
 
-    // Armor HP
     const baseHp = Number(spec.hp || 4);
     let loadedHp = baseHp;
     if (hasTitaniumTub) loadedHp += 1;
@@ -165,7 +161,6 @@ class LoadoutMetrics {
     const baseHpRating = rate('hp', baseHp);
     const loadedHpRating = rate('hp', loadedHp);
 
-    // Radar range
     let baseRadar = Number(spec.R_0 || 75.0);
     let loadedRadar = baseRadar;
     if (isLead && spec.category === 'STEALTH') loadedRadar += 15.0;
@@ -178,23 +173,23 @@ class LoadoutMetrics {
     const formattedBaseRcs = LoadoutMetrics.formatRcs(baseRcs);
     const formattedLoadedRcs = LoadoutMetrics.formatRcs(loadedRcs);
 
-    const rcsDualHtml = `<span class="dual-val" data-tag-title="RADAR CROSS SECTION" data-tag-tooltip="Clean Base: ${formattedBaseRcs} m² → Loaded: ${formattedLoadedRcs} m² (+${LoadoutMetrics.formatRcs(extraRcs)} from pylon stores)."><b class="${baseRcsRating.colorClass}">${formattedBaseRcs}</b><span class="val-sep">→</span><b class="${loadedRcsRating.colorClass}">${formattedLoadedRcs} m²</b></span>`;
+    const rcsDualHtml = `<span class="dual-val" data-tag-title="RADAR CROSS SECTION" data-tag-tooltip="Clean Base: ${formattedBaseRcs} m² -> Loaded: ${formattedLoadedRcs} m² (+${LoadoutMetrics.formatRcs(extraRcs)} from pylon stores)."><b class="${baseRcsRating.colorClass}">${formattedBaseRcs}</b><span class="val-sep">&rarr;</span><b class="${loadedRcsRating.colorClass}">${formattedLoadedRcs} m²</b></span>`;
 
-    const speedDualHtml = `<span class="dual-val" data-tag-title="MAX SPRINT AIRSPEED" data-tag-tooltip="Clean Base: Mach ${baseSpeed.toFixed(2)} → Loaded: Mach ${loadedSpeed.toFixed(2)} (${wrPercent}% payload weight penalty)."><b class="${baseSpeedRating.colorClass}">M ${baseSpeed.toFixed(2)}</b><span class="val-sep">→</span><b class="${loadedSpeedRating.colorClass}">M ${loadedSpeed.toFixed(2)}</b></span>`;
+    const speedDualHtml = `<span class="dual-val" data-tag-title="MAX SPRINT AIRSPEED" data-tag-tooltip="Clean Base: Mach ${baseSpeed.toFixed(2)} -> Loaded: Mach ${loadedSpeed.toFixed(2)} (${wrPercent}% payload weight penalty)."><b class="${baseSpeedRating.colorClass}">M ${baseSpeed.toFixed(2)}</b><span class="val-sep">&rarr;</span><b class="${loadedSpeedRating.colorClass}">M ${loadedSpeed.toFixed(2)}</b></span>`;
 
-    const agilityDualHtml = `<span class="dual-val" data-tag-title="TURN AGILITY" data-tag-tooltip="Base Agility: ${baseAgility.toFixed(2)} → Loaded Agility: ${loadedAgility.toFixed(2)} (${spec.G_limit || 9}G structural limit)."><b class="${baseAgiRating.colorClass}">${baseAgility.toFixed(2)}</b><span class="val-sep">→</span><b class="${loadedAgiRating.colorClass}">${loadedAgility.toFixed(2)}</b></span>`;
+    const agilityDualHtml = `<span class="dual-val" data-tag-title="TURN AGILITY" data-tag-tooltip="Base Agility: ${baseAgility.toFixed(2)} -> Loaded Agility: ${loadedAgility.toFixed(2)} (${spec.G_limit || 9}G structural limit)."><b class="${baseAgiRating.colorClass}">${baseAgility.toFixed(2)}</b><span class="val-sep">&rarr;</span><b class="${loadedAgiRating.colorClass}">${loadedAgility.toFixed(2)}</b></span>`;
 
     const armorDualHtml = (loadedHp !== baseHp)
-      ? `<span class="dual-val" data-tag-title="ARMOR DURABILITY" data-tag-tooltip="Base Armor: ${baseHp} HP → Reinforced: ${loadedHp} HP."><b class="${baseHpRating.colorClass}">${baseHp}</b><span class="val-sep">→</span><b class="${loadedHpRating.colorClass}">${loadedHp} HP</b></span>`
+      ? `<span class="dual-val" data-tag-title="ARMOR DURABILITY" data-tag-tooltip="Base Armor: ${baseHp} HP -> Reinforced: ${loadedHp} HP."><b class="${baseHpRating.colorClass}">${baseHp}</b><span class="val-sep">&rarr;</span><b class="${loadedHpRating.colorClass}">${loadedHp} HP</b></span>`
       : `<span class="dual-val" data-tag-title="ARMOR DURABILITY" data-tag-tooltip="Airframe Armor: ${baseHp} HP."><b class="${baseHpRating.colorClass}">${baseHp} HP</b></span>`;
 
     const radarDualHtml = (Math.round(loadedRadar) !== Math.round(baseRadar))
-      ? `<span class="dual-val" data-tag-title="RADAR RANGE" data-tag-tooltip="Base Radar: ${Math.round(baseRadar)}km → Enhanced Radar: ${Math.round(loadedRadar)}km."><b class="${baseRadarRating.colorClass}">${Math.round(baseRadar)}km</b><span class="val-sep">→</span><b class="${loadedRadarRating.colorClass}">${Math.round(loadedRadar)}km</b></span>`
+      ? `<span class="dual-val" data-tag-title="RADAR RANGE" data-tag-tooltip="Base Radar: ${Math.round(baseRadar)}km -> Enhanced Radar: ${Math.round(loadedRadar)}km."><b class="${baseRadarRating.colorClass}">${Math.round(baseRadar)}km</b><span class="val-sep">&rarr;</span><b class="${loadedRadarRating.colorClass}">${Math.round(loadedRadar)}km</b></span>`
       : `<span class="dual-val" data-tag-title="RADAR RANGE" data-tag-tooltip="Instrumented Radar Range: ${Math.round(baseRadar)}km."><b class="${baseRadarRating.colorClass}">${Math.round(baseRadar)}km</b></span>`;
 
-    const slotsDualHtml = `<span class="dual-val" data-tag-title="HARDPOINT CAPACITY" data-tag-tooltip="Equipped: ${usedSlots} stations / Max: ${totalSlots} stations (${spec.maxPylonRating || 'Type M'} rating)."><b style="color:#00f0ff;">${usedSlots}</b><span class="val-sep">/</span><b style="color:#94a3b8;">${totalSlots} Pylons</b></span>`;
+    const slotsDualHtml = `<span class="dual-val" data-tag-title="HARDPOINT CAPACITY" data-tag-tooltip="Equipped: ${usedSlots} stations / Max: ${totalSlots} stations (${spec.maxPylonRating || 'Type M'} rating)."><b style="color:var(--color-primary-blue);">${usedSlots}</b><span class="val-sep">/</span><b style="color:var(--color-moon-mist);">${totalSlots} Pylons</b></span>`;
 
-    const weightDualHtml = `<span class="dual-val" data-tag-title="PAYLOAD WEIGHT" data-tag-tooltip="Carriage Mass: ${totalMass}kg / Max: ${maxMass}kg (${wrPercent}%). Tier: ${weightCategory}."><b style="color:${weightColor};">${totalMass}kg</b><span class="val-sep">/</span><b style="color:#8494ab;">${maxMass}kg</b></span>`;
+    const weightDualHtml = `<span class="dual-val" data-tag-title="PAYLOAD WEIGHT" data-tag-tooltip="Carriage Mass: ${totalMass}kg / Max: ${maxMass}kg (${wrPercent}%). Tier: ${weightCategory}."><b style="color:${weightColor};">${totalMass}kg</b><span class="val-sep">/</span><b style="color:var(--color-moon-mist);">${maxMass}kg</b></span>`;
 
     return {
       spec, totalCost, costColorClass: costRating.colorClass,

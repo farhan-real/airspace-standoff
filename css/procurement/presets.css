@@ -6,114 +6,113 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  background-color: #020610;
+  background: var(--glass-bg);
   padding: 6px 10px;
-  border-radius: 4px;
-  border: 1px solid #16273e;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--glass-border);
 }
 
 .preset-label {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 900;
-  color: #ffb830;
-  letter-spacing: 0.5px;
+  font-family: var(--font-untitled-sans);
+  font-size: 0.70rem;
+  font-weight: 600;
+  color: var(--color-ice-highlight);
+  letter-spacing: 0.4px;
   margin-right: 4px;
 }
 
 .preset-btn {
-  background-color: #081426;
-  border: 1px solid #172a44;
-  color: #f1f5f9;
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  font-weight: 800;
-  height: 32px;
-  padding: 0 14px;
-  border-radius: 3px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--color-pure-white);
+  font-family: var(--font-untitled-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  letter-spacing: 0.4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.3px;
+  box-shadow: var(--glass-highlight);
   transition: all 0.14s ease;
 }
 
 .preset-btn:hover {
-  border-color: #00f0ff;
+  border-color: var(--glass-border-hover);
+  background: var(--glass-bg-hover);
   color: #ffffff;
-  background-color: #0f243e;
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
 }
 
 .preset-btn.active {
-  background-color: #0284c7 !important;
+  background: var(--theme-primary) !important;
   color: #ffffff !important;
-  border-color: #00f0ff !important;
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.45);
+  border-color: var(--theme-accent) !important;
+  box-shadow: 0 0 12px var(--theme-primary-glow);
 }
 
 .preset-btn.highlight {
-  background-color: #092646;
-  border-color: #0284c7;
-  color: #7dd3fc;
+  background: var(--theme-primary-dim);
+  border-color: var(--theme-primary);
+  color: var(--theme-accent);
 }
 
 .preset-btn.highlight:hover {
-  background-color: #0284c7;
-  border-color: #00f0ff;
+  background: var(--theme-primary);
   color: #ffffff;
 }
 
 .preset-btn.alert {
-  background-color: rgba(153, 27, 27, 0.4);
-  border-color: #991b1b;
-  color: #fca5a5;
+  background: rgba(244, 63, 94, 0.14);
+  border-color: rgba(244, 63, 94, 0.35);
+  color: #fecdd3;
 }
 
 .preset-btn.alert:hover {
-  background-color: #dc2626;
-  border-color: #ef4444;
+  background: rgba(244, 63, 94, 0.28);
+  border-color: #f43f5e;
   color: #ffffff;
 }
 
 .custom-preset-chip {
   display: inline-flex;
   align-items: center;
-  background-color: #06152a;
-  border: 1px solid #19385c;
-  border-radius: 3px;
-  height: 32px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-btn);
+  height: 28px;
   overflow: hidden;
 }
 
 .custom-preset-chip .preset-btn {
   border: none;
-  background-color: transparent;
+  background: transparent;
   padding: 0 10px;
   height: 100%;
   box-shadow: none;
 }
 
 .preset-icon-btn {
-  background-color: transparent;
+  background: transparent;
   border: none;
-  border-left: 1px solid #19385c;
-  color: #7dd3fc;
+  border-left: 1px solid var(--glass-border);
+  color: var(--color-frost-glow);
   font-size: 0.70rem;
-  font-weight: 800;
-  padding: 0 9px;
+  font-weight: 500;
+  padding: 0 8px;
   height: 100%;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.12s ease;
 }
 
 .preset-icon-btn:hover {
-  background-color: #0284c7;
+  background: var(--glass-bg-hover);
   color: #ffffff;
 }
 
@@ -121,23 +120,7 @@
   .procurement-presets {
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding: 4px 6px;
+    padding: 4px 8px;
     gap: 4px;
-    width: 100%;
-    box-sizing: border-box;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .preset-btn {
-    white-space: nowrap;
-    padding: 0 10px;
-    font-size: 0.68rem;
-    height: 30px;
-    flex-shrink: 0;
-  }
-
-  .preset-label {
-    font-size: 0.68rem;
-    flex-shrink: 0;
   }
 }

@@ -1,0 +1,85 @@
+/* AIRSPACE STANDOFF: Global Master Theme Tokens */
+
+:root {
+  /* Pitch Black Canvas */
+  --color-pitch-black: #000000;
+  --color-canvas: #000000;
+  --color-canvas-subtle: #010204;
+
+  /* Electric Blue Theme Colors */
+  --theme-primary: #0284c7;
+  --theme-primary-hover: #0369a1;
+  --theme-primary-active: #0ea5e9;
+  --theme-primary-glow: rgba(2, 132, 199, 0.45);
+  --theme-primary-dim: rgba(2, 132, 199, 0.16);
+
+  --theme-accent: #38bdf8;
+  --theme-accent-hover: #7dd3fc;
+  --theme-accent-glow: rgba(56, 189, 248, 0.35);
+
+  --color-ice-highlight: #e0f2fe;
+  --color-frost-glow: #bae6fd;
+  --color-moon-mist: #94a3b8;
+  --color-fog-veil: #64748b;
+  --color-pure-white: #ffffff;
+
+  --color-cyan: #38bdf8;
+  --color-blue: #0284c7;
+  --color-red: #f43f5e;
+  --color-green: #10b981;
+  --color-amber: #f59e0b;
+  --color-purple: #818cf8;
+  --color-gold: #fbbf24;
+
+  /* Spec Tier Evaluation Colors */
+  --stat-tier-1: #00f0ff;
+  --stat-tier-2: #10b981;
+  --stat-tier-3: #fbbf24;
+  --stat-tier-4: #f97316;
+  --stat-tier-5: #f43f5e;
+
+  /* Liquid Glass System */
+  --liquid-glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.015) 100%), rgba(3, 8, 20, 0.68);
+  --liquid-glass-bg-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%), rgba(4, 12, 28, 0.78);
+  --liquid-glass-border: rgba(186, 215, 247, 0.16);
+  --liquid-glass-border-top: rgba(255, 255, 255, 0.28);
+  --liquid-glass-border-hover: rgba(56, 189, 248, 0.45);
+  --liquid-glass-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.22), 0 8px 32px 0 rgba(0, 0, 0, 0.7);
+  --liquid-glass-filter: blur(20px) saturate(190%);
+
+  /* General Glass Aliases */
+  --glass-bg: var(--liquid-glass-bg);
+  --glass-bg-hover: var(--liquid-glass-bg-hover);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.045);
+  --glass-bg-active: rgba(2, 132, 199, 0.18);
+  --glass-bg-modal: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(2, 5, 14, 0.92);
+  --glass-border: var(--liquid-glass-border);
+  --glass-border-hover: var(--liquid-glass-border-hover);
+  --glass-border-active: rgba(56, 189, 248, 0.6);
+  --glass-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.20);
+  --glass-shadow: var(--liquid-glass-shadow);
+  --glass-filter: var(--liquid-glass-filter);
+
+  /* Crisp Tactical Radii */
+  --radius-btn: 6px;
+  --radius-badge: 4px;
+  --radius-input: 5px;
+  --radius-card: 8px;
+  --radius-modal: 10px;
+  --radius-pill: 999px;
+
+  /* Legacy Compatibility Aliases */
+  --radius-buttons: var(--radius-btn);
+  --radius-cards: var(--radius-card);
+  --radius-badges: var(--radius-badge);
+  --radius-inputs: var(--radius-input);
+  --radius-modals: var(--radius-modal);
+  --color-midnight-canvas: var(--color-pitch-black);
+  --color-void-violet: var(--theme-primary);
+  --gradient-ice-highlight: linear-gradient(180deg, #e0f2fe 0%, #38bdf8 100%);
+
+  /* Typography */
+  --font-untitled-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-aeonikpro: 'Space Grotesk', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-dotdigital: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}

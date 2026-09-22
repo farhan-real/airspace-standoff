@@ -1,7 +1,6 @@
 /**
- * AIRSPACE STANDOFF // Fullscreen Controls Handler
- * Detects native Android APK vs browser. In browsers, provides cross-browser
- * fullscreen toggling; in the Android APK, automatically removes the fullscreen buttons.
+ * AIRSPACE STANDOFF: Fullscreen Controls Handler
+ * Detects native Android APK vs browser and updates buttons while preserving vector icons.
  */
 
 class FullscreenHandler {
@@ -79,14 +78,20 @@ class FullscreenHandler {
     const btnProc = document.getElementById('btn-proc-fullscreen');
     const btnHud = document.getElementById('btn-fullscreen-toggle');
 
-    if (btnProc) {
-      btnProc.textContent = label;
-      btnProc.classList.toggle('active', active);
-    }
-    if (btnHud) {
-      btnHud.textContent = label;
-      btnHud.classList.toggle('active', active);
-    }
+    const updateBtn = (btn, isSmall) => {
+      if (!btn) return;
+      const span = btn.querySelector('span');
+      if (span) {
+        span.textContent = label;
+      } else {
+        const iconSize = isSmall ? 11 : 13;
+        btn.innerHTML = `<img src="icons/fullscreen.svg" class="btn-vector-ico" width="${iconSize}" height="${iconSize}" alt="Fullscreen"><span>${label}</span>`;
+      }
+      btn.classList.toggle('active', active);
+    };
+
+    updateBtn(btnProc, false);
+    updateBtn(btnHud, true);
   }
 
   init() {

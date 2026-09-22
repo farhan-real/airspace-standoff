@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Delta-Based Ultra-Smooth Touch & Pointer Engine
- * Eliminates pan-locking via direct delta tracking, bounds clamping & gesture isolation.
+ * AIRSPACE STANDOFF: Delta-Based Touch & Pointer Navigation Engine
  */
 
 class PointerControlsHandler {
@@ -49,7 +48,7 @@ class PointerControlsHandler {
       if (e.touches.length < 2) this.pinchStartDist = 0;
     }, { passive: false });
 
-    // Single-finger ultra-smooth delta panning
+    // Single-finger delta panning
     canvas.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       if (this.pinchStartDist > 0) return;
@@ -79,18 +78,15 @@ class PointerControlsHandler {
         this.totalDragDist += Math.hypot(dx, dy);
 
         if (this.totalDragDist > 4) {
-          // Release camera tracking lock on manual drag
           this.game.radar.trackingUnit = null;
 
           const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
           const effScaleX = (this.game.radar.cssWidth / cfg.THEATER_WIDTH_KM) * this.game.radar.zoom;
           const effScaleY = (this.game.radar.cssHeight / cfg.THEATER_HEIGHT_KM) * this.game.radar.zoom;
 
-          // Direct delta displacement (cannot lock or freeze)
           this.game.radar.panX -= (dx / effScaleX);
           this.game.radar.panY -= (dy / effScaleY);
 
-          // Boundaries clamp
           const maxPanX = cfg.THEATER_WIDTH_KM;
           const maxPanY = cfg.THEATER_HEIGHT_KM;
           this.game.radar.panX = Math.max(-50, Math.min(maxPanX + 50, this.game.radar.panX));
@@ -110,7 +106,6 @@ class PointerControlsHandler {
         canvas.releasePointerCapture(e.pointerId);
       } catch (err) {}
 
-      // If drag distance was negligible, treat as target tap
       if (this.totalDragDist <= 6) {
         const rect = canvas.getBoundingClientRect();
         const tapX = e.clientX - rect.left;
@@ -132,8 +127,8 @@ class PointerControlsHandler {
           } else {
             this.game.selectedTarget = entity;
             if (this.game.radar) {
-              this.game.radar.spawnCombatText(entity.x, entity.y, 'TARGET SELECTED', '#00f0ff');
-              this.game.radar.spawnShockwave(entity.x, entity.y, '#00f0ff', 24);
+              this.game.radar.spawnCombatText(entity.x, entity.y, 'TARGET SELECTED', '#38bdf8');
+              this.game.radar.spawnShockwave(entity.x, entity.y, '#38bdf8', 24);
             }
             if (typeof AudioSys !== 'undefined') AudioSys.playClick();
             this.game.avionics.updateActiveUnitMFD();

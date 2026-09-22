@@ -6,6 +6,14 @@
   <title>AIRSPACE STANDOFF</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Global Master Theme -->
+  <link rel="stylesheet" href="css/core/theme.css">
+
   <!-- Core Theme & Modals -->
   <link rel="stylesheet" href="css/core/base.css">
   <link rel="stylesheet" href="css/core/dropdown.css">
@@ -45,11 +53,11 @@
 <!-- PAUSE OVERLAY MODAL -->
 <div id="pause-modal" class="modal-backdrop">
   <div class="inspect-window" style="max-width: 440px; text-align: center;">
-    <div class="inspect-header" style="background:#0a1e36;">
-      <h2 style="color:#00f0ff;">SIMULATION PAUSED</h2>
+    <div class="inspect-header">
+      <h2 style="color: var(--color-ice-highlight);">SIMULATION PAUSED</h2>
     </div>
     <div class="inspect-body" style="padding: 20px; gap: 14px;">
-      <p style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.45;">
+      <p style="font-size: 0.76rem; color: var(--color-moon-mist); line-height: 1.5;">
         Simulation paused. Select an option to proceed.
       </p>
       <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -78,9 +86,9 @@
       </button>
     </div>
     <div class="inspect-body" style="padding: 16px 18px; gap: 12px;">
-      <p id="tactical-dialog-msg" style="font-size: 0.80rem; color: #cbd5e1; line-height: 1.5;"></p>
+      <p id="tactical-dialog-msg" style="font-size: 0.80rem; color: var(--color-moon-mist); line-height: 1.5;"></p>
       <div id="tactical-dialog-field-wrap">
-        <input type="text" id="tactical-dialog-input" class="hud-search-input" style="font-size: 0.78rem; padding: 7px 10px; width: 100%;">
+        <input type="text" id="tactical-dialog-input" class="hud-search-input" style="font-size: 0.78rem; padding: 7px 12px; width: 100%;">
       </div>
       <div id="tactical-dialog-options-wrap" style="display:none; flex-direction:column; gap:5px; max-height:200px; overflow-y:auto;"></div>
       <div class="tactical-dialog-actions">
@@ -97,7 +105,7 @@
     <div class="inspect-header">
       <div class="modal-title-row">
         <h2>AIRCRAFT LOADOUT PRESETS</h2>
-        <span class="subtext" style="color:#00f0ff;font-family:var(--font-mono);font-size:0.64rem;margin-left:8px;">STANDARD &amp; CUSTOM CONFIGURATIONS</span>
+        <span class="subtext" style="color: var(--color-frost-glow); font-family: var(--font-dotdigital); font-size: 0.64rem; margin-left: 8px;">STANDARD &amp; CUSTOM CONFIGURATIONS</span>
       </div>
       <button id="btn-close-preconfig" class="hud-btn small">
         <img src="icons/close.svg" width="10" height="10" alt="Close">
@@ -138,7 +146,7 @@
       <div class="modal-title-row">
         <img src="icons/leaderboard.svg" class="modal-title-ico" width="16" height="16" alt="Leaderboard">
         <h2>SQUADRON LEADERBOARD</h2>
-        <span class="subtext" style="color:#00f0ff;font-family:var(--font-mono);font-size:0.64rem;margin-left:8px;">TOP 10 HISTORICAL SORTIES BY FINAL SCORE</span>
+        <span class="subtext" style="color: var(--color-frost-glow); font-family: var(--font-dotdigital); font-size: 0.64rem; margin-left: 8px;">TOP 10 HISTORICAL SORTIES BY FINAL SCORE</span>
       </div>
       <button id="btn-close-leaderboard" class="hud-btn small">CLOSE</button>
     </div>
@@ -171,12 +179,12 @@
     </div>
     <div class="inspect-body">
       <div class="inspect-stat-grid" style="grid-template-columns: 1fr; gap: 6px;">
-        <div class="inspect-stat-item"><span style="color:#00f5a0;font-weight:800;">SEARCH CLEAR:</span><b>No hostile radar emissions detected. Safe to maintain altitude and cruise profile.</b></div>
-        <div class="inspect-stat-item"><span style="color:#f97316;font-weight:800;">RADAR SWEEP:</span><b>Hostile radar sweep detected in sector. Turn nose-on to reduce RCS or use terrain/clouds for masking.</b></div>
-        <div class="inspect-stat-item"><span style="color:#ff3366;font-weight:800;">RADAR LOCK:</span><b>Target tracking lock or active missile seeker detected. Beam 90 degrees (Doppler Notch) and deploy chaff.</b></div>
-        <div class="inspect-stat-item"><span style="color:#ff3366;font-weight:800;">STEALTH MISSILE:</span><b>Low-observable missile detected. Minimum warning range; execute immediate defensive break turn.</b></div>
-        <div class="inspect-stat-item"><span style="color:#00f0ff;font-weight:800;">CIVILIAN ROE:</span><b>Commercial flights active in sector. Strict RoE enforced: Firing on unverified bogeys incurs -600 VP upon launch. Striking civilian craft incurs -500 VP, destroying it incurs -2000 VP penalty.</b></div>
-        <div class="inspect-stat-item"><span style="color:#ffd700;font-weight:800;">HOSTILE LEADERS:</span><b>Designated hostile flight leads active in theater. They employ high-G defensive breaks and coordinated missile volleys.</b></div>
+        <div class="inspect-stat-item"><span style="color: var(--color-green); font-weight: 600;">SEARCH CLEAR:</span><b>No hostile radar emissions detected. Safe to maintain altitude and cruise profile.</b></div>
+        <div class="inspect-stat-item"><span style="color: var(--color-amber); font-weight: 600;">RADAR SWEEP:</span><b>Hostile radar sweep detected in sector. Turn nose-on to reduce RCS or use terrain/clouds for masking.</b></div>
+        <div class="inspect-stat-item"><span style="color: var(--color-red); font-weight: 600;">RADAR LOCK:</span><b>Target tracking lock or active missile seeker detected. Beam 90 degrees (Doppler Notch) and deploy chaff.</b></div>
+        <div class="inspect-stat-item"><span style="color: var(--color-red); font-weight: 600;">STEALTH MISSILE:</span><b>Low-observable missile detected. Minimum warning range; execute immediate defensive break turn.</b></div>
+        <div class="inspect-stat-item"><span style="color: var(--color-frost-glow); font-weight: 600;">CIVILIAN ROE:</span><b>Commercial flights active in sector. Strict RoE enforced: Firing on unverified bogeys incurs -600 VP upon launch. Striking civilian craft incurs -500 VP, destroying it incurs -2000 VP penalty.</b></div>
+        <div class="inspect-stat-item"><span style="color: var(--color-amber); font-weight: 600;">HOSTILE LEADERS:</span><b>Designated hostile flight leads active in theater. They employ high-G defensive breaks and coordinated missile volleys.</b></div>
       </div>
     </div>
   </div>
@@ -228,9 +236,9 @@
 <!-- ABORT CONFIRM MODAL -->
 <div id="abort-confirm-modal" class="modal-backdrop">
   <div class="inspect-window" style="max-width: 440px; text-align: center;">
-    <div class="inspect-header" style="background:#450a0a;"><h2 style="color:#f87171;">ABORT MISSION?</h2></div>
+    <div class="inspect-header" style="background: rgba(244, 63, 94, 0.12);"><h2 style="color: #fca5a5;">ABORT MISSION?</h2></div>
     <div class="inspect-body" style="gap:12px; padding: 18px;">
-      <p style="font-size:0.80rem; color:#cbd5e1;">Abort current mission and review the debriefing log?</p>
+      <p style="font-size:0.80rem; color: var(--color-moon-mist);">Abort current mission and review the debriefing log?</p>
       <div style="display:flex; justify-content:center; gap:10px;">
         <button id="btn-confirm-abort" class="hud-btn alert">ABORT MISSION</button>
         <button id="btn-cancel-abort" class="hud-btn">CANCEL</button>
@@ -288,7 +296,10 @@
         <span id="theater-mode-indicator" style="display:none;"></span>
 
         <div class="proc-right-actions">
-          <button id="btn-proc-fullscreen" class="hud-btn" title="Toggle Fullscreen">FULLSCREEN</button>
+          <button id="btn-proc-fullscreen" class="hud-btn" title="Toggle Fullscreen">
+            <img src="icons/fullscreen.svg" class="btn-vector-ico" width="13" height="13" alt="Fullscreen">
+            <span>FULLSCREEN</span>
+          </button>
         </div>
       </div>
 
@@ -410,7 +421,10 @@
 
     <!-- SYSTEM ACTIONS -->
     <div class="top-quick-actions">
-      <button id="btn-fullscreen-toggle" class="hud-btn small" title="Toggle Fullscreen">FULLSCREEN</button>
+      <button id="btn-fullscreen-toggle" class="hud-btn small" title="Toggle Fullscreen">
+        <img src="icons/fullscreen.svg" class="btn-vector-ico" width="11" height="11" alt="Fullscreen">
+        <span>FULLSCREEN</span>
+      </button>
       <button id="btn-audio-toggle" class="hud-btn small" title="Toggle Audio">AUDIO: ON</button>
       <button id="btn-hud-glossary" class="hud-btn small">
         <img src="icons/manual.svg" class="btn-vector-ico" width="11" height="11" alt="Manual">
@@ -434,7 +448,7 @@
     <!-- LEFT: SQUADRON ROSTER -->
     <aside class="squadron-flight-data pane-item" id="pane-fleet">
       <div class="strip-header" id="fleet-strip-header">
-        <span id="header-squadron-name">WARDOG SQUADRON &bull; UNIT DATA</span>
+        <span id="header-squadron-name">WARDOG SQUADRON</span>
         <button type="button" id="btn-close-fleet-drawer" class="hud-btn small alert fleet-drawer-close-btn">CLOSE</button>
       </div>
       <div id="flight-units-list" class="units-list"></div>
@@ -601,13 +615,13 @@
 
     <div class="after-action-body">
       <div class="ace-podium-section">
-        <div class="strip-subhead" style="color:#00f0ff;">FLIGHT PERFORMANCE SUMMARY</div>
+        <div class="strip-subhead" style="color: var(--color-ice-highlight);">FLIGHT PERFORMANCE SUMMARY</div>
         <div class="ace-podium-grid" id="ace-podium-cards"></div>
       </div>
 
       <div class="aar-full-roster-box">
         <div class="aar-roster-toggle-row">
-          <span class="strip-subhead" style="color:#00f0ff;margin:0;">PARTICIPATING AIRCRAFT &bull; STATUS REPORT</span>
+          <span class="strip-subhead" style="color: var(--color-ice-highlight); margin:0;">PARTICIPATING AIRCRAFT &bull; STATUS REPORT</span>
           <button type="button" id="btn-toggle-aar-roster" class="hud-btn small">COLLAPSE</button>
         </div>
         <div id="aar-full-roster-content" class="aar-roster-content" style="max-height: 180px; overflow-y: auto;"></div>

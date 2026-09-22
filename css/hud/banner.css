@@ -1,16 +1,19 @@
-/* AIRSPACE STANDOFF: Header Banner C4ISR Status Console */
+/* AIRSPACE STANDOFF: Header Banner C4ISR Console */
 
 .tactical-banner {
   height: 44px;
-  background: linear-gradient(180deg, #091322 0%, #040812 100%);
-  border-bottom: 1.5px solid #15263d;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px;
+  padding: 0 12px;
   gap: 8px;
   flex-shrink: 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   white-space: nowrap;
   overflow: hidden;
   z-index: 20;
@@ -18,27 +21,17 @@
 }
 
 body.safe-zone-on .tactical-banner {
-  padding-left: max(10px, var(--safe-zone-inset, 0px));
-  padding-right: max(10px, var(--safe-zone-inset, 0px));
-}
-
-.tactical-banner::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.4) 50%, transparent 100%);
+  padding-left: max(12px, var(--safe-zone-inset, 0px));
+  padding-right: max(12px, var(--safe-zone-inset, 0px));
 }
 
 .pvp-switcher {
   display: flex;
   gap: 2px;
-  background-color: #020610;
+  background: var(--glass-bg);
   padding: 2px;
-  border-radius: 3px;
-  border: 1px solid var(--border-color);
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--glass-border);
   flex-shrink: 0;
 }
 
@@ -48,26 +41,27 @@ body.safe-zone-on .tactical-banner {
 
 .pvp-team-btn {
   border: none;
-  font-family: var(--font-mono);
+  font-family: var(--font-untitled-sans);
   font-size: 0.64rem;
-  font-weight: 800;
+  font-weight: 600;
   padding: 3px 8px;
-  border-radius: 2px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
   color: var(--text-muted);
-  background-color: transparent;
+  background: transparent;
+  transition: all 0.12s ease;
 }
 
 .pvp-team-btn.blue.active {
-  background-color: var(--color-blue);
-  color: #000000;
-  box-shadow: 0 0 8px var(--color-blue);
+  background: var(--theme-primary);
+  color: #ffffff;
+  box-shadow: 0 0 8px var(--theme-primary-glow);
 }
 
 .pvp-team-btn.red.active {
-  background-color: var(--color-red);
+  background: var(--color-red);
   color: #ffffff;
-  box-shadow: 0 0 8px var(--color-red);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.45);
 }
 
 .banner-time-coords-cluster {
@@ -81,51 +75,48 @@ body.safe-zone-on .tactical-banner {
   display: flex;
   align-items: baseline;
   gap: 5px;
-  background-color: #030813;
-  border: 1px solid #14243b;
-  border-left: 2px solid var(--color-cyan);
-  border-radius: 3px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-btn);
   padding: 3px 8px;
-  font-family: var(--font-mono);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+  font-family: var(--font-dotdigital);
   flex-shrink: 0;
 }
 
 .timer-label {
   font-size: 0.54rem;
-  color: #849cb5;
-  font-weight: 800;
+  color: var(--color-moon-mist);
+  font-weight: 600;
 }
 
 .timer-digits {
   font-size: 0.90rem;
-  font-weight: 900;
-  color: #00f0ff;
+  font-weight: 700;
+  color: var(--theme-accent);
   letter-spacing: 0.8px;
-  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
 }
 
 .time-warp-controls {
   display: flex;
   align-items: center;
   gap: 2px;
-  background-color: #030712;
-  border: 1px solid #132237;
-  border-radius: 3px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-btn);
   padding: 2px;
   flex-shrink: 0;
 }
 
 .time-btn {
-  background-color: #060e1b;
-  border: 1px solid #13243a;
-  color: #8494ab;
-  font-family: var(--font-mono);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-moon-mist);
+  font-family: var(--font-dotdigital);
   font-size: 0.64rem;
-  font-weight: 800;
+  font-weight: 600;
   padding: 3px 7px;
-  height: 26px;
-  border-radius: 2px;
+  height: 24px;
+  border-radius: var(--radius-badge);
   cursor: pointer;
   transition: all 0.12s ease;
   display: inline-flex;
@@ -134,16 +125,14 @@ body.safe-zone-on .tactical-banner {
 }
 
 .time-btn:hover {
-  background-color: #0d1e34;
-  color: #00f0ff;
-  border-color: #00f0ff;
+  background: var(--glass-bg-hover);
+  color: #ffffff;
 }
 
 .time-btn.active {
-  background-color: #0284c7;
+  background: var(--theme-primary);
   color: #ffffff;
-  border-color: #00f0ff;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.45);
+  border-color: var(--theme-accent);
 }
 
 .command-token-cluster {
@@ -151,16 +140,14 @@ body.safe-zone-on .tactical-banner {
   flex-direction: column;
   justify-content: center;
   gap: 2px;
-  background-color: #030813;
-  border: 1px solid #14243b;
-  border-left: 2px solid var(--color-green);
-  border-radius: 3px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-btn);
   padding: 2px 7px;
   min-width: 96px;
   height: 26px;
   box-sizing: border-box;
-  font-family: var(--font-mono);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+  font-family: var(--font-dotdigital);
   flex-shrink: 0;
 }
 
@@ -174,33 +161,33 @@ body.safe-zone-on .tactical-banner {
 
 .token-label {
   font-size: 0.50rem;
-  color: #849cb5;
-  font-weight: 800;
+  color: var(--color-moon-mist);
+  font-weight: 600;
 }
 
 .token-digits {
   font-size: 0.66rem;
-  font-weight: 900;
-  color: var(--color-green);
+  font-weight: 700;
+  color: var(--stat-tier-2);
 }
 
 .token-rate {
   font-size: 0.50rem;
-  font-weight: 700;
-  color: #7dd3fc;
+  font-weight: 600;
+  color: var(--theme-accent);
 }
 
 .token-bar-track {
   width: 100%;
   height: 3px;
-  background-color: #0b1526;
-  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-pill);
   overflow: hidden;
 }
 
 .token-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #0284c7, var(--color-green));
+  background: linear-gradient(90deg, var(--theme-primary), var(--stat-tier-2));
   transition: width 0.12s ease;
 }
 
@@ -215,12 +202,12 @@ body.safe-zone-on .tactical-banner {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(180deg, #071528 0%, #030914 100%);
-  padding: 3px 14px;
-  border: 1.5px solid #00f0ff;
-  border-radius: 4px;
-  font-family: var(--font-mono);
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
+  padding: 3px 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-dotdigital);
+  box-shadow: var(--glass-highlight);
   flex-shrink: 0;
 }
 
@@ -232,38 +219,31 @@ body.safe-zone-on .tactical-banner {
 
 .vp-tag {
   font-size: 0.60rem;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.6px;
 }
 
-.vp-group.ally .vp-tag {
-  color: #38bdf8;
-}
-
-.vp-group.hostile .vp-tag {
-  color: #ff3366;
-}
+.vp-group.ally .vp-tag { color: var(--theme-accent); }
+.vp-group.hostile .vp-tag { color: var(--color-red); }
 
 .vp-value {
   font-size: 1.10rem;
-  font-weight: 900;
-  letter-spacing: 0.8px;
-}
-
-.vp-group.ally .vp-value {
+  font-weight: 700;
+  letter-spacing: 0.6px;
   color: #ffffff;
-  text-shadow: 0 0 10px rgba(56, 189, 248, 0.85);
-}
-
-.vp-group.hostile .vp-value {
-  color: #ffffff;
-  text-shadow: 0 0 10px rgba(255, 51, 102, 0.85);
 }
 
 .vp-divider {
-  color: #475569;
+  color: var(--color-fog-veil);
   font-size: 0.95rem;
-  font-weight: 800;
+  font-weight: 600;
+}
+
+/* Hide mobile unit cycler on desktop to prevent banner overflow */
+@media (min-width: 1025px) {
+  .banner-nav-cluster {
+    display: none !important;
+  }
 }
 
 .banner-nav-cluster {
@@ -284,19 +264,13 @@ body.safe-zone-on .tactical-banner {
   padding: 3px 8px;
   font-size: 0.64rem;
   height: 26px;
-  box-sizing: border-box;
 }
 
 .fleet-btn {
   height: 26px !important;
   font-size: 0.64rem !important;
-  font-weight: 800 !important;
+  font-weight: 600 !important;
   padding: 3px 10px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  line-height: 1 !important;
-  box-sizing: border-box !important;
 }
 
 .banner-cam-controls {
@@ -307,29 +281,28 @@ body.safe-zone-on .tactical-banner {
 }
 
 .banner-cam-controls .cam-btn {
-  background-color: #060e1b;
-  border: 1px solid #142844;
-  color: #7dd3fc;
-  font-family: var(--font-mono);
+  background: var(--liquid-glass-bg);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  color: var(--color-frost-glow);
+  font-family: var(--font-dotdigital);
   font-size: 0.64rem;
-  font-weight: 800;
+  font-weight: 600;
   height: 26px;
   min-width: 26px;
   padding: 0 7px;
-  border-radius: 2px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: all 0.12s ease;
-  box-sizing: border-box;
 }
 
 .banner-cam-controls .cam-btn:hover {
-  background-color: var(--color-cyan);
-  color: #000000;
-  border-color: var(--color-cyan);
-  box-shadow: 0 0 8px var(--color-cyan);
+  background: var(--glass-bg-hover);
+  color: #ffffff;
+  border-color: var(--glass-border-hover);
 }
 
 .top-quick-actions {
@@ -351,42 +324,5 @@ body.safe-zone-on .tactical-banner {
     height: 40px !important;
     padding: 0 8px !important;
     gap: 6px !important;
-  }
-
-  body.safe-zone-on .tactical-banner {
-    padding-left: max(8px, var(--safe-zone-inset, 0px)) !important;
-    padding-right: max(8px, var(--safe-zone-inset, 0px)) !important;
-  }
-
-  .timer-digits {
-    font-size: 0.82rem !important;
-  }
-
-  .command-token-cluster {
-    min-width: 80px !important;
-    height: 24px !important;
-    padding: 1px 5px !important;
-  }
-
-  .token-digits {
-    font-size: 0.60rem !important;
-  }
-
-  .victory-tracker {
-    padding: 2px 10px !important;
-    gap: 6px !important;
-  }
-
-  .vp-value {
-    font-size: 0.95rem !important;
-  }
-
-  .top-quick-actions .hud-btn {
-    padding: 2px 6px !important;
-    font-size: 0.60rem !important;
-  }
-
-  #btn-hud-glossary {
-    display: none !important;
   }
 }

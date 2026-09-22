@@ -1,8 +1,8 @@
-/* AIRSPACE STANDOFF: Radar Viewport Controls & Overlays */
+/* AIRSPACE STANDOFF: Radar Viewport Overlays */
 
 .radar-viewport {
   position: relative;
-  background: #02060e;
+  background: var(--color-pitch-black);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -30,68 +30,72 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  background: rgba(4, 9, 18, 0.94);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid #16273e;
-  border-radius: 3px;
-  padding: 3px 7px;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-badge);
+  padding: 4px 8px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--glass-shadow);
+  transition: all 0.14s ease;
 }
 
 body.safe-zone-on .rwr-warning-box {
   right: max(10px, var(--safe-zone-inset, 0px)) !important;
 }
 
-.rwr-warning-box:hover { border-color: var(--color-cyan); }
+.rwr-warning-box:hover { border-color: var(--glass-border-hover); }
 
 .rwr-label {
   font-size: 0.52rem;
-  font-weight: 700;
-  font-family: var(--font-mono);
+  font-weight: 600;
+  font-family: var(--font-dotdigital);
   color: var(--text-muted);
 }
 
 .rwr-status {
   font-size: 0.62rem;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  padding: 1px 4px;
-  border-radius: 2px;
+  font-weight: 700;
+  font-family: var(--font-dotdigital);
+  padding: 2px 4px;
+  border-radius: var(--radius-badge);
   letter-spacing: 0.5px;
 }
 
-.rwr-status.clean { color: var(--color-green); }
-.rwr-status.sweep { color: #f97316; }
+.rwr-status.clean { color: var(--stat-tier-2); }
+.rwr-status.sweep { color: var(--stat-tier-3); }
 .rwr-status.lock { background: var(--color-red); color: #fff; }
 
 .rwr-subtext {
   font-size: 0.50rem;
-  font-family: var(--font-mono);
-  color: #8494ab;
+  font-family: var(--font-dotdigital);
+  color: var(--color-moon-mist);
 }
 
+/* Moved slightly up so it never collides with floating cam controls and steering overlay */
 .civilian-alert-banner {
   position: absolute;
-  bottom: 10px;
+  bottom: 48px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 7;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(4, 8, 16, 0.94);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid #0284c7;
-  border-radius: 3px;
-  padding: 3px 12px;
-  font-family: var(--font-mono);
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-btn);
+  padding: 4px 12px;
+  font-family: var(--font-untitled-sans);
   font-size: 0.58rem;
-  color: #cbd5e1;
+  color: var(--color-moon-mist);
   pointer-events: none;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--glass-shadow);
   white-space: nowrap;
   width: max-content;
   max-width: calc(100% - 320px);
@@ -99,13 +103,13 @@ body.safe-zone-on .rwr-warning-box {
 }
 
 .civ-ico {
-  font-weight: 800;
-  color: #00f0ff;
+  font-weight: 600;
+  color: var(--theme-accent);
   flex-shrink: 0;
 }
 
 .civ-text {
-  color: #cbd5e1;
+  color: var(--color-moon-mist);
   white-space: nowrap;
 }
 
@@ -116,13 +120,16 @@ body.safe-zone-on .rwr-warning-box {
   left: 16px;
   right: auto;
   z-index: 10;
-  background: rgba(4, 10, 20, 0.92);
-  border: 1px solid #14243b;
-  border-radius: 4px;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-btn);
   padding: 3px 5px;
   gap: 4px;
   align-items: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--glass-shadow);
 }
 
 body.safe-zone-on .radar-floating-cam-bar {
@@ -130,16 +137,16 @@ body.safe-zone-on .radar-floating-cam-bar {
 }
 
 .radar-floating-cam-bar .cam-btn {
-  background: #08111e;
-  border: 1px solid #172a44;
-  color: #7dd3fc;
-  font-family: var(--font-mono);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-moon-mist);
+  font-family: var(--font-untitled-sans);
   font-size: 0.62rem;
-  font-weight: 800;
+  font-weight: 500;
   height: 26px;
   min-width: 26px;
   padding: 0 6px;
-  border-radius: 2px;
+  border-radius: var(--radius-badge);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -148,17 +155,15 @@ body.safe-zone-on .radar-floating-cam-bar {
 }
 
 .radar-floating-cam-bar .cam-btn:hover {
-  background: var(--color-cyan);
-  color: #000;
-  border-color: var(--color-cyan);
+  background: var(--glass-bg-hover);
+  color: #ffffff;
 }
 
 .radar-floating-cam-bar .cam-btn:active,
 .radar-floating-cam-bar .cam-btn.active {
-  background: #0284c7;
-  color: #fff;
-  border-color: #00f0ff;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+  background: var(--theme-primary);
+  color: #ffffff;
+  border-color: var(--theme-accent);
 }
 
 .radar-floating-cam-bar .prominent-cam-btn {
@@ -185,21 +190,25 @@ body.safe-zone-on .mobile-steering-overlay {
 
 .mobile-steer-btn {
   pointer-events: auto;
-  background: rgba(6, 14, 28, 0.92);
-  border: 1.5px solid #0284c7;
-  color: #7dd3fc;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  color: var(--theme-accent);
   padding: 6px 14px;
   font-size: 0.66rem;
-  font-weight: 800;
+  font-weight: 600;
   height: 34px;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  border-radius: var(--radius-btn);
+  box-shadow: var(--glass-shadow);
   touch-action: manipulation;
+  transition: all 0.14s ease;
 }
 
 .mobile-steer-btn:active {
-  background: #0284c7;
-  color: #fff;
+  background: var(--theme-primary);
+  color: #ffffff;
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
@@ -207,130 +216,5 @@ body.safe-zone-on .mobile-steering-overlay {
     top: 4px;
     right: 4px;
     padding: 2px 5px;
-  }
-
-  body.safe-zone-on .rwr-warning-box {
-    right: max(4px, var(--safe-zone-inset, 0px)) !important;
-  }
-
-  .rwr-status { font-size: 0.54rem; padding: 0 3px; }
-  .rwr-subtext { font-size: 0.44rem; }
-
-  .civilian-alert-banner {
-    bottom: 2px;
-    font-size: 0.46rem;
-    padding: 2px 5px;
-    gap: 3px;
-    max-width: 90%;
-  }
-
-  .radar-floating-cam-bar {
-    display: flex;
-    flex-direction: row;
-    position: absolute;
-    bottom: 8px;
-    left: 8px;
-    right: auto;
-  }
-
-  body.safe-zone-on .radar-floating-cam-bar {
-    left: max(8px, var(--safe-zone-inset, 0px)) !important;
-  }
-
-  .mobile-steering-overlay {
-    bottom: 8px;
-    right: 8px;
-    left: auto;
-  }
-
-  body.safe-zone-on .mobile-steering-overlay {
-    right: max(8px, var(--safe-zone-inset, 0px)) !important;
-  }
-}
-
-@media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
-  .rwr-warning-box {
-    top: 6px !important;
-    right: 8px !important;
-    padding: 2px 5px !important;
-    z-index: 9 !important;
-    max-width: 95px !important;
-  }
-
-  body.safe-zone-on .rwr-warning-box {
-    right: max(8px, var(--safe-zone-inset, 0px)) !important;
-  }
-
-  .rwr-status { font-size: 0.52rem !important; padding: 1px 3px !important; }
-  .rwr-subtext { display: none !important; }
-  .civilian-alert-banner { display: none !important; }
-
-  .radar-floating-cam-bar {
-    display: flex !important;
-    flex-direction: row !important;
-    position: absolute !important;
-    top: auto !important;
-    bottom: 8px !important;
-    left: 16px !important;
-    right: auto !important;
-    gap: 4px !important;
-    padding: 3px !important;
-    background: rgba(3, 7, 18, 0.90) !important;
-    border: 1px solid #14243b !important;
-    border-radius: 4px !important;
-    z-index: 10 !important;
-  }
-
-  body.safe-zone-on .radar-floating-cam-bar {
-    left: max(16px, var(--safe-zone-inset, 0px)) !important;
-  }
-
-  .radar-floating-cam-bar .cam-btn {
-    height: 26px !important;
-    min-width: 26px !important;
-    font-size: 0.58rem !important;
-    padding: 0 6px !important;
-  }
-
-  .radar-floating-cam-bar .prominent-cam-btn {
-    height: 26px !important;
-    font-size: 0.56rem !important;
-    min-width: 76px !important;
-    padding: 0 6px !important;
-  }
-
-  .mobile-steering-overlay {
-    display: flex !important;
-    position: absolute !important;
-    top: auto !important;
-    bottom: 8px !important;
-    right: 12px !important;
-    left: auto !important;
-    gap: 8px !important;
-    z-index: 15 !important;
-    pointer-events: none !important;
-  }
-
-  body.safe-zone-on .mobile-steering-overlay {
-    right: max(12px, var(--safe-zone-inset, 0px)) !important;
-  }
-
-  .mobile-steer-btn {
-    pointer-events: auto !important;
-    background: rgba(6, 14, 28, 0.92) !important;
-    border: 1.5px solid #0284c7 !important;
-    color: #7dd3fc !important;
-    padding: 6px 14px !important;
-    font-size: 0.66rem !important;
-    font-weight: 800 !important;
-    height: 34px !important;
-    border-radius: 4px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.6) !important;
-    touch-action: manipulation !important;
-  }
-
-  .mobile-steer-btn:active {
-    background: #0284c7 !important;
-    color: #fff !important;
   }
 }

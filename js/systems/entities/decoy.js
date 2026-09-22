@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Decoy Drone Entity
+ * AIRSPACE STANDOFF: Decoy Drone Entity
  * Deploys autonomous decoy drones mirroring host aircraft radar signature
  */
 

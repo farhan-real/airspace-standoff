@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Radar Visual FX (Particles, Tracers, Shockwaves & Combat Text)
+ * AIRSPACE STANDOFF: Radar Visual FX (Particles, Tracers, Shockwaves & Combat Text)
  */
 
 class RadarEffectsSystem {

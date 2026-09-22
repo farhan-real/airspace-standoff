@@ -1,30 +1,39 @@
 /* AIRSPACE STANDOFF: Flight Controls & MFD Panel Stylesheet */
 
 .active-unit-mfd {
-  background: var(--bg-panel);
-  border-left: 1.5px solid #142236;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-left: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
   padding: 5px;
   gap: 5px;
   overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .unit-flight-box {
-  background-color: #060e1c;
-  border: 1px solid #142642;
-  border-radius: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
   padding: 6px 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   flex-shrink: 0;
+  box-shadow: var(--glass-shadow);
 }
 
 .unit-title {
   font-size: 0.80rem;
-  font-weight: 900;
-  color: var(--color-cyan);
+  font-weight: 600;
+  color: var(--color-ice-highlight);
+  font-family: var(--font-aeonikpro);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -36,22 +45,23 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.62rem;
-  font-family: var(--font-mono);
-  color: #8fa0b5;
+  font-family: var(--font-untitled-sans);
+  color: var(--color-moon-mist);
 }
 
 .mfd-callsign-row b {
-  color: #00f0ff;
+  color: var(--theme-accent);
+  font-family: var(--font-dotdigital);
 }
 
 .coffin-indicator {
-  background-color: #1a1638;
-  color: #c7d2fe;
+  background: var(--theme-primary-dim);
+  color: var(--theme-accent);
   font-size: 0.52rem;
-  font-weight: 800;
+  font-weight: 600;
   padding: 1px 4px;
-  border-radius: 2px;
-  border: 1px solid #6366f1;
+  border-radius: var(--radius-badge);
+  border: 1px solid var(--theme-primary);
 }
 
 .coffin-indicator.hidden {
@@ -59,13 +69,13 @@
 }
 
 .lead-indicator {
-  background-color: #0a182c;
-  color: #ffd700;
+  background: rgba(251, 191, 36, 0.14);
+  color: #fbbf24;
   font-size: 0.54rem;
-  font-weight: 800;
+  font-weight: 600;
   padding: 1px 5px;
-  border-radius: 2px;
-  border: 1px solid #eab308;
+  border-radius: var(--radius-badge);
+  border: 1px solid rgba(251, 191, 36, 0.35);
 }
 
 .lead-indicator.hidden {
@@ -73,13 +83,13 @@
 }
 
 .ace-indicator {
-  background-color: #241408;
-  color: #ffd700;
+  background: rgba(251, 191, 36, 0.16);
+  color: #fbbf24;
   font-size: 0.54rem;
-  font-weight: 800;
+  font-weight: 600;
   padding: 1px 4px;
-  border-radius: 2px;
-  border: 1px solid #ffd700;
+  border-radius: var(--radius-badge);
+  border: 1px solid rgba(251, 191, 36, 0.4);
   display: inline-flex;
   align-items: center;
 }
@@ -88,41 +98,39 @@
   display: none !important;
 }
 
-/* Military Throttle Quadrant */
 .throttle-quadrant {
-  background-color: #020610;
-  border: 1px solid #122238;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-btn);
   padding: 5px 8px;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 .throttle-meta-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: var(--font-mono);
+  font-family: var(--font-untitled-sans);
 }
 
 .tq-label {
   font-size: 0.56rem;
-  color: #8fa0b5;
-  font-weight: 800;
+  color: var(--color-moon-mist);
+  font-weight: 600;
   letter-spacing: 0.5px;
 }
 
 .tq-val {
   font-size: 0.62rem;
-  font-weight: 800;
-  color: var(--color-cyan);
+  font-weight: 700;
+  font-family: var(--font-dotdigital);
+  color: var(--theme-accent);
 }
 
 .tq-val.burner {
   color: #f97316 !important;
-  text-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
 }
 
 .throttle-track-wrap {
@@ -136,10 +144,10 @@
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 8px;
-  background: linear-gradient(90deg, #091728 0%, #0284c7 72%, #dc2626 100%);
-  border-radius: 3px;
-  border: 1px solid #0f243d;
+  height: 6px;
+  background: linear-gradient(90deg, #1e293b 0%, var(--theme-primary) 75%, #f43f5e 100%);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--glass-border);
   outline: none;
   cursor: pointer;
 }
@@ -147,12 +155,12 @@
 .military-throttle-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
-  background: linear-gradient(180deg, #1e3a60 0%, #0a1422 100%);
-  border: 1px solid #00f0ff;
-  border-radius: 3px;
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  width: 16px;
+  height: 16px;
+  background: #ffffff;
+  border: 1px solid var(--theme-accent);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 8px var(--theme-primary-glow);
   cursor: ew-resize;
 }
 
@@ -163,12 +171,11 @@
   right: 0;
   display: flex;
   justify-content: space-between;
-  font-family: var(--font-mono);
+  font-family: var(--font-dotdigital);
   font-size: 0.48rem;
-  color: #4b6078;
+  color: var(--color-fog-veil);
   pointer-events: none;
-  font-weight: 800;
-  letter-spacing: 0.3px;
+  font-weight: 600;
 }
 
 .throttle-detents .highlight {
@@ -179,37 +186,36 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.56rem;
-  font-family: var(--font-mono);
-  color: #8fa0b5;
+  font-family: var(--font-untitled-sans);
+  color: var(--color-moon-mist);
   margin-bottom: 2px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .stress-bar-frame {
   height: 5px;
-  background-color: #020610;
-  border: 1px solid #142844;
-  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-pill);
   overflow: hidden;
 }
 
 .stress-bar-fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--color-green), var(--color-cyan), var(--color-red));
+  background: linear-gradient(90deg, var(--stat-tier-2), var(--stat-tier-3), var(--stat-tier-5));
   transition: width 0.15s ease;
 }
 
 .gloc-badge {
-  background-color: var(--color-red);
+  background: var(--color-red);
   color: #ffffff;
-  font-weight: 800;
+  font-weight: 700;
   text-align: center;
   font-size: 0.56rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-dotdigital);
   padding: 2px 0;
   margin-top: 2px;
-  border-radius: 2px;
+  border-radius: var(--radius-badge);
 }
 
 .gloc-badge.hidden {
@@ -217,16 +223,16 @@
 }
 
 .stress-warn-badge {
-  background-color: #2e1705;
-  border: 1px solid #f97316;
+  background: rgba(249, 115, 22, 0.15);
+  border: 1px solid rgba(249, 115, 22, 0.35);
   color: #fed7aa;
-  font-weight: 800;
+  font-weight: 600;
   text-align: center;
   font-size: 0.52rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-dotdigital);
   padding: 2px 0;
   margin-top: 2px;
-  border-radius: 2px;
+  border-radius: var(--radius-badge);
 }
 
 .stress-warn-badge.hidden {
@@ -250,14 +256,15 @@
   padding: 4px;
   font-size: 0.60rem;
   text-align: center;
+  border-radius: var(--radius-btn);
 }
 
 .rtb-toggle-btn {
   width: 100%;
   padding: 4px;
   font-size: 0.62rem;
-  background-color: #064e3b;
-  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.35);
   color: #a7f3d0;
-  transition: all 0.14s ease;
+  border-radius: var(--radius-btn);
 }

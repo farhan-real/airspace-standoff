@@ -4,9 +4,9 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-bottom: 1.5px solid #142948;
-  padding-bottom: 5px;
-  gap: 5px;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 6px;
+  gap: 6px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -28,25 +28,28 @@
 }
 
 .game-name {
-  font-size: 1.18rem;
-  font-weight: 900;
-  color: #f8fafc;
-  letter-spacing: 1.2px;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-ice-highlight);
+  background: var(--gradient-ice-highlight);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.8px;
+  font-family: var(--font-aeonikpro);
 }
 
 .hangar-badge {
-  background: rgba(0, 240, 255, 0.12);
-  border: 1px solid #00f0ff;
-  color: #00f0ff;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 900;
+  background: var(--theme-primary-dim);
+  border: 1px solid var(--theme-primary);
+  color: var(--theme-accent);
+  font-family: var(--font-dotdigital);
+  font-size: 0.66rem;
+  font-weight: 600;
   padding: 3px 8px;
-  border-radius: 3px;
+  border-radius: var(--radius-badge);
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
 }
 
 .title-right-group {
@@ -61,11 +64,11 @@
 .proc-leaderboard-btn,
 .proc-settings-btn,
 .proc-exit-btn {
-  font-size: 0.76rem;
-  font-family: var(--font-mono);
-  font-weight: 800;
+  font-size: 0.74rem;
+  font-family: var(--font-untitled-sans);
+  font-weight: 500;
   padding: 5px 12px;
-  border-radius: 3px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
   white-space: nowrap;
   height: 30px;
@@ -75,35 +78,28 @@
   box-sizing: border-box;
   transition: all 0.14s ease;
   gap: 6px;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  box-shadow: var(--glass-highlight);
 }
 
 .squad-callsign-tag {
-  background-color: #08172c;
-  border: 1px solid #0284c7;
-  color: #ffb830;
+  color: var(--stat-tier-3);
 }
 
+.proc-manual-btn,
+.proc-settings-btn,
 .proc-leaderboard-btn {
-  background-color: #08172c;
-  border: 1px solid #00f0ff;
-  color: #00f0ff;
-}
-
-.proc-settings-btn {
-  background-color: #08172c;
-  border: 1px solid #0284c7;
-  color: #7dd3fc;
-}
-
-.proc-manual-btn {
-  background-color: #08172c;
-  border: 1px solid #0284c7;
-  color: #7dd3fc;
+  color: var(--color-frost-glow);
 }
 
 .proc-exit-btn {
-  background-color: rgba(153, 27, 27, 0.35);
-  border: 1px solid #ef4444;
+  background: rgba(244, 63, 94, 0.15);
+  border-color: rgba(244, 63, 94, 0.35);
+  border-top-color: rgba(255, 120, 150, 0.5);
   color: #fecdd3;
 }
 
@@ -111,16 +107,15 @@
 .proc-leaderboard-btn:hover,
 .proc-settings-btn:hover,
 .proc-manual-btn:hover {
-  background-color: #0284c7;
+  background: var(--glass-bg-hover);
   color: #ffffff;
-  border-color: #00f0ff;
+  border-color: var(--glass-border-hover);
 }
 
 .proc-exit-btn:hover {
-  background-color: #ef4444;
+  background: rgba(244, 63, 94, 0.3);
   color: #ffffff;
-  border-color: #f87171;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+  border-color: #f43f5e;
 }
 
 .mode-and-ai-controls {
@@ -133,33 +128,36 @@
 
 .segmented-control {
   display: flex;
-  background-color: #020610;
-  border: 1px solid #142844;
-  border-radius: 4px;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-btn);
   padding: 2px;
 }
 
 .seg-btn {
   border: none;
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  font-weight: 800;
-  padding: 5px 11px;
-  border-radius: 3px;
-  background-color: transparent;
+  font-family: var(--font-untitled-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: var(--radius-badge);
+  background: transparent;
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.12s ease;
 }
 
 .seg-btn:hover {
-  color: #f1f5f9;
+  color: #ffffff;
 }
 
 .seg-btn.active {
-  background-color: var(--color-cyan);
-  color: #000000;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
+  background: var(--theme-primary);
+  color: #ffffff;
+  box-shadow: 0 0 10px var(--theme-primary-glow);
 }
 
 .ai-config-group {
@@ -179,15 +177,16 @@
 
 .proc-right-actions .hud-btn {
   font-size: 0.74rem;
-  padding: 5px 13px;
-  font-weight: 800;
+  padding: 5px 12px;
+  font-weight: 500;
   height: 30px;
+  border-radius: var(--radius-btn);
 }
 
 #btn-proc-fullscreen.active {
-  background-color: #0284c7;
+  background: var(--theme-primary);
   color: #ffffff;
-  border-color: #00f0ff;
+  border-color: var(--theme-accent);
 }
 
 .is-android-apk #btn-proc-fullscreen,
@@ -198,67 +197,69 @@
 .budget-display {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  background-color: #020610;
-  border: 1px solid #142844;
-  border-radius: 3px;
-  padding: 3px 8px;
+  gap: 10px;
+  font-family: var(--font-dotdigital);
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-btn);
+  padding: 4px 12px;
+  box-shadow: var(--glass-highlight);
 }
 
 .budget-line {
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: 5px;
 }
 
 .budget-display .label {
   font-size: 0.60rem;
-  color: #8494ab;
-  font-weight: 700;
+  color: var(--color-moon-mist);
+  font-weight: 600;
 }
 
 .budget-display .amount {
   font-size: 0.88rem;
-  font-weight: 800;
-  color: #00f0ff;
+  font-weight: 700;
+  color: var(--color-ice-highlight);
 }
 
 .budget-display .amount .spent-val {
-  color: var(--color-green);
+  color: var(--stat-tier-2);
 }
 
 .budget-display .amount .spent-val.overbudget {
-  color: var(--color-red) !important;
+  color: var(--stat-tier-5) !important;
 }
 
 .budget-display .amount .rem-val {
   font-size: 0.62rem;
-  color: #8494ab;
-  font-weight: 700;
+  color: var(--color-moon-mist);
+  font-weight: 500;
   margin-left: 2px;
 }
 
 .budget-display .count-tag {
   font-size: 0.62rem;
-  color: #e2e8f0;
-  background-color: #091526;
-  border: 1px solid #173252;
-  padding: 2px 5px;
-  border-radius: 2px;
-  font-weight: 700;
+  color: var(--color-pure-white);
+  background: var(--glass-bg-hover);
+  border: 1px solid var(--glass-border);
+  padding: 2px 7px;
+  border-radius: var(--radius-badge);
+  font-weight: 600;
 }
 
 @media (max-width: 1024px) {
   .procurement-header {
-    padding-bottom: 2px;
-    gap: 2px;
-    width: 100%;
-    box-sizing: border-box;
+    padding-bottom: 4px;
+    gap: 4px;
   }
 
   .game-name {
-    font-size: 0.98rem;
+    font-size: 1.02rem;
   }
 
   .hangar-badge {
@@ -271,39 +272,23 @@
   .proc-settings-btn,
   .proc-manual-btn,
   .proc-exit-btn {
-    padding: 4px 9px;
-    font-size: 0.70rem;
+    padding: 4px 8px;
+    font-size: 0.68rem;
     height: 28px;
     gap: 4px;
   }
 
   .mode-and-ai-controls {
     gap: 4px;
-    width: 100%;
-    justify-content: flex-start;
   }
 
   .seg-btn {
-    padding: 4px 8px;
-    font-size: 0.68rem;
-  }
-
-  .proc-right-actions {
-    margin-left: auto;
-    gap: 4px;
-  }
-
-  .proc-right-actions .hud-btn {
-    font-size: 0.68rem;
-    padding: 4px 9px;
-    height: 28px;
+    padding: 3px 6px;
+    font-size: 0.66rem;
   }
 
   .budget-display {
-    padding: 2px 6px;
-    width: 100%;
-    justify-content: space-between;
-    box-sizing: border-box;
+    padding: 3px 8px;
   }
 
   .budget-display .amount {

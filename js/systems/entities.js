@@ -1,5 +1,5 @@
 /**
- * APEX VECTOR // Master Combat Entities Aggregator
+ * AIRSPACE STANDOFF: Master Upgrades & Maneuvers Entry Point
  */
 
-window.ENTITIES_READY = true;
+window.UPGRADES_READY = true;

@@ -5,8 +5,10 @@
   min-height: 120px;
   max-height: 120px;
   flex-shrink: 0;
-  background: #030712;
-  border-top: 1px solid #132237;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
   padding: 4px 10px 5px 10px;
@@ -18,15 +20,15 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.64rem;
-  font-family: var(--font-mono);
-  font-weight: 800;
-  color: #8fa0b5;
+  font-family: var(--font-untitled-sans);
+  font-weight: 600;
+  color: var(--color-moon-mist);
   flex-shrink: 0;
   line-height: 1.2;
 }
 
 .deck-alert {
-  color: #00f0ff;
+  color: var(--theme-accent);
 }
 
 .deck-grid {
@@ -38,7 +40,6 @@
   overflow-y: hidden;
   align-items: stretch;
   padding-bottom: 2px;
-  scrollbar-width: thin;
 }
 
 .maneuver-card {
@@ -48,9 +49,12 @@
   height: 94px;
   min-height: 94px;
   max-height: 94px;
-  background: #060e1b;
-  border: 1px solid #142742;
-  border-radius: 4px;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-card);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -59,17 +63,19 @@
   transition: all 0.12s ease;
   box-sizing: border-box;
   flex-shrink: 0;
+  box-shadow: var(--glass-shadow);
 }
 
 .maneuver-card:hover:not(.locked) {
-  border-color: var(--color-cyan);
+  border-color: var(--theme-accent);
+  background: var(--glass-bg-hover);
   transform: translateY(-1px);
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+  box-shadow: 0 0 12px var(--theme-primary-glow);
 }
 
 .maneuver-card.recommended-card {
-  border-color: #00f0ff;
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+  border-color: var(--theme-accent);
+  background: var(--theme-primary-dim);
 }
 
 .maneuver-card.locked {
@@ -88,8 +94,8 @@
 
 .mcard-name {
   font-size: 0.70rem;
-  font-weight: 800;
-  color: #f8fafc;
+  font-weight: 600;
+  color: var(--color-ice-highlight);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -97,28 +103,28 @@
 
 .mcard-cost {
   font-size: 0.60rem;
-  font-family: var(--font-mono);
-  color: var(--color-green);
-  font-weight: 800;
+  font-family: var(--font-dotdigital);
+  color: var(--stat-tier-2);
+  font-weight: 700;
   flex-shrink: 0;
 }
 
 .mcard-badge {
   font-size: 0.52rem;
-  font-family: var(--font-mono);
-  color: var(--color-cyan);
+  font-family: var(--font-dotdigital);
+  color: var(--theme-accent);
   flex-shrink: 0;
   line-height: 1.1;
   margin-bottom: 2px;
 }
 
 .mcard-hint-box {
-  background: #02050e;
-  border: 1px solid #0f1c2e;
-  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-badge);
   padding: 2px 5px;
   font-size: 0.52rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-untitled-sans);
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -128,17 +134,16 @@
 }
 
 .mcard-when {
-  color: #7dd3fc;
-  font-weight: 700;
+  color: var(--theme-accent);
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .mcard-why {
-  color: #cbd5e1;
+  color: var(--color-moon-mist);
   line-height: 1.25;
-  max-height: 2.5em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
@@ -149,8 +154,8 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.62rem;
-  font-family: var(--font-mono);
-  border-top: 1px dashed #142844;
+  font-family: var(--font-dotdigital);
+  border-top: 1px solid var(--glass-border);
   padding-top: 3px;
   margin-top: 2px;
   gap: 4px;
@@ -161,22 +166,21 @@
 }
 
 .bonus-tag {
-  color: var(--color-green);
-  font-weight: 800;
+  color: var(--stat-tier-2);
+  font-weight: 700;
   font-size: 0.62rem;
   white-space: nowrap;
   flex-shrink: 0;
-  letter-spacing: 0.2px;
   line-height: 1;
 }
 
 .recom-badge {
-  background: #0284c7;
+  background: var(--theme-primary);
   color: #ffffff;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 0.52rem;
-  padding: 1px 4px;
-  border-radius: 2px;
+  padding: 1px 5px;
+  border-radius: var(--radius-badge);
   white-space: nowrap;
   flex-shrink: 0;
   line-height: 1;
@@ -184,6 +188,52 @@
 
 .recom-badge.hidden {
   display: none;
+}
+
+@media (max-width: 1024px) and (orientation: portrait) {
+  .tactical-deck-bay {
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+    padding: 3px 8px !important;
+  }
+
+  .deck-header {
+    display: none !important;
+  }
+
+  .deck-grid {
+    gap: 6px !important;
+    align-items: center !important;
+    padding-bottom: 0 !important;
+  }
+
+  .maneuver-card {
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    width: 165px !important;
+    min-width: 165px !important;
+    max-width: 165px !important;
+    padding: 4px 7px !important;
+  }
+
+  .mcard-name {
+    font-size: 0.62rem !important;
+    max-width: 110px !important;
+  }
+
+  .mcard-badge,
+  .mcard-hint-box {
+    display: none !important;
+  }
+
+  .mcard-status-bar {
+    font-size: 0.54rem !important;
+    min-height: 14px !important;
+    margin-top: 0 !important;
+    padding-top: 2px !important;
+  }
 }
 
 @media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
@@ -216,12 +266,7 @@
 
   .mcard-name {
     font-size: 0.62rem !important;
-    font-weight: 800 !important;
     max-width: 110px !important;
-  }
-
-  .mcard-cost {
-    font-size: 0.54rem !important;
   }
 
   .mcard-badge,
@@ -234,13 +279,5 @@
     min-height: 14px !important;
     margin-top: 0 !important;
     padding-top: 2px !important;
-  }
-
-  .bonus-tag {
-    font-size: 0.54rem !important;
-  }
-
-  .recom-badge {
-    font-size: 0.48rem !important;
   }
 }
