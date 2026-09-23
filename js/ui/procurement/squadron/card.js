@@ -38,6 +38,10 @@ class RosterCardBuilder {
     const totalMass = metrics ? metrics.totalMass : 100;
     const remainingSlots = metrics ? metrics.remainingSlots : (totalSlots - usedSlots);
 
+    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
+      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rG = rate('glimit', spec.G_limit || 9.0);
+
     const activeGun = gunsMap[item.chosenGunId] || gunsMap[spec.builtInGun] || gunsMap['M61A2'];
 
     const gunOptsList = Object.values(gunsMap).map(g => {
@@ -95,8 +99,18 @@ class RosterCardBuilder {
           else if (seeker === 'INS' || seeker === 'INS_RADAR') seekerTag = 'INS';
           else if (seeker === 'DIRECT_FIRE') seekerTag = 'DIRECT';
         }
+        const isFirst = (wIdx === 0);
+        const isLast = (wIdx === item.weapons.length - 1);
         return `
-          <div class="installed-item-card">
+          <div class="installed-item-card" data-sidx="${sIdx}" data-widx="${wIdx}">
+            <div class="iic-reorder-group">
+              <button type="button" class="btn-reorder-item btn-move-up" data-sidx="${sIdx}" data-widx="${wIdx}" title="Move weapon up" ${isFirst ? 'disabled' : ''}>
+                <img src="icons/arrowup.svg" width="9" height="9" alt="Up">
+              </button>
+              <button type="button" class="btn-reorder-item btn-move-down" data-sidx="${sIdx}" data-widx="${wIdx}" title="Move weapon down" ${isLast ? 'disabled' : ''}>
+                <img src="icons/arrowdown.svg" width="9" height="9" alt="Down">
+              </button>
+            </div>
             <div class="iic-title-group">
               <span class="iic-title" title="${w ? w.name : wId}">${w ? w.name : wId}</span>
             </div>
@@ -150,29 +164,29 @@ class RosterCardBuilder {
       </div>
       <div class="unit-metric-strip">
         <div class="metric-block">
-          <div class="metric-meta">
-            <span>RCS:</span>
-            ${metrics ? metrics.rcsDualHtml : `<b>${spec.sigma_0 || 1.0}m²</b>`}
-          </div>
+          <div class="metric-meta"><span>SPEED:</span>${metrics ? metrics.speedDualHtml : `<b>M ${(spec.S_0 || 0.9).toFixed(2)}</b>`}</div>
         </div>
         <div class="metric-block">
-          <div class="metric-meta">
-            <span>SPEED:</span>
-            ${metrics ? metrics.speedDualHtml : `<b>M ${(spec.S_0 || 0.9).toFixed(2)}</b>`}
-          </div>
+          <div class="metric-meta"><span>AGILITY:</span>${metrics ? metrics.agilityDualHtml : `<b>${(spec.AGI_0 || 0.85).toFixed(2)}</b>`}</div>
         </div>
         <div class="metric-block">
-          <div class="metric-meta">
-            <span>HARDPOINTS:</span>
-            ${metrics ? metrics.slotsDualHtml : `<span>${usedSlots}/${totalSlots} SLOTS</span>`}
-          </div>
+          <div class="metric-meta"><span>RADAR:</span>${metrics ? metrics.radarDualHtml : `<b>${spec.R_0 || 75}km</b>`}</div>
+        </div>
+        <div class="metric-block">
+          <div class="metric-meta"><span>RCS:</span>${metrics ? metrics.rcsDualHtml : `<b>${spec.sigma_0 || 1.0}m²</b>`}</div>
+        </div>
+        <div class="metric-block">
+          <div class="metric-meta"><span>ARMOR:</span>${metrics ? metrics.armorDualHtml : `<b>${spec.hp || 4} HP</b>`}</div>
+        </div>
+        <div class="metric-block">
+          <div class="metric-meta"><span>G-LIMIT:</span><span class="dual-val" data-tag-title="STRUCTURAL G-LIMIT" data-tag-tooltip="Structural maneuvering tolerance: ${(spec.G_limit || 9.0).toFixed(1)}G."><b class="${rG.colorClass}">${(spec.G_limit || 9.0).toFixed(1)} G</b></span></div>
+        </div>
+        <div class="metric-block">
+          <div class="metric-meta"><span>STATIONS:</span>${metrics ? metrics.slotsDualHtml : `<span>${usedSlots}/${totalSlots} SLOTS</span>`}</div>
           <div class="capacity-pips-bar">${pipsHtml}</div>
         </div>
         <div class="metric-block">
-          <div class="metric-meta">
-            <span>PAYLOAD:</span>
-            <span><b style="color:${weightColor};">${weightCategory}</b> ${wrPercent}% (${totalMass}kg)</span>
-          </div>
+          <div class="metric-meta"><span>PAYLOAD:</span><span><b style="color:${weightColor};">${weightCategory}</b> ${wrPercent}% (${totalMass}kg)</span></div>
           <div class="weight-bar-bg"><div class="weight-bar-fill ${wrPercent > 80 ? 'overload' : (wrPercent > 60 ? 'heavy' : '')}" style="width:${Math.min(100, wrPercent)}%;"></div></div>
         </div>
       </div>
@@ -271,6 +285,32 @@ class RosterCardBuilder {
     });
     card.querySelectorAll('.btn-socket-dismount').forEach(b => {
       b.onclick = (e) => { e.stopPropagation(); item.upgrades.splice(parseInt(b.dataset.uidx, 10), 1); pm.updateUI(); };
+    });
+
+    card.querySelectorAll('.btn-move-up').forEach(b => {
+      b.onclick = (e) => {
+        e.stopPropagation();
+        const wIdx = parseInt(b.dataset.widx, 10);
+        if (wIdx > 0 && wIdx < item.weapons.length) {
+          const [moved] = item.weapons.splice(wIdx, 1);
+          item.weapons.splice(wIdx - 1, 0, moved);
+          pm.updateUI();
+          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        }
+      };
+    });
+
+    card.querySelectorAll('.btn-move-down').forEach(b => {
+      b.onclick = (e) => {
+        e.stopPropagation();
+        const wIdx = parseInt(b.dataset.widx, 10);
+        if (wIdx >= 0 && wIdx < item.weapons.length - 1) {
+          const [moved] = item.weapons.splice(wIdx, 1);
+          item.weapons.splice(wIdx + 1, 0, moved);
+          pm.updateUI();
+          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        }
+      };
     });
 
     return card;

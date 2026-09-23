@@ -35,7 +35,7 @@ body.safe-zone-on .procurement-window {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: 1.15fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   overflow: hidden;
   contain: layout;
@@ -137,7 +137,7 @@ body.safe-zone-on .procurement-window {
 
   .procurement-body {
     display: grid !important;
-    grid-template-columns: 1.15fr 1fr !important;
+    grid-template-columns: 1fr 1fr !important;
     gap: 6px !important;
   }
 }
