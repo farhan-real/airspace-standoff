@@ -63,44 +63,19 @@ body.safe-zone-on .hud-container {
   display: none;
 }
 
-.mobile-pane-tabs {
-  display: none;
-  gap: 3px;
-}
-
 .mobile-steering-overlay {
   display: none;
   position: absolute;
   bottom: 8px;
   right: 12px;
-  gap: 8px;
+  gap: 5px;
   pointer-events: none;
   z-index: 15;
 }
 
-.mobile-steer-btn {
-  pointer-events: auto;
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
-  color: var(--theme-accent);
-  font-family: var(--font-untitled-sans);
-  font-size: 0.66rem;
-  font-weight: 600;
-  padding: 6px 14px;
-  height: 36px;
-  border-radius: var(--radius-btn);
-  touch-action: manipulation;
-  box-shadow: var(--glass-shadow);
-  transition: all 0.12s ease;
-}
-
-.mobile-steer-btn:active {
-  background: var(--theme-primary);
-  color: #ffffff;
-}
-
-body.has-touch .mobile-steering-overlay {
+body.has-touch .mobile-steering-overlay,
+.is-android .mobile-steering-overlay,
+.is-android-apk .mobile-steering-overlay {
   display: flex !important;
 }
 
@@ -125,6 +100,10 @@ body.has-touch .mobile-steering-overlay {
     height: 0 !important;
     overflow: hidden !important;
     position: relative !important;
+  }
+
+  .mobile-steering-overlay {
+    display: flex !important;
   }
 
   #pane-radar.radar-viewport {
@@ -189,6 +168,10 @@ body.has-touch .mobile-steering-overlay {
     height: 0 !important;
     overflow: hidden !important;
     position: relative !important;
+  }
+
+  .mobile-steering-overlay {
+    display: flex !important;
   }
 
   #pane-radar.radar-viewport {

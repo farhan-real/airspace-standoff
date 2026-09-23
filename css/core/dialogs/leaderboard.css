@@ -5,11 +5,11 @@
 }
 
 .leaderboard-window {
-  width: 95vw;
-  max-width: 1180px;
-  height: 90vh;
-  height: 90dvh;
-  max-height: 90dvh;
+  width: 90vw;
+  max-width: 840px;
+  height: 88vh;
+  height: 88dvh;
+  max-height: 88dvh;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -25,21 +25,21 @@
 }
 
 .leaderboard-window .inspect-header {
-  padding: 10px 14px;
+  padding: 9px 12px;
 }
 
 .leaderboard-window .inspect-header .hud-btn.small {
   flex-shrink: 0;
-  min-width: 32px;
+  min-width: 30px;
 }
 
 .leaderboard-body {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: 40% 60%;
-  gap: 12px;
-  padding: 12px 14px;
+  grid-template-columns: 42% 58%;
+  gap: 10px;
+  padding: 10px 12px;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -57,18 +57,18 @@
 }
 
 .leaderboard-table-pane {
-  padding: 8px 10px;
+  padding: 6px 8px;
 }
 
 .leaderboard-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.66rem;
+  font-size: 0.65rem;
 }
 
 .leaderboard-table th {
   text-align: left;
-  padding: 8px 10px;
+  padding: 6px 8px;
   background: var(--glass-bg);
   color: var(--color-frost-glow);
   border-bottom: 1px solid var(--glass-border);
@@ -77,7 +77,7 @@
 }
 
 .leaderboard-table td {
-  padding: 8px 10px;
+  padding: 6px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--color-moon-mist);
 }
@@ -98,10 +98,10 @@
 
 .leaderboard-rank-tag {
   font-weight: 700;
-  padding: 2px 6px;
+  padding: 2px 5px;
   border-radius: var(--radius-badge);
   display: inline-block;
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   font-family: var(--font-dotdigital);
 }
 
@@ -111,29 +111,29 @@
 .rank-standard { background: var(--glass-bg); color: var(--color-moon-mist); border: 1px solid var(--glass-border); }
 
 .leaderboard-detail-pane {
-  padding: 12px 14px;
-  gap: 10px;
+  padding: 10px 12px;
+  gap: 8px;
 }
 
 .dossier-header-box {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 10px 14px;
+  padding: 8px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .dossier-title {
-  font-size: 0.95rem;
+  font-size: 0.90rem;
   font-weight: 600;
   color: #ffffff;
   font-family: var(--font-aeonikpro);
 }
 
 .dossier-score-num {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--color-ice-highlight);
   font-family: var(--font-dotdigital);
@@ -142,26 +142,26 @@
 .dossier-meta-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 6px;
 }
 
 .dossier-card {
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 8px 10px;
+  padding: 6px 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .dossier-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.64rem;
+  font-size: 0.63rem;
   color: var(--color-moon-mist);
-  padding: 3px 0;
+  padding: 2px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
@@ -178,17 +178,17 @@
 .dossier-podium-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
+  gap: 5px;
 }
 
 .dossier-podium-card {
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 6px 8px;
+  padding: 5px 6px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .dossier-podium-card.rank-1 { border-color: rgba(251, 191, 36, 0.4); background: rgba(251, 191, 36, 0.06); }
@@ -199,12 +199,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   font-weight: 600;
 }
 
 .dossier-podium-cs {
-  font-size: 0.80rem;
+  font-size: 0.76rem;
   font-weight: 600;
   color: #ffffff;
   overflow: hidden;
@@ -213,7 +213,7 @@
 }
 
 .dossier-podium-sub {
-  font-size: 0.56rem;
+  font-size: 0.54rem;
   color: var(--color-moon-mist);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -224,51 +224,51 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   color: var(--color-frost-glow);
   border-top: 1px solid var(--glass-border);
-  padding-top: 4px;
-  margin-top: 3px;
+  padding-top: 3px;
+  margin-top: 2px;
   font-family: var(--font-dotdigital);
 }
 
 .dossier-timeline-container {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 8px 10px;
+  padding: 6px 8px;
 }
 
 .dossier-timeline-list {
-  max-height: 170px;
+  max-height: 150px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   padding-right: 2px;
 }
 
 @media (max-width: 900px) {
   .leaderboard-window {
-    width: 98vw;
-    height: 94vh;
-    height: 94dvh;
-    max-height: 94dvh;
+    width: 95vw;
+    height: 92vh;
+    height: 92dvh;
+    max-height: 92dvh;
     border-radius: var(--radius-card);
   }
   .leaderboard-window .inspect-header {
-    padding: 8px 10px;
+    padding: 7px 9px;
   }
   .leaderboard-window .inspect-header .subtext {
     display: none !important;
   }
   .leaderboard-body {
     grid-template-columns: 1fr;
-    gap: 8px;
-    padding: 8px;
+    gap: 6px;
+    padding: 6px;
   }
   .dossier-podium-grid {
     grid-template-columns: 1fr;
@@ -277,8 +277,8 @@
 
 @media (max-height: 550px) {
   .leaderboard-window {
-    height: 96vh;
-    height: 96dvh;
-    max-height: 96dvh;
+    height: 94vh;
+    height: 94dvh;
+    max-height: 94dvh;
   }
 }

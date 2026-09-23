@@ -37,12 +37,11 @@
   margin-top: 10px;
   padding-top: 10px;
   border-top: 1px solid var(--glass-border);
-  flex-wrap: wrap;
 }
 
 .tactical-dialog-btn {
   height: 34px;
-  min-width: 90px;
+  min-width: 100px;
   padding: 0 16px;
   font-size: 0.76rem;
   font-family: var(--font-untitled-sans);
@@ -109,7 +108,7 @@
   justify-content: space-between;
   align-items: center;
   background: var(--glass-bg);
-  padding: 10px 14px;
+  padding: 12px 18px;
   border-bottom: 1px solid var(--glass-border);
   flex-shrink: 0;
   gap: 8px;
@@ -130,11 +129,11 @@
 
 .inspect-header .hud-btn.small {
   flex-shrink: 0;
-  min-width: 32px;
+  min-width: 30px;
 }
 
 .inspect-body {
-  padding: 14px 16px;
+  padding: 16px 18px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -161,7 +160,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
 }
 
 .inspect-badge {
@@ -202,14 +200,12 @@
   color: var(--color-moon-mist);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   padding: 5px 0;
-  gap: 8px;
 }
 
 .inspect-stat-item span {
   color: var(--color-fog-veil);
   font-weight: 500;
   font-size: 0.65rem;
-  flex-shrink: 0;
 }
 
 .inspect-stat-item b:not([class*="stat-tier"]) {
@@ -217,7 +213,6 @@
   text-align: right;
   font-size: 0.68rem;
   font-family: var(--font-dotdigital);
-  word-break: break-word;
 }
 
 .inspect-desc-box {
@@ -241,7 +236,6 @@
   margin-top: 6px;
   padding-top: 10px;
   border-top: 1px solid var(--glass-border);
-  flex-wrap: wrap;
 }
 
 .inspect-action-btn {
@@ -302,30 +296,28 @@
 
 @media (max-width: 1024px) {
   .inspect-window {
-    width: 98vw !important;
-    max-width: 98vw !important;
-    max-height: 94vh !important;
-    max-height: 94dvh !important;
-    border-radius: var(--radius-card) !important;
+    max-height: 92vh;
+    max-height: 92dvh;
+    border-radius: var(--radius-card);
   }
   .inspect-header {
-    padding: 8px 10px !important;
+    padding: 8px 10px;
   }
   .inspect-body {
-    padding: 10px !important;
-    gap: 8px !important;
+    padding: 10px;
+    gap: 8px;
   }
 }
 
 @media (max-height: 550px) {
   .inspect-window {
-    max-height: 96vh !important;
-    max-height: 96dvh !important;
+    max-height: 94vh;
+    max-height: 94dvh;
   }
   .inspect-header {
-    padding: 6px 10px !important;
+    padding: 6px 10px;
   }
   .inspect-body {
-    padding: 8px 10px !important;
+    padding: 8px 10px;
   }
 }

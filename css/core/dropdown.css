@@ -19,16 +19,16 @@
   border-top: 1px solid var(--liquid-glass-border-top);
   color: var(--text-main);
   font-family: var(--font-untitled-sans);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  padding: 5px 12px;
+  padding: 4px 9px;
   border-radius: var(--radius-btn);
   outline: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: 30px;
+  gap: 6px;
+  height: 28px;
   white-space: nowrap;
   box-sizing: border-box;
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -45,7 +45,7 @@
 }
 
 .cdd-label {
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   color: var(--color-moon-mist);
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -80,11 +80,12 @@
 .custom-dropdown-menu {
   display: none;
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 5px);
   left: 0;
   min-width: 100%;
-  max-width: min(320px, calc(100vw - 20px));
-  max-height: min(240px, 45vh);
+  width: max-content;
+  max-width: min(210px, calc(100vw - 20px));
+  max-height: min(210px, 40vh);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.015) 100%), rgba(2, 5, 14, 0.94);
@@ -96,8 +97,8 @@
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.22), 0 12px 36px rgba(0, 0, 0, 0.85);
   z-index: 6500;
   flex-direction: column;
-  padding: 5px;
-  gap: 3px;
+  padding: 3px;
+  gap: 2px;
   box-sizing: border-box;
   animation: cddSlideDown 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -123,9 +124,9 @@
   border-left: 2px solid transparent;
   color: var(--color-moon-mist);
   font-family: var(--font-untitled-sans);
-  font-size: 0.70rem;
+  font-size: 0.66rem;
   font-weight: 500;
-  padding: 6px 12px;
+  padding: 4px 8px;
   text-align: left;
   cursor: pointer;
   border-radius: var(--radius-badge);
@@ -184,18 +185,18 @@
   .custom-dropdown-trigger {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-    font-size: 0.68rem;
-    height: 28px;
-    padding: 3px 8px;
+    font-size: 0.66rem;
+    height: 26px;
+    padding: 2px 7px;
   }
   .custom-dropdown-menu {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background: #040916 !important;
-    max-width: min(290px, calc(100vw - 16px));
+    max-width: min(200px, calc(100vw - 16px));
   }
   .custom-dropdown-opt {
-    font-size: 0.66rem;
-    padding: 5px 8px;
+    font-size: 0.64rem;
+    padding: 4px 6px;
   }
 }

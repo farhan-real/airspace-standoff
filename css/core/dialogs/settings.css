@@ -6,12 +6,12 @@
   backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-modal);
-  width: 95%;
-  max-width: 780px;
-  height: 82vh;
-  height: 82dvh;
+  width: 90%;
+  max-width: 580px;
+  height: 80vh;
+  height: 80dvh;
   min-height: 0;
-  max-height: 650px;
+  max-height: 600px;
   display: flex;
   flex-direction: column;
   box-shadow: var(--glass-shadow);
@@ -25,7 +25,7 @@
   justify-content: space-between;
   align-items: center;
   background: var(--glass-bg);
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-bottom: 1px solid var(--glass-border);
   flex-shrink: 0;
   min-width: 0;
@@ -33,28 +33,28 @@
 }
 
 .settings-header h2 {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--color-ice-highlight);
   background: var(--gradient-ice-highlight);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 600;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   font-family: var(--font-aeonikpro);
 }
 
 .settings-header .hud-btn.small {
   flex-shrink: 0;
-  min-width: 32px;
+  min-width: 30px;
 }
 
 .settings-nav-tabs {
   display: flex;
   background: rgba(0, 0, 0, 0.4);
   border-bottom: 1px solid var(--glass-border);
-  padding: 6px 14px 0 14px;
-  gap: 5px;
+  padding: 5px 10px 0 10px;
+  gap: 4px;
   flex-shrink: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -70,10 +70,10 @@
   border-bottom: none;
   color: var(--color-moon-mist);
   font-family: var(--font-untitled-sans);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 500;
-  padding: 6px 14px;
-  border-radius: 6px 6px 0 0;
+  padding: 5px 12px;
+  border-radius: 5px 5px 0 0;
   cursor: pointer;
   transition: all 0.12s ease;
   white-space: nowrap;
@@ -92,11 +92,11 @@
 }
 
 .settings-body {
-  padding: 14px 16px;
+  padding: 12px 14px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
   flex: 1 1 auto;
   min-height: 0;
   box-sizing: border-box;
@@ -107,7 +107,7 @@
   justify-content: space-between;
   align-items: center;
   background: var(--glass-bg);
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-top: 1px solid var(--glass-border);
   flex-shrink: 0;
   gap: 8px;
@@ -116,7 +116,7 @@
 .keybinds-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-badge);
@@ -125,7 +125,7 @@
 
 .keybinds-table th {
   text-align: left;
-  padding: 8px 12px;
+  padding: 7px 10px;
   background: var(--glass-bg);
   color: var(--color-frost-glow);
   border-bottom: 1px solid var(--glass-border);
@@ -133,7 +133,7 @@
 }
 
 .keybinds-table td {
-  padding: 7px 12px;
+  padding: 6px 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
@@ -142,12 +142,12 @@
   border: 1px solid var(--glass-border);
   color: var(--color-pure-white);
   font-family: var(--font-dotdigital);
-  font-size: 0.66rem;
+  font-size: 0.64rem;
   font-weight: 500;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: var(--radius-btn);
   cursor: pointer;
-  min-width: 80px;
+  min-width: 74px;
   text-align: center;
   transition: all 0.14s ease;
   flex-shrink: 0;
@@ -172,8 +172,8 @@
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 10px 14px;
-  gap: 12px;
+  padding: 8px 12px;
+  gap: 10px;
   flex-shrink: 0;
   box-sizing: border-box;
 }
@@ -181,14 +181,14 @@
 .settings-label-group {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
   flex: 1 1 auto;
 }
 
 .settings-label-group label {
   display: block;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--color-pure-white);
   letter-spacing: 0.4px;
@@ -196,22 +196,22 @@
 
 .settings-hint {
   display: block;
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   color: var(--color-moon-mist);
 }
 
 .slider-val-box {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .slider-num {
-  font-size: 0.70rem;
+  font-size: 0.68rem;
   font-weight: 600;
   color: var(--stat-tier-2);
-  min-width: 38px;
+  min-width: 34px;
   text-align: right;
   font-family: var(--font-dotdigital);
 }
@@ -219,7 +219,7 @@
 .settings-slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 140px;
+  width: 120px;
   height: 5px;
   background: rgba(255, 255, 255, 0.15);
   outline: none;
@@ -251,41 +251,41 @@
 
 @media (max-width: 768px) {
   .settings-window {
-    width: 98vw;
-    height: 94vh;
-    height: 94dvh;
-    max-height: 94dvh;
+    width: 95vw;
+    height: 90vh;
+    height: 90dvh;
+    max-height: 90dvh;
     min-height: 0;
     border-radius: var(--radius-card);
   }
   .settings-header {
-    padding: 8px 10px;
+    padding: 7px 9px;
   }
   .settings-body {
-    padding: 10px;
+    padding: 8px;
   }
   .settings-form-row {
-    padding: 8px 10px;
+    padding: 7px 9px;
   }
   .settings-slider {
-    width: 100px;
+    width: 90px;
   }
 }
 
 @media (max-height: 550px) {
   .settings-window {
-    height: 96vh;
-    height: 96dvh;
-    max-height: 96dvh;
+    height: 94vh;
+    height: 94dvh;
+    max-height: 94dvh;
     min-height: 0;
   }
   .settings-header {
-    padding: 6px 10px;
+    padding: 5px 8px;
   }
   .settings-body {
-    padding: 6px 10px;
+    padding: 5px 8px;
   }
   .settings-footer {
-    padding: 6px 10px;
+    padding: 5px 8px;
   }
 }

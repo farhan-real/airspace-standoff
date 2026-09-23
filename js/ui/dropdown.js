@@ -93,11 +93,11 @@ class CustomDropdown {
       if (!isOpen) {
         wrapper.classList.add('open');
 
-        // Smart dynamic viewport positioning for Android and mobile screens
+        // Smart dynamic viewport positioning: prevent overly wide menus and avoid screen clipping
         const rect = trigger.getBoundingClientRect();
         const screenW = window.innerWidth || document.documentElement.clientWidth || 360;
         const screenH = window.innerHeight || document.documentElement.clientHeight || 600;
-        const estimatedWidth = Math.max(menu.offsetWidth || 180, 200);
+        const estimatedWidth = Math.min(menu.offsetWidth || 160, 200);
 
         if (rect.left + estimatedWidth > screenW - 10) {
           menu.style.left = 'auto';
@@ -108,12 +108,12 @@ class CustomDropdown {
         }
 
         const spaceBelow = screenH - rect.bottom;
-        const estimatedHeight = Math.min(menu.scrollHeight || 180, 220);
+        const estimatedHeight = Math.min(menu.scrollHeight || 160, 200);
         if (spaceBelow < estimatedHeight && rect.top > estimatedHeight) {
           menu.style.top = 'auto';
-          menu.style.bottom = 'calc(100% + 6px)';
+          menu.style.bottom = 'calc(100% + 5px)';
         } else {
-          menu.style.top = 'calc(100% + 6px)';
+          menu.style.top = 'calc(100% + 5px)';
           menu.style.bottom = 'auto';
         }
       } else {

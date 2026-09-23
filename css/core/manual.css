@@ -4,11 +4,11 @@
   background: rgba(3, 7, 18, 0.96);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-modal);
-  width: 96vw;
-  max-width: 1200px;
-  height: 92vh;
-  height: 92dvh;
-  max-height: 92dvh;
+  width: 90vw;
+  max-width: 860px;
+  height: 90vh;
+  height: 90dvh;
+  max-height: 90dvh;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -23,7 +23,7 @@
   justify-content: space-between;
   align-items: center;
   background: var(--glass-bg);
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-bottom: 1px solid var(--glass-border);
   flex-shrink: 0;
   gap: 8px;
@@ -31,14 +31,14 @@
 }
 
 .glossary-header h2 {
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   color: var(--color-ice-highlight);
   background: var(--gradient-ice-highlight);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 600;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   font-family: var(--font-aeonikpro);
   white-space: nowrap;
   overflow: hidden;
@@ -48,7 +48,7 @@
 
 .glossary-header .hud-btn.small {
   flex-shrink: 0;
-  min-width: 32px;
+  min-width: 30px;
 }
 
 .manual-toolbar {
@@ -56,15 +56,15 @@
   flex-direction: column;
   background: rgba(0, 0, 0, 0.4);
   border-bottom: 1px solid var(--glass-border);
-  padding: 8px 12px;
-  gap: 8px;
+  padding: 7px 10px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .manual-search-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
 }
 
@@ -74,8 +74,8 @@
   border: 1px solid var(--glass-border);
   color: var(--color-pure-white);
   font-family: var(--font-untitled-sans);
-  font-size: 0.74rem;
-  padding: 7px 12px;
+  font-size: 0.72rem;
+  padding: 6px 10px;
   border-radius: var(--radius-input);
   outline: none;
   -webkit-user-select: text !important;
@@ -102,11 +102,11 @@
 }
 
 .manual-search-count {
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   font-family: var(--font-dotdigital);
   color: var(--color-frost-glow);
   font-weight: 600;
-  padding: 0 6px;
+  padding: 0 5px;
   white-space: nowrap;
 }
 
@@ -115,11 +115,11 @@
   border: 1px solid var(--glass-border);
   color: var(--color-frost-glow);
   font-family: var(--font-dotdigital);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 600;
-  height: 28px;
-  min-width: 28px;
-  padding: 0 6px;
+  height: 26px;
+  min-width: 26px;
+  padding: 0 5px;
   border-radius: var(--radius-btn);
   cursor: pointer;
   display: inline-flex;
@@ -163,7 +163,7 @@ mark.manual-search-hl.current {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   overflow-x: auto;
   white-space: nowrap;
   padding-bottom: 2px;
@@ -179,9 +179,9 @@ mark.manual-search-hl.current {
   border: 1px solid var(--glass-border);
   color: var(--color-moon-mist);
   font-family: var(--font-untitled-sans);
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   font-weight: 500;
-  padding: 4px 10px;
+  padding: 4px 8px;
   border-radius: var(--radius-btn);
   cursor: pointer;
   transition: all 0.12s ease;
@@ -223,11 +223,11 @@ mark.manual-search-hl.current {
 }
 
 .glossary-content {
-  padding: 14px 16px;
+  padding: 12px 14px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   -webkit-overflow-scrolling: touch;
   min-height: 0;
   flex: 1 1 auto;
@@ -237,10 +237,10 @@ mark.manual-search-hl.current {
   background: var(--liquid-glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 14px 16px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   content-visibility: auto;
   contain-intrinsic-size: 400px;
@@ -251,28 +251,28 @@ mark.manual-search-hl.current {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  font-size: 0.95rem;
+  font-size: 0.90rem;
   font-weight: 600;
   color: var(--color-ice-highlight);
   font-family: var(--font-aeonikpro);
   letter-spacing: 0.5px;
   border-bottom: 1px solid var(--glass-border);
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 
 .manual-classified-badge, .manual-ref-badge {
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   font-family: var(--font-dotdigital);
   font-weight: 600;
   letter-spacing: 0.8px;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: var(--radius-badge);
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   flex-shrink: 0;
 }
 
@@ -289,48 +289,48 @@ mark.manual-search-hl.current {
 }
 
 .ge-subhead {
-  font-size: 0.80rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--color-ice-highlight);
   font-family: var(--font-untitled-sans);
-  margin-top: 8px;
+  margin-top: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .ge-content, .ge-desc {
-  font-size: 0.80rem;
+  font-size: 0.78rem;
   color: var(--color-moon-mist);
-  line-height: 1.65;
+  line-height: 1.6;
 }
 
 .ge-card {
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 10px 14px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   contain: layout style;
 }
 
 .ge-grid-2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 7px;
 }
 
 .ge-formula-card {
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 10px 14px;
+  padding: 8px 12px;
   font-family: var(--font-dotdigital);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   color: var(--stat-tier-2);
   display: flex;
   flex-direction: column;
@@ -338,11 +338,11 @@ mark.manual-search-hl.current {
 }
 
 .ge-formula-code {
-  font-size: 0.82rem;
+  font-size: 0.80rem;
   font-weight: 600;
   color: #ffffff;
   background: var(--glass-bg);
-  padding: 5px 10px;
+  padding: 4px 8px;
   border-radius: var(--radius-badge);
   border-left: 2px solid var(--stat-tier-2);
 }
@@ -360,14 +360,14 @@ mark.manual-search-hl.current {
 .ge-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-family: var(--font-untitled-sans);
-  min-width: 540px;
+  min-width: 520px;
 }
 
 .ge-table th {
   text-align: left;
-  padding: 8px 12px;
+  padding: 7px 10px;
   background: var(--glass-bg);
   color: var(--color-frost-glow);
   font-weight: 600;
@@ -376,10 +376,10 @@ mark.manual-search-hl.current {
 }
 
 .ge-table td {
-  padding: 7px 12px;
+  padding: 6px 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--color-moon-mist);
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 .ge-table tr:hover td {
@@ -389,58 +389,58 @@ mark.manual-search-hl.current {
 .manual-inline-ico {
   display: inline-block;
   vertical-align: middle;
-  margin: 0 3px;
+  margin: 0 2px;
   object-fit: contain;
 }
 
 .manual-chevron-ico {
   display: inline-block;
   vertical-align: middle;
-  margin-right: 5px;
+  margin-right: 4px;
   transform: rotate(-90deg);
 }
 
 .manual-key-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-badge);
-  padding: 2px 6px;
+  padding: 2px 5px;
   color: var(--color-frost-glow);
   font-family: var(--font-dotdigital);
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   font-weight: 600;
 }
 
 @media (max-width: 1024px) {
   .glossary-window {
-    width: 98vw;
-    max-width: 98vw;
-    height: 94vh;
-    height: 94dvh;
-    max-height: 94dvh;
+    width: 95vw;
+    max-width: 95vw;
+    height: 92vh;
+    height: 92dvh;
+    max-height: 92dvh;
     border-radius: var(--radius-card);
   }
   .glossary-header {
-    padding: 8px 10px;
+    padding: 7px 9px;
   }
   .glossary-header h2 {
-    font-size: 0.88rem;
+    font-size: 0.86rem;
   }
-  .glossary-content { padding: 10px; gap: 10px; }
-  .ge-title { font-size: 0.86rem; gap: 8px; }
+  .glossary-content { padding: 8px; gap: 8px; }
+  .ge-title { font-size: 0.84rem; gap: 6px; }
   .ge-grid-2 { grid-template-columns: 1fr; }
 }
 
 @media (max-height: 550px) {
   .glossary-window {
-    height: 96vh;
-    height: 96dvh;
-    max-height: 96dvh;
+    height: 94vh;
+    height: 94dvh;
+    max-height: 94dvh;
   }
   .glossary-header {
-    padding: 6px 10px;
+    padding: 5px 8px;
   }
 }

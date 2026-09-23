@@ -8,15 +8,15 @@
   backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 10px 14px;
+  padding: 8px 12px;
   color: var(--color-pure-white);
   font-family: var(--font-untitled-sans);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   box-shadow: var(--glass-shadow);
-  width: 340px;
-  min-width: 280px;
-  max-width: min(380px, 92vw);
-  max-height: min(85vh, 480px);
+  width: 280px;
+  min-width: 240px;
+  max-width: min(310px, 90vw);
+  max-height: min(80vh, 420px);
   overflow-y: auto;
   display: none;
   z-index: 9999999 !important;
@@ -32,15 +32,15 @@ body.has-touch .hud-tooltip-box.touch-pinned {
   display: none;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   border-bottom: 1px solid var(--glass-border);
-  padding-bottom: 6px;
+  padding-bottom: 5px;
 }
 
 body.has-touch .tt-touch-close-bar { display: flex; }
 
 .tt-touch-title {
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   color: var(--theme-accent);
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -51,9 +51,9 @@ body.has-touch .tt-touch-close-bar { display: flex; }
   border: 1px solid rgba(244, 63, 94, 0.35);
   color: #fecdd3;
   font-family: var(--font-untitled-sans);
-  font-size: 0.60rem;
+  font-size: 0.58rem;
   font-weight: 500;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: var(--radius-btn);
   cursor: pointer;
 }
@@ -73,18 +73,18 @@ body.has-touch .tt-touch-close-bar { display: flex; }
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .tt-title {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--color-ice-highlight);
   letter-spacing: 0.3px;
 }
 
 .tt-cost-tag {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--stat-tier-2);
   font-family: var(--font-dotdigital);
@@ -96,16 +96,16 @@ body.has-touch .tt-touch-close-bar { display: flex; }
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--glass-border);
-  padding-bottom: 5px;
-  margin-bottom: 8px;
-  font-size: 0.62rem;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+  font-size: 0.60rem;
 }
 
 .tt-role-text { color: var(--color-moon-mist); font-weight: 500; }
 
 .tt-badge {
-  font-size: 0.60rem;
-  padding: 2px 6px;
+  font-size: 0.58rem;
+  padding: 1px 5px;
   border-radius: var(--radius-badge);
   font-weight: 600;
   text-transform: uppercase;
@@ -128,18 +128,18 @@ body.has-touch .tt-touch-close-bar { display: flex; }
 .tt-grid-box {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px 8px;
+  gap: 4px 6px;
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-input);
-  padding: 6px 8px;
-  margin-bottom: 6px;
+  padding: 5px 7px;
+  margin-bottom: 5px;
 }
 
 .tt-cell {
   display: flex;
   justify-content: space-between;
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   color: var(--color-moon-mist);
 }
 
@@ -150,10 +150,10 @@ body.has-touch .tt-touch-close-bar { display: flex; }
   border: 1px solid var(--glass-border);
   border-left: 3px solid var(--theme-accent);
   border-radius: var(--radius-badge);
-  padding: 5px 8px;
-  font-size: 0.64rem;
-  margin-bottom: 5px;
-  line-height: 1.45;
+  padding: 4px 7px;
+  font-size: 0.62rem;
+  margin-bottom: 4px;
+  line-height: 1.4;
 }
 
 .tt-counter-pill {
@@ -161,29 +161,29 @@ body.has-touch .tt-touch-close-bar { display: flex; }
   border: 1px solid rgba(244, 63, 94, 0.25);
   border-left: 3px solid #f43f5e;
   border-radius: var(--radius-badge);
-  padding: 5px 8px;
-  font-size: 0.64rem;
+  padding: 4px 7px;
+  font-size: 0.62rem;
   color: #fecdd3;
-  margin-bottom: 5px;
-  line-height: 1.45;
+  margin-bottom: 4px;
+  line-height: 1.4;
 }
 
 .tt-footer-desc {
-  font-size: 0.66rem;
+  font-size: 0.64rem;
   color: var(--color-moon-mist);
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
 @media (max-width: 1024px) {
   body.has-touch .hud-tooltip-box.touch-pinned {
     position: fixed !important;
-    bottom: max(10px, env(safe-area-inset-bottom, 10px)) !important;
+    bottom: max(8px, env(safe-area-inset-bottom, 8px)) !important;
     left: 50% !important;
     top: auto !important;
     transform: translateX(-50%) !important;
-    width: min(440px, 94vw) !important;
-    max-width: 94vw !important;
-    max-height: 60vh !important;
+    width: min(340px, 92vw) !important;
+    max-width: 92vw !important;
+    max-height: 55vh !important;
     border-radius: var(--radius-card) !important;
   }
 }

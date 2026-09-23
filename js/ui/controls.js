@@ -135,18 +135,13 @@ class ControlsSystem {
   }
 
   initMobileControls() {
-    const prevBtn = document.getElementById('btn-mobile-prev-unit');
-    const nextBtn = document.getElementById('btn-mobile-next-unit');
-    if (prevBtn) prevBtn.onclick = () => this.cycleFriendlyUnit(-1);
-    if (nextBtn) nextBtn.onclick = () => this.cycleFriendlyUnit(1);
-
     const openFleetBtn = document.getElementById('btn-mobile-open-fleet');
     const closeFleetBtn = document.getElementById('btn-close-fleet-drawer');
     const fleetPane = document.getElementById('pane-fleet');
 
-    const openDrawer = () => {
+    const toggleDrawer = () => {
       if (fleetPane) {
-        fleetPane.classList.add('drawer-open');
+        fleetPane.classList.toggle('drawer-open');
         this.game.avionics.renderFlightRoster();
       }
     };
@@ -154,7 +149,7 @@ class ControlsSystem {
       if (fleetPane) fleetPane.classList.remove('drawer-open');
     };
 
-    if (openFleetBtn) openFleetBtn.onclick = openDrawer;
+    if (openFleetBtn) openFleetBtn.onclick = toggleDrawer;
     if (closeFleetBtn) closeFleetBtn.onclick = closeDrawer;
 
     const steerLeft = document.getElementById('mobile-steer-left');

@@ -3,17 +3,21 @@
 .radar-flight-hud {
   position: absolute;
   top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 16px;
+  transform: none;
   display: flex;
   align-items: stretch;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 6px;
   z-index: 7;
   pointer-events: none;
   font-family: var(--font-dotdigital);
   width: auto;
-  max-width: 90%;
+  max-width: calc(100% - 110px);
+}
+
+body.safe-zone-on .radar-flight-hud {
+  left: max(16px, var(--safe-zone-inset, 0px)) !important;
 }
 
 .rfh-panel {
@@ -65,7 +69,14 @@
   font-weight: 600;
 }
 
-.rfh-center {
+.rfh-alt,
+.rfh-speed {
+  min-width: 76px;
+  padding: 4px 10px;
+}
+
+.rfh-center,
+.rfh-details {
   min-width: 210px;
   max-width: 260px;
   padding: 4px 12px;
@@ -146,11 +157,48 @@
 @media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
   .radar-flight-hud {
     top: 6px !important;
+    left: 12px !important;
+    transform: none !important;
     gap: 5px !important;
   }
 
   .rfh-panel {
     padding: 3px 8px !important;
     min-height: 48px !important;
+  }
+}
+
+@media (max-width: 1024px) and (orientation: portrait) {
+  .radar-flight-hud {
+    top: 6px !important;
+    left: 8px !important;
+    transform: none !important;
+    gap: 3px !important;
+    max-width: calc(100% - 80px) !important;
+  }
+
+  .rfh-panel {
+    padding: 2px 5px !important;
+  }
+
+  .rfh-alt,
+  .rfh-speed {
+    min-width: 60px !important;
+    padding: 2px 4px !important;
+  }
+
+  .rfh-center,
+  .rfh-details {
+    min-width: 120px !important;
+    max-width: 148px !important;
+    padding: 2px 4px !important;
+  }
+
+  .rfh-num {
+    font-size: 0.80rem !important;
+  }
+
+  .rfh-cs {
+    font-size: 0.64rem !important;
   }
 }

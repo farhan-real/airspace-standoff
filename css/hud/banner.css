@@ -237,40 +237,7 @@ body.safe-zone-on .tactical-banner {
   font-weight: 600;
 }
 
-/* Hide mobile controls on desktop to prevent horizontal banner blowout */
-@media (min-width: 1025px) {
-  .banner-nav-cluster {
-    display: none !important;
-  }
-}
-
-.banner-nav-cluster {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.mob-craft-cycler {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
-}
-
-.mob-craft-cycler .hud-btn {
-  padding: 3px 8px;
-  font-size: 0.64rem;
-  height: 26px;
-}
-
-.fleet-btn {
-  height: 26px !important;
-  font-size: 0.64rem !important;
-  font-weight: 600 !important;
-  padding: 3px 10px !important;
-}
-
+/* Camera controls: visible on desktop, hidden on Android and touch/mobile */
 .banner-cam-controls {
   display: flex;
   align-items: center;
@@ -303,6 +270,19 @@ body.safe-zone-on .tactical-banner {
   border-color: var(--glass-border-hover);
 }
 
+/* Fully remove camera controls on Android (APK and web) and all mobile/touch devices */
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
+  .banner-cam-controls {
+    display: none !important;
+  }
+}
+
+.is-android .banner-cam-controls,
+.is-android-apk .banner-cam-controls,
+body.has-touch .banner-cam-controls {
+  display: none !important;
+}
+
 .top-quick-actions {
   display: flex;
   align-items: center;
@@ -313,7 +293,7 @@ body.safe-zone-on .tactical-banner {
 
 .top-quick-actions .hud-btn {
   height: 26px;
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   padding: 3px 8px;
 }
 

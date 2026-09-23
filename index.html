@@ -238,7 +238,7 @@
   <div class="inspect-window" style="max-width: 440px; text-align: center;">
     <div class="inspect-header" style="background: rgba(244, 63, 94, 0.12);"><h2 style="color: #fca5a5;">ABORT MISSION?</h2></div>
     <div class="inspect-body" style="gap:12px; padding: 18px;">
-      <p style="font-size:0.80rem; color: var(--color-moon-mist);">Abort current mission and review the debriefing log?</p>
+      <p style="font-size:0.76rem; color: var(--color-moon-mist);">Abort current mission and review the debriefing log?</p>
       <div style="display:flex; justify-content:center; gap:10px;">
         <button id="btn-confirm-abort" class="hud-btn alert">ABORT MISSION</button>
         <button id="btn-cancel-abort" class="hud-btn">CANCEL</button>
@@ -398,20 +398,7 @@
       </div>
     </div>
 
-    <!-- SQUADRON CYCLER & FLEET BUTTON -->
-    <div class="banner-nav-cluster">
-      <div class="mob-craft-cycler">
-        <button type="button" id="btn-mobile-prev-unit" class="hud-btn small">
-          <img src="icons/arrowleft.svg" width="11" height="11" alt="Prev">
-        </button>
-        <button type="button" id="btn-mobile-next-unit" class="hud-btn small">
-          <img src="icons/arrowright.svg" width="11" height="11" alt="Next">
-        </button>
-      </div>
-      <button type="button" id="btn-mobile-open-fleet" class="hud-btn small highlight fleet-btn">ROSTER</button>
-    </div>
-
-    <!-- CAMERA CONTROLS -->
+    <!-- CAMERA CONTROLS (DESKTOP ONLY) -->
     <div class="banner-cam-controls" id="radar-cam-left-dock">
       <button id="cam-btn-zoom-in" class="cam-btn" title="Zoom In">+</button>
       <button id="cam-btn-zoom-out" class="cam-btn" title="Zoom Out">-</button>
@@ -429,10 +416,6 @@
       <button id="btn-hud-glossary" class="hud-btn small">
         <img src="icons/manual.svg" class="btn-vector-ico" width="11" height="11" alt="Manual">
         <span>MANUAL</span>
-      </button>
-      <button id="btn-hud-leaderboard" class="hud-btn small highlight" title="Sortie Hall of Fame">
-        <img src="icons/leaderboard.svg" class="btn-vector-ico" width="11" height="11" alt="Leaderboard">
-        <span>LEADERBOARD</span>
       </button>
       <button id="btn-open-settings" class="hud-btn small">
         <img src="icons/settings.svg" class="btn-vector-ico" width="11" height="11" alt="Settings">
@@ -462,9 +445,20 @@
     <main class="radar-viewport pane-item active" id="pane-radar">
       <canvas id="radar-canvas"></canvas>
 
-      <!-- FLIGHT DATA TAPE -->
+      <!-- FLIGHT DATA TAPE: ALTITUDE, SPEED, DETAILS -->
       <div class="radar-flight-hud" id="radar-flight-hud">
-        <div class="rfh-panel rfh-left" title="Indicated Mach and Airspeed">
+        <!-- 1. ALTITUDE -->
+        <div class="rfh-panel rfh-alt" title="Flight Level Altitude & Vertical Speed Indicator">
+          <span class="rfh-label">ALTITUDE</span>
+          <div class="rfh-val-box">
+            <span id="hud-alt-main" class="rfh-num">FL000</span>
+            <span id="hud-alt-arrow" class="rfh-arrow">--</span>
+          </div>
+          <span id="hud-vsi" class="rfh-sub">0 fpm LVL</span>
+        </div>
+
+        <!-- 2. SPEED -->
+        <div class="rfh-panel rfh-speed" title="Indicated Mach and Airspeed">
           <span class="rfh-label">AIRSPEED</span>
           <div class="rfh-val-box">
             <span id="hud-speed-main" class="rfh-num">M 0.00</span>
@@ -473,7 +467,8 @@
           <span id="hud-speed-sub" class="rfh-sub">0 km/h</span>
         </div>
 
-        <div class="rfh-panel rfh-center" title="Aircraft, Heading & Turn Performance">
+        <!-- 3. DETAILS -->
+        <div class="rfh-panel rfh-center rfh-details" title="Aircraft, Heading & Turn Performance">
           <div class="rfh-center-top">
             <span id="hud-unit-callsign" class="rfh-cs">NO AIRCRAFT SELECTED</span>
             <span id="hud-unit-model" class="rfh-model">--</span>
@@ -487,15 +482,6 @@
             </div>
           </div>
         </div>
-
-        <div class="rfh-panel rfh-right" title="Flight Level Altitude & Vertical Speed Indicator">
-          <span class="rfh-label">ALTITUDE</span>
-          <div class="rfh-val-box">
-            <span id="hud-alt-main" class="rfh-num">FL000</span>
-            <span id="hud-alt-arrow" class="rfh-arrow">--</span>
-          </div>
-          <span id="hud-vsi" class="rfh-sub">0 fpm LVL</span>
-        </div>
       </div>
 
       <!-- RWR WARNING -->
@@ -505,11 +491,14 @@
         <span id="rwr-threat-detail" class="rwr-subtext">NO EMISSIONS</span>
       </div>
 
-      <!-- RADAR LAYER TOGGLES -->
+      <!-- RADAR LAYER TOGGLES (DECLUTTER & GROUND IN ORIGINAL POSITION) -->
       <div class="radar-floating-cam-bar" id="radar-floating-cam-bar">
         <button id="cam-btn-declutter" class="cam-btn declutter-btn prominent-cam-btn">DECLUTTER: OFF</button>
         <button id="cam-btn-ground" class="cam-btn ground-toggle-btn prominent-cam-btn">GROUND: OFF</button>
       </div>
+
+      <!-- SEPARATED FLEET BUTTON (RIGHT OF DECLUTTER & GROUND) -->
+      <button type="button" id="btn-mobile-open-fleet" class="cam-btn fleet-btn prominent-cam-btn">FLEET</button>
 
       <!-- MOBILE STEERING OVERLAY -->
       <div class="mobile-steering-overlay">
@@ -615,7 +604,7 @@
 
       <div class="aar-full-roster-box">
         <div class="aar-roster-toggle-row">
-          <span class="strip-subhead" style="color: var(--color-ice-highlight); margin:0;">PARTICIPATING AIRCRAFT &bull; STATUS REPORT</span>
+          <span class="strip-subhead" style="color: var(--color-ice-highlight); margin:0; border-bottom: none;">PARTICIPATING AIRCRAFT &bull; STATUS REPORT</span>
           <button type="button" id="btn-toggle-aar-roster" class="hud-btn small">COLLAPSE</button>
         </div>
         <div id="aar-full-roster-content" class="aar-roster-content" style="max-height: 180px; overflow-y: auto;"></div>

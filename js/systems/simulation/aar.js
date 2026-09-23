@@ -21,9 +21,9 @@ class AfterActionReportSystem {
 
     if (tEl) {
       tEl.textContent = blueWon ? 'MISSION SUCCESSFUL' : 'MISSION ABORTED';
-      tEl.style.color = blueWon ? '#00f0ff' : '#ff3366';
+      tEl.style.color = blueWon ? 'var(--color-ice-highlight)' : 'var(--color-red)';
     }
-    if (dEl) dEl.textContent = msg || 'AFTER ACTION REPORT';
+    if (dEl) dEl.textContent = msg || 'OPERATIONAL SUMMARY';
 
     const allPilots = [...game.alliedAircraft, ...game.hostileAircraft];
     allPilots.sort((a, b) => (b.scorePoints || 0) - (a.scorePoints || 0));
@@ -35,7 +35,7 @@ class AfterActionReportSystem {
       podiumEl.innerHTML = topThree.map((p, idx) => {
         const rankClass = 'rank-' + (idx + 1);
         const teamName = p.team === 'friendly' ? 'BLUE' : 'RED';
-        const teamColor = p.isAce ? '#ffd700' : (p.team === 'friendly' ? '#00f0ff' : '#ff3366');
+        const teamColor = p.isAce ? '#ffd700' : (p.team === 'friendly' ? 'var(--theme-accent)' : 'var(--color-red)');
         const teamTag = p.isAce ? `${teamName} ACE` : teamName;
 
         return `
@@ -55,20 +55,28 @@ class AfterActionReportSystem {
 
     if (fullRosterContainer) {
       const rowsHtml = allPilots.map((p, i) => {
-        const col = p.team === 'friendly' ? '#00f0ff' : '#ff3366';
+        const isBlue = (p.team === 'friendly');
+        const col = isBlue ? 'var(--theme-accent)' : 'var(--color-red)';
         const isAlive = p.hp > 0.05;
         const displayHp = isAlive ? Math.max(1, Math.round(p.hp)) : 0;
-        const statusStr = isAlive ? `<b style="color:#00f5a0;">SURVIVED (${displayHp} HP)</b>` : `<span style="color:#ef4444;">DESTROYED</span>`;
-        const aceBadge = p.isAce ? `<img src="icons/diamond.svg" width="10" height="10" alt="Ace" style="vertical-align:middle;margin-left:3px;" title="Ace Pilot">` : '';
+        const statusStr = isAlive
+          ? `<b style="color:var(--stat-tier-2);">SURVIVED (${displayHp} HP)</b>`
+          : `<span style="color:var(--color-red);">DESTROYED</span>`;
+        const aceBadge = p.isAce
+          ? `<img src="icons/diamond.svg" width="10" height="10" alt="Ace" style="vertical-align:middle;margin-left:3px;" title="Ace Pilot">`
+          : '';
+        const rankClass = i === 0 ? 'rank-gold' : (i === 1 ? 'rank-silver' : (i === 2 ? 'rank-bronze' : 'rank-standard'));
+        const rowClass = i === 0 ? 'top-scoring-row' : '';
+
         return `
-          <tr>
-            <td>#${i + 1}</td>
-            <td style="color:${col};font-weight:800;">${p.callsign || 'PILOT'}${aceBadge}</td>
-            <td>${p.spec ? p.spec.id : 'AIRCRAFT'}</td>
-            <td><b style="color:${col};">[${p.team === 'friendly' ? 'BLUE' : 'RED'}]</b></td>
-            <td><b>${p.kills || 0}</b></td>
-            <td>${p.missilesEvadedCount || 0}</td>
-            <td><b>${p.scorePoints || 0}</b></td>
+          <tr class="${rowClass}">
+            <td><span class="leaderboard-rank-tag ${rankClass}">#${i + 1}</span></td>
+            <td style="color:${col};font-weight:700;">${p.callsign || 'PILOT'}${aceBadge}</td>
+            <td style="color:var(--color-moon-mist);">${p.spec ? p.spec.id : 'AIRCRAFT'}</td>
+            <td><b style="color:${col};">[${isBlue ? 'BLUE' : 'RED'}]</b></td>
+            <td style="color:#ffffff;font-family:var(--font-dotdigital);">${p.kills || 0}</td>
+            <td style="color:var(--color-moon-mist);font-family:var(--font-dotdigital);">${p.missilesEvadedCount || 0}</td>
+            <td style="color:var(--stat-tier-2);font-weight:700;font-family:var(--font-dotdigital);">${(p.scorePoints || 0).toLocaleString()}</td>
             <td>${statusStr}</td>
           </tr>
         `;
@@ -77,7 +85,16 @@ class AfterActionReportSystem {
       fullRosterContainer.innerHTML = `
         <table class="debrief-table">
           <thead>
-            <tr><th>NO.</th><th>CALLSIGN</th><th>AIRCRAFT</th><th>FORCE</th><th>HITS</th><th>EVADED</th><th>POINTS</th><th>STATUS</th></tr>
+            <tr>
+              <th>RANK</th>
+              <th>CALLSIGN</th>
+              <th>AIRCRAFT</th>
+              <th>FORCE</th>
+              <th>HITS</th>
+              <th>EVADED</th>
+              <th>POINTS</th>
+              <th>STATUS</th>
+            </tr>
           </thead>
           <tbody>${rowsHtml}</tbody>
         </table>
@@ -106,11 +123,11 @@ class AfterActionReportSystem {
                 <span class="aar-card-badge">LOG</span>
               </div>
               <div class="aar-metrics-table">
-                <div class="aar-metric-row"><span>MISSION DURATION:</span><b style="color:#00f0ff;">${timeStr}</b></div>
-                <div class="aar-metric-row"><span>SPEED TIME BONUS:</span><b style="color:#00f5a0;">+${timeBonus.toLocaleString()} VP</b></div>
+                <div class="aar-metric-row"><span>MISSION DURATION:</span><b style="color:var(--theme-accent);">${timeStr}</b></div>
+                <div class="aar-metric-row"><span>SPEED TIME BONUS:</span><b style="color:var(--stat-tier-2);">+${timeBonus.toLocaleString()} VP</b></div>
                 <div class="aar-metric-row"><span>ORDNANCE EXPENDED:</span><b style="color:#f8fafc;">${game.stats.missilesLaunched}</b></div>
-                <div class="aar-metric-row"><span>FRIENDLY LOSSES (BLUE):</span><b style="color:${game.stats.blueLosses > 0 ? '#ff3366' : '#00f5a0'};">${game.stats.blueLosses}</b></div>
-                <div class="aar-metric-row"><span>HOSTILE LOSSES (RED):</span><b style="color:#38bdf8;">${game.stats.redLosses}</b></div>
+                <div class="aar-metric-row"><span>FRIENDLY LOSSES (BLUE):</span><b style="color:${game.stats.blueLosses > 0 ? 'var(--color-red)' : 'var(--stat-tier-2)'};">${game.stats.blueLosses}</b></div>
+                <div class="aar-metric-row"><span>HOSTILE LOSSES (RED):</span><b style="color:var(--theme-accent);">${game.stats.redLosses}</b></div>
               </div>
             </div>
 
@@ -120,11 +137,11 @@ class AfterActionReportSystem {
                 <span class="aar-card-badge highlight">ASSESSMENT</span>
               </div>
               <div class="aar-metrics-table">
-                <div class="aar-metric-row"><span>BASE COMBAT VP:</span><b><span style="color:#38bdf8;">BLUE ${rawBlueScore.toLocaleString()}</span> : <span style="color:#ff3366;">RED ${game.vpHostile.toLocaleString()}</span></b></div>
-                <div class="aar-metric-row"><span>ADJUSTED BASE VP:</span><b style="color:#00f5a0;">${adjustedRawScore.toLocaleString()} VP</b></div>
-                <div class="aar-metric-row"><span>DIFFICULTY (${scoreData.diffKey}):</span><b style="color:#7dd3fc;">x${scoreData.diffMult.toFixed(2)} MULTIPLIER</b></div>
-                <div class="aar-metric-row"><span>BUDGET TIER (${scoreData.budgetCap}M):</span><b style="color:#ffb830;">x${scoreData.budgetMult.toFixed(2)} MULTIPLIER</b></div>
-                <div class="aar-metric-row"><span>FINAL MULTIPLIER:</span><b style="color:#00f5a0;">x${scoreData.totalMult.toFixed(2)} MULTIPLIER</b></div>
+                <div class="aar-metric-row"><span>BASE COMBAT VP:</span><b><span style="color:var(--theme-accent);">BLUE ${rawBlueScore.toLocaleString()}</span> : <span style="color:var(--color-red);">RED ${game.vpHostile.toLocaleString()}</span></b></div>
+                <div class="aar-metric-row"><span>ADJUSTED BASE VP:</span><b style="color:var(--stat-tier-2);">${adjustedRawScore.toLocaleString()} VP</b></div>
+                <div class="aar-metric-row"><span>DIFFICULTY (${scoreData.diffKey}):</span><b style="color:var(--theme-accent);">x${scoreData.diffMult.toFixed(2)} MULTIPLIER</b></div>
+                <div class="aar-metric-row"><span>BUDGET TIER (${scoreData.budgetCap}M):</span><b style="color:var(--stat-tier-3);">x${scoreData.budgetMult.toFixed(2)} MULTIPLIER</b></div>
+                <div class="aar-metric-row"><span>FINAL MULTIPLIER:</span><b style="color:var(--stat-tier-2);">x${scoreData.totalMult.toFixed(2)} MULTIPLIER</b></div>
               </div>
             </div>
           </div>

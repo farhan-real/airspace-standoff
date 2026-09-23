@@ -9,7 +9,8 @@
   width: 95%;
   max-width: 840px;
   height: 92vh;
-  max-height: 92vh;
+  height: 92dvh;
+  max-height: 92dvh;
   display: flex;
   flex-direction: column;
   box-shadow: var(--glass-shadow);
@@ -128,21 +129,44 @@
 
 .debrief-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.66rem;
+  font-family: var(--font-untitled-sans);
+}
+
+.debrief-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .debrief-table th {
   text-align: left;
-  padding: 6px 8px;
-  background: var(--glass-bg);
-  color: var(--color-frost-glow);
-  border-bottom: 1px solid var(--glass-border);
+  padding: 7px 8px;
+  background: rgba(4, 9, 22, 0.96);
+  color: var(--color-ice-highlight);
+  font-family: var(--font-dotdigital);
+  font-size: 0.60rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.4);
+  white-space: nowrap;
 }
 
 .debrief-table td {
   padding: 6px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--color-moon-mist);
+  white-space: nowrap;
+}
+
+.debrief-table tr.top-scoring-row {
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.debrief-table tr:hover td {
+  background: var(--glass-bg-hover);
 }
 
 .aar-report-section {
@@ -230,6 +254,12 @@
   box-shadow: 0 0 16px var(--theme-primary-dim);
 }
 
+.aar-score-banner.victory {
+  background: linear-gradient(90deg, rgba(2, 132, 199, 0.24) 0%, rgba(16, 185, 129, 0.14) 100%);
+  border: 1px solid var(--theme-accent);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.3);
+}
+
 .aar-score-banner.defeat {
   background: rgba(244, 63, 94, 0.15);
   border-color: rgba(244, 63, 94, 0.4);
@@ -315,7 +345,8 @@
   .game-over-dialog {
     width: 98vw;
     height: 96vh;
-    max-height: 96vh;
+    height: 96dvh;
+    max-height: 96dvh;
     border-radius: var(--radius-card);
   }
 }

@@ -3,6 +3,14 @@
  * Flight Lead spawns in formation center; mutual full detection in 2P mode.
  */
 
+if (typeof navigator !== 'undefined') {
+  const ua = navigator.userAgent || '';
+  if (/android/i.test(ua) || (navigator.userAgentData && navigator.userAgentData.platform === 'Android')) {
+    if (document.documentElement) document.documentElement.classList.add('is-android');
+    if (document.body) document.body.classList.add('is-android');
+  }
+}
+
 class AirspaceStandoffGame {
   constructor() {
     this.playerMode = '1P';
