@@ -154,12 +154,29 @@ class Aircraft {
     return pool[Math.floor(Math.random() * pool.length)];
   }
 
+  getEffectiveAgility() {
+    let agi = this.spec ? (this.spec.AGI_0 || 0.85) : 0.85;
+    if (this.turnBonus) agi += this.turnBonus;
+    if (this.thrustVector) agi *= 1.20;
+    if (this.isCoffin) agi *= 1.20;
+    if (this.Wr) agi *= Math.max(0.50, 1.0 - 0.25 * this.Wr);
+
+    let eturn = 1.0;
+    if (!this.isCoffin) {
+      const sOpt = (this.effectiveMaxSpeed || 0.95) * 0.65;
+      eturn = (typeof Physics !== 'undefined') ? Physics.calcTurnEfficiency(this.speed || 0.8, sOpt) : 0.85;
+      eturn = Math.max(0.40, eturn);
+    }
+    if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) {
+      eturn *= 0.70;
+    }
+    return agi * eturn;
+  }
+
   steerLeft(dt) {
     if (this.hp <= 0.05 || this.glocTimer > 0) return;
-    let agi = (this.spec ? this.spec.AGI_0 : 0.85) * (this.thrustVector ? 1.25 : 1.0);
-    if (this.isCoffin) agi *= 1.20;
-    if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) agi *= 0.70;
-    this.heading -= agi * 1.8 * dt;
+    const agi = this.getEffectiveAgility();
+    this.heading -= agi * 2.0 * dt;
     while (this.heading < 0) this.heading += Math.PI * 2;
     this.energy = Math.max(0.20, this.energy - 0.10 * dt);
     this.speed = Math.max(0.30, this.speed - 0.06 * dt);
@@ -168,10 +185,8 @@ class Aircraft {
 
   steerRight(dt) {
     if (this.hp <= 0.05 || this.glocTimer > 0) return;
-    let agi = (this.spec ? this.spec.AGI_0 : 0.85) * (this.thrustVector ? 1.25 : 1.0);
-    if (this.isCoffin) agi *= 1.20;
-    if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) agi *= 0.70;
-    this.heading += agi * 1.8 * dt;
+    const agi = this.getEffectiveAgility();
+    this.heading += agi * 2.0 * dt;
     while (this.heading >= Math.PI * 2) this.heading -= Math.PI * 2;
     this.energy = Math.max(0.20, this.energy - 0.10 * dt);
     this.speed = Math.max(0.30, this.speed - 0.06 * dt);

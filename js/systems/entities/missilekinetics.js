@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Guided Missile Kinematics & Terminal Impact Resolution
- * ProNav guidance with maneuver vulnerability, Doppler notch evasion, and impact-time hit resolution.
+ * ProNav guidance with maneuver vulnerability, Doppler notch evasion, and agility-driven hit resolution.
  */
 
 class MissileKinetics {
@@ -267,14 +267,19 @@ class MissileKinetics {
     if (aspectDiff > 2.2) aspectScore = 1.00;
     else if (aspectDiff < 0.8) aspectScore = 0.85;
 
+    const targetAgility = (typeof target.getEffectiveAgility === 'function')
+      ? target.getEffectiveAgility()
+      : ((target.spec && target.spec.AGI_0) ? target.spec.AGI_0 : 0.85);
+    const agilityScale = Math.max(0.35, Math.min(1.65, targetAgility / 0.85));
+
     const notchBonus = (target.isNotching && (w.seeker === 'ARH' || w.seeker === 'PASSIVE_RADAR'))
-      ? (missile.source && missile.source.hasIRST ? 0.16 : 0.38 * (1.0 - (w.antiNotchBonus || 0)))
+      ? (missile.source && missile.source.hasIRST ? 0.16 : 0.38 * (1.0 - (w.antiNotchBonus || 0)) * (0.6 + 0.4 * agilityScale))
       : 0.0;
     const chaffBonus = (target.cmTimer > 0)
       ? (w.seeker === 'ARH' ? 0.34 * (1.0 - (w.decoyResistance || w.flareResistance || 0)) : 0.18)
       : 0.0;
 
-    const primaryActiveEvasion = Math.max(activeManeuver, notchBonus, chaffBonus);
+    const primaryActiveEvasion = Math.max(activeManeuver * agilityScale, notchBonus, chaffBonus);
     const primaryPassiveBaseline = Math.max(
       target.isCoffin ? (target.coffinDodgeBonus || 0.25) : 0.0,
       target.isAce ? (target.aceEvasionBonus || 0.08) : 0.0,
@@ -294,7 +299,7 @@ class MissileKinetics {
       }
     }
 
-    let effectiveDefense = Math.min(0.72, primaryActiveEvasion + 0.30 * primaryPassiveBaseline);
+    let effectiveDefense = Math.min(0.75, primaryActiveEvasion + 0.30 * primaryPassiveBaseline);
     if (hasMixedSeekers) {
       effectiveDefense *= 0.55;
     }
@@ -314,12 +319,13 @@ class MissileKinetics {
 
     const heavyTargetAccuracyBonus = w.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
     const energyDeficitBonus = (1.0 - (target.energy !== undefined ? target.energy : 1.0)) * 0.25;
+    const agilityDefenseBonus = (targetAgility - 0.85) * 0.18;
 
-    const rawProb = (basePk * aspectScore) - effectiveDefense + salvoBonus + mixedSynergyBonus + afterburnerBonus + heavyTargetAccuracyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
+    const rawProb = (basePk * aspectScore) - effectiveDefense - agilityDefenseBonus + salvoBonus + mixedSynergyBonus + afterburnerBonus + heavyTargetAccuracyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
     if (isManeuvering) {
-      return Math.max(0.12, Math.min(0.95, rawProb));
+      return Math.max(0.10, Math.min(0.95, rawProb));
     }
-    const floor = (target.isAce ? 0.16 : (target.isCoffin ? 0.08 : (target.isFlightLead ? 0.10 : 0.14)));
+    const floor = (target.isAce ? 0.14 : (target.isCoffin ? 0.08 : (target.isFlightLead ? 0.10 : 0.12)));
     return Math.max(floor, Math.min(0.95, rawProb));
   }
 

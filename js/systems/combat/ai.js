@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Tactical AI Commander
- * Scaled difficulty curves; notching and advanced movement restricted to very high difficulties.
+ * Scaled difficulty curves; agility directly powers evasive turn rates and defensive success.
  */
 
 class TacticalAICommander {
@@ -127,32 +127,31 @@ class TacticalAICommander {
         const triggerDist = isStealth ? (blunderedDefense ? 4.5 : 6.5) : (blunderedDefense ? 7.5 : 11.0);
 
         if (nearest.distanceToTarget < triggerDist) {
-          // Doppler notching is strictly reserved for very high difficulties
+          const aceAgi = (typeof ace.getEffectiveAgility === 'function') ? ace.getEffectiveAgility() : (ace.spec ? ace.spec.AGI_0 : 1.15);
           if (isVeryHighDiff && isRadar && !blunderedDefense) {
             const perpHeading = nearest.heading + Math.PI / 2;
             let dAngle = perpHeading - ace.heading;
             while (dAngle < -Math.PI) dAngle += Math.PI * 2;
             while (dAngle > Math.PI) dAngle -= Math.PI * 2;
-            ace.heading += Math.max(-1.10 * dt, Math.min(1.10 * dt, dAngle));
+            ace.heading += Math.max(-aceAgi * 1.2 * dt, Math.min(aceAgi * 1.2 * dt, dAngle));
             if (Math.abs(dAngle) < 0.18) {
               ace.isNotching = true;
               ace.activeManeuverId = 'DOPPLER_NOTCH';
               ace.activeManeuverTimer = 6.0;
-              ace.activeManeuverBonus = 0.48;
+              ace.activeManeuverBonus = 0.48 * (aceAgi / 0.85);
               if (ace.chaff > 0 && ace.cmTimer <= 0) ace.deployCountermeasures();
             }
           } else {
-            // Standard break turn for all other difficulties
             const awayHeading = nearest.heading + (Math.random() < 0.5 ? 0.75 : -0.75);
             let dAngle = awayHeading - ace.heading;
             while (dAngle < -Math.PI) dAngle += Math.PI * 2;
             while (dAngle > Math.PI) dAngle -= Math.PI * 2;
-            const turnRateCap = (diffKey === 'CADET' ? 0.70 : (diffKey === 'VETERAN' ? 0.85 : 1.10));
+            const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.80 : (diffKey === 'VETERAN' ? 1.0 : 1.35));
             ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, dAngle));
             ace.isNotching = false;
             ace.activeManeuverId = 'BREAK_TURN';
             ace.activeManeuverTimer = 5.0;
-            ace.activeManeuverBonus = 0.38;
+            ace.activeManeuverBonus = 0.38 * (aceAgi / 0.85);
             ace.engineAlpha = blunderedDefense ? 0.75 : 0.50;
             if (ace.chaff > 0 && ace.cmTimer <= 0 && Math.random() < 0.45) ace.deployCountermeasures();
           }
@@ -168,7 +167,8 @@ class TacticalAICommander {
           let diff = interceptAngle - ace.heading;
           while (diff < -Math.PI) diff += Math.PI * 2;
           while (diff > Math.PI) diff -= Math.PI * 2;
-          const turnRateCap = (diffKey === 'CADET' ? 0.70 : (diffKey === 'VETERAN' ? 0.85 : 1.10));
+          const aceAgi = (typeof ace.getEffectiveAgility === 'function') ? ace.getEffectiveAgility() : (ace.spec ? ace.spec.AGI_0 : 1.15);
+          const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.75 : (diffKey === 'VETERAN' ? 0.95 : 1.30));
           ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, diff));
 
           if (this.aceSalvoTimer <= 0 && this.game.tokenBucketRed >= 0.70 && !ace.isRTB) {
@@ -209,23 +209,27 @@ class TacticalAICommander {
     const reactDistance = isStealth ? tier.stealthDist : tier.reactDist;
     if (nearestMsl.distanceToTarget > reactDistance) return;
 
-    if (Math.random() < tier.blunderChance) return;
+    const effAgi = (typeof hostile.getEffectiveAgility === 'function')
+      ? hostile.getEffectiveAgility()
+      : ((hostile.spec && hostile.spec.AGI_0) ? hostile.spec.AGI_0 : 0.85);
+    const agiFactor = Math.max(0.40, Math.min(1.60, effAgi / 0.85));
+
+    if (Math.random() < (tier.blunderChance / agiFactor)) return;
 
     const hasCm = (hostile.chaff > 0 || hostile.countermeasures > 0);
     if (nearestMsl.distanceToTarget < 5.0 && hasCm && hostile.cmTimer <= 0) {
-      if (Math.random() < tier.cmChance) hostile.deployCountermeasures();
+      if (Math.random() < (tier.cmChance * agiFactor)) hostile.deployCountermeasures();
     }
 
-    // Notching and advanced movement restricted strictly to very high difficulties
     if (!isVeryHighDiff || !profile.usesDopplerNotch) {
       const awayHeading = nearestMsl.heading + (Math.random() < 0.5 ? 0.75 : -0.75);
       let diff = awayHeading - hostile.heading;
       while (diff < -Math.PI) diff += Math.PI * 2;
       while (diff > Math.PI) diff -= Math.PI * 2;
-      const turnCap = (hostile.spec && hostile.spec.AGI_0 ? hostile.spec.AGI_0 : 0.8) * tier.turnMult;
+      const turnCap = effAgi * tier.turnMult;
       hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
       hostile.activeManeuverTimer = 5.0;
-      hostile.activeManeuverBonus = tier.bonus;
+      hostile.activeManeuverBonus = tier.bonus * agiFactor;
       hostile.activeManeuverId = 'BREAK_TURN';
       hostile.isNotching = false;
       return;
@@ -236,12 +240,11 @@ class TacticalAICommander {
       let diff = desiredPerp - hostile.heading;
       while (diff < -Math.PI) diff += Math.PI * 2;
       while (diff > Math.PI) diff -= Math.PI * 2;
-      const agi = (hostile.spec && hostile.spec.AGI_0) ? hostile.spec.AGI_0 : 0.85;
-      hostile.heading += Math.max(-agi * tier.turnMult * dt, Math.min(agi * tier.turnMult * dt, diff));
+      hostile.heading += Math.max(-effAgi * tier.turnMult * dt, Math.min(effAgi * tier.turnMult * dt, diff));
       if (Math.abs(diff) < 0.20) {
         hostile.isNotching = true;
         hostile.activeManeuverTimer = 6.0;
-        hostile.activeManeuverBonus = tier.bonus;
+        hostile.activeManeuverBonus = tier.bonus * agiFactor;
         hostile.activeManeuverId = 'DOPPLER_NOTCH';
       }
     }
@@ -290,8 +293,10 @@ class TacticalAICommander {
     while (diff < -Math.PI) diff += Math.PI * 2;
     while (diff > Math.PI) diff -= Math.PI * 2;
 
-    const agi = (hostile.spec && hostile.spec.AGI_0) ? hostile.spec.AGI_0 : 0.85;
-    const turnCap = agi * tier.turnMult;
+    const effAgi = (typeof hostile.getEffectiveAgility === 'function')
+      ? hostile.getEffectiveAgility()
+      : ((hostile.spec && hostile.spec.AGI_0) ? hostile.spec.AGI_0 : 0.85);
+    const turnCap = effAgi * tier.turnMult;
     hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
     hostile.engineAlpha = tier.throttle;
   }

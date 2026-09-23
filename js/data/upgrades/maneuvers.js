@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Balanced Tactical Maneuver Cards
- * Physical flight actions, extended defensive timers, and realistic missile deflection.
+ * Physical flight actions with maneuver evasion scaling directly with aircraft agility.
  */
 
 window.MANEUVER_CARDS = [
@@ -28,6 +28,11 @@ window.MANEUVER_CARDS = [
       unit.activeManeuverTimer = 8.0;
 
       let bonus = 0.48;
+      const agi = (typeof unit.getEffectiveAgility === 'function')
+        ? unit.getEffectiveAgility()
+        : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
+      bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
+
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.10;
       unit.activeManeuverBonus = bonus;
@@ -50,7 +55,7 @@ window.MANEUVER_CARDS = [
 
       unit.deployCountermeasures();
       if (game && game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, 'DOPPLER NOTCH (+48% EVASION)', '#38bdf8');
+        game.radar.spawnCombatText(unit.x, unit.y, `DOPPLER NOTCH (+${Math.round(bonus * 100)}% EVASION)`, '#38bdf8');
         game.radar.spawnShockwave(unit.x, unit.y, '#38bdf8', 34);
       }
     }
@@ -78,6 +83,11 @@ window.MANEUVER_CARDS = [
       unit.activeManeuverTimer = 7.0;
 
       let bonus = 0.45;
+      const agi = (typeof unit.getEffectiveAgility === 'function')
+        ? unit.getEffectiveAgility()
+        : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
+      bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
+
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.10;
       unit.activeManeuverBonus = bonus;
@@ -87,7 +97,7 @@ window.MANEUVER_CARDS = [
 
       unit.applyActionStress(0.16);
       if (game && game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, 'BARREL ROLL (+45% EVASION)', '#38bdf8');
+        game.radar.spawnCombatText(unit.x, unit.y, `BARREL ROLL (+${Math.round(bonus * 100)}% EVASION)`, '#38bdf8');
         game.radar.spawnShockwave(unit.x, unit.y, '#38bdf8', 30);
       }
     }
@@ -115,6 +125,11 @@ window.MANEUVER_CARDS = [
       unit.activeManeuverTimer = 6.0;
 
       let bonus = 0.55;
+      const agi = (typeof unit.getEffectiveAgility === 'function')
+        ? unit.getEffectiveAgility()
+        : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
+      bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
+
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.12;
       unit.activeManeuverBonus = bonus;
@@ -123,7 +138,7 @@ window.MANEUVER_CARDS = [
 
       unit.applyActionStress(0.25);
       if (game && game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, 'PUGACHEV COBRA (+55% EVASION)', '#a855f7');
+        game.radar.spawnCombatText(unit.x, unit.y, `PUGACHEV COBRA (+${Math.round(bonus * 100)}% EVASION)`, '#a855f7');
         game.radar.spawnShockwave(unit.x, unit.y, '#a855f7', 38);
       }
     }
@@ -153,12 +168,17 @@ window.MANEUVER_CARDS = [
       unit.activeManeuverTimer = 7.5;
 
       let bonus = 0.45;
+      const agi = (typeof unit.getEffectiveAgility === 'function')
+        ? unit.getEffectiveAgility()
+        : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
+      bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
+
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.10;
       unit.activeManeuverBonus = bonus;
 
       if (game && game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, 'SPLIT-S DIVE (+45% EVASION)', '#10b981');
+        game.radar.spawnCombatText(unit.x, unit.y, `SPLIT-S DIVE (+${Math.round(bonus * 100)}% EVASION)`, '#10b981');
         game.radar.spawnShockwave(unit.x, unit.y, '#10b981', 32);
       }
     }
@@ -186,10 +206,16 @@ window.MANEUVER_CARDS = [
       unit.deployCountermeasures();
       unit.cmTimer = 8.0;
       unit.activeManeuverTimer = 8.0;
-      unit.activeManeuverBonus = 0.42;
+
+      let bonus = 0.42;
+      const agi = (typeof unit.getEffectiveAgility === 'function')
+        ? unit.getEffectiveAgility()
+        : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
+      bonus *= Math.max(0.50, Math.min(1.40, agi / 0.85));
+      unit.activeManeuverBonus = bonus;
 
       if (game && game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, 'CHAFF SALVO (+42% EVASION)', '#f59e0b');
+        game.radar.spawnCombatText(unit.x, unit.y, `CHAFF SALVO (+${Math.round(bonus * 100)}% EVASION)`, '#f59e0b');
         game.radar.spawnShockwave(unit.x, unit.y, '#f59e0b', 30);
       }
     }
@@ -213,10 +239,16 @@ window.MANEUVER_CARDS = [
       unit.activeManeuverId = 'ZOOM_CLIMB';
       unit.zoomClimb();
       unit.activeManeuverTimer = 8.0;
-      unit.activeManeuverBonus = 0.38;
+
+      let bonus = 0.38;
+      const agi = (typeof unit.getEffectiveAgility === 'function')
+        ? unit.getEffectiveAgility()
+        : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
+      bonus *= Math.max(0.40, Math.min(1.50, agi / 0.85));
+      unit.activeManeuverBonus = bonus;
 
       if (game && game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, 'ZOOM PERCH (+38% EVASION)', '#38bdf8');
+        game.radar.spawnCombatText(unit.x, unit.y, `ZOOM PERCH (+${Math.round(bonus * 100)}% EVASION)`, '#38bdf8');
       }
     }
   }

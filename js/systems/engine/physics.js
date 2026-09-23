@@ -218,9 +218,14 @@ const Physics = {
       }
     }
 
+    const targetAgility = (typeof target.getEffectiveAgility === 'function')
+      ? target.getEffectiveAgility()
+      : ((target.spec && target.spec.AGI_0) ? target.spec.AGI_0 : 0.85);
+    const agilityScale = Math.max(0.35, Math.min(1.65, targetAgility / 0.85));
+
     const activeEvasion = Math.max(
-      (target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? target.activeManeuverBonus : 0.0,
-      target.isNotching ? 0.28 : 0.0,
+      (target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? (target.activeManeuverBonus * agilityScale) : 0.0,
+      target.isNotching ? (0.28 * (0.6 + 0.4 * agilityScale)) : 0.0,
       target.cmTimer > 0 ? 0.30 : 0.0
     );
     const passiveBaseline = Math.max(
@@ -237,9 +242,10 @@ const Physics = {
 
     const energyBleedBonus = (1.0 - targetEnergy) * 0.25;
     const shooterStressPenalty = (attacker.stress >= 0.65 && !attacker.isCoffin && !attacker.spec.isDrone) ? 0.15 : 0.0;
+    const agilityDefenseBonus = (targetAgility - 0.85) * 0.18;
 
-    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty - offBoresightPenalty;
-    const pkPercent = Math.round(Math.max(15, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
+    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate - agilityDefenseBonus + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty - offBoresightPenalty;
+    const pkPercent = Math.round(Math.max(12, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = (dist >= sweetMin && dist <= sweetMax) ? (isClosing ? '^' : 'v') : (isClosing ? (dist > sweetMax ? '^' : 'v') : 'v');
 
