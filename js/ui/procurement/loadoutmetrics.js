@@ -154,7 +154,7 @@ class LoadoutMetrics {
     const baseRcsRating = rate('rcs', baseRcs);
     const loadedRcsRating = rate('rcs', loadedRcs);
 
-    let baseSpeed = Number(spec.S_0 || 0.95);
+    let baseSpeed = Number(spec.S_0 || 1.15);
     if (isLead && spec.category === 'SUPERIORITY') baseSpeed *= 1.10;
     if (hasSupercruise) baseSpeed *= 1.10;
     if (hasRangeTurbo) baseSpeed *= 0.96;
@@ -172,7 +172,7 @@ class LoadoutMetrics {
       if (spec.category === 'MULTIROLE') loadedAgility += 0.20;
       else if (spec.category === 'DRONES') loadedAgility += 0.15;
     }
-    loadedAgility = Math.min(1.0, Math.max(0.20, loadedAgility));
+    loadedAgility = Math.min(1.80, Math.max(0.12, loadedAgility));
 
     const baseAgiRating = rate('agility', baseAgility);
     const loadedAgiRating = rate('agility', loadedAgility);

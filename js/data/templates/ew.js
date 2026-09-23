@@ -1,9 +1,8 @@
 /**
- * AIRSPACE STANDOFF // Preconfigured Loadouts: Electronic Warfare & SEAD Escorts
+ * AIRSPACE STANDOFF: Preconfigured Loadouts: Electronic Warfare & SEAD Escorts
  */
 
 window.TEMPLATES_EW = {
-  // EA-18G Growler
   'EA-18G Airborne Electronic Attack (AEA)': {
     name: 'EA-18G Airborne Electronic Attack (AEA)',
     specId: 'EA-18G',
@@ -23,7 +22,6 @@ window.TEMPLATES_EW = {
     desc: 'Dedicated radar hunting package fielding 8 AGM-88G anti-radiation missiles to permanently blind enemy IADS networks.'
   },
 
-  // Tornado ECR
   'Tornado-ECR Defense Suppression': {
     name: 'Tornado-ECR Defense Suppression',
     specId: 'Tornado-ECR',
@@ -43,7 +41,6 @@ window.TEMPLATES_EW = {
     desc: 'Affordable strike package escort providing broadband microwave radar noise jamming.'
   },
 
-  // EF-111A Raven
   'EF-111A Tactical Jamming System': {
     name: 'EF-111A Tactical Jamming System',
     specId: 'EF-111A',
@@ -51,7 +48,7 @@ window.TEMPLATES_EW = {
     chosenGunId: 'M61A2',
     weapons: ['AN-ALQ-99', 'AIM-120D', 'ALE-55'],
     upgrades: ['SUPERCRUISE_VCE', 'ESM_PASSIVE_SUITE'],
-    desc: 'Mach 1.05 supersonic penetration jammer designed to fly alongside strike packages and suppress early warning radars.'
+    desc: 'Mach 1.28 supersonic penetration jammer designed to fly alongside strike packages and suppress early warning radars.'
   },
   'EF-111A Standoff Electronic Screening': {
     name: 'EF-111A Standoff Electronic Screening',
@@ -63,7 +60,6 @@ window.TEMPLATES_EW = {
     desc: 'Equipped with next-generation GaN AESA jamming pods to project directional jamming beams from 120km out.'
   },
 
-  // J-16D EW Striker
   'J-16D Electronic Warfare Escort': {
     name: 'J-16D Electronic Warfare Escort',
     specId: 'J-16D',

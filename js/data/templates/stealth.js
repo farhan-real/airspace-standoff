@@ -37,7 +37,7 @@ window.TEMPLATES_STEALTH = {
     chosenGunId: 'M61A2',
     weapons: ['AIM-260', 'AIM-120D', 'METEOR', 'AIM-9X-2'],
     upgrades: ['RAM_NANO_COATING', 'SUPERCRUISE_VCE'],
-    desc: 'High-speed interceptor package (Mach 1.15 supercruise) using 7 of 8 stations with 0.0001m2 VLO airframe profile.'
+    desc: 'High-speed interceptor package (Mach 1.65 supercruise) using 7 of 8 stations with 0.0001m2 VLO airframe profile.'
   },
   'YF-23 Long-Range Penetration': {
     name: 'YF-23 Long-Range Penetration',
@@ -55,7 +55,7 @@ window.TEMPLATES_STEALTH = {
     chosenGunId: 'M61A2',
     weapons: ['AIM-260', 'AIM-260', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['RAM_NANO_COATING', 'SUPERCRUISE_VCE', 'GAN_AESA_CORE'],
-    desc: 'High-altitude sniper using 7 of 8 stations (~2,840 kg • 67% HEAVY) firing 8 stealth AIM-260 missiles above FL500 without RWR warnings.'
+    desc: 'High-altitude sniper using 7 of 8 stations (~2,840 kg) firing 8 stealth AIM-260 missiles above FL500 without RWR warnings.'
   },
   'F-35A Strike Fighter (JSF)': {
     name: 'F-35A Strike Fighter (JSF)',
@@ -100,7 +100,7 @@ window.TEMPLATES_STEALTH = {
     chosenGunId: 'GSH-30-1',
     weapons: ['R-37M', 'PL-15E', 'AIM-120D', 'R-73'],
     upgrades: ['THRUST_VECTOR', 'GAN_AESA_CORE', 'EOTS_DUAL_OPTICS'],
-    desc: 'Multi-layer BVR interceptor using 7 of 8 stations (~3,440 kg • 46% NORMAL) blending Mach 4.2 hypersonic kills with dual-pulse rockets.'
+    desc: 'Multi-layer BVR interceptor using 7 of 8 stations (~3,440 kg) blending Mach 4.2 hypersonic kills with dual-pulse rockets.'
   },
   'J-20 Long-Range Intercept': {
     name: 'J-20 Long-Range Intercept',
@@ -118,7 +118,7 @@ window.TEMPLATES_STEALTH = {
     chosenGunId: 'GSH-30-1',
     weapons: ['PL-21', 'PL-15E', 'AIM-120D', 'PYTHON-5'],
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'ADAPTIVE_ECCM_SUITE'],
-    desc: 'Perimeter denial package using 8 of 8 stations (~3,490 kg • 45% NORMAL) deploying 130 km PL-21 ramjets across the centerline.'
+    desc: 'Perimeter denial package using 8 of 8 stations (~3,490 kg) deploying 130 km PL-21 ramjets across the centerline.'
   },
   'J-20 Tactical Theater Strike': {
     name: 'J-20 Tactical Theater Strike',

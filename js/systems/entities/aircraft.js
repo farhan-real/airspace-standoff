@@ -30,7 +30,6 @@ class Aircraft {
     if (typeof spawnAltFt === 'number' && !isNaN(spawnAltFt)) {
       this.altFt = Math.max(5000, Math.min(65000, spawnAltFt));
     } else if (this.spec.id === 'DARKSTAR') {
-      this.spec.S_0 = 3.20;
       this.altFt = 58000;
     } else {
       this.altFt = 30000;
@@ -58,7 +57,7 @@ class Aircraft {
 
     if (this.isAce) {
       this.spec.hp = (this.spec.hp || 4) + 1;
-      this.spec.AGI_0 = Math.min(1.0, (this.spec.AGI_0 || 0.85) + 0.03);
+      this.spec.AGI_0 = Math.min(1.50, (this.spec.AGI_0 || 0.85) + 0.05);
       this.spec.G_limit = (this.spec.G_limit || 9.0) + 1.0;
       this.aceEvasionBonus = 0.08;
     } else if (this.isFlightLead && window.AircraftLeadBuffs) {

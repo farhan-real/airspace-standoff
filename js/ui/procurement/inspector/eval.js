@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: 5-Tier Color Classification Engine
- * Calibrated against 150km theater weapon ranges, acquisition costs & radar beam spikes.
+ * Calibrated against clean airframe base parameters, 150km theater weapons, and weapon payloads.
  */
 
 class StatEvaluator {
@@ -9,17 +9,17 @@ class StatEvaluator {
 
     switch (type) {
       case 'speed':
-        if (val >= 1.10) return { tier: 1, colorClass: 'stat-tier-1' };
-        if (val >= 1.00) return { tier: 2, colorClass: 'stat-tier-2' };
-        if (val >= 0.85) return { tier: 3, colorClass: 'stat-tier-3' };
-        if (val >= 0.70) return { tier: 4, colorClass: 'stat-tier-4' };
+        if (val >= 1.45) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 1.25) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 1.05) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 0.65) return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'agility':
-        if (val >= 0.94) return { tier: 1, colorClass: 'stat-tier-1' };
-        if (val >= 0.88) return { tier: 2, colorClass: 'stat-tier-2' };
-        if (val >= 0.80) return { tier: 3, colorClass: 'stat-tier-3' };
-        if (val >= 0.60) return { tier: 4, colorClass: 'stat-tier-4' };
+        if (val >= 1.10) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 0.90) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 0.74) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 0.45) return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'glimit':

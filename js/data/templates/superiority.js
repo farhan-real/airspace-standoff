@@ -10,7 +10,7 @@ window.TEMPLATES_SUPERIORITY = {
     chosenGunId: 'GSH-30-1',
     weapons: ['R-37M', 'PL-21', 'AIM-120D'],
     upgrades: ['SUPERCRUISE_VCE', 'ESM_PASSIVE_SUITE'],
-    desc: 'Stratospheric intercept profile (Mach 1.34 cruise / Mach 2.83 dash) deploying hypersonic R-37M Axeheads from high altitude.'
+    desc: 'Stratospheric intercept profile (Mach 1.88 sprint / Mach 2.83 dash) deploying hypersonic R-37M Axeheads from high altitude.'
   },
   'MiG-31BM Aero-Ballistic Strike': {
     name: 'MiG-31BM Aero-Ballistic Strike',
@@ -91,7 +91,7 @@ window.TEMPLATES_SUPERIORITY = {
     chosenGunId: 'BK-27',
     weapons: ['METEOR', 'METEOR', 'AIM-120D', 'IRIS-T'],
     upgrades: ['GAN_AESA_CORE', 'EOTS_DUAL_OPTICS', 'SUPERCRUISE_VCE'],
-    desc: 'Pure ramjet BVR sniper utilizing 7 of 8 stations (~3,800 kg) to launch zero-drag-decay Meteors from Mach 1.15 supercruise.'
+    desc: 'Pure ramjet BVR sniper utilizing 7 of 8 stations (~3,800 kg) to launch zero-drag-decay Meteors from Mach 1.38 supercruise.'
   },
   'Eurofighter Multi-Role Strike': {
     name: 'Eurofighter Multi-Role Strike',
@@ -109,7 +109,7 @@ window.TEMPLATES_SUPERIORITY = {
     chosenGunId: 'BK-27',
     weapons: ['METEOR', 'METEOR', 'AIM-120D', 'PYTHON-5'],
     upgrades: ['EOTS_DUAL_OPTICS', 'DAS_360_OPTIC'],
-    desc: '0.95 turn agility fighter using 7 of 8 stations combined with automated SPECTRA electronic protection and ramjet Meteor rails.'
+    desc: 'Extreme turn agility fighter using 7 of 8 stations combined with automated SPECTRA electronic protection and ramjet Meteor rails.'
   },
   'Rafale C Deep Strike Interdiction': {
     name: 'Rafale C Deep Strike Interdiction',
