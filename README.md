@@ -11,7 +11,7 @@ A browser-based tactical air combat simulator played entirely from a top-down ra
 - **Electronic Warfare:** Break radar locks by beaming 90° (Doppler notching), deploying chaff corridors, trailing towed decoys, or launching autonomous radar-mirroring decoy drones.
 - **Energy Fighting & G-Force Physics:** Balance throttle detents, kinetic dives, and corner turn speeds. Push sustained turns too far and pilots suffer tunnel vision or G-LOC blackouts—or deploy unmanned UCAVs and COFFIN cockpits for high-G immunity.
 - **Deep Hangar & Loadout Customization:** Build squadrons under credit budgets with extensive tactical freedom:
-  - **35+ Airframes Across 8 Categories:** Field stealth fighters, heavy missile trucks, multirole workhorses, armored tank busters, supersonic electronic attack escorts, swarm drones, and experimental superfighters.
+  - **35+ Aircraft Across 8 Categories:** Field stealth fighters, heavy missile trucks, multirole workhorses, armored tank busters, supersonic electronic attack escorts, swarm drones, and experimental superfighters.
   - **Diverse Ordnance & Weaponry:** Outfit long-range active radar missiles, high-off-boresight heat seekers, hypersonic bunker penetrators, precision glide bombs, thermobaric burst rockets, and standoff jamming pods.
   - **Gunnery, Lasers & Railguns:** Swap standard rotary Gatlings for heavy 30mm cannons, external gunpods, tactical pulse lasers, speed-of-light chemical lasers, or kinetic railguns.
   - **Modular Avionics & Components:** Install 3D thrust-vectoring nozzles, variable-cycle supercruise engines, GaN AESA radar arrays, dual-band IRST optics, digital ECCM processors, and RAM stealth coatings.

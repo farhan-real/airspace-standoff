@@ -183,7 +183,8 @@
   border-radius: var(--radius-btn);
 }
 
-#btn-proc-fullscreen.active {
+#btn-proc-fullscreen.active,
+#btn-fullscreen-toggle.active {
   background: var(--theme-primary);
   color: #ffffff;
   border-color: var(--theme-accent);
@@ -267,6 +268,16 @@
     padding: 2px 6px;
   }
 
+  .title-group {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .title-group::-webkit-scrollbar {
+    display: none;
+  }
+
   .squad-callsign-tag,
   .proc-leaderboard-btn,
   .proc-settings-btn,
@@ -280,6 +291,15 @@
 
   .mode-and-ai-controls {
     gap: 4px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .mode-and-ai-controls::-webkit-scrollbar {
+    display: none;
   }
 
   .seg-btn {

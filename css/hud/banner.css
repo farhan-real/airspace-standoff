@@ -317,6 +317,18 @@ body.safe-zone-on .tactical-banner {
   padding: 3px 8px;
 }
 
+@media (max-width: 1024px) {
+  .tactical-banner {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tactical-banner::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
   .tactical-banner {
     height: 40px !important;

@@ -215,12 +215,23 @@ class SettingsManager {
     };
     bindSlider('#vol-master', '#val-master', v => AudioSys.setVolumes(v, undefined, undefined));
     bindSlider('#vol-rwr', '#val-rwr', v => AudioSys.setVolumes(undefined, v, undefined));
-    bindSlider('#vol-fx', '#val-fx', v => AudioSys.setVolumes(undefined, undefined, v));
+    bindSlider('#vol-fx', '#val-fx', v => AudioSys.setVolumes(undefined, v, undefined));
   }
 
   renderRadarTab(container) {
     const curZoom = (this.game.radar ? this.game.radar.zoom.toFixed(2) : '1.00');
+    const isFullscreenActive = this.game.controls && this.game.controls.fullscreen ? this.game.controls.fullscreen.isActive() : false;
+
     container.innerHTML = `
+      <div class="settings-form-row">
+        <div class="settings-label-group">
+          <label>FULLSCREEN DISPLAY</label>
+          <span class="settings-hint">Toggle full screen immersion across mobile, tablet or desktop</span>
+        </div>
+        <button type="button" id="btn-cfg-fullscreen" class="hud-btn ${isFullscreenActive ? 'highlight' : ''}">
+          ${isFullscreenActive ? 'EXIT FULL' : 'FULLSCREEN'}
+        </button>
+      </div>
       <div class="settings-form-row">
         <div class="settings-label-group">
           <label>CAMERA CUTOUT &amp; SAFE ZONE</label>
@@ -251,6 +262,13 @@ class SettingsManager {
         </div>
         <button type="button" id="btn-cfg-reset-cam" class="hud-btn small">RESET [0]</button>
       </div>`;
+
+    const fsBtn = container.querySelector('#btn-cfg-fullscreen');
+    if (fsBtn && this.game.controls && this.game.controls.fullscreen) {
+      fsBtn.onclick = () => {
+        this.game.controls.fullscreen.toggle();
+      };
+    }
 
     const szBtn = container.querySelector('#btn-toggle-safe-zone');
     if (szBtn) szBtn.onclick = () => {

@@ -74,43 +74,6 @@ body.safe-zone-on .rwr-warning-box {
   color: var(--color-moon-mist);
 }
 
-/* Positioned above bottom bars to prevent UI collisions */
-.civilian-alert-banner {
-  position: absolute;
-  bottom: 48px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 7;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
-  border-radius: var(--radius-btn);
-  padding: 4px 12px;
-  font-family: var(--font-untitled-sans);
-  font-size: 0.58rem;
-  color: var(--color-moon-mist);
-  pointer-events: none;
-  box-shadow: var(--glass-shadow);
-  white-space: nowrap;
-  width: max-content;
-  max-width: calc(100% - 320px);
-  box-sizing: border-box;
-}
-
-.civ-ico {
-  font-weight: 600;
-  color: var(--theme-accent);
-  flex-shrink: 0;
-}
-
-.civ-text {
-  color: var(--color-moon-mist);
-  white-space: nowrap;
-}
-
 .radar-floating-cam-bar {
   display: flex;
   position: absolute;
