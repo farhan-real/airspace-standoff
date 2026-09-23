@@ -83,8 +83,10 @@
   top: calc(100% + 6px);
   left: 0;
   min-width: 100%;
-  max-height: 240px;
+  max-width: min(320px, calc(100vw - 20px));
+  max-height: min(240px, 45vh);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.015) 100%), rgba(2, 5, 14, 0.94);
   -webkit-backdrop-filter: blur(20px) saturate(190%);
   backdrop-filter: blur(20px) saturate(190%);
@@ -182,10 +184,18 @@
   .custom-dropdown-trigger {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
+    font-size: 0.68rem;
+    height: 28px;
+    padding: 3px 8px;
   }
   .custom-dropdown-menu {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background: #040916 !important;
+    max-width: min(290px, calc(100vw - 16px));
+  }
+  .custom-dropdown-opt {
+    font-size: 0.66rem;
+    padding: 5px 8px;
   }
 }

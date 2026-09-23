@@ -319,13 +319,18 @@ body.safe-zone-on .tactical-banner {
 
 @media (max-width: 1024px) {
   .tactical-banner {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-left: max(8px, env(safe-area-inset-left, 8px)) !important;
+    padding-right: max(8px, env(safe-area-inset-right, 8px)) !important;
   }
   .tactical-banner::-webkit-scrollbar {
     display: none;
+  }
+  .top-quick-actions {
+    margin-left: 6px;
   }
 }
 

@@ -13,6 +13,11 @@
   --text-muted: var(--color-moon-mist);
   --text-dim: var(--color-fog-veil);
 
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
   --safe-zone-inset: 0px;
 }
 
@@ -117,6 +122,8 @@ body.pseudo-fullscreen #procurement-modal {
   pointer-events: none;
   transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   transform: translateZ(0);
+  padding: max(8px, env(safe-area-inset-top, 8px)) max(8px, env(safe-area-inset-right, 8px)) max(8px, env(safe-area-inset-bottom, 8px)) max(8px, env(safe-area-inset-left, 8px));
+  box-sizing: border-box;
 }
 
 .modal-backdrop.active {
@@ -145,6 +152,7 @@ body.pseudo-fullscreen #procurement-modal {
   box-shadow: var(--glass-highlight);
   transition: all 0.14s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .hud-btn .btn-vector-ico {
@@ -192,9 +200,11 @@ body.pseudo-fullscreen #procurement-modal {
 .hud-btn.small {
   padding: 3px 10px;
   font-size: 0.65rem;
-  height: 26px;
+  height: 28px;
+  min-height: 28px;
   gap: 5px;
   border-radius: var(--radius-btn);
+  flex-shrink: 0;
 }
 
 .hud-btn.alert {

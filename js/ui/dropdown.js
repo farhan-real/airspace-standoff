@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Tactical Custom Dropdown Engine
- * Liquid glass selectors with smooth animations, pips, and full accessibility.
+ * Liquid glass selectors with smooth animations, pips, and smart viewport collision avoidance.
  */
 
 class CustomDropdown {
@@ -89,7 +89,37 @@ class CustomDropdown {
       document.querySelectorAll('.custom-dropdown.open').forEach(dd => {
         if (dd !== wrapper) dd.classList.remove('open');
       });
-      wrapper.classList.toggle('open', !isOpen);
+
+      if (!isOpen) {
+        wrapper.classList.add('open');
+
+        // Smart dynamic viewport positioning for Android and mobile screens
+        const rect = trigger.getBoundingClientRect();
+        const screenW = window.innerWidth || document.documentElement.clientWidth || 360;
+        const screenH = window.innerHeight || document.documentElement.clientHeight || 600;
+        const estimatedWidth = Math.max(menu.offsetWidth || 180, 200);
+
+        if (rect.left + estimatedWidth > screenW - 10) {
+          menu.style.left = 'auto';
+          menu.style.right = '0';
+        } else {
+          menu.style.left = '0';
+          menu.style.right = 'auto';
+        }
+
+        const spaceBelow = screenH - rect.bottom;
+        const estimatedHeight = Math.min(menu.scrollHeight || 180, 220);
+        if (spaceBelow < estimatedHeight && rect.top > estimatedHeight) {
+          menu.style.top = 'auto';
+          menu.style.bottom = 'calc(100% + 6px)';
+        } else {
+          menu.style.top = 'calc(100% + 6px)';
+          menu.style.bottom = 'auto';
+        }
+      } else {
+        wrapper.classList.remove('open');
+      }
+
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     };
 

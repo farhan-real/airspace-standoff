@@ -8,7 +8,9 @@
   width: 95vw;
   max-width: 1180px;
   height: 90vh;
-  max-height: 90vh;
+  height: 90dvh;
+  max-height: 90dvh;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   background: var(--glass-bg-modal);
@@ -22,13 +24,22 @@
   box-sizing: border-box;
 }
 
+.leaderboard-window .inspect-header {
+  padding: 10px 14px;
+}
+
+.leaderboard-window .inspect-header .hud-btn.small {
+  flex-shrink: 0;
+  min-width: 32px;
+}
+
 .leaderboard-body {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
   grid-template-columns: 40% 60%;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -241,6 +252,19 @@
 }
 
 @media (max-width: 900px) {
+  .leaderboard-window {
+    width: 98vw;
+    height: 94vh;
+    height: 94dvh;
+    max-height: 94dvh;
+    border-radius: var(--radius-card);
+  }
+  .leaderboard-window .inspect-header {
+    padding: 8px 10px;
+  }
+  .leaderboard-window .inspect-header .subtext {
+    display: none !important;
+  }
   .leaderboard-body {
     grid-template-columns: 1fr;
     gap: 8px;
@@ -248,5 +272,13 @@
   }
   .dossier-podium-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 550px) {
+  .leaderboard-window {
+    height: 96vh;
+    height: 96dvh;
+    max-height: 96dvh;
   }
 }

@@ -9,7 +9,8 @@
   width: 95%;
   max-width: 780px;
   height: 82vh;
-  min-height: 500px;
+  height: 82dvh;
+  min-height: 0;
   max-height: 650px;
   display: flex;
   flex-direction: column;
@@ -24,9 +25,11 @@
   justify-content: space-between;
   align-items: center;
   background: var(--glass-bg);
-  padding: 12px 18px;
+  padding: 10px 14px;
   border-bottom: 1px solid var(--glass-border);
   flex-shrink: 0;
+  min-width: 0;
+  gap: 8px;
 }
 
 .settings-header h2 {
@@ -41,6 +44,11 @@
   font-family: var(--font-aeonikpro);
 }
 
+.settings-header .hud-btn.small {
+  flex-shrink: 0;
+  min-width: 32px;
+}
+
 .settings-nav-tabs {
   display: flex;
   background: rgba(0, 0, 0, 0.4);
@@ -48,6 +56,12 @@
   padding: 6px 14px 0 14px;
   gap: 5px;
   flex-shrink: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.settings-nav-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .settings-tab-btn {
@@ -62,6 +76,8 @@
   border-radius: 6px 6px 0 0;
   cursor: pointer;
   transition: all 0.12s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .settings-tab-btn:hover {
@@ -76,7 +92,7 @@
 }
 
 .settings-body {
-  padding: 16px 18px;
+  padding: 14px 16px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -91,9 +107,10 @@
   justify-content: space-between;
   align-items: center;
   background: var(--glass-bg);
-  padding: 10px 18px;
+  padding: 10px 14px;
   border-top: 1px solid var(--glass-border);
   flex-shrink: 0;
+  gap: 8px;
 }
 
 .keybinds-table {
@@ -133,6 +150,7 @@
   min-width: 80px;
   text-align: center;
   transition: all 0.14s ease;
+  flex-shrink: 0;
 }
 
 .btn-rebind:hover {
@@ -155,7 +173,7 @@
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
   padding: 10px 14px;
-  gap: 16px;
+  gap: 12px;
   flex-shrink: 0;
   box-sizing: border-box;
 }
@@ -201,7 +219,7 @@
 .settings-slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 150px;
+  width: 140px;
   height: 5px;
   background: rgba(255, 255, 255, 0.15);
   outline: none;
@@ -234,8 +252,40 @@
 @media (max-width: 768px) {
   .settings-window {
     width: 98vw;
-    height: 92vh;
-    max-height: 92vh;
+    height: 94vh;
+    height: 94dvh;
+    max-height: 94dvh;
     min-height: 0;
+    border-radius: var(--radius-card);
+  }
+  .settings-header {
+    padding: 8px 10px;
+  }
+  .settings-body {
+    padding: 10px;
+  }
+  .settings-form-row {
+    padding: 8px 10px;
+  }
+  .settings-slider {
+    width: 100px;
+  }
+}
+
+@media (max-height: 550px) {
+  .settings-window {
+    height: 96vh;
+    height: 96dvh;
+    max-height: 96dvh;
+    min-height: 0;
+  }
+  .settings-header {
+    padding: 6px 10px;
+  }
+  .settings-body {
+    padding: 6px 10px;
+  }
+  .settings-footer {
+    padding: 6px 10px;
   }
 }

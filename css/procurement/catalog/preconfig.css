@@ -4,7 +4,9 @@
   width: 95vw !important;
   max-width: 1200px !important;
   height: 90vh !important;
-  max-height: 90vh !important;
+  height: 90dvh !important;
+  max-height: 90dvh !important;
+  min-height: 0 !important;
   background: var(--glass-bg-modal);
   -webkit-backdrop-filter: var(--glass-filter);
   backdrop-filter: var(--glass-filter);
@@ -17,11 +19,22 @@
   font-family: var(--font-untitled-sans);
   position: relative;
   z-index: 10;
+  box-sizing: border-box;
+}
+
+.inspect-window.preconfig-window .inspect-header {
+  padding: 10px 14px;
+  gap: 8px;
+}
+
+.inspect-window.preconfig-window .inspect-header #btn-close-preconfig {
+  flex-shrink: 0;
+  min-width: 32px;
 }
 
 .preconfig-toolbar {
   background: var(--glass-bg);
-  padding: 10px 16px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
@@ -40,7 +53,7 @@
 
 .preconfig-search-row .hud-search-input {
   flex: 1;
-  min-width: 220px;
+  min-width: 180px;
 }
 
 .preconfig-pills-row {
@@ -49,13 +62,18 @@
   overflow-x: auto;
   white-space: nowrap;
   padding-bottom: 2px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.preconfig-pills-row::-webkit-scrollbar {
+  display: none;
 }
 
 .preconfig-modal-body {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  padding: 14px 16px;
+  padding: 12px 14px;
   position: relative;
   z-index: 5;
 }
@@ -63,7 +81,7 @@
 .preconfig-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -72,10 +90,10 @@
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 12px 14px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
   transition: all 0.14s ease;
   box-sizing: border-box;
   min-width: 0;
@@ -175,7 +193,6 @@
   font-size: 0.60rem;
 }
 
-/* Guard spec evaluation colors from being overridden by white */
 .pc-stat-cell b:not([class*="stat-tier"]) {
   color: var(--color-pure-white);
 }
@@ -230,13 +247,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-top: auto;
   padding-top: 8px;
   border-top: 1px solid var(--glass-border);
 }
 
-.pc-footer-left { display: inline-flex; align-items: center; gap: 8px; }
+.pc-footer-left { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .pc-footer-right { display: inline-flex; align-items: center; margin-left: auto; }
 
 .pc-footer .spec-inspect-btn,
@@ -253,9 +270,10 @@
   box-sizing: border-box;
   border-radius: var(--radius-btn);
   white-space: nowrap;
-  padding: 0 14px;
+  padding: 0 12px;
   cursor: pointer;
   transition: all 0.12s ease;
+  flex-shrink: 0;
 }
 
 .pc-footer .spec-inspect-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--theme-accent); }
@@ -268,7 +286,7 @@
   border: 1px solid var(--theme-accent);
   color: #ffffff;
   box-shadow: 0 0 12px var(--theme-primary-glow);
-  padding: 0 16px;
+  padding: 0 14px;
 }
 
 .pc-footer .btn-deploy-tpl:hover {
@@ -278,7 +296,28 @@
 }
 
 @media (max-width: 768px) {
-  .inspect-window.preconfig-window { width: 100vw !important; max-width: 100vw !important; height: 100vh !important; max-height: 100vh !important; border-radius: 0; }
+  .inspect-window.preconfig-window {
+    width: 98vw !important;
+    max-width: 98vw !important;
+    height: 94vh !important;
+    height: 94dvh !important;
+    max-height: 94dvh !important;
+    border-radius: var(--radius-card) !important;
+  }
+  .inspect-window.preconfig-window .inspect-header .subtext {
+    display: none !important;
+  }
   .preconfig-grid { grid-template-columns: 1fr; }
-  .pc-footer { flex-wrap: wrap; gap: 8px; }
+  .pc-footer { flex-wrap: wrap; gap: 6px; }
+}
+
+@media (max-height: 550px) {
+  .inspect-window.preconfig-window {
+    height: 96vh !important;
+    height: 96dvh !important;
+    max-height: 96dvh !important;
+  }
+  .inspect-window.preconfig-window .inspect-header {
+    padding: 6px 10px !important;
+  }
 }
