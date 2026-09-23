@@ -106,7 +106,8 @@ class ProcurementManager {
     const editBtn = document.getElementById('btn-edit-squadron-name');
     if (editBtn) {
       editBtn.onclick = () => {
-        const curName = this.game.squadronName || 'Wardog Squadron';
+        let curName = this.game.squadronName || '7th Tactical Squadron';
+        if (curName.toLowerCase().includes('wardog')) curName = '7th Tactical Squadron';
         this.showPromptModal('RENAME SQUADRON', 'Enter a name for your squadron:', curName, (newName) => {
           if (newName && newName.trim()) {
             this.game.setSquadronName(newName.trim());
@@ -218,8 +219,8 @@ class ProcurementManager {
     if (this.equipHandler) this.equipHandler.cloneAirframe(sIdx);
   }
 
-  equipItemDataToSquadron(sIdx, itemData) {
-    if (this.equipHandler) this.equipHandler.equipItemDataToSquadron(sIdx, itemData);
+  equipItemDataToSquadron(sIdx, itemData, targetStation = null) {
+    if (this.equipHandler) this.equipHandler.equipItemDataToSquadron(sIdx, itemData, targetStation);
   }
 
   applyBuiltinPreset(type) {
@@ -264,14 +265,18 @@ class ProcurementManager {
     const mobCount = document.getElementById('mob-roster-count');
     if (mobCount) mobCount.textContent = this.game.procurementSquadron.length;
 
+    let cleanName = this.game.squadronName || '7th Tactical Squadron';
+    if (cleanName.toLowerCase().includes('wardog')) cleanName = '7th Tactical Squadron';
+    this.game.squadronName = cleanName;
+
     const dispSqName = document.getElementById('display-squadron-name');
-    if (dispSqName) dispSqName.textContent = this.game.squadronName || 'Wardog Squadron';
+    if (dispSqName) dispSqName.textContent = cleanName;
 
     if (this.shelf) this.shelf.syncActiveAircraft();
 
     if (window.Persistence && this.game.procurementSquadron.length > 0) {
       window.Persistence.saveLastSquadron(this.game.procurementSquadron);
-      window.Persistence.saveSquadronName(this.game.squadronName);
+      window.Persistence.saveSquadronName(cleanName);
     }
   }
 }

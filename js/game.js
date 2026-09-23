@@ -22,7 +22,13 @@ class AirspaceStandoffGame {
     this.playerBudgetId = 'BUDGET_400';
     this.budgetMax = 400.0;
     this.budgetRemaining = 400.0;
-    this.squadronName = (window.Persistence && window.Persistence.getSquadronName()) || 'Wardog Squadron';
+
+    let initialSquadronName = (window.Persistence && window.Persistence.getSquadronName()) || '7th Tactical Squadron';
+    if (!initialSquadronName || initialSquadronName.toLowerCase().includes('wardog')) {
+      initialSquadronName = '7th Tactical Squadron';
+      if (window.Persistence) window.Persistence.saveSquadronName(initialSquadronName);
+    }
+    this.squadronName = initialSquadronName;
 
     const maxTok = (window.CONFIG && window.CONFIG.TOKEN_MAX) || 8.0;
     this.tokenBucketBlue = maxTok;
@@ -62,6 +68,11 @@ class AirspaceStandoffGame {
       this.procurement.init();
       const saved = window.Persistence ? window.Persistence.getLastSquadron() : null;
       if (saved && saved.length > 0) {
+        saved.forEach(item => {
+          if (item && item.callsign && item.callsign.toLowerCase().includes('wardog')) {
+            item.callsign = item.callsign.replace(/wardog/gi, 'Viper');
+          }
+        });
         this.procurementSquadron = saved;
         this.procurement.updateUI();
       } else {
@@ -83,7 +94,9 @@ class AirspaceStandoffGame {
 
   setSquadronName(name) {
     if (!name || !name.trim()) return;
-    this.squadronName = name.trim();
+    let cleanName = name.trim();
+    if (cleanName.toLowerCase().includes('wardog')) cleanName = '7th Tactical Squadron';
+    this.squadronName = cleanName;
     const dispEl = document.getElementById('display-squadron-name');
     if (dispEl) dispEl.textContent = this.squadronName;
     const headerEl = document.getElementById('header-squadron-name');
@@ -196,7 +209,7 @@ class AirspaceStandoffGame {
 
       const ac = new Aircraft(
         item.specId, 'friendly', plan.x, plan.y, heading, item.chosenGunId,
-        item.callsign || takeCallsign(), this.squadronName || 'Wardog Squadron',
+        item.callsign || takeCallsign(), this.squadronName || '7th Tactical Squadron',
         plan.isLead, false, initialAltFt
       );
       (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));

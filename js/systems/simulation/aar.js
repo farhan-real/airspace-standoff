@@ -187,7 +187,7 @@ class AfterActionReportSystem {
         date: new Date().toLocaleDateString(),
         timeStr: timeStr,
         durationSec: durSec,
-        squadronName: game.squadronName || 'Wardog Squadron',
+        squadronName: game.squadronName || '7th Tactical Squadron',
         outcome: blueWon ? 'VICTORY' : 'ABORTED',
         blueWon: blueWon,
         rawScore: rawBlueScore,
@@ -245,4 +245,4 @@ class AfterActionReportSystem {
   }
 }
 
-window.AfterActionReportSystem = AfterActionReportSystem;
+window.AfterActionReportSystem = AfterActionReportSystem; 

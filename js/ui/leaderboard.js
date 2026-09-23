@@ -237,7 +237,7 @@ class LeaderboardUI {
     detailContainer.innerHTML = `
       <div class="dossier-header-box">
         <div>
-          <div class="dossier-title">${item.squadronName || 'Wardog Squadron'}</div>
+          <div class="dossier-title">${item.squadronName || '7th Tactical Squadron'}</div>
           <span style="color:#8494ab;font-size:0.58rem;">SORTIE ARCHIVE RECORD &bull; ${item.date || ''}</span>
         </div>
         <div style="text-align:right;">

@@ -7,7 +7,7 @@
 class PersistenceEngine {
   constructor() {
     this.storagePrefix = 'AIRSPACE_STANDOFF_';
-    this.legacyPrefix = 'APEX_VECTOR_';
+    this.legacyPrefix = 'AIRSPACE_STANDOFF_LEGACY_';
   }
 
   get(key, defaultValue = null) {
@@ -82,7 +82,15 @@ class PersistenceEngine {
   }
 
   getSquadronName() {
-    return this.get('SQUADRON_NAME', 'Wardog Squadron');
+    let name = this.get('SQUADRON_NAME', '7th Tactical Squadron');
+    if (!name || typeof name !== 'string' || name.toLowerCase().includes('wardog')) {
+      name = '7th Tactical Squadron';
+      this.saveSquadronName(name);
+      try {
+        localStorage.removeItem('APEX_VECTOR_SQUADRON_NAME');
+      } catch (err) {}
+    }
+    return name;
   }
 }
 

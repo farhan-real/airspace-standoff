@@ -18,8 +18,14 @@ class Aircraft {
 
     this.isAce = Boolean(isAce);
     this.isFlightLead = Boolean(isFlightLead);
-    this.callsign = callsign || this.generateRandomCallsign();
-    this.squadronName = squadronName || (team === 'friendly' ? 'Wardog Squadron' : 'Red Flight');
+
+    let rawCallsign = callsign || this.generateRandomCallsign();
+    if (rawCallsign.toLowerCase().includes('wardog')) rawCallsign = rawCallsign.replace(/wardog/gi, 'Viper');
+    this.callsign = rawCallsign;
+
+    let cleanSquadName = squadronName || (team === 'friendly' ? '7th Tactical Squadron' : 'Red Flight');
+    if (cleanSquadName.toLowerCase().includes('wardog')) cleanSquadName = (team === 'friendly' ? '7th Tactical Squadron' : 'Red Flight');
+    this.squadronName = cleanSquadName;
 
     if (typeof spawnAltFt === 'number' && !isNaN(spawnAltFt)) {
       this.altFt = Math.max(5000, Math.min(65000, spawnAltFt));

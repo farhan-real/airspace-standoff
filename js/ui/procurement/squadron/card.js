@@ -23,7 +23,7 @@ class RosterCardBuilder {
     if (!item.chosenGunId) item.chosenGunId = spec.builtInGun || 'M61A2';
     if (!item.callsign) {
       const pool = window.CALLSIGN_POOL || ['Trigger', 'Mobius 1', 'Cipher'];
-      item.callsign = pool[(sIdx * 3) % pool.length] || `Wardog ${sIdx + 1}`;
+      item.callsign = pool[(sIdx * 3) % pool.length] || `Viper ${sIdx + 1}`;
     }
 
     const metrics = (typeof LoadoutMetrics !== 'undefined')
@@ -43,6 +43,7 @@ class RosterCardBuilder {
     const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
       ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
     const rG = rate('glimit', spec.G_limit || 9.0);
+    const rSlots = rate('pylon_slots', spec.totalSlots || 6);
 
     const activeGun = gunsMap[item.chosenGunId] || gunsMap[spec.builtInGun] || gunsMap['M61A2'];
 
