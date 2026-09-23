@@ -127,7 +127,8 @@ window.MANUAL_COMBAT = [
       <div class="ge-desc">
         <ul style="list-style:none;padding-left:0;margin-top:4px;">
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Constant Bearing, Decreasing Range (CBDR):</b> The seeker tracks the rotation rate of Line of Sight (&lambda;_dot) and closure velocity (V_c), flying a predictive lead pursuit collision course.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Defeating ProNav via High-G Breaks:</b> A late, sudden break turn forces a rapid spike in &lambda;_dot. At Mach 2.8&ndash;5.0, matching this rotation rate demands more lateral acceleration than fins can aerodynamically deliver, causing a <b>Kinetic Overshoot</b>.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Defeating ProNav via High-G Breaks:</b> A late, sudden break turn forces a rapid spike in &lambda;_dot. At high speeds, matching this rotation rate demands more lateral acceleration than fins can aerodynamically deliver, causing a <b>Kinetic Overshoot</b>.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Corner Speed &amp; Agility Scaling:</b> Maneuvering while within &plusmn;12% of your aircraft's optimal corner velocity delivers maximum angular displacement, dramatically increasing the probability of forcing a kinetic miss.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Disrupting Guidance Gain (N):</b> Active defensive maneuvers degrade effective navigation gain from N = 4.0 down to 0.6&ndash;1.2, breaking intercept calculations.</li>
         </ul>
       </div>
@@ -143,14 +144,24 @@ window.MANUAL_COMBAT = [
     id: 'ch7_defense_ew',
     title: 'SECTION 07: ELECTRONIC WARFARE, DOPPLER NOTCHING & DEFENSIVE MANEUVERS',
     desc: `
-      <div class="ge-subhead">HOW TO EXECUTE A DOPPLER NOTCH (BEAMING 90&deg;)</div>
+      <div class="ge-subhead">1. HOW TO EXECUTE A DOPPLER NOTCH (BEAMING 90&deg;)</div>
       <div class="ge-desc">
         Pulse-Doppler radars detect targets by filtering for frequency shifts caused by radial closure velocity:
         <br><br>
         <b>To notch:</b> Turn your aircraft exactly <b>90&deg; perpendicular</b> to the threat's radar vector (beam aspect). Your relative radial closure speed drops to zero relative to ground clutter. The hostile radar filters your return as background clutter and drops lock. Dispensing chaff creates an artificial zero-Doppler false echo, breaking missile homing.
       </div>
 
-      <div class="ge-subhead">ACTIVE ELECTRONIC WARFARE (EW) PODS &amp; DECOYS</div>
+      <div class="ge-subhead">2. CORNER SPEED &amp; DEFENSIVE EVASION SCALING</div>
+      <div class="ge-desc">
+        Maneuver cards and break turns are governed by dynamic aerodynamic efficiency:
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Agility Multiplier:</b> Evasion probability gained from tactical cards scales directly with your airframe's effective agility rating. A 1.20 agility fighter generates up to 40% higher evasive displacement than an aircraft with 0.65 agility.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Corner Speed Peak:</b> Executing maneuvers while flying at your aircraft's optimal corner speed (<code>sOpt</code>) boosts defense effectiveness to its maximum. Flying in deep overspeed or near stall degrades evasive value.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Weight Impact:</b> Heavy payload carriages reduce turn rate and degrade evasive agility until ordnance is expended.</li>
+        </ul>
+      </div>
+
+      <div class="ge-subhead">3. ACTIVE ELECTRONIC WARFARE (EW) PODS &amp; DECOYS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
@@ -191,11 +202,11 @@ window.MANUAL_COMBAT = [
         </table>
       </div>
 
-      <div class="ge-subhead">TACTICAL MANEUVER CARDS REFERENCE</div>
+      <div class="ge-subhead">4. TACTICAL MANEUVER CARDS REFERENCE</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>MANEUVER</th><th>COST</th><th>TIME</th><th>EVASION</th><th>TRIGGER CONDITION &amp; TACTICAL EFFECT</th></tr>
+            <tr><th>MANEUVER</th><th>COST</th><th>TIME</th><th>BASE EVASION</th><th>TRIGGER CONDITION &amp; TACTICAL EFFECT</th></tr>
           </thead>
           <tbody>
             <tr>
@@ -203,42 +214,42 @@ window.MANUAL_COMBAT = [
               <td>0.7 TOK</td>
               <td style="color:#00f5a0;font-weight:700;">8.0s</td>
               <td>+48%</td>
-              <td>Trigger on active radar (ARH) lock. Beams radar 90&deg;, cuts closure rate, and pops chaff.</td>
+              <td>Trigger on active radar (ARH) lock. Beams threat 90&deg;, cuts closure rate, and pops chaff. Evasion scales with agility and corner velocity.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">High-G Barrel Roll</td>
               <td>0.7 TOK</td>
               <td style="color:#00f5a0;font-weight:700;">7.0s</td>
               <td>+45%</td>
-              <td>Trigger on inbound missile within 25 km. High-G 3D spiral disrupts proportional lead pursuit.</td>
+              <td>Trigger on inbound missile within 25 km. High-G 3D spiral disrupts proportional lead pursuit. Evasion scales with agility and corner velocity.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">Pugachev Push Cobra</td>
               <td>0.8 TOK</td>
               <td style="color:#00f5a0;font-weight:700;">6.0s</td>
               <td>+55%</td>
-              <td>Requires TVC. Pitch up to 110&deg; creates an immediate closure rate mismatch against tailgaters.</td>
+              <td>Requires TVC. Pitch up to 110&deg; creates an immediate closure rate mismatch against tailgaters. Evasion scales with agility and corner velocity.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Split-S Kinetic Escape</td>
               <td>0.7 TOK</td>
               <td style="color:#00f5a0;font-weight:700;">7.5s</td>
               <td>+45%</td>
-              <td>Requires altitude &gt; FL150. Inverts aircraft and dives to recover Mach speed out of envelope.</td>
+              <td>Requires altitude &gt; FL150. Inverts aircraft and dives to recover Mach speed out of envelope. Evasion scales with agility and corner velocity.</td>
             </tr>
             <tr>
               <td style="color:#ffb830;font-weight:800;">Emergency Chaff Salvo</td>
               <td>0.7 TOK</td>
               <td style="color:#00f5a0;font-weight:700;">8.0s</td>
               <td>+42%</td>
-              <td>Dispenses dense chaff cloud to disrupt radar tracking locks. Costs 1 countermeasure charge.</td>
+              <td>Dispenses dense chaff cloud to disrupt radar tracking locks. Costs 1 countermeasure charge. Evasion scales with agility and corner velocity.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">Zoom Climb to Perch</td>
               <td>0.7 TOK</td>
               <td style="color:#00f5a0;font-weight:700;">8.0s</td>
               <td>+38%</td>
-              <td>Requires Mach 0.70+. Converts airspeed into +8,500 ft high-altitude perch.</td>
+              <td>Requires Mach 0.70+. Converts airspeed into +8,500 ft high-altitude perch. Evasion scales with agility and corner velocity.</td>
             </tr>
           </tbody>
         </table>

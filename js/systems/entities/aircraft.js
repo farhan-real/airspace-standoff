@@ -7,7 +7,7 @@ class Aircraft {
     this.id = 'AC_' + Math.random().toString(36).substr(2, 6);
     const catalog = window.AIRCRAFT_CATALOG || {};
     this.spec = catalog[specId] ? JSON.parse(JSON.stringify(catalog[specId])) : {
-      id: specId, name: specId, role: 'Fighter', category: 'MULTIROLE', cost: 18.0, hp: 4, AGI_0: 0.85, S_0: 0.95,
+      id: specId, name: specId, role: 'Fighter', category: 'MULTIROLE', cost: 18.0, hp: 4, AGI_0: 0.85, S_0: 0.95, sOpt: 0.65,
       R_0: 75.0, radarType: 'Pulse-Doppler', radarConeDeg: 120, sigma_0: 1.0, M_max: 5000, G_limit: 9,
       builtInGun: 'M61A2', allowedGuns: ['M61A2'], gunRounds: 500, internalSlots: 0, externalSlots: 6, hasCenterline: true, centerlineSlots: 4, totalSlots: 6, maxPylonRating: 'Type M', upgradeSockets: 3
     };
@@ -27,13 +27,9 @@ class Aircraft {
     if (cleanSquadName.toLowerCase().includes('wardog')) cleanSquadName = (team === 'friendly' ? '7th Tactical Squadron' : 'Red Flight');
     this.squadronName = cleanSquadName;
 
-    if (typeof spawnAltFt === 'number' && !isNaN(spawnAltFt)) {
-      this.altFt = Math.max(5000, Math.min(65000, spawnAltFt));
-    } else if (this.spec.id === 'DARKSTAR') {
-      this.altFt = 58000;
-    } else {
-      this.altFt = 30000;
-    }
+    this.altFt = (typeof spawnAltFt === 'number' && !isNaN(spawnAltFt))
+      ? Math.max(5000, Math.min(65000, spawnAltFt))
+      : (this.spec.id === 'DARKSTAR' ? 58000 : 30000);
 
     this.targetAltFt = this.altFt;
     this.vsiFpm = 0;
@@ -41,8 +37,10 @@ class Aircraft {
     this.prevAltFt = this.altFt;
     this.altTrend = '--';
 
-    this.engineAlpha = 0.60;
-    this.speed = (this.spec.S_0 || 0.95) * 0.85;
+    this.engineAlpha = 0.50;
+    this.effectiveMaxSpeed = this.spec.S_0 || 0.95;
+    this.effectiveAcceleration = 0.24;
+    this.speed = this.getTargetMach();
     this.prevSpeed = this.speed;
     this.speedTrend = '--';
     this.energy = 1.0;
@@ -108,6 +106,7 @@ class Aircraft {
     this.rtbTimer = 0.0;
     this.hasMaldDecoy = false;
     this.maldDecoyCharges = 0;
+    this.distanceTraveled = 0.0;
 
     const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
     this.trackDurationBlue = (team === 'friendly' || is2P) ? 999.0 : 0.0;
@@ -129,6 +128,8 @@ class Aircraft {
     this.glocThreshold = (this.spec.isDrone || this.isCoffin) ? 999.0 : 0.95;
 
     this.recalculateWeight();
+    this.speed = this.getTargetMach();
+    this.prevSpeed = this.speed;
   }
 
   isIdentifiedBy(team) {
@@ -139,8 +140,7 @@ class Aircraft {
 
   get isIdentified() {
     if (window.Game && window.Game.playerMode === '2P') return true;
-    const commander = (window.Game && window.Game.currentPvpCommander) || 'friendly';
-    return this.isIdentifiedBy(commander);
+    return this.isIdentifiedBy((window.Game && window.Game.currentPvpCommander) || 'friendly');
   }
 
   set isIdentified(val) {
@@ -154,6 +154,19 @@ class Aircraft {
     return pool[Math.floor(Math.random() * pool.length)];
   }
 
+  getTargetMach() {
+    const maxSpd = this.effectiveMaxSpeed || (this.spec ? this.spec.S_0 : 0.95);
+    const alpha = Math.max(0.20, Math.min(1.0, this.engineAlpha !== undefined ? this.engineAlpha : 0.50));
+    const ratio = 0.45 + (alpha - 0.20) * (0.55 / 0.80);
+    return Math.max(0.25, maxSpd * ratio);
+  }
+
+  getOptimalCornerSpeed() {
+    const baseOpt = (this.spec && this.spec.sOpt) ? this.spec.sOpt : ((this.spec ? this.spec.S_0 : 0.95) * 0.65);
+    const baseS0 = (this.spec && this.spec.S_0) ? this.spec.S_0 : 1.0;
+    return Math.max(0.25, baseOpt * ((this.effectiveMaxSpeed || baseS0) / baseS0));
+  }
+
   getEffectiveAgility() {
     let agi = this.spec ? (this.spec.AGI_0 || 0.85) : 0.85;
     if (this.turnBonus) agi += this.turnBonus;
@@ -163,13 +176,11 @@ class Aircraft {
 
     let eturn = 1.0;
     if (!this.isCoffin) {
-      const sOpt = (this.effectiveMaxSpeed || 0.95) * 0.65;
+      const sOpt = this.getOptimalCornerSpeed();
       eturn = (typeof Physics !== 'undefined') ? Physics.calcTurnEfficiency(this.speed || 0.8, sOpt) : 0.85;
       eturn = Math.max(0.40, eturn);
     }
-    if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) {
-      eturn *= 0.70;
-    }
+    if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) eturn *= 0.70;
     return agi * eturn;
   }
 
@@ -219,20 +230,17 @@ class Aircraft {
   }
 
   orderRTB() { this.isRTB = true; this.targetAltFt = 36000; this.engineAlpha = 1.0; }
-  cancelRTB() { this.isRTB = false; this.rtbTimer = 0.0; this.targetAltFt = this.altFt; this.vsiFpm = 0; this.engineAlpha = 0.60; }
+  cancelRTB() { this.isRTB = false; this.rtbTimer = 0.0; this.targetAltFt = this.altFt; this.vsiFpm = 0; this.engineAlpha = 0.50; }
   toggleRTB() { if (this.isRTB) { this.cancelRTB(); return false; } else { this.orderRTB(); return true; } }
 
   update(dt, incomingMissiles) {
-    if (this.hp <= 0.05) {
-      this.hp = 0;
-      return;
-    }
+    if (this.hp <= 0.05) { this.hp = 0; return; }
 
     if (isNaN(this.x) || isNaN(this.y)) {
       this.x = (this.team === 'friendly') ? 20.0 : ((window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) ? window.CONFIG.THEATER_WIDTH_KM - 20.0 : 130.0);
       this.y = 50.0;
     }
-    if (isNaN(this.speed)) this.speed = 0.85;
+    if (isNaN(this.speed)) this.speed = this.getTargetMach();
     if (isNaN(this.heading)) this.heading = (this.team === 'friendly') ? 0.0 : Math.PI;
 
     if (this.isRTB) this.processRTB(dt);
@@ -261,10 +269,10 @@ class Aircraft {
       this.thermalBloom = 1.0;
     }
 
-    const recoveryRate = 0.09 * (this.engineAlpha || 0.60);
+    const recoveryRate = 0.09 * (this.engineAlpha || 0.50);
     this.energy = Math.min(1.0, this.energy + recoveryRate * dt);
 
-    const targetMach = this.effectiveMaxSpeed * (0.35 + 0.65 * this.engineAlpha);
+    const targetMach = this.getTargetMach();
     const speedDiff = targetMach - this.speed;
     this.speed += speedDiff * ((speedDiff >= 0) ? (this.effectiveAcceleration * 1.2) : 0.28) * dt;
     this.speed = Math.max(0.20, Math.min(this.effectiveMaxSpeed * 1.35, this.speed));
@@ -284,6 +292,7 @@ class Aircraft {
     const step = this.speed * 0.35 * dt;
     this.x += Math.cos(this.heading) * step;
     this.y += Math.sin(this.heading) * step;
+    this.distanceTraveled = (this.distanceTraveled || 0.0) + step;
 
     const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;

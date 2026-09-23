@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 1 to 3
- * Covers: Core Rules, Kinematics & Throttle, Flight Lead Systems & Tactical Gunnery
+ * Covers: Core Rules, Kinematics & Throttle, Corner Velocity & Tactical Gunnery
  */
 
 window.MANUAL_BASICS = [
@@ -121,13 +121,25 @@ window.MANUAL_BASICS = [
   },
   {
     id: 'ch2_kinematics',
-    title: 'SECTION 02: FLIGHT KINEMATICS, SPEED ENVELOPES & PROPULSION DETENTS',
+    title: 'SECTION 02: FLIGHT KINEMATICS, CORNER VELOCITY & PROPULSION DETENTS',
     desc: `
       <div class="ge-desc">
-        Aerodynamic flight in AIRSPACE STANDOFF models real-world physical dynamics: airspeed, altitude, air density, structural G-loading, and throttle propulsion states.
+        Aerodynamic flight in AIRSPACE STANDOFF models real-world physical dynamics: airspeed, altitude, air density, structural G-loading, corner velocity, and throttle propulsion states.
       </div>
 
-      <div class="ge-subhead">ENGINE POWER MODES: IDLE, CRUISE, MILITARY POWER &amp; AFTERBURNER</div>
+      <div class="ge-subhead">1. OPTIMAL CORNER VELOCITY (V_CORNER / sOpt) &amp; TURN EFFICIENCY</div>
+      <div class="ge-desc">
+        Every airframe possesses a tailored <b>Optimal Corner Speed</b> (displayed on HUD and spec sheets as <code>sOpt</code>):
+        <br><br>
+        <ul style="list-style:none;padding-left:0;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Peak Turn Rate:</b> Flying within &plusmn;12% of your aircraft's tailored corner velocity delivers <b>100% instantaneous turn authority</b>.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Stall &amp; Overspeed Penalty:</b> Flying too slow (bleeding energy below corner speed) or in extreme overspeed widens turning circles and degrades turn rate by up to <b>60%</b>.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Maneuver Defense Scaling:</b> Active maneuver defense (barrel rolls, break turns, Doppler notching) scales with your current turn efficiency. Throttling into your corner velocity before breaking maximizes missile evasion probability!</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>COFFIN Exemption:</b> COFFIN synthetic vision fighters maintain 100% turn rate authority across all airspeeds, locking turn efficiency at 100%.</li>
+        </ul>
+      </div>
+
+      <div class="ge-subhead">2. ENGINE POWER MODES: IDLE, CRUISE, MILITARY POWER &amp; AFTERBURNER</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
@@ -155,14 +167,14 @@ window.MANUAL_BASICS = [
             <tr>
               <td style="color:#f97316;font-weight:800;">AFTERBURNER</td>
               <td>86% &ndash; 100%</td>
-              <td>Mach 1.05 &ndash; 3.20+</td>
+              <td>Mach 1.05 &ndash; 2.40+</td>
               <td>Wet thrust injecting raw fuel into exhaust conduits. Peak dash velocity (+15% tracking vulnerability to hostile IR missiles).</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="ge-subhead">KINETIC ENERGY CONVERSIONS: DIVE &amp; ZOOM</div>
+      <div class="ge-subhead">3. KINETIC ENERGY CONVERSIONS: DIVE &amp; ZOOM</div>
       <div class="ge-grid-2">
         <div class="ge-card">
           <b style="color:#38bdf8;">KINETIC DIVE <span class="manual-key-badge">[Key X]</span></b>
@@ -189,7 +201,7 @@ window.MANUAL_BASICS = [
         <div class="ge-formula-code">Payload % = (Equipment Mass + External Drag Mass &times; 0.40) / Max Payload Mass &times; 100%</div>
       </div>
       <div class="ge-desc">
-        Notice that internal bay weapons add only pure equipment mass without multiplying parasite drag, keeping the payload ratio lower and preserving maximum speed.
+        Notice that internal bay weapons add only pure equipment mass without multiplying parasite drag, keeping the payload ratio lower and preserving maximum speed and turn agility.
       </div>
 
       <div class="table-scroll-wrapper">
@@ -220,7 +232,7 @@ window.MANUAL_BASICS = [
               <td style="color:#ef4444;font-weight:800;">OVERLOAD</td>
               <td>&gt; 80%</td>
               <td>Up to 25% Speed Decay</td>
-              <td>Maximum ordnance loadout. Top speed degraded by up to 25% with pronounced acceleration lag.</td>
+              <td>Maximum ordnance loadout. Top speed degraded by up to 25% with pronounced turn rate lag.</td>
             </tr>
           </tbody>
         </table>

@@ -214,11 +214,22 @@ class AirspaceStandoffGame {
       );
       (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
       (item.weapons || []).forEach(w => ac.installWeapon((typeof w === 'object' && w !== null) ? (w.id || w.specId) : w));
+      ac.recalculateWeight();
+      ac.speed = ac.getTargetMach();
+      ac.prevSpeed = ac.speed;
+      ac.speedTrend = '--';
       this.alliedAircraft.push(ac);
     });
 
     this.hostileAircraft = (typeof FleetGenerator !== 'undefined')
       ? FleetGenerator.generateHostileFleet(this.aiDifficulty, this.aiDoctrine, mapW, mapH) : [];
+
+    this.hostileAircraft.forEach(h => {
+      h.recalculateWeight();
+      h.speed = h.getTargetMach();
+      h.prevSpeed = h.speed;
+      h.speedTrend = '--';
+    });
 
     if (this.playerMode === '2P') {
       [...this.alliedAircraft, ...this.hostileAircraft].forEach(unit => {

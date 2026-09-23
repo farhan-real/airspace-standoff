@@ -1,12 +1,11 @@
 /**
  * AIRSPACE STANDOFF: Guided Missile Kinematics & Terminal Impact Resolution
- * ProNav guidance with maneuver vulnerability, Doppler notch evasion, and agility-driven hit resolution.
+ * ProNav guidance with corner speed turn efficiency scaling maneuver evasion probability.
  */
 
 class MissileKinetics {
   static getRelativePeakSpeed(weapon) {
-    if (!weapon) return 2.8;
-    return weapon.speedMach || 2.8;
+    return weapon ? (weapon.speedMach || 2.8) : 2.8;
   }
 
   static getAccelerationProfile(weapon) {
@@ -29,28 +28,22 @@ class MissileKinetics {
     const trait = w.trait || '';
     let baseRate = 1.6;
 
-    if (trait === 'SNAP_TURN') baseRate = 3.6;
+    if (trait === 'SNAP_TURN' || trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST') baseRate = 3.6;
     else if (trait === 'HOBS_VANE') baseRate = 3.4;
-    else if (trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST') baseRate = 3.6;
     else if (w.category === 'A2A' && (w.rangeKm || 40) <= 35) baseRate = 3.0;
     else if (trait === 'RAMJET_SUSTAINED' || trait === 'STEALTH_SEEKER' || trait === 'DUAL_PULSE_SURGE') baseRate = 2.2;
     else if (w.category === 'A2A') baseRate = 2.0;
     else if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') baseRate = 1.1;
     else if (trait === 'STEALTH_CRUISE' || trait === 'GLIDE_SATURATION') baseRate = 0.8;
 
-    if (missile.distanceToTarget && missile.distanceToTarget <= 3.5) {
-      baseRate = Math.max(baseRate, 3.2);
-    } else if (!missile.hasStartedClosing && missile.age <= 2.5) {
-      baseRate = Math.max(baseRate, 2.6);
-    }
-
+    if (missile.distanceToTarget && missile.distanceToTarget <= 3.5) baseRate = Math.max(baseRate, 3.2);
+    else if (!missile.hasStartedClosing && missile.age <= 2.5) baseRate = Math.max(baseRate, 2.6);
     return baseRate;
   }
 
   static initMissile(missile) {
     const w = missile.weapon || {};
     const source = missile.source;
-
     const launchCraftSpeed = source ? Math.max(0.70, Number(source.speed || 0.85)) : 0.85;
     const initialKick = (w.trait === 'GLIDE_SATURATION') ? 0.0 : 0.75;
     missile.launchSpeed = (w.trait === 'GLIDE_SATURATION') ? 0.90 : (launchCraftSpeed + initialKick);
@@ -89,12 +82,10 @@ class MissileKinetics {
     while (headingDiffToLos > Math.PI) headingDiffToLos = Math.abs(headingDiffToLos - Math.PI * 2);
 
     const vm = Math.max(0.45, missile.speed * 0.35);
-
     const tgtSpeedKm = (tgt.speed || 0.8) * 0.35;
     const tgtHdg = tgt.heading || 0;
     const vtx = Math.cos(tgtHdg) * tgtSpeedKm;
     const vty = Math.sin(tgtHdg) * tgtSpeedKm;
-
     const vmx = Math.cos(missile.heading) * vm;
     const vmy = Math.sin(missile.heading) * vm;
     const vrx = vtx - vmx;
@@ -103,35 +94,22 @@ class MissileKinetics {
     const losRate = (dx * vry - dy * vrx) / Math.max(0.04, dist * dist);
     const closingVel = -((dx * vrx + dy * vry) / Math.max(0.1, dist));
 
-    if (!missile.hasStartedClosing) {
-      if (headingDiffToLos < Math.PI * 0.55 && (closingVel > 0.1 || dist < missile.prevDistanceToTarget)) {
-        missile.hasStartedClosing = true;
-      }
+    if (!missile.hasStartedClosing && headingDiffToLos < Math.PI * 0.55 && (closingVel > 0.1 || dist < missile.prevDistanceToTarget)) {
+      missile.hasStartedClosing = true;
     }
 
     let N = 4.0;
     if (tgt.activeManeuverTimer > 0) {
-      if (tgt.isNotching && missile.weapon && (missile.weapon.seeker === 'ARH' || missile.weapon.seeker === 'PASSIVE_RADAR')) {
-        N = 0.6;
-      } else if (tgt.activeManeuverId === 'BARREL_ROLL') {
-        N = 1.2;
-      } else if (tgt.activeManeuverId === 'BREAK_TURN') {
-        N = 2.4;
-      }
+      if (tgt.isNotching && missile.weapon && (missile.weapon.seeker === 'ARH' || missile.weapon.seeker === 'PASSIVE_RADAR')) N = 0.6;
+      else if (tgt.activeManeuverId === 'BARREL_ROLL') N = 1.2;
+      else if (tgt.activeManeuverId === 'BREAK_TURN') N = 2.4;
     }
 
     let diff = los - missile.heading;
     while (diff < -Math.PI) diff += Math.PI * 2;
     while (diff > Math.PI) diff -= Math.PI * 2;
 
-    let turnRate = 0;
-    if (closingVel > 0.1 && dist > 1.5) {
-      turnRate = N * (closingVel / vm) * losRate;
-    } else {
-      const pursuitGain = (dist <= 1.5) ? 4.5 : (tgt.activeManeuverTimer > 0 ? 1.5 : 2.5);
-      turnRate = diff * pursuitGain;
-    }
-
+    let turnRate = (closingVel > 0.1 && dist > 1.5) ? (N * (closingVel / vm) * losRate) : (diff * (dist <= 1.5 ? 4.5 : (tgt.activeManeuverTimer > 0 ? 1.5 : 2.5)));
     const maxRate = MissileKinetics.getMaxTurnRate(missile);
     const clampedRate = Math.max(-maxRate, Math.min(maxRate, turnRate));
     missile.heading += clampedRate * dt;
@@ -149,29 +127,16 @@ class MissileKinetics {
     const prevDist = missile.prevDistanceToTarget;
     const tgt = missile.target;
 
-    if (missile.age < 1.0) {
-      return { shouldTrigger: false };
-    }
-
-    if (dist <= 0.65) {
-      return { shouldTrigger: true, isHitCandidate: true };
-    }
+    if (missile.age < 1.0) return { shouldTrigger: false };
+    if (dist <= 0.65) return { shouldTrigger: true, isHitCandidate: true };
 
     if (missile.minDistanceReached <= 1.8 && dist > prevDist) {
-      if (prevDist <= 0.95) {
-        return { shouldTrigger: true, isHitCandidate: true };
-      }
-
+      if (prevDist <= 0.95) return { shouldTrigger: true, isHitCandidate: true };
       if (tgt && typeof tgt.x === 'number') {
-        const toTgtX = tgt.x - missile.x;
-        const toTgtY = tgt.y - missile.y;
-        const forwardDot = toTgtX * Math.cos(missile.heading) + toTgtY * Math.sin(missile.heading);
-        if (forwardDot <= 0) {
-          return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
-        }
+        const forwardDot = (tgt.x - missile.x) * Math.cos(missile.heading) + (tgt.y - missile.y) * Math.sin(missile.heading);
+        if (forwardDot <= 0) return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
       }
     }
-
     return { shouldTrigger: false };
   }
 
@@ -207,8 +172,7 @@ class MissileKinetics {
       if (distToTarget > 28.0) {
         missile.stage = 'LOFT';
         missile.alt = Math.min(0.95, (missile.alt || 0.5) + 0.16 * dt);
-        const loftTarget = missile.peakSpeed * 0.82;
-        if (missile.speed < loftTarget) missile.speed += 2.0 * dt;
+        if (missile.speed < missile.peakSpeed * 0.82) missile.speed += 2.0 * dt;
       } else {
         missile.stage = 'DIVE';
         missile.alt = Math.max(0.18, (missile.alt || 0.5) - 0.28 * dt);
@@ -248,8 +212,7 @@ class MissileKinetics {
     else missile.stage = 'COAST';
 
     const minSustain = (w.category === 'A2A' && (w.rangeKm || 40) <= 35) ? 1.85 : 2.05;
-    const decayRate = 0.045;
-    missile.speed = Math.max(minSustain, missile.speed - decayRate * dt);
+    missile.speed = Math.max(minSustain, missile.speed - 0.045 * dt);
   }
 
   static resolveHitProbability(missile, target, weatherClouds, salvoCount) {
@@ -263,14 +226,20 @@ class MissileKinetics {
     let aspectDiff = Math.abs((target.heading !== undefined ? target.heading : angleToTarget) - angleToTarget);
     while (aspectDiff > Math.PI) aspectDiff = Math.abs(aspectDiff - Math.PI * 2);
 
-    let aspectScore = 0.90;
-    if (aspectDiff > 2.2) aspectScore = 1.00;
-    else if (aspectDiff < 0.8) aspectScore = 0.85;
+    let aspectScore = (aspectDiff > 2.2) ? 1.00 : ((aspectDiff < 0.8) ? 0.85 : 0.90);
 
     const targetAgility = (typeof target.getEffectiveAgility === 'function')
       ? target.getEffectiveAgility()
       : ((target.spec && target.spec.AGI_0) ? target.spec.AGI_0 : 0.85);
     const agilityScale = Math.max(0.35, Math.min(1.65, targetAgility / 0.85));
+
+    const sOpt = (typeof target.getOptimalCornerSpeed === 'function')
+      ? target.getOptimalCornerSpeed()
+      : ((target.effectiveMaxSpeed || 0.95) * 0.65);
+    const turnOptEff = target.isCoffin
+      ? 1.0
+      : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(target.speed || 0.8, sOpt) : 0.85);
+    const turnOptFactor = Math.max(0.40, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
 
     const notchBonus = (target.isNotching && (w.seeker === 'ARH' || w.seeker === 'PASSIVE_RADAR'))
       ? (missile.source && missile.source.hasIRST ? 0.16 : 0.38 * (1.0 - (w.antiNotchBonus || 0)) * (0.6 + 0.4 * agilityScale))
@@ -279,7 +248,7 @@ class MissileKinetics {
       ? (w.seeker === 'ARH' ? 0.34 * (1.0 - (w.decoyResistance || w.flareResistance || 0)) : 0.18)
       : 0.0;
 
-    const primaryActiveEvasion = Math.max(activeManeuver * agilityScale, notchBonus, chaffBonus);
+    const primaryActiveEvasion = Math.max(activeManeuver * agilityScale * turnOptFactor, notchBonus, chaffBonus);
     const primaryPassiveBaseline = Math.max(
       target.isCoffin ? (target.coffinDodgeBonus || 0.25) : 0.0,
       target.isAce ? (target.aceEvasionBonus || 0.08) : 0.0,
@@ -292,17 +261,11 @@ class MissileKinetics {
       const inbounds = window.Game.missiles.filter(m => (m.active || m.id === missile.id) && m.target && m.target.id === target.id);
       const isRf = (s) => (s === 'ARH' || s === 'PASSIVE_RADAR' || s === 'INS' || s === 'INS_RADAR');
       const isOpt = (s) => (s === 'IIR' || s === 'EO' || s === 'OPT');
-      const hasRf = inbounds.some(m => m.weapon && isRf(m.weapon.seeker));
-      const hasOpt = inbounds.some(m => m.weapon && isOpt(m.weapon.seeker));
-      if (hasRf && hasOpt) {
-        hasMixedSeekers = true;
-      }
+      hasMixedSeekers = (inbounds.some(m => m.weapon && isRf(m.weapon.seeker)) && inbounds.some(m => m.weapon && isOpt(m.weapon.seeker)));
     }
 
     let effectiveDefense = Math.min(0.75, primaryActiveEvasion + 0.30 * primaryPassiveBaseline);
-    if (hasMixedSeekers) {
-      effectiveDefense *= 0.55;
-    }
+    if (hasMixedSeekers) effectiveDefense *= 0.55;
 
     const salvoBonus = Math.min(0.30, Math.max(0, (salvoCount || 1) - 1) * 0.12);
     const weatherPenalty = (weatherClouds && (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT') && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
@@ -310,21 +273,17 @@ class MissileKinetics {
     const mixedSynergyBonus = hasMixedSeekers ? mixedBonusVal : 0.0;
 
     let energyTurnPenalty = 0.0;
-    if (missile.cumulativeTurn && missile.cumulativeTurn > Math.PI) {
-      const trait = w.trait || '';
-      if (trait !== 'REAR_ENGAGE' && trait !== 'ALL_ASPECT_BURST') {
-        energyTurnPenalty = Math.min(0.18, (missile.cumulativeTurn - Math.PI) * 0.08);
-      }
+    if (missile.cumulativeTurn && missile.cumulativeTurn > Math.PI && w.trait !== 'REAR_ENGAGE' && w.trait !== 'ALL_ASPECT_BURST') {
+      energyTurnPenalty = Math.min(0.18, (missile.cumulativeTurn - Math.PI) * 0.08);
     }
 
-    const heavyTargetAccuracyBonus = w.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
+    const heavyBonus = w.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
     const energyDeficitBonus = (1.0 - (target.energy !== undefined ? target.energy : 1.0)) * 0.25;
     const agilityDefenseBonus = (targetAgility - 0.85) * 0.18;
+    const turnOptBonus = (turnOptEff - 0.70) * 0.15;
 
-    const rawProb = (basePk * aspectScore) - effectiveDefense - agilityDefenseBonus + salvoBonus + mixedSynergyBonus + afterburnerBonus + heavyTargetAccuracyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
-    if (isManeuvering) {
-      return Math.max(0.10, Math.min(0.95, rawProb));
-    }
+    const rawProb = (basePk * aspectScore) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + afterburnerBonus + heavyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
+    if (isManeuvering) return Math.max(0.10, Math.min(0.95, rawProb));
     const floor = (target.isAce ? 0.14 : (target.isCoffin ? 0.08 : (target.isFlightLead ? 0.10 : 0.12)));
     return Math.max(floor, Math.min(0.95, rawProb));
   }

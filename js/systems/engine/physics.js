@@ -59,11 +59,7 @@ const Physics = {
       }
     }
 
-    let effectiveRcs = 1.0;
-    if (targetUnit.effectiveRcs !== undefined) effectiveRcs = targetUnit.effectiveRcs;
-    else if (targetUnit.rcs !== undefined) effectiveRcs = targetUnit.rcs;
-    else if (targetUnit.weapon && targetUnit.weapon.rcs !== undefined) effectiveRcs = targetUnit.weapon.rcs;
-
+    let effectiveRcs = targetUnit.effectiveRcs !== undefined ? targetUnit.effectiveRcs : (targetUnit.rcs !== undefined ? targetUnit.rcs : 1.0);
     effectiveRcs = Math.max(0.0001, effectiveRcs * aspectMultiplier);
     let maxDetectDist = baseR0 * Math.pow(effectiveRcs, 0.25);
 
@@ -77,8 +73,7 @@ const Physics = {
     if (window.Game && window.Game.surfaceUnits) {
       const hostileJammers = window.Game.surfaceUnits.filter(s => s.hp > 0 && s.team !== sensorUnit.team && s.isJammerStation && Math.hypot(s.x - targetUnit.x, s.y - targetUnit.y) <= s.rangeKm);
       if (hostileJammers.length > 0) {
-        let sJam = 0.30;
-        if (sensorUnit.hasECCM) sJam *= (1.0 - (sensorUnit.eccmBonus || 0.60));
+        let sJam = 0.30 * (sensorUnit.hasECCM ? (1.0 - (sensorUnit.eccmBonus || 0.60)) : 1.0);
         maxDetectDist *= (1.0 - sJam);
       }
     }
@@ -159,23 +154,12 @@ const Physics = {
     if (!isSurface && typeof attacker.heading === 'number') {
       let offBoresight = Math.abs(attacker.heading - angleToTarget);
       while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
-
       const trait = weapon.trait || '';
-      if (trait === 'REAR_ENGAGE') {
-        isRearShot = true;
-        offBoresightPenalty = 0.0;
-      } else if (trait === 'ALL_ASPECT_BURST') {
-        offBoresightPenalty = 0.0;
-      } else if (trait === 'HOBS_VANE' || weapon.id === 'IRIS-T') {
-        if (offBoresight > Math.PI * 0.5) {
-          offBoresightPenalty = (offBoresight - Math.PI * 0.5) * 0.16;
-        }
-      } else if (trait === 'SNAP_TURN' || trait === 'SWARM_RIPPLE') {
-        if (offBoresight > 1.05) {
-          offBoresightPenalty = (offBoresight - 1.05) * 0.20;
-        }
-      } else {
-        if (offBoresight > 0.6) {
+      if (trait === 'REAR_ENGAGE') isRearShot = true;
+      else if (trait !== 'ALL_ASPECT_BURST') {
+        if (trait === 'HOBS_VANE' || weapon.id === 'IRIS-T') {
+          if (offBoresight > Math.PI * 0.5) offBoresightPenalty = (offBoresight - Math.PI * 0.5) * 0.16;
+        } else if (offBoresight > 0.6) {
           offBoresightPenalty = (offBoresight - 0.6) * 0.18;
         }
       }
@@ -205,13 +189,7 @@ const Physics = {
         salvoBonus = Math.min(0.30, salvoCount * 0.12);
         const isRf = (s) => (s === 'ARH' || s === 'PASSIVE_RADAR' || s === 'INS' || s === 'INS_RADAR');
         const isOpt = (s) => (s === 'IIR' || s === 'EO' || s === 'OPT');
-        const thisRf = isRf(weapon.seeker);
-        const thisOpt = isOpt(weapon.seeker);
-
-        const hasOtherRf = inbounds.some(m => m.weapon && isRf(m.weapon.seeker));
-        const hasOtherOpt = inbounds.some(m => m.weapon && isOpt(m.weapon.seeker));
-
-        if ((thisRf && hasOtherOpt) || (thisOpt && hasOtherRf)) {
+        if ((isRf(weapon.seeker) && inbounds.some(m => m.weapon && isOpt(m.weapon.seeker))) || (isOpt(weapon.seeker) && inbounds.some(m => m.weapon && isRf(m.weapon.seeker)))) {
           hasMixedSeekers = true;
           salvoBonus += mixedBonusVal;
         }
@@ -223,8 +201,16 @@ const Physics = {
       : ((target.spec && target.spec.AGI_0) ? target.spec.AGI_0 : 0.85);
     const agilityScale = Math.max(0.35, Math.min(1.65, targetAgility / 0.85));
 
+    const sOpt = (typeof target.getOptimalCornerSpeed === 'function')
+      ? target.getOptimalCornerSpeed()
+      : ((target.effectiveMaxSpeed || 0.95) * 0.65);
+    const turnOptEff = target.isCoffin
+      ? 1.0
+      : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(target.speed || 0.8, sOpt) : 0.85);
+    const turnOptFactor = Math.max(0.40, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
+
     const activeEvasion = Math.max(
-      (target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? (target.activeManeuverBonus * agilityScale) : 0.0,
+      (target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? (target.activeManeuverBonus * agilityScale * turnOptFactor) : 0.0,
       target.isNotching ? (0.28 * (0.6 + 0.4 * agilityScale)) : 0.0,
       target.cmTimer > 0 ? 0.30 : 0.0
     );
@@ -236,15 +222,14 @@ const Physics = {
 
     const targetEnergy = Math.max(0.20, Math.min(1.0, target.energy !== undefined ? target.energy : 1.0));
     let effectiveDefenseEstimate = Math.min(0.50, Math.max(activeEvasion, passiveBaseline) + 0.15 * Math.min(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
-    if (hasMixedSeekers) {
-      effectiveDefenseEstimate *= 0.55;
-    }
+    if (hasMixedSeekers) effectiveDefenseEstimate *= 0.55;
 
     const energyBleedBonus = (1.0 - targetEnergy) * 0.25;
     const shooterStressPenalty = (attacker.stress >= 0.65 && !attacker.isCoffin && !attacker.spec.isDrone) ? 0.15 : 0.0;
     const agilityDefenseBonus = (targetAgility - 0.85) * 0.18;
+    const turnOptBonus = (turnOptEff - 0.70) * 0.15;
 
-    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate - agilityDefenseBonus + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty - offBoresightPenalty;
+    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate - agilityDefenseBonus - turnOptBonus + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty - offBoresightPenalty;
     const pkPercent = Math.round(Math.max(12, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = (dist >= sweetMin && dist <= sweetMax) ? (isClosing ? '^' : 'v') : (isClosing ? (dist > sweetMax ? '^' : 'v') : 'v');

@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Inspector Modal Renderer
- * Displays comprehensive airframe specifications with station breakdown (internal, external, centerline).
+ * Displays comprehensive airframe specifications with station breakdown and optimal corner speeds.
  */
 
 class InspectorModalRenderer {
@@ -67,6 +67,9 @@ class InspectorModalRenderer {
     const builtInName = guns[a.builtInGun] ? guns[a.builtInGun].name : (a.builtInGun || 'M61A2 Vulcan');
     const maxPayloadKg = (a.M_max || 5000).toLocaleString();
 
+    const sOptVal = a.sOpt || ((a.S_0 || 0.90) * 0.65);
+    const sOptKmH = Math.round(sOptVal * 1225);
+
     const internalBayDesc = a.internalSlots > 0
       ? `${a.internalSlots} Slots (Concealed VLO Bay - Zero Drag & Zero Extra RCS)`
       : 'None (Conventional Airframe)';
@@ -90,7 +93,7 @@ class InspectorModalRenderer {
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>PRIMARY COMBAT ROLE:</span><b>${a.role || 'Fighter'}</b></div>
         <div class="inspect-stat-item"><span>MAX SPRINT AIRSPEED:</span><b class="${rSpeed.colorClass}">Mach ${(a.S_0 || 0.90).toFixed(2)} (${Math.round((a.S_0 || 0.90) * 1225)} km/h)</b></div>
-        <div class="inspect-stat-item"><span>TURN AGILITY (CORNER SPEED):</span><b class="${rAgi.colorClass}">${(a.AGI_0 || 0.85).toFixed(2)} (${Math.round((a.S_0 || 0.90) * 0.65 * 1225)} km/h opt)</b></div>
+        <div class="inspect-stat-item"><span>TURN AGILITY (CORNER SPEED):</span><b class="${rAgi.colorClass}">${(a.AGI_0 || 0.85).toFixed(2)} (M ${sOptVal.toFixed(2)} / ${sOptKmH} km/h opt)</b></div>
         <div class="inspect-stat-item"><span>STRUCTURAL G-LIMIT:</span><b class="${rG.colorClass}">${(a.G_limit || 9.0).toFixed(1)} G</b></div>
         <div class="inspect-stat-item"><span>THRUST VECTORING / COFFIN:</span><b class="${nozzleClass}">${nozzleDesc} <span class="stat-badge-tier ${nozzleTier}">${a.thrustVector ? 'TVC' : (a.isCoffin ? 'COFFIN' : 'AERO')}</span></b></div>
         <div class="inspect-stat-item"><span>AIRFRAME ARMOR INTEGRITY:</span><b class="${rHp.colorClass}">${a.hp || 4} HP</b></div>

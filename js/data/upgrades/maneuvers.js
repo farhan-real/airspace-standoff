@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Balanced Tactical Maneuver Cards
- * Physical flight actions with maneuver evasion scaling directly with aircraft agility.
+ * Physical flight actions with maneuver evasion scaling directly with agility and corner speed turn efficiency.
  */
 
 window.MANEUVER_CARDS = [
@@ -32,6 +32,14 @@ window.MANEUVER_CARDS = [
         ? unit.getEffectiveAgility()
         : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
       bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
+
+      const sOpt = (typeof unit.getOptimalCornerSpeed === 'function')
+        ? unit.getOptimalCornerSpeed()
+        : ((unit.effectiveMaxSpeed || 0.95) * 0.65);
+      const turnOptEff = unit.isCoffin
+        ? 1.0
+        : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(unit.speed || 0.8, sOpt) : 0.85);
+      bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
 
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.10;
@@ -88,6 +96,14 @@ window.MANEUVER_CARDS = [
         : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
       bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
 
+      const sOpt = (typeof unit.getOptimalCornerSpeed === 'function')
+        ? unit.getOptimalCornerSpeed()
+        : ((unit.effectiveMaxSpeed || 0.95) * 0.65);
+      const turnOptEff = unit.isCoffin
+        ? 1.0
+        : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(unit.speed || 0.8, sOpt) : 0.85);
+      bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
+
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.10;
       unit.activeManeuverBonus = bonus;
@@ -129,6 +145,14 @@ window.MANEUVER_CARDS = [
         ? unit.getEffectiveAgility()
         : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
       bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
+
+      const sOpt = (typeof unit.getOptimalCornerSpeed === 'function')
+        ? unit.getOptimalCornerSpeed()
+        : ((unit.effectiveMaxSpeed || 0.95) * 0.65);
+      const turnOptEff = unit.isCoffin
+        ? 1.0
+        : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(unit.speed || 0.8, sOpt) : 0.85);
+      bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
 
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.12;
@@ -173,6 +197,14 @@ window.MANEUVER_CARDS = [
         : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
       bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
 
+      const sOpt = (typeof unit.getOptimalCornerSpeed === 'function')
+        ? unit.getOptimalCornerSpeed()
+        : ((unit.effectiveMaxSpeed || 0.95) * 0.65);
+      const turnOptEff = unit.isCoffin
+        ? 1.0
+        : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(unit.speed || 0.8, sOpt) : 0.85);
+      bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
+
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.10;
       unit.activeManeuverBonus = bonus;
@@ -212,6 +244,14 @@ window.MANEUVER_CARDS = [
         ? unit.getEffectiveAgility()
         : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
       bonus *= Math.max(0.50, Math.min(1.40, agi / 0.85));
+
+      const sOpt = (typeof unit.getOptimalCornerSpeed === 'function')
+        ? unit.getOptimalCornerSpeed()
+        : ((unit.effectiveMaxSpeed || 0.95) * 0.65);
+      const turnOptEff = unit.isCoffin
+        ? 1.0
+        : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(unit.speed || 0.8, sOpt) : 0.85);
+      bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
       unit.activeManeuverBonus = bonus;
 
       if (game && game.radar) {
@@ -245,6 +285,14 @@ window.MANEUVER_CARDS = [
         ? unit.getEffectiveAgility()
         : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
       bonus *= Math.max(0.40, Math.min(1.50, agi / 0.85));
+
+      const sOpt = (typeof unit.getOptimalCornerSpeed === 'function')
+        ? unit.getOptimalCornerSpeed()
+        : ((unit.effectiveMaxSpeed || 0.95) * 0.65);
+      const turnOptEff = unit.isCoffin
+        ? 1.0
+        : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(unit.speed || 0.8, sOpt) : 0.85);
+      bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
       unit.activeManeuverBonus = bonus;
 
       if (game && game.radar) {

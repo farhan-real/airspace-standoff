@@ -1,7 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Aircraft Combat Actions, Stores Management & Live Dynamics
- * Supports slot differentiation (INTERNAL bay, EXTERNAL pylons, CENTERLINE station).
- * Dynamically sheds parasitic drag and extra pylon RCS in real time as ordnance is expended.
+ * Supports slot differentiation, real-time drag/RCS shedding, and trimmed cruise initialization.
  */
 
 Aircraft.prototype.deployDecoyDrone = function() {
@@ -43,21 +42,10 @@ Aircraft.prototype.installUpgrade = function(upgradeId) {
   return true;
 };
 
-Aircraft.prototype.getUsedInternalSlots = function() {
-  return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'INTERNAL' && item.weapon ? item.weapon.slots : 0), 0);
-};
-
-Aircraft.prototype.getUsedExternalSlots = function() {
-  return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'EXTERNAL' && item.weapon ? item.weapon.slots : 0), 0);
-};
-
-Aircraft.prototype.getUsedCenterlineSlots = function() {
-  return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'CENTERLINE' && item.weapon ? item.weapon.slots : 0), 0);
-};
-
-Aircraft.prototype.getUsedSlots = function() {
-  return this.equippedWeapons.reduce((sum, item) => sum + (item.weapon ? item.weapon.slots : 0), 0);
-};
+Aircraft.prototype.getUsedInternalSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'INTERNAL' && item.weapon ? item.weapon.slots : 0), 0); };
+Aircraft.prototype.getUsedExternalSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'EXTERNAL' && item.weapon ? item.weapon.slots : 0), 0); };
+Aircraft.prototype.getUsedCenterlineSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'CENTERLINE' && item.weapon ? item.weapon.slots : 0), 0); };
+Aircraft.prototype.getUsedSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.weapon ? item.weapon.slots : 0), 0); };
 
 Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
   const wpn = (window.WEAPONS_CATALOG || {})[weaponId];
@@ -116,7 +104,6 @@ Aircraft.prototype.recalculateWeight = function() {
   let mass = this.gun ? Number(this.gun.mass || 100) : 100;
   let externalDragPenalty = 0;
   let extraRcs = 0;
-
   const upgCatalog = window.UPGRADES_CATALOG || {};
 
   for (const item of this.equippedWeapons) {
@@ -124,24 +111,17 @@ Aircraft.prototype.recalculateWeight = function() {
     const w = item.weapon;
     const isMounted = item.ammo > 0;
     const ammoFraction = item.maxAmmo > 0 ? (item.ammo / item.maxAmmo) : (isMounted ? 1 : 0);
-
-    const currentMass = Number(w.mass || 0) * ammoFraction;
-    mass += currentMass;
+    mass += Number(w.mass || 0) * ammoFraction;
 
     const station = item.station || (w.slotType === 'CENTERLINE' ? 'CENTERLINE' : (w.slotType === 'INTERNAL' && this.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL'));
-
-    if (station === 'INTERNAL') {
-      // Internal bay: zero extra radar cross section and zero parasite drag
-    } else if (station === 'CENTERLINE') {
+    if (station === 'CENTERLINE') {
       if (isMounted) {
         extraRcs += Number(w.sigmaPylon || 0.50);
         externalDragPenalty += 0.05 * ammoFraction;
       }
-    } else {
-      if (isMounted) {
-        extraRcs += Number(w.sigmaPylon || 0.05);
-        externalDragPenalty += 0.02 * (w.slots || 1) * ammoFraction;
-      }
+    } else if (station !== 'INTERNAL' && isMounted) {
+      extraRcs += Number(w.sigmaPylon || 0.05);
+      externalDragPenalty += 0.02 * (w.slots || 1) * ammoFraction;
     }
   }
 
@@ -158,13 +138,18 @@ Aircraft.prototype.recalculateWeight = function() {
   let baseRcs = Number(this.spec ? (this.spec.sigma_0 || 1.0) : 1.0);
   if (this.isFlightLead && this.spec && this.spec.category === 'STEALTH') baseRcs *= 0.65;
   if (this.equippedUpgrades.includes('RAM_NANO_COATING')) baseRcs *= 0.55;
-
   this.effectiveRcs = Math.max(0.00005, baseRcs + extraRcs);
 
   const baseSpeed = Number(this.spec ? (this.spec.S_0 || 0.95) : 0.95);
   this.effectiveMaxSpeed = Math.max(0.35, baseSpeed * (1.0 - 0.22 * this.Wr) - externalDragPenalty);
   const baseAccel = 0.24 + (this.accelBonus || 0);
   this.effectiveAcceleration = baseAccel / (1.0 + 0.70 * this.Wr);
+
+  if (!this.distanceTraveled || this.distanceTraveled === 0) {
+    this.speed = this.getTargetMach();
+    this.prevSpeed = this.speed;
+    this.speedTrend = '--';
+  }
 };
 
 Aircraft.prototype.deployCountermeasures = function() {
@@ -204,7 +189,7 @@ Aircraft.prototype.processRTB = function(dt) {
       this.isRTB = false;
       this.rtbTimer = 0.0;
       this.heading = isBlue ? 0.0 : Math.PI;
-      this.engineAlpha = 0.70;
+      this.engineAlpha = 0.50;
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnCombatText(this.x, this.y, 'RE-ARMED & REPAIRED', isBlue ? '#00f5a0' : '#ef4444');
       }

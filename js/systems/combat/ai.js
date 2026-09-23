@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Tactical AI Commander
- * Scaled difficulty curves; agility directly powers evasive turn rates and defensive success.
+ * Scaled difficulty curves; agility and corner velocity directly power evasive turn rates and defenses.
  */
 
 class TacticalAICommander {
@@ -128,6 +128,14 @@ class TacticalAICommander {
 
         if (nearest.distanceToTarget < triggerDist) {
           const aceAgi = (typeof ace.getEffectiveAgility === 'function') ? ace.getEffectiveAgility() : (ace.spec ? ace.spec.AGI_0 : 1.15);
+          const sOpt = (typeof ace.getOptimalCornerSpeed === 'function') ? ace.getOptimalCornerSpeed() : 0.90;
+          const turnOptEff = ace.isCoffin ? 1.0 : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(ace.speed || 0.8, sOpt) : 0.85);
+
+          // Aces manage engine power towards optimal corner velocity during defensive breaks
+          if (ace.speed > sOpt * 1.15) ace.engineAlpha = 0.35;
+          else if (ace.speed < sOpt * 0.85) ace.engineAlpha = 0.85;
+          else ace.engineAlpha = 0.65;
+
           if (isVeryHighDiff && isRadar && !blunderedDefense) {
             const perpHeading = nearest.heading + Math.PI / 2;
             let dAngle = perpHeading - ace.heading;
@@ -138,7 +146,7 @@ class TacticalAICommander {
               ace.isNotching = true;
               ace.activeManeuverId = 'DOPPLER_NOTCH';
               ace.activeManeuverTimer = 6.0;
-              ace.activeManeuverBonus = 0.48 * (aceAgi / 0.85);
+              ace.activeManeuverBonus = 0.48 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff);
               if (ace.chaff > 0 && ace.cmTimer <= 0) ace.deployCountermeasures();
             }
           } else {
@@ -151,8 +159,7 @@ class TacticalAICommander {
             ace.isNotching = false;
             ace.activeManeuverId = 'BREAK_TURN';
             ace.activeManeuverTimer = 5.0;
-            ace.activeManeuverBonus = 0.38 * (aceAgi / 0.85);
-            ace.engineAlpha = blunderedDefense ? 0.75 : 0.50;
+            ace.activeManeuverBonus = 0.38 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff);
             if (ace.chaff > 0 && ace.cmTimer <= 0 && Math.random() < 0.45) ace.deployCountermeasures();
           }
         }
@@ -214,6 +221,10 @@ class TacticalAICommander {
       : ((hostile.spec && hostile.spec.AGI_0) ? hostile.spec.AGI_0 : 0.85);
     const agiFactor = Math.max(0.40, Math.min(1.60, effAgi / 0.85));
 
+    const sOpt = (typeof hostile.getOptimalCornerSpeed === 'function') ? hostile.getOptimalCornerSpeed() : 0.75;
+    const turnOptEff = hostile.isCoffin ? 1.0 : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(hostile.speed || 0.8, sOpt) : 0.85);
+    const turnOptFactor = Math.max(0.40, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
+
     if (Math.random() < (tier.blunderChance / agiFactor)) return;
 
     const hasCm = (hostile.chaff > 0 || hostile.countermeasures > 0);
@@ -229,7 +240,7 @@ class TacticalAICommander {
       const turnCap = effAgi * tier.turnMult;
       hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
       hostile.activeManeuverTimer = 5.0;
-      hostile.activeManeuverBonus = tier.bonus * agiFactor;
+      hostile.activeManeuverBonus = tier.bonus * agiFactor * turnOptFactor;
       hostile.activeManeuverId = 'BREAK_TURN';
       hostile.isNotching = false;
       return;
@@ -244,7 +255,7 @@ class TacticalAICommander {
       if (Math.abs(diff) < 0.20) {
         hostile.isNotching = true;
         hostile.activeManeuverTimer = 6.0;
-        hostile.activeManeuverBonus = tier.bonus * agiFactor;
+        hostile.activeManeuverBonus = tier.bonus * agiFactor * turnOptFactor;
         hostile.activeManeuverId = 'DOPPLER_NOTCH';
       }
     }

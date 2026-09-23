@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Avionics UI
- * Displays telemetry, compass tape, and full names (RETURN TO BASE).
+ * Displays telemetry, dynamic corner velocity turn efficiency, and Stores Management.
  */
 
 class AvionicsUI {
@@ -123,7 +123,7 @@ class AvionicsUI {
       if (hudCallsign) hudCallsign.textContent = 'NO CRAFT SELECTED';
       if (hudModel) hudModel.textContent = '--';
       if (hudCardinal) hudCardinal.textContent = 'N';
-      if (hudDeg) hudDeg.textContent = '000°';
+      if (hudDeg) hudDeg.textContent = '000 deg';
       if (hudEturn) {
         hudEturn.textContent = 'TURN: --%';
         hudEturn.className = 'rfh-pill';
@@ -167,7 +167,7 @@ class AvionicsUI {
     }
 
     const machNum = (u.speed || 0.85);
-    const sOpt = (u.effectiveMaxSpeed || 0.95) * 0.65;
+    const sOpt = (typeof u.getOptimalCornerSpeed === 'function') ? u.getOptimalCornerSpeed() : ((u.effectiveMaxSpeed || 0.95) * 0.65);
     const sTr = u.speedTrend || '--';
     const aTr = u.altTrend || '--';
     const fpm = Math.round(u.vsiFpm || 0);
@@ -198,7 +198,7 @@ class AvionicsUI {
     }
     if (hudModel) hudModel.textContent = `${callsignText} - ${u.spec ? u.spec.role : ''}`;
     if (hudCardinal) { hudCardinal.textContent = cardStr; hudCardinal.style.color = (cardStr === 'E') ? '#00f0ff' : (cardStr === 'W' ? '#00f5a0' : '#f8fafc'); }
-    if (hudDeg) hudDeg.textContent = String(deg).padStart(3, '0') + '°';
+    if (hudDeg) hudDeg.textContent = String(deg).padStart(3, '0') + ' deg';
 
     if (hudEturn) {
       if (u.isCoffin) {
@@ -208,7 +208,8 @@ class AvionicsUI {
         hudEturn.style.color = '#c7d2fe';
       } else {
         hudEturn.className = 'rfh-pill';
-        hudEturn.title = 'Instantaneous Turn Efficiency based on Corner Speed (OPT = 65% top speed)';
+        const optKmH = Math.round(sOpt * 1225);
+        hudEturn.title = `Instantaneous Turn Efficiency based on Corner Speed (OPT: M ${sOpt.toFixed(2)} / ${optKmH} km/h). Directly scales maneuver evasion probability.`;
         hudEturn.textContent = 'TURN: ' + Math.round(eturn * 100) + '%' + (eturn >= 0.88 ? ' OPT' : '');
         hudEturn.style.color = this.getTurnColor(eturn, false);
       }
@@ -220,10 +221,12 @@ class AvionicsUI {
       hudWr.style.color = this.getLoadColor(u.Wr || 0);
     }
 
-    const pct = Math.round((u.engineAlpha !== undefined ? u.engineAlpha : 0.60) * 100);
+    const pct = Math.round((u.engineAlpha !== undefined ? u.engineAlpha : 0.50) * 100);
     if (slider) slider.value = pct;
     if (alphaLabel) {
-      alphaLabel.textContent = pct + '% ' + (pct > 85 ? 'AFTERBURNER' : (pct > 75 ? 'MIL POWER' : (pct > 35 ? 'CRUISE' : 'IDLE')));
+      const targetMachVal = (typeof u.getTargetMach === 'function') ? u.getTargetMach() : (u.speed || 0.85);
+      const modeText = pct > 85 ? 'AFTERBURNER' : (pct > 75 ? 'MIL POWER' : (pct > 35 ? 'CRUISE' : 'IDLE'));
+      alphaLabel.textContent = `${pct}% ${modeText} [M ${targetMachVal.toFixed(2)}]`;
       alphaLabel.classList.toggle('burner', pct > 85);
     }
 
