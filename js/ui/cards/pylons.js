@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Weapon Pylon Bay & Stores Management System
- * Displays stations tagged by mount type ([INTERNAL], [EXTERNAL], [CENTERLINE]).
+ * Displays weapon name exclusively on the top row, with ammo count, station tag, and specs on a new line.
  */
 
 class PylonBayRenderer {
@@ -102,28 +102,41 @@ class PylonBayRenderer {
 
           if (isMobile) {
             pylonCard.className = 'mob-compact-pylon';
+            const cleanName = (w.name || w.id || 'WPN').replace(/\s*\(\d+x\)/gi, '').trim();
             pylonCard.innerHTML = `
               <div class="mob-pylon-top-line">
-                <div class="mob-pylon-name-group">
-                  <span class="pylon-station-tag ${stationClass}">[${stationLabel}]</span>
-                  <span class="mob-pylon-name">${(w.name || w.id || 'WPN').split(' ')[0]}</span>
-                </div>
-                <div class="mob-pylon-top-right"><span class="pylon-ammo-counter mob-pylon-cap">${item.ammo}/${item.maxAmmo}</span><button type="button" class="micro-spec-btn" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button></div>
+                <span class="mob-pylon-name" title="${w.name || w.id}">${cleanName}</span>
               </div>
-              <div class="mob-pylon-prob-row"><span class="mob-pylon-sub">${w.rangeKm || 0}km &bull; ${w.damagePerBurst || w.damage || 2}HP</span><span class="pk-value-tag mob-pylon-pk">[${w.seeker || 'GUIDED'}]</span></div>
+              <div class="mob-pylon-meta-row">
+                <div style="display:inline-flex;align-items:center;gap:3px;">
+                  <span class="pylon-ammo-counter mob-pylon-cap">${item.ammo}/${item.maxAmmo}</span>
+                  <span class="pylon-station-tag ${stationClass}">[${stationLabel}]</span>
+                </div>
+                <button type="button" class="micro-spec-btn" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button>
+              </div>
+              <div class="mob-pylon-prob-row">
+                <span class="mob-pylon-sub">${w.rangeKm || 0}km &bull; ${w.damagePerBurst || w.damage || 2}HP</span>
+                <span class="pk-value-tag mob-pylon-pk">[${w.seeker || 'GUIDED'}]</span>
+              </div>
               <button type="button" class="btn-fire-pylon mob-fire-btn" disabled>ENGAGE</button>
             `;
           } else {
             pylonCard.className = 'pylon-item-card';
             pylonCard.innerHTML = `
               <div class="pylon-top-row">
-                <div class="pylon-name-group">
-                  <span class="pylon-station-tag ${stationClass}">[${station}]</span>
-                  <span class="pylon-name">${w.name || w.id}</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:6px;"><button type="button" class="pylon-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button><span class="pylon-ammo-counter">${item.ammo} / ${item.maxAmmo}</span></div>
+                <span class="pylon-name" title="${w.name || w.id}">${w.name || w.id}</span>
               </div>
-              <div class="pylon-sub-row"><span class="pylon-seeker-tag">${w.rangeKm || 0}km &bull; <b style="color:#ffb830;">${w.damagePerBurst || w.damage || 2} HP</b></span><span class="pk-value-tag">[${w.seeker || 'GUIDED'}]</span></div>
+              <div class="pylon-meta-row">
+                <div style="display:inline-flex;align-items:center;gap:6px;">
+                  <span class="pylon-ammo-counter">${item.ammo} / ${item.maxAmmo}</span>
+                  <span class="pylon-station-tag ${stationClass}">[${stationLabel}]</span>
+                </div>
+                <button type="button" class="pylon-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button>
+              </div>
+              <div class="pylon-sub-row">
+                <span class="pylon-seeker-tag">${w.rangeKm || 0}km &bull; <b style="color:#ffb830;">${w.damagePerBurst || w.damage || 2} HP</b></span>
+                <span class="pk-value-tag">[${w.seeker || 'GUIDED'}]</span>
+              </div>
               <div class="pk-progress-bar-bg"><div class="pk-progress-fill" style="width: 0%;"></div></div>
               <button type="button" class="btn-fire-pylon" disabled>ENGAGE TARGET</button>
             `;

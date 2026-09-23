@@ -107,7 +107,7 @@
   padding: 5px 8px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   transition: all 0.12s ease;
   box-shadow: var(--glass-shadow);
 }
@@ -124,8 +124,12 @@
   font-weight: 700;
   padding: 1px 4px;
   border-radius: var(--radius-badge);
-  margin-right: 3px;
   letter-spacing: 0.4px;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .station-internal-tag {
@@ -148,26 +152,28 @@
 
 .pylon-top-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 0.68rem;
-  font-weight: 600;
-}
-
-.pylon-name-group {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  overflow: hidden;
-  min-width: 0;
+  width: 100%;
 }
 
 .pylon-name {
   color: #ffffff;
+  font-size: 0.70rem;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 155px;
+  display: block;
+  width: 100%;
+}
+
+.pylon-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.60rem;
+  color: var(--color-moon-mist);
+  width: 100%;
 }
 
 .pylon-ammo-counter {
@@ -181,9 +187,11 @@
 .pylon-sub-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.58rem;
   font-family: var(--font-dotdigital);
   color: var(--color-moon-mist);
+  gap: 4px;
 }
 
 .pk-value-tag {
@@ -266,7 +274,7 @@
   gap: 3px;
   font-family: var(--font-untitled-sans);
   box-sizing: border-box;
-  min-height: 56px;
+  min-height: 72px;
 }
 
 .mob-compact-pylon.empty {
@@ -276,35 +284,30 @@
 
 .mob-pylon-top-line {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 3px;
   width: 100%;
-}
-
-.mob-pylon-name-group {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  overflow: hidden;
-  max-width: 65%;
   min-width: 0;
 }
 
 .mob-pylon-name {
   color: #ffffff;
-  font-size: 0.66rem;
+  font-size: 0.65rem;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
+  width: 100%;
 }
 
-.mob-pylon-top-right {
+.mob-pylon-meta-row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
+  font-size: 0.58rem;
+  color: var(--color-moon-mist);
+  line-height: 1.2;
+  width: 100%;
 }
 
 .mob-pylon-cap {
@@ -321,12 +324,15 @@
   font-size: 0.58rem;
   color: var(--color-moon-mist);
   line-height: 1.2;
+  width: 100%;
 }
 
 .mob-pylon-sub {
   color: var(--theme-accent);
   white-space: nowrap;
   font-size: 0.56rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mob-pylon-pk {
