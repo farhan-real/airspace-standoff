@@ -27,10 +27,14 @@ window.AIRCRAFT_EW = {
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27'],
     gunRounds: 150,
+    internalSlots: 0,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Cost-effective SEAD hunter ($17.0M). Variable-sweep wings for low-altitude penetration; rapidly geolocates surface radar emitters.'
+    desc: 'SEAD hunter ($17.0M). 8 external stations for anti-radiation missiles plus extra centerline station.'
   },
   'EF-111A': {
     id: 'EF-111A',
@@ -56,10 +60,14 @@ window.AIRCRAFT_EW = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2'],
     gunRounds: 510,
+    internalSlots: 2,
+    externalSlots: 6,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Supersonic tactical jammer (Mach 1.05). Flies alongside strike packages to blind hostile early warning radar arrays.'
+    desc: 'Supersonic jammer (Mach 1.05). 2 internal bay slots, 6 external stations (8 total slots), and extra centerline mount.'
   },
   'EA-18G': {
     id: 'EA-18G',
@@ -85,10 +93,14 @@ window.AIRCRAFT_EW = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'GAU-22'],
     gunRounds: 450,
+    internalSlots: 0,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Suppresses enemy radar networks, shields nearby friendly aircraft with a jamming umbrella, and disrupts hostile missile datalinks.'
+    desc: 'Electronic attack fighter. 8 external stations plus extra centerline station for high-power AESA jamming pods.'
   },
   'J-16D': {
     id: 'J-16D',
@@ -114,9 +126,13 @@ window.AIRCRAFT_EW = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1'],
     gunRounds: 150,
+    internalSlots: 0,
+    externalSlots: 10,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Heavy electronic attack fighter equipped with wingtip wideband ESM pods and 10 stations for anti-radiation missile volleys.'
+    desc: 'Heavy electronic attack fighter equipped with 10 external weapon stations plus extra centerline station.'
   }
 };

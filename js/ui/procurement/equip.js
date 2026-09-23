@@ -1,5 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Procurement Equipment Actions, Desktop Drag-and-Drop & Hardpoint Mounting
+ * Station-aware equipment router handling internal bay, external pylons, and centerline stations.
  */
 
 class ProcurementEquipHandler {
@@ -116,8 +117,17 @@ class ProcurementEquipHandler {
       const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
       if (ratings.indexOf(wpn.minRating) > ratings.indexOf(spec.maxPylonRating || 'Type M')) return false;
       if (wpn.allowedAirframes && !wpn.allowedAirframes.includes(spec.id)) return false;
-      const curSlots = (item.weapons || []).reduce((sum, wId) => sum + (((window.WEAPONS_CATALOG || {})[wId] || {}).slots || 1), 0);
-      return (curSlots + (wpn.slots || 1) <= (spec.totalSlots || 6));
+
+      const metrics = LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead);
+      const wSlotType = wpn.slotType || 'EXTERNAL';
+
+      if (wSlotType === 'CENTERLINE') {
+        return Boolean(metrics && metrics.hasCenterline && metrics.centerlineUsed === 0);
+      }
+      if (wSlotType === 'INTERNAL') {
+        return Boolean(metrics && (metrics.remainingInternal >= wpn.slots || metrics.remainingExternal >= wpn.slots));
+      }
+      return Boolean(metrics && metrics.remainingExternal >= wpn.slots);
     }
 
     if (itemData.type === 'upgrade') {
@@ -149,7 +159,7 @@ class ProcurementEquipHandler {
       return;
     }
     const sIdx = (this.pm.activeBayIndex !== undefined && this.pm.activeBayIndex < this.pm.game.procurementSquadron.length) ? this.pm.activeBayIndex : 0;
-    this.equipItemDataToSquadron(sIdx, itemData);
+    this.equipItemDataToSquadron(sIdx, itemData, this.pm.targetEquipStation);
   }
 
   addAirframe(specId) {
@@ -188,7 +198,7 @@ class ProcurementEquipHandler {
     this.pm.updateUI();
   }
 
-  equipItemDataToSquadron(sIdx, itemData) {
+  equipItemDataToSquadron(sIdx, itemData, targetStation = null) {
     const item = this.pm.game.procurementSquadron[sIdx];
     if (!item) return;
 
@@ -220,12 +230,49 @@ class ProcurementEquipHandler {
         return;
       }
 
-      const curSlots = item.weapons.reduce((sum, wId) => sum + ((window.WEAPONS_CATALOG[wId] || {}).slots || 1), 0);
-      if (curSlots + (wpn.slots || 1) > (spec.totalSlots || 6)) {
-        this.pm.showAlertModal('HARDPOINTS FULL', `Mounting ${wpn.name} exceeds remaining hardpoint capacity on Aircraft #${sIdx + 1}.`);
-        return;
+      const metrics = LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead);
+      const wSlotType = wpn.slotType || 'EXTERNAL';
+      let assignedStation = targetStation;
+
+      if (wSlotType === 'CENTERLINE') {
+        if (!metrics.hasCenterline || metrics.centerlineUsed > 0) {
+          this.pm.showAlertModal('CENTERLINE OCCUPIED', `${wpn.name} mounts on the centerline fuselage station, which is either unavailable or already occupied.`);
+          return;
+        }
+        assignedStation = 'CENTERLINE';
+      } else if (!assignedStation) {
+        if (wSlotType === 'INTERNAL' && (metrics.remainingInternal >= wpn.slots)) {
+          assignedStation = 'INTERNAL';
+        } else if (metrics.remainingExternal >= wpn.slots) {
+          assignedStation = 'EXTERNAL';
+        } else {
+          this.pm.showAlertModal('HARDPOINTS FULL', `Mounting ${wpn.name} (${wpn.slots} slots) exceeds available capacity on Aircraft #${sIdx + 1}.`);
+          return;
+        }
+      } else {
+        if (assignedStation === 'INTERNAL') {
+          if (wSlotType !== 'INTERNAL') {
+            this.pm.showAlertModal('SLOT INCOMPATIBLE', `${wpn.name} is an external munition and cannot be mounted inside the internal weapon bay.`);
+            return;
+          }
+          if (metrics.remainingInternal < wpn.slots) {
+            this.pm.showAlertModal('INTERNAL BAY FULL', `Internal weapons bay only has ${metrics.remainingInternal} slots remaining (${wpn.slots} required).`);
+            return;
+          }
+        } else if (assignedStation === 'EXTERNAL') {
+          if (wSlotType === 'CENTERLINE') {
+            this.pm.showAlertModal('CENTERLINE ONLY', `${wpn.name} can only be mounted on the centerline fuselage station.`);
+            return;
+          }
+          if (metrics.remainingExternal < wpn.slots) {
+            this.pm.showAlertModal('EXTERNAL PYLONS FULL', `External pylons only have ${metrics.remainingExternal} slots remaining (${wpn.slots} required).`);
+            return;
+          }
+        }
       }
-      item.weapons.push(itemData.id);
+
+      item.weapons.push({ id: itemData.id, station: assignedStation });
+      this.pm.targetEquipStation = null;
     } else if (itemData.type === 'upgrade') {
       const specU = (window.AIRCRAFT_CATALOG || {})[item.specId];
       if (item.upgrades.length >= (specU.upgradeSockets || 3)) {

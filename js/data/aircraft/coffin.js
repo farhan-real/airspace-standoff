@@ -29,10 +29,14 @@ window.AIRCRAFT_COFFIN = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'BK-27', 'DE-PULSE'],
     gunRounds: 510,
+    internalSlots: 0,
+    externalSlots: 10,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual COFFIN enclosed-cockpit conversion of real F-15. Eliminates pilot G-fatigue limits, provides 16G structural tolerance, and grants +24% neural evasive dodge bonus.'
+    desc: 'Manual COFFIN conversion. 10 external weapon stations (10 total slots) plus extra heavy centerline mount with 16G envelope.'
   },
   'Su-37-COFFIN': {
     id: 'Su-37-COFFIN',
@@ -60,10 +64,14 @@ window.AIRCRAFT_COFFIN = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L', 'DE-PULSE'],
     gunRounds: 150,
+    internalSlots: 0,
+    externalSlots: 10,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual enclosed-cockpit modification of real Su-37. Enables continuous 16G post-stall turns without G-LOC blackout and grants +26% neural evasion against missile salvos.'
+    desc: 'Enclosed-cockpit super-maneuverable Flanker. 10 external stations (10 total slots) plus extra reinforced centerline station.'
   },
   'F-22C-COFFIN': {
     id: 'F-22C-COFFIN',
@@ -91,10 +99,14 @@ window.AIRCRAFT_COFFIN = {
     builtInGun: 'DE-PULSE',
     allowedGuns: ['DE-PULSE', 'M61A2', 'GAU-22', 'PLSL_LIGHT'],
     gunRounds: 120,
+    internalSlots: 6,
+    externalSlots: 2,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Real F-22 airframe with enclosed synthetic vision cockpit ($62.0M). 0.00005m2 RCS, 18G envelope, weak pulse laser option, and +28% neural evasive dodge bonus.'
+    desc: 'Apex stealth COFFIN air dominance (0.00005m2 RCS). 6 internal bay slots with zero drag plus 2 external pylons (8 total slots).'
   },
   'ADF-11F': {
     id: 'ADF-11F',
@@ -122,9 +134,13 @@ window.AIRCRAFT_COFFIN = {
     builtInGun: 'PLSL_HEAVY',
     allowedGuns: ['PLSL_HEAVY', 'PLSL_MED', 'PLSL_LIGHT', 'DE-PULSE', 'M61A2', 'BK-27', 'EML_GUN'],
     gunRounds: 140,
+    internalSlots: 4,
+    externalSlots: 4,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Advanced fictional superfighter with manual COFFIN interface. 20.0G structural limit, certified for all pulse laser tiers, railgun, zero G-LOC blackout, and supreme +30% neural evasive dodge bonus.'
+    desc: 'Advanced superfighter with manual COFFIN interface. 4 internal bay slots, 4 external pylons (8 total slots), plus extra centerline rail.'
   }
 };

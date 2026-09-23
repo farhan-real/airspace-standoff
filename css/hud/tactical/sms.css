@@ -112,9 +112,38 @@
   box-shadow: var(--glass-shadow);
 }
 
-.pylon-item-card.empty {
-  opacity: 0.32;
-  border-style: dashed;
+.pylon-item-card.empty,
+.pylon-item-card.depleted-rack,
+.mob-compact-pylon.depleted-rack {
+  opacity: 0.38;
+}
+
+.pylon-station-tag {
+  font-size: 0.52rem;
+  font-family: var(--font-dotdigital);
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: var(--radius-badge);
+  margin-right: 3px;
+  letter-spacing: 0.4px;
+}
+
+.station-internal-tag {
+  background: rgba(20, 184, 166, 0.18);
+  border: 1px solid rgba(20, 184, 166, 0.40);
+  color: #2dd4bf;
+}
+
+.station-external-tag {
+  background: var(--theme-primary-dim);
+  border: 1px solid var(--glass-border);
+  color: var(--theme-accent);
+}
+
+.station-centerline-tag {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.40);
+  color: #fbbf24;
 }
 
 .pylon-top-row {

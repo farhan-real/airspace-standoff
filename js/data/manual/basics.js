@@ -56,54 +56,66 @@ window.MANUAL_BASICS = [
         </div>
       </div>
 
-      <div class="ge-subhead">2. TACTICAL GUNNERY: BALLISTIC GATLINGS VS. DIRECTED ENERGY (LASERS)</div>
+      <div class="ge-subhead">2. STORES ARCHITECTURE: INTERNAL BAYS, EXTERNAL PYLONS &amp; CENTERLINE STATIONS</div>
       <div class="ge-desc">
-        Choosing your primary cannon and auxiliary gun pods requires weighing distinct tactical trade-offs:
+        Weapons stations follow strict aerospace physics and geometric enclosure rules:
       </div>
+      <div class="ge-grid-2">
+        <div class="ge-card" style="border-left:3px solid #14b8a6;">
+          <b style="color:#2dd4bf;">INTERNAL WEAPONS BAY (STEALTH AIRFRAMES)</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Zero Parasite Drag:</b> Enclosed behind sealed fuselage doors; causes zero aerodynamic wave drag.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Zero Extra RCS:</b> Preserves clean Very Low Observable (VLO) stealth.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Restricted Munitions:</b> Accepts only compact internal-rated missiles (e.g. AIM-120D, PL-15E, Meteor, AIM-260, AIM-9X, GBU-39).<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Visual Layout:</b> Always displayed on top of the roster card, showing open slots.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #0284c7;">
+          <b style="color:#38bdf8;">EXTERNAL WING &amp; FUSELAGE PYLONS</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Universal Mounting:</b> Carries internal-rated missiles, external heavy missiles (R-37M, PL-21), cruise missiles, and ECM pods.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Parasite Wave Drag:</b> Reduces top speed and acceleration while ordnance is loaded.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Radar Bloom:</b> Exposed ordnance adds pylon RCS (&sigma;_pylon), compromising stealth.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Visual Layout:</b> Positioned in the middle of the roster card; hides individual empty slots.
+          </div>
+        </div>
+      </div>
+      <div class="ge-card" style="border-left:3px solid #f59e0b;margin-top:6px;">
+        <b style="color:#fbbf24;">CENTERLINE FUSELAGE STATION (HEAVY / HYPERSONIC)</b>
+        <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+          <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Dedicated Heavy Station:</b> High-capacity station under the fuselage centerline reserved for heavy strategic weapons (Kh-47M2 Kinzhal).<br>
+          <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Selective Visibility:</b> Only rendered on the roster card when a centerline weapon is mounted. Hidden when unequipped.<br>
+          <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Massive Dynamic Weight:</b> Imposes substantial form drag and radar return while mounted; shedding it drops over 8,000 kg instantly.
+        </div>
+      </div>
+
+      <div class="ge-subhead">3. LIVE IN-BATTLE PERFORMANCE SHEDDING (PLAYER &amp; AI)</div>
+      <div class="ge-desc">
+        Loadout weight, aerodynamic drag, and pylon radar reflections update in real time as weapons are fired:
+        <br><br>
+        <span style="color:#00f0ff;font-weight:700;">DYNAMIC STEALTH &amp; SPEED RECOVERY:</span> When a stealth aircraft launches its external or centerline missiles in combat, the pylon radar cross-section bloom and parasite drag are immediately eliminated. A stealth fighter that entered contested airspace with an elevated RCS returns to pristine clean VLO stealth (e.g. 0.0001 m&sup2;) as soon as its external stores are expended. Both player and AI fighters benefit from dynamic drag and weight reduction.
+      </div>
+
+      <div class="ge-subhead">4. TACTICAL GUNNERY: BALLISTIC GATLINGS VS. DIRECTED ENERGY (LASERS)</div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #00f5a0;">
           <b style="color:#00f5a0;">BALLISTIC ROTARY CANNONS (M61A2, GAU-22, BK-27)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Zero Thermal Bloom:</b> Firing draws no generator power and creates no thermal spike, preserving F-22 and F-35 VLO stealth.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Wide Snapshot Cone (48&deg;&ndash;55&deg;):</b> Massive high-G boresight authority allows scoring snapshot deflection hits during hard turns.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Zero Thermal Bloom:</b> Firing draws no generator power and creates no thermal spike, preserving VLO stealth.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Wide Snapshot Cone (48&deg;&ndash;55&deg;):</b> High-G boresight authority allows scoring snapshot deflection hits during hard turns.<br>
             <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>100% All-Weather Penetration:</b> Tungsten shells pierce moisture clouds with zero damage degradation.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Kinetic Concussion:</b> Shell impacts induce pilot stress (+30%) and drain target kinetic energy (-15%), setting up follow-up missile kills.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Fast 1.0s Cooling Cycle:</b> Rapid recharge with over 20 bursts of ammo.
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Kinetic Concussion:</b> Shell impacts induce pilot stress (+30%) and drain target kinetic energy (-15%).
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
           <b style="color:#00f0ff;">DIRECTED ENERGY WEAPONS (DE-PULSE, PLSL, EML)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Speed-of-Light Hitscan:</b> Instantaneous thermal beam impact out to 7.5&ndash;15.0 km with zero projectile travel time.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Narrow Pencil Beam (25&deg;&ndash;28&deg;):</b> Demands precise nose-pointing alignment; maneuvering bandits easily evade off-angle bursts.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Heavy Thermal Bloom:</b> 80 kW capacitor discharge heats the fuselage (+60% IR signature for 4s), compromising stealth against enemy seekers.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Scattered in Clouds:</b> Cloud vapor scatters optical beams, inflicting a 75% damage penalty.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>2.5s Recharge Cooldown:</b> Overheated capacitors disable bursts for 2.5s with limited pulse reserves.
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Speed-of-Light Hitscan:</b> Instantaneous thermal beam impact out to 7.5&ndash;18.0 km with zero travel time.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Narrow Pencil Beam (22&deg;&ndash;34&deg;):</b> Demands precise nose-pointing alignment.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Heavy Thermal Bloom:</b> Capacitor discharge increases IR signature (+60% for 4s), compromising stealth.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Scattered in Clouds:</b> Cloud vapor scatters optical beams, inflicting a 75% damage penalty.
           </div>
         </div>
-      </div>
-
-      <div class="ge-subhead">3. RADAR CROSS SECTION (RCS) &amp; GEOMETRIC BEAM SPIKES (1.3× TO 4.8×)</div>
-      <div class="ge-desc">
-        Radar stealth is highly directional. A Very Low Observable (VLO) airframe with a frontal RCS of <b>0.0001 m&sup2;</b> presents minimal radar return nose-on, significantly delaying hostile classification. However, turning 90&deg; broadside exposes fuselage sides, wing surfaces, and vertical stabilizers, multiplying radar returns based on airframe geometry:
-        <ul style="list-style:none;padding-left:0;margin-top:6px;">
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Tailless Flying Wings (1.3× – 1.5×):</b> B-21, B-2A, RQ-180, and S-70 feature blended silhouettes with no vertical fins, preserving outstanding stealth even at 90&deg; beam aspects.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Canted-Tail 5th-Gen Fighters (1.8× – 2.4×):</b> F-22A, YF-23, F-35A, and Su-57 tilt vertical fins outward at steep angles (19°–50°), deflecting broadside radar reflections away from emitting receivers.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Delta-Canard 4.5-Gen Fighters (2.6× – 3.0×):</b> Rafale, Eurofighter, and Gripen balance low frontal profiles with single vertical stabilizers, yielding moderate beam spikes.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Conventional Twin-Tail Interceptors (3.6× – 4.5×):</b> F-15EX, Su-35S, and MiG-31BM possess massive upright vertical stabilizers and boxy slab fuselages, generating severe broadside radar spikes.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Strategic Heavy Bombers (4.2× – 4.8×):</b> Tu-160M and B-1B expose giant radar cross-sections when turning perpendicular to hostile radars.</li>
-        </ul>
-      </div>
-
-      <div class="ge-subhead">4. MULTI-MISSILE SALVO &amp; MIXED-SEEKER SYNERGY (+25% P_K)</div>
-      <div class="ge-desc">
-        Firing a single missile allows an enemy fighter to focus its kinetic agility entirely on evasion. Synchronized volleys saturate target defense systems, providing <b>+12% hit probability (P_k) per additional missile in flight (up to +30%)</b> while degrading target defensive turn efficiency by <b>25% per extra missile</b>.<br><br>
-        Crucially, combining active radar (ARH) with imaging infrared (IIR) or optical missiles creates an insurmountable defensive dilemma: an aircraft turning broadside to Doppler notch a radar lock exposes hot exhaust plumes to the trailing heat seeker. This awards a massive <b>+25% Mixed-Seeker Synergy Bonus</b> and reduces target defensive countermeasure effectiveness by <b>45%</b>!
-      </div>
-
-      <div class="ge-subhead">5. CORNER TURN VELOCITY (0.65 &times; S0) &amp; HUD INDICATION</div>
-      <div class="ge-desc">
-        Every fighter possesses an optimal turning airspeed at approximately <b>65% of clean maximum sprint speed (S_opt = 0.65 &times; S0)</b>. Turning faster than corner speed widens your radius and generates excessive centrifugal G-loading; turning slower bleeds kinetic energy toward an aerodynamic stall. Maintain corner speed to maximize instantaneous nose-pointing authority (indicated as <code>TURN: 100% OPT</code> in cyan, or <code>TURN: 100% LOCKED</code> in blue for COFFIN airframes).
       </div>
     `
   },
@@ -165,11 +177,6 @@ window.MANUAL_BASICS = [
           </div>
         </div>
       </div>
-
-      <div class="ge-subhead">ALL-AXIS THRUST VECTORING (TVC)</div>
-      <div class="ge-desc">
-        Aircraft equipped with 2D or 3D thrust-vectoring engine nozzles deflect exhaust directly, augmenting aerodynamic control surfaces. This provides <b>post-stall pitch authority</b> (such as Pugachev Cobra and Kulbit maneuvers) for rapid nose-pointing at low airspeeds.
-      </div>
     `
   },
   {
@@ -179,7 +186,10 @@ window.MANUAL_BASICS = [
       <div class="ge-subhead">PAYLOAD RATIO (LOAD %) &amp; WEIGHT CALCULATIONS</div>
       <div class="ge-formula-card">
         <span style="color:#94a3b8;font-size:0.62rem;">PAYLOAD RATIO FORMULATION:</span>
-        <div class="ge-formula-code">Payload % = (Equipment Mass / Max Payload Mass) &times; 100%</div>
+        <div class="ge-formula-code">Payload % = (Equipment Mass + External Drag Mass &times; 0.40) / Max Payload Mass &times; 100%</div>
+      </div>
+      <div class="ge-desc">
+        Notice that internal bay weapons add only pure equipment mass without multiplying parasite drag, keeping the payload ratio lower and preserving maximum speed.
       </div>
 
       <div class="table-scroll-wrapper">
@@ -217,10 +227,6 @@ window.MANUAL_BASICS = [
       </div>
 
       <div class="ge-subhead">PILOT G-LOAD FATIGUE, TUNNEL VISION &amp; G-LOC</div>
-      <div class="ge-desc">
-        Sustained high-G turns induce physiological circulatory strain on human pilots:
-      </div>
-
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #ffb830;">
           <b style="color:#ffb830;">TUNNEL VISION (STRESS &ge; 0.65)</b>
@@ -242,8 +248,8 @@ window.MANUAL_BASICS = [
         <ul style="list-style:none;padding-left:0;margin-top:6px;">
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Direct Manual Flight:</b> Piloted directly by the user with instantaneous electro-neural control responsiveness (+20% roll/pitch rate).</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Zero Pilot Physiological Limits:</b> Enclosed pressurized crew capsule eliminates G-LOC blackout, allowing sustained <b>16G&ndash;20G</b> structural turns.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+24% to +30% Neural Evasive Dodge:</b> High-bandwidth neural flight controls and 360-degree sensor fusion provide an innate <b>+24% to +30% missile evasion bonus</b> with strong resistance against multi-missile salvo saturation.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>HUD Readout (TURN: 100% LOCKED):</b> On the central HUD flight tape, COFFIN fighters display a distinctive blue <code>TURN: 100% LOCKED</code> pill badge. Unlike human pilots whose turn efficiency fluctuates with corner speed and degrades under G-stress, COFFIN airframes have their turn efficiency locked at 100% across all airspeed regimes.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>+24% to +30% Neural Evasive Dodge:</b> High-bandwidth neural flight controls and 360-degree sensor fusion provide an innate <b>+24% to +30% missile evasion bonus</b>.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>HUD Readout (TURN: 100% LOCKED):</b> On the central HUD flight tape, COFFIN fighters display a distinctive blue <code>TURN: 100% LOCKED</code> badge. Turn efficiency is locked at 100% across all airspeed regimes.</li>
         </ul>
       </div>
     `

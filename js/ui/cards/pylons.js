@@ -1,5 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Weapon Pylon Bay & Stores Management System
+ * Displays stations tagged by mount type ([INTERNAL], [EXTERNAL], [CENTERLINE]).
  */
 
 class PylonBayRenderer {
@@ -38,7 +39,7 @@ class PylonBayRenderer {
     const validTarget = this.getValidatedTarget();
 
     const gunId = activeUnit.gun ? activeUnit.gun.id : 'M61A2';
-    const weaponKeys = weapons.map(item => `${item && item.weapon ? item.weapon.id : (item ? item.id : '')}:${item ? (item.maxAmmo || 0) : 0}`).join('|');
+    const weaponKeys = weapons.map(item => `${item && item.weapon ? item.weapon.id : (item ? item.id : '')}:${item ? item.station : 'EXT'}:${item ? (item.maxAmmo || 0) : 0}`).join('|');
     const fingerprint = `${activeUnit.id}#${isMobile ? 'mob' : 'desk'}#${gunId}#${weapons.length}#${weaponKeys}`;
 
     const needsRebuild = (this.lastFingerprint !== fingerprint) ||
@@ -79,7 +80,7 @@ class PylonBayRenderer {
         emptyNotice.className = 'empty-bay-indicator';
         emptyNotice.style.padding = '6px';
         emptyNotice.style.gridColumn = '1 / -1';
-        emptyNotice.textContent = 'NO PYLON WEAPONS INSTALLED';
+        emptyNotice.textContent = 'NO WEAPONS INSTALLED';
         targetContainer.appendChild(emptyNotice);
       } else {
         weapons.forEach((item, idx) => {
@@ -88,11 +89,25 @@ class PylonBayRenderer {
           const pylonCard = document.createElement('div');
           pylonCard.dataset.pylonIdx = idx;
 
+          const station = item.station || 'EXTERNAL';
+          let stationLabel = 'EXT';
+          let stationClass = 'station-external-tag';
+          if (station === 'INTERNAL') {
+            stationLabel = 'INT';
+            stationClass = 'station-internal-tag';
+          } else if (station === 'CENTERLINE') {
+            stationLabel = 'CTR';
+            stationClass = 'station-centerline-tag';
+          }
+
           if (isMobile) {
             pylonCard.className = 'mob-compact-pylon';
             pylonCard.innerHTML = `
               <div class="mob-pylon-top-line">
-                <div class="mob-pylon-name-group"><span class="mob-pylon-name">${(w.name || w.id || 'WPN').split(' ')[0]}</span></div>
+                <div class="mob-pylon-name-group">
+                  <span class="pylon-station-tag ${stationClass}">[${stationLabel}]</span>
+                  <span class="mob-pylon-name">${(w.name || w.id || 'WPN').split(' ')[0]}</span>
+                </div>
                 <div class="mob-pylon-top-right"><span class="pylon-ammo-counter mob-pylon-cap">${item.ammo}/${item.maxAmmo}</span><button type="button" class="micro-spec-btn" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button></div>
               </div>
               <div class="mob-pylon-prob-row"><span class="mob-pylon-sub">${w.rangeKm || 0}km &bull; ${w.damagePerBurst || w.damage || 2}HP</span><span class="pk-value-tag mob-pylon-pk">[${w.seeker || 'GUIDED'}]</span></div>
@@ -102,7 +117,10 @@ class PylonBayRenderer {
             pylonCard.className = 'pylon-item-card';
             pylonCard.innerHTML = `
               <div class="pylon-top-row">
-                <div class="pylon-name-group"><span class="pylon-name">${w.name || w.id}</span></div>
+                <div class="pylon-name-group">
+                  <span class="pylon-station-tag ${stationClass}">[${station}]</span>
+                  <span class="pylon-name">${w.name || w.id}</span>
+                </div>
                 <div style="display:flex;align-items:center;gap:6px;"><button type="button" class="pylon-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button><span class="pylon-ammo-counter">${item.ammo} / ${item.maxAmmo}</span></div>
               </div>
               <div class="pylon-sub-row"><span class="pylon-seeker-tag">${w.rangeKm || 0}km &bull; <b style="color:#ffb830;">${w.damagePerBurst || w.damage || 2} HP</b></span><span class="pk-value-tag">[${w.seeker || 'GUIDED'}]</span></div>
@@ -214,8 +232,14 @@ class PylonBayRenderer {
 
       if (item.ammo <= 0) {
         if (pkFill) pkFill.style.width = '0%';
-        if (fireBtn) { fireBtn.disabled = true; fireBtn.textContent = 'NO AMMO'; }
+        if (fireBtn) {
+          fireBtn.disabled = true;
+          fireBtn.textContent = (item.station === 'INTERNAL') ? 'EMPTY BAY' : 'DEPLETED (JETTISONED)';
+        }
+        cardEl.classList.add('depleted-rack');
         return;
+      } else {
+        cardEl.classList.remove('depleted-rack');
       }
 
       if (w.isGunpod || w.category === 'GUN') {

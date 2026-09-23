@@ -53,7 +53,7 @@
 .metric-meta {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   font-size: 0.62rem;
   font-family: var(--font-untitled-sans);
   color: var(--color-moon-mist);
@@ -66,6 +66,51 @@
 
 .metric-meta b:not([class*="stat-tier"]) {
   color: var(--color-pure-white);
+}
+
+.station-tag-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.station-slot-pill {
+  font-size: 0.54rem;
+  font-family: var(--font-dotdigital);
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: var(--radius-badge);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  line-height: 1.1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.station-slot-pill.int-pill {
+  background: rgba(20, 184, 166, 0.20);
+  border: 1px solid rgba(20, 184, 166, 0.50);
+  color: #2dd4bf;
+}
+
+.station-slot-pill.ext-pill {
+  background: rgba(2, 132, 199, 0.20);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: #38bdf8;
+}
+
+.station-slot-pill.ctr-pill {
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #fbbf24;
+}
+
+.station-slot-pill.ctr-pill.occupied {
+  background: rgba(245, 158, 11, 0.32);
+  border-color: #f59e0b;
+  color: #ffffff;
 }
 
 .capacity-pips-bar {
@@ -184,10 +229,110 @@
   align-items: center;
 }
 
-.installed-weapons-grid {
+/* Stores Stations Architecture: Internal Bay, External Pylons, Centerline */
+.stores-stations-wrapper {
   display: flex;
   flex-direction: column;
+  gap: 6px;
+}
+
+.station-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-badge);
+  padding: 5px 7px;
+  box-sizing: border-box;
+}
+
+.internal-bay-group {
+  border-left: 3px solid #14b8a6;
+  background: rgba(4, 47, 46, 0.16);
+}
+
+.external-pylons-group {
+  border-left: 3px solid var(--theme-primary);
+}
+
+.centerline-station-group {
+  border-left: 3px solid #f59e0b;
+  background: rgba(69, 26, 3, 0.20);
+}
+
+.station-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.58rem;
+  font-family: var(--font-untitled-sans);
+  font-weight: 600;
+  color: var(--color-moon-mist);
+  margin-bottom: 2px;
+}
+
+.station-title {
+  display: inline-flex;
+  align-items: center;
   gap: 4px;
+}
+
+.station-title b {
+  color: var(--color-pure-white);
+  font-family: var(--font-dotdigital);
+}
+
+.station-tag {
+  font-size: 0.50rem;
+  font-family: var(--font-dotdigital);
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: var(--radius-badge);
+  letter-spacing: 0.4px;
+}
+
+.station-tag.stealth-tag {
+  background: rgba(20, 184, 166, 0.18);
+  border: 1px solid rgba(20, 184, 166, 0.40);
+  color: #2dd4bf;
+}
+
+.station-tag.external-tag {
+  background: var(--theme-primary-dim);
+  border: 1px solid var(--glass-border);
+  color: var(--theme-accent);
+}
+
+.station-tag.centerline-tag {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.40);
+  color: #fbbf24;
+}
+
+.station-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.empty-internal-slot {
+  text-align: center;
+  padding: 6px;
+  font-size: 0.58rem;
+  font-family: var(--font-untitled-sans);
+  color: #2dd4bf;
+  border: 1px dashed rgba(20, 184, 166, 0.45);
+  background: rgba(20, 184, 166, 0.05);
+  border-radius: var(--radius-badge);
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.empty-internal-slot:hover {
+  border-color: #2dd4bf;
+  background: rgba(20, 184, 166, 0.14);
+  color: #ffffff;
 }
 
 .installed-item-card {
@@ -202,6 +347,18 @@
   font-family: var(--font-untitled-sans);
   box-sizing: border-box;
   min-width: 0;
+}
+
+.installed-item-card.station-internal {
+  border-left: 2px solid #14b8a6;
+}
+
+.installed-item-card.station-external {
+  border-left: 2px solid var(--theme-primary);
+}
+
+.installed-item-card.station-centerline {
+  border-left: 2px solid #f59e0b;
 }
 
 .iic-reorder-group {

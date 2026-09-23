@@ -7,6 +7,7 @@ window.WEAPONS_A2A_WVR = {
     id: 'AIM-9X-2',
     name: 'AIM-9X Sidewinder (4x)',
     slots: 1,
+    slotType: 'INTERNAL',
     minRating: 'Type S',
     mass: 440,
     cost: 0.6,
@@ -28,12 +29,13 @@ window.WEAPONS_A2A_WVR = {
     decoyResistance: 0.65,
     sigmaPylon: 0.02,
     category: 'A2A',
-    desc: 'High off-boresight infrared dogfight missile (4x). Accelerates rapidly to Mach 2.8 with 90-degree off-boresight cueing.'
+    desc: 'High off-boresight infrared dogfight missile (4x). Fits stealth side internal bays or external wingtip rails.'
   },
   'R-73': {
     id: 'R-73',
     name: 'R-73 Archer (4x)',
     slots: 1,
+    slotType: 'INTERNAL',
     minRating: 'Type S',
     mass: 520,
     cost: 0.5,
@@ -54,12 +56,13 @@ window.WEAPONS_A2A_WVR = {
     T_0: 0.88,
     sigmaPylon: 0.02,
     category: 'A2A',
-    desc: 'Gas-vane short-range dogfight missile (4x) with immediate 60-degree snap turns and Mach 2.8 sprint velocity.'
+    desc: 'Gas-vane dogfight missile (4x) with immediate 60-degree snap turns. Mounts internally in stealth wing roots or externally.'
   },
   'PYTHON-5': {
     id: 'PYTHON-5',
     name: 'Python-5 (4x)',
     slots: 1,
+    slotType: 'EXTERNAL',
     minRating: 'Type S',
     mass: 500,
     cost: 0.7,
@@ -80,12 +83,13 @@ window.WEAPONS_A2A_WVR = {
     T_0: 0.90,
     sigmaPylon: 0.03,
     category: 'A2A',
-    desc: 'Electro-optical matrix seeker capable of rearward over-the-shoulder launches (4x) reaching Mach 3.0. Immune to RF jamming.'
+    desc: 'Electro-optical matrix seeker for rearward over-the-shoulder launches (4x). Carried externally on wing/fuselage pylons.'
   },
   'IRIS-T': {
     id: 'IRIS-T',
     name: 'IRIS-T Dogfight (4x)',
     slots: 1,
+    slotType: 'INTERNAL',
     minRating: 'Type S',
     mass: 460,
     cost: 0.6,
@@ -107,12 +111,13 @@ window.WEAPONS_A2A_WVR = {
     decoyResistance: 0.80,
     sigmaPylon: 0.02,
     category: 'A2A',
-    desc: 'Advanced European dogfight missile (4x) with optical image processing and Mach 2.8 agility to defeat flare decoys.'
+    desc: 'Advanced European dogfight missile (4x) with optical image processing. Mounts in internal bays or external pylons.'
   },
   'MAM': {
     id: 'MAM',
     name: 'MAM Micro-Missiles (8x)',
     slots: 1,
+    slotType: 'INTERNAL',
     minRating: 'Type S',
     mass: 120,
     cost: 0.4,
@@ -134,12 +139,13 @@ window.WEAPONS_A2A_WVR = {
     sigmaPylon: 0.01,
     category: 'A2A',
     allowedAirframes: ['MQ-99', 'MQ-101', 'XQ-58A', 'Kizilelma', 'S-70', 'MQ-28', 'JAS-39E', 'F-16V', 'Tejas-MK2', 'Mirage-2000', 'CFA-44', 'RQ-180'],
-    desc: 'Ultra-lightweight micro-missile (8x) sprinting at Mach 2.2 to overwhelm enemy defenses through volume of fire.'
+    desc: 'Ultra-lightweight micro-missile (8x) designed for UCAV internal weapon bays and lightweight external pylon racks.'
   },
   'ADMM': {
     id: 'ADMM',
     name: 'ADMM Micro-Missile Pod (12x)',
     slots: 3,
+    slotType: 'EXTERNAL',
     minRating: 'Type H',
     mass: 1150,
     cost: 2.6,
@@ -161,6 +167,6 @@ window.WEAPONS_A2A_WVR = {
     sigmaPylon: 0.08,
     category: 'A2A',
     allowedAirframes: ['CFA-44', 'ADF-11F', 'ADFX-01', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'X-02S'],
-    desc: 'All-Direction Multi-Purpose Missile pod designed for experimental superfighters (12x). Mach 2.8 omni-directional burst.'
+    desc: 'All-Direction Multi-Purpose Missile pod (12x) mounted externally on heavy pylons of advanced superfighters.'
   }
 };

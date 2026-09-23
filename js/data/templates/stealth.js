@@ -64,7 +64,7 @@ window.TEMPLATES_STEALTH = {
     chosenGunId: 'GAU-22',
     weapons: ['AIM-260', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['EOTS_DUAL_OPTICS', 'DAS_360_OPTIC', 'MADL_BATTLE_LINK'],
-    desc: 'Sensor fusion suite using 5 of 6 stations. APG-81 radar (+45% clutter filter) detects terrain-masking contacts and shares tracks via MADL.'
+    desc: 'Sensor fusion suite using 5 of 8 stations. APG-81 radar (+45% clutter filter) detects terrain-masking contacts and shares tracks via MADL.'
   },
   'F-35A Precision Interdiction': {
     name: 'F-35A Precision Interdiction',
@@ -73,7 +73,7 @@ window.TEMPLATES_STEALTH = {
     chosenGunId: 'GAU-22',
     weapons: ['GBU-39', 'GBU-39', 'AIM-120D'],
     upgrades: ['RAM_NANO_COATING', 'EOTS_DUAL_OPTICS'],
-    desc: 'Precision strike loadout using 6 of 6 stations carrying 16 GBU-39 SDBs to saturate hardened command facilities.'
+    desc: 'Precision strike loadout using 6 of 8 stations carrying 16 GBU-39 SDBs to saturate hardened command facilities.'
   },
   'Su-57 Air Superiority Sweep': {
     name: 'Su-57 Air Superiority Sweep',
@@ -145,7 +145,7 @@ window.TEMPLATES_STEALTH = {
     chosenGunId: 'GSH-23L',
     weapons: ['PL-15E', 'AIM-120D', 'R-73'],
     upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE'],
-    desc: 'Carrier-borne multirole airframe using 5 of 6 stations with internal bays and conformal electronic warfare sensors.'
+    desc: 'Carrier-borne multirole airframe using 5 of 8 stations with internal bays and conformal electronic warfare sensors.'
   },
   'J-35 Carrier Air Wing OCA': {
     name: 'J-35 Carrier Air Wing OCA',
@@ -154,6 +154,6 @@ window.TEMPLATES_STEALTH = {
     chosenGunId: 'GSH-23L',
     weapons: ['PL-15E', 'PL-15E', 'R-73'],
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'Naval fleet defense package using 5 of 6 stations featuring AESA radar, 8 dual-pulse missiles, and carrier durability.'
+    desc: 'Naval fleet defense package using 5 of 8 stations featuring AESA radar, 8 dual-pulse missiles, and carrier durability.'
   }
 };

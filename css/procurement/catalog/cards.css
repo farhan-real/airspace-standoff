@@ -155,8 +155,13 @@
 .adc-metric-cell {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   color: var(--color-moon-mist);
   padding: 1px 2px;
+}
+
+.adc-metric-cell .station-tag-box {
+  margin-left: auto;
 }
 
 /* Guard spec evaluation colors so they are never overridden by white */

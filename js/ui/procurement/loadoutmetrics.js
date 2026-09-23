@@ -1,11 +1,11 @@
 /**
  * AIRSPACE STANDOFF: Loadout Metrics & Dual-Value Kinematics Calculator
- * Evaluates clean base vs loaded/effective aircraft performance factors.
+ * Evaluates internal bays (zero extra RCS, zero drag), external pylons, and centerline stations.
  */
 
 class LoadoutMetrics {
   static formatRcs(val) {
-    if (val === undefined || val === null || isNaN(val)) return '1.0m²';
+    if (val === undefined || val === null || isNaN(val)) return '1.0m2';
     const num = Number(val);
     if (num <= 0.00005) return '0.00005';
     if (num <= 0.0001) return '0.0001';
@@ -29,19 +29,52 @@ class LoadoutMetrics {
     const activeGun = gunsMap[chosenGunId] || gunsMap[spec.builtInGun] || gunsMap['M61A2'];
     const gunMass = activeGun ? Number(activeGun.mass || 100) : 100;
 
-    let weaponMass = 0;
+    const internalCapacity = Number(spec.internalSlots || 0);
+    const externalCapacity = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+    const hasCenterline = Boolean(spec.hasCenterline);
+    const centerlineCapacity = Number(spec.centerlineSlots !== undefined ? spec.centerlineSlots : (hasCenterline ? 6 : 0));
+    const baselineTotalSlots = Number(spec.totalSlots !== undefined ? spec.totalSlots : (internalCapacity + externalCapacity));
+
+    let internalUsed = 0;
+    let externalUsed = 0;
+    let centerlineUsed = 0;
+    let totalOrdnanceMass = 0;
+    let externalDragMach = 0;
     let extraRcs = 0;
-    let usedSlots = 0;
     let weaponsCost = 0;
 
     (weaponsList || []).forEach(wItem => {
-      const wId = (typeof wItem === 'object' && wItem !== null) ? (wItem.id || wItem.specId) : wItem;
+      let wId = (typeof wItem === 'object' && wItem !== null) ? (wItem.id || wItem.specId) : wItem;
+      let assignedStation = (typeof wItem === 'object' && wItem !== null && wItem.station) ? wItem.station : null;
       const w = weaponsMap[wId];
-      if (w) {
-        weaponMass += Number(w.mass || 0);
-        usedSlots += Number(w.slots || 1);
-        extraRcs += Number(w.sigmaPylon || 0);
-        weaponsCost += Number(w.cost || 0);
+      if (!w) return;
+
+      const wSlots = Number(w.slots || 1);
+      const wType = w.slotType || 'EXTERNAL';
+
+      if (!assignedStation) {
+        if (wType === 'CENTERLINE' && hasCenterline) {
+          assignedStation = 'CENTERLINE';
+        } else if (wType === 'INTERNAL' && (internalUsed + wSlots <= internalCapacity)) {
+          assignedStation = 'INTERNAL';
+        } else {
+          assignedStation = 'EXTERNAL';
+        }
+      }
+
+      totalOrdnanceMass += Number(w.mass || 0);
+      weaponsCost += Number(w.cost || 0);
+
+      if (assignedStation === 'INTERNAL') {
+        internalUsed += wSlots;
+      } else if (assignedStation === 'CENTERLINE') {
+        centerlineUsed += wSlots;
+        extraRcs += Number(w.sigmaPylon || 0.50);
+        externalDragMach += 0.05;
+      } else {
+        externalUsed += wSlots;
+        extraRcs += Number(w.sigmaPylon || 0.05);
+        externalDragMach += 0.02 * wSlots;
       }
     });
 
@@ -71,7 +104,7 @@ class LoadoutMetrics {
       }
     });
 
-    const totalMass = 100 + gunMass + weaponMass + upgradesMass;
+    const totalMass = 100 + gunMass + totalOrdnanceMass + upgradesMass;
     const maxMass = Number(spec.M_max || 5000);
     let effectiveWr = Math.min(1.0, totalMass / maxMass);
 
@@ -79,7 +112,7 @@ class LoadoutMetrics {
       effectiveWr = Math.max(0, effectiveWr - 0.40);
     }
 
-    const wrPercent = Math.round(Math.min(1.0, totalMass / maxMass) * 100);
+    const wrPercent = Math.round(effectiveWr * 100);
 
     let weightCategory = 'NORMAL';
     let weightColor = '#34d399';
@@ -108,8 +141,6 @@ class LoadoutMetrics {
       weightBorder = '#ef4444';
     }
 
-    const totalSlots = Number(spec.totalSlots || 6);
-    const remainingSlots = Math.max(0, totalSlots - usedSlots);
     const totalCost = Number(spec.cost || 0) + weaponsCost + upgradesCost;
 
     let baseRcs = Number(spec.sigma_0 !== undefined ? spec.sigma_0 : 1.0);
@@ -119,7 +150,7 @@ class LoadoutMetrics {
     }
     if (hasRam) baseRcs *= 0.55;
 
-    const loadedRcs = baseRcs + extraRcs;
+    const loadedRcs = Math.max(0.00005, baseRcs + extraRcs);
     const baseRcsRating = rate('rcs', baseRcs);
     const loadedRcsRating = rate('rcs', loadedRcs);
 
@@ -128,7 +159,7 @@ class LoadoutMetrics {
     if (hasSupercruise) baseSpeed *= 1.10;
     if (hasRangeTurbo) baseSpeed *= 0.96;
 
-    const loadedSpeed = baseSpeed * (1.0 - 0.22 * effectiveWr);
+    const loadedSpeed = Math.max(0.35, baseSpeed * (1.0 - 0.22 * effectiveWr) - externalDragMach);
     const baseSpeedRating = rate('speed', baseSpeed);
     const loadedSpeedRating = rate('speed', loadedSpeed);
 
@@ -169,15 +200,14 @@ class LoadoutMetrics {
     const loadedRadarRating = rate('radar_range', loadedRadar);
 
     const costRating = rate('cost_airframe', totalCost);
-
     const formattedBaseRcs = LoadoutMetrics.formatRcs(baseRcs);
     const formattedLoadedRcs = LoadoutMetrics.formatRcs(loadedRcs);
 
-    const rcsDualHtml = `<span class="dual-val" data-tag-title="RADAR CROSS SECTION" data-tag-tooltip="Clean Base: ${formattedBaseRcs} m² -> Loaded: ${formattedLoadedRcs} m² (+${LoadoutMetrics.formatRcs(extraRcs)} from pylon stores)."><b class="${baseRcsRating.colorClass}">${formattedBaseRcs}</b><span class="val-sep">&rarr;</span><b class="${loadedRcsRating.colorClass}">${formattedLoadedRcs} m²</b></span>`;
+    const rcsDualHtml = `<span class="dual-val" data-tag-title="RADAR CROSS SECTION" data-tag-tooltip="Clean Base: ${formattedBaseRcs} m2 -> Loaded: ${formattedLoadedRcs} m2 (+${LoadoutMetrics.formatRcs(extraRcs)} from external stores)."><b class="${baseRcsRating.colorClass}">${formattedBaseRcs}</b><span class="val-sep">&rarr;</span><b class="${loadedRcsRating.colorClass}">${formattedLoadedRcs} m2</b></span>`;
 
-    const speedDualHtml = `<span class="dual-val" data-tag-title="MAX SPRINT AIRSPEED" data-tag-tooltip="Clean Base: Mach ${baseSpeed.toFixed(2)} -> Loaded: Mach ${loadedSpeed.toFixed(2)} (${wrPercent}% payload weight penalty)."><b class="${baseSpeedRating.colorClass}">M ${baseSpeed.toFixed(2)}</b><span class="val-sep">&rarr;</span><b class="${loadedSpeedRating.colorClass}">M ${loadedSpeed.toFixed(2)}</b></span>`;
+    const speedDualHtml = `<span class="dual-val" data-tag-title="MAX SPRINT AIRSPEED" data-tag-tooltip="Clean Base: Mach ${baseSpeed.toFixed(2)} -> Loaded: Mach ${loadedSpeed.toFixed(2)} (${wrPercent}% payload weight & drag)."><b class="${baseSpeedRating.colorClass}">M ${baseSpeed.toFixed(2)}</b><span class="val-sep">&rarr;</span><b class="${loadedSpeedRating.colorClass}">M ${loadedSpeed.toFixed(2)}</b></span>`;
 
-    const agilityDualHtml = `<span class="dual-val" data-tag-title="TURN AGILITY" data-tag-tooltip="Base Agility: ${baseAgility.toFixed(2)} -> Loaded Agility: ${loadedAgility.toFixed(2)} (${spec.G_limit || 9}G structural limit)."><b class="${baseAgiRating.colorClass}">${baseAgility.toFixed(2)}</b><span class="val-sep">&rarr;</span><b class="${loadedAgiRating.colorClass}">${loadedAgility.toFixed(2)}</b></span>`;
+    const agilityDualHtml = `<span class="dual-val" data-tag-title="TURN AGILITY" data-tag-tooltip="Base Agility: ${baseAgility.toFixed(2)} -> Loaded Agility: ${loadedAgility.toFixed(2)}."><b class="${baseAgiRating.colorClass}">${baseAgility.toFixed(2)}</b><span class="val-sep">&rarr;</span><b class="${loadedAgiRating.colorClass}">${loadedAgility.toFixed(2)}</b></span>`;
 
     const armorDualHtml = (loadedHp !== baseHp)
       ? `<span class="dual-val" data-tag-title="ARMOR DURABILITY" data-tag-tooltip="Base Armor: ${baseHp} HP -> Reinforced: ${loadedHp} HP."><b class="${baseHpRating.colorClass}">${baseHp}</b><span class="val-sep">&rarr;</span><b class="${loadedHpRating.colorClass}">${loadedHp} HP</b></span>`
@@ -187,18 +217,29 @@ class LoadoutMetrics {
       ? `<span class="dual-val" data-tag-title="RADAR RANGE" data-tag-tooltip="Base Radar: ${Math.round(baseRadar)}km -> Enhanced Radar: ${Math.round(loadedRadar)}km."><b class="${baseRadarRating.colorClass}">${Math.round(baseRadar)}km</b><span class="val-sep">&rarr;</span><b class="${loadedRadarRating.colorClass}">${Math.round(loadedRadar)}km</b></span>`
       : `<span class="dual-val" data-tag-title="RADAR RANGE" data-tag-tooltip="Instrumented Radar Range: ${Math.round(baseRadar)}km."><b class="${baseRadarRating.colorClass}">${Math.round(baseRadar)}km</b></span>`;
 
-    const slotsDualHtml = `<span class="dual-val" data-tag-title="HARDPOINT CAPACITY" data-tag-tooltip="Equipped: ${usedSlots} stations / Max: ${totalSlots} stations (${spec.maxPylonRating || 'Type M'} rating)."><b style="color:var(--color-primary-blue);">${usedSlots}</b><span class="val-sep">/</span><b style="color:var(--color-moon-mist);">${totalSlots} Pylons</b></span>`;
+    let intPill = internalCapacity > 0
+      ? `<span class="station-slot-pill int-pill">${internalUsed}/${internalCapacity} INT</span>`
+      : '';
+    let extPill = `<span class="station-slot-pill ext-pill">${externalUsed}/${externalCapacity} EXT</span>`;
+    let ctrPill = hasCenterline
+      ? `<span class="station-slot-pill ctr-pill ${centerlineUsed > 0 ? 'occupied' : ''}">${centerlineUsed > 0 ? '1/1' : '0/1'} CTR</span>`
+      : '';
 
-    const weightDualHtml = `<span class="dual-val" data-tag-title="PAYLOAD WEIGHT" data-tag-tooltip="Carriage Mass: ${totalMass}kg / Max: ${maxMass}kg (${wrPercent}%). Tier: ${weightCategory}."><b style="color:${weightColor};">${totalMass}kg</b><span class="val-sep">/</span><b style="color:var(--color-moon-mist);">${maxMass}kg</b></span>`;
+    const stationsBadgeHtml = `<span class="station-tag-box" data-tag-title="STATIONS BREAKDOWN" data-tag-tooltip="Internal Bay: ${internalUsed}/${internalCapacity} slots &bull; External Pylons: ${externalUsed}/${externalCapacity} slots &bull; Centerline: ${hasCenterline ? (centerlineUsed > 0 ? '1/1' : '0/1') : 'None'} (Total: ${baselineTotalSlots} Slots)">${intPill}${extPill}${ctrPill}</span>`;
 
     return {
       spec, totalCost, costColorClass: costRating.colorClass,
       totalMass, maxMass, wrPercent, weightCategory, weightColor, weightBg, weightBorder,
-      usedSlots, totalSlots, remainingSlots,
+      internalCapacity, internalUsed, remainingInternal: Math.max(0, internalCapacity - internalUsed),
+      externalCapacity, externalUsed, remainingExternal: Math.max(0, externalCapacity - externalUsed),
+      hasCenterline, centerlineCapacity, centerlineUsed,
+      totalSlots: baselineTotalSlots,
+      usedSlots: internalUsed + externalUsed + centerlineUsed,
+      remainingSlots: Math.max(0, baselineTotalSlots - (internalUsed + externalUsed)),
       baseRcs, loadedRcs, extraRcs, baseSpeed, loadedSpeed,
       baseAgility, loadedAgility, baseHp, loadedHp, baseRadar, loadedRadar,
       formatRcs: LoadoutMetrics.formatRcs,
-      rcsDualHtml, speedDualHtml, agilityDualHtml, armorDualHtml, radarDualHtml, slotsDualHtml, weightDualHtml
+      rcsDualHtml, speedDualHtml, agilityDualHtml, armorDualHtml, radarDualHtml, stationsBadgeHtml
     };
   }
 }

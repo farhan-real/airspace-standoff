@@ -7,6 +7,7 @@ window.WEAPONS_A2G = {
     id: 'AGM-88G',
     name: 'AGM-88G AARGM-ER (4x)',
     slots: 2,
+    slotType: 'INTERNAL',
     minRating: 'Type M',
     mass: 2100,
     cost: 1.6,
@@ -28,12 +29,13 @@ window.WEAPONS_A2G = {
     isAntiRadiation: true,
     sigmaPylon: 0.12,
     category: 'A2G',
-    desc: 'Extended-range anti-radiation missile (4x). Passive radar homing inflicts 3x damage on hostile radar arrays and jammers.'
+    desc: 'Extended-range anti-radiation missile (4x). Redesigned compact control fins allow internal stealth bay or external carriage.'
   },
   'GBU-39': {
     id: 'GBU-39',
     name: 'GBU-39 SDB (8x)',
     slots: 2,
+    slotType: 'INTERNAL',
     minRating: 'Type M',
     mass: 1420,
     cost: 0.9,
@@ -55,12 +57,13 @@ window.WEAPONS_A2G = {
     isBunkerCracker: true,
     sigmaPylon: 0.14,
     category: 'A2G',
-    desc: 'Precision stand-off glide bomb (8x) designed for bunker cracking and airfield facility neutralization at Mach 0.90.'
+    desc: 'Precision stand-off glide bomb dispenser (8x). Designed for internal stealth bays and external multi-rack pylons.'
   },
   'AGM-158B': {
     id: 'AGM-158B',
     name: 'AGM-158B JASSM-ER (2x)',
     slots: 4,
+    slotType: 'INTERNAL',
     minRating: 'Type H',
     mass: 2600,
     cost: 2.6,
@@ -83,12 +86,13 @@ window.WEAPONS_A2G = {
     isBunkerCracker: true,
     sigmaPylon: 0.35,
     category: 'A2G',
-    desc: 'Long-range stealth cruise missiles (2x) cruising at Mach 1.15 to penetrate deep contested airspace and destroy command bunkers.'
+    desc: 'Heavy long-range stealth cruise missiles (2x). Fits inside stealth bomber rotary bays or mounts on external heavy pylons.'
   },
   'KINZHAL': {
     id: 'KINZHAL',
     name: 'Kh-47M2 Kinzhal (2x)',
     slots: 6,
+    slotType: 'CENTERLINE',
     minRating: 'Type X',
     mass: 8800,
     cost: 4.2,
@@ -111,6 +115,6 @@ window.WEAPONS_A2G = {
     sigmaPylon: 0.80,
     category: 'A2G',
     allowedAirframes: ['MiG-31BM', 'Tu-160M', 'Su-34', 'F-15EX', 'J-16', 'B-1B'],
-    desc: 'Hypersonic aero-ballistic heavy missile (2x) guided by Inertial Navigation System (INS) with active radar terminal correlation, delivering Mach 5.0 kinetic shock to penetrate deeply reinforced theater structures.'
+    desc: 'Hypersonic aero-ballistic heavy missile (2x). Mounts exclusively on the aircraft centerline fuselage station.'
   }
 };

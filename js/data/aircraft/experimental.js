@@ -28,10 +28,14 @@ window.AIRCRAFT_EXPERIMENTAL = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'BK-27'],
     gunRounds: 510,
+    internalSlots: 0,
+    externalSlots: 10,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Flight technology demonstrator pairing canard foreplanes with 2D vectoring nozzles for pitch response.'
+    desc: 'Technology demonstrator pairing canards with 2D TVC nozzles. 10 external pylons plus extra centerline mount.'
   },
   'Su-47': {
     id: 'Su-47',
@@ -58,10 +62,14 @@ window.AIRCRAFT_EXPERIMENTAL = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
     gunRounds: 150,
+    internalSlots: 2,
+    externalSlots: 6,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Forward-swept composite wing demonstrator providing instantaneous 0.99 turn agility for close-range combat.'
+    desc: 'Forward-swept wing demonstrator delivering 0.99 turn agility. 2 internal bay slots plus 6 external wing stations (8 total slots).'
   },
   'Su-37': {
     id: 'Su-37',
@@ -88,10 +96,14 @@ window.AIRCRAFT_EXPERIMENTAL = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
     gunRounds: 150,
+    internalSlots: 0,
+    externalSlots: 10,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Equipped with canard foreplanes and 3D thrust vectoring nozzles for post-stall Kulbit loops.'
+    desc: '3D thrust vectoring nozzles for Kulbit loops. 10 external weapon stations plus extra centerline carriage capacity.'
   },
   'X-29A': {
     id: 'X-29A',
@@ -118,10 +130,14 @@ window.AIRCRAFT_EXPERIMENTAL = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'BK-27'],
     gunRounds: 450,
+    internalSlots: 0,
+    externalSlots: 6,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Forward-swept wing technology demonstrator ($19.0M) delivering high roll and pitch authority at extreme AoA.'
+    desc: 'Forward-swept wing technology demonstrator ($19.0M). 6 external hardpoints delivering extreme pitch authority (6 total slots).'
   },
   'X-02S': {
     id: 'X-02S',
@@ -148,10 +164,14 @@ window.AIRCRAFT_EXPERIMENTAL = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'BK-27', 'DE-PULSE', 'EML_GUN', 'PLSL_LIGHT', 'PLSL_MED', 'PLSL_HEAVY'],
     gunRounds: 510,
+    internalSlots: 4,
+    externalSlots: 4,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Variable-geometry fictional stealth superfighter. Certified for all pulse laser tiers, kinetic railgun, and directed energy weapons.'
+    desc: 'Variable-geometry stealth superfighter. 4 internal weapon bay slots, 4 external pylons (8 total slots), plus extra centerline rail.'
   },
   'ADFX-01': {
     id: 'ADFX-01',
@@ -178,10 +198,14 @@ window.AIRCRAFT_EXPERIMENTAL = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'DE-PULSE', 'EML_GUN', 'PLSL_LIGHT', 'PLSL_MED', 'PLSL_HEAVY'],
     gunRounds: 510,
+    internalSlots: 2,
+    externalSlots: 6,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Forward-canted canard prototype airframe configured to mount TLS tactical laser pods, MPBM burst munitions, and all pulse laser tiers.'
+    desc: 'Forward-canted canard prototype airframe. 2 internal bay slots, 6 external stations (8 total slots), plus extra centerline heavy rail.'
   },
   'CFA-44': {
     id: 'CFA-44',
@@ -208,10 +232,14 @@ window.AIRCRAFT_EXPERIMENTAL = {
     builtInGun: 'EML_GUN',
     allowedGuns: ['EML_GUN', 'M61A2', 'DE-PULSE', 'PLSL_LIGHT', 'PLSL_MED', 'PLSL_HEAVY'],
     gunRounds: 24,
+    internalSlots: 4,
+    externalSlots: 6,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Heavy fictional carrier interceptor featuring integrated EML railgun, ADMM micro-missiles, and all pulse laser tiers.'
+    desc: 'Carrier interceptor with 4 internal slots, 6 external pylons (10 total slots), plus extra centerline rail.'
   },
   'DARKSTAR': {
     id: 'DARKSTAR',
@@ -238,9 +266,13 @@ window.AIRCRAFT_EXPERIMENTAL = {
     builtInGun: 'PLSL_HEAVY',
     allowedGuns: ['PLSL_HEAVY', 'PLSL_MED', 'PLSL_LIGHT', 'DE-PULSE', 'GAU-22'],
     gunRounds: 140,
+    internalSlots: 4,
+    externalSlots: 2,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 6,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Advanced fictional scramjet penetrator cruising at Mach 3.20 above FL580. Certified for heavy pulse lasers and directed energy.'
+    desc: 'Hypersonic scramjet penetrator. 4 internal weapon bay slots (0 drag at Mach 3.2) plus 2 external hardpoints (6 total slots).'
   }
 };

@@ -1,6 +1,7 @@
 /**
- * AIRSPACE STANDOFF: Aircraft Combat Actions, Stores, Gun Pod Volleys & Gun Tracking
- * Extends Aircraft prototype with outfitting, RTB logistics, gun pod DPS and burst cooldowns.
+ * AIRSPACE STANDOFF: Aircraft Combat Actions, Stores Management & Live Dynamics
+ * Supports slot differentiation (INTERNAL bay, EXTERNAL pylons, CENTERLINE station).
+ * Dynamically sheds parasitic drag and extra pylon RCS in real time as ordnance is expended.
  */
 
 Aircraft.prototype.deployDecoyDrone = function() {
@@ -42,46 +43,126 @@ Aircraft.prototype.installUpgrade = function(upgradeId) {
   return true;
 };
 
-Aircraft.prototype.installWeapon = function(weaponId) {
-  const wpn = (window.WEAPONS_CATALOG || {})[weaponId];
-  if (!wpn || (this.getUsedSlots() + wpn.slots > this.totalSlots)) return false;
-  const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
-  if (ratings.indexOf(wpn.minRating) > ratings.indexOf(this.maxPylonRating)) return false;
-  if (wpn.allowedAirframes && !wpn.allowedAirframes.includes(this.spec.id)) return false;
+Aircraft.prototype.getUsedInternalSlots = function() {
+  return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'INTERNAL' && item.weapon ? item.weapon.slots : 0), 0);
+};
 
-  this.equippedWeapons.push({ id: wpn.id, weapon: wpn, ammo: wpn.ammoCount || 4, maxAmmo: wpn.ammoCount || 4, cooldown: 0.0 });
-  if (wpn.isJammerPod) this.jamEfficiency = Math.max(this.jamEfficiency, wpn.jamEfficiency || 0.45);
-  if (wpn.isDecoyDrone) {
-    this.hasMaldDecoy = true;
-    this.maldDecoyCharges = (this.maldDecoyCharges || 0) + (wpn.ammoCount || 2);
-  }
-  this.recalculateWeight();
-  return true;
+Aircraft.prototype.getUsedExternalSlots = function() {
+  return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'EXTERNAL' && item.weapon ? item.weapon.slots : 0), 0);
+};
+
+Aircraft.prototype.getUsedCenterlineSlots = function() {
+  return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'CENTERLINE' && item.weapon ? item.weapon.slots : 0), 0);
 };
 
 Aircraft.prototype.getUsedSlots = function() {
   return this.equippedWeapons.reduce((sum, item) => sum + (item.weapon ? item.weapon.slots : 0), 0);
 };
 
+Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
+  const wpn = (window.WEAPONS_CATALOG || {})[weaponId];
+  if (!wpn) return false;
+
+  const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
+  if (ratings.indexOf(wpn.minRating) > ratings.indexOf(this.maxPylonRating)) return false;
+  if (wpn.allowedAirframes && !wpn.allowedAirframes.includes(this.spec.id)) return false;
+
+  const wpnSlotType = wpn.slotType || 'EXTERNAL';
+  let assignedStation = targetStation;
+
+  if (wpnSlotType === 'CENTERLINE') {
+    if (!this.hasCenterline || this.getUsedCenterlineSlots() > 0) return false;
+    assignedStation = 'CENTERLINE';
+  } else if (!assignedStation) {
+    if (wpnSlotType === 'INTERNAL' && (this.getUsedInternalSlots() + wpn.slots <= this.internalSlots)) {
+      assignedStation = 'INTERNAL';
+    } else if (this.getUsedExternalSlots() + wpn.slots <= this.externalSlots) {
+      assignedStation = 'EXTERNAL';
+    } else {
+      return false;
+    }
+  } else {
+    if (assignedStation === 'INTERNAL') {
+      if (wpnSlotType !== 'INTERNAL') return false;
+      if (this.getUsedInternalSlots() + wpn.slots > this.internalSlots) return false;
+    } else if (assignedStation === 'EXTERNAL') {
+      if (wpnSlotType === 'CENTERLINE') return false;
+      if (this.getUsedExternalSlots() + wpn.slots > this.externalSlots) return false;
+    } else if (assignedStation === 'CENTERLINE') {
+      if (wpnSlotType !== 'CENTERLINE' || !this.hasCenterline || this.getUsedCenterlineSlots() > 0) return false;
+    }
+  }
+
+  this.equippedWeapons.push({
+    id: wpn.id,
+    weapon: wpn,
+    station: assignedStation,
+    ammo: wpn.ammoCount || 4,
+    maxAmmo: wpn.ammoCount || 4,
+    cooldown: 0.0
+  });
+
+  if (wpn.isJammerPod) this.jamEfficiency = Math.max(this.jamEfficiency, wpn.jamEfficiency || 0.45);
+  if (wpn.isDecoyDrone) {
+    this.hasMaldDecoy = true;
+    this.maldDecoyCharges = (this.maldDecoyCharges || 0) + (wpn.ammoCount || 2);
+  }
+
+  this.recalculateWeight();
+  return true;
+};
+
 Aircraft.prototype.recalculateWeight = function() {
   let mass = this.gun ? Number(this.gun.mass || 100) : 100;
+  let externalDragPenalty = 0;
   let extraRcs = 0;
+
   const upgCatalog = window.UPGRADES_CATALOG || {};
+
   for (const item of this.equippedWeapons) {
-    if (item && item.weapon) { mass += Number(item.weapon.mass || 0); extraRcs += Number(item.weapon.sigmaPylon || 0); }
+    if (!item || !item.weapon) continue;
+    const w = item.weapon;
+    const isMounted = item.ammo > 0;
+    const ammoFraction = item.maxAmmo > 0 ? (item.ammo / item.maxAmmo) : (isMounted ? 1 : 0);
+
+    const currentMass = Number(w.mass || 0) * ammoFraction;
+    mass += currentMass;
+
+    const station = item.station || (w.slotType === 'CENTERLINE' ? 'CENTERLINE' : (w.slotType === 'INTERNAL' && this.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL'));
+
+    if (station === 'INTERNAL') {
+      // Internal bay: zero extra radar cross section and zero parasite drag
+    } else if (station === 'CENTERLINE') {
+      if (isMounted) {
+        extraRcs += Number(w.sigmaPylon || 0.50);
+        externalDragPenalty += 0.05 * ammoFraction;
+      }
+    } else {
+      if (isMounted) {
+        extraRcs += Number(w.sigmaPylon || 0.05);
+        externalDragPenalty += 0.02 * (w.slots || 1) * ammoFraction;
+      }
+    }
   }
+
   for (const upgId of this.equippedUpgrades) {
     const upg = upgCatalog[upgId];
     if (upg) mass += Number(upg.mass || 0);
   }
+
   const maxMass = (this.spec && this.spec.M_max > 0) ? this.spec.M_max : 5000;
   let effectiveWr = Math.min(1.0, mass / maxMass);
   if (this.heavyLeadDragMitigation) effectiveWr = Math.max(0, effectiveWr - this.heavyLeadDragMitigation);
   this.Wr = effectiveWr;
 
-  this.effectiveRcs = Number(this.spec ? (this.spec.sigma_0 || 1.0) : 1.0) + extraRcs;
+  let baseRcs = Number(this.spec ? (this.spec.sigma_0 || 1.0) : 1.0);
+  if (this.isFlightLead && this.spec && this.spec.category === 'STEALTH') baseRcs *= 0.65;
+  if (this.equippedUpgrades.includes('RAM_NANO_COATING')) baseRcs *= 0.55;
+
+  this.effectiveRcs = Math.max(0.00005, baseRcs + extraRcs);
+
   const baseSpeed = Number(this.spec ? (this.spec.S_0 || 0.95) : 0.95);
-  this.effectiveMaxSpeed = baseSpeed * (1.0 - 0.22 * this.Wr);
+  this.effectiveMaxSpeed = Math.max(0.35, baseSpeed * (1.0 - 0.22 * this.Wr) - externalDragPenalty);
   const baseAccel = 0.24 + (this.accelBonus || 0);
   this.effectiveAcceleration = baseAccel / (1.0 + 0.70 * this.Wr);
 };
@@ -145,11 +226,12 @@ Aircraft.prototype.rearmStandardPackage = function() {
   }
   if (this.hasMaldDecoy) this.maldDecoyCharges = 2;
   if (this.equippedWeapons.length === 0) {
-    if (this.maxPylonRating === 'Type S') {
-      this.installWeapon('MAM');
+    if (this.internalSlots > 0) {
+      this.installWeapon('AIM-120D', 'INTERNAL');
+      this.installWeapon('AIM-9X-2', 'INTERNAL');
     } else {
-      this.installWeapon('AIM-120D');
-      this.installWeapon('AIM-9X-2');
+      this.installWeapon('AIM-120D', 'EXTERNAL');
+      this.installWeapon('AIM-9X-2', 'EXTERNAL');
     }
   }
   this.recalculateWeight();
@@ -176,18 +258,13 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
       while (angleDiff > Math.PI) angleDiff = Math.abs(angleDiff - Math.PI * 2);
 
       if (angleDiff < maxConeRad) {
-        if (isEnemy && !this.isAce && Math.random() < (diffKey === 'CADET' ? 0.60 : 0.40)) {
-          break;
-        }
+        if (isEnemy && !this.isAce && Math.random() < (diffKey === 'CADET' ? 0.60 : 0.40)) break;
 
         let sustainedDmg = totalGunDps * dt;
         const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
         const inCloud = clouds.some(c => c.containsPoint(this.x, this.y) || c.containsPoint(enemy.x, enemy.y));
 
-        if (inCloud && isEnergy && this.gun.cloudScattering) {
-          sustainedDmg *= (1.0 - this.gun.cloudScattering);
-        }
-
+        if (inCloud && isEnergy && this.gun.cloudScattering) sustainedDmg *= (1.0 - this.gun.cloudScattering);
         if (isEnemy && !this.isAce) sustainedDmg *= 0.65;
         if (enemy.spec && enemy.spec.category === 'STRIKE') sustainedDmg *= 0.50;
         if (enemy.isFlightLead && enemy.autocannonResistance) sustainedDmg *= (1.0 - enemy.autocannonResistance);

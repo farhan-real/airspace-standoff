@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Shelf Airframes Sub-Renderer
- * Optimized batch DOM injection with DocumentFragment and responsive filtering.
+ * Optimized batch DOM injection with tag-like box badges for station capacities.
  */
 
 class ShelfAirframesRenderer {
@@ -65,7 +65,7 @@ class ShelfAirframesRenderer {
       : () => ({ tier: 3, colorClass: 'stat-tier-3' });
 
     const catDescriptions = {
-      STEALTH: 'Very Low Observable airframe designed to evade early radar detection (RCS <= 0.005 m²).',
+      STEALTH: 'Very Low Observable airframe designed to evade early radar detection (RCS <= 0.005 m2).',
       SUPERIORITY: 'Air superiority fighter engineered for high-altitude BVR intercept and energy merges.',
       MULTIROLE: 'Versatile tactical fighter balancing BVR missile combat with close-in dogfight agility.',
       STRIKE: 'Armored ground-attack or strategic penetrator carrying heavy payloads against surface bases.',
@@ -74,7 +74,6 @@ class ShelfAirframesRenderer {
       EXPERIMENTAL: 'Advanced superfighter prototype featuring 3D TVC, directed-energy weapons, or COFFIN systems.'
     };
 
-    // Use DocumentFragment to batch DOM operations into a single GPU composite
     const fragment = document.createDocumentFragment();
 
     all.forEach(spec => {
@@ -91,16 +90,24 @@ class ShelfAirframesRenderer {
       const rRadar = rate('radar_range', spec.R_0 || 75.0);
       const rRcs = rate('rcs', spec.sigma_0 || 1.0);
       const rHp = rate('hp', spec.hp || 4);
-      const rSlots = rate('pylon_slots', spec.totalSlots || 6);
       const rCost = rate('cost_airframe', spec.cost || 20.0);
 
       const category = spec.category || 'MULTIROLE';
       const rcsVal = spec.sigma_0 || 1.0;
-      const rcsTag = (rcsVal <= 0.0005) ? `VLO (${rcsVal}m²)` : ((rcsVal < 0.1) ? `LO (${rcsVal}m²)` : `${rcsVal}m²`);
+      const rcsTag = (rcsVal <= 0.0005) ? `VLO (${rcsVal}m2)` : ((rcsVal < 0.1) ? `LO (${rcsVal}m2)` : `${rcsVal}m2`);
       const tvcLabel = spec.thrustVector ? '3D TVC' : (spec.isCoffin ? 'COFFIN' : 'AERO');
       const tvcDesc = spec.thrustVector
-        ? '3D Thrust Vectoring Nozzles provide post-stall pitch and yaw authority (Pugachev Cobra loops).'
+        ? '3D Thrust Vectoring Nozzles provide post-stall pitch and yaw authority.'
         : (spec.isCoffin ? 'COFFIN Synthetic Vision enclosed cockpit: eliminates G-LOC blackout and grants +25% evasion.' : 'Conventional aerodynamic control surfaces.');
+
+      const intSlots = Number(spec.internalSlots || 0);
+      const extSlots = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+      const hasCtr = Boolean(spec.hasCenterline);
+
+      let intPill = intSlots > 0 ? `<span class="station-slot-pill int-pill">${intSlots} INT</span>` : '';
+      let extPill = `<span class="station-slot-pill ext-pill">${extSlots} EXT</span>`;
+      let ctrPill = hasCtr ? `<span class="station-slot-pill ctr-pill">+ CTR</span>` : '';
+      const stationsBadgeHtml = `<span class="station-tag-box">${intPill}${extPill}${ctrPill}</span>`;
 
       card.innerHTML = `
         <div class="adc-header">
@@ -119,10 +126,10 @@ class ShelfAirframesRenderer {
         <div class="adc-metrics-grid">
           <div class="adc-metric-cell" data-tag-title="SPRINT AIRSPEED" data-tag-tooltip="Maximum clean sprint speed: Mach ${(spec.S_0 || 0.9).toFixed(2)} (~${Math.round((spec.S_0 || 0.9) * 1225)} km/h)."><span>SPEED:</span><b class="${rSpeed.colorClass}">M ${(spec.S_0 || 0.9).toFixed(2)}</b></div>
           <div class="adc-metric-cell" data-tag-title="TURN AGILITY & G-LIMIT" data-tag-tooltip="Corner turn agility (${(spec.AGI_0 || 0.85).toFixed(2)}) and structural maneuvering tolerance (${spec.G_limit || 9}G)."><span>AGILITY:</span><b class="${rAgi.colorClass}">${(spec.AGI_0 || 0.85).toFixed(2)} (${spec.G_limit || 9}G)</b></div>
-          <div class="adc-metric-cell" data-tag-title="RADAR ENVELOPE" data-tag-tooltip="Instrumented radar range (${spec.R_0 || 75}km) across forward cone (±${Math.round((spec.radarConeDeg || 120)/2)}° off nose)."><span>RADAR:</span><b class="${rRadar.colorClass}">${spec.R_0 || 75}km</b></div>
+          <div class="adc-metric-cell" data-tag-title="RADAR ENVELOPE" data-tag-tooltip="Instrumented radar range (${spec.R_0 || 75}km) across forward cone."><span>RADAR:</span><b class="${rRadar.colorClass}">${spec.R_0 || 75}km</b></div>
           <div class="adc-metric-cell" data-tag-title="RADAR CROSS SECTION" data-tag-tooltip="Nose-on radar signature: ${rcsTag}. Lower RCS exponentially reduces enemy radar lock distance."><span>RCS:</span><b class="${rRcs.colorClass}">${rcsTag}</b></div>
           <div class="adc-metric-cell" data-tag-title="ARMOR HP" data-tag-tooltip="Fuselage damage tolerance: ${spec.hp || 4} Hit Points. Deflects close-in kinetic fire."><span>ARMOR:</span><b class="${rHp.colorClass}">${spec.hp || 4} HP</b></div>
-          <div class="adc-metric-cell" data-tag-title="HARDPOINTS" data-tag-tooltip="Certified weapon rails: ${spec.totalSlots || 6} stations (${spec.maxPylonRating || 'Type M'} rating)."><span>STATIONS:</span><b class="${rSlots.colorClass}">${spec.totalSlots || 6} Pylons</b></div>
+          <div class="adc-metric-cell" data-tag-title="STATIONS BREAKDOWN" data-tag-tooltip="Internal Bay: ${intSlots} slots &bull; External Pylons: ${extSlots} slots &bull; Centerline: ${hasCtr ? 'Available' : 'None'} (Total: ${spec.totalSlots || 6} Slots)."><span>STATIONS:</span>${stationsBadgeHtml}</div>
         </div>
         <div class="adc-desc">${spec.desc || ''}</div>
         <div class="adc-footer">

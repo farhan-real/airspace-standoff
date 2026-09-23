@@ -26,10 +26,14 @@ window.AIRCRAFT_STEALTH = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'GAU-22', 'DE-PULSE', 'PLSL_LIGHT'],
     gunRounds: 480,
+    internalSlots: 6,
+    externalSlots: 2,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Benchmark 5th-gen air dominance. Unmatched frontal VLO signature (0.0001m2), 2D pitch thrust vectoring, Mach 1.06 supercruise, with weak pulse laser option.'
+    desc: 'Benchmark 5th-gen air dominance. 6 internal weapon bay slots (0 drag, VLO preserved) plus 2 optional external pylons (8 total slots).'
   },
   'YF-23': {
     id: 'YF-23',
@@ -54,10 +58,14 @@ window.AIRCRAFT_STEALTH = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'GAU-22', 'DE-PULSE', 'PLSL_LIGHT'],
     gunRounds: 480,
+    internalSlots: 6,
+    externalSlots: 2,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Fastest stealth supercruiser in class (Mach 1.15). Diamond wing planform offers ghost stealth (0.0001m2) and weak pulse laser option.'
+    desc: 'Fastest stealth supercruiser in class (Mach 1.15). Features 6 internal bay slots and 2 external pylons (8 total slots).'
   },
   'F-35A': {
     id: 'F-35A',
@@ -82,10 +90,14 @@ window.AIRCRAFT_STEALTH = {
     builtInGun: 'GAU-22',
     allowedGuns: ['GAU-22', 'M61A2', 'PLSL_LIGHT'],
     gunRounds: 182,
-    totalSlots: 6,
+    internalSlots: 4,
+    externalSlots: 4,
+    hasCenterline: false,
+    centerlineSlots: 0,
+    totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Supreme battlespace sensor fusion ($38.0M). 95km AESA reach with clutter filter, armed with 25mm Gatling or weak pulse laser.'
+    desc: 'Supreme battlespace sensor fusion ($38.0M). 4 internal weapon bay slots for clean stealth cruise, plus 4 external pylons for beast mode strike (8 total slots).'
   },
   'Su-57': {
     id: 'Su-57',
@@ -110,10 +122,14 @@ window.AIRCRAFT_STEALTH = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L', 'DE-PULSE', 'PLSL_LIGHT'],
     gunRounds: 150,
+    internalSlots: 4,
+    externalSlots: 4,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: '3D all-axis thrust vectoring paired with cheek radar arrays. Post-stall Pugachev Cobra agility with weak pulse laser option.'
+    desc: 'Tandem main weapon bays and wing-root bays (4 internal slots) plus 4 external pylons (8 total slots).'
   },
   'J-20': {
     id: 'J-20',
@@ -138,10 +154,14 @@ window.AIRCRAFT_STEALTH = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'DE-PULSE', 'PLSL_LIGHT'],
     gunRounds: 150,
+    internalSlots: 4,
+    externalSlots: 4,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Heavy long-range stealth interceptor. Canard delta layout provides high Mach sprint stability with weak pulse laser option.'
+    desc: 'Ventral and lateral weapon bays provide 4 internal slots; supports 4 external wing pylons for standoff strikes (8 total slots).'
   },
   'Su-75': {
     id: 'Su-75',
@@ -166,10 +186,14 @@ window.AIRCRAFT_STEALTH = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L', 'PLSL_LIGHT'],
     gunRounds: 150,
+    internalSlots: 4,
+    externalSlots: 2,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Accessible 5th-gen stealth fighter ($24.0M). Features low RCS (0.007m2), 3D TVC, and weak pulse laser option.'
+    desc: 'Accessible 5th-gen tactical fighter ($24.0M). Features 4 internal bay slots and 2 external weapon pylons (6 total slots).'
   },
   'FC-31': {
     id: 'FC-31',
@@ -194,10 +218,14 @@ window.AIRCRAFT_STEALTH = {
     builtInGun: 'GSH-23L',
     allowedGuns: ['GSH-23L', 'GSH-30-1', 'DE-PULSE', 'PLSL_LIGHT'],
     gunRounds: 250,
-    totalSlots: 6,
+    internalSlots: 4,
+    externalSlots: 4,
+    hasCenterline: false,
+    centerlineSlots: 0,
+    totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Twin-engine naval stealth platform balancing internal weapon bay depth with low radar observability and weak pulse laser.'
+    desc: 'Twin-engine naval stealth platform. Deep central bay accommodates 4 internal slots; supports 4 external wing pylons (8 total slots).'
   },
   'J-35': {
     id: 'J-35',
@@ -222,9 +250,13 @@ window.AIRCRAFT_STEALTH = {
     builtInGun: 'GSH-23L',
     allowedGuns: ['GSH-23L', 'M61A2', 'PLSL_LIGHT'],
     gunRounds: 250,
-    totalSlots: 6,
+    internalSlots: 4,
+    externalSlots: 4,
+    hasCenterline: false,
+    centerlineSlots: 0,
+    totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Naval carrier stealth strike jet equipped with high-resolution AESA, anti-surface targeting, and weak pulse laser.'
+    desc: 'Naval carrier stealth fighter with 4 internal slots for clean supersonic egress, plus 4 external pylons for heavy strikes (8 total slots).'
   }
 };

@@ -26,10 +26,14 @@ window.AIRCRAFT_SUPERIORITY = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
     gunRounds: 260,
+    internalSlots: 0,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 8,
     maxPylonRating: 'Type X',
     upgradeSockets: 3,
-    desc: 'Stratospheric high-speed interceptor (Mach 1.34 cruise / Mach 2.83 dash). Zaslon-M phased array burns through enemy stealth to launch hypersonic R-37M salvos.'
+    desc: 'Stratospheric interceptor. 8 external underwing pylons with an extra dedicated centerline station for Kh-47M2 Kinzhal.'
   },
   'F-15EX': {
     id: 'F-15EX',
@@ -54,10 +58,14 @@ window.AIRCRAFT_SUPERIORITY = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'DE-PULSE', 'PLSL_LIGHT'],
     gunRounds: 500,
+    internalSlots: 0,
+    externalSlots: 14,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 14,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Heavy missile truck carrying up to 14 ordnance rails and 13,500 kg payload. Designed for fleet-wide BVR salvo saturation with weak pulse laser option.'
+    desc: 'Heavy missile truck with 14 external weapon stations and an extra reinforced centerline station for extreme standoff weapons.'
   },
   'Su-35S': {
     id: 'Su-35S',
@@ -82,10 +90,14 @@ window.AIRCRAFT_SUPERIORITY = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
     gunRounds: 150,
+    internalSlots: 0,
+    externalSlots: 10,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Dogfight merge specialist with 3D all-axis thrust vectoring, 10 weapon stations, and post-stall Pugachev Cobra authority.'
+    desc: 'Air superiority fighter with 10 external wing and tandem fuselage stations, plus extra centerline mount.'
   },
   'Su-30SM': {
     id: 'Su-30SM',
@@ -110,10 +122,14 @@ window.AIRCRAFT_SUPERIORITY = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
     gunRounds: 150,
+    internalSlots: 0,
+    externalSlots: 10,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Tandem-cockpit multirole interceptor with canard foreplanes and thrust vectoring for high-AoA maneuvering.'
+    desc: 'Tandem-cockpit multirole interceptor with 10 external weapon stations and extra centerline carriage capacity.'
   },
   'Eurofighter': {
     id: 'Eurofighter',
@@ -138,10 +154,14 @@ window.AIRCRAFT_SUPERIORITY = {
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27', 'M61A2'],
     gunRounds: 150,
+    internalSlots: 0,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Outstanding climb and instantaneous turn rate with low 4.5-gen radar profile (0.50m2 RCS) and Meteor ramjet BVR synergy.'
+    desc: 'Canard-delta interceptor with 8 external underwing and semi-recessed fuselage stations, plus extra centerline pylon.'
   },
   'Rafale-C': {
     id: 'Rafale-C',
@@ -166,10 +186,14 @@ window.AIRCRAFT_SUPERIORITY = {
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27', 'M61A2'],
     gunRounds: 125,
+    internalSlots: 0,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Highest conventional dogfight agility (0.95) paired with automated SPECTRA electronic defensive jamming.'
+    desc: 'Omnirole fighter with 8 external weapon stations and an extra centerline wet station for heavy standoff ordnance.'
   },
   'J-16': {
     id: 'J-16',
@@ -194,10 +218,14 @@ window.AIRCRAFT_SUPERIORITY = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
     gunRounds: 150,
+    internalSlots: 0,
+    externalSlots: 12,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 12,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Heavy tandem-seat interceptor with 12 weapon stations designed for coordinated long-range PL-15E and PL-21 missile salvos.'
+    desc: 'Heavy tandem-seat interceptor with 12 external weapon stations and extra centerline station certified for heavy missiles.'
   },
   'F-14D': {
     id: 'F-14D',
@@ -222,9 +250,13 @@ window.AIRCRAFT_SUPERIORITY = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2'],
     gunRounds: 675,
+    internalSlots: 0,
+    externalSlots: 10,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Fleet defender ($22.0M) with 98km radar reach and 10 stations for long-range BVR perimeter coverage.'
+    desc: 'Carrier interceptor with 10 external fuselage and wing-glove stations, plus extra tunnel centerline rails.'
   }
 };

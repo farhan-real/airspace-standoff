@@ -27,10 +27,14 @@ window.AIRCRAFT_DRONES = {
     builtInGun: 'PLSL_LIGHT',
     allowedGuns: ['PLSL_LIGHT', 'PLSL_MED', 'MICRO_GUN'],
     gunRounds: 200,
+    internalSlots: 2,
+    externalSlots: 0,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 2,
     maxPylonRating: 'Type S',
     upgradeSockets: 2,
-    desc: 'Low-cost 18G fictional swarm drone ($3.5M). Armed with a pulse laser by default with weak to medium pulse laser options for saturation harassment.'
+    desc: 'Low-cost 18G swarm drone ($3.5M). 2 internal weapon bay slots (2 total slots) maintain zero drag and minimal radar cross section.'
   },
   'MQ-101': {
     id: 'MQ-101',
@@ -56,10 +60,14 @@ window.AIRCRAFT_DRONES = {
     builtInGun: 'PLSL_LIGHT',
     allowedGuns: ['PLSL_LIGHT', 'PLSL_MED', 'MICRO_GUN'],
     gunRounds: 200,
+    internalSlots: 2,
+    externalSlots: 0,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 2,
     maxPylonRating: 'Type S',
     upgradeSockets: 2,
-    desc: 'Lightweight supersonic fictional interceptor drone (Mach 1.15). Equipped with pulse laser as primary armament with weak to medium pulse laser options.'
+    desc: 'Supersonic interceptor drone (Mach 1.15, 20G limit). Carries 2 internal weapon bay slots with zero drag penalty (2 total slots).'
   },
   'XQ-58A': {
     id: 'XQ-58A',
@@ -85,10 +93,14 @@ window.AIRCRAFT_DRONES = {
     builtInGun: 'MICRO_GUN',
     allowedGuns: ['MICRO_GUN', 'GSH-23L'],
     gunRounds: 350,
+    internalSlots: 2,
+    externalSlots: 2,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 4,
     maxPylonRating: 'Type M',
     upgradeSockets: 2,
-    desc: 'Cost-effective real-world stealth loyal wingman ($7.5M). Extends the flight sensor network and carries internal medium BVR missiles.'
+    desc: 'Stealth loyal wingman ($7.5M). 2 internal bay slots for BVR missiles and 2 external wing pylons (4 total slots).'
   },
   'Kizilelma': {
     id: 'Kizilelma',
@@ -114,10 +126,14 @@ window.AIRCRAFT_DRONES = {
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27', 'MICRO_GUN'],
     gunRounds: 150,
+    internalSlots: 2,
+    externalSlots: 2,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 4,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Naval carrier-capable supersonic UCAV. Balances internal weapon carriage with AESA radar and 16G combat breaks.'
+    desc: 'Carrier-capable supersonic UCAV. 2 internal bay slots plus 2 external wing stations (4 total slots).'
   },
   'S-70': {
     id: 'S-70',
@@ -143,10 +159,14 @@ window.AIRCRAFT_DRONES = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'MICRO_GUN'],
     gunRounds: 150,
+    internalSlots: 4,
+    externalSlots: 2,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 6,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Heavy 20-ton stealth flying wing UCAV. Capable of carrying heavy standoff anti-radiation missiles and internal hypersonic ordnance.'
+    desc: 'Heavy 20-ton stealth flying-wing UCAV. 4 deep internal bay slots plus 2 external pylons (6 total slots).'
   },
   'MQ-28': {
     id: 'MQ-28',
@@ -172,10 +192,14 @@ window.AIRCRAFT_DRONES = {
     builtInGun: 'MICRO_GUN',
     allowedGuns: ['MICRO_GUN', 'BK-27'],
     gunRounds: 350,
+    internalSlots: 2,
+    externalSlots: 2,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 4,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Collaborative combat aircraft with interchangeable modular nose sensors. Provides low-cost sensor extension and missile support.'
+    desc: 'Collaborative combat aircraft with 2 internal bay stations plus 2 external wing pylons (4 total slots).'
   },
   'RQ-180': {
     id: 'RQ-180',
@@ -201,9 +225,13 @@ window.AIRCRAFT_DRONES = {
     builtInGun: 'MICRO_GUN',
     allowedGuns: ['MICRO_GUN'],
     gunRounds: 350,
+    internalSlots: 2,
+    externalSlots: 0,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 2,
     maxPylonRating: 'Type S',
     upgradeSockets: 4,
-    desc: 'Ultra-low observable stratospheric flying-wing drone ($16M, 0.0001m2 RCS). Acts as a dedicated high-altitude squadron sensor gateway.'
+    desc: 'Ultra-low observable flying-wing drone ($16M, 0.0001m2 RCS). 2 internal bay slots with zero external drag (2 total slots).'
   }
 };

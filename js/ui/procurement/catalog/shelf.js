@@ -37,11 +37,19 @@ class ProcurementShelf {
       ? this.pm.activeBayIndex : 0;
     const item = squadron[sIdx] || squadron[0];
     const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
+    const metrics = (typeof LoadoutMetrics !== 'undefined')
+      ? LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead)
+      : null;
+
     return {
       index: sIdx + 1, sIdx: sIdx,
       callsign: item.callsign || 'Pilot', model: spec.name || item.specId, specId: item.specId,
-      totalSlots: spec.totalSlots || 6,
-      usedSlots: (item.weapons || []).reduce((s, wId) => s + (((window.WEAPONS_CATALOG || {})[wId] || {}).slots || 1), 0),
+      internalCapacity: metrics ? metrics.internalCapacity : (spec.internalSlots || 0),
+      remainingInternal: metrics ? metrics.remainingInternal : 0,
+      externalCapacity: metrics ? metrics.externalCapacity : (spec.externalSlots || 6),
+      remainingExternal: metrics ? metrics.remainingExternal : 6,
+      hasCenterline: metrics ? metrics.hasCenterline : Boolean(spec.hasCenterline),
+      centerlineUsed: metrics ? metrics.centerlineUsed : 0,
       totalSockets: spec.upgradeSockets || 3, usedSockets: (item.upgrades || []).length
     };
   }
@@ -59,14 +67,14 @@ class ProcurementShelf {
       el.innerHTML = `<span style="color:#f97316;">NO ACTIVE AIRCRAFT SELECTED &bull; ADD AN AIRFRAME FIRST</span>`;
       return;
     }
-    const remSlots = Math.max(0, active.totalSlots - active.usedSlots);
-    const slotText = remSlots === 1 ? 'SLOT' : 'SLOTS';
     if (tab === 'upgrades') {
       const remSockets = Math.max(0, active.totalSockets - active.usedSockets);
       const sockText = remSockets === 1 ? 'SOCKET' : 'SOCKETS';
       el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSockets} ${sockText} AVAILABLE &bull; DRAG OR CLICK TO EQUIP</span>`;
     } else {
-      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSlots} ${slotText} AVAILABLE &bull; DRAG OR CLICK TO EQUIP</span>`;
+      const intMsg = active.internalCapacity > 0 ? `INT BAY: ${active.remainingInternal}/${active.internalCapacity} &bull; ` : '';
+      const extMsg = `EXT PYLONS: ${active.remainingExternal}/${active.externalCapacity}`;
+      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${intMsg}${extMsg} AVAILABLE</span>`;
     }
   }
 
@@ -209,6 +217,16 @@ class ProcurementShelf {
       const wpnSlotWord = wpn.slots === 1 ? 'SLOT' : 'SLOTS';
       const typeBadge = wpn.isGunpod ? '<span class="badge-category" style="color:#fde047;border-color:#ca8a04;">GUN POD</span>' : '';
 
+      const slotType = wpn.slotType || 'EXTERNAL';
+      let stationBadge = '';
+      if (slotType === 'INTERNAL') {
+        stationBadge = '<span class="badge-slots" style="background:#042f2e;border-color:#0d9488;color:#2dd4bf;" data-tag-title="INTERNAL / EXTERNAL" data-tag-tooltip="Sized for stealth internal bays (zero parasite drag, zero extra RCS). Can also be mounted on external pylons.">INT / EXT</span>';
+      } else if (slotType === 'CENTERLINE') {
+        stationBadge = '<span class="badge-slots" style="background:#451a03;border-color:#d97706;color:#fbbf24;" data-tag-title="CENTERLINE ONLY" data-tag-tooltip="Requires reinforced centerline fuselage station.">CENTERLINE</span>';
+      } else {
+        stationBadge = '<span class="badge-slots" style="background:#082f49;border-color:#0284c7;color:#38bdf8;" data-tag-title="EXTERNAL ONLY" data-tag-tooltip="Mounts externally on wing or fuselage pylons (adds weapon mass and pylon drag).">EXT ONLY</span>';
+      }
+
       card.setAttribute('draggable', isRestricted ? 'false' : 'true');
       card.dataset.dragType = 'weapon';
       card.dataset.dragId = wpn.id;
@@ -217,7 +235,8 @@ class ProcurementShelf {
       card.innerHTML = `
         <div class="cic-top"><span class="cic-title">${wpn.name}</span><span class="cic-cost">$${Number(wpn.cost || 0).toFixed(1)}M</span></div>
         <div class="cic-type-bar">
-          <span class="badge-slots" data-tag-title="HARDPOINT REQUIREMENT" data-tag-tooltip="Requires ${wpn.slots} open pylon station${wpn.slots === 1 ? '' : 's'} (${wpn.minRating || 'Type S'} minimum).">${wpn.slots} ${wpnSlotWord}</span>
+          <span class="badge-slots" data-tag-title="HARDPOINT REQUIREMENT" data-tag-tooltip="Requires ${wpn.slots} open station${wpn.slots === 1 ? '' : 's'} (${wpn.minRating || 'Type S'} minimum).">${wpn.slots} ${wpnSlotWord}</span>
+          ${stationBadge}
           <span class="badge-mass" data-tag-title="ORDNANCE WEIGHT" data-tag-tooltip="+${wpn.mass} kg total carriage weight.">+${wpn.mass} kg</span>
           ${typeBadge}
           <span class="badge-category" style="color:#00f0ff;" data-tag-title="SEEKER HOMING" data-tag-tooltip="Guidance: ${wpn.seeker || 'GUIDED'} &bull; ${wpn.behaviorDesc || wpn.desc || ''}">${wpn.seeker || 'GUIDED'}</span>

@@ -12,53 +12,61 @@ window.MANUAL_COMBAT = [
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>SEEKER</th><th>HOMING METHOD</th><th>TACTICAL PROFILE</th><th>DEFENSIVE COUNTERMEASURE</th></tr>
+            <tr><th>SEEKER</th><th>HOMING METHOD</th><th>SLOT COMPATIBILITY</th><th>DEFENSIVE COUNTERMEASURE</th></tr>
           </thead>
           <tbody>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">ARH</td>
-              <td>Active Radar Homing (AIM-120D, Meteor, R-37M, PL-15E, AIM-260)</td>
-              <td>Internal nose radar transmitter. Autonomous fire-and-forget; long BVR reach (72&ndash;130 km).</td>
+              <td>Active Radar Homing (AIM-120D, Meteor, PL-15E, AIM-260, R-37M, PL-21)</td>
+              <td>AIM-120D/PL-15E/Meteor/AIM-260: <b>Internal &amp; External</b>.<br>R-37M/PL-21: <b>External Only</b>.</td>
               <td><b>Doppler Notch (Beam 90&deg;) + Chaff / ECM Pod / Decoys.</b> Cuts radial closure velocity to zero and drops tracking lock.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">IIR / EO</td>
               <td>Imaging Infrared / Optical (AIM-9X, R-73, Python-5, IRIS-T)</td>
-              <td>Tracks thermal exhaust plume and 3D silhouette. Immune to RF radar jamming and Doppler notching.</td>
+              <td>AIM-9X/R-73/IRIS-T: <b>Internal &amp; External</b>.<br>Python-5: <b>External Only</b>.</td>
               <td><b>Throttle to Idle / Dive into Weather Clouds / Break Line of Sight.</b> Clouds scatter infrared tracking; idle cuts thermal signature.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">INS</td>
               <td>Inertial Navigation System with Terminal Radar (Kh-47M2 Kinzhal)</td>
-              <td>Internal solid-state gyroscopes and accelerometers dead-reckon the high-altitude stratospheric cruise. Switches to active radar terrain/target correlation upon terminal hypersonic dive (Mach 5.0). Completely immune to midcourse RF jamming.</td>
-              <td><b>Perpendicular Break Turn / CIWS Point Defense.</b> Hypersonic momentum creates a wide turning radius; break hard 90&deg; perpendicular to the dive vector, or intercept with Phalanx / Pantsir CIWS batteries.</td>
+              <td><b>Centerline Station Only</b>. Hypersonic plunge from stratosphere.</td>
+              <td><b>Perpendicular Break Turn / CIWS Point Defense.</b> Hypersonic momentum creates a wide turning radius; break hard 90&deg; perpendicular.</td>
             </tr>
             <tr>
               <td style="color:#94a3b8;font-weight:800;">GPS / INS</td>
               <td>Satellite Uplink &amp; Inertial Dead-Reckoning (GBU-39 SDB)</td>
-              <td>Coordinates aerodynamic glide trajectory via satellite constellation and internal INS dead-reckoning against surface command bunkers and air defense nodes.</td>
-              <td><b>CIWS Point Defense / Platform Neutralization.</b> Intercept glide weapons with CIWS batteries or neutralize launch aircraft before weapon release.</td>
+              <td><b>Internal &amp; External</b>. Standoff glide weapon.</td>
+              <td><b>CIWS Point Defense / Platform Neutralization.</b> Intercept glide weapons with CIWS batteries or neutralize launch aircraft.</td>
             </tr>
             <tr>
               <td style="color:#ffb830;font-weight:800;">PASSIVE RADAR</td>
               <td>Anti-Radiation Homing (AGM-88G AARGM-ER)</td>
-              <td>Homes directly on hostile radar emissions. Inflicts <b>3&times; damage</b> to SAM radar arrays and EW jammers.</td>
+              <td><b>Internal &amp; External</b>. Homes on radar emissions; 3&times; SAM damage.</td>
               <td>Power down emitting radar arrays, deactivate airborne jammer pods, or intercept with CIWS.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">DIRECT ENERGY</td>
               <td>Hitscan Chemical Laser / Railgun (DE-Pulse, TLS, EML)</td>
-              <td>Instantaneous speed-of-light kinetic or thermal impact. Zero lead time required.</td>
+              <td>Built-in or <b>External Pylon Pods</b>. Speed-of-light beam.</td>
               <td>Dive into moisture clouds (scatters thermal laser beam) or maintain standoff beyond 9.0 km.</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="ge-subhead">2. MULTI-STAGE PROPULSION &amp; RADAR FLIGHT STATES</div>
+      <div class="ge-subhead">2. STATION COMPATIBILITY RULES &amp; LIVE BATTLE RECOVERY</div>
       <div class="ge-desc">
-        Missiles feature authentic multi-stage propulsion physics. Speed scales proportionally relative to combat aircraft (from subsonic cruise at Mach 0.90 up to hypersonic plunges at Mach 5.0). The active stage is displayed in real time on the radar scope:
+        Weapon stations adhere to physical enclosure and mounting constraints:
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Internal Missiles:</b> Sized for stealth bays with folding fins. Can be mounted in internal bays (zero drag, zero extra RCS) OR on external pylons.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>External Missiles:</b> Heavy or long airframes (R-37M, PL-21, AGM-158B, gunpods, ECM pods). Can ONLY be mounted on external pylons.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Centerline Missiles:</b> Strategic aero-ballistic weapons (Kh-47M2 Kinzhal). Can ONLY be mounted on the centerline fuselage station.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Live Battle Drag &amp; Stealth Shedding:</b> When external or centerline missiles are launched in battle, their weight, drag penalty, and radar reflection bloom are removed in real time. Both player and AI fighters immediately recover top speed and return to clean stealth observability.</li>
+        </ul>
       </div>
+
+      <div class="ge-subhead">3. MULTI-STAGE PROPULSION &amp; RADAR FLIGHT STATES</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
@@ -68,105 +76,66 @@ window.MANUAL_COMBAT = [
             <tr>
               <td style="color:#00f0ff;font-weight:800;">[BOOST]</td>
               <td>Initial Rocket Burn</td>
-              <td>Separation impulse kicks missile forward off the rail; solid rocket booster burns intensely, accelerating to peak speed.</td>
-              <td>Leaves host aircraft behind immediately in a trail of smoke; high energy and acceleration.</td>
+              <td>Separation impulse kicks missile off rail; booster accelerates to peak Mach speed.</td>
+              <td>Leaves host aircraft behind immediately in a trail of smoke; high energy.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">[SUSTAIN]</td>
               <td>Midcourse Sustainer</td>
-              <td>Sustainer grain (e.g. AIM-260 JATM) continues burning for 14s, maintaining high Mach 3.6 cruise across long distances.</td>
+              <td>Sustainer grain (AIM-260) burns for 14s, maintaining Mach 3.6 across long distances.</td>
               <td>Extends effective BVR reach without the kinetic decay of pure booster rockets.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">[RAMJET]</td>
               <td>Continuous Ramjet</td>
-              <td>Solid-fuel variable-flow ramjet (Meteor, PL-21) maintains continuous thrust at Mach 3.2&ndash;3.6 with <b>zero speed decay</b> out to maximum range.</td>
+              <td>Ramjet (Meteor, PL-21) maintains continuous thrust at Mach 3.2&ndash;3.6 with <b>zero speed decay</b>.</td>
               <td>Hits distant targets at full sprint speed, denying the kinetic escape window.</td>
             </tr>
             <tr>
               <td style="color:#8494ab;font-weight:800;">[COAST]</td>
               <td>Unpowered Glide</td>
-              <td>Rocket motor has burned out. Aerodynamic drag causes velocity to gradually bleed over extended ranges.</td>
-              <td>Missiles arriving in coast phase have reduced kinetic energy, making evasion easier for evasive targets.</td>
+              <td>Rocket motor has burned out. Aerodynamic drag causes velocity to gradually bleed.</td>
+              <td>Arriving in coast phase leaves reduced kinetic energy, making evasion easier.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">[PULSE 2]</td>
               <td>Terminal Reignition</td>
-              <td>At 22 km from target, PL-15E second pulse rocket grain ignites, surging velocity by <b>+1.1 Mach</b> into the terminal basket.</td>
-              <td>Defeats midcourse defensive notches with a dramatic burst of speed and renewed turn authority.</td>
+              <td>At 22 km from target, PL-15E second pulse rocket ignites, surging velocity by <b>+1.1 Mach</b>.</td>
+              <td>Defeats midcourse defensive notches with a dramatic burst of speed and turn authority.</td>
             </tr>
             <tr>
               <td style="color:#f97316;font-weight:800;">[LOFT] / [DIVE]</td>
               <td>Aero-Ballistic Trajectory (INS / ARH)</td>
-              <td>R-37M and Kinzhal loft into the stratosphere (FL550&ndash;FL600) in thin air, then plunge in a terminal hypersonic dive (Mach 4.2&ndash;5.0) onto radar-correlated target coordinates.</td>
-              <td>Devastating kinetic energy against heavy aircraft and bunkers; wide turn radius allows perpendicular evasion breaks.</td>
+              <td>Lofts into stratosphere (FL550&ndash;FL600), then plunges in terminal hypersonic dive (Mach 4.2&ndash;5.0).</td>
+              <td>Devastating kinetic energy against heavy aircraft and bunkers; wide turn radius allows perpendicular evasion.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">[TERMINAL]</td>
               <td>Active Terminal Homing</td>
-              <td>Missile enters the endgame engagement basket; seeker transitions to high-frequency target tracking.</td>
+              <td>Seeker transitions to high-frequency target tracking in the endgame engagement basket.</td>
               <td>Final closure phase prior to proximity fuse detonation.</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="ge-subhead">3. PROPORTIONAL NAVIGATION (PRONAV) GUIDANCE LAW</div>
-      <div class="ge-desc">
-        Guided missiles in AIRSPACE STANDOFF steer using real <b>Proportional Navigation (ProNav)</b> rather than primitive pure pursuit (flying straight at the target's current position, which causes severe lagging):
-      </div>
+      <div class="ge-subhead">4. PROPORTIONAL NAVIGATION (PRONAV) GUIDANCE LAW</div>
       <div class="ge-formula-card">
         <span style="color:#94a3b8;font-size:0.62rem;">PRONAV COMMAND TURN RATE FORMULATION:</span>
         <div class="ge-formula-code">&omega;_m = N &times; (V_c / V_m) &times; &lambda;_dot</div>
       </div>
       <div class="ge-desc">
         <ul style="list-style:none;padding-left:0;margin-top:4px;">
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Constant Bearing, Decreasing Range (CBDR):</b> The seeker continuously tracks the rotation rate of the Line of Sight (&lambda;_dot) and closure velocity (V_c). The missile turns ahead of the target along a predictive collision triangle, maintaining a constant bearing to intercept with minimal control surface drag.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Navigation Ratio (N = 4.0):</b> A baseline navigation constant of N = 4.0 ensures rapid intercept stabilization against non-maneuvering targets while preserving rocket kinetic energy.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Defeating ProNav via High-G Breaks:</b> A late, sudden break turn forces a rapid spike in &lambda;_dot. Because the missile travels at Mach 2.8&ndash;5.0, matching this rotation rate demands more lateral acceleration than its fins can aerodynamically deliver (exceeding maximum turn rate limits). The missile cannot pull the required lead, resulting in a <b>Kinetic Overshoot</b> as it streaks harmlessly past the target.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Disrupting Guidance Gain (N):</b> Active defensive maneuvers (such as Doppler Notching, Barrel Rolls, and Cobras) degrade the missile's effective navigation gain from N = 4.0 down to 0.6&ndash;1.2, breaking its ability to calculate an intercept lead point.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Constant Bearing, Decreasing Range (CBDR):</b> The seeker tracks the rotation rate of Line of Sight (&lambda;_dot) and closure velocity (V_c), flying a predictive lead pursuit collision course.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Defeating ProNav via High-G Breaks:</b> A late, sudden break turn forces a rapid spike in &lambda;_dot. At Mach 2.8&ndash;5.0, matching this rotation rate demands more lateral acceleration than fins can aerodynamically deliver, causing a <b>Kinetic Overshoot</b>.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Disrupting Guidance Gain (N):</b> Active defensive maneuvers degrade effective navigation gain from N = 4.0 down to 0.6&ndash;1.2, breaking intercept calculations.</li>
         </ul>
       </div>
 
-      <div class="ge-subhead">4. NON-STACKING EVASIONS &amp; KINETIC ENERGY BLEED</div>
+      <div class="ge-subhead">5. MULTI-MISSILE SALVO &amp; MIXED-SEEKER SYNERGY (+25% P_K)</div>
       <div class="ge-desc">
-        Defense against guided weapons is governed by two fundamental physical principles:
-        <ul style="list-style:none;padding-left:0;margin-top:6px;">
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Non-Stacking Evasions:</b> Evasion bonuses do not add linearly. Activating a Doppler notch, dropping chaff, and pulling a barrel roll simultaneously uses your <b>single strongest active defense</b> rather than compounding into immunity.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Kinetic Energy Bleed:</b> Hard turns, banking, and high-G maneuvers induce aerodynamic drag that drains aircraft kinetic energy. An aircraft that bleeds energy (below 100%) suffers reduced turn capability and grants a direct <b>hit probability bonus (+up to 30% P_k)</b> to subsequent inbound missiles!</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Subsequent Missile Vulnerability:</b> Successfully evading a missile costs an immediate 25% energy drain, making chaining multi-missile salvos lethal against evasive targets.</li>
-        </ul>
-      </div>
-
-      <div class="ge-subhead">5. LAUNCH ESTIMATE VS. IMPACT RESOLUTION</div>
-      <div class="ge-desc">
-        The probability displayed on the cockpit HUD and weapon buttons (e.g. <code>EST. 72%</code>) is a real-time firing estimate based on launch geometry and target energy. The <b>true hit probability is resolved at the moment of impact</b>, calculating the target's current speed, energy deficit, non-stacking defenses, and terminal aspect.
-      </div>
-
-      <div class="ge-subhead">6. PROXIMITY FUSING VS. KINETIC OVERSHOOTS</div>
-      <div class="ge-desc">
-        Warheads detonate when the missile closes within <b>650 meters</b> or reaches its Closest Point of Approach (CPA &le; 950m). If an aircraft breaks hard outside the missile's turn radius, the missile does not prematurely detonate or enter a circle; it executes a realistic <b>Kinetic Overshoot</b>, streaking past the target on kinetic momentum before expiration.
-      </div>
-
-      <div class="ge-subhead">7. PASSIVE RADAR HOMING &amp; CONCEALMENT (AGM-88G)</div>
-      <div class="ge-desc">
-        Anti-Radiation Missiles (e.g. AGM-88G AARGM-ER) passively track enemy RF radar emissions without transmitting active radar:
-        <ul style="list-style:none;padding-left:0;margin-top:6px;">
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Launch Concealment:</b> The missile icon remains hidden from enemy radar for the first 3.2 seconds of motor burn.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Trajectory Path Gating:</b> The missile's path to target is suppressed on enemy radar until within <b>20 km</b> of the target.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Full Commander Telemetry:</b> You always see the complete flight path and telemetry of your own missiles!</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>No Active Lock Warning:</b> Targets receive no active ARH lock tones prior to terminal proximity.</li>
-        </ul>
-      </div>
-
-      <div class="ge-subhead">8. RADAR TELEMETRY READOUT &amp; THERMOBARIC BLAST (MPBM)</div>
-      <div class="ge-desc">
-        Missiles display comprehensive two-line telemetry on the radar scope:
-        <ul style="list-style:none;padding-left:0;margin-top:6px;">
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Line 1:</b> Missile designation and salvo count in team/identification color (e.g. <code>AIM-120D x2</code>).</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Line 2:</b> Real-time Mach velocity, active propulsion stage, and target range in telemetry accent colors (e.g. <code>M 3.2 [PULSE 2] [18km]</code>).</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Thermobaric Area of Effect (MPBM):</b> The Multi-Purpose Burst Missile detonates in an expansive thermobaric shockwave, inflicting 7 HP direct damage on the target and secondary blast damage (1&ndash;5 HP) across an <b>8.5 km radius</b>.</li>
-        </ul>
+        Synchronized volleys saturate defenses, providing <b>+12% P_k per additional missile in flight (up to +30%)</b> while degrading target turn efficiency by <b>25% per extra missile</b>.<br><br>
+        Combining active radar (ARH) with imaging infrared (IIR) or optical missiles creates an insurmountable defensive dilemma: beaming 90&deg; to notch radar exposes hot exhaust plumes to the trailing heat seeker, awarding a <b>+25% Mixed-Seeker Synergy Bonus</b> and reducing countermeasure effectiveness by <b>45%</b>!
       </div>
     `
   },
@@ -190,31 +159,31 @@ window.MANUAL_COMBAT = [
           <tbody>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">AN/ALQ-184</td>
-              <td>1-Slot Self Pod</td>
+              <td>1-Slot External Pod</td>
               <td>30% Lock Degradation</td>
               <td>Compact self-protection jammer. Emits directional RF pulse noise against active radar locks.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">AN/ALQ-99</td>
-              <td>2-Slot Heavy Pod</td>
+              <td>2-Slot External Pod</td>
               <td>45% Area Suppression</td>
               <td>Broadband tactical jammer pod suppressing enemy early warning radars across 95 km.</td>
             </tr>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">AN/ALQ-249 NGJ</td>
-              <td>3-Slot AESA Pod</td>
+              <td>3-Slot External Pod</td>
               <td>60% Standoff Jamming</td>
               <td>Next-gen GaN AESA standoff jamming pod delivering concentrated beam jamming out to 125 km.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">ADM-160B MALD</td>
-              <td>Decoy Drone (2x)</td>
+              <td>External Decoy (2x)</td>
               <td>Signature Spoofing</td>
               <td>Air-launched autonomous decoy drone replicating host radar signature and speed profile out to 110 km.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">AN/ALE-55 FOTD</td>
-              <td>Towed Decoy (4x)</td>
+              <td>External Decoy (4x)</td>
               <td>Missile Seduction</td>
               <td>Fiber-optic towed decoy trailing high-power RF repeaters behind the aircraft to seduce radar missiles.</td>
             </tr>

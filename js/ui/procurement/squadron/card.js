@@ -1,5 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Squadron Roster Bay Card DOM Builder
+ * Renders tag-like boxes for stations and aligns STATIONS and PAYLOAD on the exact same row.
  */
 
 class RosterCardBuilder {
@@ -29,14 +30,15 @@ class RosterCardBuilder {
       ? LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead)
       : null;
 
-    const totalSlots = metrics ? metrics.totalSlots : (spec.totalSlots || 6);
-    const usedSlots = metrics ? metrics.usedSlots : 0;
+    const internalCapacity = metrics ? metrics.internalCapacity : (spec.internalSlots || 0);
+    const externalCapacity = metrics ? metrics.externalCapacity : (spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
     const totalCost = metrics ? metrics.totalCost : Number(spec.cost || 0);
     const wrPercent = metrics ? metrics.wrPercent : 50;
     const weightCategory = metrics ? metrics.weightCategory : 'NORMAL';
     const weightColor = metrics ? metrics.weightColor : '#00f5a0';
     const totalMass = metrics ? metrics.totalMass : 100;
-    const remainingSlots = metrics ? metrics.remainingSlots : (totalSlots - usedSlots);
+    const remInternal = metrics ? metrics.remainingInternal : internalCapacity;
+    const remExternal = metrics ? metrics.remainingExternal : externalCapacity;
 
     const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
       ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
@@ -52,11 +54,6 @@ class RosterCardBuilder {
         ${isComp ? g.name + ' (' + (g.damagePerSec || 2.5) + ' HP/s)' : '[INCOMPATIBLE] ' + g.name}
       </button>`;
     }).join('');
-
-    let pipsHtml = '';
-    for (let p = 0; p < totalSlots; p++) {
-      pipsHtml += `<div class="slot-pip ${p < usedSlots ? 'filled' : ''}"></div>`;
-    }
 
     const socketCount = spec.upgradeSockets || 3;
     let upgradesHtml = '';
@@ -74,58 +71,134 @@ class RosterCardBuilder {
             </button>
           </div>`;
       } else {
-        upgradesHtml += `<div class="upgrade-socket empty" data-sidx="${sIdx}" title="Click to install system"><span>+ [EMPTY SLOT]</span></div>`;
+        upgradesHtml += `<div class="upgrade-socket empty" data-sidx="${sIdx}" title="Click to install system"><span>+ [EMPTY SOCKET]</span></div>`;
       }
     }
 
-    const remSlotLabel = remainingSlots === 1 ? 'SLOT' : 'SLOTS';
-    const weaponsHtml = (item.weapons.length === 0)
-      ? `<div class="empty-bay-indicator" data-sidx="${sIdx}">EMPTY HARDPOINTS (${remainingSlots} ${remSlotLabel} AVAILABLE)</div>`
-      : item.weapons.map((wItem, wIdx) => {
-        const wId = (typeof wItem === 'object' && wItem !== null) ? (wItem.id || wItem.specId) : wItem;
-        const w = weaponsMap[wId];
-        const damageHP = w ? (w.damage !== undefined ? w.damage : 2) : 2;
-        const slots = w ? (w.slots || 1) : 1;
-        const itemSlotWord = slots === 1 ? 'SLOT' : 'SLOTS';
-        const seeker = w ? (w.seeker || 'GUIDED') : 'ARH';
-        let seekerTag = seeker;
-        if (w) {
-          if (w.isJammerPod) seekerTag = 'ECM';
-          else if (w.isDecoyDrone) seekerTag = 'MALD';
-          else if (w.isDecoy) seekerTag = 'DECOY';
-          else if (w.isLaser) seekerTag = 'LASER';
-          else if (seeker === 'PASSIVE_RADAR') seekerTag = 'ARM';
-          else if (seeker === 'GPS_INS') seekerTag = 'GPS/INS';
-          else if (seeker === 'INS' || seeker === 'INS_RADAR') seekerTag = 'INS';
-          else if (seeker === 'DIRECT_FIRE') seekerTag = 'DIRECT';
-        }
-        const isFirst = (wIdx === 0);
-        const isLast = (wIdx === item.weapons.length - 1);
-        return `
-          <div class="installed-item-card" data-sidx="${sIdx}" data-widx="${wIdx}">
-            <div class="iic-reorder-group">
-              <button type="button" class="btn-reorder-item btn-move-up" data-sidx="${sIdx}" data-widx="${wIdx}" title="Move weapon up" ${isFirst ? 'disabled' : ''}>
-                <img src="icons/arrowup.svg" width="9" height="9" alt="Up">
-              </button>
-              <button type="button" class="btn-reorder-item btn-move-down" data-sidx="${sIdx}" data-widx="${wIdx}" title="Move weapon down" ${isLast ? 'disabled' : ''}>
-                <img src="icons/arrowdown.svg" width="9" height="9" alt="Down">
-              </button>
-            </div>
-            <div class="iic-title-group">
-              <span class="iic-title" title="${w ? w.name : wId}">${w ? w.name : wId}</span>
-            </div>
-            <div class="iic-right-group">
-              <span class="iic-details"><span class="iic-slots">${slots}<span class="iic-slots-word"> ${itemSlotWord}</span><span class="iic-slots-short">S</span></span> &bull; <b class="iic-hp">${damageHP} HP</b> &bull; <span class="iic-seeker">${seekerTag}</span></span>
-              <button type="button" class="spec-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w ? w.id : wId}">SPECS</button>
-              <button class="btn-dismount-item" data-sidx="${sIdx}" data-widx="${wIdx}" title="Dismount weapon">
-                <img src="icons/close.svg" width="8" height="8" alt="Remove">
-              </button>
-            </div>
-          </div>`;
-      }).join('');
+    let internalItems = [];
+    let externalItems = [];
+    let centerlineItems = [];
 
-    const addWeaponSlotBtn = (remainingSlots > 0 && item.weapons.length > 0)
-      ? `<button type="button" class="slot-action-btn btn-add-weapon-slot" data-sidx="${sIdx}">+ ADD WEAPONS (${remainingSlots} ${remSlotLabel} REMAINING)</button>` : '';
+    let currentInternalUsed = 0;
+    item.weapons.forEach((wEntry, wIdx) => {
+      const wId = (typeof wEntry === 'object' && wEntry !== null) ? (wEntry.id || wEntry.specId) : wEntry;
+      const w = weaponsMap[wId];
+      if (!w) return;
+
+      const wSlots = Number(w.slots || 1);
+      let assignedStation = (typeof wEntry === 'object' && wEntry !== null && wEntry.station) ? wEntry.station : null;
+
+      if (!assignedStation) {
+        if (w.slotType === 'CENTERLINE') assignedStation = 'CENTERLINE';
+        else if (w.slotType === 'INTERNAL' && (currentInternalUsed + wSlots <= internalCapacity)) {
+          assignedStation = 'INTERNAL';
+          currentInternalUsed += wSlots;
+        } else {
+          assignedStation = 'EXTERNAL';
+        }
+      }
+
+      const itemData = { wId, w, wIdx, station: assignedStation, slots: wSlots };
+      if (assignedStation === 'INTERNAL') internalItems.push(itemData);
+      else if (assignedStation === 'CENTERLINE') centerlineItems.push(itemData);
+      else externalItems.push(itemData);
+    });
+
+    const renderWeaponCard = (data) => {
+      const w = data.w;
+      const wIdx = data.wIdx;
+      const damageHP = w.damage !== undefined ? w.damage : 2;
+      const slots = data.slots;
+      const itemSlotWord = slots === 1 ? 'SLOT' : 'SLOTS';
+      const seeker = w.seeker || 'GUIDED';
+      let seekerTag = seeker;
+      if (w.isJammerPod) seekerTag = 'ECM';
+      else if (w.isDecoyDrone) seekerTag = 'MALD';
+      else if (w.isDecoy) seekerTag = 'DECOY';
+      else if (w.isLaser) seekerTag = 'LASER';
+      else if (seeker === 'PASSIVE_RADAR') seekerTag = 'ARM';
+      else if (seeker === 'GPS_INS') seekerTag = 'GPS/INS';
+      else if (seeker === 'INS' || seeker === 'INS_RADAR') seekerTag = 'INS';
+      else if (seeker === 'DIRECT_FIRE') seekerTag = 'DIRECT';
+
+      return `
+        <div class="installed-item-card station-${data.station.toLowerCase()}" data-sidx="${sIdx}" data-widx="${wIdx}">
+          <div class="iic-reorder-group">
+            <button type="button" class="btn-reorder-item btn-move-up" data-sidx="${sIdx}" data-widx="${wIdx}" title="Move weapon up">
+              <img src="icons/arrowup.svg" width="9" height="9" alt="Up">
+            </button>
+            <button type="button" class="btn-reorder-item btn-move-down" data-sidx="${sIdx}" data-widx="${wIdx}" title="Move weapon down">
+              <img src="icons/arrowdown.svg" width="9" height="9" alt="Down">
+            </button>
+          </div>
+          <div class="iic-title-group">
+            <span class="iic-title" title="${w.name}">${w.name}</span>
+          </div>
+          <div class="iic-right-group">
+            <span class="iic-details"><span class="iic-slots">${slots}<span class="iic-slots-word"> ${itemSlotWord}</span><span class="iic-slots-short">S</span></span> &bull; <b class="iic-hp">${damageHP} HP</b> &bull; <span class="iic-seeker">${seekerTag}</span></span>
+            <button type="button" class="spec-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button>
+            <button class="btn-dismount-item" data-sidx="${sIdx}" data-widx="${wIdx}" title="Dismount weapon">
+              <img src="icons/close.svg" width="8" height="8" alt="Remove">
+            </button>
+          </div>
+        </div>`;
+    };
+
+    let internalBayHtml = '';
+    if (internalCapacity > 0) {
+      const internalCards = internalItems.map(renderWeaponCard).join('');
+      const emptyInternalCards = (remInternal > 0)
+        ? `<div class="empty-internal-slot" data-sidx="${sIdx}" data-station="INTERNAL" title="Equip internal missile">+ [EMPTY INTERNAL BAY: ${remInternal} SLOTS OPEN &bull; ZERO DRAG &amp; ZERO EXTRA RCS]</div>`
+        : '';
+
+      internalBayHtml = `
+        <div class="station-section internal-bay-group">
+          <div class="station-header-row">
+            <span class="station-title"><img src="icons/diamond.svg" width="10" height="10" alt="Internal" class="manual-inline-ico"> INTERNAL WEAPONS BAY: <b>${metrics.internalUsed} / ${internalCapacity} SLOTS</b></span>
+            <span class="station-tag stealth-tag">VLO ZERO DRAG</span>
+          </div>
+          <div class="station-items-container">
+            ${internalCards}
+            ${emptyInternalCards}
+          </div>
+        </div>
+      `;
+    }
+
+    const externalCards = externalItems.map(renderWeaponCard).join('');
+    const addExternalBtn = (remExternal > 0)
+      ? `<button type="button" class="slot-action-btn btn-add-external-slot" data-sidx="${sIdx}" data-station="EXTERNAL">+ ADD EXTERNAL WEAPONS (${remExternal} SLOTS REMAINING)</button>`
+      : '';
+
+    const externalPylonsHtml = `
+      <div class="station-section external-pylons-group">
+        <div class="station-header-row">
+          <span class="station-title">EXTERNAL WING PYLONS: <b>${metrics ? metrics.externalUsed : 0} / ${externalCapacity} SLOTS</b></span>
+          <span class="station-tag external-tag">STANDARD PYLONS</span>
+        </div>
+        <div class="station-items-container">
+          ${externalCards || (remExternal === externalCapacity ? `<div class="empty-bay-indicator" data-sidx="${sIdx}" data-station="EXTERNAL">NO EXTERNAL PYLONS EQUIPPED (${externalCapacity} SLOTS OPEN)</div>` : '')}
+          ${addExternalBtn}
+        </div>
+      </div>
+    `;
+
+    let centerlineHtml = '';
+    if (centerlineItems.length > 0) {
+      const centerlineCards = centerlineItems.map(renderWeaponCard).join('');
+      centerlineHtml = `
+        <div class="station-section centerline-station-group">
+          <div class="station-header-row">
+            <span class="station-title" style="color:#f59e0b;">CENTERLINE FUSELAGE STATION: <b>${metrics.centerlineUsed} / ${metrics.centerlineCapacity || 6} SLOTS</b></span>
+            <span class="station-tag centerline-tag">HEAVY HYPERSONIC</span>
+          </div>
+          <div class="station-items-container">
+            ${centerlineCards}
+          </div>
+        </div>
+      `;
+    }
+
     const category = spec.category || 'MULTIROLE';
     const activeGunDmg = activeGun ? (activeGun.damagePerSec || 2.5) : 2.5;
 
@@ -173,7 +246,7 @@ class RosterCardBuilder {
           <div class="metric-meta"><span>RADAR:</span>${metrics ? metrics.radarDualHtml : `<b>${spec.R_0 || 75}km</b>`}</div>
         </div>
         <div class="metric-block">
-          <div class="metric-meta"><span>RCS:</span>${metrics ? metrics.rcsDualHtml : `<b>${spec.sigma_0 || 1.0}m²</b>`}</div>
+          <div class="metric-meta"><span>RCS:</span>${metrics ? metrics.rcsDualHtml : `<b>${spec.sigma_0 || 1.0}m2</b>`}</div>
         </div>
         <div class="metric-block">
           <div class="metric-meta"><span>ARMOR:</span>${metrics ? metrics.armorDualHtml : `<b>${spec.hp || 4} HP</b>`}</div>
@@ -182,11 +255,16 @@ class RosterCardBuilder {
           <div class="metric-meta"><span>G-LIMIT:</span><span class="dual-val" data-tag-title="STRUCTURAL G-LIMIT" data-tag-tooltip="Structural maneuvering tolerance: ${(spec.G_limit || 9.0).toFixed(1)}G."><b class="${rG.colorClass}">${(spec.G_limit || 9.0).toFixed(1)} G</b></span></div>
         </div>
         <div class="metric-block">
-          <div class="metric-meta"><span>STATIONS:</span>${metrics ? metrics.slotsDualHtml : `<span>${usedSlots}/${totalSlots} SLOTS</span>`}</div>
-          <div class="capacity-pips-bar">${pipsHtml}</div>
+          <div class="metric-meta">
+            <span>STATIONS:</span>
+            ${metrics ? metrics.stationsBadgeHtml : '<span>--</span>'}
+          </div>
         </div>
         <div class="metric-block">
-          <div class="metric-meta"><span>PAYLOAD:</span><span><b style="color:${weightColor};">${weightCategory}</b> ${wrPercent}% (${totalMass}kg)</span></div>
+          <div class="metric-meta">
+            <span>PAYLOAD:</span>
+            <span><b style="color:${weightColor};">${weightCategory}</b> ${wrPercent}% (${totalMass}kg)</span>
+          </div>
           <div class="weight-bar-bg"><div class="weight-bar-fill ${wrPercent > 80 ? 'overload' : (wrPercent > 60 ? 'heavy' : '')}" style="width:${Math.min(100, wrPercent)}%;"></div></div>
         </div>
       </div>
@@ -197,14 +275,15 @@ class RosterCardBuilder {
         </div>
         <div class="upgrade-slots-container">${upgradesHtml}</div>
       </div>
-      <div class="installed-weapons-grid">
-        ${weaponsHtml}
-        ${addWeaponSlotBtn}
+      <div class="stores-stations-wrapper">
+        ${internalBayHtml}
+        ${externalPylonsHtml}
+        ${centerlineHtml}
       </div>
     `;
 
     card.onclick = (e) => {
-      if (!e.target.closest('button, input, select, .squad-callsign-tag, .custom-dropdown')) {
+      if (!e.target.closest('button, input, select, .squad-callsign-tag, .custom-dropdown, .empty-internal-slot, .empty-bay-indicator')) {
         pm.activeBayIndex = sIdx;
         pm.updateUI();
       }
@@ -252,8 +331,9 @@ class RosterCardBuilder {
       });
     }
 
-    const goToWeapons = () => {
+    const goToWeapons = (targetStation = null) => {
       pm.activeBayIndex = sIdx;
+      pm.targetEquipStation = targetStation;
       pm.currentTab = 'a2a';
       document.querySelectorAll('.shelf-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'a2a'));
       pm.renderCatalog();
@@ -270,21 +350,36 @@ class RosterCardBuilder {
       if (btnShelf && window.innerWidth <= 1024) btnShelf.click();
     };
 
-    const emptyBay = card.querySelector('.empty-bay-indicator');
-    if (emptyBay) emptyBay.onclick = (e) => { e.stopPropagation(); goToWeapons(); };
-    const addWpnSlot = card.querySelector('.btn-add-weapon-slot');
-    if (addWpnSlot) addWpnSlot.onclick = (e) => { e.stopPropagation(); goToWeapons(); };
+    const emptyInternalSlot = card.querySelector('.empty-internal-slot');
+    if (emptyInternalSlot) emptyInternalSlot.onclick = (e) => { e.stopPropagation(); goToWeapons('INTERNAL'); };
+
+    const emptyExternalBay = card.querySelector('.empty-bay-indicator');
+    if (emptyExternalBay) emptyExternalBay.onclick = (e) => { e.stopPropagation(); goToWeapons('EXTERNAL'); };
+
+    const addExternalBtnEl = card.querySelector('.btn-add-external-slot');
+    if (addExternalBtnEl) addExternalBtnEl.onclick = (e) => { e.stopPropagation(); goToWeapons('EXTERNAL'); };
+
     const quickUpg = card.querySelector('.btn-quick-to-upgrades');
     if (quickUpg) quickUpg.onclick = (e) => { e.stopPropagation(); goToUpgrades(); };
 
     card.querySelectorAll('.upgrade-socket.empty').forEach(el => {
       el.onclick = (e) => { e.stopPropagation(); goToUpgrades(); };
     });
+
     card.querySelectorAll('.btn-dismount-item').forEach(b => {
-      b.onclick = (e) => { e.stopPropagation(); item.weapons.splice(parseInt(b.dataset.widx, 10), 1); pm.updateUI(); };
+      b.onclick = (e) => {
+        e.stopPropagation();
+        item.weapons.splice(parseInt(b.dataset.widx, 10), 1);
+        pm.updateUI();
+      };
     });
+
     card.querySelectorAll('.btn-socket-dismount').forEach(b => {
-      b.onclick = (e) => { e.stopPropagation(); item.upgrades.splice(parseInt(b.dataset.uidx, 10), 1); pm.updateUI(); };
+      b.onclick = (e) => {
+        e.stopPropagation();
+        item.upgrades.splice(parseInt(b.dataset.uidx, 10), 1);
+        pm.updateUI();
+      };
     });
 
     card.querySelectorAll('.btn-move-up').forEach(b => {

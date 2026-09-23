@@ -7,6 +7,7 @@ window.WEAPONS_PODS = {
     id: 'SUU-23A',
     name: 'SUU-23/A 20mm Vulcan Gunpod',
     slots: 1,
+    slotType: 'EXTERNAL',
     minRating: 'Type S',
     mass: 780,
     cost: 0.6,
@@ -30,12 +31,13 @@ window.WEAPONS_PODS = {
       'Eurofighter', 'Rafale-C', 'A-10C', 'B-1B', 'F-15-SMTD',
       'F-15-SMT-COFFIN', 'X-29A', 'ADFX-01', 'X-02S', 'KF-21'
     ],
-    desc: 'Self-contained 20mm Vulcan Gatling pod certified for Western multirole, intercept, and strike pylons.'
+    desc: 'Self-contained 20mm Vulcan Gatling pod. Mounts on external wing or fuselage stations.'
   },
   'SPPU-22': {
     id: 'SPPU-22',
     name: 'SPPU-22-01 Twin 23mm Gunpod',
     slots: 1,
+    slotType: 'EXTERNAL',
     minRating: 'Type S',
     mass: 560,
     cost: 0.5,
@@ -59,12 +61,13 @@ window.WEAPONS_PODS = {
       'J-16D', 'MiG-29K', 'Tejas-MK2', 'Su-47', 'Su-37',
       'Su-37-COFFIN', 'S-70', 'FC-31', 'J-35'
     ],
-    desc: 'Twin 23mm autocannon pod certified for Eastern strike fighters, Flankers, and heavy naval air wings.'
+    desc: 'Twin 23mm autocannon pod certified for external hardpoints on Eastern strike fighters and Flankers.'
   },
   'GPU-5A': {
     id: 'GPU-5A',
     name: 'GPU-5/A 30mm Heavy Gunpod',
     slots: 2,
+    slotType: 'EXTERNAL',
     minRating: 'Type M',
     mass: 1350,
     cost: 0.8,
@@ -87,12 +90,13 @@ window.WEAPONS_PODS = {
       'A-10C', 'Su-25SM3', 'Su-34', 'F-15EX', 'F-18E', 'F-2A',
       'J-16', 'Su-30SM', 'Su-35S', 'B-1B', 'F-15-SMTD', 'F-15-SMT-COFFIN'
     ],
-    desc: 'Heavy 30mm rotary cannon pod restricted to reinforced pylons on heavy strike, CAS, and interceptor airframes.'
+    desc: 'Heavy 30mm rotary cannon pod restricted to reinforced external pylons on heavy strike and CAS airframes.'
   },
   'PLSL_POD': {
     id: 'PLSL_POD',
     name: 'PLSL Tactical Pulse Laser Pod',
     slots: 2,
+    slotType: 'EXTERNAL',
     minRating: 'Type M',
     mass: 650,
     cost: 1.6,
@@ -118,12 +122,13 @@ window.WEAPONS_PODS = {
       'F-22A', 'Su-57', 'J-20', 'F-35A', 'F-15EX',
       'Kizilelma', 'S-70'
     ],
-    desc: 'Tactical pulse laser pod restricted to advanced 5th-Gen platforms, heavy supersonic UCAVs, and experimental superfighters.'
+    desc: 'Tactical pulse laser pod restricted to external pylons on advanced 5th-Gen platforms and superfighters.'
   },
   'DE_POD': {
     id: 'DE_POD',
     name: 'HEL Solid-State Laser Pod',
     slots: 3,
+    slotType: 'EXTERNAL',
     minRating: 'Type H',
     mass: 1180,
     cost: 2.4,
@@ -148,12 +153,13 @@ window.WEAPONS_PODS = {
       'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN',
       'F-15EX', 'Su-57', 'F-22A', 'J-20', 'B-21', 'Su-35S'
     ],
-    desc: 'High-power solid-state laser pod certified exclusively for experimental flagships, COFFIN conversions, and heavy air superiority leaders.'
+    desc: 'High-power solid-state laser pod certified exclusively for external heavy pylons on experimental flagships.'
   },
   'ADM-160B': {
     id: 'ADM-160B',
     name: 'ADM-160B MALD Decoy Drone (2x)',
     slots: 1,
+    slotType: 'INTERNAL',
     minRating: 'Type S',
     mass: 260,
     cost: 0.5,
@@ -167,12 +173,13 @@ window.WEAPONS_PODS = {
     ammoCount: 2,
     sigmaPylon: 0.02,
     category: 'POD',
-    desc: 'Air-launched decoy drones (2x) matching host radar profile to draw hostile missiles across theater depth.'
+    desc: 'Air-launched decoy drones (2x) matching host radar profile. Mounts inside internal stealth bays or on external pylons.'
   },
   'ALE-55': {
     id: 'ALE-55',
     name: 'AN/ALE-55 FOTD Pod (4x)',
     slots: 2,
+    slotType: 'INTERNAL',
     minRating: 'Type M',
     mass: 380,
     cost: 0.8,
@@ -185,12 +192,13 @@ window.WEAPONS_PODS = {
     ammoCount: 4,
     sigmaPylon: 0.04,
     category: 'POD',
-    desc: 'Towed fiber-optic decoy system (4x charges). Deflects inbound radar-guided missiles away from the host airframe.'
+    desc: 'Towed fiber-optic decoy system (4x charges). Can be housed inside internal bays or mounted on external pylons.'
   },
   'AN-ALQ-184': {
     id: 'AN-ALQ-184',
     name: 'AN/ALQ-184 Tactical ECM Pod',
     slots: 1,
+    slotType: 'EXTERNAL',
     minRating: 'Type S',
     mass: 310,
     cost: 0.7,
@@ -203,12 +211,13 @@ window.WEAPONS_PODS = {
     behaviorDesc: 'Lightweight self-protection jammer pod. Emits directional RF pulse jamming against radar threats (30% suppression).',
     sigmaPylon: 0.08,
     category: 'POD',
-    desc: 'Compact 1-slot self-protection ECM pod. Mounts on fighter hardpoints to degrade hostile radar lock quality.'
+    desc: 'Compact 1-slot self-protection ECM pod mounted on external fighter hardpoints.'
   },
   'AN-ALQ-99': {
     id: 'AN-ALQ-99',
     name: 'AN/ALQ-99 Jammer Pod',
     slots: 2,
+    slotType: 'EXTERNAL',
     minRating: 'Type M',
     mass: 720,
     cost: 1.2,
@@ -221,12 +230,13 @@ window.WEAPONS_PODS = {
     behaviorDesc: 'Emits broadband microwave noise that degrades incoming active radar locks and search arrays across 95 km (45% suppression).',
     sigmaPylon: 0.15,
     category: 'POD',
-    desc: 'Broadband tactical radar jammer pod reducing enemy radar detection ranges and lock reliability.'
+    desc: 'Broadband tactical radar jammer pod mounted on external pylons to degrade hostile radar detection.'
   },
   'AN-ALQ-249': {
     id: 'AN-ALQ-249',
     name: 'AN/ALQ-249 NGJ-MB AESA Pod',
     slots: 3,
+    slotType: 'EXTERNAL',
     minRating: 'Type H',
     mass: 980,
     cost: 2.2,
@@ -239,12 +249,13 @@ window.WEAPONS_PODS = {
     behaviorDesc: 'Next Generation Jammer Mid-Band with GaN AESA transmitters. Delivers concentrated high-power beam jamming out to 125 km (60% suppression).',
     sigmaPylon: 0.20,
     category: 'POD',
-    desc: 'High-power GaN AESA tactical jamming pod. Blinds enemy early warning radars and severely degrades active missile tracking.'
+    desc: 'High-power GaN AESA tactical jamming pod mounted externally on heavy weapon stations.'
   },
   'TLS_POD': {
     id: 'TLS_POD',
     name: 'TLS Tactical Laser Pod',
     slots: 4,
+    slotType: 'EXTERNAL',
     minRating: 'Type H',
     mass: 1380,
     cost: 2.8,
@@ -266,6 +277,6 @@ window.WEAPONS_PODS = {
       'J-20', 'FC-31', 'ADF-11F', 'CFA-44', 'DARKSTAR',
       'F-22C-COFFIN', 'Su-37-COFFIN', 'ADFX-01'
     ],
-    desc: 'High-energy chemical laser pod providing instantaneous thermal damage out to 9 km (24 charges, 2.5s recharge).'
+    desc: 'High-energy chemical laser pod providing instantaneous thermal hitscan damage. Mounts externally on heavy pylons.'
   }
 };

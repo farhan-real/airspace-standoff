@@ -26,10 +26,14 @@ window.AIRCRAFT_MULTIROLE = {
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27', 'M61A2'],
     gunRounds: 125,
+    internalSlots: 0,
+    externalSlots: 6,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Affordable manned fighter ($11.5M). Light French delta design with snappy roll rate and agile visual combat.'
+    desc: 'Light tailless delta fighter ($11.5M). 6 external wing stations plus extra fuselage centerline pylon.'
   },
   'Tejas-MK2': {
     id: 'Tejas-MK2',
@@ -54,10 +58,14 @@ window.AIRCRAFT_MULTIROLE = {
     builtInGun: 'GSH-23L',
     allowedGuns: ['GSH-23L', 'BK-27'],
     gunRounds: 220,
+    internalSlots: 0,
+    externalSlots: 6,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Compact canard-delta platform ($13.0M). Features low clean radar signature (0.75m2 RCS) and indigenous Uttam AESA radar.'
+    desc: 'Compact canard-delta platform with 6 external wing stations plus extra fuselage centerline station.'
   },
   'F-16V': {
     id: 'F-16V',
@@ -82,10 +90,14 @@ window.AIRCRAFT_MULTIROLE = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'GAU-22'],
     gunRounds: 510,
+    internalSlots: 0,
+    externalSlots: 6,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Affordable, agile multirole baseline ($13.5M). Compact SABR AESA radar with full access to modern medium BVR missiles.'
+    desc: 'Agile multirole baseline ($13.5M). 6 external wing pylons and extra centerline fuselage hardpoint.'
   },
   'MiG-29K': {
     id: 'MiG-29K',
@@ -110,10 +122,14 @@ window.AIRCRAFT_MULTIROLE = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L'],
     gunRounds: 150,
+    internalSlots: 0,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 8,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'High thrust-to-weight carrier dogfighter ($14.5M). Delivers 4 HP durability and 8 weapon stations at a competitive cost.'
+    desc: 'Naval carrier dogfighter ($14.5M). 8 external weapon stations with extra centerline hardpoint.'
   },
   'JAS-39E': {
     id: 'JAS-39E',
@@ -138,10 +154,14 @@ window.AIRCRAFT_MULTIROLE = {
     builtInGun: 'BK-27',
     allowedGuns: ['BK-27', 'M61A2'],
     gunRounds: 120,
+    internalSlots: 0,
+    externalSlots: 6,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Networked canard-delta interceptor ($15.5M). Swiveling swashplate AESA radar and passive datalink bus bonus.'
+    desc: 'Networked canard-delta interceptor. 6 external stations plus extra centerline station with datalink bonuses.'
   },
   'F-18E': {
     id: 'F-18E',
@@ -166,10 +186,14 @@ window.AIRCRAFT_MULTIROLE = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'GAU-22'],
     gunRounds: 412,
+    internalSlots: 0,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Rugged carrier strike platform ($17.5M). 8 stations, APG-79 AESA radar, and high-alpha nose-pointing control.'
+    desc: 'Carrier strike platform ($17.5M). 8 external pylons and extra high-capacity centerline station.'
   },
   'F-2A': {
     id: 'F-2A',
@@ -194,10 +218,14 @@ window.AIRCRAFT_MULTIROLE = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2'],
     gunRounds: 512,
+    internalSlots: 0,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Enlarged carbon-composite wing platform ($18.0M). 8 hardpoints and specialized maritime anti-surface search envelopes.'
+    desc: 'Enlarged composite wing fighter with 8 external stations plus extra heavy centerline hardpoint.'
   },
   'KF-21': {
     id: 'KF-21',
@@ -222,9 +250,13 @@ window.AIRCRAFT_MULTIROLE = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2', 'GAU-22'],
     gunRounds: 412,
+    internalSlots: 4,
+    externalSlots: 4,
+    hasCenterline: true,
+    centerlineSlots: 4,
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: '4.5+ gen multirole airframe ($22.0M). Reduced frontal RCS (0.15m2) with conformal weapon stations and 8 total pylons.'
+    desc: '4.5+ gen semi-stealth multirole airframe. 4 conformal internal slots, 4 external pylons (8 total slots), plus extra centerline mount.'
   }
 };

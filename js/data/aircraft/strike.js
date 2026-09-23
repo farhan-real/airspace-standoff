@@ -26,10 +26,14 @@ window.AIRCRAFT_STRIKE = {
     builtInGun: 'GAU-8',
     allowedGuns: ['GAU-8'],
     gunRounds: 1174,
+    internalSlots: 0,
+    externalSlots: 10,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Heavily armored titanium bathtub cockpit (7 HP, 50% autocannon damage reduction). Built around the 30mm GAU-8 Gatling (4.8 DPS) with 1,174 rounds.'
+    desc: 'Titanium bathtub armored close-support aircraft (7 HP). 10 external hardpoints plus an extra heavy centerline station.'
   },
   'Su-25SM3': {
     id: 'Su-25SM3',
@@ -54,10 +58,14 @@ window.AIRCRAFT_STRIKE = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GSH-23L', 'GAU-8'],
     gunRounds: 250,
+    internalSlots: 0,
+    externalSlots: 10,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Titanium-tub ground attacker ($11.5M, 7 HP). Supports Vitebsk defensive jamming and 10 stations for close-range ordnance.'
+    desc: 'Titanium ground attacker ($11.5M, 7 HP) with 10 external stations for ordnance and an extra centerline station.'
   },
   'Su-34': {
     id: 'Su-34',
@@ -82,10 +90,14 @@ window.AIRCRAFT_STRIKE = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1', 'GAU-8'],
     gunRounds: 180,
+    internalSlots: 0,
+    externalSlots: 12,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 12,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Armored side-by-side cockpit with rearward defense radar and 12 weapon stations carrying heavy standoff cruise missiles.'
+    desc: 'Armored strike bomber with 12 external weapon stations and an extra centerline carriage certified for Kh-47M2 Kinzhal.'
   },
   'B-1B': {
     id: 'B-1B',
@@ -110,10 +122,14 @@ window.AIRCRAFT_STRIKE = {
     builtInGun: 'M61A2',
     allowedGuns: ['M61A2'],
     gunRounds: 500,
+    internalSlots: 6,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 6,
     totalSlots: 14,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Supersonic variable-sweep strategic bomber carrying 18,000 kg across 14 stations. Terrain-following flight profiles.'
+    desc: 'Variable-sweep supersonic heavy bomber. 6 internal bay slots, 8 external pylons (14 total slots), plus extra centerline mount.'
   },
   'Tu-160M': {
     id: 'Tu-160M',
@@ -138,10 +154,14 @@ window.AIRCRAFT_STRIKE = {
     builtInGun: 'GSH-30-1',
     allowedGuns: ['GSH-30-1'],
     gunRounds: 150,
+    internalSlots: 8,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 12,
     totalSlots: 16,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Heavy supersonic strategic bomber with 9 HP durability and 16 stations certified for hypersonic Kh-47M2 Kinzhal missiles.'
+    desc: 'Heavy supersonic strategic bomber (9 HP). 8 internal rotary bay slots, 8 external pylons (16 total slots), plus dual centerline mounts.'
   },
   'B-21': {
     id: 'B-21',
@@ -166,10 +186,14 @@ window.AIRCRAFT_STRIKE = {
     builtInGun: 'GAU-22',
     allowedGuns: ['GAU-22', 'DE-PULSE', 'PLSL_LIGHT'],
     gunRounds: 200,
+    internalSlots: 16,
+    externalSlots: 0,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 16,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Very low radar observability across all microwave radar bands (0.0002m2). 16 internal stations to saturate subterranean command bunkers with weak pulse laser option.'
+    desc: 'Very low observable flying wing (0.0002m2 RCS). 16 internal bay slots with zero external pylons for total stealth (16 total slots).'
   },
   'B-2A': {
     id: 'B-2A',
@@ -194,9 +218,13 @@ window.AIRCRAFT_STRIKE = {
     builtInGun: 'GAU-22',
     allowedGuns: ['GAU-22'],
     gunRounds: 200,
+    internalSlots: 16,
+    externalSlots: 0,
+    hasCenterline: false,
+    centerlineSlots: 0,
     totalSlots: 16,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Strategic stealth flying wing (0.0001m2 RCS). Internal rotary launcher bays carrying up to 18,000 kg of precision ordnance.'
+    desc: 'Strategic stealth flying wing. Internal rotary launcher bays provide 16 internal slots with zero external drag (16 total slots).'
   }
 };

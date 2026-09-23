@@ -7,6 +7,7 @@ window.WEAPONS_A2A = {
     id: 'AIM-120D',
     name: 'AIM-120D AMRAAM (4x)',
     slots: 2,
+    slotType: 'INTERNAL',
     minRating: 'Type M',
     mass: 760,
     cost: 1.2,
@@ -27,12 +28,13 @@ window.WEAPONS_A2A = {
     T_0: 0.75,
     sigmaPylon: 0.06,
     category: 'A2A',
-    desc: 'Fleet standard medium BVR active radar homing missile (4x). Reaches Mach 2.85 on booster burn with reliable midcourse datalink guidance.'
+    desc: 'Fleet standard medium BVR active radar homing missile (4x). Compatible with internal stealth bays and external wing pylons.'
   },
   'PL-15E': {
     id: 'PL-15E',
     name: 'PL-15E Dual-Pulse (4x)',
     slots: 2,
+    slotType: 'INTERNAL',
     minRating: 'Type M',
     mass: 880,
     cost: 1.5,
@@ -53,12 +55,13 @@ window.WEAPONS_A2A = {
     T_0: 0.78,
     sigmaPylon: 0.08,
     category: 'A2A',
-    desc: 'Dual-pulse rocket maintaining high terminal kinetic energy. Re-ignites at 22 km to surge speed and defeat defensive breaks (4x).'
+    desc: 'Dual-pulse rocket maintaining high terminal kinetic energy (4x). Compatible with internal weapon bays and external pylons.'
   },
   'METEOR': {
     id: 'METEOR',
     name: 'MBDA Meteor (4x)',
     slots: 2,
+    slotType: 'INTERNAL',
     minRating: 'Type M',
     mass: 860,
     cost: 1.9,
@@ -79,12 +82,13 @@ window.WEAPONS_A2A = {
     T_0: 0.84,
     sigmaPylon: 0.08,
     category: 'A2A',
-    desc: 'Ramjet-powered BVR missile (4x). Continuous propulsion sustains Mach 3.2 with zero drag decay across the entire 85 km envelope.'
+    desc: 'Ramjet-powered BVR missile (4x). Continuous Mach 3.2 cruise with zero drag decay; mounts internally or on external pylons.'
   },
   'AIM-260': {
     id: 'AIM-260',
     name: 'AIM-260 JATM Stealth (4x)',
     slots: 2,
+    slotType: 'INTERNAL',
     minRating: 'Type M',
     mass: 820,
     cost: 3.4,
@@ -107,12 +111,13 @@ window.WEAPONS_A2A = {
     antiNotchBonus: 0.35,
     sigmaPylon: 0.04,
     category: 'A2A',
-    desc: 'Next-generation air dominance stealth missile (4x). Sustains Mach 3.6 cruise across 115 km with minimal radar observability.'
+    desc: 'Next-generation air dominance stealth missile (4x). Sized for internal stealth bays; can also be mounted on external pylons.'
   },
   'R-37M': {
     id: 'R-37M',
     name: 'R-37M Axehead (2x)',
     slots: 3,
+    slotType: 'EXTERNAL',
     minRating: 'Type H',
     mass: 1280,
     cost: 2.8,
@@ -134,12 +139,13 @@ window.WEAPONS_A2A = {
     heavyTargetBonus: true,
     sigmaPylon: 0.20,
     category: 'A2A',
-    desc: 'Heavy hypersonic deep interceptor (2x). Lofts into high altitude and dives at Mach 4.2 to neutralize bombers and high-value aircraft.'
+    desc: 'Heavy hypersonic deep interceptor (2x). Requires external heavy pylons; cannot be mounted in standard internal bays.'
   },
   'PL-21': {
     id: 'PL-21',
     name: 'PL-21 Hypersonic BVR (2x)',
     slots: 3,
+    slotType: 'EXTERNAL',
     minRating: 'Type H',
     mass: 1350,
     cost: 3.0,
@@ -160,12 +166,13 @@ window.WEAPONS_A2A = {
     T_0: 0.75,
     sigmaPylon: 0.18,
     category: 'A2A',
-    desc: 'Extreme standoff ramjet interceptor (2x) fielding 130 km range and continuous Mach 3.6 cruise to secure theater perimeters.'
+    desc: 'Extreme standoff ramjet interceptor (2x). Requires external heavy pylons due to oversized ramjet airframe length.'
   },
   'MPBM': {
     id: 'MPBM',
     name: 'MPBM Burst Missile (2x)',
     slots: 3,
+    slotType: 'EXTERNAL',
     minRating: 'Type H',
     mass: 1450,
     cost: 3.2,
@@ -187,6 +194,6 @@ window.WEAPONS_A2A = {
     sigmaPylon: 0.16,
     category: 'A2A',
     allowedAirframes: ['ADFX-01', 'CFA-44', 'X-02S', 'F-15EX', 'F-22C-COFFIN'],
-    desc: 'Multi-Purpose Burst Missile (2x) providing standoff area-of-effect shockwave destruction (8.5 km radius) against tight formations.'
+    desc: 'Multi-Purpose Burst Missile (2x) providing standoff area shockwave destruction (8.5 km radius). Carried externally on heavy pylons.'
   }
 };

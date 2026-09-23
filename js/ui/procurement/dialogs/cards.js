@@ -1,5 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Preconfigured Aircraft Preset Card Builder
+ * Displays stations inside tag-like box badges as 1 cohesive stat matching the armory shelf.
  */
 
 class PreconfigCardsRenderer {
@@ -22,10 +23,12 @@ class PreconfigCardsRenderer {
     const gunsMap = window.AUTOCANNONS_CATALOG || {};
     const gun = gunsMap[tpl.chosenGunId] || gunsMap[spec.builtInGun] || gunsMap['M61A2'];
 
-    const weaponsListHtml = (tpl.weapons || []).map(wId => {
+    const weaponsListHtml = (tpl.weapons || []).map(wEntry => {
+      const wId = (typeof wEntry === 'object' && wEntry !== null) ? (wEntry.id || wEntry.specId) : wEntry;
       const w = wpnMap[wId];
       if (!w) return '';
-      return `<span class="pc-item-pill wpn" data-tag-title="${w.name}" data-tag-tooltip="${w.rangeKm}km range &bull; ${w.damage} HP damage &bull; ${w.seeker || 'GUIDED'} &bull; ${w.ammoCount || 4}x count">${w.name.split(' ')[0]} (${w.ammoCount || 4}x)</span>`;
+      const station = (typeof wEntry === 'object' && wEntry !== null && wEntry.station) ? wEntry.station : (w.slotType || 'EXT');
+      return `<span class="pc-item-pill wpn station-${String(station).toLowerCase()}" data-tag-title="${w.name} [${station}]" data-tag-tooltip="${w.rangeKm}km range &bull; ${w.damage} HP &bull; Station: ${station} &bull; ${w.ammoCount || 4}x count">${w.name.split(' ')[0]} (${w.ammoCount || 4}x)</span>`;
     }).join('');
 
     const upgradesListHtml = (tpl.upgrades || []).map(uId => {
@@ -42,6 +45,15 @@ class PreconfigCardsRenderer {
     const weightColor = metrics ? metrics.weightColor : '#00f5a0';
     const weightCategory = metrics ? metrics.weightCategory : 'NORMAL';
     const wrPercent = metrics ? metrics.wrPercent : 50;
+
+    const intSlots = Number(spec.internalSlots || 0);
+    const extSlots = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+    const hasCtr = Boolean(spec.hasCenterline);
+
+    let defaultIntPill = intSlots > 0 ? `<span class="station-slot-pill int-pill">${intSlots} INT</span>` : '';
+    let defaultExtPill = `<span class="station-slot-pill ext-pill">${extSlots} EXT</span>`;
+    let defaultCtrPill = hasCtr ? `<span class="station-slot-pill ctr-pill">+ CTR</span>` : '';
+    const fallbackBadges = `<span class="station-tag-box">${defaultIntPill}${defaultExtPill}${defaultCtrPill}</span>`;
 
     card.innerHTML = `
       <div class="pc-top-row">
@@ -63,8 +75,8 @@ class PreconfigCardsRenderer {
         <div class="pc-stat-cell"><span>AGILITY</span>${metrics ? metrics.agilityDualHtml : `<b>${(spec.AGI_0 || 0.85).toFixed(2)}</b>`}</div>
         <div class="pc-stat-cell"><span>ARMOR</span>${metrics ? metrics.armorDualHtml : `<b>${spec.hp || 4} HP</b>`}</div>
         <div class="pc-stat-cell"><span>RADAR</span>${metrics ? metrics.radarDualHtml : `<b>${spec.R_0 || 75}km</b>`}</div>
-        <div class="pc-stat-cell"><span>RCS</span>${metrics ? metrics.rcsDualHtml : `<b>${spec.sigma_0 || 1.0}m²</b>`}</div>
-        <div class="pc-stat-cell"><span>STATIONS</span>${metrics ? metrics.slotsDualHtml : `<b>${spec.totalSlots || 6} Pylons</b>`}</div>
+        <div class="pc-stat-cell"><span>RCS</span>${metrics ? metrics.rcsDualHtml : `<b>${spec.sigma_0 || 1.0}m2</b>`}</div>
+        <div class="pc-stat-cell" data-tag-title="STATIONS BREAKDOWN" data-tag-tooltip="Configured stations across internal bay, external pylons, and centerline station."><span>STATIONS</span>${metrics ? metrics.stationsBadgeHtml : fallbackBadges}</div>
       </div>
       <div class="pc-loadout-summary">
         <div class="pc-loadout-line"><span class="pc-tag-label">GUN:</span>${gunHtml}</div>

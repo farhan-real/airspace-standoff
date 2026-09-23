@@ -9,7 +9,7 @@ class Aircraft {
     this.spec = catalog[specId] ? JSON.parse(JSON.stringify(catalog[specId])) : {
       id: specId, name: specId, role: 'Fighter', category: 'MULTIROLE', cost: 18.0, hp: 4, AGI_0: 0.85, S_0: 0.95,
       R_0: 75.0, radarType: 'Pulse-Doppler', radarConeDeg: 120, sigma_0: 1.0, M_max: 5000, G_limit: 9,
-      builtInGun: 'M61A2', allowedGuns: ['M61A2'], gunRounds: 500, totalSlots: 6, maxPylonRating: 'Type M', upgradeSockets: 3
+      builtInGun: 'M61A2', allowedGuns: ['M61A2'], gunRounds: 500, internalSlots: 0, externalSlots: 6, hasCenterline: true, centerlineSlots: 4, totalSlots: 6, maxPylonRating: 'Type M', upgradeSockets: 3
     };
     this.team = team;
     this.x = (typeof spawnX === 'number' && !isNaN(spawnX)) ? spawnX : 20.0;
@@ -82,7 +82,12 @@ class Aircraft {
     this.gunCooldown = 0.0;
 
     this.radarLockedTarget = null;
-    this.totalSlots = this.spec.totalSlots;
+    this.internalSlots = this.spec.internalSlots || 0;
+    this.externalSlots = this.spec.externalSlots !== undefined ? this.spec.externalSlots : (this.spec.totalSlots || 6);
+    this.hasCenterline = Boolean(this.spec.hasCenterline);
+    this.centerlineSlots = this.spec.centerlineSlots !== undefined ? this.spec.centerlineSlots : (this.hasCenterline ? 6 : 0);
+    this.totalSlots = this.spec.totalSlots !== undefined ? this.spec.totalSlots : (this.internalSlots + this.externalSlots);
+
     this.maxPylonRating = this.spec.maxPylonRating;
     this.upgradeSockets = this.spec.upgradeSockets || 3;
     this.equippedWeapons = [];

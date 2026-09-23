@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Inspector Modal Renderer
- * Renders airframe dossiers with individual beam exposure spikes and evaluated color tiers.
+ * Displays comprehensive airframe specifications with station breakdown (internal, external, centerline).
  */
 
 class InspectorModalRenderer {
@@ -67,6 +67,14 @@ class InspectorModalRenderer {
     const builtInName = guns[a.builtInGun] ? guns[a.builtInGun].name : (a.builtInGun || 'M61A2 Vulcan');
     const maxPayloadKg = (a.M_max || 5000).toLocaleString();
 
+    const internalBayDesc = a.internalSlots > 0
+      ? `${a.internalSlots} Slots (Concealed VLO Bay - Zero Drag & Zero Extra RCS)`
+      : 'None (Conventional Airframe)';
+    const externalPylonsDesc = `${a.externalSlots !== undefined ? a.externalSlots : (a.totalSlots || 6)} Pylons (${a.maxPylonRating || 'Type M'} Max Rating)`;
+    const centerlineDesc = a.hasCenterline
+      ? `1 Heavy Station (${a.centerlineSlots || 6} Slots Max - Kinzhal Compatible)`
+      : 'None';
+
     return `
       <div class="inspect-type-banner">
         <span class="inspect-badge badge-cat-${category.toLowerCase()}" data-tag-title="${category} CLASS" data-tag-tooltip="${a.desc || 'Tactical airframe.'}">${category}</span>
@@ -92,16 +100,19 @@ class InspectorModalRenderer {
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>RADAR ARRAY:</span><b>${a.radarType || 'Pulse-Doppler'}</b></div>
         <div class="inspect-stat-item"><span>INSTRUMENTED RANGE:</span><b class="${rRadar.colorClass}">${(a.R_0 || 75.0).toFixed(1)} km</b></div>
-        <div class="inspect-stat-item"><span>GIMBAL SCAN CONE:</span><b class="${rCone.colorClass}">±${Math.round((a.radarConeDeg || 120) / 2)}°</b></div>
+        <div class="inspect-stat-item"><span>GIMBAL SCAN CONE:</span><b class="${rCone.colorClass}">+-${Math.round((a.radarConeDeg || 120) / 2)}deg</b></div>
         <div class="inspect-stat-item"><span>LOOK-DOWN CLUTTER FILTER:</span><b class="${rClutter.colorClass}">+${Math.round((a.lookDownBonus || 0.20) * 100)}%</b></div>
-        <div class="inspect-stat-item"><span>BASE RCS (NOSE-ON):</span><b class="${rRcs.colorClass}">${a.sigma_0 || 1.0} m² (${stealthClass})</b></div>
-        <div class="inspect-stat-item"><span>BEAM EXPOSURE SPIKE:</span><b class="${rBeamSpike.colorClass}">${baseSpike.toFixed(1)}× (+${spikePct}% signature increase when turning broadside)</b></div>
+        <div class="inspect-stat-item"><span>BASE RCS (NOSE-ON):</span><b class="${rRcs.colorClass}">${a.sigma_0 || 1.0} m2 (${stealthClass})</b></div>
+        <div class="inspect-stat-item"><span>BEAM EXPOSURE SPIKE:</span><b class="${rBeamSpike.colorClass}">${baseSpike.toFixed(1)}x (+${spikePct}% signature increase when turning broadside)</b></div>
         <div class="inspect-stat-item"><span>COFFIN NEURAL FLIGHT:</span><b class="${a.isCoffin ? 'stat-tier-1' : 'stat-tier-3'}">${a.isCoffin ? 'MANUAL COFFIN (Zero stress, immune to G-LOC, +25% dodge bonus)' : 'HUMAN CREWED (Standard stress limits)'}</b></div>
       </div>
 
       <div class="inspect-sec-head">3. ORDNANCE ARCHITECTURE &amp; HARDPOINTS</div>
       <div class="inspect-stat-grid">
-        <div class="inspect-stat-item"><span>HARDPOINTS:</span><b class="${rSlots.colorClass}">${a.totalSlots || 6} Pylons (${a.maxPylonRating || 'Type M'} Max)</b></div>
+        <div class="inspect-stat-item"><span>INTERNAL WEAPONS BAY:</span><b class="${a.internalSlots > 0 ? 'stat-tier-1' : 'stat-tier-4'}">${internalBayDesc}</b></div>
+        <div class="inspect-stat-item"><span>EXTERNAL WING PYLONS:</span><b class="stat-tier-2">${externalPylonsDesc}</b></div>
+        <div class="inspect-stat-item"><span>CENTERLINE FUSELAGE STATION:</span><b class="${a.hasCenterline ? 'stat-tier-2' : 'stat-tier-4'}">${centerlineDesc}</b></div>
+        <div class="inspect-stat-item"><span>TOTAL COMBINED CAPACITY:</span><b class="${rSlots.colorClass}">${a.totalSlots || 6} Max Slots</b></div>
         <div class="inspect-stat-item"><span>MAX PAYLOAD CARRIAGE:</span><b class="${rMass.colorClass}">${maxPayloadKg} kg</b></div>
         <div class="inspect-stat-item"><span>BUILT-IN CANNON:</span><b>${builtInName} (${a.gunRounds || 3200} rds)</b></div>
         <div class="inspect-stat-item"><span>COMPATIBLE GUNS:</span><b>${allowedGunNames}</b></div>

@@ -22,6 +22,16 @@ window.MANUAL_SENSORS = [
         Because detection range scales with the <b>fourth root (0.25 power)</b> of Radar Cross Section, reducing an aircraft's signature by 10&times; cuts detection range by 44%; cutting RCS by 10,000&times; cuts detection range by 90%!
       </div>
 
+      <div class="ge-subhead">INTERNAL WEAPONS BAY VS. EXTERNAL PYLON RCS</div>
+      <div class="ge-desc">
+        Carriage location fundamentally dictates radar detectability:
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Internal Bay Carriage (0.0000 m&sup2; extra RCS):</b> Weapons enclosed behind sealed, RAM-treated bay doors add zero radar signature. An F-22A carrying 6 internal missiles maintains its clean 0.0001 m&sup2; ghost profile.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>External Pylon Carriage (+0.05 to +0.80 m&sup2; extra RCS):</b> Weapons mounted on external wing or fuselage stations expose reflective metallic casings, seeker domes, and fin corners, adding pylon signature (&sigma;_pylon) directly to the aircraft.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Dynamic RCS Shedding:</b> When external missiles are fired in battle, their pylon RCS contribution is eliminated. The aircraft's radar signature drops back down to its clean stealth baseline in real time.</li>
+        </ul>
+      </div>
+
       <div class="ge-subhead">RADAR CROSS SECTION (RCS in m&sup2;) SPECTRUM</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">

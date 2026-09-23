@@ -118,7 +118,7 @@ function getManualControlsContent() {
       </table>
     </div>
 
-    <div class="ge-subhead">3. WEAPONS &amp; STORES RELEASE</div>
+    <div class="ge-subhead">3. WEAPONS, STORES RELEASE &amp; STATION MANAGEMENT</div>
     <div class="table-scroll-wrapper">
       <table class="ge-table">
         <thead>
@@ -131,14 +131,19 @@ function getManualControlsContent() {
             <td>Fires a manual boresight strafe burst with active cannon and mounted gunpods.</td>
           </tr>
           <tr>
-            <td><b>Fire Pylons 1 &ndash; 9</b></td>
+            <td><b>Fire Stations 1 &ndash; 9</b></td>
             <td><span class="manual-key-badge">${kPylon1}</span> through <span class="manual-key-badge">${kPylon9}</span></td>
-            <td>Launches missile, glide bomb, or deploys pod system at corresponding station index.</td>
+            <td>Launches internal bay missile, external pylon weapon, or centerline hypersonic munition.</td>
           </tr>
           <tr>
             <td><b>Deploy Countermeasures</b></td>
             <td><span class="manual-key-badge">${kCM}</span></td>
             <td>Dispenses an emergency chaff cloud to break active radar seeker locks.</td>
+          </tr>
+          <tr>
+            <td><b>Stores Management System (SMS)</b></td>
+            <td><span class="manual-key-badge">MFD RACK</span></td>
+            <td>Displays station tags: <b style="color:#2dd4bf;">[INTERNAL]</b> (doors closed, 0 drag/RCS), <b style="color:#38bdf8;">[EXTERNAL]</b>, or <b style="color:#fbbf24;">[CENTERLINE]</b>. Marks depleted racks as jettisoned in real time.</td>
           </tr>
         </tbody>
       </table>
