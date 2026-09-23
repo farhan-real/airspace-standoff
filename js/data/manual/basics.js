@@ -140,38 +140,48 @@ window.MANUAL_BASICS = [
       </div>
 
       <div class="ge-subhead">2. ENGINE POWER MODES: IDLE, CRUISE, MILITARY POWER &amp; AFTERBURNER</div>
+      <div class="ge-desc">
+        Engine thrust is calibrated across four primary military detents, mapping directly to target airspeed ratios and displaying live target Mach on the cockpit MFD:
+      </div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>POWER DETENT</th><th>THROTTLE %</th><th>AIRSPEED PROFILE</th><th>TACTICAL CHARACTERISTICS &amp; THERMAL EMISSION</th></tr>
+            <tr><th>POWER DETENT</th><th>THROTTLE %</th><th>AIRSPEED TARGET</th><th>TACTICAL CHARACTERISTICS &amp; THERMAL EMISSION</th></tr>
           </thead>
           <tbody>
             <tr>
               <td style="color:#8494ab;font-weight:800;">IDLE</td>
               <td>20% &ndash; 35%</td>
-              <td>Mach 0.35 &ndash; 0.55</td>
-              <td>Bleeds excess speed to re-enter corner velocity. Cools exhaust plume to minimize IR lock detection range.</td>
+              <td>~45% Max Speed</td>
+              <td>Lowest power setting. Rapidly bleeds excess speed to re-enter corner velocity from high-speed dashes. Cools exhaust plume to suppress infrared lock range.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">CRUISE</td>
-              <td>36% &ndash; 70%</td>
-              <td>Mach 0.65 &ndash; 0.85</td>
-              <td>Standard formation transit. Optimal fuel efficiency, stable turn performance, and minimal thermal emissions.</td>
+              <td>36% &ndash; 74% (50% Detent)</td>
+              <td>~65% Max Speed (sOpt)</td>
+              <td>Standard formation transit and spawn setting. Aligns directly with optimal corner velocity (sOpt) for 100% turn authority and maximum defensive maneuver evasion.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">MIL POWER</td>
-              <td>71% &ndash; 85%</td>
-              <td>Mach 0.85 &ndash; 1.05</td>
-              <td>Maximum dry thrust. High acceleration and climb performance without blooming the infrared exhaust plume.</td>
+              <td>75% &ndash; 85% (80% Detent)</td>
+              <td>~85% Max Speed</td>
+              <td>Maximum dry thrust without afterburner fuel injection. High climb rate and fast acceleration without expanding thermal IR signature.</td>
             </tr>
             <tr>
               <td style="color:#f97316;font-weight:800;">AFTERBURNER</td>
               <td>86% &ndash; 100%</td>
-              <td>Mach 1.05 &ndash; 2.40+</td>
-              <td>Wet thrust injecting raw fuel into exhaust conduits. Peak dash velocity (+15% tracking vulnerability to hostile IR missiles).</td>
+              <td>100% Max Speed (Sprint)</td>
+              <td>Wet thrust injecting raw fuel into exhaust conduits. Achieves full sprint airspeed (+15% tracking vulnerability to hostile IR missiles and elevated thermal bloom).</td>
             </tr>
           </tbody>
         </table>
+      </div>
+      <div class="ge-card" style="margin-top:6px;border-left:3px solid #38bdf8;">
+        <b style="color:#38bdf8;">LIVE THROTTLE FEEDBACK &amp; INITIAL TRIM:</b>
+        <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;margin-top:2px;">
+          <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Cockpit Target Mach Display:</b> The MFD throttle quadrant shows your current power setting alongside its exact target velocity (e.g. <code>50% CRUISE [M 0.75]</code>).<br>
+          <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Spawn Velocity Trim:</b> Aircraft spawn into the theater trimmed precisely at Cruise velocity (50% throttle), eliminating abrupt post-launch deceleration.
+        </div>
       </div>
 
       <div class="ge-subhead">3. KINETIC ENERGY CONVERSIONS: DIVE &amp; ZOOM</div>
