@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Autocannon Bay Controller, Gun Pod Volleys & Burst Cooldowns
+ * AIRSPACE STANDOFF: Autocannon Bay Controller, Gun Pod Volleys & Multi-Round Burst Engine
  */
 
 class AutocannonBayRenderer {
@@ -9,7 +9,7 @@ class AutocannonBayRenderer {
   }
 
   static render(targetContainer, activeUnit, isMobile, fireCallback, getTargetFn) {
-    const gun = activeUnit.gun || (window.AUTOCANNONS_CATALOG && window.AUTOCANNONS_CATALOG['M61A2']) || { name: 'Autocannon', id: 'M61A2', rangeKm: 4.6, damagePerSec: 2.8, coneAngleDeg: 55 };
+    const gun = activeUnit.gun || (window.AUTOCANNONS_CATALOG && window.AUTOCANNONS_CATALOG['M61A2']) || { name: 'Autocannon', id: 'M61A2', rangeKm: 4.6, damagePerSec: 2.8, coneAngleDeg: 55, roundsPerBurst: 4, damagePerBurst: 1.40, burstCooldown: 1.6 };
     const gunName = String(gun.name || 'Autocannon');
     const shortGunName = gunName.split(' ')[0] || 'GUN';
     const mountedPods = AutocannonBayRenderer.getMountedGunpods(activeUnit);
@@ -35,9 +35,10 @@ class AutocannonBayRenderer {
       `;
     } else {
       gunBox.className = 'autocannon-status-card';
-      let totalBurstDmg = (gun.damagePerBurst || gun.damagePerPulse || 0.85);
-      mountedPods.forEach(p => { totalBurstDmg += (p.weapon.damagePerBurst || p.weapon.damage || 0.80); });
-      const dmgDisplay = `${totalBurstDmg.toFixed(2)} HP/burst${podTag}`;
+      let totalBurstDmg = (gun.damagePerBurst || gun.damagePerPulse || 1.40);
+      mountedPods.forEach(p => { totalBurstDmg += (p.weapon.damagePerBurst || p.weapon.damage || 1.28); });
+      const roundsCount = gun.roundsPerBurst || 4;
+      const dmgDisplay = `${totalBurstDmg.toFixed(2)} HP (${roundsCount} rds)${podTag}`;
       const coneText = `${gun.coneAngleDeg || 45}&deg; CONE`;
 
       gunBox.innerHTML = `
@@ -117,11 +118,12 @@ class AutocannonBayRenderer {
         cannonBtn.style.opacity = '0.4';
       } else if (isCooldown) {
         const isEnergy = Boolean(activeUnit.gun && (activeUnit.gun.damagePerPulse || activeUnit.gun.id === 'DE-PULSE' || activeUnit.gun.id.startsWith('PLSL') || activeUnit.gun.id === 'EML_GUN'));
-        const label = isEnergy ? 'RECHARGE' : 'COOLING';
+        const label = isEnergy ? 'RECHARGE' : 'RELOAD';
         cannonBtn.textContent = `${label} (${cd.toFixed(1)}s)`;
         cannonBtn.style.opacity = '0.5';
       } else {
-        cannonBtn.textContent = inCone ? 'BURST' : (inGunRange ? 'BURST [WIDE]' : 'BURST [ARMED]');
+        const roundsCount = activeUnit.gun ? (activeUnit.gun.roundsPerBurst || 4) : 4;
+        cannonBtn.textContent = inCone ? `BURST (${roundsCount} RDS)` : (inGunRange ? `BURST [WIDE]` : `BURST [${roundsCount} RDS]`);
         cannonBtn.style.opacity = '1.0';
       }
     }
@@ -129,95 +131,124 @@ class AutocannonBayRenderer {
 
   static fireAutocannonManual(unit, target, game) {
     if (!unit || unit.hp <= 0.05 || (unit.gunAmmo || 0) <= 0 || (unit.gunCooldown || 0) > 0) return;
-    const gun = unit.gun || (window.AUTOCANNONS_CATALOG && window.AUTOCANNONS_CATALOG['M61A2']) || { rangeKm: 4.6, damagePerSec: 2.8, burstCooldown: 1.0, tracerColor: '#00f0ff', coneAngleDeg: 55 };
-    const cd = gun.burstCooldown || 1.5;
+    const gun = unit.gun || (window.AUTOCANNONS_CATALOG && window.AUTOCANNONS_CATALOG['M61A2']) || { rangeKm: 4.6, damagePerSec: 2.8, burstCooldown: 1.6, tracerColor: '#00f0ff', coneAngleDeg: 55, roundsPerBurst: 4, damagePerRound: 0.35, damagePerBurst: 1.40 };
+    const cd = gun.burstCooldown || 1.6;
     unit.gunCooldown = cd;
 
-    const ammoSpend = gun.ammoPerBurst || 25;
+    const numRounds = gun.roundsPerBurst || 4;
+    const ammoSpend = gun.ammoPerBurst || (numRounds * 5);
     unit.gunAmmo = Math.max(0, unit.gunAmmo - Math.min(unit.gunAmmo, ammoSpend));
 
-    let combinedDmg = gun.damagePerBurst || gun.damagePerPulse || ((gun.damagePerSec || 2.5) * 0.45);
     const mountedPods = AutocannonBayRenderer.getMountedGunpods(unit);
-
     mountedPods.forEach(p => {
       p.ammo = Math.max(0, p.ammo - 1);
-      p.cooldown = p.weapon.burstCooldown || 1.5;
-      combinedDmg += (p.weapon.damagePerBurst || p.weapon.damage || 0.80);
+      p.cooldown = p.weapon.burstCooldown || cd;
     });
 
-    const validTarget = (target && target.hp > 0.05 && typeof target.x === 'number' && typeof target.y === 'number' && !isNaN(target.x) && !isNaN(target.y)) ? target : null;
     const isDEW = Boolean(gun.damagePerPulse || (gun.caliber && gun.caliber.includes('DEW')) || gun.id.startsWith('PLSL') || gun.id === 'DE-PULSE' || gun.id === 'EML_GUN');
-    const heading = (typeof unit.heading === 'number' && !isNaN(unit.heading)) ? unit.heading : 0;
-
     if (gun.thermalBloom && gun.thermalBloom > 1.0) {
-      unit.thermalBloomTimer = 4.0;
+      unit.thermalBloomTimer = 3.5;
       if (game && game.radar) game.radar.spawnCombatText(unit.x, unit.y, 'THERMAL BLOOM (STEALTH COMPROMISED)', '#f97316');
     }
 
-    if (validTarget && Math.hypot(validTarget.x - unit.x, validTarget.y - unit.y) <= (gun.rangeKm || 4.6)) {
-      let angleDiff = Math.abs(heading - Math.atan2(validTarget.y - unit.y, validTarget.x - unit.x));
-      while (angleDiff > Math.PI) angleDiff = Math.abs(angleDiff - Math.PI * 2);
-      const maxConeRad = ((gun.coneAngleDeg || 45) / 2.0) * (Math.PI / 180.0);
-
-      if (angleDiff <= maxConeRad) {
-        const wasAlive = validTarget.hp > 0.05;
-        let finalDmg = combinedDmg;
-
-        const clouds = (game && game.simulation && game.simulation.weatherClouds) || [];
-        const inCloud = clouds.some(c => c.containsPoint(unit.x, unit.y) || c.containsPoint(validTarget.x, validTarget.y));
-        if (inCloud && gun.cloudScattering && gun.cloudScattering > 0) {
-          finalDmg *= (1.0 - gun.cloudScattering);
-          if (game && game.radar) game.radar.spawnCombatText(validTarget.x, validTarget.y, 'BEAM SCATTERED IN CLOUDS (-75%)', '#f59e0b');
-        }
-
-        if (validTarget.isGhost) { validTarget.takeDamage(finalDmg); }
-        else if (validTarget.isDecoyDrone) { validTarget.takeDamage(finalDmg); }
-        else if (typeof SurfaceUnit !== 'undefined' && validTarget instanceof SurfaceUnit) { validTarget.takeDamage(finalDmg, true); }
-        else if (validTarget.isCivilian && typeof validTarget.takeDamage === 'function') { validTarget.takeDamage(finalDmg, unit, gun); }
-        else {
-          if (validTarget.spec && validTarget.spec.category === 'STRIKE') finalDmg *= 0.60;
-          validTarget.hp = Math.max(0, validTarget.hp - finalDmg);
-          if (validTarget.hp < 0.05) validTarget.hp = 0;
-
-          if (gun.kineticConcussion && gun.kineticConcussion > 0) {
-            if (typeof validTarget.applyActionStress === 'function') validTarget.applyActionStress(gun.kineticConcussion);
-            if (validTarget.energy !== undefined) validTarget.energy = Math.max(0.20, validTarget.energy - 0.15);
-          } else if (typeof validTarget.applyActionStress === 'function') {
-            validTarget.applyActionStress(0.12);
-          }
-        }
-
-        if (game && game.radar) {
-          game.radar.spawnGunTracer(unit.x, unit.y, validTarget.x, validTarget.y, gun.tracerColor || '#00f0ff');
-          mountedPods.forEach(p => {
-            game.radar.spawnGunTracer(unit.x, unit.y, validTarget.x, validTarget.y, p.weapon.tracerColor || '#fbbf24');
-          });
-          const podNote = mountedPods.length > 0 ? `+${mountedPods.length} PODS ` : '';
-          game.radar.spawnCombatText(validTarget.x, validTarget.y, `${isDEW ? 'LASER' : 'BURST'} ${podNote}-${finalDmg.toFixed(1)}HP`, '#00f0ff');
-        }
-
-        if (typeof AudioSys !== 'undefined') {
-          if (isDEW) AudioSys.playLaser();
-          else AudioSys.playGunBurst();
-        }
-
-        if (wasAlive && validTarget.hp <= 0 && game && game.simulation && !validTarget.isCivilian) {
-          game.simulation.recordKillEvent(unit.team, validTarget, unit, { weapon: gun, isSalvo: mountedPods.length > 0, salvoCount: mountedPods.length + 1 });
-        }
-        return;
-      }
-    }
-
-    if (game && game.radar) {
-      game.radar.spawnGunTracer(unit.x, unit.y, unit.x + Math.cos(heading) * (gun.rangeKm || 4.5), unit.y + Math.sin(heading) * (gun.rangeKm || 4.5), gun.tracerColor || '#00f0ff');
-      mountedPods.forEach(p => {
-        game.radar.spawnGunTracer(unit.x, unit.y, unit.x + Math.cos(heading) * (p.weapon.rangeKm || 4.2), unit.y + Math.sin(heading) * (p.weapon.rangeKm || 4.2), p.weapon.tracerColor || '#fbbf24');
-      });
-      game.radar.spawnCombatText(unit.x, unit.y, isDEW ? 'LASER PULSE' : 'STRAFE BURST', '#00f0ff');
-    }
     if (typeof AudioSys !== 'undefined') {
       if (isDEW) AudioSys.playLaser();
       else AudioSys.playGunBurst();
+    }
+
+    let totalBurstDamage = 0;
+    let roundsLanded = 0;
+
+    for (let r = 0; r < numRounds; r++) {
+      setTimeout(() => {
+        if (!unit || unit.hp <= 0.05) return;
+        const validTarget = (target && target.hp > 0.05 && typeof target.x === 'number' && typeof target.y === 'number' && !isNaN(target.x) && !isNaN(target.y) && !target.isDissolved) ? target : null;
+        const heading = (typeof unit.heading === 'number' && !isNaN(unit.heading)) ? unit.heading : 0;
+        const spreadOffset = (r - (numRounds - 1) / 2) * 0.012;
+        const tracerAngle = heading + spreadOffset;
+
+        if (validTarget && Math.hypot(validTarget.x - unit.x, validTarget.y - unit.y) <= (gun.rangeKm || 4.6)) {
+          let angleDiff = Math.abs(heading - Math.atan2(validTarget.y - unit.y, validTarget.x - unit.x));
+          while (angleDiff > Math.PI) angleDiff = Math.abs(angleDiff - Math.PI * 2);
+          const maxConeRad = ((gun.coneAngleDeg || 45) / 2.0) * (Math.PI / 180.0);
+
+          if (angleDiff <= maxConeRad) {
+            const wasAlive = validTarget.hp > 0.05;
+            let roundDmg = gun.damagePerRound || ((gun.damagePerBurst || 1.40) / numRounds);
+            mountedPods.forEach(p => {
+              const podDmg = p.weapon.damagePerRound || ((p.weapon.damagePerBurst || 1.28) / numRounds);
+              roundDmg += podDmg;
+            });
+
+            const clouds = (game && game.simulation && game.simulation.weatherClouds) || [];
+            const inCloud = clouds.some(c => c.containsPoint(unit.x, unit.y) || c.containsPoint(validTarget.x, validTarget.y));
+            if (inCloud && gun.cloudScattering && gun.cloudScattering > 0) {
+              roundDmg *= (1.0 - gun.cloudScattering);
+            }
+
+            if (validTarget.spec && validTarget.spec.category === 'STRIKE') roundDmg *= 0.60;
+            if (validTarget.isFlightLead && validTarget.autocannonResistance) roundDmg *= (1.0 - validTarget.autocannonResistance);
+
+            if (validTarget.isGhost) {
+              validTarget.takeDamage(roundDmg);
+            } else if (validTarget.isDecoyDrone) {
+              validTarget.takeDamage(roundDmg);
+            } else if (typeof SurfaceUnit !== 'undefined' && validTarget instanceof SurfaceUnit) {
+              validTarget.takeDamage(roundDmg, true);
+            } else if (validTarget.isCivilian && typeof validTarget.takeDamage === 'function') {
+              validTarget.takeDamage(roundDmg, unit, gun);
+            } else {
+              validTarget.hp = Math.max(0, validTarget.hp - roundDmg);
+              if (validTarget.hp < 0.05) validTarget.hp = 0;
+
+              if (gun.kineticConcussion && gun.kineticConcussion > 0) {
+                if (typeof validTarget.applyActionStress === 'function') validTarget.applyActionStress(gun.kineticConcussion * 0.25);
+                if (validTarget.energy !== undefined) validTarget.energy = Math.max(0.20, validTarget.energy - 0.04);
+              }
+            }
+
+            totalBurstDamage += roundDmg;
+            roundsLanded++;
+
+            const jitterX = (Math.random() - 0.5) * 0.35;
+            const jitterY = (Math.random() - 0.5) * 0.35;
+            if (game && game.radar) {
+              game.radar.spawnGunTracer(unit.x, unit.y, validTarget.x + jitterX, validTarget.y + jitterY, gun.tracerColor || '#00f0ff');
+              mountedPods.forEach(p => {
+                game.radar.spawnGunTracer(unit.x, unit.y, validTarget.x + jitterX, validTarget.y + jitterY, p.weapon.tracerColor || '#fbbf24');
+              });
+            }
+
+            if (wasAlive && validTarget.hp <= 0 && game && game.simulation && !validTarget.isCivilian) {
+              game.simulation.recordKillEvent(unit.team, validTarget, unit, {
+                weapon: gun,
+                isSalvo: mountedPods.length > 0,
+                salvoCount: mountedPods.length + 1
+              });
+            }
+          } else {
+            if (game && game.radar) {
+              game.radar.spawnGunTracer(unit.x, unit.y, unit.x + Math.cos(tracerAngle) * (gun.rangeKm || 4.5), unit.y + Math.sin(tracerAngle) * (gun.rangeKm || 4.5), gun.tracerColor || '#00f0ff');
+            }
+          }
+        } else {
+          if (game && game.radar) {
+            game.radar.spawnGunTracer(unit.x, unit.y, unit.x + Math.cos(tracerAngle) * (gun.rangeKm || 4.5), unit.y + Math.sin(tracerAngle) * (gun.rangeKm || 4.5), gun.tracerColor || '#00f0ff');
+            mountedPods.forEach(p => {
+              game.radar.spawnGunTracer(unit.x, unit.y, unit.x + Math.cos(tracerAngle) * (p.weapon.rangeKm || 4.2), unit.y + Math.sin(tracerAngle) * (p.weapon.rangeKm || 4.2), p.weapon.tracerColor || '#fbbf24');
+            });
+          }
+        }
+
+        if (r === numRounds - 1 && game && game.radar) {
+          const podNote = mountedPods.length > 0 ? `+${mountedPods.length} PODS ` : '';
+          if (roundsLanded > 0 && validTarget) {
+            game.radar.spawnCombatText(validTarget.x, validTarget.y, `${isDEW ? 'LASER' : 'BURST'} ${podNote}-${totalBurstDamage.toFixed(1)}HP (${roundsLanded}/${numRounds} RDS)`, '#00f0ff');
+          } else {
+            game.radar.spawnCombatText(unit.x, unit.y, `${isDEW ? 'LASER PULSE' : 'STRAFE BURST'} (${numRounds} RDS)`, '#00f0ff');
+          }
+        }
+      }, r * 50);
     }
   }
 }

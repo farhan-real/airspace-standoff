@@ -10,10 +10,11 @@ window.AUTOCANNONS_ENERGY = {
     rpm: 1200,
     rangeKm: 12.5,
     damagePerSec: 2.0,
-    damagePerPulse: 0.65,
-    damagePerBurst: 0.65,
-    burstCooldown: 1.4,
-    ammoPerBurst: 10,
+    roundsPerBurst: 3,
+    damagePerRound: 0.38,
+    damagePerBurst: 1.14,
+    burstCooldown: 1.8,
+    ammoPerBurst: 9,
     coneAngleDeg: 34,
     mass: 65,
     tracerColor: '#38bdf8',
@@ -27,7 +28,7 @@ window.AUTOCANNONS_ENERGY = {
     kineticConcussion: 0.0,
     thermalBloom: 1.4,
     cloudScattering: 0.70,
-    desc: 'Lightweight tactical pulse laser (12.5 km range). Focused 34-degree cone; electrical discharge increases thermal bloom and beam scatters in clouds.'
+    desc: 'Lightweight tactical pulse laser firing 3-pulse bursts (1.14 HP total, 1.8s reload). Focused 34-degree cone; electrical discharge increases thermal bloom and beam scatters in clouds.'
   },
   'PLSL_MED': {
     id: 'PLSL_MED',
@@ -36,10 +37,11 @@ window.AUTOCANNONS_ENERGY = {
     rpm: 900,
     rangeKm: 15.0,
     damagePerSec: 2.8,
-    damagePerPulse: 0.95,
-    damagePerBurst: 0.95,
-    burstCooldown: 1.8,
-    ammoPerBurst: 15,
+    roundsPerBurst: 3,
+    damagePerRound: 0.50,
+    damagePerBurst: 1.50,
+    burstCooldown: 2.0,
+    ammoPerBurst: 12,
     coneAngleDeg: 30,
     mass: 135,
     tracerColor: '#00f0ff',
@@ -52,7 +54,7 @@ window.AUTOCANNONS_ENERGY = {
     kineticConcussion: 0.0,
     thermalBloom: 1.5,
     cloudScattering: 0.75,
-    desc: 'Medium-tier coherent optical pulse emitter (15.0 km range). Narrow 30-degree beam requires close boresight tracking; scattered by cloud moisture.'
+    desc: 'Medium-tier optical pulse emitter firing 3-pulse bursts (1.50 HP total, 2.0s reload). Narrow 30-degree beam requires close boresight tracking; scattered by cloud moisture.'
   },
   'PLSL_HEAVY': {
     id: 'PLSL_HEAVY',
@@ -61,10 +63,11 @@ window.AUTOCANNONS_ENERGY = {
     rpm: 600,
     rangeKm: 18.0,
     damagePerSec: 3.8,
-    damagePerPulse: 1.35,
-    damagePerBurst: 1.35,
-    burstCooldown: 2.4,
-    ammoPerBurst: 20,
+    roundsPerBurst: 3,
+    damagePerRound: 0.65,
+    damagePerBurst: 1.95,
+    burstCooldown: 2.5,
+    ammoPerBurst: 15,
     coneAngleDeg: 26,
     mass: 240,
     tracerColor: '#c084fc',
@@ -76,7 +79,7 @@ window.AUTOCANNONS_ENERGY = {
     kineticConcussion: 0.0,
     thermalBloom: 1.7,
     cloudScattering: 0.80,
-    desc: 'High-energy optical burst weapon (18.0 km range). Tight 26-degree pencil beam; heavy capacitor discharge spikes thermal signature.'
+    desc: 'High-energy optical burst weapon firing 3-pulse bursts (1.95 HP total, 2.5s reload). Tight 26-degree pencil beam; heavy capacitor discharge spikes thermal signature.'
   },
   'DE-PULSE': {
     id: 'DE-PULSE',
@@ -85,10 +88,11 @@ window.AUTOCANNONS_ENERGY = {
     rpm: 9999,
     rangeKm: 7.5,
     damagePerSec: 3.6,
-    damagePerPulse: 1.1,
-    damagePerBurst: 1.1,
-    burstCooldown: 2.5,
-    ammoPerBurst: 15,
+    roundsPerBurst: 3,
+    damagePerRound: 0.55,
+    damagePerBurst: 1.65,
+    burstCooldown: 2.4,
+    ammoPerBurst: 12,
     coneAngleDeg: 28,
     mass: 220,
     tracerColor: '#00f0ff',
@@ -98,7 +102,7 @@ window.AUTOCANNONS_ENERGY = {
     kineticConcussion: 0.0,
     thermalBloom: 1.6,
     cloudScattering: 0.75,
-    desc: '80 kW solid-state pulsed fiber laser. 7.5 km instant hitscan, but narrow 28-degree pencil beam, heavy thermal bloom compromises stealth, and beam scatters in clouds.'
+    desc: '80 kW solid-state pulsed fiber laser firing 3-pulse bursts (1.65 HP total, 2.4s reload). 7.5 km instant hitscan, narrow 28-degree beam; thermal bloom compromises stealth.'
   },
   'EML_GUN': {
     id: 'EML_GUN',
@@ -107,10 +111,11 @@ window.AUTOCANNONS_ENERGY = {
     rpm: 120,
     rangeKm: 9.5,
     damagePerSec: 2.6,
-    damagePerPulse: 1.8,
-    damagePerBurst: 1.8,
+    roundsPerBurst: 2,
+    damagePerRound: 0.95,
+    damagePerBurst: 1.90,
     burstCooldown: 2.8,
-    ammoPerBurst: 1,
+    ammoPerBurst: 2,
     coneAngleDeg: 22,
     mass: 320,
     tracerColor: '#38bdf8',
@@ -120,7 +125,7 @@ window.AUTOCANNONS_ENERGY = {
     kineticConcussion: 0.40,
     thermalBloom: 1.3,
     cloudScattering: 0.0,
-    desc: 'Electromagnetic accelerator firing hyper-velocity kinetic penetrators. Out-ranges conventional cannons, but tight 22-degree boresight requires pinpoint alignment.'
+    desc: 'Electromagnetic accelerator firing 2 hyper-velocity kinetic slugs (1.90 HP total, 2.8s reload). Out-ranges conventional cannons; tight 22-degree boresight requires pinpoint alignment.'
   }
 };
 

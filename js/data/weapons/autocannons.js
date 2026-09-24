@@ -10,9 +10,11 @@ window.AUTOCANNONS_BALLISTIC = {
     rpm: 6000,
     rangeKm: 4.6,
     damagePerSec: 2.8,
-    damagePerBurst: 0.85,
-    burstCooldown: 1.0,
-    ammoPerBurst: 25,
+    roundsPerBurst: 4,
+    damagePerRound: 0.35,
+    damagePerBurst: 1.40,
+    burstCooldown: 1.6,
+    ammoPerBurst: 20,
     coneAngleDeg: 55,
     mass: 115,
     tracerColor: '#fbbf24',
@@ -21,7 +23,7 @@ window.AUTOCANNONS_BALLISTIC = {
     kineticConcussion: 0.30,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'High-cyclic 20mm Gatling. Wide 55-degree snapshot cone excels in high-G turns. Zero thermal bloom preserves VLO stealth; 100% cloud penetration.'
+    desc: 'High-cyclic 20mm Gatling firing a rapid 4-round burst (1.40 HP total, 1.6s reload). Wide 55-degree snapshot cone excels in high-G turns. Zero thermal bloom preserves VLO stealth; 100% cloud penetration.'
   },
   'GSH-30-1': {
     id: 'GSH-30-1',
@@ -30,8 +32,10 @@ window.AUTOCANNONS_BALLISTIC = {
     rpm: 1800,
     rangeKm: 5.2,
     damagePerSec: 3.4,
-    damagePerBurst: 1.20,
-    burstCooldown: 1.4,
+    roundsPerBurst: 3,
+    damagePerRound: 0.55,
+    damagePerBurst: 1.65,
+    burstCooldown: 1.8,
     ammoPerBurst: 15,
     coneAngleDeg: 38,
     mass: 46,
@@ -41,7 +45,7 @@ window.AUTOCANNONS_BALLISTIC = {
     kineticConcussion: 0.35,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'Heavy 30mm cannon firing high-explosive shells. Heavy kinetic knockback drains target energy; completely unaffected by weather clouds.'
+    desc: 'Heavy 30mm cannon firing a punchy 3-round high-explosive burst (1.65 HP total, 1.8s reload). Heavy kinetic knockback drains target energy; completely unaffected by weather clouds.'
   },
   'BK-27': {
     id: 'BK-27',
@@ -50,9 +54,11 @@ window.AUTOCANNONS_BALLISTIC = {
     rpm: 1700,
     rangeKm: 5.0,
     damagePerSec: 3.0,
-    damagePerBurst: 1.00,
-    burstCooldown: 1.2,
-    ammoPerBurst: 15,
+    roundsPerBurst: 4,
+    damagePerRound: 0.38,
+    damagePerBurst: 1.52,
+    burstCooldown: 1.7,
+    ammoPerBurst: 16,
     coneAngleDeg: 42,
     mass: 100,
     tracerColor: '#facc15',
@@ -61,7 +67,7 @@ window.AUTOCANNONS_BALLISTIC = {
     kineticConcussion: 0.32,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'Revolver cannon balancing high muzzle velocity with tight projectile dispersion. Zero thermal signature and 100% all-weather penetration.'
+    desc: 'Revolver cannon balancing high muzzle velocity with a tight 4-round burst (1.52 HP total, 1.7s reload). Zero thermal signature and 100% all-weather penetration.'
   },
   'GAU-8': {
     id: 'GAU-8',
@@ -70,9 +76,11 @@ window.AUTOCANNONS_BALLISTIC = {
     rpm: 3900,
     rangeKm: 5.8,
     damagePerSec: 4.8,
-    damagePerBurst: 1.60,
-    burstCooldown: 1.8,
-    ammoPerBurst: 40,
+    roundsPerBurst: 5,
+    damagePerRound: 0.44,
+    damagePerBurst: 2.20,
+    burstCooldown: 2.2,
+    ammoPerBurst: 35,
     coneAngleDeg: 42,
     mass: 281,
     tracerColor: '#ef4444',
@@ -82,7 +90,7 @@ window.AUTOCANNONS_BALLISTIC = {
     kineticConcussion: 0.45,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: '7-barrel hydraulic Gatling firing depleted-uranium shells. Devastating kinetic shock drains 25% target energy and shreds surface armor.'
+    desc: '7-barrel hydraulic Gatling firing a devastating 5-round depleted-uranium burst (2.20 HP total, 2.2s reload). Heavy kinetic shock drains target energy and shreds surface armor.'
   },
   'GAU-22': {
     id: 'GAU-22',
@@ -91,9 +99,11 @@ window.AUTOCANNONS_BALLISTIC = {
     rpm: 3300,
     rangeKm: 4.8,
     damagePerSec: 2.9,
-    damagePerBurst: 0.95,
-    burstCooldown: 1.1,
-    ammoPerBurst: 20,
+    roundsPerBurst: 4,
+    damagePerRound: 0.38,
+    damagePerBurst: 1.52,
+    burstCooldown: 1.6,
+    ammoPerBurst: 16,
     coneAngleDeg: 48,
     mass: 105,
     tracerColor: '#38bdf8',
@@ -102,7 +112,7 @@ window.AUTOCANNONS_BALLISTIC = {
     kineticConcussion: 0.32,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: '4-barrel Gatling engineered for stealth bays. Zero thermal emission preserves F-35 stealth; wide 48-degree cone with heavy kinetic concussion.'
+    desc: '4-barrel Gatling engineered for stealth bays firing a 4-round burst (1.52 HP total, 1.6s reload). Zero thermal emission preserves stealth; wide 48-degree cone with heavy kinetic concussion.'
   },
   'GSH-23L': {
     id: 'GSH-23L',
@@ -111,9 +121,11 @@ window.AUTOCANNONS_BALLISTIC = {
     rpm: 3400,
     rangeKm: 4.2,
     damagePerSec: 2.4,
-    damagePerBurst: 0.80,
-    burstCooldown: 0.9,
-    ammoPerBurst: 20,
+    roundsPerBurst: 4,
+    damagePerRound: 0.32,
+    damagePerBurst: 1.28,
+    burstCooldown: 1.5,
+    ammoPerBurst: 16,
     coneAngleDeg: 52,
     mass: 50,
     tracerColor: '#fb923c',
@@ -122,7 +134,7 @@ window.AUTOCANNONS_BALLISTIC = {
     kineticConcussion: 0.25,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'Gast-principle twin 23mm cannon. Generous 52-degree spread for close dogfights; fast 0.9s cooling cycle with zero thermal bloom.'
+    desc: 'Gast-principle twin 23mm cannon firing rapid 4-round bursts (1.28 HP total, 1.5s reload). Generous 52-degree spread for close dogfights; zero thermal bloom.'
   },
   'MICRO_GUN': {
     id: 'MICRO_GUN',
@@ -131,9 +143,11 @@ window.AUTOCANNONS_BALLISTIC = {
     rpm: 2600,
     rangeKm: 3.6,
     damagePerSec: 1.8,
-    damagePerBurst: 0.55,
-    burstCooldown: 0.8,
-    ammoPerBurst: 20,
+    roundsPerBurst: 4,
+    damagePerRound: 0.22,
+    damagePerBurst: 0.88,
+    burstCooldown: 1.3,
+    ammoPerBurst: 16,
     coneAngleDeg: 60,
     mass: 35,
     tracerColor: '#a855f7',
@@ -142,7 +156,7 @@ window.AUTOCANNONS_BALLISTIC = {
     kineticConcussion: 0.20,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'Ultra-wide 60-degree cone machine gun for unmanned drones. Instantaneous snapshot coverage with zero electrical generator drain.'
+    desc: 'Ultra-wide 60-degree cone machine gun firing 4-round bursts (0.88 HP total, 1.3s reload). Instantaneous snapshot coverage with zero electrical generator drain.'
   }
 };
 

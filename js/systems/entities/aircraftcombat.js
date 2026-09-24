@@ -183,7 +183,7 @@ Aircraft.prototype.processRTB = function(dt) {
     this.speed = Math.min(this.effectiveMaxSpeed * 1.35, this.speed + 0.20 * dt);
   } else {
     this.rtbTimer += dt;
-    const dur = this.hasFastRTB ? 1.0 : ((window.CONFIG && window.CONFIG.RTB_REARM_DURATION_SEC) || 2.0);
+    const dur = this.hasFastRTB ? 1.8 : ((window.CONFIG && window.CONFIG.RTB_REARM_DURATION_SEC) || 3.5);
     if (this.rtbTimer >= dur) {
       this.rearmStandardPackage();
       this.isRTB = false;
@@ -227,7 +227,7 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
   const diffKey = (window.Game && window.Game.aiDifficulty) || 'VETERAN';
   const isEnemy = (this.team !== ((window.Game && window.Game.currentPvpCommander) || 'friendly'));
 
-  const maxRange = (this.gun && this.gun.rangeKm) ? this.gun.rangeKm : 4.8;
+  const maxRange = (this.gun && this.gun.rangeKm) ? this.gun.rangeKm : 4.6;
   const maxConeRad = ((this.gun && this.gun.coneAngleDeg ? this.gun.coneAngleDeg : 40) / 2.0) * (Math.PI / 180.0);
   const isEnergy = Boolean(this.gun && (this.gun.damagePerPulse || this.gun.id === 'DE-PULSE' || this.gun.id.startsWith('PLSL') || this.gun.id === 'EML_GUN'));
 
@@ -265,7 +265,9 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
         const ammoUsed = Math.max(1, Math.ceil(20 * dt));
         this.gunAmmo = Math.max(0, this.gunAmmo - ammoUsed);
 
-        if (radarRenderer && (Math.random() < 0.25 || isEnergy || activeGunpods.length > 0)) {
+        this.gunCooldown = (window.CONFIG && window.CONFIG.AUTO_GUN_COOLDOWN) || 0.50;
+
+        if (radarRenderer && (Math.random() < 0.45 || isEnergy || activeGunpods.length > 0)) {
           radarRenderer.spawnGunTracer(this.x, this.y, enemy.x, enemy.y, this.gun.tracerColor || (isEnemy ? '#ef4444' : '#00f0ff'));
           activeGunpods.forEach(p => {
             radarRenderer.spawnGunTracer(this.x, this.y, enemy.x, enemy.y, p.weapon.tracerColor || '#fbbf24');

@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Advanced Web Audio Synthesizer Core
+ * AIRSPACE STANDOFF: Advanced Web Audio Synthesizer Core
  */
 
 class TacticalAudioEngine {
@@ -85,8 +85,8 @@ class TacticalAudioEngine {
     if (!this.ctx) return;
     try {
       const now = this.ctx.currentTime;
-      const burstRounds = 3;
-      const roundSpacing = 0.024;
+      const burstRounds = 4;
+      const roundSpacing = 0.040;
 
       for (let i = 0; i < burstRounds; i++) {
         const roundTime = now + (i * roundSpacing);
@@ -94,19 +94,19 @@ class TacticalAudioEngine {
         const osc = this.ctx.createOscillator();
         const oscGain = this.ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(110, roundTime);
-        osc.frequency.exponentialRampToValueAtTime(35, roundTime + 0.03);
+        osc.frequency.setValueAtTime(120, roundTime);
+        osc.frequency.exponentialRampToValueAtTime(40, roundTime + 0.028);
 
         const thumpVol = 0.16 * this.masterVolume * this.fxVolume;
         oscGain.gain.setValueAtTime(thumpVol, roundTime);
-        oscGain.gain.exponentialRampToValueAtTime(0.001, roundTime + 0.035);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, roundTime + 0.032);
 
         osc.connect(oscGain);
         oscGain.connect(this.getMasterDestination());
         osc.start(roundTime);
-        osc.stop(roundTime + 0.04);
+        osc.stop(roundTime + 0.035);
 
-        const noiseSize = Math.floor(this.ctx.sampleRate * 0.025);
+        const noiseSize = Math.floor(this.ctx.sampleRate * 0.022);
         const buffer = this.ctx.createBuffer(1, noiseSize, this.ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let j = 0; j < noiseSize; j++) data[j] = Math.random() * 2 - 1;
@@ -115,19 +115,19 @@ class TacticalAudioEngine {
         noise.buffer = buffer;
         const snapFilter = this.ctx.createBiquadFilter();
         snapFilter.type = 'bandpass';
-        snapFilter.frequency.setValueAtTime(1400, roundTime);
-        snapFilter.Q.setValueAtTime(3.0, roundTime);
+        snapFilter.frequency.setValueAtTime(1500, roundTime);
+        snapFilter.Q.setValueAtTime(3.2, roundTime);
 
         const snapGain = this.ctx.createGain();
         snapGain.gain.setValueAtTime(0.12 * this.masterVolume * this.fxVolume, roundTime);
-        snapGain.gain.exponentialRampToValueAtTime(0.001, roundTime + 0.025);
+        snapGain.gain.exponentialRampToValueAtTime(0.001, roundTime + 0.022);
 
         noise.connect(snapFilter);
         snapFilter.connect(snapGain);
         snapGain.connect(this.getMasterDestination());
 
         noise.start(roundTime);
-        noise.stop(roundTime + 0.028);
+        noise.stop(roundTime + 0.025);
       }
     } catch (e) {}
   }

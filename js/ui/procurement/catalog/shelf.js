@@ -134,12 +134,16 @@ class ProcurementShelf {
       card.dataset.dragId = g.id;
       card.dataset.dragName = g.name;
 
+      const burstDmg = (g.damagePerBurst || g.damagePerPulse || 1.40).toFixed(2);
+      const roundsCount = g.roundsPerBurst || 4;
+      const reloadTime = (g.burstCooldown || 1.6).toFixed(1);
+
       card.innerHTML = `
         <div class="cic-top"><span class="cic-title">${g.name}</span><span class="cic-cost" style="color:#7dd3fc;">${g.caliber}</span></div>
         <div class="cic-type-bar">
           <span class="badge-category" data-tag-title="CYCLIC FIRE RATE" data-tag-tooltip="${g.rpm} Rounds Per Minute deliver instantaneous snapshot burst density.">${g.rpm} RPM</span>
           <span class="badge-mass" data-tag-title="MECHANISM WEIGHT" data-tag-tooltip="+${g.mass} kg deadweight added to forward airframe.">+${g.mass} kg</span>
-          <span class="badge-category" style="color:#00f5a0;" data-tag-title="BURST DAMAGE" data-tag-tooltip="Inflicts ${(g.damagePerBurst || g.damagePerPulse || 0.85).toFixed(2)} HP per burst with ${g.burstCooldown || 1.0}s cooling.">${(g.damagePerBurst || g.damagePerPulse || 0.85).toFixed(2)} HP/burst</span>
+          <span class="badge-category" style="color:#00f5a0;" data-tag-title="BURST DAMAGE" data-tag-tooltip="Inflicts ${burstDmg} HP across a ${roundsCount}-round burst with ${reloadTime}s reload.">${burstDmg} HP (${roundsCount} rds, ${reloadTime}s)</span>
         </div>
         <div class="cic-desc">${g.desc}</div>
         <div style="display:flex;gap:6px;margin-top:4px;">
