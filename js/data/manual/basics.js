@@ -96,24 +96,28 @@ window.MANUAL_BASICS = [
         <span style="color:#00f0ff;font-weight:700;">DYNAMIC STEALTH &amp; SPEED RECOVERY:</span> When a stealth aircraft launches its external or centerline missiles in combat, the pylon radar cross-section bloom and parasite drag are immediately eliminated. A stealth fighter that entered contested airspace with an elevated RCS returns to pristine clean VLO stealth (e.g. 0.0001 m&sup2;) as soon as its external stores are expended. Both player and AI fighters benefit from dynamic drag and weight reduction.
       </div>
 
-      <div class="ge-subhead">4. TACTICAL GUNNERY: BALLISTIC GATLINGS VS. DIRECTED ENERGY (LASERS)</div>
+      <div class="ge-subhead">4. TACTICAL GUNNERY: BURST DOCTRINE, AMMUNITION &amp; WEAPON TYPES</div>
+      <div class="ge-desc">
+        Autocannons and directed-energy weapons operate in high-intensity, multi-round bursts with restricted magazine capacity (4 to 6 bursts total before requiring base replenishment). They are intended primarily as a <b>last-resort defense system</b>: deploy them during emergency close merges when all missile stores are exhausted (Bingo Ammo), or to conserve ordnance when hunting down the final 1 or 2 surviving enemy aircraft in the sector.
+      </div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #00f5a0;">
-          <b style="color:#00f5a0;">BALLISTIC ROTARY CANNONS (M61A2, GAU-22, BK-27)</b>
+          <b style="color:#00f5a0;">BALLISTIC ROTARY CANNONS (M61A2, GAU-8, GAU-22, BK-27, GSh-30-1)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Zero Thermal Bloom:</b> Firing draws no generator power and creates no thermal spike, preserving VLO stealth.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Wide Snapshot Cone (48&deg;&ndash;55&deg;):</b> High-G boresight authority allows scoring snapshot deflection hits during hard turns.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>100% All-Weather Penetration:</b> Tungsten shells pierce moisture clouds with zero damage degradation.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Kinetic Concussion:</b> Shell impacts induce pilot stress (+30%) and drain target kinetic energy (-15%).
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Multi-Round Bursts (3&ndash;5 Rounds):</b> Each trigger pull streams 3 to 5 rapid shells delivering balanced burst damage (1.28&ndash;2.20 HP total).<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Restricted Magazine (16&ndash;30 Rounds):</b> Limited drum capacity permits 4 to 6 strategic bursts. Re-arming requires RTB to depot sanctuary.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Reload &amp; Cooling Cycle (1.5&ndash;2.2s):</b> Mechanical barrels require reload interval between bursts.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Wide Snapshot Cones (38&deg;&ndash;60&deg;):</b> High-G boresight authority across 3.6&ndash;5.8 km engagement envelopes.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Kinetic Concussion:</b> Impacts induce pilot stress (+25%) and drain target kinetic energy; 100% cloud penetration.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
-          <b style="color:#00f0ff;">DIRECTED ENERGY WEAPONS (DE-PULSE, PLSL, EML)</b>
+          <b style="color:#00f0ff;">DIRECTED ENERGY &amp; RAILGUNS (PLSL, DE-PULSE, EML)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Speed-of-Light Hitscan:</b> Instantaneous thermal beam impact out to 7.5&ndash;18.0 km with zero travel time.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Narrow Pencil Beam (22&deg;&ndash;34&deg;):</b> Demands precise nose-pointing alignment.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Heavy Thermal Bloom:</b> Capacitor discharge increases IR signature (+60% for 4s), compromising stealth.<br>
-            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Scattered in Clouds:</b> Cloud vapor scatters optical beams, inflicting a 75% damage penalty.
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Multi-Pulse Burst Discharge:</b> Emitters discharge 2 to 3 optical pulses or hyper-velocity slugs delivering 1.14&ndash;1.95 HP total.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Limited Energy Capacitor (8&ndash;18 Pulses):</b> Provides 4 to 6 high-power discharges before capacitor exhaustion.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Speed-of-Light Standoff (7.5&ndash;18.0 km):</b> Hitscan beam out-ranges conventional cannons along narrow boresights (22&deg;&ndash;34&deg;).<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Thermal Bloom &amp; Cloud Scattering:</b> Discharge compromises VLO stealth (+60% IR bloom); moisture clouds scatter beams (-75% damage).
           </div>
         </div>
       </div>
