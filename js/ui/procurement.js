@@ -175,18 +175,24 @@ class ProcurementManager {
     if (bScramble) {
       bScramble.onclick = (e) => {
         e.preventDefault();
-        if (this.game.procurementSquadron.length === 0) {
+        const editorRandomRoster = window.MissionEditor
+          && window.MissionEditor.canProvideRandomSquadron(this.game);
+        if (this.game.procurementSquadron.length === 0 && !editorRandomRoster) {
           this.showAlertModal('EMPTY SQUADRON', 'Add at least one aircraft to your squadron before launching the mission.');
           return;
         }
-        if (this.game.budgetRemaining < 0) {
+        if (this.game.budgetRemaining < 0 && !editorRandomRoster) {
           this.showAlertModal('OVER BUDGET', `Total cost exceeds available budget ($${this.game.budgetMax.toFixed(1)}M). Adjust aircraft or weapons.`);
           return;
         }
 
+        const isEditorSortie = Boolean(this.game.pendingMissionEditorSettings);
+        const confirmText = isEditorSortie
+          ? 'Launch this custom editor sortie? It will not be ranked or saved to the leaderboard.'
+          : `Launch mission with ${this.game.procurementSquadron.length} aircraft?`;
         this.showConfirmModal(
-          'COMMENCE MISSION',
-          `Launch mission with ${this.game.procurementSquadron.length} aircraft?`,
+          isEditorSortie ? 'COMMENCE UNRANKED MISSION' : 'COMMENCE MISSION',
+          confirmText,
           () => this.game.scrambleFlight(),
           { confirmText: 'LAUNCH MISSION', isAlert: false }
         );

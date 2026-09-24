@@ -17,6 +17,10 @@ class AirspaceStandoffGame {
     this.scenarioMode = 'SKIRMISH';
     this.aiDifficulty = 'VETERAN';
     this.aiDoctrine = 'BALANCED';
+    this.pendingMissionEditorSettings = null;
+    this.missionEditorBaseSettings = null;
+    this.activeMissionEditorConfig = null;
+    this.isMissionEditorMatch = false;
     this.currentPvpCommander = 'friendly';
 
     this.playerBudgetId = 'BUDGET_400';
@@ -155,6 +159,29 @@ class AirspaceStandoffGame {
 
   scrambleFlight() {
     if (typeof AudioSys !== 'undefined') AudioSys.ensureContext();
+    if (this.pendingMissionEditorSettings) {
+      this.missionEditorBaseSettings = {
+        scenarioMode: this.scenarioMode,
+        aiDifficulty: this.aiDifficulty,
+        aiDoctrine: this.aiDoctrine
+      };
+    }
+    const editorMission = window.MissionEditor && typeof window.MissionEditor.consumeNextMission === 'function'
+      ? window.MissionEditor.consumeNextMission(this)
+      : null;
+    this.activeMissionEditorConfig = editorMission;
+    this.isMissionEditorMatch = Boolean(editorMission && editorMission.unranked);
+    if (editorMission) {
+      this.scenarioMode = editorMission.scenarioMode;
+      this.aiDifficulty = editorMission.difficulty;
+      this.aiDoctrine = editorMission.doctrine;
+      const skirmishButton = document.getElementById('scenario-btn-skirmish');
+      const dynamicButton = document.getElementById('scenario-btn-dynamic');
+      if (skirmishButton) skirmishButton.classList.toggle('active', this.scenarioMode === 'SKIRMISH');
+      if (dynamicButton) dynamicButton.classList.toggle('active', this.scenarioMode === 'DYNAMIC_THEATER');
+      this.updateModeIndicator();
+    }
+    if (this.procurement) this.procurement.updateUI();
     ['system-inspect-modal', 'glossary-modal', 'settings-modal', 'rwr-briefing-modal', 'abort-confirm-modal', 'game-over-modal', 'procurement-modal', 'pause-modal'].forEach(id => {
       const m = document.getElementById(id); if (m) m.classList.remove('active');
     });
@@ -180,6 +207,8 @@ class AirspaceStandoffGame {
       this.simulation.ghostSpawnTimer = 0.0;
       this.simulation.setTimeWarp(1);
       this.simulation.resetReplay();
+      this.simulation.cloudCoverage = editorMission ? editorMission.clouds : 'RANDOM';
+      this.simulation.civilianTrafficEnabled = editorMission ? editorMission.civilians === 'ON' : true;
       this.simulation.initWeatherClouds();
     }
     const scoreLogEl = document.getElementById('combat-score-log-list');
@@ -187,8 +216,24 @@ class AirspaceStandoffGame {
     const aarTimelineEl = document.getElementById('aar-timeline-list');
     if (aarTimelineEl) aarTimelineEl.innerHTML = '';
 
-    if (!this.procurementSquadron || this.procurementSquadron.length === 0) {
-      if (typeof ProcurementPresets !== 'undefined') this.procurementSquadron = ProcurementPresets.getBuiltinPreset('stealth');
+    let launchSquadron = this.procurementSquadron || [];
+    if (editorMission && editorMission.blueSquadron === 'RANDOM' && window.MissionEditor) {
+      launchSquadron = window.MissionEditor.createRandomSquadron(this, editorMission);
+    }
+    if (editorMission && editorMission.blueWeapons === 'STANDARD' && typeof FleetGenerator !== 'undefined') {
+      launchSquadron = launchSquadron.map(item => {
+        if (!item) return item;
+        const spec = (window.AIRCRAFT_CATALOG || {})[item.specId];
+        if (!spec) return item;
+        const loadout = FleetGenerator.planAircraftLoadout(spec, false, editorMission.doctrine, editorMission.difficulty, Math.random);
+        return { ...item, weapons: loadout.weapons || [] };
+      });
+    }
+    if (launchSquadron.length === 0) {
+      const fallbackSquadron = (typeof ProcurementPresets !== 'undefined')
+        ? ProcurementPresets.getBuiltinPreset('stealth') : [];
+      if (!editorMission) this.procurementSquadron = fallbackSquadron;
+      launchSquadron = fallbackSquadron;
     }
 
     const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
@@ -197,11 +242,11 @@ class AirspaceStandoffGame {
     const takeCallsign = () => callsignPool.length ? callsignPool.pop() : 'Viper';
 
     this.alliedAircraft = [];
-    let chosenLeadIdx = this.procurementSquadron.findIndex(it => it && it.isLead);
+    let chosenLeadIdx = launchSquadron.findIndex(it => it && it.isLead);
     if (chosenLeadIdx === -1) chosenLeadIdx = 0;
-    this.procurementSquadron.forEach((it, idx) => { it.isLead = (idx === chosenLeadIdx); });
+    launchSquadron.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
 
-    const spawnPlans = FleetGenerator.calculateFormationSpawns(this.procurementSquadron, 'friendly', mapW, mapH);
+    const spawnPlans = FleetGenerator.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH);
     spawnPlans.forEach(plan => {
       const item = plan.item;
       if (!item) return;
@@ -216,6 +261,9 @@ class AirspaceStandoffGame {
       (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
       (item.weapons || []).forEach(w => ac.installWeapon((typeof w === 'object' && w !== null) ? (w.id || w.specId) : w));
       ac.recalculateWeight();
+      if (editorMission && editorMission.blueWeapons === 'RANDOM' && window.MissionEditor) {
+        window.MissionEditor.applyRandomWeapons(ac);
+      }
       ac.speed = ac.getTargetMach();
       ac.prevSpeed = ac.speed;
       ac.speedTrend = '--';
@@ -223,10 +271,14 @@ class AirspaceStandoffGame {
     });
 
     this.hostileAircraft = (typeof FleetGenerator !== 'undefined')
-      ? FleetGenerator.generateHostileFleet(this.aiDifficulty, this.aiDoctrine, mapW, mapH) : [];
+      ? FleetGenerator.generateHostileFleet(this.aiDifficulty, this.aiDoctrine, mapW, mapH,
+        editorMission ? { aircraftCount: editorMission.redSize } : {}) : [];
 
     this.hostileAircraft.forEach(h => {
       h.recalculateWeight();
+      if (editorMission && editorMission.redWeapons === 'RANDOM' && window.MissionEditor) {
+        window.MissionEditor.applyRandomWeapons(h);
+      }
       h.speed = h.getTargetMach();
       h.prevSpeed = h.speed;
       h.speedTrend = '--';
@@ -240,6 +292,11 @@ class AirspaceStandoffGame {
     }
 
     this.initSurfaceFacilities(mapW, mapH);
+    if (editorMission && editorMission.defenses === 'LIGHT') {
+      this.surfaceUnits = this.surfaceUnits.filter(unit => unit.type !== 'S-400');
+    } else if (editorMission && editorMission.defenses === 'OFF') {
+      this.surfaceUnits = this.surfaceUnits.filter(unit => unit.type !== 'S-400' && unit.type !== 'PANTSIR');
+    }
     if (this.simulation) {
       this.simulation.civilianTraffic = [];
       this.simulation.civilianSpawnTimer = 0.0;

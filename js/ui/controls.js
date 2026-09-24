@@ -18,6 +18,9 @@ class ControlsSystem {
     this.initPauseScreenModal();
     this.initExitButtons();
     this.initLeaderboardModal();
+    if (window.MissionEditor && typeof window.MissionEditor.init === 'function') {
+      window.MissionEditor.init(this.game);
+    }
     if (this.fullscreen && this.fullscreen.init) {
       this.fullscreen.init();
     }
@@ -241,6 +244,9 @@ class ControlsSystem {
         const gameOverModal = document.getElementById('game-over-modal');
         const procModal = document.getElementById('procurement-modal');
         if (window.AfterActionReplay && typeof window.AfterActionReplay.stop === 'function') window.AfterActionReplay.stop();
+        if (window.MissionEditor && typeof window.MissionEditor.restoreBaseSettings === 'function') {
+          window.MissionEditor.restoreBaseSettings(this.game);
+        }
         if (gameOverModal) gameOverModal.classList.remove('active');
         if (procModal) procModal.classList.add('active');
       };

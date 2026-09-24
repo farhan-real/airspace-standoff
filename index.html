@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="css/core/manual.css">
   <link rel="stylesheet" href="css/core/dialogs/dialogs.css">
   <link rel="stylesheet" href="css/core/dialogs/settings.css">
+  <link rel="stylesheet" href="css/core/dialogs/mission-editor.css">
   <link rel="stylesheet" href="css/core/dialogs/leaderboard.css">
   <link rel="stylesheet" href="css/core/dialogs/debrief.css">
 
@@ -247,6 +248,101 @@
   </div>
 </div>
 
+<!-- CUSTOM MISSION EDITOR -->
+<div id="mission-editor-modal" class="modal-backdrop">
+  <div class="mission-editor-window">
+    <div class="inspect-header mission-editor-header">
+      <div class="modal-title-row">
+        <span class="mission-editor-mark">✦</span>
+        <div>
+          <h2>MISSION EDITOR</h2>
+          <span class="mission-editor-kicker">BUILD A CUSTOM THEATER SCENARIO</span>
+        </div>
+      </div>
+      <button type="button" id="btn-close-mission-editor" class="hud-btn small">CLOSE</button>
+    </div>
+    <div class="mission-editor-body">
+      <p class="mission-editor-intro">Choose a value for each setting. Press <b>RANDOM</b> only where you want a new value chosen at launch. This setup is for your next sortie only and is unranked.</p>
+      <div class="mission-editor-section">
+        <h3><span>01</span> MISSION</h3>
+        <p>Choose the battle type, challenge, and enemy style.</p>
+        <div class="mission-editor-grid">
+        <div class="mission-editor-field">
+          <label for="me-scenario">SCENARIO</label>
+          <select id="me-scenario"><option value="SKIRMISH">SKIRMISH</option><option value="DYNAMIC_THEATER">DYNAMIC THEATER</option></select>
+          <button type="button" class="mission-editor-random-toggle" data-random-for="scenario" aria-pressed="false">RANDOM</button>
+        </div>
+        <div class="mission-editor-field">
+          <label for="me-difficulty">DIFFICULTY</label>
+          <select id="me-difficulty">
+            <option value="CADET">CADET</option><option value="VETERAN" selected>VETERAN</option><option value="ELITE">ELITE</option>
+            <option value="ACE">ACE</option><option value="MASTER">MASTER</option><option value="LEGEND">LEGEND</option>
+          </select>
+          <button type="button" class="mission-editor-random-toggle" data-random-for="difficulty" aria-pressed="false">RANDOM</button>
+        </div>
+        <div class="mission-editor-field">
+          <label for="me-doctrine">ENEMY STYLE</label>
+          <select id="me-doctrine"><option value="BALANCED">BALANCED</option><option value="AGGRESSIVE">AGGRESSIVE</option><option value="STANDOFF">STANDOFF</option></select>
+          <button type="button" class="mission-editor-random-toggle" data-random-for="doctrine" aria-pressed="false">RANDOM</button>
+        </div>
+        </div>
+      </div>
+      <div class="mission-editor-section">
+        <h3><span>02</span> FORCES</h3>
+        <p>Blue is your side; red is the enemy. Random blue squadrons use 3–8 aircraft.</p>
+        <div class="mission-editor-grid">
+        <div class="mission-editor-field">
+          <label for="me-blue-squadron">YOUR SQUADRON</label>
+          <select id="me-blue-squadron"><option value="HANGAR">USE HANGAR ROSTER</option><option value="RANDOM">GENERATE RANDOM SQUADRON</option></select>
+          <button type="button" class="mission-editor-random-toggle" data-random-for="blue-squadron" aria-pressed="false">RANDOM</button>
+        </div>
+        <div class="mission-editor-field">
+          <label for="me-blue-weapons">YOUR WEAPONS</label>
+          <select id="me-blue-weapons"><option value="HANGAR">KEEP CURRENT / DEFAULTS</option><option value="STANDARD">STANDARD LOADOUTS</option><option value="RANDOM">RANDOM LEGAL LOADOUTS</option></select>
+          <button type="button" class="mission-editor-random-toggle" data-random-for="blue-weapons" aria-pressed="false">RANDOM</button>
+        </div>
+        <div class="mission-editor-field">
+          <label for="me-red-size">ENEMY SQUADRON SIZE</label>
+          <select id="me-red-size"><option value="3">3 AIRCRAFT</option><option value="5">5 AIRCRAFT</option><option value="7" selected>7 AIRCRAFT</option><option value="9">9 AIRCRAFT</option><option value="11">11 AIRCRAFT</option><option value="13">13 AIRCRAFT</option><option value="15">15 AIRCRAFT</option></select>
+          <button type="button" class="mission-editor-random-toggle" data-random-for="red-size" aria-pressed="false">RANDOM</button>
+        </div>
+        <div class="mission-editor-field">
+          <label for="me-red-weapons">ENEMY WEAPONS</label>
+          <select id="me-red-weapons"><option value="DOCTRINE">STYLE-BASED LOADOUTS</option><option value="RANDOM">RANDOM LEGAL LOADOUTS</option></select>
+          <button type="button" class="mission-editor-random-toggle" data-random-for="red-weapons" aria-pressed="false">RANDOM</button>
+        </div>
+        </div>
+      </div>
+      <div class="mission-editor-section">
+        <h3><span>03</span> CONDITIONS</h3>
+        <p>Set the weather, air defenses, and civilian activity.</p>
+        <div class="mission-editor-grid">
+        <div class="mission-editor-field">
+          <label for="me-clouds">CLOUD COVER</label>
+          <select id="me-clouds"><option value="CLEAR">CLEAR</option><option value="LIGHT">LIGHT</option><option value="SCATTERED" selected>SCATTERED</option><option value="DENSE">DENSE</option></select>
+          <button type="button" class="mission-editor-random-toggle" data-random-for="clouds" aria-pressed="false">RANDOM</button>
+        </div>
+        <div class="mission-editor-field">
+          <label for="me-defenses">GROUND AIR DEFENSES</label>
+          <select id="me-defenses"><option value="FULL" selected>FULL BATTERIES</option><option value="LIGHT">CIWS ONLY</option><option value="OFF">NO SAM OR CIWS</option></select>
+          <button type="button" class="mission-editor-random-toggle" data-random-for="defenses" aria-pressed="false">RANDOM</button>
+        </div>
+        <div class="mission-editor-field">
+          <label for="me-civilians">CIVILIAN TRAFFIC</label>
+          <select id="me-civilians"><option value="ON" selected>ACTIVE</option><option value="OFF">DISABLED</option></select>
+          <button type="button" class="mission-editor-random-toggle" data-random-for="civilians" aria-pressed="false">RANDOM</button>
+        </div>
+        </div>
+      </div>
+      <div id="mission-editor-preview" class="mission-editor-preview">Standard mission setup is unchanged until you apply an editor configuration.</div>
+    </div>
+    <div class="mission-editor-footer">
+      <button type="button" id="btn-reset-mission-editor" class="hud-btn small">RESET</button>
+      <button type="button" id="btn-apply-mission-editor" class="hud-btn">USE THIS SETUP</button>
+    </div>
+  </div>
+</div>
+
 <!-- ABORT CONFIRM MODAL -->
 <div id="abort-confirm-modal" class="modal-backdrop">
   <div class="inspect-window" style="max-width: 440px; text-align: center;">
@@ -310,6 +406,8 @@
         <span id="theater-mode-indicator" style="display:none;"></span>
 
         <div class="proc-right-actions">
+          <button id="btn-open-mission-editor" class="hud-btn mission-editor-open-btn" title="Build a custom, unranked mission">MISSION EDITOR</button>
+          <span id="mission-editor-state" class="mission-editor-state">STANDARD MISSION</span>
           <button id="btn-proc-fullscreen" class="hud-btn" title="Toggle Fullscreen">
             <img src="icons/fullscreen.svg" class="btn-vector-ico" width="13" height="13" alt="Fullscreen">
             <span>FULLSCREEN</span>
@@ -773,6 +871,7 @@
 <script src="js/ui/procurement/equip.js"></script>
 <script src="js/ui/procurement/dialogs/dialog.js"></script>
 <script src="js/ui/procurement.js"></script>
+<script src="js/ui/mission-editor.js"></script>
 
 <script src="js/game.js"></script>
 </body>

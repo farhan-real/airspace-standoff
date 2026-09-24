@@ -26,7 +26,10 @@ class AfterActionReportSystem {
       tEl.textContent = blueWon ? 'MISSION SUCCESSFUL' : 'MISSION ABORTED';
       tEl.style.color = blueWon ? 'var(--color-ice-highlight)' : 'var(--color-red)';
     }
-    if (dEl) dEl.textContent = msg || 'OPERATIONAL SUMMARY';
+    if (dEl) {
+      const sortieNote = game.isMissionEditorMatch ? ' · CUSTOM EDITOR SORTIE · NOT LEADERBOARD RANKED' : '';
+      dEl.textContent = `${msg || 'OPERATIONAL SUMMARY'}${sortieNote}`;
+    }
 
     const allPilots = [...game.alliedAircraft, ...game.hostileAircraft];
     allPilots.sort((a, b) => (b.scorePoints || 0) - (a.scorePoints || 0));
@@ -209,7 +212,7 @@ class AfterActionReportSystem {
       ? AfterActionReportTimeline.getMergedTimelineEvents(game)
       : ((game.simulation && game.simulation.timelineEvents) ? [...game.simulation.timelineEvents] : []);
 
-    if (window.Persistence && window.Persistence.saveTopSortie) {
+    if (!game.isMissionEditorMatch && window.Persistence && window.Persistence.saveTopSortie) {
       window.Persistence.saveTopSortie({
         id: 'SORTIE_' + Date.now(),
         date: new Date().toLocaleDateString(),

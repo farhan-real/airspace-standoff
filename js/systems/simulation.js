@@ -12,6 +12,8 @@ class SimulationSystem {
     this.isPaused = false;
     this.weatherClouds = [];
     this.civilianTraffic = [];
+    this.cloudCoverage = 'RANDOM';
+    this.civilianTrafficEnabled = true;
     this.ghostContacts = [];
     this.decoyDrones = [];
     this.civilianSpawnTimer = 0.0;
@@ -126,7 +128,11 @@ class SimulationSystem {
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
 
-    const count = rng() < 0.15 ? 2 : (rng() < 0.70 ? 3 : (rng() < 0.92 ? 4 : 5));
+    const coverageCounts = { CLEAR: 0, LIGHT: 2, SCATTERED: 4, DENSE: 5 };
+    const configuredCount = coverageCounts[this.cloudCoverage];
+    const count = Number.isFinite(configuredCount)
+      ? configuredCount
+      : (rng() < 0.15 ? 2 : (rng() < 0.70 ? 3 : (rng() < 0.92 ? 4 : 5)));
     const sizeProfiles = [{ rxMin: 25, rxMax: 32, ryMin: 16, ryMax: 22 }, { rxMin: 24, rxMax: 32, ryMin: 12, ryMax: 16 }, { rxMin: 18, rxMax: 25, ryMin: 13, ryMax: 18 }];
     const sectors = [
       { minX: 25, maxX: 65, minY: 18, maxY: 45 }, { minX: 85, maxX: 125, minY: 18, maxY: 45 },
@@ -156,6 +162,7 @@ class SimulationSystem {
   }
 
   spawnCivilianFlight() {
+    if (!this.civilianTrafficEnabled) return;
     const pool = window.CIVILIAN_FLIGHTS || [{ code: 'CIV-401', name: 'Commercial Flight', speedMach: 0.78, altFt: 36000, rcs: 25.0 }];
     const data = pool[Math.floor(Math.random() * pool.length)];
     const fromLeft = Math.random() < 0.5;
@@ -174,8 +181,8 @@ class SimulationSystem {
 
     for (const c of this.weatherClouds) c.update(dt);
 
-    this.civilianSpawnTimer += dt;
-    if (this.civilianSpawnTimer >= 45.0 && this.civilianTraffic.length < 2) {
+    if (this.civilianTrafficEnabled) this.civilianSpawnTimer += dt;
+    if (this.civilianTrafficEnabled && this.civilianSpawnTimer >= 45.0 && this.civilianTraffic.length < 2) {
       this.civilianSpawnTimer = 0.0;
       this.spawnCivilianFlight();
     }
@@ -200,8 +207,16 @@ class SimulationSystem {
         this.currentWave++;
         const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
         const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-        this.game.hostileAircraft.push(...FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'hostile', mapW, mapH, this.game.aiDifficulty));
-        this.game.alliedAircraft.push(...FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'friendly', mapW, mapH, this.game.aiDifficulty));
+        const redReinforcements = FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'hostile', mapW, mapH, this.game.aiDifficulty);
+        const blueReinforcements = FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'friendly', mapW, mapH, this.game.aiDifficulty);
+        const mission = this.game.activeMissionEditorConfig;
+        if (mission && window.MissionEditor) {
+          if (mission.redWeapons === 'RANDOM') window.MissionEditor.randomizeWeaponsForFleet(redReinforcements);
+          if (mission.blueWeapons === 'RANDOM') window.MissionEditor.randomizeWeaponsForFleet(blueReinforcements);
+          else if (mission.blueWeapons === 'STANDARD') blueReinforcements.forEach(unit => window.MissionEditor.applyStandardWeapons(unit, mission));
+        }
+        this.game.hostileAircraft.push(...redReinforcements);
+        this.game.alliedAircraft.push(...blueReinforcements);
         this.logScoreEvent('friendly', 0, `REINFORCEMENTS: Wave ${this.currentWave} entered theater`);
       }
     }

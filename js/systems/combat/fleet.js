@@ -177,7 +177,7 @@ const FleetGenerator = {
     return { weapons, upgrades, totalCost };
   },
 
-  generateHostileFleet(difficultyKey, doctrineKey, theaterWidth, theaterHeight) {
+  generateHostileFleet(difficultyKey, doctrineKey, theaterWidth, theaterHeight, options = {}) {
     const diff = difficultyKey || 'VETERAN';
     const doctrine = doctrineKey || 'BALANCED';
     const diffProfile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diff]) || { budgetCap: 260.0, aceCount: 1 };
@@ -190,9 +190,12 @@ const FleetGenerator = {
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
 
-    const targetBudget = diffProfile.budgetCap || 260.0;
+    const configuredCount = Number.isFinite(Number(options.aircraftCount)) ? Number(options.aircraftCount) : null;
+    const targetBudget = configuredCount !== null ? Number.POSITIVE_INFINITY : (diffProfile.budgetCap || 260.0);
     const basePlanes = diff === 'CADET' ? 5 : (diff === 'VETERAN' ? 7 : (diff === 'ELITE' ? 9 : 11));
-    const maxPlanes = Math.max(3, basePlanes + Math.floor(rng() * 2));
+    const maxPlanes = configuredCount !== null
+      ? Math.max(3, Math.min(16, Math.floor(configuredCount)))
+      : Math.max(3, basePlanes + Math.floor(rng() * 2));
     const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : 1;
     const catalog = window.AIRCRAFT_CATALOG || {};
     const callsigns = [...(window.CALLSIGN_POOL || ['Viper', 'Ghost', 'Talon', 'Reaper', 'Bandit'])].sort(() => rng() - 0.5);
@@ -259,7 +262,9 @@ const FleetGenerator = {
     const multiroleScreenPool = ['JAS-39E', 'Mirage-2000', 'F-16V', 'MiG-29K', 'KF-21', 'Tejas-MK2', 'F-2A', 'F-18E', 'X-29A'];
     const supportPool = (doctrine === 'AGGRESSIVE') ? ['Su-34', 'MQ-101', 'Kizilelma', 'S-70'] : ['XQ-58A', 'MQ-101', 'Su-34', 'Kizilelma', 'MQ-28'];
 
-    while (fleetItems.length < maxPlanes) {
+    let screenAttempts = 0;
+    while (fleetItems.length < maxPlanes && screenAttempts < maxPlanes * 16) {
+      screenAttempts++;
       const roll = rng();
       let candidatePool;
       if (roll < 0.60 || diff === 'CADET') candidatePool = (diff === 'CADET') ? multiroleScreenPool : airSuperiorityPool;

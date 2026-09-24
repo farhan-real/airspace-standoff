@@ -53,9 +53,12 @@ class ProcurementRoster {
     if (quickStatEl) quickStatEl.textContent = `${squadron.length} AIRCRAFT ASSIGNED`;
 
     if (scrambleBtnEl) {
-      const canScramble = (squadron.length > 0 && spent <= budgetMax);
+      const editorRandomRoster = window.MissionEditor
+        && window.MissionEditor.canProvideRandomSquadron(this.pm.game);
+      const canScramble = editorRandomRoster || (squadron.length > 0 && spent <= budgetMax);
       scrambleBtnEl.disabled = !canScramble;
-      scrambleBtnEl.textContent = canScramble ? 'LAUNCH MISSION' : (squadron.length === 0 ? 'ASSIGN AIRCRAFT' : 'BUDGET EXCEEDED');
+      scrambleBtnEl.textContent = editorRandomRoster ? 'LAUNCH EDITOR MISSION'
+        : (canScramble ? 'LAUNCH MISSION' : (squadron.length === 0 ? 'ASSIGN AIRCRAFT' : 'BUDGET EXCEEDED'));
     }
 
     if (squadron.length === 0) {
