@@ -225,13 +225,14 @@ class SimulationSystem {
     const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0);
     const friendlyBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'friendly' && s.hp <= 0);
     const hostileBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'hostile' && s.hp <= 0);
+    const hasUpcomingWaves = this.game.scenarioMode === 'DYNAMIC_THEATER' && this.currentWave <= 3;
 
-    if (allHostilesDead) {
+    if (allHostilesDead && !hasUpcomingWaves) {
       const winReason = hostileBunkerDestroyed
         ? 'HOSTILE AIR FLEET NEUTRALIZED & COMMAND BUNKER DESTROYED'
         : 'ALL HOSTILE AIR ASSETS NEUTRALIZED - AIR SUPERIORITY SECURED';
       this.game.triggerGameOver(true, winReason);
-    } else if (allAlliesDead) {
+    } else if (allAlliesDead && !hasUpcomingWaves) {
       const loseReason = friendlyBunkerDestroyed
         ? 'ALL ALLIED AIR ASSETS & COMMAND BUNKER DESTROYED'
         : 'ALL ALLIED AIR ASSETS NEUTRALIZED';

@@ -76,14 +76,19 @@ class ProcurementRoster {
       this.pm.activeBayIndex = 0;
     }
 
-    const renderKey = squadron.map((it, idx) => `${idx}:${it.specId}:${it.chosenGunId}:${it.weapons.join(',')}:${it.upgrades.join(',')}:${it.callsign}:${Boolean(it.isLead)}:${this.pm.activeBayIndex === idx}`).join('|');
-    if (this.lastRenderKey === renderKey && container.children.length === squadron.length) return;
+    const renderKey = squadron.map((it, idx) => {
+      if (!it) return `${idx}:EMPTY`;
+      return `${idx}:${it.specId}:${it.chosenGunId}:${JSON.stringify(it.weapons || [])}:${JSON.stringify(it.upgrades || [])}:${it.callsign}:${Boolean(it.isLead)}:${this.pm.activeBayIndex === idx}`;
+    }).join('|');
+    const renderableAircraftCount = squadron.filter(Boolean).length;
+    if (this.lastRenderKey === renderKey && container.children.length === renderableAircraftCount) return;
     this.lastRenderKey = renderKey;
     container.innerHTML = '';
 
     if (typeof RosterCardBuilder !== 'undefined') {
       const fragment = document.createDocumentFragment();
       squadron.forEach((item, sIdx) => {
+        if (!item) return;
         const card = RosterCardBuilder.build(this.pm, item, sIdx);
         if (card) fragment.appendChild(card);
       });
