@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Custom Loadouts & Preconfigured Aircraft Storage
+ * AIRSPACE STANDOFF: Custom Loadouts & Preconfigured Aircraft Storage
  */
 
 class SafeStorageAdapter {
@@ -40,8 +40,8 @@ class CustomLoadoutsManager {
     this.storage = new SafeStorageAdapter();
     this.fleetKey = 'AIRSPACE_STANDOFF_CUSTOM_LOADOUTS';
     this.aircraftTemplateKey = 'AIRSPACE_STANDOFF_AIRCRAFT_TEMPLATES';
-    this.legacyFleetKey = 'APEX_VECTOR_CUSTOM_LOADOUTS';
-    this.legacyTemplateKey = 'APEX_VECTOR_AIRCRAFT_TEMPLATES';
+    this.legacyFleetKey = 'AIRSPACE_STANDOFF_LEGACY_CUSTOM_LOADOUTS';
+    this.legacyTemplateKey = 'AIRSPACE_STANDOFF_LEGACY_AIRCRAFT_TEMPLATES';
   }
 
   getAll() {

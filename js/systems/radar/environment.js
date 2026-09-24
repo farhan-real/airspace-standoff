@@ -68,20 +68,21 @@ class RadarEnvironmentRenderer {
 
   static drawUplinkBanner(ctx, count, cssWidth, cssHeight) {
     ctx.save();
-    ctx.font = '800 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Consolas", monospace';
+    ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Consolas", monospace';
     const text = `SATELLITE RADAR UPLINK: ${count} HOSTILE${count > 1 ? 'S' : ''} REMAINING (PINPOINTED)`;
+    const isMobile = (cssWidth <= 1024);
     const textWidth = ctx.measureText(text).width;
-    const x = Math.round((cssWidth - textWidth) / 2);
-    const y = cssHeight - 16;
+    const x = isMobile ? 8 : 16;
+    const y = isMobile ? 54 : 68;
 
-    ctx.fillStyle = 'rgba(3, 9, 20, 0.94)';
+    ctx.fillStyle = 'rgba(3, 9, 20, 0.92)';
     ctx.strokeStyle = '#00f0ff';
-    ctx.lineWidth = 1.4;
-    ctx.fillRect(x - 10, y - 14, textWidth + 20, 20);
-    ctx.strokeRect(x - 10, y - 14, textWidth + 20, 20);
+    ctx.lineWidth = 1.2;
+    ctx.fillRect(x, y - 11, textWidth + 14, 16);
+    ctx.strokeRect(x, y - 11, textWidth + 14, 16);
 
     ctx.fillStyle = '#00f0ff';
-    ctx.fillText(text, x, y);
+    ctx.fillText(text, x + 7, y + 1);
     ctx.restore();
   }
 }

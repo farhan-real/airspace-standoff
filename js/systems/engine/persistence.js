@@ -47,6 +47,19 @@ class PersistenceEngine {
     return list;
   }
 
+  deleteTopSortie(idOrIndex) {
+    let list = this.get('TOP_10_SORTIES', []);
+    if (typeof idOrIndex === 'number') {
+      if (idOrIndex >= 0 && idOrIndex < list.length) {
+        list.splice(idOrIndex, 1);
+      }
+    } else if (typeof idOrIndex === 'string') {
+      list = list.filter(item => item && item.id !== idOrIndex);
+    }
+    this.set('TOP_10_SORTIES', list);
+    return list;
+  }
+
   getTopSorties() {
     return this.get('TOP_10_SORTIES', []);
   }
@@ -87,7 +100,7 @@ class PersistenceEngine {
       name = '7th Tactical Squadron';
       this.saveSquadronName(name);
       try {
-        localStorage.removeItem('APEX_VECTOR_SQUADRON_NAME');
+        localStorage.removeItem('AIRSPACE_STANDOFF_LEGACY_SQUADRON_NAME');
       } catch (err) {}
     }
     return name;

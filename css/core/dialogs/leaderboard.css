@@ -5,11 +5,11 @@
 }
 
 .leaderboard-window {
-  width: 90vw;
-  max-width: 840px;
-  height: 88vh;
-  height: 88dvh;
-  max-height: 88dvh;
+  width: 92vw;
+  max-width: 920px;
+  height: 90vh;
+  height: 90dvh;
+  max-height: 90dvh;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -25,7 +25,7 @@
 }
 
 .leaderboard-window .inspect-header {
-  padding: 9px 12px;
+  padding: 9px 14px;
 }
 
 .leaderboard-window .inspect-header .hud-btn.small {
@@ -37,7 +37,7 @@
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: 42% 58%;
+  grid-template-columns: 38% 62%;
   gap: 10px;
   padding: 10px 12px;
   overflow: hidden;
@@ -123,6 +123,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+}
+
+.dossier-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
 }
 
 .dossier-title {
@@ -132,11 +140,50 @@
   font-family: var(--font-aeonikpro);
 }
 
+.dossier-score-block {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
+}
+
 .dossier-score-num {
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--color-ice-highlight);
   font-family: var(--font-dotdigital);
+  letter-spacing: 0.5px;
+}
+
+.dossier-score-unit {
+  color: var(--stat-tier-2);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  font-family: var(--font-dotdigital);
+}
+
+.btn-delete-sortie {
+  background: rgba(244, 63, 94, 0.15) !important;
+  border-color: rgba(244, 63, 94, 0.35) !important;
+  color: #fecdd3 !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: var(--radius-btn) !important;
+  flex-shrink: 0;
+}
+
+.btn-delete-sortie:hover {
+  background: rgba(244, 63, 94, 0.32) !important;
+  border-color: #f43f5e !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.4) !important;
 }
 
 .dossier-meta-grid {
@@ -149,7 +196,7 @@
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 6px 8px;
+  padding: 7px 9px;
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -239,24 +286,64 @@
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  padding: 6px 8px;
+  padding: 7px 9px;
 }
 
 .dossier-timeline-list {
-  max-height: 150px;
+  max-height: 200px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding-right: 2px;
+  gap: 4px;
+  padding-right: 3px;
+}
+
+/* EXPANDED PARTICIPATING SQUADRON ROSTER */
+.dossier-roster-card {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-sizing: border-box;
+}
+
+.dossier-roster-list {
+  overflow-y: auto;
+  max-height: 230px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-right: 3px;
+  box-sizing: border-box;
+}
+
+.dossier-roster-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  padding: 4px 7px;
+  border-radius: var(--radius-badge);
+  background: var(--glass-bg);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.12s ease;
+}
+
+.dossier-roster-item:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
 }
 
 @media (max-width: 900px) {
   .leaderboard-window {
-    width: 95vw;
-    height: 92vh;
-    height: 92dvh;
-    max-height: 92dvh;
+    width: 96vw;
+    height: 94vh;
+    height: 94dvh;
+    max-height: 94dvh;
     border-radius: var(--radius-card);
   }
   .leaderboard-window .inspect-header {
@@ -273,12 +360,15 @@
   .dossier-podium-grid {
     grid-template-columns: 1fr;
   }
+  .dossier-roster-list {
+    max-height: 160px;
+  }
 }
 
 @media (max-height: 550px) {
   .leaderboard-window {
-    height: 94vh;
-    height: 94dvh;
-    max-height: 94dvh;
+    height: 96vh;
+    height: 96dvh;
+    max-height: 96dvh;
   }
 }

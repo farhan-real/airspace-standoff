@@ -24,6 +24,52 @@
   transform: translateZ(0);
 }
 
+/* SATELLITE UPLINK BANNER: Situated directly beneath the Speed, Altitude and Flight Details Tape */
+.radar-uplink-banner {
+  position: absolute;
+  top: 66px;
+  left: 16px;
+  z-index: 8;
+  pointer-events: none;
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--theme-accent);
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-badge);
+  padding: 3px 10px;
+  font-family: var(--font-dotdigital);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--color-ice-highlight);
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 14px var(--theme-primary-glow), var(--glass-highlight);
+  white-space: nowrap;
+  animation: radarUplinkGlow 2.2s infinite ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radar-uplink-banner.hidden {
+  display: none !important;
+}
+
+@keyframes radarUplinkGlow {
+  0%, 100% {
+    border-color: var(--theme-accent);
+    box-shadow: 0 0 10px var(--theme-primary-glow);
+  }
+  50% {
+    border-color: #ffffff;
+    box-shadow: 0 0 18px var(--theme-primary-glow);
+  }
+}
+
+body.safe-zone-on .radar-uplink-banner {
+  left: max(16px, var(--safe-zone-inset, 0px)) !important;
+}
+
 .rwr-warning-box {
   position: absolute;
   top: 8px;
@@ -136,7 +182,7 @@ body.safe-zone-on .radar-floating-cam-bar {
   min-width: 80px;
 }
 
-/* Separated Fleet button: placed to the right of declutter and ground with exact matching 32px height */
+/* Separated Fleet button: placed to the right of declutter and ground */
 #btn-mobile-open-fleet.fleet-btn {
   position: absolute;
   bottom: 10px;
@@ -244,5 +290,11 @@ body.safe-zone-on .mobile-steering-overlay {
     top: 6px;
     right: 6px;
     padding: 2px 5px;
+  }
+  .radar-uplink-banner {
+    top: 52px !important;
+    left: 8px !important;
+    font-size: 0.54rem !important;
+    padding: 2px 7px !important;
   }
 }

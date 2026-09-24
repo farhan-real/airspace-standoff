@@ -5,20 +5,11 @@
 class LeaderboardUI {
   static init() {
     const btnProc = document.getElementById('btn-proc-leaderboard');
-    const btnHud = document.getElementById('btn-hud-leaderboard');
     const btnClose = document.getElementById('btn-close-leaderboard');
     const modal = document.getElementById('leaderboard-modal');
 
     if (btnProc) {
       btnProc.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        LeaderboardUI.open();
-      };
-    }
-
-    if (btnHud) {
-      btnHud.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
         LeaderboardUI.open();
@@ -35,9 +26,7 @@ class LeaderboardUI {
 
     if (modal) {
       modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          LeaderboardUI.close();
-        }
+        if (e.target === modal) LeaderboardUI.close();
       });
     }
   }
@@ -46,7 +35,6 @@ class LeaderboardUI {
     const modal = document.getElementById('leaderboard-modal');
     if (!modal) return;
     if (window.Game && window.Game.controls) window.Game.controls.autoPauseOnDialogOpen();
-
     LeaderboardUI.render();
     modal.classList.add('active');
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
@@ -65,30 +53,23 @@ class LeaderboardUI {
     if (!tableContainer || !detailContainer) return;
 
     const list = (window.Persistence && window.Persistence.getTopSorties)
-      ? window.Persistence.getTopSorties()
-      : [];
+      ? window.Persistence.getTopSorties() : [];
 
     if (list.length === 0) {
       tableContainer.innerHTML = `
         <div style="text-align:center;padding:40px 10px;color:#8494ab;font-size:0.72rem;">
           <b style="color:#00f0ff;">NO ARCHIVED SORTIES LOGGED YET</b>
           <p style="margin-top:6px;">Complete missions to set high scores on the leaderboard.</p>
-        </div>
-      `;
+        </div>`;
       detailContainer.innerHTML = `
         <div style="text-align:center;padding:40px 10px;color:#8494ab;font-size:0.72rem;">
           Select a recorded sortie from the left pane to view classified flight debrief details.
-        </div>
-      `;
+        </div>`;
       return;
     }
 
     const rowsHtml = list.map((item, idx) => {
-      let rankClass = 'rank-standard';
-      if (idx === 0) rankClass = 'rank-gold';
-      else if (idx === 1) rankClass = 'rank-silver';
-      else if (idx === 2) rankClass = 'rank-bronze';
-
+      const rankClass = idx === 0 ? 'rank-gold' : (idx === 1 ? 'rank-silver' : (idx === 2 ? 'rank-bronze' : 'rank-standard'));
       return `
         <tr class="leaderboard-row ${idx === 0 ? 'selected' : ''}" data-idx="${idx}">
           <td><span class="leaderboard-rank-tag ${rankClass}">#${idx + 1}</span></td>
@@ -96,8 +77,7 @@ class LeaderboardUI {
           <td style="color:#7dd3fc;">${item.difficulty || 'VETERAN'}</td>
           <td style="color:#00f0ff;">${item.timeStr || '00:00'}</td>
           <td style="text-align:right;"><b style="color:#00f5a0;font-size:0.74rem;">${(item.totalScore || 0).toLocaleString()}</b></td>
-        </tr>
-      `;
+        </tr>`;
     }).join('');
 
     tableContainer.innerHTML = `
@@ -112,23 +92,22 @@ class LeaderboardUI {
           </tr>
         </thead>
         <tbody>${rowsHtml}</tbody>
-      </table>
-    `;
+      </table>`;
 
     tableContainer.querySelectorAll('.leaderboard-row').forEach(row => {
       row.onclick = () => {
         tableContainer.querySelectorAll('.leaderboard-row').forEach(r => r.classList.remove('selected'));
         row.classList.add('selected');
         const i = parseInt(row.getAttribute('data-idx'), 10);
-        LeaderboardUI.renderDetail(list[i]);
+        LeaderboardUI.renderDetail(list[i], i);
         if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       };
     });
 
-    LeaderboardUI.renderDetail(list[0]);
+    LeaderboardUI.renderDetail(list[0], 0);
   }
 
-  static renderDetail(item) {
+  static renderDetail(item, itemIdx = 0) {
     const detailContainer = document.getElementById('leaderboard-detail-view');
     if (!detailContainer || !item) return;
 
@@ -137,15 +116,9 @@ class LeaderboardUI {
     const topThreePilots = (item.topPilots && item.topPilots.length > 0)
       ? item.topPilots
       : (pilots.slice(0, 3).map((p, idx) => ({
-          rank: idx + 1,
-          callsign: p.callsign || 'Pilot',
-          model: p.model || 'JET',
-          team: 'friendly',
-          isAce: false,
-          kills: p.kills || 0,
-          evaded: 0,
-          points: p.scorePoints || 0,
-          survived: p.survived
+          rank: idx + 1, callsign: p.callsign || 'Pilot', model: p.model || 'JET',
+          team: 'friendly', isAce: false, kills: p.kills || 0, evaded: 0,
+          points: p.scorePoints || p.points || 0, survived: p.survived
         })));
 
     const podiumCardsHtml = topThreePilots.map((p, idx) => {
@@ -155,84 +128,33 @@ class LeaderboardUI {
       const teamColor = p.isAce ? '#ffd700' : (isBlue ? '#00f0ff' : '#ff3366');
       return `
         <div class="dossier-podium-card ${rankClass}">
-          <div class="dossier-podium-head">
-            <span style="color:#ffffff;">#${p.rank || idx + 1} PILOT</span>
-            <b style="color:${teamColor};">[${teamTag}]</b>
-          </div>
+          <div class="dossier-podium-head"><span style="color:#ffffff;">#${p.rank || idx + 1} PILOT</span><b style="color:${teamColor};">[${teamTag}]</b></div>
           <div class="dossier-podium-cs">${p.callsign || 'Pilot'}</div>
           <div class="dossier-podium-sub">${p.model || 'JET'} &bull; <span style="color:${p.survived ? '#00f5a0' : '#ef4444'};">${p.survived ? 'SURVIVED' : 'LOST'}</span></div>
           <div class="dossier-podium-metrics">
-            <span><b>${p.kills || 0}</b> HITS</span>
-            <span><b>${p.evaded || 0}</b> EVADED</span>
-            <b style="color:#00f5a0;">${(p.points || 0).toLocaleString()} VP</b>
+            <span><b>${p.kills || 0}</b> HITS</span><span><b>${p.evaded || 0}</b> EVADED</span><b style="color:#00f5a0;">${(p.points || 0).toLocaleString()} VP</b>
           </div>
-        </div>
-      `;
+        </div>`;
     }).join('');
 
     const timelineEvents = item.timeline || [];
     const timelineHtml = (timelineEvents.length > 0)
-      ? timelineEvents.map(ev => {
-          const isKill = ev.type === 'kill' || ev.type === 'ace-kill';
-          const isRoe = ev.type === 'roe_penalty';
-          const isHit = ev.type === 'hit';
-          const isTimeBonus = ev.type === 'time_bonus';
-          const isVictory = ev.type === 'victory';
-          const col = isVictory ? '#00f0ff' : (ev.type === 'ace-kill' ? '#ffd700' : (isTimeBonus ? '#00f5a0' : (isKill ? (ev.team === 'friendly' ? '#00f0ff' : '#ff3366') : (isRoe ? '#f97316' : (isHit ? '#38bdf8' : '#94a3b8')))));
-          const teamStr = isVictory ? 'VICTORY' : (isTimeBonus ? 'TIME BONUS' : (ev.type === 'ace-kill' ? 'LEADER DOWN' : (ev.team ? (ev.team === 'friendly' ? 'BLUE' : 'RED') : '')));
-
-          if (isVictory) {
-            return `
-              <div class="timeline-entry victory-entry">
-                <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#00f0ff;">[AIR DOMINANCE]</b> <span>${ev.source || 'Squadron'} achieved theater victory</span></div>
-                <b style="color:#00f0ff;">VICTORY</b>
-              </div>
-            `;
-          } else if (isTimeBonus) {
-            return `
-              <div class="timeline-entry" style="background:rgba(0,245,160,0.08);border-left:2px solid #00f5a0;">
-                <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#00f5a0;">[SPEED BONUS]</b> <span>Sortie rapid completion bonus</span></div>
-                <b style="color:#00f5a0;">+${ev.points || 0} VP</b>
-              </div>
-            `;
-          } else if (isKill) {
-            return `
-              <div class="timeline-entry ${ev.type === 'ace-kill' ? 'ace-kill' : 'kill'}">
-                <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:${col};">[${teamStr}]</b> <span><b>${ev.source}</b> destroyed <b>${ev.target}</b></span></div>
-                <b style="color:${col};">+${ev.points || 0} VP</b>
-              </div>
-            `;
-          } else if (isHit) {
-            return `
-              <div class="timeline-entry hit">
-                <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#38bdf8;">[STRIKE]</b> <span><b>${ev.source}</b> struck <b>${ev.target}</b> (-${ev.damage || 2} HP)</span></div>
-                <b style="color:#64748b;">HIT</b>
-              </div>
-            `;
-          } else if (isRoe) {
-            return `
-              <div class="timeline-entry roe">
-                <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#f97316;">[ROE PENALTY]</b> <span>${ev.reason || 'Civilian engagement violation'}</span></div>
-                <b style="color:#ff3366;">${ev.points || 0} VP</b>
-              </div>
-            `;
-          } else {
-            return `
-              <div class="timeline-entry">
-                <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <span>${ev.target || ev.reason || 'Sortie Engagement'}</span></div>
-                <b>${ev.points || 0} VP</b>
-              </div>
-            `;
-          }
-        }).join('')
+      ? timelineEvents.map(ev => LeaderboardUI.renderTimelineEvent(ev)).join('')
       : `<div style="color:#8494ab;font-size:0.62rem;font-style:italic;padding:8px 0;">No chronological engagement events archived for this sortie.</div>`;
 
-    const pilotsListHtml = pilots.map(p => `
-      <div class="dossier-row">
-        <span>${p.callsign || 'Pilot'} [${p.model || 'JET'}]</span>
-        <span style="color:${p.survived ? '#00f5a0' : '#ef4444'};">${p.survived ? 'SURVIVED' : 'LOST'} &bull; <b>${p.scorePoints || 0} VP</b></span>
-      </div>
-    `).join('');
+    const pilotsListHtml = pilots.map((p, pIdx) => `
+      <div class="dossier-roster-item">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="color:#8494ab;font-family:var(--font-dotdigital);font-size:0.58rem;">#${pIdx + 1}</span>
+          <b style="color:#ffffff;">${p.callsign || 'Pilot'}</b>
+          <span style="color:var(--color-moon-mist);font-size:0.58rem;">[${p.model || 'JET'}]</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-family:var(--font-dotdigital);">
+          <span style="color:${p.survived ? 'var(--stat-tier-2)' : 'var(--color-red)'};font-weight:600;">${p.survived ? 'SURVIVED' : 'LOST'}</span>
+          <span style="color:var(--color-moon-mist);font-size:0.58rem;">${p.kills || 0} HITS</span>
+          <b style="color:var(--stat-tier-2);">${(p.scorePoints || p.points || 0).toLocaleString()} VP</b>
+        </div>
+      </div>`).join('');
 
     detailContainer.innerHTML = `
       <div class="dossier-header-box">
@@ -240,9 +162,14 @@ class LeaderboardUI {
           <div class="dossier-title">${item.squadronName || '7th Tactical Squadron'}</div>
           <span style="color:#8494ab;font-size:0.58rem;">SORTIE ARCHIVE RECORD &bull; ${item.date || ''}</span>
         </div>
-        <div style="text-align:right;">
-          <div class="dossier-score-num">${(item.totalScore || 0).toLocaleString()}</div>
-          <span style="color:#00f5a0;font-size:0.58rem;font-weight:800;">POINTS</span>
+        <div class="dossier-header-right">
+          <button type="button" class="hud-btn small alert btn-delete-sortie" id="btn-delete-sortie" title="Delete this match record" aria-label="Delete sortie">
+            <img src="icons/trash.svg" class="btn-vector-ico" width="12" height="12" alt="Delete">
+          </button>
+          <div class="dossier-score-block">
+            <div class="dossier-score-num">${(item.totalScore || 0).toLocaleString()}</div>
+            <span class="dossier-score-unit">POINTS</span>
+          </div>
         </div>
       </div>
 
@@ -277,16 +204,102 @@ class LeaderboardUI {
         <div class="dossier-timeline-list">${timelineHtml}</div>
       </div>
 
-      <div class="dossier-card" style="min-height:75px;">
-        <div style="color:#7dd3fc;font-size:0.64rem;font-weight:800;border-bottom:1px solid #162c46;padding-bottom:3px;margin-bottom:3px;">SQUADRON PARTICIPATING ROSTER</div>
-        <div style="overflow-y:auto;max-height:100px;display:flex;flex-direction:column;gap:2px;">${pilotsListHtml}</div>
-      </div>
-    `;
+      <div class="dossier-roster-card">
+        <div style="color:#7dd3fc;font-size:0.64rem;font-weight:800;border-bottom:1px solid #162c46;padding-bottom:3px;display:flex;justify-content:space-between;">
+          <span>SQUADRON PARTICIPATING ROSTER</span>
+          <span style="color:#8494ab;font-size:0.56rem;">${pilots.length} AIRCRAFT ASSIGNED</span>
+        </div>
+        <div class="dossier-roster-list">${pilotsListHtml || '<span style="color:#8494ab;font-size:0.60rem;font-style:italic;">No pilot records found.</span>'}</div>
+      </div>`;
+
+    const deleteBtn = detailContainer.querySelector('#btn-delete-sortie');
+    if (deleteBtn) {
+      deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        const confirmMsg = `Delete sortie record for "${item.squadronName || 'Squadron'}" (${(item.totalScore || 0).toLocaleString()} PTS)?`;
+        const doDelete = () => {
+          if (window.Persistence && typeof window.Persistence.deleteTopSortie === 'function') {
+            window.Persistence.deleteTopSortie(item.id !== undefined ? item.id : itemIdx);
+          }
+          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+          LeaderboardUI.render();
+        };
+
+        if (window.Game && window.Game.procurement && typeof window.Game.procurement.showConfirmModal === 'function') {
+          window.Game.procurement.showConfirmModal('DELETE SORTIE', confirmMsg, doDelete, { confirmText: 'DELETE', isAlert: true });
+        } else if (window.confirm(confirmMsg)) {
+          doDelete();
+        }
+      };
+    }
+  }
+
+  static renderTimelineEvent(ev) {
+    const isKill = ev.type === 'kill' || ev.type === 'ace-kill';
+    const isRoe = ev.type === 'roe_penalty';
+    const isHit = ev.type === 'hit';
+    const isTimeBonus = ev.type === 'time_bonus';
+    const isVictory = ev.type === 'victory';
+    const col = isVictory ? '#00f0ff' : (ev.type === 'ace-kill' ? '#ffd700' : (isTimeBonus ? '#00f5a0' : (isKill ? (ev.team === 'friendly' ? '#00f0ff' : '#ff3366') : (isRoe ? '#f97316' : (isHit ? '#38bdf8' : '#94a3b8')))));
+    const teamStr = isVictory ? 'VICTORY' : (isTimeBonus ? 'TIME BONUS' : (ev.type === 'ace-kill' ? 'LEADER DOWN' : (ev.team ? (ev.team === 'friendly' ? 'BLUE' : 'RED') : '')));
+    const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge" style="color:#00f0ff;font-size:0.56rem;margin-left:4px;">[Salvo: ${ev.salvoBreakdown || ('x' + (ev.salvoCount || 2))}]</span>` : '';
+
+    if (isVictory) {
+      return `
+        <div class="timeline-entry victory-entry">
+          <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#00f0ff;">[MISSION COMPLETE]</b> <span class="timeline-combatant"><b>${ev.source || 'Squadron'}</b> secured theater air dominance</span></div>
+          <b style="color:#00f0ff;white-space:nowrap;">AIR DOMINANCE</b>
+        </div>`;
+    } else if (isTimeBonus) {
+      return `
+        <div class="timeline-entry" style="background:rgba(0,245,160,0.08);border-left:2px solid #00f5a0;">
+          <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#00f5a0;">[SPEED BONUS]</b> <span>Rapid air neutralization speed bonus</span></div>
+          <b style="color:#00f5a0;white-space:nowrap;">+${(ev.points || 0).toLocaleString()} VP</b>
+        </div>`;
+    } else if (isKill) {
+      return `
+        <div class="timeline-entry ${ev.type === 'ace-kill' ? 'ace-kill' : 'kill'}">
+          <div class="timeline-main-info">
+            <span class="timeline-time">[${ev.time || '00:00'}]</span>
+            <b style="color:${col};">[${teamStr}]</b>
+            <span class="timeline-combatant"><b>${ev.source || 'PILOT'}</b> (${ev.sourceType || 'AIRCRAFT'})</span>
+            <span>destroyed</span>
+            <span class="timeline-combatant"><b>${ev.target || 'TARGET'}</b> (${ev.targetType || 'TARGET'})</span>
+            <span class="timeline-weapon-tag">using <b>${ev.weapon || 'Missile'}</b></span>
+            ${salvoBadge}
+          </div>
+          <b style="color:${col};white-space:nowrap;">+${(ev.points || 0).toLocaleString()} VP</b>
+        </div>`;
+    } else if (isHit) {
+      return `
+        <div class="timeline-entry hit">
+          <div class="timeline-main-info">
+            <span class="timeline-time">[${ev.time || '00:00'}]</span>
+            <b style="color:#38bdf8;">[${teamStr}]</b>
+            <span class="timeline-combatant"><b>${ev.source || 'PILOT'}</b> (${ev.sourceType || 'AIRCRAFT'})</span>
+            <span>struck</span>
+            <span class="timeline-combatant"><b>${ev.target || 'TARGET'}</b> (${ev.targetType || 'TARGET'})</span>
+            <span class="timeline-weapon-tag">with <b>${ev.weapon || 'Missile'}</b> (-${ev.damage || 2} HP)</span>
+            ${salvoBadge}
+          </div>
+          <b style="color:#64748b;white-space:nowrap;">STRIKE</b>
+        </div>`;
+    } else if (isRoe) {
+      return `
+        <div class="timeline-entry roe">
+          <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#f97316;">[ROE PENALTY]</b> <span>${ev.reason || 'Civilian engagement violation'}</span></div>
+          <b style="color:#ff3366;white-space:nowrap;">${ev.points || 0} VP</b>
+        </div>`;
+    }
+    return `
+      <div class="timeline-entry">
+        <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <span>${ev.target || ev.reason || 'Combat Event'}</span></div>
+        <b>${ev.points || 0} VP</b>
+      </div>`;
   }
 }
 
 window.LeaderboardUI = LeaderboardUI;
-
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => LeaderboardUI.init());
 } else {
