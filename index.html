@@ -546,7 +546,7 @@
 
         <span id="selected-target-info" style="display:none;">TARGET: NONE</span>
 
-        <!-- THROTTLE QUADRANT -->
+        <!-- THROTTLE QUADRANT (KEYBOARD-DEFOCUSED RANGE INPUT) -->
         <div class="throttle-quadrant" id="throttle-quadrant" title="Engine Thrust Setting">
           <div class="throttle-meta-row">
             <span class="tq-label">ENGINE POWER</span>
@@ -554,7 +554,7 @@
           </div>
 
           <div class="throttle-track-wrap">
-            <input type="range" id="engine-slider" min="20" max="100" value="50" class="military-throttle-slider">
+            <input type="range" id="engine-slider" min="20" max="100" value="50" class="military-throttle-slider" tabindex="-1" autocomplete="off">
             <div class="throttle-detents">
               <span class="detent" style="left:0%;">IDLE</span>
               <span class="detent" style="left:37.5%;">CRUISE</span>

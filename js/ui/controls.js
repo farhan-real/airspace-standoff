@@ -183,11 +183,26 @@ class ControlsSystem {
 
     const slider = document.getElementById('engine-slider');
     if (slider) {
+      slider.setAttribute('tabindex', '-1');
       slider.oninput = (e) => {
         if (!this.game.activeUnit || this.game.activeUnit.hp <= 0.05) return;
         this.game.activeUnit.engineAlpha = parseInt(e.target.value, 10) / 100.0;
         this.game.avionics.updateActiveUnitMFD();
       };
+
+      // Disallow focus and suppress arrow key interception on throttle slider
+      const removeFocus = () => { try { slider.blur(); } catch (err) {} };
+      slider.addEventListener('change', removeFocus);
+      slider.addEventListener('pointerup', removeFocus);
+      slider.addEventListener('mouseup', removeFocus);
+      slider.addEventListener('touchend', removeFocus);
+      slider.addEventListener('keydown', (e) => {
+        if (e.key && e.key.startsWith('Arrow')) {
+          e.preventDefault();
+          e.stopPropagation();
+          removeFocus();
+        }
+      });
     }
 
     const diveBtn = document.getElementById('btn-pitch-dive');

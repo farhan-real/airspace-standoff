@@ -1,6 +1,7 @@
 /**
  * AIRSPACE STANDOFF: Keyboard Controls
  * Direct pylon firing, simulation time warp triggers, and configurable keybind bindings.
+ * Arrows strictly reserved for turning (Left/Right) and cycling friendly units (Up/Down).
  */
 
 class KeyboardControlsHandler {
@@ -33,7 +34,15 @@ class KeyboardControlsHandler {
 
   initKeyListeners() {
     window.addEventListener('keydown', (e) => {
-      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+      // Disallow range inputs (like throttle) from capturing or blocking game controls
+      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) {
+        if (e.target.tagName === 'INPUT' && e.target.type === 'range') {
+          try { e.target.blur(); } catch (err) {}
+        } else {
+          return;
+        }
+      }
+
       if (window.Settings && window.Settings.isRecordingKey) return;
 
       const key = e.code || e.key;
@@ -93,15 +102,21 @@ class KeyboardControlsHandler {
         return;
       }
 
+      // Arrows strictly reserved for steering and unit switching
       if (key === binds.STEER_LEFT || key === 'ArrowLeft' || key === binds.STEER_RIGHT || key === 'ArrowRight') {
-        e.preventDefault(); return;
+        e.preventDefault();
+        return;
       }
 
       if (key === binds.NEXT_UNIT || key === 'ArrowDown') {
-        e.preventDefault(); this.sys.cycleFriendlyUnit(1); return;
+        e.preventDefault();
+        this.sys.cycleFriendlyUnit(1);
+        return;
       }
       if (key === binds.PREV_UNIT || key === 'ArrowUp') {
-        e.preventDefault(); this.sys.cycleFriendlyUnit(-1); return;
+        e.preventDefault();
+        this.sys.cycleFriendlyUnit(-1);
+        return;
       }
 
       if (key === binds.CYCLE_TARGET || key === 'KeyT' || key === 'Tab' || key === 'Space') {
