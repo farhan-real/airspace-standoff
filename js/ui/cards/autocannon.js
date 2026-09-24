@@ -152,7 +152,7 @@ class AutocannonBayRenderer {
     unit.gunCooldown = cd;
 
     const numRounds = gun.roundsPerBurst || 4;
-    const ammoSpend = gun.ammoPerBurst || (numRounds * 5);
+    const ammoSpend = gun.roundsPerBurst || gun.ammoPerBurst || numRounds;
     unit.gunAmmo = Math.max(0, unit.gunAmmo - Math.min(unit.gunAmmo, ammoSpend));
 
     const mountedPods = AutocannonBayRenderer.getMountedGunpods(unit);

@@ -262,8 +262,8 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
           if (typeof enemy.applyActionStress === 'function') enemy.applyActionStress(this.gun.kineticConcussion * 0.4 * dt);
         }
 
-        const ammoUsed = Math.max(1, Math.ceil(20 * dt));
-        this.gunAmmo = Math.max(0, this.gunAmmo - ammoUsed);
+        const burstRds = this.gun.roundsPerBurst || 4;
+        this.gunAmmo = Math.max(0, this.gunAmmo - burstRds);
 
         this.gunCooldown = (window.CONFIG && window.CONFIG.AUTO_GUN_COOLDOWN) || 0.50;
 
