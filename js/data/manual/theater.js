@@ -30,7 +30,7 @@ window.MANUAL_THEATER = [
             <tr>
               <td style="color:#8494ab;font-weight:800;">PERMISSIVE SECTOR</td>
               <td>0.50x VP</td>
-              <td>180.0M CR</td>
+              <td>150.0M CR</td>
               <td>0</td>
               <td>7.2s reaction cooldown, 62% blunder rate, 16% evasion skill, basic standard flight turns, no notching.</td>
             </tr>
@@ -51,21 +51,21 @@ window.MANUAL_THEATER = [
             <tr>
               <td style="color:#ffd700;font-weight:800;">HIGH-THREAT GRID</td>
               <td>2.00x VP</td>
-              <td>450.0M CR</td>
+              <td>460.0M CR</td>
               <td>2</td>
               <td>3.4s reaction cooldown, 26% blunder rate, 44% evasion skill, coordinated pincer attacks, standard maneuvers only, 2 Aces.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">AIR DENIAL ZONE</td>
               <td>2.60x VP</td>
-              <td>550.0M CR</td>
+              <td>560.0M CR</td>
               <td>2</td>
               <td>2.8s reaction cooldown, 18% blunder rate, 52% evasion skill, Doppler notching, advanced post-stall maneuvers, 2 Aces.</td>
             </tr>
             <tr>
               <td style="color:#ff3366;font-weight:800;">FORTRESS AIRSPACE</td>
               <td>3.20x VP</td>
-              <td>650.0M CR</td>
+              <td>660.0M CR</td>
               <td>3</td>
               <td>2.2s reaction cooldown, 12% blunder rate, 60% evasion skill, energy fighting, Doppler notching, TVC cobras, 3 Aces.</td>
             </tr>
@@ -96,7 +96,7 @@ window.MANUAL_THEATER = [
               <td style="color:#00f0ff;font-weight:800;">S-400 / Patriot Battery</td>
               <td>8 HP</td>
               <td>52.0 km</td>
-              <td>Fires Mach 4.8 radar-guided SAM volleys. <b>Requires an active Early Warning Radar Array</b> to detect and track targets; destroying the radar blinds the battery!</td>
+              <td>Fires Mach 5.2 radar-guided SAM volleys. <b>Requires an active Early Warning Radar Array</b> to detect and track targets; destroying the radar blinds the battery!</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Early Warning Radar Array</td>
