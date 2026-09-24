@@ -82,13 +82,13 @@ window.MANUAL_COMBAT = [
             <tr>
               <td style="color:#38bdf8;font-weight:800;">[SUSTAIN]</td>
               <td>Midcourse Sustainer</td>
-              <td>Sustainer grain (AIM-260) burns for 14s, maintaining Mach 3.6 across long distances.</td>
+              <td>Sustainer grain (AIM-260) burns for 14s, maintaining Mach 4.2 across long distances.</td>
               <td>Extends effective BVR reach without the kinetic decay of pure booster rockets.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">[RAMJET]</td>
               <td>Continuous Ramjet</td>
-              <td>Ramjet (Meteor, PL-21) maintains continuous thrust at Mach 3.2&ndash;3.6 with <b>zero speed decay</b>.</td>
+              <td>Ramjet (Meteor, PL-21) maintains continuous thrust at Mach 4.2&ndash;4.5 with <b>zero speed decay</b>.</td>
               <td>Hits distant targets at full sprint speed, denying the kinetic escape window.</td>
             </tr>
             <tr>
@@ -100,13 +100,13 @@ window.MANUAL_COMBAT = [
             <tr>
               <td style="color:#ffd700;font-weight:800;">[PULSE 2]</td>
               <td>Terminal Reignition</td>
-              <td>At 22 km from target, PL-15E second pulse rocket ignites, surging velocity by <b>+1.1 Mach</b>.</td>
+              <td>At 22 km from target, PL-15E second pulse rocket ignites, surging velocity by <b>+0.9 Mach</b> (to Mach 4.5).</td>
               <td>Defeats midcourse defensive notches with a dramatic burst of speed and turn authority.</td>
             </tr>
             <tr>
               <td style="color:#f97316;font-weight:800;">[LOFT] / [DIVE]</td>
               <td>Aero-Ballistic Trajectory (INS / ARH)</td>
-              <td>Lofts into stratosphere (FL550&ndash;FL600), then plunges in terminal hypersonic dive (Mach 4.2&ndash;5.0).</td>
+              <td>Lofts into stratosphere (FL550&ndash;FL650), then plunges in terminal hypersonic dive (Mach 5.8&ndash;6.2).</td>
               <td>Devastating kinetic energy against heavy aircraft and bunkers; wide turn radius allows perpendicular evasion.</td>
             </tr>
             <tr>

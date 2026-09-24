@@ -5,7 +5,7 @@
 
 class MissileKinetics {
   static getRelativePeakSpeed(weapon) {
-    return weapon ? (weapon.speedMach || 2.8) : 2.8;
+    return weapon ? (weapon.speedMach || 3.0) : 3.0;
   }
 
   static getAccelerationProfile(weapon) {
@@ -13,14 +13,14 @@ class MissileKinetics {
     const category = weapon.category || 'A2A';
     const range = weapon.rangeKm || 40;
 
-    if (category === 'A2A' && range <= 35) return { boostDuration: 1.4, accelMultiplier: 3.2, hasSustainedThrust: false };
-    if (trait === 'SWARM_RIPPLE' || trait === 'ALL_ASPECT_BURST') return { boostDuration: 1.2, accelMultiplier: 2.8, hasSustainedThrust: false };
-    if (trait === 'RAMJET_SUSTAINED' || trait === 'EXTREME_STANDOFF') return { boostDuration: 2.4, accelMultiplier: 2.2, hasSustainedThrust: true };
-    if (trait === 'STEALTH_CRUISE') return { boostDuration: 1.4, accelMultiplier: 1.8, hasSustainedThrust: true };
+    if (category === 'A2A' && range <= 35) return { boostDuration: 1.2, accelMultiplier: 3.4, hasSustainedThrust: false };
+    if (trait === 'SWARM_RIPPLE' || trait === 'ALL_ASPECT_BURST') return { boostDuration: 1.0, accelMultiplier: 3.0, hasSustainedThrust: false };
+    if (trait === 'RAMJET_SUSTAINED' || trait === 'EXTREME_STANDOFF') return { boostDuration: 2.2, accelMultiplier: 2.5, hasSustainedThrust: true };
+    if (trait === 'STEALTH_CRUISE') return { boostDuration: 1.2, accelMultiplier: 1.6, hasSustainedThrust: true };
     if (trait === 'GLIDE_SATURATION') return { boostDuration: 0.0, accelMultiplier: 1.0, hasSustainedThrust: false };
-    if (trait === 'DUAL_PULSE_SURGE') return { boostDuration: 2.6, accelMultiplier: 2.2, hasSustainedThrust: false };
-    if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') return { boostDuration: 3.6, accelMultiplier: 2.4, hasSustainedThrust: false };
-    return { boostDuration: 2.8, accelMultiplier: 2.0, hasSustainedThrust: false };
+    if (trait === 'DUAL_PULSE_SURGE') return { boostDuration: 2.4, accelMultiplier: 2.4, hasSustainedThrust: false };
+    if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') return { boostDuration: 3.2, accelMultiplier: 2.8, hasSustainedThrust: false };
+    return { boostDuration: 2.6, accelMultiplier: 2.2, hasSustainedThrust: false };
   }
 
   static getMaxTurnRate(missile) {
@@ -28,12 +28,12 @@ class MissileKinetics {
     const trait = w.trait || '';
     let baseRate = 1.6;
 
-    if (trait === 'SNAP_TURN' || trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST') baseRate = 3.6;
-    else if (trait === 'HOBS_VANE') baseRate = 3.4;
-    else if (w.category === 'A2A' && (w.rangeKm || 40) <= 35) baseRate = 3.0;
+    if (trait === 'SNAP_TURN' || trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST') baseRate = 3.8;
+    else if (trait === 'HOBS_VANE') baseRate = 3.5;
+    else if (w.category === 'A2A' && (w.rangeKm || 40) <= 35) baseRate = 3.2;
     else if (trait === 'RAMJET_SUSTAINED' || trait === 'STEALTH_SEEKER' || trait === 'DUAL_PULSE_SURGE') baseRate = 2.2;
     else if (w.category === 'A2A') baseRate = 2.0;
-    else if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') baseRate = 1.1;
+    else if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') baseRate = 1.0;
     else if (trait === 'STEALTH_CRUISE' || trait === 'GLIDE_SATURATION') baseRate = 0.8;
 
     if (missile.distanceToTarget && missile.distanceToTarget <= 3.5) baseRate = Math.max(baseRate, 3.2);
@@ -45,9 +45,11 @@ class MissileKinetics {
     const w = missile.weapon || {};
     const source = missile.source;
     const launchCraftSpeed = source ? Math.max(0.70, Number(source.speed || 0.85)) : 0.85;
-    const initialKick = (w.trait === 'GLIDE_SATURATION') ? 0.0 : 0.75;
-    missile.launchSpeed = (w.trait === 'GLIDE_SATURATION') ? 0.90 : (launchCraftSpeed + initialKick);
-    missile.peakSpeed = Math.max(missile.launchSpeed, MissileKinetics.getRelativePeakSpeed(w));
+    const isSubsonic = (w.speedMach && w.speedMach < 1.0) || w.trait === 'GLIDE_SATURATION' || w.trait === 'STEALTH_CRUISE';
+    const initialKick = isSubsonic ? 0.0 : 0.85;
+
+    missile.launchSpeed = isSubsonic ? (w.speedMach || 0.85) : (launchCraftSpeed + initialKick);
+    missile.peakSpeed = isSubsonic ? (w.speedMach || 0.85) : Math.max(missile.launchSpeed, MissileKinetics.getRelativePeakSpeed(w));
     missile.speed = missile.launchSpeed;
 
     const profile = MissileKinetics.getAccelerationProfile(w);
@@ -60,7 +62,7 @@ class MissileKinetics {
     missile.isLofting = Boolean(w.trait === 'LOFTED_HYPERSONIC' || w.trait === 'HYPERSONIC_IMPACT');
     missile.initialAlt = source ? (source.alt || 0.5) : 0.5;
 
-    missile.stage = (w.trait === 'GLIDE_SATURATION') ? 'GLIDE' : 'BOOST';
+    missile.stage = isSubsonic ? 'CRUISE' : 'BOOST';
     missile.isPassiveRadar = Boolean(w.seeker === 'PASSIVE_RADAR');
     missile.launchStealthDuration = missile.isPassiveRadar ? 3.2 : 0.0;
     missile.pathRevealDistance = missile.isPassiveRadar ? 20.0 : 999.0;
@@ -81,7 +83,7 @@ class MissileKinetics {
     let headingDiffToLos = Math.abs(missile.heading - los);
     while (headingDiffToLos > Math.PI) headingDiffToLos = Math.abs(headingDiffToLos - Math.PI * 2);
 
-    const vm = Math.max(0.45, missile.speed * 0.35);
+    const vm = Math.max(0.30, missile.speed * 0.35);
     const tgtSpeedKm = (tgt.speed || 0.8) * 0.35;
     const tgtHdg = tgt.heading || 0;
     const vtx = Math.cos(tgtHdg) * tgtSpeedKm;
@@ -127,7 +129,7 @@ class MissileKinetics {
     const prevDist = missile.prevDistanceToTarget;
     const tgt = missile.target;
 
-    if (missile.age < 1.0) return { shouldTrigger: false };
+    if (missile.age < 0.8) return { shouldTrigger: false };
     if (dist <= 0.65) return { shouldTrigger: true, isHitCandidate: true };
 
     if (missile.minDistanceReached <= 1.8 && dist > prevDist) {
@@ -146,7 +148,7 @@ class MissileKinetics {
     if (missile.age <= missile.boostDuration) {
       missile.stage = 'BOOST';
       const needed = Math.max(0.1, missile.peakSpeed - missile.launchSpeed);
-      const accel = (needed / Math.max(0.4, missile.boostDuration)) * (missile.accelMultiplier || 1.8);
+      const accel = (needed / Math.max(0.3, missile.boostDuration)) * (missile.accelMultiplier || 2.0);
       missile.speed = Math.min(missile.peakSpeed, missile.speed + accel * dt);
       return;
     }
@@ -156,14 +158,14 @@ class MissileKinetics {
         missile.hasIgnitedPulseTwo = true;
         missile.pulseTwoTimer = 2.4;
         if (window.Game && window.Game.radar) {
-          window.Game.radar.spawnCombatText(missile.x, missile.y, 'PULSE 2 (+1.1M SURGE)', '#00f0ff');
+          window.Game.radar.spawnCombatText(missile.x, missile.y, 'PULSE 2 (+0.9M SURGE)', '#00f0ff');
           window.Game.radar.spawnShockwave(missile.x, missile.y, '#00f0ff', 24);
         }
       }
       if (missile.pulseTwoTimer > 0) {
         missile.pulseTwoTimer -= dt;
         missile.stage = 'PULSE 2';
-        missile.speed = Math.min(missile.peakSpeed + 0.65, missile.speed + 2.8 * dt);
+        missile.speed = Math.min(missile.peakSpeed + 0.9, missile.speed + 3.2 * dt);
         return;
       }
     }
@@ -172,11 +174,11 @@ class MissileKinetics {
       if (distToTarget > 28.0) {
         missile.stage = 'LOFT';
         missile.alt = Math.min(0.95, (missile.alt || 0.5) + 0.16 * dt);
-        if (missile.speed < missile.peakSpeed * 0.82) missile.speed += 2.0 * dt;
+        if (missile.speed < missile.peakSpeed * 0.85) missile.speed += 2.2 * dt;
       } else {
         missile.stage = 'DIVE';
         missile.alt = Math.max(0.18, (missile.alt || 0.5) - 0.28 * dt);
-        if (missile.speed < missile.peakSpeed) missile.speed += 3.4 * dt;
+        if (missile.speed < missile.peakSpeed) missile.speed += 4.5 * dt;
       }
       return;
     }
@@ -189,12 +191,12 @@ class MissileKinetics {
 
     if (w.trait === 'STEALTH_CRUISE') {
       missile.stage = (distToTarget <= 15.0) ? 'TERMINAL' : 'CRUISE';
-      missile.speed = Math.max(missile.peakSpeed, missile.speed);
+      missile.speed = w.speedMach || 0.85;
       return;
     }
     if (w.trait === 'GLIDE_SATURATION') {
       missile.stage = 'GLIDE';
-      missile.speed = 0.90;
+      missile.speed = w.speedMach || 0.80;
       return;
     }
 
@@ -211,8 +213,10 @@ class MissileKinetics {
     else if (w.category === 'A2A') missile.stage = (w.rangeKm <= 35) ? 'TERMINAL' : (missile.age < 12.0 ? 'MIDCOURSE' : 'COAST');
     else missile.stage = 'COAST';
 
-    const minSustain = (w.category === 'A2A' && (w.rangeKm || 40) <= 35) ? 1.85 : 2.05;
-    missile.speed = Math.max(minSustain, missile.speed - 0.045 * dt);
+    const minSustain = (w.speedMach && w.speedMach < 1.5)
+      ? (w.speedMach * 0.85)
+      : ((w.category === 'A2A' && (w.rangeKm || 40) <= 35) ? 1.65 : 2.0);
+    missile.speed = Math.max(minSustain, missile.speed - 0.05 * dt);
   }
 
   static resolveHitProbability(missile, target, weatherClouds, salvoCount) {

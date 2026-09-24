@@ -179,16 +179,16 @@ window.WEAPONS_PODS = {
     mass: 260,
     cost: 0.5,
     rangeKm: 110.0,
-    speedMach: 0.90,
+    speedMach: 0.80,
     damage: 0,
     isDecoyDrone: true,
     trait: 'RADAR_SIGNATURE_SPOOF',
     traitBadge: 'RADAR RCS MIRROR',
-    behaviorDesc: 'Miniature Air-Launched Decoy drones (2x). Replicates host aircraft radar cross-section and speed profile to deceive enemy radars.',
+    behaviorDesc: 'Miniature Air-Launched Decoy drones (2x). Replicates host aircraft radar cross-section and speed profile (Mach 0.80) to deceive enemy radars.',
     ammoCount: 2,
     sigmaPylon: 0.02,
     category: 'POD',
-    desc: 'Air-launched decoy drones (2x) matching host radar profile. Mounts inside internal stealth bays or on external pylons.'
+    desc: 'Air-launched decoy drones (2x, Mach 0.80) matching host radar profile. Mounts inside internal stealth bays or on external pylons.'
   },
   'ALE-55': {
     id: 'ALE-55',

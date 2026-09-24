@@ -12,12 +12,12 @@ window.WEAPONS_A2G = {
     mass: 2100,
     cost: 1.6,
     rangeKm: 90.0,
-    speedMach: 2.85,
+    speedMach: 3.6,
     seeker: 'PASSIVE_RADAR',
     rcs: 0.06,
     trait: 'EMITTER_KILLER',
     traitBadge: '3x SAM DAMAGE',
-    behaviorDesc: 'Passive RF seeker locks onto active radar emissions without active illumination. Deals 3x damage against SAM radars and EW jammers. Trajectory hidden until within 20 km.',
+    behaviorDesc: 'Passive RF seeker locks onto active radar emissions at Mach 3.6 without active illumination. Deals 3x damage against SAM radars and EW jammers. Trajectory hidden until within 20 km.',
     damage: 5,
     ammoCount: 4,
     minRangeKm: 5.0,
@@ -29,7 +29,7 @@ window.WEAPONS_A2G = {
     isAntiRadiation: true,
     sigmaPylon: 0.12,
     category: 'A2G',
-    desc: 'Extended-range anti-radiation missile (4x). Redesigned compact control fins allow internal stealth bay or external carriage.'
+    desc: 'Extended-range anti-radiation sprint missile (4x, Mach 3.6). Redesigned compact control fins allow internal stealth bay or external carriage.'
   },
   'GBU-39': {
     id: 'GBU-39',
@@ -40,12 +40,12 @@ window.WEAPONS_A2G = {
     mass: 1420,
     cost: 0.9,
     rangeKm: 55.0,
-    speedMach: 0.90,
+    speedMach: 0.80,
     seeker: 'GPS_INS',
     rcs: 0.005,
     trait: 'GLIDE_SATURATION',
     traitBadge: 'STANDOFF DISPERSAL',
-    behaviorDesc: 'Gliding wing dispensers release 8 GPS penetrators simultaneously for standoff facility saturation at Mach 0.90.',
+    behaviorDesc: 'Gliding wing dispensers release 8 GPS penetrators simultaneously for standoff facility saturation at subsonic glide velocity (Mach 0.80).',
     damage: 3,
     ammoCount: 8,
     minRangeKm: 4.0,
@@ -57,7 +57,7 @@ window.WEAPONS_A2G = {
     isBunkerCracker: true,
     sigmaPylon: 0.14,
     category: 'A2G',
-    desc: 'Precision stand-off glide bomb dispenser (8x). Designed for internal stealth bays and external multi-rack pylons.'
+    desc: 'Precision stand-off glide bomb dispenser (8x, Mach 0.80). Designed for internal stealth bays and external multi-rack pylons.'
   },
   'AGM-158B': {
     id: 'AGM-158B',
@@ -68,13 +68,13 @@ window.WEAPONS_A2G = {
     mass: 2600,
     cost: 2.6,
     rangeKm: 110.0,
-    speedMach: 1.15,
+    speedMach: 0.85,
     seeker: 'IIR',
     rcs: 0.0005,
     isStealthMissile: true,
     trait: 'STEALTH_CRUISE',
     traitBadge: '0.0005m2 STEALTH CRUISE',
-    behaviorDesc: 'Low-observable cruise body penetrates surface SAM rings undetected at Mach 1.15 until terminal descent.',
+    behaviorDesc: 'Low-observable cruise body penetrates surface SAM rings undetected in low-altitude subsonic cruise (Mach 0.85) until terminal descent.',
     damage: 10,
     ammoCount: 2,
     minRangeKm: 10.0,
@@ -86,7 +86,7 @@ window.WEAPONS_A2G = {
     isBunkerCracker: true,
     sigmaPylon: 0.35,
     category: 'A2G',
-    desc: 'Heavy long-range stealth cruise missiles (2x). Fits inside stealth bomber rotary bays or mounts on external heavy pylons.'
+    desc: 'Heavy long-range subsonic stealth cruise missiles (2x, Mach 0.85). Fits inside stealth bomber rotary bays or mounts on external heavy pylons.'
   },
   'KINZHAL': {
     id: 'KINZHAL',
@@ -97,12 +97,12 @@ window.WEAPONS_A2G = {
     mass: 8800,
     cost: 4.2,
     rangeKm: 135.0,
-    speedMach: 5.0,
+    speedMach: 6.2,
     seeker: 'INS',
     rcs: 0.25,
     trait: 'HYPERSONIC_IMPACT',
-    traitBadge: 'MACH 5.0 KINETIC SHOCK',
-    behaviorDesc: 'Inertial Navigation System (INS) with active radar terminal correlation. Lofts into the stratosphere, then dives at Mach 5.0 with extreme kinetic impact that neutralizes heavy bunkers in 1-2 hits.',
+    traitBadge: 'MACH 6.2 KINETIC SHOCK',
+    behaviorDesc: 'Inertial Navigation System (INS) with active radar terminal correlation. Lofts into the stratosphere, then dives at hypersonic Mach 6.2 with extreme kinetic impact that neutralizes heavy bunkers in 1-2 hits.',
     damage: 16,
     ammoCount: 2,
     minRangeKm: 15.0,
@@ -115,6 +115,6 @@ window.WEAPONS_A2G = {
     sigmaPylon: 0.80,
     category: 'A2G',
     allowedAirframes: ['MiG-31BM', 'Tu-160M', 'Su-34', 'F-15EX', 'J-16', 'B-1B'],
-    desc: 'Hypersonic aero-ballistic heavy missile (2x). Mounts exclusively on the aircraft centerline fuselage station.'
+    desc: 'Hypersonic aero-ballistic heavy missile (2x, Mach 6.2). Mounts exclusively on the aircraft centerline fuselage station.'
   }
 };

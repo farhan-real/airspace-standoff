@@ -28,7 +28,7 @@ class SurfaceUnit {
       this.rangeKm = 52.0;
       this.cooldownMax = 6.5;
       this.canAttack = true;
-      this.desc = 'Long-range surface-to-air missile battery (52 km engagement envelope). Fires radar-guided SAMs; requires active Radar Array to engage.';
+      this.desc = 'Long-range surface-to-air missile battery (52 km engagement envelope). Fires Mach 5.2 radar-guided SAMs; requires active Radar Array to engage.';
     } else if (type === 'PANTSIR') {
       this.name = team === 'friendly' ? 'Phalanx CIWS' : 'Pantsir-S1 CIWS';
       this.hp = 6;
@@ -116,7 +116,7 @@ class SurfaceUnit {
             id: this.team === 'friendly' ? 'MIM-104_SAM' : '48N6_SAM',
             name: 'Heavy SAM Missile',
             rangeKm: 52.0,
-            speedMach: 4.8,
+            speedMach: 5.2,
             seeker: 'ARH',
             rcs: 0.12,
             lambda: 0.25,
