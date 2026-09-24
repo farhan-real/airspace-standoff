@@ -26,7 +26,7 @@ body.safe-zone-on .tactical-banner {
 .pvp-switcher {
   display: flex;
   gap: 2px;
-  background: var(--glass-bg);
+  background: rgba(4, 9, 22, 0.85);
   padding: 2px;
   border-radius: var(--radius-btn);
   border: 1px solid var(--glass-border);
@@ -73,7 +73,7 @@ body.safe-zone-on .tactical-banner {
   display: flex;
   align-items: baseline;
   gap: 5px;
-  background: var(--glass-bg);
+  background: rgba(4, 9, 22, 0.85);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-btn);
   padding: 3px 8px;
@@ -98,7 +98,7 @@ body.safe-zone-on .tactical-banner {
   display: flex;
   align-items: center;
   gap: 2px;
-  background: var(--glass-bg);
+  background: rgba(4, 9, 22, 0.85);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-btn);
   padding: 2px;
@@ -138,7 +138,7 @@ body.safe-zone-on .tactical-banner {
   flex-direction: column;
   justify-content: center;
   gap: 2px;
-  background: var(--glass-bg);
+  background: rgba(4, 9, 22, 0.85);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-btn);
   padding: 2px 7px;
@@ -185,7 +185,7 @@ body.safe-zone-on .tactical-banner {
 
 .token-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--theme-primary), var(--stat-tier-2));
+  background: var(--stat-tier-2);
   transition: width 0.12s ease;
 }
 
@@ -196,11 +196,12 @@ body.safe-zone-on .tactical-banner {
   flex-shrink: 0;
 }
 
+/* VICTORY TRACKER: Flat solid dark glass background with no diagonal gradients */
 .victory-tracker {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--glass-bg);
+  background: rgba(4, 9, 22, 0.90);
   padding: 3px 12px;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-btn);
@@ -237,7 +238,7 @@ body.safe-zone-on .tactical-banner {
   font-weight: 600;
 }
 
-/* Camera controls: visible on desktop, hidden on Android and touch/mobile */
+/* Camera controls: visible on desktop, hidden on mobile/touch */
 .banner-cam-controls {
   display: flex;
   align-items: center;
@@ -246,7 +247,7 @@ body.safe-zone-on .tactical-banner {
 }
 
 .banner-cam-controls .cam-btn {
-  background: var(--liquid-glass-bg);
+  background: rgba(4, 9, 22, 0.85);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   color: var(--color-frost-glow);
@@ -270,7 +271,6 @@ body.safe-zone-on .tactical-banner {
   border-color: var(--glass-border-hover);
 }
 
-/* Fully remove camera controls on Android (APK and web) and all mobile/touch devices */
 @media (max-width: 1024px), (hover: none) and (pointer: coarse) {
   .banner-cam-controls {
     display: none !important;

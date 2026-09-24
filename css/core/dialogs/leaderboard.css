@@ -46,7 +46,7 @@
 
 .leaderboard-table-pane,
 .leaderboard-detail-pane {
-  background: var(--glass-bg);
+  background: rgba(4, 9, 22, 0.85);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
   display: flex;
@@ -69,7 +69,7 @@
 .leaderboard-table th {
   text-align: left;
   padding: 6px 8px;
-  background: var(--glass-bg);
+  background: rgba(6, 14, 30, 0.96);
   color: var(--color-frost-glow);
   border-bottom: 1px solid var(--glass-border);
   font-weight: 600;
@@ -80,20 +80,19 @@
   padding: 6px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--color-moon-mist);
+  transition: background-color 0.12s ease;
 }
 
 .leaderboard-row {
   cursor: pointer;
-  transition: background 0.12s ease;
 }
 
-.leaderboard-row:hover {
-  background: var(--glass-bg-hover);
+.leaderboard-row:hover td {
+  background: rgba(56, 189, 248, 0.08);
 }
 
-.leaderboard-row.selected {
+.leaderboard-row.selected td {
   background: var(--theme-primary-dim);
-  border-left: 2px solid var(--theme-primary);
 }
 
 .leaderboard-rank-tag {
@@ -108,7 +107,7 @@
 .rank-gold { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); }
 .rank-silver { background: rgba(56, 189, 248, 0.15); color: #bae6fd; border: 1px solid rgba(56, 189, 248, 0.4); }
 .rank-bronze { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35); }
-.rank-standard { background: var(--glass-bg); color: var(--color-moon-mist); border: 1px solid var(--glass-border); }
+.rank-standard { background: rgba(2, 6, 18, 0.6); color: var(--color-moon-mist); border: 1px solid var(--glass-border); }
 
 .leaderboard-detail-pane {
   padding: 10px 12px;
@@ -116,7 +115,7 @@
 }
 
 .dossier-header-box {
-  background: var(--glass-bg);
+  background: rgba(4, 9, 22, 0.85);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
   padding: 8px 12px;
@@ -328,13 +327,13 @@
   font-size: 0.65rem;
   padding: 4px 7px;
   border-radius: var(--radius-badge);
-  background: var(--glass-bg);
+  background: rgba(2, 6, 18, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.04);
   transition: all 0.12s ease;
 }
 
 .dossier-roster-item:hover {
-  background: var(--glass-bg-hover);
+  background: rgba(56, 189, 248, 0.08);
   border-color: var(--glass-border-hover);
 }
 
