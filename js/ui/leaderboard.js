@@ -35,14 +35,17 @@ class LeaderboardUI {
     const modal = document.getElementById('leaderboard-modal');
     if (!modal) return;
     if (window.Game && window.Game.controls) window.Game.controls.autoPauseOnDialogOpen();
-    LeaderboardUI.render();
     modal.classList.add('active');
+    LeaderboardUI.render();
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
   static close() {
     const modal = document.getElementById('leaderboard-modal');
     if (!modal) return;
+    if (window.AfterActionReplay && typeof window.AfterActionReplay.stopArchived === 'function') {
+      window.AfterActionReplay.stopArchived();
+    }
     modal.classList.remove('active');
     if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
   }
@@ -51,6 +54,9 @@ class LeaderboardUI {
     const tableContainer = document.getElementById('leaderboard-list-table');
     const detailContainer = document.getElementById('leaderboard-detail-view');
     if (!tableContainer || !detailContainer) return;
+    if (window.AfterActionReplay && typeof window.AfterActionReplay.stopArchived === 'function') {
+      window.AfterActionReplay.stopArchived();
+    }
 
     const list = (window.Persistence && window.Persistence.getTopSorties)
       ? window.Persistence.getTopSorties() : [];
@@ -132,12 +138,14 @@ class LeaderboardUI {
           <div class="dossier-podium-cs">${p.callsign || 'Pilot'}</div>
           <div class="dossier-podium-sub">${p.model || 'JET'} &bull; <span style="color:${p.survived ? '#00f5a0' : '#ef4444'};">${p.survived ? 'SURVIVED' : 'LOST'}</span></div>
           <div class="dossier-podium-metrics">
-            <span><b>${p.kills || 0}</b> HITS</span><span><b>${p.evaded || 0}</b> EVADED</span><b style="color:#00f5a0;">${(p.points || 0).toLocaleString()} VP</b>
+            <span><b>${p.kills || 0}</b> KILLS</span><span><b>${p.evaded || 0}</b> EVADED</span><b style="color:#00f5a0;">${(p.points || 0).toLocaleString()} VP</b>
           </div>
         </div>`;
     }).join('');
 
     const timelineEvents = item.timeline || [];
+    const combatSummary = item.combatSummary || {};
+    const summaryValue = (key) => item.combatSummary ? (combatSummary[key] || 0) : '—';
     const timelineHtml = (timelineEvents.length > 0)
       ? timelineEvents.map(ev => LeaderboardUI.renderTimelineEvent(ev)).join('')
       : `<div style="color:#8494ab;font-size:0.62rem;font-style:italic;padding:8px 0;">No chronological engagement events archived for this sortie.</div>`;
@@ -151,7 +159,7 @@ class LeaderboardUI {
         </div>
         <div style="display:flex;align-items:center;gap:8px;font-family:var(--font-dotdigital);">
           <span style="color:${p.survived ? 'var(--stat-tier-2)' : 'var(--color-red)'};font-weight:600;">${p.survived ? 'SURVIVED' : 'LOST'}</span>
-          <span style="color:var(--color-moon-mist);font-size:0.58rem;">${p.kills || 0} HITS</span>
+          <span style="color:var(--color-moon-mist);font-size:0.58rem;">${p.kills || 0} KILLS</span>
           <b style="color:var(--stat-tier-2);">${(p.scorePoints || p.points || 0).toLocaleString()} VP</b>
         </div>
       </div>`).join('');
@@ -180,6 +188,11 @@ class LeaderboardUI {
           <div class="dossier-row"><span>SORTIE DURATION:</span><b style="color:#00f0ff;">${item.timeStr || '00:00'}</b></div>
           <div class="dossier-row"><span>SPEED TIME BONUS:</span><b class="time-bonus-tag">+${timeBonusVal.toLocaleString()} VP</b></div>
           <div class="dossier-row"><span>BASE RAW SCORE:</span><b>${(item.rawScore || 0).toLocaleString()} VP</b></div>
+          <div class="dossier-row"><span>BLUE IMPACTS / KILLS:</span><b>${item.combatSummary ? `${summaryValue('blueImpacts')} / ${summaryValue('blueKills')}` : '—'}</b></div>
+          <div class="dossier-row"><span>RED IMPACTS / KILLS:</span><b>${item.combatSummary ? `${summaryValue('redImpacts')} / ${summaryValue('redKills')}` : '—'}</b></div>
+          <div class="dossier-row"><span>BLUE MISSILES EVADED:</span><b>${summaryValue('blueMissilesEvaded')}</b></div>
+          <div class="dossier-row"><span>DEFENSIVE INTERCEPTS:</span><b>${summaryValue('defensiveIntercepts')}</b></div>
+          <div class="dossier-row"><span>ROE INCIDENTS:</span><b>${summaryValue('roeIncidents')}</b></div>
         </div>
 
         <div class="dossier-card">
@@ -189,6 +202,22 @@ class LeaderboardUI {
           <div class="dossier-row"><span>TOTAL MULTIPLIER:</span><b style="color:#00f5a0;">x${(item.totalMult || 1.0).toFixed(2)}</b></div>
           <div class="dossier-row"><span>AIR LOSSES:</span><span>BLUE: ${item.blueLosses || 0} &bull; RED: ${item.redLosses || 0}</span></div>
         </div>
+      </div>
+
+      <div class="aar-replay-container dossier-replay-container">
+        <div class="aar-replay-heading">
+          <span class="strip-subhead" style="color:#7dd3fc;margin:0;border-bottom:none;">SORTIE REPLAY</span>
+          <span class="aar-replay-status">LOADING ARCHIVED PLAYBACK</span>
+        </div>
+        <canvas class="aar-replay-canvas" aria-label="Tactical replay of the archived sortie"></canvas>
+        <div class="aar-replay-controls">
+          <button type="button" class="hud-btn small aar-replay-play">PLAY</button>
+          <button type="button" class="hud-btn small aar-replay-restart">RESTART</button>
+          <button type="button" class="hud-btn small aar-replay-speed">1× SPEED</button>
+          <input type="range" class="aar-replay-slider" min="0" max="1" step="0.1" value="0" aria-label="Archived replay position">
+          <span class="aar-replay-clock">00:00 / 00:00</span>
+        </div>
+        <div class="aar-replay-events" aria-label="Archived replay event jump points"></div>
       </div>
 
       <div class="dossier-card">
@@ -211,6 +240,14 @@ class LeaderboardUI {
         </div>
         <div class="dossier-roster-list">${pilotsListHtml || '<span style="color:#8494ab;font-size:0.60rem;font-style:italic;">No pilot records found.</span>'}</div>
       </div>`;
+
+    if (window.AfterActionReplay && typeof window.AfterActionReplay.showArchived === 'function') {
+      window.AfterActionReplay.showArchived(
+        detailContainer.querySelector('.dossier-replay-container'),
+        item.replay,
+        timelineEvents
+      );
+    }
 
     const deleteBtn = detailContainer.querySelector('#btn-delete-sortie');
     if (deleteBtn) {

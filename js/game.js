@@ -46,7 +46,7 @@ class AirspaceStandoffGame {
     this.animFrameId = null;
     this.matchStartTime = 0;
 
-    this.stats = { blueLosses: 0, redLosses: 0, missilesLaunched: 0, salvoCoordinatedHits: 0 };
+    this.stats = { blueLosses: 0, redLosses: 0, missilesLaunched: 0, salvoCoordinatedHits: 0, defensiveIntercepts: 0 };
     this.detectedByBlue = new Set();
     this.detectedByRed = new Set();
 
@@ -168,7 +168,7 @@ class AirspaceStandoffGame {
     this.isGameOver = false;
     this.selectedTarget = null;
     this.matchStartTime = performance.now();
-    this.stats = { blueLosses: 0, redLosses: 0, missilesLaunched: 0, salvoCoordinatedHits: 0 };
+    this.stats = { blueLosses: 0, redLosses: 0, missilesLaunched: 0, salvoCoordinatedHits: 0, defensiveIntercepts: 0 };
     this.detectedByBlue = new Set();
     this.detectedByRed = new Set();
 
@@ -179,6 +179,7 @@ class AirspaceStandoffGame {
       this.simulation.decoyDrones = [];
       this.simulation.ghostSpawnTimer = 0.0;
       this.simulation.setTimeWarp(1);
+      this.simulation.resetReplay();
       this.simulation.initWeatherClouds();
     }
     const scoreLogEl = document.getElementById('combat-score-log-list');
@@ -278,6 +279,7 @@ class AirspaceStandoffGame {
   startLoop() {
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
     this.isGameOver = false;
+    if (this.simulation) this.simulation.captureReplayFrame(true);
     let lastTime = performance.now();
     let uiThrottle = 0;
 
@@ -307,6 +309,7 @@ class AirspaceStandoffGame {
   triggerGameOver(blueWon, msg) {
     this.isGameOver = true;
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
+    if (this.simulation) this.simulation.captureReplayFrame(true);
     if (typeof AfterActionReportSystem !== 'undefined') AfterActionReportSystem.renderSortieSummary(this, blueWon, msg);
   }
 }

@@ -14,7 +14,10 @@ class AfterActionReportSystem {
     const podiumEl = document.getElementById('ace-podium-cards');
     const fullRosterContainer = document.getElementById('aar-full-roster-content');
 
-    const durSec = Math.max(1, Math.round((performance.now() - (game.matchStartTime || performance.now())) / 1000));
+    const sortieElapsed = game.simulation && Number.isFinite(game.simulation.elapsedTimeSec)
+      ? game.simulation.elapsedTimeSec
+      : (performance.now() - (game.matchStartTime || performance.now())) / 1000;
+    const durSec = Math.max(1, Math.round(sortieElapsed));
     const min = Math.floor(durSec / 60);
     const sec = durSec % 60;
     const timeStr = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
@@ -44,7 +47,7 @@ class AfterActionReportSystem {
             <div class="ace-callsign">${p.callsign || 'PILOT'}</div>
             <div class="ace-sub">${p.spec ? p.spec.name : 'AIRCRAFT'} - ${p.squadronName || (p.team === 'friendly' ? 'Allied Fleet' : 'Hostile Fleet')}</div>
             <div class="ace-stats">
-              <span>HITS: <b>${p.kills || 0}</b></span>
+              <span>KILLS: <b>${p.kills || 0}</b></span>
               <span>EVADED: <b>${p.missilesEvadedCount || 0}</b></span>
               <span>POINTS: <b>${p.scorePoints || 0}</b></span>
             </div>
@@ -90,7 +93,7 @@ class AfterActionReportSystem {
               <th>CALLSIGN</th>
               <th>AIRCRAFT</th>
               <th>FORCE</th>
-              <th>HITS</th>
+              <th>KILLS</th>
               <th>EVADED</th>
               <th>POINTS</th>
               <th>STATUS</th>
@@ -109,6 +112,15 @@ class AfterActionReportSystem {
       ? game.simulation.scoring.calcTimeBonus(durSec, blueWon)
       : 0;
 
+    const engagementEvents = (game.simulation && game.simulation.timelineEvents) || [];
+    const blueKills = engagementEvents.filter(event => (event.type === 'kill' || event.type === 'ace-kill') && event.team === 'friendly').length;
+    const redKills = engagementEvents.filter(event => (event.type === 'kill' || event.type === 'ace-kill') && event.team === 'hostile').length;
+    const blueImpacts = engagementEvents.filter(event => event.type === 'hit' && event.team === 'friendly').length + blueKills;
+    const redImpacts = engagementEvents.filter(event => event.type === 'hit' && event.team === 'hostile').length + redKills;
+    const roeIncidents = engagementEvents.filter(event => event.type === 'roe_penalty').length;
+    const blueMissilesEvaded = game.alliedAircraft.reduce((sum, pilot) => sum + (pilot.missilesEvadedCount || 0), 0);
+    const defensiveIntercepts = game.stats.defensiveIntercepts || 0;
+
     const rawBlueScore = game.vpAlly || 0;
     const adjustedRawScore = rawBlueScore + timeBonus;
     const finalSortieScore = Math.round(adjustedRawScore * scoreData.totalMult);
@@ -125,7 +137,7 @@ class AfterActionReportSystem {
               <div class="aar-metrics-table">
                 <div class="aar-metric-row"><span>MISSION DURATION:</span><b style="color:var(--theme-accent);">${timeStr}</b></div>
                 <div class="aar-metric-row"><span>SPEED TIME BONUS:</span><b style="color:var(--stat-tier-2);">+${timeBonus.toLocaleString()} VP</b></div>
-                <div class="aar-metric-row"><span>ORDNANCE EXPENDED:</span><b style="color:#f8fafc;">${game.stats.missilesLaunched}</b></div>
+                <div class="aar-metric-row"><span>COMMANDER WEAPON RELEASES:</span><b style="color:#f8fafc;">${game.stats.missilesLaunched}</b></div>
                 <div class="aar-metric-row"><span>FRIENDLY LOSSES (BLUE):</span><b style="color:${game.stats.blueLosses > 0 ? 'var(--color-red)' : 'var(--stat-tier-2)'};">${game.stats.blueLosses}</b></div>
                 <div class="aar-metric-row"><span>HOSTILE LOSSES (RED):</span><b style="color:var(--theme-accent);">${game.stats.redLosses}</b></div>
               </div>
@@ -142,6 +154,22 @@ class AfterActionReportSystem {
                 <div class="aar-metric-row"><span>DIFFICULTY (${scoreData.diffKey}):</span><b style="color:var(--theme-accent);">x${scoreData.diffMult.toFixed(2)} MULTIPLIER</b></div>
                 <div class="aar-metric-row"><span>BUDGET TIER (${scoreData.budgetCap}M):</span><b style="color:var(--stat-tier-3);">x${scoreData.budgetMult.toFixed(2)} MULTIPLIER</b></div>
                 <div class="aar-metric-row"><span>FINAL MULTIPLIER:</span><b style="color:var(--stat-tier-2);">x${scoreData.totalMult.toFixed(2)} MULTIPLIER</b></div>
+              </div>
+            </div>
+
+            <div class="aar-report-card">
+              <div class="aar-card-head">
+                <span class="aar-card-title">ENGAGEMENT RESULTS</span>
+                <span class="aar-card-badge">TACTICAL</span>
+              </div>
+              <div class="aar-metrics-table">
+                <div class="aar-metric-row"><span>BLUE CONFIRMED IMPACTS:</span><b style="color:var(--theme-accent);">${blueImpacts}</b></div>
+                <div class="aar-metric-row"><span>RED CONFIRMED IMPACTS:</span><b style="color:var(--color-red);">${redImpacts}</b></div>
+                <div class="aar-metric-row"><span>BLUE TARGETS DESTROYED:</span><b style="color:var(--theme-accent);">${blueKills}</b></div>
+                <div class="aar-metric-row"><span>RED TARGETS DESTROYED:</span><b style="color:var(--color-red);">${redKills}</b></div>
+                <div class="aar-metric-row"><span>BLUE MISSILES EVADED:</span><b>${blueMissilesEvaded}</b></div>
+                <div class="aar-metric-row"><span>DEFENSIVE INTERCEPTS:</span><b>${defensiveIntercepts}</b></div>
+                <div class="aar-metric-row"><span>ROE INCIDENTS:</span><b style="color:${roeIncidents > 0 ? 'var(--color-red)' : 'var(--stat-tier-2)'};">${roeIncidents}</b></div>
               </div>
             </div>
           </div>
@@ -200,6 +228,7 @@ class AfterActionReportSystem {
         totalMult: scoreData.totalMult,
         blueLosses: game.stats.blueLosses,
         redLosses: game.stats.redLosses,
+        combatSummary: { blueImpacts, redImpacts, blueKills, redKills, roeIncidents, blueMissilesEvaded, defensiveIntercepts },
         topPilot: {
           callsign: topPilot ? topPilot.callsign : 'Pilot',
           model: topPilot && topPilot.spec ? topPilot.spec.id : 'JET',
@@ -208,6 +237,9 @@ class AfterActionReportSystem {
         },
         topPilots: archivedTopThree,
         timeline: archivedTimeline,
+        replay: window.AfterActionReplay && typeof window.AfterActionReplay.encode === 'function'
+          ? window.AfterActionReplay.encode((game.simulation && game.simulation.replaySnapshots) || [])
+          : null,
         pilots: allPilots.filter(p => p.team === 'friendly').map(p => ({
           callsign: p.callsign || 'Pilot',
           model: p.spec ? p.spec.id : 'JET',
@@ -241,6 +273,9 @@ class AfterActionReportSystem {
     }
 
     modal.classList.add('active');
+    if (window.AfterActionReplay && typeof window.AfterActionReplay.show === 'function') {
+      window.AfterActionReplay.show(game);
+    }
     if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(true);
   }
 }

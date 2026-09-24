@@ -18,6 +18,9 @@ class SimulationSystem {
     this.waveSpawnTimer = 0.0;
     this.ghostSpawnTimer = 0.0;
     this.currentWave = 1;
+    this.elapsedTimeSec = 0;
+    this.replaySnapshots = [];
+    this.replayCaptureAccumulator = 0;
     this._satelliteUplinkAnnouncedBlue = false;
     this.initWeatherClouds();
   }
@@ -32,6 +35,72 @@ class SimulationSystem {
   recordCivilianHit(team, civ, src, wpn) { this.scoring.recordCivilianHit(team, civ, src, wpn); }
   recordCivilianShootdown(team, civ, src, wpn) { this.scoring.recordCivilianShootdown(team, civ, src, wpn); }
   getElapsedTimeString() { return this.scoring.getElapsedTimeString(); }
+
+  resetReplay() {
+    this.elapsedTimeSec = 0;
+    this.replaySnapshots = [];
+    this.replayCaptureAccumulator = 0;
+  }
+
+  captureReplayFrame(force = false) {
+    const lastFrame = this.replaySnapshots[this.replaySnapshots.length - 1];
+    if (!force && lastFrame && this.elapsedTimeSec - lastFrame.time < 1.0) return;
+
+    const snapshotAircraft = (aircraft) => ({
+      id: aircraft.id,
+      team: aircraft.team,
+      x: aircraft.x,
+      y: aircraft.y,
+      heading: aircraft.heading,
+      speed: aircraft.speed,
+      hp: aircraft.hp,
+      maxHp: aircraft.maxHp,
+      altFt: aircraft.altFt,
+      callsign: aircraft.callsign,
+      model: aircraft.spec ? aircraft.spec.id : 'AIRCRAFT',
+      category: aircraft.spec ? aircraft.spec.category : 'MULTIROLE',
+      isAce: Boolean(aircraft.isAce),
+      isFlightLead: Boolean(aircraft.isFlightLead),
+      isCoffin: Boolean(aircraft.isCoffin),
+      isRTB: Boolean(aircraft.isRTB),
+      identified: Boolean(aircraft.isIdentifiedBy ? aircraft.isIdentifiedBy('friendly') : aircraft.isIdentified)
+    });
+
+    const frame = {
+      time: this.elapsedTimeSec,
+      alliedAircraft: this.game.alliedAircraft.map(snapshotAircraft),
+      hostileAircraft: this.game.hostileAircraft.map(snapshotAircraft),
+      surfaceUnits: this.game.surfaceUnits.map(unit => ({
+        id: unit.id, team: unit.team, type: unit.type, x: unit.x, y: unit.y,
+        hp: unit.hp, maxHp: unit.maxHp, name: unit.name,
+        isIndestructible: Boolean(unit.isIndestructible)
+      })),
+      missiles: this.game.missiles.filter(missile => !missile.isDead).map(missile => ({
+        id: missile.id, team: missile.team, x: missile.x, y: missile.y,
+        heading: missile.heading, weapon: missile.weapon ? (missile.weapon.name || missile.weapon.id) : 'MISSILE',
+        stage: missile.stage, speed: missile.speed, active: missile.active,
+        trail: (missile.trail || []).slice(0, 8).map(point => ({ x: point.x, y: point.y }))
+      })),
+      civilianTraffic: this.civilianTraffic.map(civilian => ({
+        id: civilian.id, x: civilian.x, y: civilian.y, heading: civilian.heading,
+        speed: civilian.speed, hp: civilian.hp, flightCode: civilian.flightCode,
+        identified: Boolean(civilian.isIdentified)
+      })),
+      clouds: this.weatherClouds.map(cloud => ({ x: cloud.x, y: cloud.y, rx: cloud.rx, ry: cloud.ry })),
+      decoys: this.decoyDrones.map(decoy => ({
+        id: decoy.id, team: decoy.team, x: decoy.x, y: decoy.y,
+        heading: decoy.heading, speed: decoy.speed, hp: decoy.hp,
+        model: decoy.mirroredModel || 'DECOY'
+      }))
+    };
+
+    if (lastFrame && Math.abs(lastFrame.time - frame.time) < 0.001) {
+      this.replaySnapshots[this.replaySnapshots.length - 1] = frame;
+    } else {
+      this.replaySnapshots.push(frame);
+      if (this.replaySnapshots.length > 900) this.replaySnapshots.shift();
+    }
+  }
 
   setTimeWarp(multiplier) {
     this.isPaused = (multiplier === 0);
@@ -98,6 +167,7 @@ class SimulationSystem {
   step(realDt) {
     if (this.isPaused || this.game.isGameOver) return;
     const dt = realDt * this.timeWarp;
+    this.elapsedTimeSec += dt;
 
     const clockEl = document.getElementById('mission-clock');
     if (clockEl) clockEl.textContent = this.getElapsedTimeString();
@@ -161,6 +231,11 @@ class SimulationSystem {
     this.resolveUnitFocus();
     if (this.game.ai && typeof this.game.ai.update === 'function') this.game.ai.update(dt);
     if (this.game.avionics && typeof this.game.avionics.updateRWRState === 'function') this.game.avionics.updateRWRState();
+    this.replayCaptureAccumulator += dt;
+    if (this.replayCaptureAccumulator >= 1.0) {
+      this.replayCaptureAccumulator %= 1.0;
+      this.captureReplayFrame();
+    }
     this.checkWinConditions();
   }
 

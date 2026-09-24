@@ -16,7 +16,10 @@ class SimulationScoring {
   }
 
   getElapsedTimeString() {
-    const durSec = Math.max(0, Math.floor((performance.now() - (this.game.matchStartTime || performance.now())) / 1000));
+    const simulationTime = this.game.simulation && Number.isFinite(this.game.simulation.elapsedTimeSec)
+      ? this.game.simulation.elapsedTimeSec
+      : (performance.now() - (this.game.matchStartTime || performance.now())) / 1000;
+    const durSec = Math.max(0, Math.floor(simulationTime));
     const m = Math.floor(durSec / 60);
     const s = durSec % 60;
     return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');

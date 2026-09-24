@@ -40,7 +40,10 @@ class AfterActionReportTimeline {
     const recordedEvents = AfterActionReportTimeline.getMergedTimelineEvents(game);
 
     if (blueWon) {
-      const durSec = Math.max(1, Math.round((performance.now() - (game.matchStartTime || performance.now())) / 1000));
+      const elapsed = game.simulation && Number.isFinite(game.simulation.elapsedTimeSec)
+        ? game.simulation.elapsedTimeSec
+        : (performance.now() - (game.matchStartTime || performance.now())) / 1000;
+      const durSec = Math.max(1, Math.round(elapsed));
       const timeBonus = (game.simulation && game.simulation.scoring)
         ? game.simulation.scoring.calcTimeBonus(durSec, blueWon)
         : 0;

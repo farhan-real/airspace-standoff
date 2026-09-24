@@ -143,6 +143,7 @@ class SurfaceUnit {
         targetMissile.isDead = true;
         this.fireCooldown = this.cooldownMax;
 
+        if (window.Game && window.Game.stats) window.Game.stats.defensiveIntercepts = (window.Game.stats.defensiveIntercepts || 0) + 1;
         if (window.Game && window.Game.simulation) {
           window.Game.simulation.logScoreEvent(this.team, 40, 'CIWS intercepted inbound missile');
         }

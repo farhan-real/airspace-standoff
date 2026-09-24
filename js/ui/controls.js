@@ -240,6 +240,7 @@ class ControlsSystem {
       restartBtn.onclick = () => {
         const gameOverModal = document.getElementById('game-over-modal');
         const procModal = document.getElementById('procurement-modal');
+        if (window.AfterActionReplay && typeof window.AfterActionReplay.stop === 'function') window.AfterActionReplay.stop();
         if (gameOverModal) gameOverModal.classList.remove('active');
         if (procModal) procModal.classList.add('active');
       };
