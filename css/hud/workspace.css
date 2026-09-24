@@ -47,6 +47,14 @@ body.safe-zone-on .hud-container {
   flex-shrink: 0;
 }
 
+#fleet-strip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .strip-subhead {
   font-size: 0.60rem;
   font-weight: 600;
@@ -149,12 +157,20 @@ body.has-touch .mobile-steering-overlay,
     display: flex !important;
   }
 
+  #fleet-strip-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 8px 10px !important;
+    width: 100% !important;
+  }
+
   .fleet-drawer-close-btn {
     display: inline-flex !important;
-    margin-left: auto;
+    margin-left: auto !important;
     min-height: 28px;
-    padding: 3px 10px;
-    font-weight: 600;
+    padding: 3px 12px;
+    font-weight: 700;
     flex-shrink: 0;
   }
 }
@@ -220,12 +236,20 @@ body.has-touch .mobile-steering-overlay,
     gap: 6px !important;
   }
 
+  #fleet-strip-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 8px 10px !important;
+    width: 100% !important;
+  }
+
   .fleet-drawer-close-btn {
     display: inline-flex !important;
-    margin-left: auto;
+    margin-left: auto !important;
     min-height: 28px;
-    padding: 3px 10px;
-    font-weight: 600;
+    padding: 3px 12px;
+    font-weight: 700;
     flex-shrink: 0;
   }
 }

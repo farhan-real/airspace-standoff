@@ -120,14 +120,29 @@ body.safe-zone-on .rwr-warning-box {
   color: var(--color-moon-mist);
 }
 
-/* Radar layer toggles: Declutter & Ground in exact original bottom-left position */
-.radar-floating-cam-bar {
+/* Bottom-left radar controls dock */
+.radar-bottom-controls-dock {
   display: flex;
   position: absolute;
   bottom: 10px;
   left: 16px;
-  right: auto;
   z-index: 10;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+body.safe-zone-on .radar-bottom-controls-dock {
+  left: max(16px, var(--safe-zone-inset, 0px)) !important;
+}
+
+.radar-bottom-controls-dock > * {
+  pointer-events: auto;
+}
+
+/* Radar layer toggles: 2-button bar (Declutter & Ground) */
+.radar-floating-cam-bar {
+  display: flex;
   height: 32px;
   box-sizing: border-box;
   background: var(--liquid-glass-bg);
@@ -138,10 +153,7 @@ body.safe-zone-on .rwr-warning-box {
   gap: 4px;
   align-items: center;
   box-shadow: var(--glass-shadow);
-}
-
-body.safe-zone-on .radar-floating-cam-bar {
-  left: max(16px, var(--safe-zone-inset, 0px)) !important;
+  flex-shrink: 0;
 }
 
 .radar-floating-cam-bar .cam-btn {
@@ -182,12 +194,9 @@ body.safe-zone-on .radar-floating-cam-bar {
   min-width: 80px;
 }
 
-/* Separated Fleet button: placed to the right of declutter and ground */
+/* Separated Fleet button: Hidden on desktop; active on mobile/Android */
 #btn-mobile-open-fleet.fleet-btn {
-  position: absolute;
-  bottom: 10px;
-  left: calc(16px + 180px + 10px);
-  z-index: 10;
+  display: none;
   height: 32px;
   box-sizing: border-box;
   background: var(--liquid-glass-bg);
@@ -202,16 +211,12 @@ body.safe-zone-on .radar-floating-cam-bar {
   padding: 0 10px;
   border-radius: var(--radius-btn);
   box-shadow: var(--glass-shadow);
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.14s ease;
   white-space: nowrap;
-}
-
-body.safe-zone-on #btn-mobile-open-fleet.fleet-btn {
-  left: calc(max(16px, var(--safe-zone-inset, 0px)) + 180px + 10px) !important;
+  flex-shrink: 0;
 }
 
 #btn-mobile-open-fleet.fleet-btn:hover {
@@ -226,9 +231,19 @@ body.safe-zone-on #btn-mobile-open-fleet.fleet-btn {
   color: #ffffff;
 }
 
+@media (max-width: 1024px) {
+  #btn-mobile-open-fleet.fleet-btn {
+    display: inline-flex !important;
+  }
+}
+
 @media (max-width: 480px) {
-  .radar-floating-cam-bar {
+  .radar-bottom-controls-dock {
     left: 8px;
+    bottom: 8px;
+    gap: 5px;
+  }
+  .radar-floating-cam-bar {
     height: 30px;
     padding: 2px 3px;
     gap: 3px;
@@ -240,7 +255,6 @@ body.safe-zone-on #btn-mobile-open-fleet.fleet-btn {
     padding: 0 5px;
   }
   #btn-mobile-open-fleet.fleet-btn {
-    left: calc(8px + 144px + 8px);
     height: 30px;
     min-width: 52px;
     padding: 0 6px;

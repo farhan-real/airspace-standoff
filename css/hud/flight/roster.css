@@ -175,3 +175,41 @@
   font-size: 0.58rem;
   font-weight: 700;
 }
+
+/* Mobile & Drawer Viewport: 2 Aircraft Cards Per Row */
+@media (max-width: 1024px) {
+  .units-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    align-content: start;
+    flex: 1 1 auto;
+  }
+
+  .flight-card {
+    padding: 5px 6px;
+    gap: 3px;
+  }
+
+  .tcard-callsign {
+    font-size: 0.62rem;
+  }
+
+  .tcard-model {
+    font-size: 0.52rem;
+  }
+
+  .tcard-hp {
+    font-size: 0.56rem;
+  }
+
+  .tcard-metrics {
+    font-size: 0.54rem;
+    padding: 2px 4px;
+    gap: 2px 3px;
+  }
+
+  .tcard-metric-cell b {
+    font-size: 0.54rem;
+  }
+}
