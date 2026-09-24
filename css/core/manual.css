@@ -81,7 +81,7 @@
   -webkit-user-select: text !important;
   user-select: text !important;
   touch-action: auto !important;
-  transition: all 0.14s ease;
+  transition: border-color 0.14s ease, box-shadow 0.14s ease;
   min-width: 0;
 }
 
@@ -159,17 +159,55 @@ mark.manual-search-hl.current {
   outline: 1.5px solid #fbbf24;
 }
 
+/* SECTION SHORTCUTS TOOLBAR: Responsive Scroll Wrapper */
+.manual-nav-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+.manual-nav-scroll-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--color-frost-glow);
+  width: 22px;
+  height: 26px;
+  min-width: 22px;
+  padding: 0;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s ease;
+  flex-shrink: 0;
+}
+
+.manual-nav-scroll-btn:hover {
+  background: var(--glass-bg-hover);
+  color: #ffffff;
+  border-color: var(--theme-accent);
+}
+
 .manual-nav-bar {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
   gap: 4px;
   overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
-  padding-bottom: 2px;
+  padding: 2px 0;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x !important;
   scrollbar-width: none;
+  flex: 1 1 auto;
+  min-width: 0;
 }
+
 .manual-nav-bar::-webkit-scrollbar {
   display: none;
 }
@@ -222,9 +260,12 @@ mark.manual-search-hl.current {
   color: var(--color-ice-highlight);
 }
 
+/* GLOSSARY CONTENT: Stable, Non-Flickering Container */
 .glossary-content {
   padding: 12px 14px;
-  overflow-y: auto;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -242,9 +283,6 @@ mark.manual-search-hl.current {
   flex-direction: column;
   gap: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  content-visibility: auto;
-  contain-intrinsic-size: 400px;
-  contain: layout style paint;
 }
 
 .ge-title {
@@ -315,7 +353,6 @@ mark.manual-search-hl.current {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  contain: layout style;
 }
 
 .ge-grid-2 {
@@ -353,26 +390,41 @@ mark.manual-search-hl.current {
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
   background: rgba(0, 0, 0, 0.5);
-  contain: paint;
   -webkit-overflow-scrolling: touch;
 }
 
 .ge-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.72rem;
   font-family: var(--font-untitled-sans);
   min-width: 520px;
 }
 
+.ge-table thead {
+  background: rgba(6, 14, 30, 0.96);
+}
+
 .ge-table th {
   text-align: left;
-  padding: 7px 10px;
-  background: var(--glass-bg);
-  color: var(--color-frost-glow);
+  padding: 8px 10px;
+  background: transparent;
+  color: var(--color-ice-highlight);
+  font-family: var(--font-dotdigital);
+  font-size: 0.64rem;
   font-weight: 600;
-  border-bottom: 1px solid var(--glass-border);
-  letter-spacing: 0.4px;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.35);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.ge-table thead tr,
+.ge-table thead tr:hover,
+.ge-table thead tr:hover th {
+  background: transparent;
 }
 
 .ge-table td {
@@ -380,10 +432,12 @@ mark.manual-search-hl.current {
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--color-moon-mist);
   line-height: 1.45;
+  transition: background-color 0.12s ease;
 }
 
+.ge-table tbody tr:hover td,
 .ge-table tr:hover td {
-  background: var(--glass-bg-hover);
+  background: rgba(56, 189, 248, 0.08);
 }
 
 .manual-inline-ico {

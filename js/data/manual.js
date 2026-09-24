@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Master Flight Manual Orchestrator & High-Performance Search
+ * AIRSPACE STANDOFF: Master Flight Manual Orchestrator & Stable Search Engine
  */
 
 window.TACTICAL_FLIGHT_MANUAL = [
@@ -14,8 +14,14 @@ window.initTacticalManual = function() {
   const container = document.getElementById('glossary-modal-content');
   const navContainer = document.getElementById('manual-quick-nav-bar');
   const searchInput = document.getElementById('manual-search-filter');
-  const searchRow = document.querySelector('.manual-search-row');
   const modal = document.getElementById('glossary-modal');
+  const searchActions = document.getElementById('manual-search-actions');
+  const countEl = document.getElementById('manual-search-count');
+  const prevBtn = document.getElementById('btn-manual-search-prev');
+  const nextBtn = document.getElementById('btn-manual-search-next');
+  const clearBtn = document.getElementById('btn-manual-search-clear');
+  const navPrevBtn = document.getElementById('btn-manual-nav-prev');
+  const navNextBtn = document.getElementById('btn-manual-nav-next');
 
   const chapters = [
     { id: 'ch1_quickstart', label: '01: DOCTRINE & ROE' },
@@ -34,24 +40,13 @@ window.initTacticalManual = function() {
   let currentMatchIndex = 0;
   let lastQuery = null;
 
-  let searchActions = document.getElementById('manual-search-actions');
-  if (!searchActions && searchRow) {
-    searchActions = document.createElement('div');
-    searchActions.id = 'manual-search-actions';
-    searchActions.className = 'manual-search-actions';
-    searchActions.innerHTML = `
-      <span id="manual-search-count" class="manual-search-count"></span>
-      <button type="button" id="btn-manual-search-prev" class="manual-search-nav-btn" title="Previous Match (Shift+Enter)">&lt;</button>
-      <button type="button" id="btn-manual-search-next" class="manual-search-nav-btn" title="Next Match (Enter)">&gt;</button>
-      <button type="button" id="btn-manual-search-clear" class="manual-search-clear-btn" title="Clear Search">&times;</button>
-    `;
-    searchRow.appendChild(searchActions);
-  }
-
-  const countEl = document.getElementById('manual-search-count');
-  const prevBtn = document.getElementById('btn-manual-search-prev');
-  const nextBtn = document.getElementById('btn-manual-search-next');
-  const clearBtn = document.getElementById('btn-manual-search-clear');
+  const scrollToTarget = (targetEl) => {
+    if (!targetEl || !container) return;
+    const cRect = container.getBoundingClientRect();
+    const tRect = targetEl.getBoundingClientRect();
+    const topOffset = tRect.top - cRect.top + container.scrollTop - 10;
+    container.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
+  };
 
   const renderNavButtons = (matchingChapterIds = null) => {
     if (!navContainer) return;
@@ -67,9 +62,14 @@ window.initTacticalManual = function() {
         const targetId = btn.getAttribute('data-target');
         const el = document.getElementById(targetId);
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          scrollToTarget(el);
           navContainer.querySelectorAll('.manual-nav-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
+
+          const nRect = navContainer.getBoundingClientRect();
+          const bRect = btn.getBoundingClientRect();
+          const bOffset = bRect.left - nRect.left + navContainer.scrollLeft - (navContainer.clientWidth - btn.clientWidth) / 2;
+          navContainer.scrollTo({ left: Math.max(0, bOffset), behavior: 'smooth' });
         }
       };
     });
@@ -82,14 +82,12 @@ window.initTacticalManual = function() {
     const targetMatch = currentMatches[currentMatchIndex];
     if (targetMatch) {
       targetMatch.classList.add('current');
-      targetMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      scrollToTarget(targetMatch);
     }
-    if (countEl) {
-      countEl.textContent = `${currentMatchIndex + 1}/${currentMatches.length}`;
-    }
+    if (countEl) countEl.textContent = `${currentMatchIndex + 1}/${currentMatches.length}`;
   };
 
-  const highlightMatches = (query) => {
+  const highlightMatches = (query, shouldScroll = false) => {
     currentMatches = [];
     currentMatchIndex = 0;
     if (!query || query.length < 2 || !container) return;
@@ -112,22 +110,24 @@ window.initTacticalManual = function() {
         const span = document.createElement('span');
         span.innerHTML = text.replace(regex, '<mark class="manual-search-hl">$1</mark>');
         span.querySelectorAll('mark.manual-search-hl').forEach(m => currentMatches.push(m));
-        if (node.parentNode) {
-          node.parentNode.replaceChild(span, node);
-        }
+        if (node.parentNode) node.parentNode.replaceChild(span, node);
       }
     }
 
     if (currentMatches.length > 0) {
       if (searchActions) searchActions.classList.add('active');
-      jumpToMatch(0);
+      if (shouldScroll) jumpToMatch(0);
+      else {
+        currentMatches[0].classList.add('current');
+        if (countEl) countEl.textContent = `1/${currentMatches.length}`;
+      }
     } else if (searchActions) {
       searchActions.classList.add('active');
       if (countEl) countEl.textContent = '0 matches';
     }
   };
 
-  const renderChapters = (filterQuery = '') => {
+  const renderChapters = (filterQuery = '', shouldScrollToMatch = false) => {
     if (!container) return;
     const q = filterQuery.trim().toLowerCase();
     if (lastQuery === q && container.children.length > 0) return;
@@ -152,8 +152,7 @@ window.initTacticalManual = function() {
         <div style="text-align:center;padding:40px;color:#8494ab;font-family:var(--font-mono);font-size:0.80rem;">
           <b style="color:var(--theme-accent);">NO OPERATIONAL PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
           <p style="margin-top:6px;font-size:0.72rem;">Try searching for terms like "ProNav", "Notch", "RCS", "COFFIN", "Datalink", "Depots", or "Controls".</p>
-        </div>
-      `;
+        </div>`;
       return;
     }
 
@@ -172,12 +171,11 @@ window.initTacticalManual = function() {
             ${badgeHtml}
           </div>
           <div class="ge-content">${descContent}</div>
-        </div>
-      `;
+        </div>`;
     }).join('');
 
     if (q.length >= 2) {
-      highlightMatches(q);
+      highlightMatches(q, shouldScrollToMatch);
     } else {
       if (searchActions) searchActions.classList.remove('active');
       if (countEl) countEl.textContent = '';
@@ -192,8 +190,8 @@ window.initTacticalManual = function() {
     searchInput.oninput = (e) => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
-        renderChapters(e.target.value || '');
-      }, 180);
+        renderChapters(e.target.value || '', false);
+      }, 150);
     };
 
     searchInput.onkeydown = (e) => {
@@ -204,7 +202,7 @@ window.initTacticalManual = function() {
       } else if (e.key === 'Escape') {
         e.preventDefault();
         searchInput.value = '';
-        renderChapters('');
+        renderChapters('', false);
       }
     };
   }
@@ -215,10 +213,41 @@ window.initTacticalManual = function() {
     clearBtn.onclick = () => {
       if (searchInput) {
         searchInput.value = '';
-        renderChapters('');
+        renderChapters('', false);
         searchInput.focus();
       }
     };
+  }
+
+  if (navContainer) {
+    navContainer.addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        navContainer.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+
+    let isDown = false, startX = 0, scrollStart = 0;
+    navContainer.addEventListener('mousedown', (e) => {
+      if (e.target.tagName === 'BUTTON') return;
+      isDown = true;
+      startX = e.pageX - navContainer.offsetLeft;
+      scrollStart = navContainer.scrollLeft;
+    });
+    window.addEventListener('mouseup', () => { isDown = false; });
+    navContainer.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - navContainer.offsetLeft;
+      navContainer.scrollLeft = scrollStart - (x - startX) * 1.4;
+    });
+  }
+
+  if (navPrevBtn && navContainer) {
+    navPrevBtn.onclick = () => navContainer.scrollBy({ left: -180, behavior: 'smooth' });
+  }
+  if (navNextBtn && navContainer) {
+    navNextBtn.onclick = () => navContainer.scrollBy({ left: 180, behavior: 'smooth' });
   }
 
   const openHangarBtn = document.getElementById('btn-open-glossary');
@@ -227,34 +256,22 @@ window.initTacticalManual = function() {
 
   const openModal = (e) => {
     if (e) e.preventDefault();
-    if (searchInput && searchInput.value) {
-      renderChapters(searchInput.value);
-    } else if (container.children.length === 0) {
-      renderChapters('');
-    }
+    if (searchInput && searchInput.value) renderChapters(searchInput.value, false);
+    else if (container.children.length === 0) renderChapters('', false);
     if (modal) modal.classList.add('active');
-    if (window.Game && window.Game.controls) {
-      window.Game.controls.autoPauseOnDialogOpen();
-    }
+    if (window.Game && window.Game.controls) window.Game.controls.autoPauseOnDialogOpen();
   };
 
   const closeModal = (e) => {
     if (e) e.preventDefault();
     if (modal) modal.classList.remove('active');
-    if (window.Game && window.Game.controls) {
-      window.Game.controls.autoUnpauseOnDialogClose();
-    }
+    if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
   };
 
   if (openHangarBtn) openHangarBtn.onclick = openModal;
   if (openHudBtn) openHudBtn.onclick = openModal;
   if (closeBtn) closeBtn.onclick = closeModal;
-
-  if (modal) {
-    modal.onclick = (e) => {
-      if (e.target === modal) closeModal(e);
-    };
-  }
+  if (modal) modal.onclick = (e) => { if (e.target === modal) closeModal(e); };
 };
 
 if (document.readyState === 'loading') {

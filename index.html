@@ -203,8 +203,22 @@
     <div class="manual-toolbar">
       <div class="manual-search-row">
         <input type="text" id="manual-search-filter" class="manual-search-input" placeholder="Search operational manual by keyword (e.g. Notch, RCS, COFFIN, Salvo, Datalink, Depots, Controls)...">
+        <div id="manual-search-actions" class="manual-search-actions">
+          <span id="manual-search-count" class="manual-search-count"></span>
+          <button type="button" id="btn-manual-search-prev" class="manual-search-nav-btn" title="Previous Match (Shift+Enter)">&lt;</button>
+          <button type="button" id="btn-manual-search-next" class="manual-search-nav-btn" title="Next Match (Enter)">&gt;</button>
+          <button type="button" id="btn-manual-search-clear" class="manual-search-clear-btn" title="Clear Search">&times;</button>
+        </div>
       </div>
-      <div class="manual-nav-bar" id="manual-quick-nav-bar"></div>
+      <div class="manual-nav-wrapper">
+        <button type="button" id="btn-manual-nav-prev" class="manual-nav-scroll-btn" title="Scroll shortcuts left">
+          <img src="icons/arrowleft.svg" width="9" height="9" alt="&lt;">
+        </button>
+        <div class="manual-nav-bar" id="manual-quick-nav-bar"></div>
+        <button type="button" id="btn-manual-nav-next" class="manual-nav-scroll-btn" title="Scroll shortcuts right">
+          <img src="icons/arrowright.svg" width="9" height="9" alt="&gt;">
+        </button>
+      </div>
     </div>
     <div class="glossary-content" id="glossary-modal-content"></div>
   </div>
