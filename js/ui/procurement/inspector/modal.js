@@ -64,7 +64,9 @@ class InspectorModalRenderer {
 
     const allowedList = a.allowedGuns || (a.builtInGun ? [a.builtInGun] : ['M61A2']);
     const allowedGunNames = allowedList.map(gId => (guns[gId] ? guns[gId].name : gId)).join(', ');
-    const builtInName = guns[a.builtInGun] ? guns[a.builtInGun].name : (a.builtInGun || 'M61A2 Vulcan');
+    const builtInGunObj = guns[a.builtInGun] || guns['M61A2'];
+    const builtInName = builtInGunObj ? builtInGunObj.name : (a.builtInGun || 'M61A2 Vulcan');
+    const builtInCapacity = builtInGunObj && builtInGunObj.defaultAmmo ? builtInGunObj.defaultAmmo : (a.gunRounds || 24);
     const maxPayloadKg = (a.M_max || 5000).toLocaleString();
 
     const sOptVal = a.sOpt || ((a.S_0 || 0.90) * 0.65);
@@ -117,7 +119,7 @@ class InspectorModalRenderer {
         <div class="inspect-stat-item"><span>CENTERLINE FUSELAGE STATION:</span><b class="${a.hasCenterline ? 'stat-tier-2' : 'stat-tier-4'}">${centerlineDesc}</b></div>
         <div class="inspect-stat-item"><span>TOTAL COMBINED CAPACITY:</span><b class="${rSlots.colorClass}">${a.totalSlots || 6} Max Slots</b></div>
         <div class="inspect-stat-item"><span>MAX PAYLOAD CARRIAGE:</span><b class="${rMass.colorClass}">${maxPayloadKg} kg</b></div>
-        <div class="inspect-stat-item"><span>BUILT-IN CANNON:</span><b>${builtInName} (${a.gunRounds || 3200} rds)</b></div>
+        <div class="inspect-stat-item"><span>BUILT-IN CANNON:</span><b>${builtInName} (${builtInCapacity} rds)</b></div>
         <div class="inspect-stat-item"><span>COMPATIBLE GUNS:</span><b>${allowedGunNames}</b></div>
         <div class="inspect-stat-item"><span>MODULAR SOCKETS:</span><b class="${rUpg.colorClass}">${a.upgradeSockets || 3} Sockets</b></div>
       </div>

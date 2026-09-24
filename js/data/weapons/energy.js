@@ -24,11 +24,11 @@ window.AUTOCANNONS_ENERGY = {
       'F-22A', 'YF-23', 'F-35A', 'Su-57', 'J-20', 'Su-75', 'FC-31', 'J-35', 'B-21', 'F-15EX', 'F-22C-COFFIN',
       'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR'
     ],
-    defaultAmmo: 150,
+    defaultAmmo: 18,
     kineticConcussion: 0.0,
     thermalBloom: 1.4,
     cloudScattering: 0.70,
-    desc: 'Lightweight tactical pulse laser firing 3-pulse bursts (1.14 HP total, 1.8s reload). Focused 34-degree cone; electrical discharge increases thermal bloom and beam scatters in clouds.'
+    desc: 'Lightweight tactical pulse laser firing 3-pulse bursts (1.14 HP total, 1.8s reload). 18 pulses allow 6 bursts. Focused 34-degree cone; electrical discharge increases thermal bloom and beam scatters in clouds.'
   },
   'PLSL_MED': {
     id: 'PLSL_MED',
@@ -50,11 +50,11 @@ window.AUTOCANNONS_ENERGY = {
       'MQ-99', 'MQ-101',
       'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR'
     ],
-    defaultAmmo: 120,
+    defaultAmmo: 15,
     kineticConcussion: 0.0,
     thermalBloom: 1.5,
     cloudScattering: 0.75,
-    desc: 'Medium-tier optical pulse emitter firing 3-pulse bursts (1.50 HP total, 2.0s reload). Narrow 30-degree beam requires close boresight tracking; scattered by cloud moisture.'
+    desc: 'Medium-tier optical pulse emitter firing 3-pulse bursts (1.50 HP total, 2.0s reload). 15 pulses allow 5 focused bursts. Narrow 30-degree beam requires close boresight tracking; scattered by cloud moisture.'
   },
   'PLSL_HEAVY': {
     id: 'PLSL_HEAVY',
@@ -75,11 +75,11 @@ window.AUTOCANNONS_ENERGY = {
     lockedTo: [
       'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR'
     ],
-    defaultAmmo: 90,
+    defaultAmmo: 12,
     kineticConcussion: 0.0,
     thermalBloom: 1.7,
     cloudScattering: 0.80,
-    desc: 'High-energy optical burst weapon firing 3-pulse bursts (1.95 HP total, 2.5s reload). Tight 26-degree pencil beam; heavy capacitor discharge spikes thermal signature.'
+    desc: 'High-energy optical burst weapon firing 3-pulse bursts (1.95 HP total, 2.5s reload). 12 pulses deliver 4 heavy bursts. Tight 26-degree pencil beam; heavy capacitor discharge spikes thermal signature.'
   },
   'DE-PULSE': {
     id: 'DE-PULSE',
@@ -98,11 +98,11 @@ window.AUTOCANNONS_ENERGY = {
     tracerColor: '#00f0ff',
     badge: '28 DEG PENCIL BEAM',
     lockedTo: ['F-22A', 'Su-57', 'X-02S', 'B-21', 'J-20', 'F-15EX', 'FC-31', 'YF-23', 'ADF-11F', 'DARKSTAR', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'CFA-44'],
-    defaultAmmo: 120,
+    defaultAmmo: 15,
     kineticConcussion: 0.0,
     thermalBloom: 1.6,
     cloudScattering: 0.75,
-    desc: '80 kW solid-state pulsed fiber laser firing 3-pulse bursts (1.65 HP total, 2.4s reload). 7.5 km instant hitscan, narrow 28-degree beam; thermal bloom compromises stealth.'
+    desc: '80 kW solid-state pulsed fiber laser firing 3-pulse bursts (1.65 HP total, 2.4s reload). 15 pulses allow 5 instant hitscan bursts; narrow 28-degree beam; thermal bloom compromises stealth.'
   },
   'EML_GUN': {
     id: 'EML_GUN',
@@ -121,11 +121,11 @@ window.AUTOCANNONS_ENERGY = {
     tracerColor: '#38bdf8',
     badge: '22 DEG PINPOINT RAILGUN',
     lockedTo: ['CFA-44', 'X-02S', 'ADF-11F'],
-    defaultAmmo: 24,
+    defaultAmmo: 8,
     kineticConcussion: 0.40,
     thermalBloom: 1.3,
     cloudScattering: 0.0,
-    desc: 'Electromagnetic accelerator firing 2 hyper-velocity kinetic slugs (1.90 HP total, 2.8s reload). Out-ranges conventional cannons; tight 22-degree boresight requires pinpoint alignment.'
+    desc: 'Electromagnetic accelerator firing 2 hyper-velocity kinetic slugs (1.90 HP total, 2.8s reload). 8 slugs permit 4 sniper shots. Out-ranges conventional cannons; tight 22-degree boresight.'
   }
 };
 

@@ -19,11 +19,11 @@ window.AUTOCANNONS_BALLISTIC = {
     mass: 115,
     tracerColor: '#fbbf24',
     badge: '55 DEG SNAPSHOT CONE',
-    defaultAmmo: 240,
+    defaultAmmo: 24,
     kineticConcussion: 0.30,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'High-cyclic 20mm Gatling firing a rapid 4-round burst (1.40 HP total, 1.6s reload). Wide 55-degree snapshot cone excels in high-G turns. Zero thermal bloom preserves VLO stealth; 100% cloud penetration.'
+    desc: 'High-cyclic 20mm Gatling firing a rapid 4-round burst (1.40 HP total, 1.6s reload). Compact 24-round magazine allows 6 tactical bursts. Zero thermal bloom preserves VLO stealth; 100% cloud penetration.'
   },
   'GSH-30-1': {
     id: 'GSH-30-1',
@@ -41,11 +41,11 @@ window.AUTOCANNONS_BALLISTIC = {
     mass: 46,
     tracerColor: '#f97316',
     badge: '30MM HIGH-EXPLOSIVE',
-    defaultAmmo: 150,
+    defaultAmmo: 18,
     kineticConcussion: 0.35,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'Heavy 30mm cannon firing a punchy 3-round high-explosive burst (1.65 HP total, 1.8s reload). Heavy kinetic knockback drains target energy; completely unaffected by weather clouds.'
+    desc: 'Heavy 30mm cannon firing a punchy 3-round high-explosive burst (1.65 HP total, 1.8s reload). 18-round capacity permits 6 high-impact bursts. Heavy kinetic knockback drains target energy; unaffected by clouds.'
   },
   'BK-27': {
     id: 'BK-27',
@@ -63,11 +63,11 @@ window.AUTOCANNONS_BALLISTIC = {
     mass: 100,
     tracerColor: '#facc15',
     badge: '27MM REVOLVER CANNON',
-    defaultAmmo: 150,
+    defaultAmmo: 24,
     kineticConcussion: 0.32,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'Revolver cannon balancing high muzzle velocity with a tight 4-round burst (1.52 HP total, 1.7s reload). Zero thermal signature and 100% all-weather penetration.'
+    desc: 'Revolver cannon balancing high muzzle velocity with a tight 4-round burst (1.52 HP total, 1.7s reload). 24 rounds allow 6 concentrated bursts. Zero thermal signature and 100% all-weather penetration.'
   },
   'GAU-8': {
     id: 'GAU-8',
@@ -86,11 +86,11 @@ window.AUTOCANNONS_BALLISTIC = {
     tracerColor: '#ef4444',
     badge: '30MM ARMOR-PIERCING',
     lockedTo: ['A-10C', 'Su-34', 'Su-25SM3'],
-    defaultAmmo: 350,
+    defaultAmmo: 30,
     kineticConcussion: 0.45,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: '7-barrel hydraulic Gatling firing a devastating 5-round depleted-uranium burst (2.20 HP total, 2.2s reload). Heavy kinetic shock drains target energy and shreds surface armor.'
+    desc: '7-barrel hydraulic Gatling firing a devastating 5-round depleted-uranium burst (2.20 HP total, 2.2s reload). 30-round drum delivers 6 armor-penetrating bursts. Heavy kinetic shock drains target energy.'
   },
   'GAU-22': {
     id: 'GAU-22',
@@ -108,11 +108,11 @@ window.AUTOCANNONS_BALLISTIC = {
     mass: 105,
     tracerColor: '#38bdf8',
     badge: 'STEALTH BORESIGHT 25MM',
-    defaultAmmo: 180,
+    defaultAmmo: 20,
     kineticConcussion: 0.32,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: '4-barrel Gatling engineered for stealth bays firing a 4-round burst (1.52 HP total, 1.6s reload). Zero thermal emission preserves stealth; wide 48-degree cone with heavy kinetic concussion.'
+    desc: '4-barrel Gatling engineered for stealth bays firing a 4-round burst (1.52 HP total, 1.6s reload). 20-round magazine grants 5 precision bursts. Zero thermal emission preserves stealth.'
   },
   'GSH-23L': {
     id: 'GSH-23L',
@@ -130,11 +130,11 @@ window.AUTOCANNONS_BALLISTIC = {
     mass: 50,
     tracerColor: '#fb923c',
     badge: '52 DEG TWIN SNAPSHOT',
-    defaultAmmo: 200,
+    defaultAmmo: 20,
     kineticConcussion: 0.25,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'Gast-principle twin 23mm cannon firing rapid 4-round bursts (1.28 HP total, 1.5s reload). Generous 52-degree spread for close dogfights; zero thermal bloom.'
+    desc: 'Gast-principle twin 23mm cannon firing rapid 4-round bursts (1.28 HP total, 1.5s reload). 20 rounds provide 5 dogfight snapshot bursts. Generous 52-degree spread with zero thermal bloom.'
   },
   'MICRO_GUN': {
     id: 'MICRO_GUN',
@@ -152,11 +152,11 @@ window.AUTOCANNONS_BALLISTIC = {
     mass: 35,
     tracerColor: '#a855f7',
     badge: '60 DEG UCAV SNAPSHOT',
-    defaultAmmo: 200,
+    defaultAmmo: 16,
     kineticConcussion: 0.20,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'Ultra-wide 60-degree cone machine gun firing 4-round bursts (0.88 HP total, 1.3s reload). Instantaneous snapshot coverage with zero electrical generator drain.'
+    desc: 'Ultra-wide 60-degree cone machine gun firing 4-round bursts (0.88 HP total, 1.3s reload). 16-round lightweight magazine permits 4 snapshot bursts with zero electrical generator drain.'
   }
 };
 

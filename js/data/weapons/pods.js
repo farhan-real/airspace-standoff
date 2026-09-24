@@ -34,7 +34,7 @@ window.WEAPONS_PODS = {
       'Eurofighter', 'Rafale-C', 'A-10C', 'B-1B', 'F-15-SMTD',
       'F-15-SMT-COFFIN', 'X-29A', 'ADFX-01', 'X-02S', 'KF-21'
     ],
-    desc: 'Self-contained 20mm Vulcan Gatling pod. Mounts on external wing or fuselage stations.'
+    desc: 'Self-contained 20mm Vulcan Gatling pod (20 rounds, 5 bursts). Mounts on external wing or fuselage stations.'
   },
   'SPPU-22': {
     id: 'SPPU-22',
@@ -67,7 +67,7 @@ window.WEAPONS_PODS = {
       'J-16D', 'MiG-29K', 'Tejas-MK2', 'Su-47', 'Su-37',
       'Su-37-COFFIN', 'S-70', 'FC-31', 'J-35'
     ],
-    desc: 'Twin 23mm autocannon pod certified for external hardpoints on Eastern strike fighters and Flankers.'
+    desc: 'Twin 23mm autocannon pod (16 rounds, 4 bursts) certified for external hardpoints on Eastern strike fighters and Flankers.'
   },
   'GPU-5A': {
     id: 'GPU-5A',
@@ -99,7 +99,7 @@ window.WEAPONS_PODS = {
       'A-10C', 'Su-25SM3', 'Su-34', 'F-15EX', 'F-18E', 'F-2A',
       'J-16', 'Su-30SM', 'Su-35S', 'B-1B', 'F-15-SMTD', 'F-15-SMT-COFFIN'
     ],
-    desc: 'Heavy 30mm rotary cannon pod restricted to reinforced external pylons on heavy strike and CAS airframes.'
+    desc: 'Heavy 30mm rotary cannon pod (20 rounds, 5 bursts) restricted to reinforced external pylons on heavy strike and CAS airframes.'
   },
   'PLSL_POD': {
     id: 'PLSL_POD',
@@ -121,7 +121,7 @@ window.WEAPONS_PODS = {
     damagePerBurst: 1.50,
     damagePerSec: 2.8,
     burstCooldown: 2.0,
-    ammoCount: 16,
+    ammoCount: 15,
     ammoPerBurst: 3,
     isGunpod: true,
     isLaser: true,
@@ -134,7 +134,7 @@ window.WEAPONS_PODS = {
       'F-22A', 'Su-57', 'J-20', 'F-35A', 'F-15EX',
       'Kizilelma', 'S-70'
     ],
-    desc: 'Tactical pulse laser pod restricted to external pylons on advanced 5th-Gen platforms and superfighters.'
+    desc: 'Tactical pulse laser pod (15 pulses, 5 bursts) restricted to external pylons on advanced 5th-Gen platforms and superfighters.'
   },
   'DE_POD': {
     id: 'DE_POD',
@@ -168,7 +168,7 @@ window.WEAPONS_PODS = {
       'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN',
       'F-15EX', 'Su-57', 'F-22A', 'J-20', 'B-21', 'Su-35S'
     ],
-    desc: 'High-power solid-state laser pod certified exclusively for external heavy pylons on experimental flagships.'
+    desc: 'High-power solid-state laser pod (12 pulses, 4 bursts) certified exclusively for external heavy pylons on experimental flagships.'
   },
   'ADM-160B': {
     id: 'ADM-160B',
@@ -279,13 +279,13 @@ window.WEAPONS_PODS = {
     seeker: 'DIRECT_ENERGY',
     trait: 'HITSCAN_THERMAL',
     traitBadge: 'SPEED-OF-LIGHT BEAM',
-    behaviorDesc: 'Direct speed-of-light thermal hitscan beam firing 3-pulse bursts (3.0 HP total, 24 shots, 2.8s reload). Zero lead time required; scattered by clouds.',
+    behaviorDesc: 'Direct speed-of-light thermal hitscan beam firing 3-pulse bursts (3.0 HP total, 12 shots, 2.8s reload). Zero lead time required; scattered by clouds.',
     damage: 3,
     roundsPerBurst: 3,
     damagePerRound: 1.00,
     damagePerBurst: 3.0,
     cooldown: 2.8,
-    ammoCount: 24,
+    ammoCount: 12,
     ammoPerBurst: 3,
     isLaser: true,
     sigmaPylon: 0.25,
@@ -295,6 +295,6 @@ window.WEAPONS_PODS = {
       'J-20', 'FC-31', 'ADF-11F', 'CFA-44', 'DARKSTAR',
       'F-22C-COFFIN', 'Su-37-COFFIN', 'ADFX-01'
     ],
-    desc: 'High-energy chemical laser pod providing instantaneous thermal hitscan damage. Mounts externally on heavy pylons.'
+    desc: 'High-energy chemical laser pod (12 pulses, 4 bursts) providing instantaneous thermal hitscan damage. Mounts externally on heavy pylons.'
   }
 };
