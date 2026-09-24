@@ -114,6 +114,11 @@ class PointerControlsHandler {
         const pick = this.findClosestContactInScreenSpace(tapX, tapY, 38);
         if (pick) {
           const entity = pick.entity;
+          if (this.game.inspection && this.game.inspection.isOpen) {
+            this.game.inspection.selectMapEntity(entity);
+            if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+            return;
+          }
           const commanderTeam = this.game.currentPvpCommander || 'friendly';
 
           if (entity.team === commanderTeam && entity instanceof Aircraft) {
@@ -143,6 +148,7 @@ class PointerControlsHandler {
 
   findClosestContactInScreenSpace(screenX, screenY, maxRadiusPx) {
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
+    const inspectionOpen = Boolean(this.game.inspection && this.game.inspection.isOpen);
     const detectedSet = (commanderTeam === 'friendly')
       ? (this.game.detectedByBlue || new Set())
       : (this.game.detectedByRed || new Set());
@@ -159,7 +165,7 @@ class PointerControlsHandler {
 
     const enemies = (commanderTeam === 'friendly') ? this.game.hostileAircraft : this.game.alliedAircraft;
     for (const e of enemies) {
-      if (e.hp > 0 && detectedSet.has(e.id)) {
+      if (e.hp > 0 && (inspectionOpen || detectedSet.has(e.id))) {
         const pE = this.game.radar.toScreen(e.x, e.y);
         const distE = Math.hypot(pE.x - screenX, pE.y - screenY);
         if (distE <= maxRadiusPx) candidates.push({ entity: e, distPx: distE });
@@ -168,7 +174,7 @@ class PointerControlsHandler {
 
     const ghosts = (this.game.simulation && this.game.simulation.ghostContacts) || [];
     for (const g of ghosts) {
-      if (g.hp > 0 && !g.isDissolved && detectedSet.has(g.id)) {
+      if (g.hp > 0 && !g.isDissolved && (inspectionOpen || detectedSet.has(g.id))) {
         const pG = this.game.radar.toScreen(g.x, g.y);
         const distG = Math.hypot(pG.x - screenX, pG.y - screenY);
         if (distG <= maxRadiusPx) candidates.push({ entity: g, distPx: distG });
@@ -177,7 +183,7 @@ class PointerControlsHandler {
 
     const decoys = (this.game.simulation && this.game.simulation.decoyDrones) || [];
     for (const d of decoys) {
-      if (d.hp > 0 && (d.team === commanderTeam || detectedSet.has(d.id))) {
+      if (d.hp > 0 && (inspectionOpen || d.team === commanderTeam || detectedSet.has(d.id))) {
         const pD = this.game.radar.toScreen(d.x, d.y);
         const distD = Math.hypot(pD.x - screenX, pD.y - screenY);
         if (distD <= maxRadiusPx) candidates.push({ entity: d, distPx: distD });
@@ -185,7 +191,7 @@ class PointerControlsHandler {
     }
 
     for (const s of this.game.surfaceUnits) {
-      if (s.hp > 0 && (s.team === commanderTeam || detectedSet.has(s.id))) {
+      if (s.hp > 0 && (inspectionOpen || s.team === commanderTeam || detectedSet.has(s.id))) {
         const pS = this.game.radar.toScreen(s.x, s.y);
         const distS = Math.hypot(pS.x - screenX, pS.y - screenY);
         if (distS <= maxRadiusPx) candidates.push({ entity: s, distPx: distS });
@@ -194,10 +200,26 @@ class PointerControlsHandler {
 
     const civilians = (this.game.simulation && this.game.simulation.civilianTraffic) || [];
     for (const civ of civilians) {
-      if (civ.hp > 0 && detectedSet.has(civ.id)) {
+      if (civ.hp > 0 && (inspectionOpen || detectedSet.has(civ.id))) {
         const pC = this.game.radar.toScreen(civ.x, civ.y);
         const distC = Math.hypot(pC.x - screenX, pC.y - screenY);
         if (distC <= maxRadiusPx) candidates.push({ entity: civ, distPx: distC });
+      }
+    }
+
+    for (const missile of this.game.missiles || []) {
+      if (!missile.isDead && (inspectionOpen || missile.team === commanderTeam || detectedSet.has(missile.id))) {
+        const pM = this.game.radar.toScreen(missile.x, missile.y);
+        const distM = Math.hypot(pM.x - screenX, pM.y - screenY);
+        if (distM <= maxRadiusPx) candidates.push({ entity: missile, distPx: distM });
+      }
+    }
+
+    if (inspectionOpen && this.game.radar && this.game.radar.cam) {
+      const mapPoint = this.game.radar.cam.toKm(screenX, screenY);
+      const clouds = (this.game.simulation && this.game.simulation.weatherClouds) || [];
+      for (const cloud of clouds) {
+        if (cloud.containsPoint(mapPoint.x, mapPoint.y)) candidates.push({ entity: cloud, distPx: 24 });
       }
     }
 

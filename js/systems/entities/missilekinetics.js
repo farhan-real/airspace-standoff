@@ -220,6 +220,10 @@ class MissileKinetics {
   }
 
   static resolveHitProbability(missile, target, weatherClouds, salvoCount) {
+    return this.explainHitProbability(missile, target, weatherClouds, salvoCount).probability;
+  }
+
+  static explainHitProbability(missile, target, weatherClouds, salvoCount) {
     const w = missile.weapon || {};
     const basePk = (w.T_0 || 0.80);
 
@@ -287,9 +291,36 @@ class MissileKinetics {
     const turnOptBonus = (turnOptEff - 0.70) * 0.15;
 
     const rawProb = (basePk * aspectScore) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + afterburnerBonus + heavyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
-    if (isManeuvering) return Math.max(0.10, Math.min(0.95, rawProb));
-    const floor = (target.isAce ? 0.14 : (target.isCoffin ? 0.08 : (target.isFlightLead ? 0.10 : 0.12)));
-    return Math.max(floor, Math.min(0.95, rawProb));
+    const probabilityFloor = isManeuvering ? 0.10 : (target.isAce ? 0.14 : (target.isCoffin ? 0.08 : (target.isFlightLead ? 0.10 : 0.12)));
+    const probability = Math.max(probabilityFloor, Math.min(0.95, rawProb));
+    return {
+      probability,
+      rawProbability: rawProb,
+      probabilityFloor,
+      probabilityCeiling: 0.95,
+      factors: {
+        baseHitProbability: basePk,
+        aspectDifferenceRad: aspectDiff,
+        aspectScore,
+        activeManeuverEvasion: activeManeuver * agilityScale * turnOptFactor,
+        notchBonus,
+        chaffBonus,
+        combinedActiveEvasion: primaryActiveEvasion,
+        passiveEvasionBaseline: primaryPassiveBaseline,
+        effectiveDefense,
+        mixedSeekers: hasMixedSeekers,
+        salvoBonus,
+        mixedSeekerBonus: mixedSynergyBonus,
+        afterburnerHeatBonus: afterburnerBonus,
+        heavyTargetBonus: heavyBonus,
+        targetEnergyBonus: energyDeficitBonus,
+        agilityPenalty: agilityDefenseBonus,
+        turnEfficiency: turnOptEff,
+        turnEfficiencyPenalty: turnOptBonus,
+        opticalWeatherPenalty: weatherPenalty,
+        excessiveTurnPenalty: energyTurnPenalty
+      }
+    };
   }
 
   static applyThermobaricAoE(missile, primaryTarget, directDamage, game) {

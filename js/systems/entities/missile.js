@@ -71,6 +71,21 @@ class MissileEntity {
       this.isPassiveRadar = Boolean(weapon.seeker === 'PASSIVE_RADAR');
       this.pathRevealDistance = this.isPassiveRadar ? 20.0 : 999.0;
     }
+
+    const inspection = window.Game && window.Game.inspection;
+    if (inspection && inspection.enabled) {
+      const clouds = window.Game.simulation ? window.Game.simulation.weatherClouds : [];
+      const launchSolution = (typeof Physics !== 'undefined') ? Physics.calcPk(weapon, sourceUnit, targetUnit, clouds) : null;
+      inspection.recordEvent('WEAPON LAUNCH', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(sourceUnit) : (sourceUnit.callsign || sourceUnit.name || sourceUnit.id)} fired ${weapon.name || weapon.id}`, sourceUnit, targetUnit, {
+        weapon: weapon.name || weapon.id,
+        seeker: weapon.seeker || 'UNGUIDED',
+        launchRangeKm: this.distanceToTarget,
+        weaponMaxRangeKm: weapon.rangeKm,
+        estimatedLaunchPk: launchSolution ? launchSolution.pk : null,
+        launchAssessment: launchSolution ? launchSolution.label : 'Unavailable',
+        assessmentReason: launchSolution ? launchSolution.desc : 'Launch model unavailable'
+      }, this);
+    }
   }
 
   isIdentifiedBy(team) {
@@ -105,6 +120,14 @@ class MissileEntity {
     }
 
     if (this.target.hp <= 0.05) {
+      const inspection = window.Game && window.Game.inspection;
+      if (inspection && inspection.enabled) inspection.recordEvent('TARGET DESTROYED FIRST', `${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(this.target) : (this.target.callsign || this.target.name || this.target.id)} was destroyed before ${this.weapon.name || this.weapon.id} arrived`, this.source, this.target, {
+        missileId: this.id,
+        missileAgeSec: this.age,
+        distanceRemainingKm: Math.hypot(this.target.x - this.x, this.target.y - this.y),
+        targetHp: this.target.hp,
+        outcome: 'Missile lost its target before impact'
+      }, this);
       this.state = 'LOST_TRACK';
       this.active = false;
       this.lostReason = 'TARGET DESTROYED';
@@ -184,11 +207,26 @@ class MissileEntity {
 
   triggerLostTrack(reason) {
     if (this.state === 'LOST_TRACK') return;
+    const stageBeforeLoss = this.stage;
     this.state = 'LOST_TRACK';
     this.active = false;
     this.lostReason = reason;
     this.stage = 'COAST';
     this.heading += (Math.random() * 0.2 - 0.1);
+
+    const inspection = window.Game && window.Game.inspection;
+    if (inspection && inspection.enabled) {
+      inspection.recordEvent('MISSILE LOST', `${this.weapon.name || this.weapon.id} lost its solution: ${reason}`, this.source, this.target, {
+        missileId: this.id,
+        reason,
+        stageBeforeLoss,
+        distanceToTargetKm: this.distanceToTarget,
+        distanceTraveledKm: this.distanceTraveled,
+        ageSec: this.age,
+        cloudObscureSec: this.cloudObscureTimer,
+        targetManeuver: this.target && this.target.activeManeuverId
+      }, this);
+    }
 
     const isLiveTarget = this.target && this.target.hp > 0.05 && !this.target.isCivilian && !this.target.isGhost && !this.target.isDecoyDrone;
     const isGenuineEvade = isLiveTarget && (
@@ -229,7 +267,12 @@ class MissileEntity {
   resolveTerminalEngagement(weatherClouds) {
     const tgt = this.target;
     const w = this.weapon;
-    if (!tgt || tgt.hp <= 0.05) { this.active = false; this.isDead = true; return; }
+    if (!tgt || tgt.hp <= 0.05) {
+      this.active = false; this.isDead = true;
+      const inspection = window.Game && window.Game.inspection;
+      if (inspection && inspection.enabled) inspection.recordEvent('IMPACT CANCELLED', 'Target was already destroyed or unavailable at impact', this.source, tgt, { missileId: this.id, targetHp: tgt ? tgt.hp : null }, this);
+      return;
+    }
 
     let concurrent = 1;
     let salvoDetails = '';
@@ -252,6 +295,8 @@ class MissileEntity {
     if (tgt.isGhost) {
       this.isDead = true;
       tgt.takeDamage();
+      const inspection = window.Game && window.Game.inspection;
+      if (inspection && inspection.enabled) inspection.recordEvent('FALSE CONTACT', 'The missile reached a ghost track; the atmospheric contact dissipated without a real target', this.source, tgt, { missileId: this.id, seeker: w.seeker, distanceToTargetKm: this.distanceToTarget }, this);
       this.triggerLostTrack('FALSE CONTACT DISSIPATED');
       return;
     }
@@ -259,6 +304,8 @@ class MissileEntity {
     if (tgt.isDecoyDrone) {
       this.isDead = true;
       tgt.takeDamage(w.damage || 1);
+      const inspection = window.Game && window.Game.inspection;
+      if (inspection && inspection.enabled) inspection.recordEvent('DECOY HIT', 'The seeker followed a decoy drone and did not reach the aircraft', this.source, tgt, { missileId: this.id, seeker: w.seeker, decoyRcs: tgt.effectiveRcs, damage: w.damage || 1 }, this);
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, false);
         window.Game.radar.spawnCombatText(tgt.x, tgt.y, 'DECOY DESTROYED', '#c084fc');
@@ -271,8 +318,14 @@ class MissileEntity {
       const isEmitter = (tgt.type === 'S-400' || tgt.type === 'RADAR_ARRAY' || tgt.type === 'EW_JAMMER' || tgt.type === 'RADAR_VAN');
       const dmg = w.damage * ((w.trait === 'EMITTER_KILLER' && isEmitter) ? 3 : 1);
       const wasDead = tgt.hp <= 0;
+      const hpBefore = tgt.hp;
       tgt.takeDamage(dmg, w.isBunkerCracker);
       this.isDead = true;
+      const inspection = window.Game && window.Game.inspection;
+      if (inspection && inspection.enabled) inspection.recordEvent('SURFACE IMPACT', `${w.name || w.id} hit ${tgt.name || tgt.type}`, this.source, tgt, {
+        missileId: this.id, weaponDamage: w.damage, emitterBonusApplied: dmg !== w.damage,
+        bunkerCracker: Boolean(w.isBunkerCracker), hpBefore, damageApplied: hpBefore - tgt.hp, hpAfter: tgt.hp
+      }, this);
       if (!wasDead && tgt.hp <= 0 && window.Game && window.Game.simulation) {
         window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       } else if (!wasDead && tgt.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
@@ -286,16 +339,43 @@ class MissileEntity {
     }
 
     if (tgt.isCivilian) {
+      const hpBefore = tgt.hp;
       tgt.takeDamage(w.damage, this.source);
       this.isDead = true;
+      const inspection = window.Game && window.Game.inspection;
+      if (inspection && inspection.enabled) inspection.recordEvent('CIVILIAN IMPACT', 'The missile hit a civilian aircraft; rules-of-engagement penalties were applied', this.source, tgt, {
+        missileId: this.id, weapon: w.name || w.id, hpBefore, damage: w.damage, hpAfter: tgt.hp
+      }, this);
       return;
     }
 
-    const hitChance = (typeof MissileKinetics !== 'undefined')
-      ? MissileKinetics.resolveHitProbability(this, tgt, weatherClouds, concurrent)
-      : 0.65;
+    const impactModel = (typeof MissileKinetics !== 'undefined')
+      ? MissileKinetics.explainHitProbability(this, tgt, weatherClouds, concurrent)
+      : { probability: 0.65, rawProbability: 0.65, factors: {} };
+    const hitChance = impactModel.probability;
+    const impactRoll = Math.random();
+    const hpBefore = tgt.hp;
+    const flightLeadReduction = tgt.isFlightLead ? (tgt.missileDamageReduction || 0) : 0;
+    const expectedDamage = flightLeadReduction ? Math.max(1, w.damage - flightLeadReduction) : w.damage;
+    const hit = impactRoll <= hitChance;
+    const inspection = window.Game && window.Game.inspection;
+    if (inspection && inspection.enabled) inspection.recordEvent(hit ? 'MISSILE HIT' : 'MISSILE MISS',
+      hit ? `${w.name || w.id} hit ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(tgt) : (tgt.callsign || tgt.name || tgt.id)}` : `${w.name || w.id} missed ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(tgt) : (tgt.callsign || tgt.name || tgt.id)}`,
+      this.source, tgt, {
+        missileId: this.id,
+        weapon: w.name || w.id,
+        distanceAtImpactKm: this.distanceToTarget,
+        targetHpBefore: hpBefore,
+        baseDamage: w.damage,
+        flightLeadDamageReduction: flightLeadReduction,
+        expectedDamageAfterReduction: expectedDamage,
+        hitProbability: hitChance,
+        impactRoll,
+        outcome: hit ? 'HIT (roll ≤ probability)' : 'MISS (roll > probability)',
+        calculation: impactModel
+      }, this);
 
-    if (Math.random() <= hitChance) {
+    if (hit) {
       this.isDead = true;
       let finalDamage = w.damage;
       if (tgt.isFlightLead && tgt.missileDamageReduction) finalDamage = Math.max(1, finalDamage - tgt.missileDamageReduction);

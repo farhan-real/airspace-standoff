@@ -169,7 +169,7 @@ class TacticalRadarRenderer {
     const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
 
     const activeUnit = state ? state.activeUnit : null;
-    this.selectedTarget = state ? state.selectedTarget : null;
+    this.selectedTarget = state ? (state.inspectionEntity || state.selectedTarget) : null;
 
     if (this.cam.trackingUnit) {
       if (this.cam.trackingUnit.hp > 0) this.cam.centerOnKm(this.cam.trackingUnit.x, this.cam.trackingUnit.y);
@@ -179,7 +179,7 @@ class TacticalRadarRenderer {
     const commanderTeam = (window.Game && window.Game.currentPvpCommander) || 'friendly';
     const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
 
-    const detectedSet = is2P
+    const detectedSet = is2P || (state && state.inspectionMode)
       ? new Set([
           ...allied.map(a => a.id),
           ...hostiles.map(h => h.id),
@@ -239,10 +239,10 @@ class TacticalRadarRenderer {
       RadarEnvironmentRenderer.drawUplinkBanner(ctx, liveHostiles.length, w, h);
     }
 
-    if (this.hoveredContact && this.hoveredContact.hp > 0 && typeof this.hoveredContact.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {
+    if (this.hoveredContact && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0) && typeof this.hoveredContact.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {
       RadarTacticalRenderer.drawHoverReticle(ctx, this.cam, this.hoveredContact);
     }
-    if (this.selectedTarget && this.selectedTarget.hp > 0 && typeof this.selectedTarget.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {
+    if (this.selectedTarget && (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0) && typeof this.selectedTarget.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {
       RadarTacticalRenderer.drawTargetReticle(ctx, this.cam, this.selectedTarget);
     }
 

@@ -59,7 +59,7 @@ class SimulationSystem {
       maxHp: aircraft.maxHp,
       altFt: aircraft.altFt,
       callsign: aircraft.callsign,
-      model: aircraft.spec ? aircraft.spec.id : 'AIRCRAFT',
+      model: aircraft.spec ? (aircraft.spec.name || aircraft.spec.id) : 'AIRCRAFT',
       category: aircraft.spec ? aircraft.spec.category : 'MULTIROLE',
       isAce: Boolean(aircraft.isAce),
       isFlightLead: Boolean(aircraft.isFlightLead),
@@ -217,6 +217,7 @@ class SimulationSystem {
         }
         this.game.hostileAircraft.push(...redReinforcements);
         this.game.alliedAircraft.push(...blueReinforcements);
+        if (typeof this.game.ensureUniqueAircraftCallsigns === 'function') this.game.ensureUniqueAircraftCallsigns();
         this.logScoreEvent('friendly', 0, `REINFORCEMENTS: Wave ${this.currentWave} entered theater`);
       }
     }

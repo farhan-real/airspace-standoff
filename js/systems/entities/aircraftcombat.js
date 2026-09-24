@@ -160,6 +160,13 @@ Aircraft.prototype.deployCountermeasures = function() {
     this.chaffFlares = count - 1;
     this.cmTimer = 3.0;
     this.applyActionStress(0.08);
+    const inspection = window.Game && window.Game.inspection;
+    if (inspection && inspection.enabled) inspection.recordEvent('COUNTERMEASURE', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(this) : this.callsign} deployed chaff`, this, null, {
+      remainingChaff: this.chaff, activeWindowSec: this.cmTimer, stressAfterDeployment: this.stress,
+      incomingMissiles: (window.Game.missiles || []).filter(missile => missile.active && missile.target && missile.target.id === this.id).map(missile => ({
+        weapon: missile.weapon && missile.weapon.name, seeker: missile.weapon && missile.weapon.seeker, distanceKm: missile.distanceToTarget
+      }))
+    });
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     return true;
   }
@@ -245,16 +252,25 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
       if (angleDiff < maxConeRad) {
         if (isEnemy && !this.isAce && Math.random() < (diffKey === 'CADET' ? 0.60 : 0.40)) break;
 
-        let sustainedDmg = totalGunDps * dt;
+        const baseDamage = totalGunDps * dt;
+        let sustainedDmg = baseDamage;
+        const damageFactors = [];
         const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
         const inCloud = clouds.some(c => c.containsPoint(this.x, this.y) || c.containsPoint(enemy.x, enemy.y));
 
-        if (inCloud && isEnergy && this.gun.cloudScattering) sustainedDmg *= (1.0 - this.gun.cloudScattering);
-        if (isEnemy && !this.isAce) sustainedDmg *= 0.65;
-        if (enemy.spec && enemy.spec.category === 'STRIKE') sustainedDmg *= 0.50;
-        if (enemy.isFlightLead && enemy.autocannonResistance) sustainedDmg *= (1.0 - enemy.autocannonResistance);
-        if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) sustainedDmg *= 0.75;
+        if (inCloud && isEnergy && this.gun.cloudScattering) {
+          const factor = 1.0 - this.gun.cloudScattering; sustainedDmg *= factor;
+          damageFactors.push({ cause: 'Cloud scattering', multiplier: factor });
+        }
+        if (isEnemy && !this.isAce) { sustainedDmg *= 0.65; damageFactors.push({ cause: 'AI gun damage scaling', multiplier: 0.65 }); }
+        if (enemy.spec && enemy.spec.category === 'STRIKE') { sustainedDmg *= 0.50; damageFactors.push({ cause: 'Strike-aircraft resistance', multiplier: 0.50 }); }
+        if (enemy.isFlightLead && enemy.autocannonResistance) {
+          const factor = 1.0 - enemy.autocannonResistance; sustainedDmg *= factor;
+          damageFactors.push({ cause: 'Flight-lead autocannon resistance', multiplier: factor });
+        }
+        if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) { sustainedDmg *= 0.75; damageFactors.push({ cause: 'Shooter stress', multiplier: 0.75 }); }
 
+        const hpBefore = enemy.hp;
         enemy.hp = Math.max(0, enemy.hp - sustainedDmg);
         if (enemy.hp < 0.05) enemy.hp = 0;
 
@@ -264,6 +280,23 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
 
         const burstRds = this.gun.roundsPerBurst || 4;
         this.gunAmmo = Math.max(0, this.gunAmmo - burstRds);
+
+        const inspection = window.Game && window.Game.inspection;
+        if (inspection && inspection.enabled) inspection.recordEvent('GUN BURST', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(this) : this.callsign} fired ${this.gun.name || this.gun.id} at ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(enemy) : (enemy.callsign || enemy.name || enemy.id)}`, this, enemy, {
+          gun: this.gun.name || this.gun.id,
+          rangeKm: dist,
+          maximumRangeKm: maxRange,
+          targetAngleDeg: angleDiff * 180 / Math.PI,
+          allowedHalfConeDeg: maxConeRad * 180 / Math.PI,
+          firingDps: totalGunDps,
+          simulationStepSec: dt,
+          baseDamage,
+          damageFactors,
+          finalDamage: hpBefore - enemy.hp,
+          hpBefore,
+          hpAfter: enemy.hp,
+          ammunitionRemaining: this.gunAmmo
+        });
 
         this.gunCooldown = (window.CONFIG && window.CONFIG.AUTO_GUN_COOLDOWN) || 0.50;
 

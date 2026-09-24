@@ -7,6 +7,7 @@ window.TACTICAL_FLIGHT_MANUAL = [
   ...(window.MANUAL_SENSORS || []),
   ...(window.MANUAL_COMBAT || []),
   ...(window.MANUAL_THEATER || []),
+  ...(window.MANUAL_OPERATIONS || []),
   ...(window.MANUAL_CONTROLS || [])
 ];
 
@@ -33,6 +34,9 @@ window.initTacticalManual = function() {
     { id: 'ch7_defense_ew', label: '07: EW & NOTCH DEFENSE' },
     { id: 'ch8_aces_difficulties', label: '08: ACES & THREAT TIERS' },
     { id: 'ch9_logistics_scoring', label: '09: THEATER IADS & SCORING' },
+    { id: 'ch10_mission_editor', label: '10: MISSION EDITOR' },
+    { id: 'ch11_inspection', label: '11: INSPECTION MODE' },
+    { id: 'ch12_debrief_replay', label: '12: DEBRIEF & REPLAY' },
     { id: 'ref_controls', label: 'CONTROLS & KEYBINDS', isSpecial: true }
   ];
 
@@ -151,7 +155,7 @@ window.initTacticalManual = function() {
       container.innerHTML = `
         <div style="text-align:center;padding:40px;color:#8494ab;font-family:var(--font-mono);font-size:0.80rem;">
           <b style="color:var(--theme-accent);">NO OPERATIONAL PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
-          <p style="margin-top:6px;font-size:0.72rem;">Try searching for terms like "ProNav", "Notch", "RCS", "COFFIN", "Datalink", "Depots", or "Controls".</p>
+          <p style="margin-top:6px;font-size:0.72rem;">Try "Mission Editor", "Random", "Inspection", "Replay", "Debrief", "Callsign", "Notch", "RCS", or "Controls".</p>
         </div>`;
       return;
     }

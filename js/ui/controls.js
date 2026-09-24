@@ -258,6 +258,7 @@ class ControlsSystem {
     if (!u || u.hp <= 0.05) return;
     if (this.game.consumeCurrentCommanderTokens(0.4)) {
       u.dive();
+      if (this.game.inspection && this.game.inspection.enabled) this.game.inspection.recordEvent('FLIGHT ACTION', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : u.callsign} executed a dive`, u, null, { altitudeFt: u.altFt, targetAltitudeFt: u.targetAltFt, speedMach: u.speed, energy: u.energy, stress: u.stress });
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'DIVE', '#00f0ff');
       this.game.avionics.updateActiveUnitMFD();
@@ -273,6 +274,7 @@ class ControlsSystem {
     }
     if (this.game.consumeCurrentCommanderTokens(0.4)) {
       u.zoomClimb();
+      if (this.game.inspection && this.game.inspection.enabled) this.game.inspection.recordEvent('FLIGHT ACTION', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : u.callsign} executed a zoom climb`, u, null, { altitudeFt: u.altFt, targetAltitudeFt: u.targetAltFt, speedMach: u.speed, energy: u.energy, stress: u.stress });
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'CLIMB', '#00f5a0');
       this.game.avionics.updateActiveUnitMFD();

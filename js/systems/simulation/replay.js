@@ -460,7 +460,9 @@ class AfterActionReplay {
       if (width >= 500) {
         ctx.font = '600 8px ui-monospace, monospace';
         ctx.fillStyle = color;
-        ctx.fillText(aircraft.identified ? (aircraft.callsign || aircraft.model) : 'BOGEY', p.x + 7, p.y - 5);
+        ctx.fillText(aircraft.identified
+          ? (window.formatAircraftDisplayName ? window.formatAircraftDisplayName(aircraft) : `${aircraft.callsign || 'PILOT'} · ${aircraft.model || 'AIRCRAFT'}`)
+          : 'BOGEY', p.x + 7, p.y - 5);
       }
     });
 

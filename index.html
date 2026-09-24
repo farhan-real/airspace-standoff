@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="css/hud/banner.css">
   <link rel="stylesheet" href="css/hud/workspace.css">
   <link rel="stylesheet" href="css/hud/radar.css">
+  <link rel="stylesheet" href="css/hud/inspection.css">
   <link rel="stylesheet" href="css/hud/flight/tape.css">
   <link rel="stylesheet" href="css/hud/flight/mfd.css">
   <link rel="stylesheet" href="css/hud/flight/roster.css">
@@ -203,7 +204,7 @@
     </div>
     <div class="manual-toolbar">
       <div class="manual-search-row">
-        <input type="text" id="manual-search-filter" class="manual-search-input" placeholder="Search operational manual by keyword (e.g. Notch, RCS, COFFIN, Salvo, Datalink, Depots, Controls)...">
+        <input type="text" id="manual-search-filter" class="manual-search-input" placeholder="Search manual (e.g. Mission Editor, Inspection, Replay, Callsign, Notch, RCS)...">
         <div id="manual-search-actions" class="manual-search-actions">
           <span id="manual-search-count" class="manual-search-count"></span>
           <button type="button" id="btn-manual-search-prev" class="manual-search-nav-btn" title="Previous Match (Shift+Enter)">&lt;</button>
@@ -263,6 +264,10 @@
     </div>
     <div class="mission-editor-body">
       <p class="mission-editor-intro">Choose a value for each setting. Press <b>RANDOM</b> only where you want a new value chosen at launch. This setup is for your next sortie only and is unranked.</p>
+      <div class="mission-editor-inspection-setting">
+        <div><strong>INSPECTION MODE</strong><span>Opens a live analysis workspace. Reveals every contact and explains sensors, weapons, and outcomes.</span></div>
+        <button type="button" id="me-inspection-mode" class="mission-editor-inspection-toggle" aria-pressed="false">OFF</button>
+      </div>
       <div class="mission-editor-section">
         <h3><span>01</span> MISSION</h3>
         <p>Choose the battle type, challenge, and enemy style.</p>
@@ -524,6 +529,8 @@
         <img src="icons/fullscreen.svg" class="btn-vector-ico" width="11" height="11" alt="Fullscreen">
         <span>FULLSCREEN</span>
       </button>
+      <button type="button" id="btn-inspection-mode" class="hud-btn small hidden" title="Open live mission analysis">INSPECTION</button>
+      <button type="button" id="inspection-time-stop" class="hud-btn small alert hidden" aria-pressed="false" title="Stop or resume time in this inspection sortie">STOP TIME</button>
       <button id="btn-audio-toggle" class="hud-btn small" title="Toggle Audio">AUDIO: ON</button>
       <button id="btn-hud-glossary" class="hud-btn small">
         <img src="icons/manual.svg" class="btn-vector-ico" width="11" height="11" alt="Manual">
@@ -621,6 +628,30 @@
         <button id="mobile-steer-right" class="mobile-steer-btn">TURN RIGHT &gt;</button>
       </div>
     </main>
+
+    <aside id="inspection-pane" class="inspection-pane hidden" aria-label="Mission inspection workspace">
+      <div class="inspection-pane-header">
+        <div><span class="inspection-kicker">LIVE SORTIE ANALYSIS</span><strong id="inspection-selection-title">SELECT AN OBJECT</strong></div>
+        <select id="inspection-entity-select" aria-label="Choose an aircraft or object to inspect"><option value="">CHOOSE OBJECT</option></select>
+        <div class="inspection-pane-actions">
+          <button type="button" id="inspection-enemy-toggle" class="hud-btn small" aria-label="Enemy aircraft details are shown" aria-pressed="true" title="When off, selecting enemy aircraft targets them without replacing your aircraft details">ENEMY: ON</button>
+          <button type="button" id="inspection-close" class="hud-btn small">EXIT</button>
+        </div>
+      </div>
+      <div class="inspection-hint" id="inspection-hint">Choose a unit to inspect. Friendly aircraft become your active aircraft; enemy aircraft become your target.</div>
+      <nav class="inspection-tabs" aria-label="Inspection sections">
+        <button type="button" data-inspection-tab="OVERVIEW" class="active">SUMMARY</button>
+        <button type="button" data-inspection-tab="RADAR">SENSORS</button>
+        <button type="button" data-inspection-tab="ENGAGEMENT">WEAPONS</button>
+        <button type="button" data-inspection-tab="TRACE">EVENTS</button>
+        <button type="button" data-inspection-tab="RAW">ALL DATA</button>
+      </nav>
+      <div id="inspection-content" class="inspection-content"></div>
+      <div class="inspection-events-dock">
+        <div class="inspection-subhead"><span>CAUSE &amp; EFFECT LOG</span><span id="inspection-event-count">0 EVENTS</span></div>
+        <div id="inspection-event-list" class="inspection-event-list"></div>
+      </div>
+    </aside>
 
     <!-- RIGHT: FLIGHT CONTROLS & WEAPONS SMS -->
     <aside class="active-unit-mfd pane-item" id="pane-mfd">
@@ -764,6 +795,7 @@
 <script src="js/data/manual/sensors.js"></script>
 <script src="js/data/manual/combat.js"></script>
 <script src="js/data/manual/theater.js"></script>
+<script src="js/data/manual/operations.js"></script>
 <script src="js/data/manual/controls.js"></script>
 <script src="js/data/manual.js"></script>
 <script src="js/data/weapons/autocannons.js"></script>
@@ -872,6 +904,7 @@
 <script src="js/ui/procurement/dialogs/dialog.js"></script>
 <script src="js/ui/procurement.js"></script>
 <script src="js/ui/mission-editor.js"></script>
+<script src="js/ui/inspection-mode.js"></script>
 
 <script src="js/game.js"></script>
 </body>

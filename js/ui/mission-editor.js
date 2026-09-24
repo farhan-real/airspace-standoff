@@ -8,6 +8,7 @@ class MissionEditor {
     const closeButton = document.getElementById('btn-close-mission-editor');
     const applyButton = document.getElementById('btn-apply-mission-editor');
     const resetButton = document.getElementById('btn-reset-mission-editor');
+    const inspectionToggle = document.getElementById('me-inspection-mode');
     if (!modal || !openButton) return;
 
     openButton.onclick = () => {
@@ -21,6 +22,13 @@ class MissionEditor {
     });
     if (applyButton) applyButton.onclick = () => this.applyDraft();
     if (resetButton) resetButton.onclick = () => this.resetDraft();
+    if (inspectionToggle) inspectionToggle.onclick = () => {
+      const enabled = inspectionToggle.getAttribute('aria-pressed') !== 'true';
+      inspectionToggle.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+      inspectionToggle.textContent = enabled ? 'ON' : 'OFF';
+      inspectionToggle.classList.toggle('is-active', enabled);
+      this.updatePreview();
+    };
     modal.querySelectorAll('select').forEach(input => {
       input.addEventListener('change', () => this.updatePreview());
     });
@@ -59,6 +67,12 @@ class MissionEditor {
       const button = document.querySelector(`.mission-editor-random-toggle[data-random-for="${key}"]`);
       if (button) button.setAttribute('aria-pressed', 'false');
     });
+    const inspectionToggle = document.getElementById('me-inspection-mode');
+    if (inspectionToggle) {
+      inspectionToggle.setAttribute('aria-pressed', 'false');
+      inspectionToggle.textContent = 'OFF';
+      inspectionToggle.classList.remove('is-active');
+    }
     if (this.game) {
       this.game.pendingMissionEditorSettings = null;
       if (this.game.procurement) this.game.procurement.updateUI();
@@ -77,7 +91,8 @@ class MissionEditor {
       values[key] = select ? select.value : '';
       randomize[key] = Boolean(button && button.getAttribute('aria-pressed') === 'true');
     });
-    return { values, randomize };
+    const inspectionToggle = document.getElementById('me-inspection-mode');
+    return { values, randomize, inspectionMode: Boolean(inspectionToggle && inspectionToggle.getAttribute('aria-pressed') === 'true') };
   }
 
   static applyDraft() {
@@ -124,7 +139,7 @@ class MissionEditor {
       `CONDITIONS  ·  Clouds: ${valueFor('clouds')}  ·  Air defenses: ${valueFor('defenses')}  ·  Civilian traffic: ${valueFor('civilians')}`
     ];
     preview.classList.toggle('armed', Boolean(armed));
-    preview.textContent = `${armed ? 'NEXT SORTIE · UNRANKED' : 'PREVIEW · NOT APPLIED'}\n${lines.join('\n')}\n${armed ? 'This sortie will not appear on the leaderboard.' : 'Use this setup to apply it to your next sortie.'}`;
+    preview.textContent = `${armed ? 'NEXT SORTIE · UNRANKED' : 'PREVIEW · NOT APPLIED'}\n${lines.join('\n')}\nINSPECTION MODE: ${draft.inspectionMode ? 'ON · FULL CONTACT VISIBILITY + EVENT EXPLANATIONS' : 'OFF'}\n${armed ? 'This sortie will not appear on the leaderboard.' : 'Use this setup to apply it to your next sortie.'}`;
   }
 
   static updateStateLabel(text, armed) {
@@ -149,6 +164,8 @@ class MissionEditor {
     game.aiDoctrine = base.aiDoctrine;
     game.activeMissionEditorConfig = null;
     game.isMissionEditorMatch = false;
+    game.inspectionModeEnabled = false;
+    if (game.inspection) game.inspection.beginMission(false);
     game.missionEditorBaseSettings = null;
     const skirmishButton = document.getElementById('scenario-btn-skirmish');
     const dynamicButton = document.getElementById('scenario-btn-dynamic');
@@ -195,8 +212,9 @@ class MissionEditor {
     const clouds = choose('clouds', ['CLEAR', 'LIGHT', 'SCATTERED', 'DENSE']);
     const defenses = choose('defenses', ['FULL', 'LIGHT', 'OFF']);
     const civilians = choose('civilians', ['ON', 'OFF']);
+    const inspectionMode = Boolean(settings.inspectionMode);
     this.updateStateLabel('EDITOR SORTIE · UNRANKED', true);
-    return { scenarioMode, difficulty, doctrine, blueSquadron, blueWeapons, redSize, redWeapons, clouds, defenses, civilians, unranked: true };
+    return { scenarioMode, difficulty, doctrine, blueSquadron, blueWeapons, redSize, redWeapons, clouds, defenses, civilians, inspectionMode, unranked: true };
   }
 
   static createRandomSquadron(game, mission) {

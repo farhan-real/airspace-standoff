@@ -139,9 +139,21 @@ class SurfaceUnit {
 
       if (incomingSalvo.length > 0) {
         const targetMissile = incomingSalvo[0];
+        const interceptionDistance = Math.hypot(targetMissile.x - this.x, targetMissile.y - this.y);
         targetMissile.active = false;
         targetMissile.isDead = true;
         this.fireCooldown = this.cooldownMax;
+
+        const inspection = window.Game && window.Game.inspection;
+        if (inspection && inspection.enabled) inspection.recordEvent('CIWS INTERCEPT', `${this.name} intercepted ${targetMissile.weapon.name || targetMissile.weapon.id}`, this, targetMissile.source, {
+          interceptedMissile: targetMissile.id,
+          missileWeapon: targetMissile.weapon.name || targetMissile.weapon.id,
+          missileTeam: targetMissile.team,
+          interceptionRangeKm: interceptionDistance,
+          maximumDefenseRadiusKm: this.rangeKm,
+          insideDefenseRadius: interceptionDistance <= this.rangeKm,
+          interceptCount: (window.Game.stats.defensiveIntercepts || 0) + 1
+        }, targetMissile);
 
         if (window.Game && window.Game.stats) window.Game.stats.defensiveIntercepts = (window.Game.stats.defensiveIntercepts || 0) + 1;
         if (window.Game && window.Game.simulation) {

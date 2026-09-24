@@ -66,6 +66,9 @@ class SimulationScoring {
     });
 
     if (this.scoreLog.length > 20) this.scoreLog.pop();
+    if (this.game.inspection && this.game.inspection.enabled) {
+      this.game.inspection.recordEvent('SCORE CHANGE', reason, null, null, { team, points, blueScore: this.game.vpAlly, redScore: this.game.vpHostile });
+    }
     this.renderScoreLog();
   }
 
@@ -141,6 +144,12 @@ class SimulationScoring {
       salvoCount: salvoCount,
       salvoBreakdown: salvoBreakdown
     });
+    if (this.game.inspection && this.game.inspection.enabled) {
+      this.game.inspection.recordEvent('DAMAGE', `${srcName} damaged ${tgtName}`, firingSource, targetEntity, {
+        weapon: wpnName, damage: dmg, isSalvo, salvoCount, salvoBreakdown,
+        remainingHp: targetEntity.hp, targetMaxHp: targetEntity.maxHp
+      });
+    }
   }
 
   recordKillEvent(firingTeam, targetEntity, firingSource, details = {}) {
@@ -231,7 +240,9 @@ class SimulationScoring {
 
   recordCivilianHit(firingTeam, civilianFlight, firingSource, weapon) {
     const penalty = (window.CONFIG && window.CONFIG.VP_CIVILIAN_HIT_PENALTY) || 500;
-    const srcName = firingSource ? (firingSource.callsign || firingSource.name || firingSource.id || 'PILOT') : 'PILOT';
+    const srcName = firingSource && firingSource.spec && window.formatAircraftDisplayName
+      ? window.formatAircraftDisplayName(firingSource)
+      : (firingSource ? (firingSource.callsign || firingSource.name || firingSource.id || 'PILOT') : 'PILOT');
     const rawWpn = weapon ? (weapon.name || weapon.id || 'Weapon') : 'Weapon';
     const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
 
@@ -261,7 +272,9 @@ class SimulationScoring {
 
   recordCivilianShootdown(firingTeam, civilianFlight, firingSource, weapon) {
     const penalty = (window.CONFIG && window.CONFIG.VP_CIVILIAN_DESTROYED_PENALTY) || 2000;
-    const srcName = firingSource ? (firingSource.callsign || firingSource.name || firingSource.id || 'PILOT') : 'PILOT';
+    const srcName = firingSource && firingSource.spec && window.formatAircraftDisplayName
+      ? window.formatAircraftDisplayName(firingSource)
+      : (firingSource ? (firingSource.callsign || firingSource.name || firingSource.id || 'PILOT') : 'PILOT');
     const rawWpn = weapon ? (weapon.name || weapon.id || 'Weapon') : 'Weapon';
     const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
 

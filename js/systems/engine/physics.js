@@ -241,7 +241,20 @@ const Physics = {
     else if (pkPercent >= 45) { label = 'GOOD'; color = '#38bdf8'; }
     else { label = 'POOR'; color = '#f43f5e'; }
 
-    return { pk: pkPercent, label: label, color: color, arrow: arrow, desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Over-the-shoulder lock' : 'Target solution locked'), salvoCount: salvoCount, hasMixedSeekers: hasMixedSeekers };
+    return {
+      pk: pkPercent, label: label, color: color, arrow: arrow,
+      desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Over-the-shoulder lock' : 'Target solution locked'),
+      salvoCount, hasMixedSeekers,
+      breakdown: {
+        weaponBasePk: weapon.T_0 || 0.80, rangeKm: dist, rangeScore, sweetMinKm: sweetMin, sweetMaxKm: sweetMax,
+        aspectDifferenceRad: aspectDiff, aspectScore, offBoresightPenalty, rearShot: isRearShot,
+        activeEvasion, passiveBaseline, effectiveDefenseEstimate, mixedSeekers: hasMixedSeekers,
+        targetEnergy, energyBleedBonus, targetAgility, agilityDefenseBonus, turnEfficiency: turnOptEff,
+        turnEfficiencyPenalty: turnOptBonus, weatherPenalty, afterburnerBonus, heavyBonus,
+        jammerPenalty, shooterStressPenalty, salvoBonus, salvoCount, preClampProbability: basePk,
+        finalProbabilityPercent: pkPercent
+      }
+    };
   }
 };
 

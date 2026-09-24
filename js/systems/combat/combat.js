@@ -99,7 +99,7 @@ class CombatSystem {
       let landedDmg = 0;
 
       for (let r = 0; r < numRounds; r++) {
-        setTimeout(() => {
+        this.scheduleWeaponPulse(r * 50, () => {
           if (!sourceUnit || sourceUnit.hp <= 0.05) return;
           const heading = sourceUnit.heading || 0;
           const spread = (r - (numRounds - 1) / 2) * 0.012;
@@ -135,11 +135,18 @@ class CombatSystem {
             if (r === numRounds - 1 && this.game.radar) {
               this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `GUN POD BURST (${numRounds} RDS)`, '#fbbf24');
             }
+            if (r === numRounds - 1 && landedDmg <= 0 && this.game.inspection && this.game.inspection.enabled) {
+              const missDistance = targetEntity ? Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) : null;
+              this.game.inspection.recordEvent('GUN POD MISS', `${w.name || w.id} did not damage ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(targetEntity) : (targetEntity ? targetEntity.callsign || targetEntity.name || targetEntity.id : 'a target')}`, sourceUnit, targetEntity, {
+                rangeKm: missDistance, maximumRangeKm: w.rangeKm || 4.8, roundsFired: numRounds,
+                reason: !targetEntity ? 'No target was assigned' : (targetEntity.hp <= 0.05 ? 'Target was destroyed before the burst ended' : (missDistance > (w.rangeKm || 4.8) ? 'Target is outside the gun pod range' : 'No valid impact'))
+              });
+            }
           }
           if (r === numRounds - 1 && landedDmg > 0 && targetEntity.hp > 0.05 && this.game.simulation && this.game.simulation.scoring) {
             this.game.simulation.scoring.recordHitEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, damage: landedDmg });
           }
-        }, r * 50);
+        });
       }
       if (typeof AudioSys !== 'undefined') AudioSys.playGunBurst();
     } else if (w.isLaser) {
@@ -150,7 +157,7 @@ class CombatSystem {
       let landedDmg = 0;
 
       for (let p = 0; p < numPulses; p++) {
-        setTimeout(() => {
+        this.scheduleWeaponPulse(p * 50, () => {
           if (!sourceUnit || sourceUnit.hp <= 0.05) return;
           if (targetEntity && targetEntity.hp > 0.05 && Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) <= (w.rangeKm || 9.0)) {
             const wasAlive = targetEntity.hp > 0.05;
@@ -177,7 +184,14 @@ class CombatSystem {
           if (p === numPulses - 1 && landedDmg > 0 && targetEntity.hp > 0.05 && this.game.simulation && this.game.simulation.scoring) {
             this.game.simulation.scoring.recordHitEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, damage: landedDmg });
           }
-        }, p * 50);
+          if (p === numPulses - 1 && landedDmg <= 0 && this.game.inspection && this.game.inspection.enabled) {
+            const distance = targetEntity ? Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) : null;
+            this.game.inspection.recordEvent('DIRECTED ENERGY MISS', `${w.name || w.id} did not strike a target`, sourceUnit, targetEntity, {
+              rangeKm: distance, maximumRangeKm: w.rangeKm || 9,
+              reason: !targetEntity ? 'No target was assigned' : (targetEntity.hp <= 0.05 ? 'Target was destroyed before the pulse' : (distance > (w.rangeKm || 9) ? 'Target is outside laser range' : 'No valid beam contact'))
+            });
+          }
+        });
       }
     } else {
       if (typeof MissileEntity !== 'undefined') {
@@ -194,11 +208,34 @@ class CombatSystem {
     const cfg = window.CONFIG || {};
     const cost = card.cost || cfg.TOKEN_ACTION_COST || 0.70;
     if (!this.game.consumeCurrentCommanderTokens(cost)) return;
+    const before = { speed: unit.speed, altitudeFt: unit.altFt, energy: unit.energy, stress: unit.stress, heading: unit.heading };
     unit.applyActionStress(0.18);
     unit.activeManeuverId = card.id;
     card.execute(unit);
+    if (this.game.inspection && this.game.inspection.enabled) this.game.inspection.recordEvent('MANEUVER ORDER', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(unit) : unit.callsign} executed ${card.name || card.title || card.id}`, unit, this.game.selectedTarget, {
+      maneuver: card.id, tokenCost: cost, before,
+      after: { speed: unit.speed, altitudeFt: unit.altFt, energy: unit.energy, stress: unit.stress, heading: unit.heading },
+      activeDurationSec: unit.activeManeuverTimer, evasionBonus: unit.activeManeuverBonus
+    });
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     if (this.game.deckManager) this.game.deckManager.renderManeuverHand(this.game.activeUnit);
+  }
+
+  scheduleWeaponPulse(delayMs, callback) {
+    const simulation = this.game && this.game.simulation;
+    if (!simulation || !(this.game.inspection && this.game.inspection.enabled)) {
+      setTimeout(callback, delayMs);
+      return;
+    }
+    const dueAt = simulation.elapsedTimeSec + Math.max(0, delayMs) / 1000;
+    const timer = setInterval(() => {
+      if (this.game.isGameOver) { clearInterval(timer); return; }
+      if (simulation.isPaused) return;
+      if (simulation.elapsedTimeSec >= dueAt) {
+        clearInterval(timer);
+        callback();
+      }
+    }, 16);
   }
 }
 

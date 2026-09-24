@@ -143,10 +143,11 @@ class AvionicsUI {
     const modelCode = u.spec ? u.spec.id : 'AIRCRAFT';
     const modelName = u.spec ? u.spec.name : 'AIRCRAFT';
     const callsignText = String(u.callsign || 'PILOT').replace(/<[^>]*>/g, '');
+    const displayName = window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : `${callsignText} · ${modelName}`;
 
     if (nameEl) nameEl.textContent = modelName;
     if (callsignValEl) {
-      callsignValEl.textContent = `${modelCode} (${callsignText})`;
+      callsignValEl.textContent = displayName;
       callsignValEl.style.color = isFriendly ? '#00f0ff' : '#ff3366';
     }
 
@@ -196,7 +197,7 @@ class AvionicsUI {
       hudCallsign.textContent = `${modelCode}${badge}`;
       hudCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00f0ff' : '#ff3366'));
     }
-    if (hudModel) hudModel.textContent = `${callsignText} - ${u.spec ? u.spec.role : ''}`;
+    if (hudModel) hudModel.textContent = `${displayName} · ${u.spec ? u.spec.role : 'AIRCRAFT'}`;
     if (hudCardinal) { hudCardinal.textContent = cardStr; hudCardinal.style.color = (cardStr === 'E') ? '#00f0ff' : (cardStr === 'W' ? '#00f5a0' : '#f8fafc'); }
     if (hudDeg) hudDeg.textContent = String(deg).padStart(3, '0') + ' deg';
 

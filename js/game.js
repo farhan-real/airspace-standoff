@@ -64,6 +64,7 @@ class AirspaceStandoffGame {
     window.Settings = this.settings;
 
     this.controls = (typeof ControlsSystem !== 'undefined') ? new ControlsSystem(this) : null;
+    this.inspection = (typeof InspectionModeController !== 'undefined') ? new InspectionModeController(this) : null;
     this.procurement = (typeof ProcurementManager !== 'undefined') ? new ProcurementManager(this) : null;
     this.procurementSquadron = [];
 
@@ -171,6 +172,7 @@ class AirspaceStandoffGame {
       : null;
     this.activeMissionEditorConfig = editorMission;
     this.isMissionEditorMatch = Boolean(editorMission && editorMission.unranked);
+    this.inspectionModeEnabled = Boolean(editorMission && editorMission.inspectionMode);
     if (editorMission) {
       this.scenarioMode = editorMission.scenarioMode;
       this.aiDifficulty = editorMission.difficulty;
@@ -283,6 +285,7 @@ class AirspaceStandoffGame {
       h.prevSpeed = h.speed;
       h.speedTrend = '--';
     });
+    this.ensureUniqueAircraftCallsigns();
 
     if (this.playerMode === '2P') {
       [...this.alliedAircraft, ...this.hostileAircraft].forEach(unit => {
@@ -309,7 +312,22 @@ class AirspaceStandoffGame {
     this.currentPvpCommander = 'friendly';
     if (this.radar) { this.radar.resize(); this.radar.resetCamera(); }
     if (this.avionics) { this.avionics.renderFlightRoster(); this.avionics.updateActiveUnitMFD(); }
+    if (this.inspection) this.inspection.beginMission(this.inspectionModeEnabled);
     this.startLoop();
+  }
+
+  ensureUniqueAircraftCallsigns() {
+    const used = new Set();
+    const aircraft = [...(this.alliedAircraft || []), ...(this.hostileAircraft || [])];
+    aircraft.forEach((unit, index) => {
+      if (!unit) return;
+      const base = String(unit.callsign || `Pilot ${index + 1}`).trim() || `Pilot ${index + 1}`;
+      let callsign = base;
+      let suffix = 2;
+      while (used.has(callsign.toLowerCase())) callsign = `${base} ${suffix++}`;
+      unit.callsign = callsign;
+      used.add(callsign.toLowerCase());
+    });
   }
 
   initSurfaceFacilities(mapW, mapH) {
@@ -349,7 +367,9 @@ class AirspaceStandoffGame {
         this.radar.render({
           alliedAircraft: this.alliedAircraft, hostileAircraft: this.hostileAircraft,
           surfaceUnits: this.surfaceUnits, missiles: this.missiles,
-          activeUnit: this.activeUnit, selectedTarget: this.selectedTarget
+          activeUnit: this.activeUnit, selectedTarget: this.selectedTarget,
+          inspectionEntity: this.inspection && this.inspection.isOpen ? this.inspection.selectedEntity : null,
+          inspectionMode: Boolean(this.inspection && this.inspection.isOpen)
         });
       }
 
@@ -357,6 +377,7 @@ class AirspaceStandoffGame {
       if (uiThrottle >= 0.12) {
         uiThrottle = 0;
         if (this.avionics) { this.avionics.updateActiveUnitMFD(); this.avionics.renderFlightRoster(); }
+        if (this.inspection) this.inspection.update();
       }
       if (!this.isGameOver) this.animFrameId = requestAnimationFrame(loop);
     };
@@ -365,6 +386,7 @@ class AirspaceStandoffGame {
 
   triggerGameOver(blueWon, msg) {
     this.isGameOver = true;
+    if (this.inspection) this.inspection.recordEvent('MISSION END', msg || (blueWon ? 'Victory' : 'Defeat'), null, null, { result: blueWon ? 'VICTORY' : 'DEFEAT' });
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
     if (this.simulation) this.simulation.captureReplayFrame(true);
     if (typeof AfterActionReportSystem !== 'undefined') AfterActionReportSystem.renderSortieSummary(this, blueWon, msg);

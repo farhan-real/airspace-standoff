@@ -28,7 +28,7 @@ class AvionicsRosterDisplay {
 
         const rawCallsign = a.callsign || 'PILOT';
         const callsignText = String(rawCallsign).replace(/<[^>]*>/g, '');
-        const specText = (a.spec && a.spec.id) ? a.spec.id : 'JET';
+        const specText = a.spec ? (a.spec.name || a.spec.id || 'JET') : 'JET';
         const isBlue = (a.team === 'friendly');
 
         const machNum = (a.speed || 0.85);

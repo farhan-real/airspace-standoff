@@ -49,10 +49,12 @@ class PylonTargetSolution {
         classification = `GROUND INSTALLATION: ${validTarget.type}`;
         armorText = validTarget.isIndestructible ? 'INDESTRUCTIBLE' : `${Math.max(1, Math.round(validTarget.hp))}/${validTarget.maxHp} HP`;
       } else {
-        rawTgtName = validTarget.spec ? validTarget.spec.id : (validTarget.callsign || 'TARGET');
+        rawTgtName = window.formatAircraftDisplayName
+          ? window.formatAircraftDisplayName(validTarget)
+          : `${validTarget.callsign || 'PILOT'} · ${validTarget.spec ? (validTarget.spec.name || validTarget.spec.id) : 'AIRCRAFT'}`;
         const dispHp = validTarget.hp > 0.05 ? Math.max(1, Math.round(validTarget.hp)) : 0;
         armorText = `${dispHp}/${validTarget.maxHp} HP`;
-        classification = validTarget.spec && validTarget.spec.role ? `${validTarget.spec.role} (${validTarget.callsign || 'PILOT'})` : 'COMBAT AIRCRAFT';
+        classification = validTarget.spec && validTarget.spec.role ? validTarget.spec.role : 'COMBAT AIRCRAFT';
       }
 
       const tgtName = String(rawTgtName || 'TARGET').replace(/<[^>]*>/g, '');

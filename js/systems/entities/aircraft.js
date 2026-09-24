@@ -2,6 +2,24 @@
  * AIRSPACE STANDOFF: Aircraft Entity & Kinematics Engine
  */
 
+function formatAircraftDisplayName(aircraft) {
+  if (!aircraft) return 'Unknown aircraft';
+  const callsign = String(aircraft.callsign || 'PILOT').trim();
+  const model = aircraft.spec
+    ? (aircraft.spec.name || aircraft.spec.id || aircraft.model || 'AIRCRAFT')
+    : (aircraft.model || aircraft.modelName || 'AIRCRAFT');
+  return `${callsign} · ${model}`;
+}
+
+function formatCombatantDisplayName(entity) {
+  if (!entity) return 'Unknown contact';
+  if (entity.spec && (entity.callsign || entity.model)) return formatAircraftDisplayName(entity);
+  return entity.callsign || entity.flightCode || entity.name || entity.id || 'Unknown contact';
+}
+
+window.formatAircraftDisplayName = formatAircraftDisplayName;
+window.formatCombatantDisplayName = formatCombatantDisplayName;
+
 class Aircraft {
   constructor(specId, team, spawnX, spawnY, heading, chosenGunId, callsign, squadronName, isFlightLead = false, isAce = false, spawnAltFt = null) {
     this.id = 'AC_' + Math.random().toString(36).substr(2, 6);
