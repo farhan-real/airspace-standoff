@@ -69,6 +69,49 @@ class RadarContactsRenderer {
         continue;
       }
 
+      // Render Active Unit Gun Range Envelope & Boresight Arc
+      if (isSelected && a.hp > 0.05 && a.gun) {
+        const gunRangeKm = a.gun.rangeKm || 4.6;
+        const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0 };
+        const screenRadius = (gunRangeKm / cfg.THEATER_WIDTH_KM) * cssWidth * cam.zoom;
+
+        if (screenRadius > 6) {
+          ctx.save();
+          const coneDeg = a.gun.coneAngleDeg || 55;
+          const halfConeRad = ((coneDeg / 2.0) * Math.PI) / 180.0;
+          const hdg = a.heading || 0;
+          const isDEW = Boolean(a.gun.damagePerPulse || a.gun.id.startsWith('PLSL') || a.gun.id === 'DE-PULSE' || a.gun.id === 'EML_GUN');
+          const rangeCol = isDEW ? 'rgba(0, 240, 255, 0.40)' : 'rgba(251, 191, 36, 0.40)';
+          const fillCol = isDEW ? 'rgba(0, 240, 255, 0.05)' : 'rgba(251, 191, 36, 0.05)';
+
+          ctx.beginPath();
+          ctx.moveTo(px, py);
+          ctx.arc(px, py, screenRadius, hdg - halfConeRad, hdg + halfConeRad);
+          ctx.closePath();
+          ctx.fillStyle = fillCol;
+          ctx.fill();
+          ctx.strokeStyle = rangeCol;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(px, py, screenRadius, 0, Math.PI * 2);
+          ctx.strokeStyle = isDEW ? 'rgba(0, 240, 255, 0.16)' : 'rgba(251, 191, 36, 0.16)';
+          ctx.lineWidth = 1.0;
+          ctx.setLineDash([3, 4]);
+          ctx.stroke();
+
+          const labelAngle = hdg + halfConeRad;
+          const lx = px + Math.cos(labelAngle) * screenRadius;
+          const ly = py + Math.sin(labelAngle) * screenRadius;
+          ctx.font = '700 8.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+          ctx.fillStyle = isDEW ? '#00f0ff' : '#fbbf24';
+          ctx.setLineDash([]);
+          ctx.fillText(`GUN: ${gunRangeKm.toFixed(1)}km`, lx + 4, ly + 2);
+          ctx.restore();
+        }
+      }
+
       if (isLastFew && isIdentified) {
         const pulse = (performance.now() % 1400) / 1400;
         const ringRadius = 14 + pulse * 14;

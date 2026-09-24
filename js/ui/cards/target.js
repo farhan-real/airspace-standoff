@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Pylon Target Solution Submodule
- * Displays verified target telemetry and ground/civilian classification.
+ * Displays verified target telemetry, ground/civilian classification and gun range proximity.
  */
 
 class PylonTargetSolution {
@@ -61,13 +61,17 @@ class PylonTargetSolution {
       const isCiv = Boolean(validTarget.isCivilian);
       const isHostile = validTarget.team === 'hostile';
       const showAceColor = Boolean(validTarget.isAce && isKnown);
+      const inGunRange = (activeUnit && activeUnit.gun && dist <= (activeUnit.gun.rangeKm || 4.6));
 
       targetBox.className = 'target-solution-box active-target';
       if (nameSpan) {
         nameSpan.textContent = `TARGET: ${tgtName}`;
         nameSpan.style.color = !isKnown ? '#f97316' : (showAceColor ? '#ffd700' : (validTarget.isGhost ? '#94a3b8' : (isHostile ? '#ff3366' : (isCiv ? '#7dd3fc' : '#00f0ff'))));
       }
-      if (distSpan) distSpan.textContent = `${dist.toFixed(1)} km`;
+      if (distSpan) {
+        distSpan.textContent = inGunRange ? `${dist.toFixed(1)} km [IN RANGE]` : `${dist.toFixed(1)} km`;
+        distSpan.style.color = inGunRange ? '#00f5a0' : '#38bdf8';
+      }
       if (altB) altB.textContent = tgtAlt;
       if (spdB) spdB.textContent = tgtSpeed;
       if (hpB) hpB.textContent = armorText;
@@ -101,7 +105,7 @@ class PylonTargetSolution {
     } else {
       targetBox.className = 'target-solution-box no-target';
       if (nameSpan) { nameSpan.textContent = 'TARGET: NONE'; nameSpan.style.color = '#8494ab'; }
-      if (distSpan) distSpan.textContent = '-- km';
+      if (distSpan) { distSpan.textContent = '-- km'; distSpan.style.color = '#38bdf8'; }
       if (specsBtn) specsBtn.classList.add('hidden');
       if (gridDiv) gridDiv.classList.add('hidden');
       if (emptyPrompt) emptyPrompt.classList.remove('hidden');
