@@ -121,13 +121,15 @@ class MissileEntity {
 
     if (this.target.hp <= 0.05) {
       const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) inspection.recordEvent('TARGET DESTROYED FIRST', `${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(this.target) : (this.target.callsign || this.target.name || this.target.id)} was destroyed before ${this.weapon.name || this.weapon.id} arrived`, this.source, this.target, {
-        missileId: this.id,
-        missileAgeSec: this.age,
-        distanceRemainingKm: Math.hypot(this.target.x - this.x, this.target.y - this.y),
-        targetHp: this.target.hp,
-        outcome: 'Missile lost its target before impact'
-      }, this);
+      if (inspection && inspection.enabled) {
+        inspection.recordEvent('TARGET LOST', `${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(this.target) : (this.target.callsign || this.target.name || this.target.id)} neutralized prior to missile arrival`, this.source, this.target, {
+          missileId: this.id,
+          missileAgeSec: this.age,
+          distanceRemainingKm: Math.hypot(this.target.x - this.x, this.target.y - this.y),
+          targetHp: this.target.hp,
+          outcome: 'Target lost before terminal intercept'
+        }, this);
+      }
       this.state = 'LOST_TRACK';
       this.active = false;
       this.lostReason = 'TARGET DESTROYED';
@@ -190,10 +192,10 @@ class MissileEntity {
             else if (tgt.activeManeuverId === 'SPLIT_S') reason = 'SPLIT-S (KINETIC ESCAPE)';
             else if (tgt.activeManeuverId === 'EMERGENCY_CM' || tgt.cmTimer > 0) reason = 'CHAFF DECOY SEDUCTION';
             else if (tgt.activeManeuverId === 'ZOOM_CLIMB') reason = 'ENERGY PERCH (GRAVITY DEFICIT)';
-            else if (tgt.activeManeuverId === 'BREAK_TURN') reason = 'STANDARD DEFENSIVE BREAK';
+            else if (tgt.activeManeuverId === 'BREAK_TURN') reason = 'DEFENSIVE BREAK TURN';
             else if (tgt.isCoffin) reason = 'COFFIN NEURAL DODGE';
             else if (tgt.isAce) reason = 'ACE DEFENSIVE BREAK';
-            else if (tgt.activeManeuverBonus > 0) reason = 'STANDARD DEFENSIVE BREAK';
+            else if (tgt.activeManeuverBonus > 0) reason = 'DEFENSIVE BREAK TURN';
           }
           this.triggerLostTrack(reason);
         } else {
@@ -216,7 +218,7 @@ class MissileEntity {
 
     const inspection = window.Game && window.Game.inspection;
     if (inspection && inspection.enabled) {
-      inspection.recordEvent('MISSILE LOST', `${this.weapon.name || this.weapon.id} lost its solution: ${reason}`, this.source, this.target, {
+      inspection.recordEvent('TRACK TERMINATED', `${this.weapon.name || this.weapon.id} terminal track defeated (${reason})`, this.source, this.target, {
         missileId: this.id,
         reason,
         stageBeforeLoss,
@@ -270,7 +272,9 @@ class MissileEntity {
     if (!tgt || tgt.hp <= 0.05) {
       this.active = false; this.isDead = true;
       const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) inspection.recordEvent('IMPACT CANCELLED', 'Target was already destroyed or unavailable at impact', this.source, tgt, { missileId: this.id, targetHp: tgt ? tgt.hp : null }, this);
+      if (inspection && inspection.enabled) {
+        inspection.recordEvent('INTERCEPT ABORTED', 'Target neutralized prior to terminal impact', this.source, tgt, { missileId: this.id, targetHp: tgt ? tgt.hp : null }, this);
+      }
       return;
     }
 
@@ -296,7 +300,9 @@ class MissileEntity {
       this.isDead = true;
       tgt.takeDamage();
       const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) inspection.recordEvent('FALSE CONTACT', 'The missile reached a ghost track; the atmospheric contact dissipated without a real target', this.source, tgt, { missileId: this.id, seeker: w.seeker, distanceToTargetKm: this.distanceToTarget }, this);
+      if (inspection && inspection.enabled) {
+        inspection.recordEvent('FALSE CONTACT DISSIPATION', 'Radar contact resolved as atmospheric clutter. Terminal track dropped.', this.source, tgt, { missileId: this.id, seeker: w.seeker, distanceToTargetKm: this.distanceToTarget }, this);
+      }
       this.triggerLostTrack('FALSE CONTACT DISSIPATED');
       return;
     }
@@ -305,7 +311,9 @@ class MissileEntity {
       this.isDead = true;
       tgt.takeDamage(w.damage || 1);
       const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) inspection.recordEvent('DECOY HIT', 'The seeker followed a decoy drone and did not reach the aircraft', this.source, tgt, { missileId: this.id, seeker: w.seeker, decoyRcs: tgt.effectiveRcs, damage: w.damage || 1 }, this);
+      if (inspection && inspection.enabled) {
+        inspection.recordEvent('DECOY SEDUCTION', 'Seeker intercepted air-launched decoy drone. Target aircraft cleared.', this.source, tgt, { missileId: this.id, seeker: w.seeker, decoyRcs: tgt.effectiveRcs, damage: w.damage || 1 }, this);
+      }
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, false);
         window.Game.radar.spawnCombatText(tgt.x, tgt.y, 'DECOY DESTROYED', '#c084fc');
@@ -322,10 +330,12 @@ class MissileEntity {
       tgt.takeDamage(dmg, w.isBunkerCracker);
       this.isDead = true;
       const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) inspection.recordEvent('SURFACE IMPACT', `${w.name || w.id} hit ${tgt.name || tgt.type}`, this.source, tgt, {
-        missileId: this.id, weaponDamage: w.damage, emitterBonusApplied: dmg !== w.damage,
-        bunkerCracker: Boolean(w.isBunkerCracker), hpBefore, damageApplied: hpBefore - tgt.hp, hpAfter: tgt.hp
-      }, this);
+      if (inspection && inspection.enabled) {
+        inspection.recordEvent('SURFACE IMPACT', `${w.name || w.id} hit ${tgt.name || tgt.type}`, this.source, tgt, {
+          missileId: this.id, weaponDamage: w.damage, emitterBonusApplied: dmg !== w.damage,
+          bunkerCracker: Boolean(w.isBunkerCracker), hpBefore, damageApplied: hpBefore - tgt.hp, hpAfter: tgt.hp
+        }, this);
+      }
       if (!wasDead && tgt.hp <= 0 && window.Game && window.Game.simulation) {
         window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       } else if (!wasDead && tgt.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
@@ -343,9 +353,11 @@ class MissileEntity {
       tgt.takeDamage(w.damage, this.source);
       this.isDead = true;
       const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) inspection.recordEvent('CIVILIAN IMPACT', 'The missile hit a civilian aircraft; rules-of-engagement penalties were applied', this.source, tgt, {
-        missileId: this.id, weapon: w.name || w.id, hpBefore, damage: w.damage, hpAfter: tgt.hp
-      }, this);
+      if (inspection && inspection.enabled) {
+        inspection.recordEvent('ROE VIOLATION', 'Non-combatant civilian aircraft struck. RoE penalty assessed.', this.source, tgt, {
+          missileId: this.id, weapon: w.name || w.id, hpBefore, damage: w.damage, hpAfter: tgt.hp
+        }, this);
+      }
       return;
     }
 
@@ -359,21 +371,23 @@ class MissileEntity {
     const expectedDamage = flightLeadReduction ? Math.max(1, w.damage - flightLeadReduction) : w.damage;
     const hit = impactRoll <= hitChance;
     const inspection = window.Game && window.Game.inspection;
-    if (inspection && inspection.enabled) inspection.recordEvent(hit ? 'MISSILE HIT' : 'MISSILE MISS',
-      hit ? `${w.name || w.id} hit ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(tgt) : (tgt.callsign || tgt.name || tgt.id)}` : `${w.name || w.id} missed ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(tgt) : (tgt.callsign || tgt.name || tgt.id)}`,
-      this.source, tgt, {
-        missileId: this.id,
-        weapon: w.name || w.id,
-        distanceAtImpactKm: this.distanceToTarget,
-        targetHpBefore: hpBefore,
-        baseDamage: w.damage,
-        flightLeadDamageReduction: flightLeadReduction,
-        expectedDamageAfterReduction: expectedDamage,
-        hitProbability: hitChance,
-        impactRoll,
-        outcome: hit ? 'HIT (roll ≤ probability)' : 'MISS (roll > probability)',
-        calculation: impactModel
-      }, this);
+    if (inspection && inspection.enabled) {
+      inspection.recordEvent(hit ? 'MISSILE IMPACT' : 'MISSILE EVADED',
+        hit ? `${w.name || w.id} struck ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(tgt) : (tgt.callsign || tgt.name || tgt.id)}` : `${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(tgt) : (tgt.callsign || tgt.name || tgt.id)} evaded ${w.name || w.id}`,
+        this.source, tgt, {
+          missileId: this.id,
+          weapon: w.name || w.id,
+          distanceAtImpactKm: this.distanceToTarget,
+          targetHpBefore: hpBefore,
+          baseDamage: w.damage,
+          flightLeadDamageReduction: flightLeadReduction,
+          expectedDamageAfterReduction: expectedDamage,
+          hitProbability: hitChance,
+          impactRoll,
+          outcome: hit ? 'IMPACT CONFIRMED (roll <= probability)' : 'MISSILE DEFEATED (roll > probability)',
+          calculation: impactModel
+        }, this);
+    }
 
     if (hit) {
       this.isDead = true;
@@ -406,10 +420,10 @@ class MissileEntity {
       else if (tgt.activeManeuverId === 'SPLIT_S') reason = 'SPLIT-S (KINETIC ESCAPE)';
       else if (tgt.activeManeuverId === 'EMERGENCY_CM' || tgt.cmTimer > 0) reason = 'CHAFF DECOY SEDUCTION';
       else if (tgt.activeManeuverId === 'ZOOM_CLIMB') reason = 'ENERGY PERCH (GRAVITY DEFICIT)';
-      else if (tgt.activeManeuverId === 'BREAK_TURN') reason = 'STANDARD DEFENSIVE BREAK';
+      else if (tgt.activeManeuverId === 'BREAK_TURN') reason = 'DEFENSIVE BREAK TURN';
       else if (tgt.isCoffin) reason = 'COFFIN NEURAL DODGE';
       else if (tgt.isAce) reason = 'ACE DEFENSIVE BREAK';
-      else if (tgt.activeManeuverBonus > 0) reason = 'STANDARD DEFENSIVE BREAK';
+      else if (tgt.activeManeuverBonus > 0) reason = 'DEFENSIVE BREAK TURN';
       this.triggerLostTrack(reason);
     }
   }

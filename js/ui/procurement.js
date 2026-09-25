@@ -11,14 +11,15 @@ class ProcurementManager {
     this.activeBayIndex = 0;
 
     this.dialogModal = new TacticalDialogModal(this);
-    this.inspector = new ProcurementInspector(this);
+    this.specs = new ProcurementSpecs(this);
+    this.inspector = this.specs;
     this.shelf = new ProcurementShelf(this);
     this.roster = new ProcurementRoster(this);
     this.customLoadouts = new CustomLoadoutsManager();
     this.preconfigModal = new PreconfigModalController(this);
     this.equipHandler = (typeof ProcurementEquipHandler !== 'undefined') ? new ProcurementEquipHandler(this) : null;
 
-    window.openSystemInspectModal = (t, id) => this.inspector.openInspectModal(t, id);
+    window.openSystemInspectModal = (t, id) => this.specs.openInspectModal(t, id);
     this.initInspectListeners();
     this.initMobileProcurement();
     this.initSquadronNameEditor();
@@ -143,7 +144,7 @@ class ProcurementManager {
         e.preventDefault(); e.stopPropagation();
         const type = btn.getAttribute('data-inspect-type');
         const id = btn.getAttribute('data-inspect-id');
-        if (type && id) this.inspector.openInspectModal(type, id);
+        if (type && id) this.specs.openInspectModal(type, id);
       }
     });
 

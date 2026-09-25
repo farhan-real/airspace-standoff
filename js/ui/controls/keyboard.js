@@ -34,7 +34,6 @@ class KeyboardControlsHandler {
 
   initKeyListeners() {
     window.addEventListener('keydown', (e) => {
-      // Disallow range inputs (like throttle) from capturing or blocking game controls
       if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) {
         if (e.target.tagName === 'INPUT' && e.target.type === 'range') {
           try { e.target.blur(); } catch (err) {}
@@ -102,7 +101,6 @@ class KeyboardControlsHandler {
         return;
       }
 
-      // Arrows strictly reserved for steering and unit switching
       if (key === binds.STEER_LEFT || key === 'ArrowLeft' || key === binds.STEER_RIGHT || key === 'ArrowRight') {
         e.preventDefault();
         return;
@@ -177,13 +175,17 @@ class KeyboardControlsHandler {
         }
         return;
       }
+
       if (key === binds.OPEN_MANUAL || key === 'KeyM') {
         e.preventDefault();
         const gm = document.getElementById('glossary-modal');
-        if (gm) {
-          const isOpen = gm.classList.contains('active');
-          if (isOpen) { gm.classList.remove('active'); this.sys.autoUnpauseOnDialogClose(); }
-          else { gm.classList.add('active'); this.sys.autoPauseOnDialogOpen(); }
+        const isOpen = gm && gm.classList.contains('active');
+        if (isOpen) {
+          if (typeof window.closeTacticalManual === 'function') window.closeTacticalManual();
+          else if (gm) { gm.classList.remove('active'); this.sys.autoUnpauseOnDialogClose(); }
+        } else {
+          if (typeof window.openTacticalManual === 'function') window.openTacticalManual();
+          else if (gm) { gm.classList.add('active'); this.sys.autoPauseOnDialogOpen(); }
         }
         return;
       }

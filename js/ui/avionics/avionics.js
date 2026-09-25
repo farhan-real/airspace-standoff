@@ -123,7 +123,7 @@ class AvionicsUI {
       if (hudCallsign) hudCallsign.textContent = 'NO CRAFT SELECTED';
       if (hudModel) hudModel.textContent = '--';
       if (hudCardinal) hudCardinal.textContent = 'N';
-      if (hudDeg) hudDeg.textContent = '000 deg';
+      if (hudDeg) hudDeg.textContent = '000\u00B0';
       if (hudEturn) {
         hudEturn.textContent = 'TURN: --%';
         hudEturn.className = 'rfh-pill';
@@ -143,7 +143,7 @@ class AvionicsUI {
     const modelCode = u.spec ? u.spec.id : 'AIRCRAFT';
     const modelName = u.spec ? u.spec.name : 'AIRCRAFT';
     const callsignText = String(u.callsign || 'PILOT').replace(/<[^>]*>/g, '');
-    const displayName = window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : `${callsignText} · ${modelName}`;
+    const displayName = window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : `${callsignText} - ${modelName}`;
 
     if (nameEl) nameEl.textContent = modelName;
     if (callsignValEl) {
@@ -179,6 +179,7 @@ class AvionicsUI {
 
     let deg = Math.round((u.heading * 180 / Math.PI) % 360);
     if (deg < 0) deg += 360;
+    if (deg >= 360) deg = 0;
     const cardStr = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(deg / 45) % 8];
 
     if (hudSpdMain) { hudSpdMain.textContent = 'M ' + machNum.toFixed(2); hudSpdMain.style.color = this.getSpeedColor(machNum, sOpt, u.effectiveMaxSpeed || 1.0); }
@@ -197,9 +198,9 @@ class AvionicsUI {
       hudCallsign.textContent = `${modelCode}${badge}`;
       hudCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00f0ff' : '#ff3366'));
     }
-    if (hudModel) hudModel.textContent = `${displayName} · ${u.spec ? u.spec.role : 'AIRCRAFT'}`;
+    if (hudModel) hudModel.textContent = `${displayName} - ${u.spec ? u.spec.role : 'AIRCRAFT'}`;
     if (hudCardinal) { hudCardinal.textContent = cardStr; hudCardinal.style.color = (cardStr === 'E') ? '#00f0ff' : (cardStr === 'W' ? '#00f5a0' : '#f8fafc'); }
-    if (hudDeg) hudDeg.textContent = String(deg).padStart(3, '0') + ' deg';
+    if (hudDeg) hudDeg.textContent = String(deg).padStart(3, '0') + '\u00B0';
 
     if (hudEturn) {
       if (u.isCoffin) {

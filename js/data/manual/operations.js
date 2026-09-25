@@ -9,7 +9,7 @@ window.MANUAL_OPERATIONS = [
     title: 'SECTION 10: MISSION EDITOR & CUSTOM SORTIES',
     desc: `
       <div class="ge-desc">
-        Access <b>MISSION EDITOR</b> from the Hangar header bar to construct tailored combat scenarios. The live dossier updates dynamically to display force balance and tactical odds. Press <b>ARM SORTIE CONFIGURATION</b> to prepare the setup for your next launch.
+        Access <b>MISSION EDITOR</b> from the Hangar header bar to construct tailored combat scenarios. The live dossier updates dynamically to display force balance and engagement odds. Press <b>ARM SORTIE CONFIGURATION</b> to prepare the setup for your next launch.
       </div>
 
       <div class="ge-subhead">1. THEATER SCENARIO, OPPOSITION &amp; RANDOMIZATION</div>
@@ -17,7 +17,7 @@ window.MANUAL_OPERATIONS = [
         Configure operational parameters across <b>Scenario Mode, Threat Contestation, Combat Doctrine, Fleet Strengths, Ordnance Rules, Weather Clouds, Ground IADS Defenses,</b> and <b>Civilian RoE</b>.
         <br><br>
         <ul style="list-style:none;padding-left:0;">
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Tactile Random Toggles:</b> Each field includes an independent <b>RANDOM</b> button. Enabling random on a parameter engages procedural theater generation for that specific field at launch time.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Adaptive Random Toggles:</b> Each field includes an independent <b>RANDOM</b> button. Enabling random on a parameter engages procedural theater generation for that specific field at launch time.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Force Ratio Balance:</b> Adjust enemy squadron size from 3 aircraft (Light Flight) up to 15 aircraft (Saturation Fleet) to test squadron survivability against asymmetric numbers.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Unranked Sortie Status:</b> All missions launched using custom editor configurations are flagged as unranked. They provide full debriefings and replays but do not submit scores to the Squadron Leaderboard.</li>
         </ul>
@@ -34,7 +34,7 @@ window.MANUAL_OPERATIONS = [
     title: 'SECTION 11: INSPECTION MODE & VISUAL C4ISR ANALYSIS',
     desc: `
       <div class="ge-desc">
-        Engage <b>INSPECTION MODE</b> inside the Mission Editor prior to sortie launch. Inspection Mode unlocks an interactive C4ISR analysis workspace while keeping tactical flight and missile controls fully active.
+        Engage <b>INSPECTION MODE</b> inside the Mission Editor prior to sortie launch. Inspection Mode unlocks an interactive C4ISR analysis workspace while keeping cockpit flight controls and missile launch systems fully active.
       </div>
 
       <div class="ge-subhead">1. SELECTION &amp; COMBAT CONTROLS</div>
@@ -64,7 +64,7 @@ window.MANUAL_OPERATIONS = [
     title: 'SECTION 12: MISSION DEBRIEFS, REPLAYS & SQUADRON ARCHIVE',
     desc: `
       <div class="ge-desc">
-        Upon sortie completion or mission abort, the After Action Report provides complete performance metrics, pilot podium rankings, chronological engagement timelines, and interactive tactical replays.
+        Upon sortie completion or mission abort, the After Action Report provides complete performance metrics, pilot podium rankings, chronological engagement timelines, and interactive mission replays.
       </div>
 
       <div class="ge-subhead">1. SORTIE REPLAY CONTROLS</div>

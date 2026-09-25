@@ -1,9 +1,9 @@
 /**
- * AIRSPACE STANDOFF: Subsystem Dossier Views Module
+ * AIRSPACE STANDOFF: Specifications Subsystem Dossier Views Module
  * Renders modal dossiers for: Guided Weapons, Autocannons, Modular Components, Civilians, Surface Units.
  */
 
-class InspectorSubsystemViews {
+class SpecsSubsystemViews {
   static renderWeapon(w) {
     if (!w) return '<div class="inspect-desc-box">NO WEAPON DATA AVAILABLE</div>';
 
@@ -60,7 +60,7 @@ class InspectorSubsystemViews {
         <span class="inspect-cost-tag ${rCost.colorClass}">$${Number(w.cost || 0).toFixed(1)}M</span>
       </div>
 
-      ${InspectorModalRenderer.getLegendHtml()}
+      ${SpecsModalRenderer.getLegendHtml()}
 
       <div class="inspect-sec-head">1. ENGAGEMENT BASKET &amp; KINEMATICS</div>
       <div class="inspect-stat-grid">
@@ -119,7 +119,7 @@ class InspectorSubsystemViews {
         <span class="inspect-cost-tag">BUILT-IN / PODDED AUTOCANNON</span>
       </div>
 
-      ${InspectorModalRenderer.getLegendHtml()}
+      ${SpecsModalRenderer.getLegendHtml()}
 
       <div class="inspect-sec-head">1. BALLISTIC SPECIFICATIONS</div>
       <div class="inspect-stat-grid">
@@ -170,7 +170,7 @@ class InspectorSubsystemViews {
         <span class="inspect-cost-tag ${rCost.colorClass}">$${Number(u.cost || 0).toFixed(1)}M</span>
       </div>
 
-      ${InspectorModalRenderer.getLegendHtml()}
+      ${SpecsModalRenderer.getLegendHtml()}
 
       <div class="inspect-sec-head">1. SUBSYSTEM INTEGRATION &amp; WEIGHT IMPACT</div>
       <div class="inspect-stat-grid">
@@ -243,4 +243,5 @@ class InspectorSubsystemViews {
   }
 }
 
-window.InspectorSubsystemViews = InspectorSubsystemViews;
+window.SpecsSubsystemViews = SpecsSubsystemViews;
+window.InspectorSubsystemViews = SpecsSubsystemViews;

@@ -159,7 +159,7 @@ function getManualControlsContent() {
           <tr>
             <td><b>Track Active Aircraft</b></td>
             <td><span class="manual-key-badge">${kCamTrk}</span></td>
-            <td>Centers and locks tactical radar camera tracking onto active aircraft.</td>
+            <td>Centers and locks radar camera tracking onto active aircraft.</td>
           </tr>
           <tr>
             <td><b>Reset Panoramic View</b></td>
@@ -184,7 +184,7 @@ function getManualControlsContent() {
           <tr>
             <td><b>Open Flight Manual</b></td>
             <td><span class="manual-key-badge"><img src="icons/manual.svg" width="11" height="11" alt="Manual" class="manual-inline-ico"> ${kManual}</span></td>
-            <td>Opens classified tactical flight manual and operational codex.</td>
+            <td>Opens classified flight operations manual and combat codex.</td>
           </tr>
         </tbody>
       </table>
@@ -205,7 +205,7 @@ function getManualControlsContent() {
 window.MANUAL_CONTROLS = [
   {
     id: 'ref_controls',
-    title: 'TACTICAL CONTROLS &amp; FLIGHT SYSTEMS REFERENCE',
+    title: 'FLIGHT CONTROLS &amp; AVIONICS SYSTEMS REFERENCE',
     isSpecial: true,
     getDesc: getManualControlsContent,
     get desc() {

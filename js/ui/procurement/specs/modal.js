@@ -1,9 +1,9 @@
 /**
- * AIRSPACE STANDOFF: Inspector Modal Renderer
+ * AIRSPACE STANDOFF: Specifications Modal Renderer
  * Displays comprehensive airframe specifications with station breakdown and optimal corner speeds.
  */
 
-class InspectorModalRenderer {
+class SpecsModalRenderer {
   static getLegendHtml() {
     return `
       <div class="inspect-spectrum-legend">
@@ -89,7 +89,7 @@ class InspectorModalRenderer {
         <span class="inspect-cost-tag ${rCost.colorClass}">$${Number(a.cost || 0).toFixed(1)}M</span>
       </div>
 
-      ${InspectorModalRenderer.getLegendHtml()}
+      ${SpecsModalRenderer.getLegendHtml()}
 
       <div class="inspect-sec-head">1. KINEMATICS &amp; FLIGHT ENVELOPE</div>
       <div class="inspect-stat-grid">
@@ -136,11 +136,12 @@ class InspectorModalRenderer {
     `;
   }
 
-  static renderWeapon(w) { return InspectorSubsystemViews.renderWeapon(w); }
-  static renderGun(g) { return InspectorSubsystemViews.renderGun(g); }
-  static renderUpgrade(u) { return InspectorSubsystemViews.renderUpgrade(u); }
-  static renderCivilian(c) { return InspectorSubsystemViews.renderCivilian(c); }
-  static renderSurfaceUnit(s) { return InspectorSubsystemViews.renderSurfaceUnit(s); }
+  static renderWeapon(w) { return SpecsSubsystemViews.renderWeapon(w); }
+  static renderGun(g) { return SpecsSubsystemViews.renderGun(g); }
+  static renderUpgrade(u) { return SpecsSubsystemViews.renderUpgrade(u); }
+  static renderCivilian(c) { return SpecsSubsystemViews.renderCivilian(c); }
+  static renderSurfaceUnit(s) { return SpecsSubsystemViews.renderSurfaceUnit(s); }
 }
 
-window.InspectorModalRenderer = InspectorModalRenderer;
+window.SpecsModalRenderer = SpecsModalRenderer;
+window.InspectorModalRenderer = SpecsModalRenderer;

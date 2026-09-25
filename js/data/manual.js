@@ -11,7 +11,13 @@ window.TACTICAL_FLIGHT_MANUAL = [
   ...(window.MANUAL_CONTROLS || [])
 ];
 
+window.FLIGHT_MANUAL = window.TACTICAL_FLIGHT_MANUAL;
+
 window.initTacticalManual = function() {
+  if (!document.getElementById('glossary-modal') && window.ModalPanelsTemplates && typeof window.ModalPanelsTemplates.install === 'function') {
+    window.ModalPanelsTemplates.install();
+  }
+
   const container = document.getElementById('glossary-modal-content');
   const navContainer = document.getElementById('manual-quick-nav-bar');
   const searchInput = document.getElementById('manual-search-filter');
@@ -23,6 +29,9 @@ window.initTacticalManual = function() {
   const clearBtn = document.getElementById('btn-manual-search-clear');
   const navPrevBtn = document.getElementById('btn-manual-nav-prev');
   const navNextBtn = document.getElementById('btn-manual-nav-next');
+  const openHangarBtn = document.getElementById('btn-open-glossary');
+  const openHudBtn = document.getElementById('btn-hud-glossary');
+  const closeBtn = document.getElementById('btn-close-glossary');
 
   const chapters = [
     { id: 'ch1_quickstart', label: '01: DOCTRINE & ROE' },
@@ -45,35 +54,36 @@ window.initTacticalManual = function() {
   let lastQuery = null;
 
   const scrollToTarget = (targetEl) => {
-    if (!targetEl || !container) return;
-    const cRect = container.getBoundingClientRect();
+    const c = document.getElementById('glossary-modal-content');
+    if (!targetEl || !c) return;
+    const cRect = c.getBoundingClientRect();
     const tRect = targetEl.getBoundingClientRect();
-    const topOffset = tRect.top - cRect.top + container.scrollTop - 10;
-    container.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
+    const topOffset = tRect.top - cRect.top + c.scrollTop - 10;
+    c.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
   };
 
   const renderNavButtons = (matchingChapterIds = null) => {
-    if (!navContainer) return;
-    navContainer.innerHTML = chapters.map(ch => {
+    const nav = document.getElementById('manual-quick-nav-bar');
+    if (!nav) return;
+    nav.innerHTML = chapters.map(ch => {
       const isMatch = matchingChapterIds ? matchingChapterIds.has(ch.id) : true;
       const matchClass = matchingChapterIds ? (isMatch ? 'has-match' : 'no-match') : '';
       return `<button type="button" class="manual-nav-btn ${ch.isSpecial ? 'special' : ''} ${matchClass}" data-target="${ch.id}">${ch.label}</button>`;
     }).join('');
 
-    navContainer.querySelectorAll('.manual-nav-btn').forEach(btn => {
+    nav.querySelectorAll('.manual-nav-btn').forEach(btn => {
       btn.onclick = (e) => {
         e.preventDefault();
         const targetId = btn.getAttribute('data-target');
         const el = document.getElementById(targetId);
         if (el) {
           scrollToTarget(el);
-          navContainer.querySelectorAll('.manual-nav-btn').forEach(b => b.classList.remove('active'));
+          nav.querySelectorAll('.manual-nav-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-
-          const nRect = navContainer.getBoundingClientRect();
+          const nRect = nav.getBoundingClientRect();
           const bRect = btn.getBoundingClientRect();
-          const bOffset = bRect.left - nRect.left + navContainer.scrollLeft - (navContainer.clientWidth - btn.clientWidth) / 2;
-          navContainer.scrollTo({ left: Math.max(0, bOffset), behavior: 'smooth' });
+          const bOffset = bRect.left - nRect.left + nav.scrollLeft - (nav.clientWidth - btn.clientWidth) / 2;
+          nav.scrollTo({ left: Math.max(0, bOffset), behavior: 'smooth' });
         }
       };
     });
@@ -88,15 +98,19 @@ window.initTacticalManual = function() {
       targetMatch.classList.add('current');
       scrollToTarget(targetMatch);
     }
-    if (countEl) countEl.textContent = `${currentMatchIndex + 1}/${currentMatches.length}`;
+    const cnt = document.getElementById('manual-search-count');
+    if (cnt) cnt.textContent = `${currentMatchIndex + 1}/${currentMatches.length}`;
   };
 
   const highlightMatches = (query, shouldScroll = false) => {
+    const c = document.getElementById('glossary-modal-content');
+    const act = document.getElementById('manual-search-actions');
+    const cnt = document.getElementById('manual-search-count');
     currentMatches = [];
     currentMatchIndex = 0;
-    if (!query || query.length < 2 || !container) return;
+    if (!query || query.length < 2 || !c) return;
 
-    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+    const walker = document.createTreeWalker(c, NodeFilter.SHOW_TEXT, null, false);
     const textNodes = [];
     while (walker.nextNode()) {
       const parent = walker.currentNode.parentNode;
@@ -119,25 +133,28 @@ window.initTacticalManual = function() {
     }
 
     if (currentMatches.length > 0) {
-      if (searchActions) searchActions.classList.add('active');
+      if (act) act.classList.add('active');
       if (shouldScroll) jumpToMatch(0);
       else {
         currentMatches[0].classList.add('current');
-        if (countEl) countEl.textContent = `1/${currentMatches.length}`;
+        if (cnt) cnt.textContent = `1/${currentMatches.length}`;
       }
-    } else if (searchActions) {
-      searchActions.classList.add('active');
-      if (countEl) countEl.textContent = '0 matches';
+    } else if (act) {
+      act.classList.add('active');
+      if (cnt) cnt.textContent = '0 matches';
     }
   };
 
   const renderChapters = (filterQuery = '', shouldScrollToMatch = false) => {
-    if (!container) return;
+    const c = document.getElementById('glossary-modal-content');
+    const act = document.getElementById('manual-search-actions');
+    const cnt = document.getElementById('manual-search-count');
+    if (!c) return;
     const q = filterQuery.trim().toLowerCase();
-    if (lastQuery === q && container.children.length > 0) return;
+    if (lastQuery === q && c.children.length > 0) return;
     lastQuery = q;
 
-    const sourceData = window.TACTICAL_FLIGHT_MANUAL;
+    const sourceData = window.TACTICAL_FLIGHT_MANUAL || [];
     const matchingIds = new Set();
     const filtered = sourceData.filter(ch => {
       const descContent = typeof ch.getDesc === 'function' ? ch.getDesc() : ch.desc;
@@ -150,19 +167,19 @@ window.initTacticalManual = function() {
 
     if (filtered.length === 0) {
       renderNavButtons(matchingIds);
-      if (searchActions) searchActions.classList.add('active');
-      if (countEl) countEl.textContent = '0 matches';
-      container.innerHTML = `
+      if (act) act.classList.add('active');
+      if (cnt) cnt.textContent = '0 matches';
+      c.innerHTML = `
         <div style="text-align:center;padding:40px;color:#8494ab;font-family:var(--font-mono);font-size:0.80rem;">
-          <b style="color:var(--theme-accent);">NO OPERATIONAL PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
-          <p style="margin-top:6px;font-size:0.72rem;">Try "Mission Editor", "Random", "Inspection", "Replay", "Debrief", "Callsign", "Notch", "RCS", or "Controls".</p>
+          <b style="color:var(--theme-accent);">NO PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
+          <p style="margin-top:6px;font-size:0.72rem;">Try "Mission Editor", "Inspection", "Replay", "Debrief", "Notch", "RCS", or "Controls".</p>
         </div>`;
       return;
     }
 
     renderNavButtons(q ? matchingIds : null);
 
-    container.innerHTML = filtered.map(ch => {
+    c.innerHTML = filtered.map(ch => {
       const descContent = typeof ch.getDesc === 'function' ? ch.getDesc() : ch.desc;
       const badgeHtml = ch.isSpecial
         ? '<span class="manual-ref-badge"><img src="icons/settings.svg" width="10" height="10" alt="Ref" class="manual-inline-ico"> FLIGHT SYSTEMS REFERENCE</span>'
@@ -181,13 +198,38 @@ window.initTacticalManual = function() {
     if (q.length >= 2) {
       highlightMatches(q, shouldScrollToMatch);
     } else {
-      if (searchActions) searchActions.classList.remove('active');
-      if (countEl) countEl.textContent = '';
+      if (act) act.classList.remove('active');
+      if (cnt) cnt.textContent = '';
       currentMatches = [];
     }
   };
 
-  renderChapters();
+  const openModal = (e) => {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    const m = document.getElementById('glossary-modal');
+    const c = document.getElementById('glossary-modal-content');
+    const sInput = document.getElementById('manual-search-filter');
+    if (!c || c.children.length === 0) renderChapters((sInput && sInput.value) || '', false);
+    if (m) m.classList.add('active');
+    if (window.Game && window.Game.controls) window.Game.controls.autoPauseOnDialogOpen();
+  };
+
+  const closeModal = (e) => {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    const m = document.getElementById('glossary-modal');
+    if (m) m.classList.remove('active');
+    if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
+  };
+
+  window.openTacticalManual = openModal;
+  window.closeTacticalManual = closeModal;
+
+  if (openHangarBtn) openHangarBtn.onclick = openModal;
+  if (openHudBtn) openHudBtn.onclick = openModal;
+  if (closeBtn) closeBtn.onclick = closeModal;
+
+  const mEl = document.getElementById('glossary-modal');
+  if (mEl) mEl.onclick = (e) => { if (e.target === mEl) closeModal(e); };
 
   if (searchInput) {
     let debounceTimer = null;
@@ -230,21 +272,6 @@ window.initTacticalManual = function() {
         navContainer.scrollLeft += e.deltaY;
       }
     }, { passive: false });
-
-    let isDown = false, startX = 0, scrollStart = 0;
-    navContainer.addEventListener('mousedown', (e) => {
-      if (e.target.tagName === 'BUTTON') return;
-      isDown = true;
-      startX = e.pageX - navContainer.offsetLeft;
-      scrollStart = navContainer.scrollLeft;
-    });
-    window.addEventListener('mouseup', () => { isDown = false; });
-    navContainer.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - navContainer.offsetLeft;
-      navContainer.scrollLeft = scrollStart - (x - startX) * 1.4;
-    });
   }
 
   if (navPrevBtn && navContainer) {
@@ -254,28 +281,9 @@ window.initTacticalManual = function() {
     navNextBtn.onclick = () => navContainer.scrollBy({ left: 180, behavior: 'smooth' });
   }
 
-  const openHangarBtn = document.getElementById('btn-open-glossary');
-  const openHudBtn = document.getElementById('btn-hud-glossary');
-  const closeBtn = document.getElementById('btn-close-glossary');
-
-  const openModal = (e) => {
-    if (e) e.preventDefault();
-    if (searchInput && searchInput.value) renderChapters(searchInput.value, false);
-    else if (container.children.length === 0) renderChapters('', false);
-    if (modal) modal.classList.add('active');
-    if (window.Game && window.Game.controls) window.Game.controls.autoPauseOnDialogOpen();
-  };
-
-  const closeModal = (e) => {
-    if (e) e.preventDefault();
-    if (modal) modal.classList.remove('active');
-    if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
-  };
-
-  if (openHangarBtn) openHangarBtn.onclick = openModal;
-  if (openHudBtn) openHudBtn.onclick = openModal;
-  if (closeBtn) closeBtn.onclick = closeModal;
-  if (modal) modal.onclick = (e) => { if (e.target === modal) closeModal(e); };
+  if (container && container.children.length === 0) {
+    renderChapters('', false);
+  }
 };
 
 if (document.readyState === 'loading') {

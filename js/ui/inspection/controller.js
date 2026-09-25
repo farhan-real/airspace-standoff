@@ -1,9 +1,12 @@
-/* AIRSPACE STANDOFF: Inspection Mode Controller (Liquid Glass Theme) */
+/**
+ * AIRSPACE STANDOFF: Inspection Mode Controller
+ * Non-flickering C4ISR inspector with real-time in-place live telemetry updates.
+ */
 
 class InspectionModeController {
   constructor(game) {
     this.game = game;
-    this.enabled = true;
+    this.enabled = false;
     this.isOpen = false;
     this.selectedEntity = null;
     this.showEnemyDetails = true;
@@ -11,8 +14,13 @@ class InspectionModeController {
     this.activeTab = 'OVERVIEW';
     this.events = [];
     this.focusedEvent = null;
+    this.accordionStates = new Map();
     this.refreshAt = 0;
     this.resumeWarp = 1;
+    this._lastEntityIdsKey = '';
+    this._lastStructureSig = '';
+    this._lastEventsCount = 0;
+    this._lastFocusedEvent = null;
     this.init();
   }
 
@@ -43,11 +51,12 @@ class InspectionModeController {
     tabs.forEach(btn => {
       btn.onclick = () => {
         this.activeTab = btn.dataset.inspectionTab || 'OVERVIEW';
-        this.render();
+        this.render(true);
       };
     });
 
     window.addEventListener('keydown', (e) => {
+      if (!this.enabled) return;
       if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
       if (e.code === 'KeyI') {
         e.preventDefault();
@@ -55,18 +64,24 @@ class InspectionModeController {
       }
     });
 
-    this.setAvailable(true);
+    this.setAvailable(false);
   }
 
-  beginMission(autoOpen) {
+  beginMission(enabled) {
+    this.enabled = Boolean(enabled);
     this.events = [];
     this.focusedEvent = null;
     this.selectedEntity = null;
+    this.accordionStates.clear();
     this.activeTab = 'OVERVIEW';
+    this._lastEntityIdsKey = '';
+    this._lastStructureSig = '';
+    this._lastEventsCount = 0;
+    this._lastFocusedEvent = null;
     this.setEnemyDetails(true);
-    this.setAvailable(true);
-    if (autoOpen) {
-      this.recordEvent('INSPECTION INITIALIZED', 'Full theater telemetry and causal diagnostics engaged.', null, null);
+    this.setAvailable(this.enabled);
+    if (this.enabled) {
+      this.recordEvent('SORTIE LAUNCH', 'Sortie commenced with live inspection telemetry enabled.', null, null);
       this.open();
     } else {
       this.close();
@@ -74,18 +89,20 @@ class InspectionModeController {
   }
 
   setAvailable(available) {
-    this.enabled = true;
+    this.enabled = Boolean(available);
     const toggle = document.getElementById('btn-inspection-mode');
     const timeStop = document.getElementById('inspection-time-stop');
     if (toggle) {
-      toggle.classList.remove('hidden');
+      toggle.classList.toggle('hidden', !this.enabled);
       toggle.textContent = this.isOpen ? 'CLOSE ANALYSIS' : 'INSPECTION';
     }
-    if (timeStop) timeStop.classList.toggle('hidden', !this.isOpen);
+    if (timeStop) {
+      timeStop.classList.toggle('hidden', !this.enabled);
+    }
   }
 
   open() {
-    if (!this.game) return;
+    if (!this.game || !this.enabled) return;
     this.isOpen = true;
     const pane = document.getElementById('inspection-pane');
     const hud = document.getElementById('hud-container');
@@ -95,9 +112,9 @@ class InspectionModeController {
     const toggle = document.getElementById('btn-inspection-mode');
     if (toggle) toggle.textContent = 'CLOSE ANALYSIS';
     const timeStop = document.getElementById('inspection-time-stop');
-    if (timeStop) timeStop.classList.remove('hidden');
+    if (timeStop && this.enabled) timeStop.classList.remove('hidden');
     if (!this.selectedEntity) this.selectedEntity = this.game.activeUnit || null;
-    this.render();
+    this.render(true);
   }
 
   close() {
@@ -108,12 +125,16 @@ class InspectionModeController {
     if (hud) hud.classList.remove('inspection-layout');
     this.resizeRadar();
     const toggle = document.getElementById('btn-inspection-mode');
-    if (toggle) toggle.textContent = 'INSPECTION';
+    if (toggle && this.enabled) toggle.textContent = 'INSPECTION';
     const timeStop = document.getElementById('inspection-time-stop');
-    if (timeStop) timeStop.classList.add('hidden');
+    if (timeStop) {
+      timeStop.classList.toggle('hidden', !this.enabled);
+    }
+    this.updateTimeStopButton();
   }
 
   toggleTimeStop() {
+    if (!this.enabled) return;
     const sim = this.game && this.game.simulation;
     if (!sim) return;
     if (sim.isPaused) {
@@ -123,12 +144,18 @@ class InspectionModeController {
       sim.setTimeWarp(0);
     }
     this.updateTimeStopButton();
+    if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+    this.render(true);
   }
 
   updateTimeStopButton() {
     const btn = document.getElementById('inspection-time-stop');
     const sim = this.game && this.game.simulation;
     if (!btn || !sim) return;
+    if (!this.enabled) {
+      btn.classList.add('hidden');
+      return;
+    }
     const stopped = Boolean(sim.isPaused);
     btn.textContent = stopped ? 'RESUME TIME' : 'STOP TIME';
     btn.classList.toggle('inspection-resume', stopped);
@@ -149,11 +176,13 @@ class InspectionModeController {
       btn.textContent = this.showEnemyDetails ? 'ENEMY: ON' : 'ENEMY: OFF';
       btn.classList.toggle('inspection-enemy-off', !this.showEnemyDetails);
     }
-    this.render();
+    this.render(true);
   }
 
   selectMapEntity(entity) {
     if (!entity) return;
+    if (this.selectedEntity && this.selectedEntity.id === entity.id) return;
+
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
     const isEnemy = entity.team && entity.team !== commanderTeam;
 
@@ -161,7 +190,8 @@ class InspectionModeController {
       this.game.selectedTarget = entity;
       if (this.game.avionics) this.game.avionics.updateActiveUnitMFD();
       this.selectionNotice = `Locked ${this.getName(entity)} as combat target.`;
-      this.render();
+      this.refreshAt = performance.now() + 450;
+      this.render(true);
       return;
     }
 
@@ -179,7 +209,8 @@ class InspectionModeController {
     this.selectedEntity = entity;
     this.selectionNotice = '';
     this.focusedEvent = null;
-    this.render();
+    this.refreshAt = performance.now() + 450;
+    this.render(true);
   }
 
   getEntityId(e) {
@@ -210,11 +241,12 @@ class InspectionModeController {
   }
 
   recordEvent(type, title, source, target, details = {}) {
+    if (!this.enabled) return;
     const sim = this.game && this.game.simulation;
     const event = {
       id: `EV_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
       time: sim && sim.getElapsedTimeString ? sim.getElapsedTimeString() : '00:00',
-      type: String(type || 'EVENT'),
+      type: String(type || 'TACTICAL EVENT'),
       title: String(title || type),
       sourceName: this.getName(source),
       targetName: this.getName(target),
@@ -226,17 +258,83 @@ class InspectionModeController {
   }
 
   update() {
-    if (!this.isOpen) return;
+    if (!this.enabled) return;
     this.updateTimeStopButton();
+    if (!this.isOpen) return;
+
+    const sim = this.game && this.game.simulation;
+    if (sim && sim.isPaused) return;
+
     const now = performance.now();
     if (now >= this.refreshAt) {
-      this.refreshAt = now + 250;
-      this.render();
+      this.refreshAt = now + 400;
+      this.render(false);
     }
   }
 
-  render() {
-    if (!this.isOpen) return;
+  bindInteractions(content) {
+    content.querySelectorAll('.inspection-accordion').forEach(acc => {
+      const accId = acc.dataset.accordionId;
+      if (accId) {
+        if (this.accordionStates.has(accId)) {
+          acc.open = this.accordionStates.get(accId);
+        } else {
+          this.accordionStates.set(accId, acc.open);
+        }
+        acc.addEventListener('toggle', () => {
+          this.accordionStates.set(accId, acc.open);
+        });
+      }
+    });
+
+    content.querySelectorAll('[data-insp-action="fly"]').forEach(btn => {
+      btn.onclick = () => {
+        this.game.activeUnit = this.selectedEntity;
+        if (this.game.avionics) {
+          this.game.avionics.renderFlightRoster();
+          this.game.avionics.updateActiveUnitMFD();
+        }
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        this.render(true);
+      };
+    });
+
+    content.querySelectorAll('[data-insp-action="target"]').forEach(btn => {
+      btn.onclick = () => {
+        this.game.selectedTarget = this.selectedEntity;
+        if (this.game.avionics) this.game.avionics.updateActiveUnitMFD();
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        this.render(true);
+      };
+    });
+  }
+
+  computeStructureSignature() {
+    const e = this.selectedEntity;
+    if (!e) return `${this.activeTab}:none`;
+    const eid = this.getEntityId(e);
+    const tid = this.getEntityId(this.game.selectedTarget);
+
+    if (this.activeTab === 'WEAPONS') {
+      const inbounds = (this.game.missiles || []).filter(m => m.active && m.target && m.target.id === e.id).map(m => m.id).join(',');
+      const wpns = (e.equippedWeapons || []).map((it, i) => `${it.weapon ? it.weapon.id : ''}:${it.ammo > 0}`).join(',');
+      return `${this.activeTab}:${eid}:${tid}:${inbounds}:${wpns}`;
+    }
+    if (this.activeTab === 'SENSORS') {
+      const isBlue = e.team === (this.game.currentPvpCommander || 'friendly');
+      const sensors = isBlue ? (this.game.hostileAircraft || []) : (this.game.alliedAircraft || []);
+      const sIds = sensors.filter(s => s.hp > 0).map(s => s.id).join(',');
+      return `${this.activeTab}:${eid}:${sIds}`;
+    }
+    if (this.activeTab === 'OVERVIEW') {
+      return `${this.activeTab}:${eid}:${e.maxHp}:${(e.equippedWeapons || []).length}`;
+    }
+    return `${this.activeTab}:${eid}`;
+  }
+
+  render(force = false) {
+    if (!this.isOpen || !this.enabled) return;
+
     const titleEl = document.getElementById('inspection-selection-title');
     const hintEl = document.getElementById('inspection-hint');
     const content = document.getElementById('inspection-content');
@@ -244,20 +342,27 @@ class InspectionModeController {
     if (titleEl) titleEl.textContent = this.selectedEntity ? this.getName(this.selectedEntity) : 'SELECT AN OBJECT';
     if (hintEl) {
       hintEl.textContent = this.selectionNotice || (this.selectedEntity
-        ? `Analyzing ${this.getName(this.selectedEntity)}. Tap contacts on radar to switch inspection target.`
+        ? `Analyzing ${this.getName(this.selectedEntity)}. Tap contacts on radar to switch target.`
         : 'Select any aircraft or missile contact on the radar display.');
     }
 
     if (typeof CustomDropdown !== 'undefined') {
       const cdd = CustomDropdown.get('cdd-inspection-entity');
-      if (cdd) {
+      if (cdd && !cdd.isOpen()) {
         const all = this.getAllEntities();
+        const idsKey = all.map(e => e.id).join(',');
         const curId = this.getEntityId(this.selectedEntity);
-        const options = [
-          { value: '', text: `CHOOSE OBJECT (${all.length})` },
-          ...all.map(e => ({ value: this.getEntityId(e), text: this.getName(e) }))
-        ];
-        cdd.setOptions(options, curId);
+
+        if (idsKey !== this._lastEntityIdsKey) {
+          this._lastEntityIdsKey = idsKey;
+          const options = [
+            { value: '', text: `CHOOSE OBJECT (${all.length})` },
+            ...all.map(e => ({ value: this.getEntityId(e), text: this.getName(e) }))
+          ];
+          cdd.setOptions(options, curId);
+        } else if (curId !== cdd.getValue()) {
+          cdd.setValue(curId, false);
+        }
       }
     }
 
@@ -266,38 +371,36 @@ class InspectionModeController {
     });
 
     if (content) {
-      if (this.activeTab === 'SENSORS' && typeof InspectionTelemetry !== 'undefined') {
-        content.innerHTML = InspectionTelemetry.renderRadarDashboard(this, this.selectedEntity);
-      } else if (this.activeTab === 'WEAPONS' && typeof InspectionTelemetry !== 'undefined') {
-        content.innerHTML = InspectionTelemetry.renderWeaponsDashboard(this, this.selectedEntity);
-      } else if (this.activeTab === 'TRACE' && typeof InspectionViews !== 'undefined') {
-        content.innerHTML = InspectionViews.renderEventTraceTab(this, this.focusedEvent);
-      } else if (this.activeTab === 'RAW' && typeof InspectionViews !== 'undefined') {
-        content.innerHTML = InspectionViews.renderRawDataTab(this, this.selectedEntity);
-      } else if (typeof InspectionViews !== 'undefined') {
-        content.innerHTML = InspectionViews.renderOverviewTab(this, this.selectedEntity);
+      const structSig = this.computeStructureSignature();
+      const needsFullRebuild = force || this._lastStructureSig !== structSig;
+
+      if (needsFullRebuild) {
+        this._lastStructureSig = structSig;
+        let nextHtml = '';
+        if (this.activeTab === 'SENSORS' && typeof InspectionTelemetry !== 'undefined') {
+          nextHtml = InspectionTelemetry.renderRadarDashboard(this, this.selectedEntity);
+        } else if (this.activeTab === 'WEAPONS' && typeof InspectionWeapons !== 'undefined') {
+          nextHtml = InspectionWeapons.renderWeaponsDashboard(this, this.selectedEntity);
+        } else if (this.activeTab === 'TRACE' && typeof InspectionViews !== 'undefined') {
+          nextHtml = InspectionViews.renderEventTraceTab(this, this.focusedEvent);
+        } else if (this.activeTab === 'RAW' && typeof InspectionViews !== 'undefined') {
+          nextHtml = InspectionViews.renderRawDataTab(this, this.selectedEntity);
+        } else if (typeof InspectionViews !== 'undefined') {
+          nextHtml = InspectionViews.renderOverviewTab(this, this.selectedEntity);
+        }
+        content.innerHTML = nextHtml;
+        this.bindInteractions(content);
+      } else {
+        if (this.activeTab === 'SENSORS' && typeof InspectionTelemetry !== 'undefined') {
+          InspectionTelemetry.updateLive(this, this.selectedEntity, content);
+        } else if (this.activeTab === 'WEAPONS' && typeof InspectionWeapons !== 'undefined') {
+          InspectionWeapons.updateLive(this, this.selectedEntity, content);
+        } else if (this.activeTab === 'OVERVIEW' && typeof InspectionViews !== 'undefined') {
+          InspectionViews.updateLive(this, this.selectedEntity, content);
+        } else if (this.activeTab === 'RAW' && typeof InspectionViews !== 'undefined') {
+          InspectionViews.updateRawLive(this, this.selectedEntity, content);
+        }
       }
-
-      content.querySelectorAll('[data-insp-action="fly"]').forEach(btn => {
-        btn.onclick = () => {
-          this.game.activeUnit = this.selectedEntity;
-          if (this.game.avionics) {
-            this.game.avionics.renderFlightRoster();
-            this.game.avionics.updateActiveUnitMFD();
-          }
-          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-          this.render();
-        };
-      });
-
-      content.querySelectorAll('[data-insp-action="target"]').forEach(btn => {
-        btn.onclick = () => {
-          this.game.selectedTarget = this.selectedEntity;
-          if (this.game.avionics) this.game.avionics.updateActiveUnitMFD();
-          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-          this.render();
-        };
-      });
     }
 
     this.renderEvents();
@@ -309,19 +412,26 @@ class InspectionModeController {
     if (!listEl) return;
     if (countEl) countEl.textContent = `${this.events.length} EVENTS`;
 
-    listEl.innerHTML = this.events.slice(0, 25).map(ev => `
+    if (this.events.length === this._lastEventsCount && this.focusedEvent === this._lastFocusedEvent) {
+      return;
+    }
+
+    this._lastEventsCount = this.events.length;
+    this._lastFocusedEvent = this.focusedEvent;
+
+    listEl.innerHTML = this.events.slice(0, 30).map(ev => `
       <button type="button" class="inspection-event-row ${this.focusedEvent && this.focusedEvent.id === ev.id ? 'focused' : ''}" data-ev-id="${ev.id}">
         <span>[${ev.time}] ${ev.type}</span>
         <b>${this.escape(ev.title)}</b>
       </button>
-    `).join('') || '<p class="inspection-muted" style="padding:8px 10px;">Waiting for flight events...</p>';
+    `).join('') || '<p class="inspection-muted" style="padding:8px 10px;">Waiting for operational events...</p>';
 
     listEl.querySelectorAll('.inspection-event-row').forEach(row => {
       row.onclick = () => {
         const id = row.getAttribute('data-ev-id');
         this.focusedEvent = this.events.find(e => e.id === id) || null;
         this.activeTab = 'TRACE';
-        this.render();
+        this.render(true);
       };
     });
   }

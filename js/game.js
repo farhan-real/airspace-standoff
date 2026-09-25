@@ -21,6 +21,7 @@ class AirspaceStandoffGame {
     this.missionEditorBaseSettings = null;
     this.activeMissionEditorConfig = null;
     this.isMissionEditorMatch = false;
+    this.inspectionModeEnabled = false;
     this.currentPvpCommander = 'friendly';
 
     this.playerBudgetId = 'BUDGET_400';
@@ -92,6 +93,7 @@ class AirspaceStandoffGame {
     if (window.ModalEditorTemplate && typeof window.ModalEditorTemplate.install === 'function') window.ModalEditorTemplate.install();
     if (window.ModalDebriefTemplate && typeof window.ModalDebriefTemplate.install === 'function') window.ModalDebriefTemplate.install();
     if (window.ModalPanelsTemplates && typeof window.ModalPanelsTemplates.install === 'function') window.ModalPanelsTemplates.install();
+    if (typeof window.initTacticalManual === 'function') window.initTacticalManual();
   }
 
   setPlayerBudgetTier(tierKey) {
@@ -180,6 +182,7 @@ class AirspaceStandoffGame {
     this.activeMissionEditorConfig = editorMission;
     this.isMissionEditorMatch = Boolean(editorMission && editorMission.unranked);
     this.inspectionModeEnabled = Boolean(editorMission && editorMission.inspectionMode);
+
     if (editorMission) {
       this.scenarioMode = editorMission.scenarioMode;
       this.aiDifficulty = editorMission.difficulty;

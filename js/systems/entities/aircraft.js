@@ -8,7 +8,7 @@ function formatAircraftDisplayName(aircraft) {
   const model = aircraft.spec
     ? (aircraft.spec.name || aircraft.spec.id || aircraft.model || 'AIRCRAFT')
     : (aircraft.model || aircraft.modelName || 'AIRCRAFT');
-  return `${callsign} · ${model}`;
+  return `${callsign} - ${model}`;
 }
 
 function formatCombatantDisplayName(entity) {

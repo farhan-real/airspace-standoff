@@ -1,9 +1,9 @@
 /**
- * AIRSPACE STANDOFF: Inspector Coordinator & Tag-Only Tooltip Engine
- * Mobile inspection is strictly for tags and badges; aircraft cards do not trigger mobile tooltips.
+ * AIRSPACE STANDOFF: Procurement Specifications Coordinator & Tag-Only Tooltip Engine
+ * Manages spec modal views for airframes, weapons, autocannons, and modular components in the hangar.
  */
 
-class ProcurementInspector {
+class ProcurementSpecs {
   constructor(procurementManager) {
     this.pm = procurementManager;
     this.tooltipEl = null;
@@ -108,30 +108,14 @@ class ProcurementInspector {
     this.tooltipEl.style.top = `${Math.round(Math.max(8, Math.min(y, window.innerHeight - tipH - 8)))}px`;
   }
 
-  generateLeadBuffHtml(specId) {
-    const acMap = window.AIRCRAFT_CATALOG || {};
-    const spec = acMap[specId] || { name: specId, category: 'MULTIROLE' };
-    const cat = spec.category || 'MULTIROLE';
-    const data = (window.LEAD_BUFFS && window.LEAD_BUFFS[cat]) || window.LEAD_BUFFS.MULTIROLE;
-    const cellsHtml = data.buffs.map(b => `<div class="tt-cell"><span>${b.label}:</span><b class="stat-tier-1">${b.val}</b></div>`).join('');
-    const buffsList = data.buffs.map(b => `<div style="display:flex;justify-content:space-between;gap:6px;border-bottom:1px solid rgba(255,255,255,0.04);padding:2px 0;"><span style="color:#ffd700;font-weight:800;">${b.label}:</span><span style="color:#e2e8f0;text-align:right;">${b.desc}</span></div>`).join('');
-
-    return `
-      <div class="tt-header-row"><span class="tt-title" style="color:#ffd700;">FLIGHT LEAD: ${(spec.name || specId).toUpperCase()}</span><span class="tt-badge" style="background:#082846;color:#38bdf8;border:1px solid #0284c7;">FORMATION CENTER</span></div>
-      <div class="tt-sub-bar"><span class="tt-role-text" style="color:#fef08a;">${data.role}</span><span class="tt-badge badge-cat-${cat.toLowerCase()}">${cat}</span></div>
-      <div class="tt-grid-box">${cellsHtml}</div>
-      <div class="tt-trait-pill" style="border-left-color:#00f5a0;background:rgba(0,245,160,0.06);"><b style="color:#00f5a0;">[SURVIVABILITY]</b><br><span style="color:#cbd5e1;">${data.survivability}</span></div>
-      <div class="tt-trait-pill" style="border-left-color:#ffd700;background:rgba(255,215,0,0.06);"><b style="color:#ffd700;">[LEAD SUITE: ${data.title}]</b><div style="margin-top:3px;font-size:0.58rem;color:#cbd5e1;">${data.weaknessFixed}</div><div style="margin-top:4px;display:flex;flex-direction:column;gap:1px;">${buffsList}</div></div>
-      <div class="tt-footer-desc"><b>FORMATION POSITION:</b> Positioned in central slot. ${data.summary}</div>`;
-  }
-
   openInspectModal(type, id) {
     if (!type || !id) return;
     this.hideTooltip();
     const modal = document.getElementById('system-inspect-modal');
     const titleEl = document.getElementById('inspect-modal-title');
     const bodyEl = document.getElementById('inspect-modal-body');
-    if (!modal || !bodyEl || !window.InspectorModalRenderer) return;
+    const renderer = window.SpecsModalRenderer || window.InspectorModalRenderer;
+    if (!modal || !bodyEl || !renderer) return;
 
     if (window.Game && window.Game.controls) window.Game.controls.autoPauseOnDialogOpen();
 
@@ -144,7 +128,7 @@ class ProcurementInspector {
       const a = aircraft[id];
       if (!a) return;
       titleEl.textContent = `AIRFRAME SPECIFICATION - ${(a.name || id).toUpperCase()}`;
-      bodyEl.innerHTML = window.InspectorModalRenderer.renderAirframe(a, guns);
+      bodyEl.innerHTML = renderer.renderAirframe(a, guns);
       const btn = bodyEl.querySelector('#inspect-btn-req');
       if (btn) btn.onclick = () => { this.pm.addAirframe(a.id); btn.textContent = 'ADDED'; };
       modal.classList.add('active');
@@ -154,7 +138,7 @@ class ProcurementInspector {
       const w = weapons[id];
       if (!w) return;
       titleEl.textContent = `ORDNANCE SPECIFICATION - ${(w.name || id).toUpperCase()}`;
-      bodyEl.innerHTML = window.InspectorModalRenderer.renderWeapon(w);
+      bodyEl.innerHTML = renderer.renderWeapon(w);
       const selBtn = bodyEl.querySelector('#inspect-btn-sel');
       if (selBtn) selBtn.onclick = () => { this.pm.equipItemDirectly({ type: 'weapon', id: w.id, name: w.name }); modal.classList.remove('active'); };
       modal.classList.add('active');
@@ -164,7 +148,7 @@ class ProcurementInspector {
       const g = guns[id] || guns['M61A2'];
       if (!g) return;
       titleEl.textContent = `AUTOCANNON SPECIFICATION - ${(g.name || id).toUpperCase()}`;
-      bodyEl.innerHTML = window.InspectorModalRenderer.renderGun(g);
+      bodyEl.innerHTML = renderer.renderGun(g);
       modal.classList.add('active');
       return;
     }
@@ -172,7 +156,7 @@ class ProcurementInspector {
       const u = upgrades[id];
       if (!u) return;
       titleEl.textContent = `AVIONICS SUBSYSTEM SPECIFICATION - ${(u.name || id).toUpperCase()}`;
-      bodyEl.innerHTML = window.InspectorModalRenderer.renderUpgrade(u);
+      bodyEl.innerHTML = renderer.renderUpgrade(u);
       const selUpg = bodyEl.querySelector('#inspect-btn-sel-upg');
       if (selUpg) selUpg.onclick = () => { this.pm.equipItemDirectly({ type: 'upgrade', id: u.id, name: u.name }); modal.classList.remove('active'); };
       modal.classList.add('active');
@@ -180,4 +164,5 @@ class ProcurementInspector {
   }
 }
 
-window.ProcurementInspector = ProcurementInspector;
+window.ProcurementSpecs = ProcurementSpecs;
+window.ProcurementInspector = ProcurementSpecs;

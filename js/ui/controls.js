@@ -125,8 +125,12 @@ class ControlsSystem {
     }
     if (btnManual) {
       btnManual.onclick = () => {
-        const gm = document.getElementById('glossary-modal');
-        if (gm) gm.classList.add('active');
+        if (typeof window.openTacticalManual === 'function') {
+          window.openTacticalManual();
+        } else {
+          const gm = document.getElementById('glossary-modal');
+          if (gm) gm.classList.add('active');
+        }
       };
     }
     if (btnAbort) {
@@ -193,7 +197,6 @@ class ControlsSystem {
         this.game.avionics.updateActiveUnitMFD();
       };
 
-      // Disallow focus and suppress arrow key interception on throttle slider
       const removeFocus = () => { try { slider.blur(); } catch (err) {} };
       slider.addEventListener('change', removeFocus);
       slider.addEventListener('pointerup', removeFocus);

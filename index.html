@@ -213,8 +213,8 @@
         <img src="icons/fullscreen.svg" class="btn-vector-ico" width="11" height="11" alt="Fullscreen">
         <span>FULLSCREEN</span>
       </button>
-      <button type="button" id="btn-inspection-mode" class="hud-btn small" title="Open live mission analysis">INSPECTION</button>
-      <button type="button" id="inspection-time-stop" class="hud-btn small alert hidden" aria-pressed="false" title="Stop or resume time in this inspection sortie">STOP TIME</button>
+      <button type="button" id="btn-inspection-mode" class="hud-btn small hidden" title="Open live mission analysis">INSPECTION</button>
+      <button type="button" id="inspection-time-stop" class="hud-btn small alert hidden" aria-pressed="false" title="Stop or resume time in this sortie">STOP TIME</button>
       <button id="btn-audio-toggle" class="hud-btn small" title="Toggle Audio">AUDIO: ON</button>
       <button id="btn-hud-glossary" class="hud-btn small">
         <img src="icons/manual.svg" class="btn-vector-ico" width="11" height="11" alt="Manual">
@@ -512,11 +512,11 @@
 <script src="js/ui/cards/pylons.js"></script>
 <script src="js/ui/cards.js"></script>
 
-<!-- Procurement Subsystems -->
-<script src="js/ui/procurement/inspector/eval.js"></script>
-<script src="js/ui/procurement/inspector/views.js"></script>
-<script src="js/ui/procurement/inspector/modal.js"></script>
-<script src="js/ui/procurement/inspector/inspector.js"></script>
+<!-- Procurement Specifications Subsystems -->
+<script src="js/ui/procurement/specs/eval.js"></script>
+<script src="js/ui/procurement/specs/views.js"></script>
+<script src="js/ui/procurement/specs/modal.js"></script>
+<script src="js/ui/procurement/specs/specs.js"></script>
 <script src="js/ui/procurement/squadron/loadouts.js"></script>
 <script src="js/ui/procurement/catalog/presets.js"></script>
 <script src="js/ui/procurement/loadoutmetrics.js"></script>
@@ -531,8 +531,9 @@
 <script src="js/ui/procurement.js"></script>
 <script src="js/ui/mission-editor.js"></script>
 
-<!-- Inspection Subsystems -->
+<!-- Live Sortie Inspection Subsystems -->
 <script src="js/ui/inspection/telemetry.js"></script>
+<script src="js/ui/inspection/weapons.js"></script>
 <script src="js/ui/inspection/views.js"></script>
 <script src="js/ui/inspection/controller.js"></script>
 
