@@ -21,7 +21,6 @@ window.TEMPLATES_EW = {
     upgrades: ['ESM_PASSIVE_SUITE', 'ADAPTIVE_ECCM_SUITE', 'MADL_BATTLE_LINK'],
     desc: 'Dedicated radar hunting package fielding 8 AGM-88G anti-radiation missiles to permanently blind enemy IADS networks.'
   },
-
   'Tornado-ECR Defense Suppression': {
     name: 'Tornado-ECR Defense Suppression',
     specId: 'Tornado-ECR',
@@ -31,8 +30,8 @@ window.TEMPLATES_EW = {
     upgrades: ['ESM_PASSIVE_SUITE', 'ADAPTIVE_ECCM_SUITE'],
     desc: 'Low-level terrain-penetration SEAD specialist. Rapidly geolocates surface radar emitters and fires 3x damage ARM volleys.'
   },
-  'Tornado-ECR Tactical Jamming Escort': {
-    name: 'Tornado-ECR Tactical Jamming Escort',
+  'Tornado-ECR Radar Jamming Escort': {
+    name: 'Tornado-ECR Radar Jamming Escort',
     specId: 'Tornado-ECR',
     roleCategory: 'SEAD & EW',
     chosenGunId: 'BK-27',
@@ -40,9 +39,8 @@ window.TEMPLATES_EW = {
     upgrades: ['ESM_PASSIVE_SUITE', 'EXTENDED_RANGE_TURBO'],
     desc: 'Affordable strike package escort providing broadband microwave radar noise jamming.'
   },
-
-  'EF-111A Tactical Jamming System': {
-    name: 'EF-111A Tactical Jamming System',
+  'EF-111A Penetration Jamming System': {
+    name: 'EF-111A Penetration Jamming System',
     specId: 'EF-111A',
     roleCategory: 'SEAD & EW',
     chosenGunId: 'M61A2',
@@ -59,7 +57,6 @@ window.TEMPLATES_EW = {
     upgrades: ['ADAPTIVE_ECCM_SUITE', 'SUPERCRUISE_VCE'],
     desc: 'Equipped with next-generation GaN AESA jamming pods to project directional jamming beams from 120km out.'
   },
-
   'J-16D Electronic Warfare Escort': {
     name: 'J-16D Electronic Warfare Escort',
     specId: 'J-16D',

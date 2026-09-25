@@ -1,5 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Flight Manual additions for mission setup, inspection, and sortie review.
+ * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 10 to 12
+ * Covers: Mission Editor, Visual Inspection Analysis & Debriefing Replay
  */
 
 window.MANUAL_OPERATIONS = [
@@ -8,94 +9,75 @@ window.MANUAL_OPERATIONS = [
     title: 'SECTION 10: MISSION EDITOR & CUSTOM SORTIES',
     desc: `
       <div class="ge-desc">
-        Open <b>MISSION EDITOR</b> in the Hangar to set up one custom sortie. The preview shows the choices that will be used. Press <b>USE THIS SETUP</b> to arm it for the next sortie. Press <b>RESET</b> to clear the setup and restore the default values.
+        Access <b>MISSION EDITOR</b> from the Hangar header bar to construct tailored combat scenarios. The live dossier updates dynamically to display force balance and tactical odds. Press <b>ARM SORTIE CONFIGURATION</b> to prepare the setup for your next launch.
       </div>
 
-      <div class="ge-subhead">1. SET EACH FIELD YOUR WAY</div>
+      <div class="ge-subhead">1. THEATER SCENARIO, OPPOSITION &amp; RANDOMIZATION</div>
       <div class="ge-desc">
-        Choose values for <b>scenario, difficulty, enemy style, your squadron, your weapons, enemy squadron size, enemy weapons, cloud cover, ground air defenses,</b> and <b>civilian traffic</b>. Each field has its own <b>RANDOM</b> button. Turn on only the fields you want the game to choose at launch; their menus become disabled until you turn RANDOM off. All other fields keep the values you chose.
-      </div>
-      <div class="ge-callout">
-        <b>Example:</b> Keep your Hangar squadron and clear skies, but turn RANDOM on for enemy size and weapons. The separate <b>INSPECTION MODE</b> switch opens live analysis when the sortie starts. A menu choice such as <b>RANDOM LEGAL LOADOUTS</b> sets that weapon rule; the nearby RANDOM button instead randomizes which weapon rule is used.
-      </div>
-      <div class="ge-callout">
-        <b>EDITOR SORTIES ARE UNRANKED.</b> Every sortie launched with this editor setup is excluded from the leaderboard, even if all fields use their default values. The setup applies to the next sortie only.
+        Configure operational parameters across <b>Scenario Mode, Threat Contestation, Combat Doctrine, Fleet Strengths, Ordnance Rules, Weather Clouds, Ground IADS Defenses,</b> and <b>Civilian RoE</b>.
+        <br><br>
+        <ul style="list-style:none;padding-left:0;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Tactile Random Toggles:</b> Each field includes an independent <b>RANDOM</b> button. Enabling random on a parameter engages procedural theater generation for that specific field at launch time.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Force Ratio Balance:</b> Adjust enemy squadron size from 3 aircraft (Light Flight) up to 15 aircraft (Saturation Fleet) to test squadron survivability against asymmetric numbers.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Unranked Sortie Status:</b> All missions launched using custom editor configurations are flagged as unranked. They provide full debriefings and replays but do not submit scores to the Squadron Leaderboard.</li>
+        </ul>
       </div>
 
-      <div class="ge-subhead">2. IDENTIFY AIRCRAFT</div>
+      <div class="ge-subhead">2. PROCEDURAL AIRCRAFT IDENTIFICATION</div>
       <div class="ge-desc">
-        Every aircraft in the sortie, on both teams, gets a unique callsign. If two aircraft start with the same callsign, a number is added to distinguish them. Aircraft are identified by both callsign and model, for example <b>Viper 2 · F-22A Raptor</b>.
+        Every participating combatant receives a unique operational callsign and airframe designation (e.g. <b>Viper 2 - F-22A Raptor</b>). Numerical suffixes prevent telemetry overlap when deploying multiple identical airframes.
       </div>
     `
   },
   {
     id: 'ch11_inspection',
-    title: 'SECTION 11: INSPECTION MODE & LIVE ANALYSIS',
+    title: 'SECTION 11: INSPECTION MODE & VISUAL C4ISR ANALYSIS',
     desc: `
       <div class="ge-desc">
-        Turn on <b>INSPECTION MODE</b> in the Mission Editor before pressing <b>USE THIS SETUP</b>. The live analysis workspace opens when that sortie starts. The tactical map and normal flight and weapon controls remain usable.
+        Engage <b>INSPECTION MODE</b> inside the Mission Editor prior to sortie launch. Inspection Mode unlocks an interactive C4ISR analysis workspace while keeping tactical flight and missile controls fully active.
       </div>
 
-      <div class="ge-subhead">1. PICK AN OBJECT AND CONTROL YOUR AIRCRAFT</div>
+      <div class="ge-subhead">1. SELECTION &amp; COMBAT CONTROLS</div>
       <ul style="list-style:none;padding-left:0;font-size:0.74rem;line-height:1.6;">
-        <li style="margin-bottom:6px;">Select an object on the map or from <b>CHOOSE OBJECT</b>. Select a friendly aircraft to make it the aircraft you fly.</li>
-        <li style="margin-bottom:6px;">Select an enemy aircraft to target it. <b>ENEMY: ON</b> also shows its details. Switch to <b>ENEMY: OFF</b> to keep your own aircraft details on screen while selecting enemies as targets.</li>
-        <li style="margin-bottom:6px;">Use the normal flight and weapon controls to maneuver and launch. Inspection does not disable combat actions.</li>
+        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Seamless Selection:</b> Tap contacts on the radar scope or select them from the HUD dropdown menu. Friendly aircraft can be taken over directly; hostile contacts are immediately acquired as target locks.</li>
+        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Enemy Filter Switch:</b> Toggle <b>ENEMY: ON/OFF</b> to inspect enemy telemetry or maintain focus on your active fighter while acquiring targets.</li>
+        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Simulation Time-Stop:</b> Press <b>STOP TIME</b> in the header bar to freeze combat physics for deep telemetry analysis, then resume when ready.</li>
       </ul>
 
-      <div class="ge-subhead">2. READ THE PICTURE, THEN OPEN DETAILS IF NEEDED</div>
+      <div class="ge-subhead">2. VISUAL DIAGNOSTIC WORKSPACE TABS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
-          <thead><tr><th>TAB</th><th>WHAT YOU CAN LEARN</th></tr></thead>
+          <thead><tr><th>WORKSPACE TAB</th><th>INTELLIGENCE DISPLAY</th></tr></thead>
           <tbody>
-            <tr><td>Summary</td><td>Aircraft condition, speed, altitude, energy, pilot status, and weapons at a glance.</td></tr>
-            <tr><td>Sensors</td><td>Shows the selected object's radar signature and enemy-aircraft sensor coverage. Friendly aircraft and ground units are not listed as sensors. The range bars compare sensor reach with target distance; read the status text to see if the target is currently detected. Missile details also say whether the opposing side can see the missile's intended target.</td></tr>
-            <tr><td>Weapons</td><td>Shows incoming missiles and estimated hit chances. The bar gives a quick visual estimate; expand its factors to see what helps or hurts the shot. The estimate can change while a missile is flying.</td></tr>
-            <tr><td>Events</td><td>Lists recorded actions and outcomes in time order. Select an event to focus on the objects involved and read the explanation.</td></tr>
-            <tr><td>All Data</td><td>Shows the detailed values behind the simpler summaries.</td></tr>
+            <tr><td><b>OVERVIEW</b></td><td>Visual segmented armor health pips, Mach corner velocity turn-efficiency gauge, altitude tape, energy reserve meter, and store station inventory.</td></tr>
+            <tr><td><b>SENSORS</b></td><td>Stealth radar cross-section spectrum bar, aspect spike factors, and horizontal range-versus-distance comparison tracks for all opposing radars.</td></tr>
+            <tr><td><b>WEAPONS</b></td><td>Dynamic hit probability gauge (P_k percentage arc), green advantage chips, red disadvantage chips, and inbound threat warnings.</td></tr>
+            <tr><td><b>EVENTS</b></td><td>Chronological Causal Log recording missile launches, intercepts, chaff deployments, and kill events with plain-language summaries.</td></tr>
+            <tr><td><b>DATA</b></td><td>Complete raw telemetry registry and aircraft flight-path trail coordinates for advanced technical analysis.</td></tr>
           </tbody>
         </table>
-      </div>
-      <div class="ge-desc">
-        Expand <b>Show why and how</b> to see the calculation or reason behind a result. You can expand details only when you want them; they stay open as the live information refreshes.
-      </div>
-
-      <div class="ge-subhead">3. STOP TIME OR CLOSE ANALYSIS</div>
-      <div class="ge-desc">
-        <b>STOP TIME</b> is in the top action bar, outside the analysis panel, so it remains available even after you press <b>EXIT</b> to close analysis. Press <b>RESUME TIME</b> to continue. On a phone, the workspace rearranges to fit the screen; scroll the analysis tabs and rotate to landscape for more room if needed.
       </div>
     `
   },
   {
     id: 'ch12_debrief_replay',
-    title: 'SECTION 12: MISSION DEBRIEFS, REPLAYS & LEADERBOARD',
+    title: 'SECTION 12: MISSION DEBRIEFS, REPLAYS & SQUADRON ARCHIVE',
     desc: `
       <div class="ge-desc">
-        After a sortie, the debrief shows who flew, what was hit or lost, and when key events happened. A replay is available in the debrief. When a ranked sortie is saved as a leaderboard result, its replay is saved with it.
+        Upon sortie completion or mission abort, the After Action Report provides complete performance metrics, pilot podium rankings, chronological engagement timelines, and interactive tactical replays.
       </div>
 
-      <div class="ge-subhead">1. REVIEW THE DEBRIEF</div>
-      <ul style="list-style:none;padding-left:0;font-size:0.74rem;line-height:1.6;">
-        <li style="margin-bottom:6px;">The performance summary highlights the top pilots and their results.</li>
-        <li style="margin-bottom:6px;">Review the aircraft roster for each aircraft, its model, kills, missiles evaded, score, and whether it survived.</li>
-        <li style="margin-bottom:6px;">Open the engagement timeline to review hits, kills, and rules-of-engagement incidents in order.</li>
-      </ul>
-
-      <div class="ge-subhead">2. CONTROL THE REPLAY</div>
-      <div class="ge-desc">Open <b>LEADERBOARD</b> and select a saved result to view its archived replay in the result details.</div>
+      <div class="ge-subhead">1. SORTIE REPLAY CONTROLS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
-          <thead><tr><th>CONTROL</th><th>USE</th></tr></thead>
+          <thead><tr><th>CONTROL</th><th>FUNCTION</th></tr></thead>
           <tbody>
-            <tr><td>Play / Pause</td><td>Start or pause the recorded battle.</td></tr>
-            <tr><td>Restart</td><td>Return the replay to the beginning.</td></tr>
-            <tr><td>Speed</td><td>Cycle through 0.5×, 1×, and 2× playback.</td></tr>
-            <tr><td>Timeline slider</td><td>Scrub to any recorded time. Select a key engagement below the timeline to jump to it.</td></tr>
+            <tr><td><b>Play / Pause</b></td><td>Start or suspend recorded playback.</td></tr>
+            <tr><td><b>Restart</b></td><td>Rewind replay to mission launch coordinates.</td></tr>
+            <tr><td><b>Speed</b></td><td>Toggle playback rate across 0.5x, 1x, and 2x.</td></tr>
+            <tr><td><b>Timeline Scrubber</b></td><td>Drag timeline slider to inspect any point in the engagement, or click key event chips to jump directly to decisive missile impacts.</td></tr>
           </tbody>
         </table>
-      </div>
-      <div class="ge-callout">
-        New ranked matches save their replay with the leaderboard record, so you can open the result later and watch it again. Mission Editor sorties still have a debrief replay, but the match itself is unranked and is not saved to the leaderboard. An older record may have no replay if it was saved before replay recording was added.
       </div>
     `
   }

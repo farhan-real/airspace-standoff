@@ -48,8 +48,8 @@ window.TEMPLATES_SUPERIORITY = {
     upgrades: ['TITANIUM_COCKPIT', 'EXTENDED_RANGE_TURBO'],
     desc: 'Extreme standoff strike configuration taking advantage of Type X pylons to deploy the Mach 5.0 Kh-47M2 Kinzhal (~93% payload).'
   },
-  'Su-35S Tactical Air Superiority': {
-    name: 'Su-35S Tactical Air Superiority',
+  'Su-35S Air Dominance Sweep': {
+    name: 'Su-35S Air Dominance Sweep',
     specId: 'Su-35S',
     roleCategory: 'DOGFIGHT',
     chosenGunId: 'GSH-30-1',
@@ -66,14 +66,14 @@ window.TEMPLATES_SUPERIORITY = {
     upgrades: ['THRUST_VECTOR', 'GAN_AESA_CORE'],
     desc: 'Deep beyond-visual-range loadout using 9 of 10 stations pairing hypersonic R-37M missiles with dual-pulse PL-15E volleys.'
   },
-  'Su-35S Apex Gun Dogfighter': {
-    name: 'Su-35S Apex Gun Dogfighter',
+  'Su-35S Close-Range Gunfighter': {
+    name: 'Su-35S Close-Range Gunfighter',
     specId: 'Su-35S',
     roleCategory: 'DOGFIGHT',
     chosenGunId: 'GSH-30-1',
     weapons: ['SPPU-22', 'SPPU-22', 'R-73', 'R-73', 'PYTHON-5', 'PL-15E', 'AN-ALQ-184'],
     upgrades: ['THRUST_VECTOR', 'TITANIUM_COCKPIT', 'EOTS_DUAL_OPTICS'],
-    desc: 'Close merge predator using 8 of 10 stations mounting dual 23mm gunpods (7.3 HP/s burst), snap-turns, and rearward Python-5s.'
+    desc: 'Close merge configuration using 8 of 10 stations mounting dual 23mm gunpods (7.3 HP/s burst), snap-turns, and rearward Python-5s.'
   },
   'Eurofighter Air Dominance Sweep': {
     name: 'Eurofighter Air Dominance Sweep',
@@ -91,7 +91,7 @@ window.TEMPLATES_SUPERIORITY = {
     chosenGunId: 'BK-27',
     weapons: ['METEOR', 'METEOR', 'AIM-120D', 'IRIS-T'],
     upgrades: ['GAN_AESA_CORE', 'EOTS_DUAL_OPTICS', 'SUPERCRUISE_VCE'],
-    desc: 'Pure ramjet BVR sniper utilizing 7 of 8 stations (~3,800 kg) to launch zero-drag-decay Meteors from Mach 1.38 supercruise.'
+    desc: 'Pure ramjet BVR interceptor utilizing 7 of 8 stations (~3,800 kg) to launch zero-drag-decay Meteors from Mach 1.38 supercruise.'
   },
   'Eurofighter Multi-Role Strike': {
     name: 'Eurofighter Multi-Role Strike',
@@ -154,6 +154,6 @@ window.TEMPLATES_SUPERIORITY = {
     chosenGunId: 'M61A2',
     weapons: ['AIM-120D', 'AIM-120D', 'METEOR', 'ALE-55'],
     upgrades: ['MADL_BATTLE_LINK', 'SUPERCRUISE_VCE'],
-    desc: 'Classic naval perimeter defense using 8 of 10 stations (~3,520 kg • 38% NORMAL) deploying 16 BVR missiles and towed decoys.'
+    desc: 'Classic naval perimeter defense using 8 of 10 stations (~3,520 kg) deploying 16 BVR missiles and towed decoys.'
   }
 };

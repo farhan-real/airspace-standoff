@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Balanced Tactical Maneuver Cards
- * Physical flight actions with maneuver evasion scaling directly with agility and corner speed turn efficiency.
+ * AIRSPACE STANDOFF: Combat Maneuver Cards
  */
 
 window.MANEUVER_CARDS = [
@@ -73,7 +72,7 @@ window.MANEUVER_CARDS = [
     name: 'High-G Barrel Roll',
     badge: 'KINETIC DODGE',
     whenToUse: 'TRIGGER: Inbound missile < 25km',
-    whyToUse: 'BENEFIT: 3D spiral displacement disrupts proportional lead pursuit (7s)',
+    whyToUse: 'BENEFIT: Spiral displacement disrupts proportional lead pursuit (7s)',
     evasionBonus: 0.45,
     cost: 0.7,
     isRecommended: function(unit, game) {
@@ -120,9 +119,9 @@ window.MANEUVER_CARDS = [
   },
   {
     id: 'PUSH_COBRA',
-    name: 'Pugachev Push Cobra',
+    name: "Pugachev's Cobra",
     badge: 'SUPER-MANEUVER',
-    whenToUse: 'TRIGGER: Tailgater < 15km',
+    whenToUse: 'TRIGGER: Hostile on tail < 15km',
     whyToUse: 'BENEFIT: High-alpha aerodynamic brake creates closure-rate mismatch (6s)',
     evasionBonus: 0.55,
     cost: 0.8,
@@ -162,16 +161,16 @@ window.MANEUVER_CARDS = [
 
       unit.applyActionStress(0.25);
       if (game && game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, `PUGACHEV COBRA (+${Math.round(bonus * 100)}% EVASION)`, '#a855f7');
+        game.radar.spawnCombatText(unit.x, unit.y, `COBRA (+${Math.round(bonus * 100)}% EVASION)`, '#a855f7');
         game.radar.spawnShockwave(unit.x, unit.y, '#a855f7', 38);
       }
     }
   },
   {
     id: 'SPLIT_S',
-    name: 'Split-S Kinetic Escape',
+    name: 'Split-S Dive',
     badge: 'DIVE ESCAPE',
-    whenToUse: 'TRIGGER: High-altitude volley',
+    whenToUse: 'TRIGGER: High-altitude missile volley',
     whyToUse: 'BENEFIT: Invert 180 degrees, dive to break line-of-sight & regain speed (7.5s)',
     evasionBonus: 0.45,
     cost: 0.7,
@@ -218,9 +217,9 @@ window.MANEUVER_CARDS = [
   {
     id: 'EMERGENCY_CM',
     name: 'Emergency Chaff Salvo',
-    badge: 'CHAFF DECOY',
-    whenToUse: 'TRIGGER: Active missile lock',
-    whyToUse: 'BENEFIT: Dense chaff corridor disrupts radar tracking & active seekers (8s)',
+    badge: 'CHAFF SCREEN',
+    whenToUse: 'TRIGGER: Active radar missile lock',
+    whyToUse: 'BENEFIT: Dense chaff corridor disrupts radar tracking (8s)',
     evasionBonus: 0.42,
     cost: 0.7,
     isRecommended: function(unit, game) {
@@ -262,10 +261,10 @@ window.MANEUVER_CARDS = [
   },
   {
     id: 'ZOOM_CLIMB',
-    name: 'Zoom Climb to Perch',
-    badge: 'ENERGY PERCH',
+    name: 'Zoom Climb',
+    badge: 'ENERGY CLIMB',
     whenToUse: 'TRIGGER: Speed > Mach 0.7 in level flight',
-    whyToUse: 'BENEFIT: Converts airspeed into +8,500ft perch; starves inbounds of energy (8s)',
+    whyToUse: 'BENEFIT: Converts airspeed into +8,500ft altitude gain (8s)',
     evasionBonus: 0.38,
     cost: 0.7,
     isRecommended: function(unit, game) {
@@ -296,7 +295,7 @@ window.MANEUVER_CARDS = [
       unit.activeManeuverBonus = bonus;
 
       if (game && game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, `ZOOM PERCH (+${Math.round(bonus * 100)}% EVASION)`, '#38bdf8');
+        game.radar.spawnCombatText(unit.x, unit.y, `ZOOM CLIMB (+${Math.round(bonus * 100)}% EVASION)`, '#38bdf8');
       }
     }
   }

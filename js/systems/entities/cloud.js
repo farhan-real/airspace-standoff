@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Tactical Weather Cloud Entity
+ * AIRSPACE STANDOFF: Weather Cloud Entity
  */
 
 class WeatherCloud {

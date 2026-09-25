@@ -1,7 +1,4 @@
-/**
- * AIRSPACE STANDOFF: Tactical Custom Dropdown Engine
- * Liquid glass selectors with smooth animations, pips, and smart viewport collision avoidance.
- */
+/* AIRSPACE STANDOFF: Custom Liquid Glass Dropdown Engine */
 
 class CustomDropdown {
   static registry = {};
@@ -85,6 +82,8 @@ class CustomDropdown {
 
     trigger.onclick = (e) => {
       e.stopPropagation();
+      if (trigger.disabled || wrapper.classList.contains('disabled')) return;
+
       const isOpen = wrapper.classList.contains('open');
       document.querySelectorAll('.custom-dropdown.open').forEach(dd => {
         if (dd !== wrapper) dd.classList.remove('open');
@@ -93,11 +92,10 @@ class CustomDropdown {
       if (!isOpen) {
         wrapper.classList.add('open');
 
-        // Smart dynamic viewport positioning: prevent overly wide menus and avoid screen clipping
         const rect = trigger.getBoundingClientRect();
         const screenW = window.innerWidth || document.documentElement.clientWidth || 360;
         const screenH = window.innerHeight || document.documentElement.clientHeight || 600;
-        const estimatedWidth = Math.min(menu.offsetWidth || 160, 200);
+        const estimatedWidth = Math.min(menu.offsetWidth || 160, 240);
 
         if (rect.left + estimatedWidth > screenW - 10) {
           menu.style.left = 'auto';
@@ -135,6 +133,7 @@ class CustomDropdown {
       menu: menu,
       options: options,
       currentValue: initialValue,
+      disabled: false,
       getValue() {
         return this.currentValue;
       },
@@ -151,6 +150,12 @@ class CustomDropdown {
 
           if (triggerChange && onChange) onChange(newVal);
         }
+      },
+      setDisabled(isDisabled) {
+        this.disabled = Boolean(isDisabled);
+        this.trigger.disabled = this.disabled;
+        this.wrapper.classList.toggle('disabled', this.disabled);
+        if (this.disabled) this.wrapper.classList.remove('open');
       },
       setOptions(newOptions, selectedVal = null) {
         this.options = newOptions || [];

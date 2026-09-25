@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Mission Editor Controls and Scenario Preparation */
+/* AIRSPACE STANDOFF: Custom Mission Editor Logic */
 
 class MissionEditor {
   static init(game) {
@@ -11,6 +11,8 @@ class MissionEditor {
     const inspectionToggle = document.getElementById('me-inspection-mode');
     if (!modal || !openButton) return;
 
+    this.initDropdowns();
+
     openButton.onclick = () => {
       if (!this.game.pendingMissionEditorSettings) this.syncStandardValues();
       modal.classList.add('active');
@@ -22,16 +24,17 @@ class MissionEditor {
     });
     if (applyButton) applyButton.onclick = () => this.applyDraft();
     if (resetButton) resetButton.onclick = () => this.resetDraft();
-    if (inspectionToggle) inspectionToggle.onclick = () => {
-      const enabled = inspectionToggle.getAttribute('aria-pressed') !== 'true';
-      inspectionToggle.setAttribute('aria-pressed', enabled ? 'true' : 'false');
-      inspectionToggle.textContent = enabled ? 'ON' : 'OFF';
-      inspectionToggle.classList.toggle('is-active', enabled);
-      this.updatePreview();
-    };
-    modal.querySelectorAll('select').forEach(input => {
-      input.addEventListener('change', () => this.updatePreview());
-    });
+
+    if (inspectionToggle) {
+      inspectionToggle.onclick = () => {
+        const enabled = inspectionToggle.getAttribute('aria-pressed') !== 'true';
+        inspectionToggle.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+        inspectionToggle.textContent = enabled ? 'ON' : 'OFF';
+        inspectionToggle.classList.toggle('is-active', enabled);
+        this.updatePreview();
+      };
+    }
+
     modal.querySelectorAll('.mission-editor-random-toggle').forEach(button => {
       button.addEventListener('click', () => {
         button.setAttribute('aria-pressed', button.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
@@ -41,29 +44,129 @@ class MissionEditor {
     this.updateStateLabel('STANDARD MISSION', false);
   }
 
+  static getFieldConfigs() {
+    return {
+      scenario: {
+        default: 'SKIRMISH',
+        options: [
+          { value: 'SKIRMISH', text: 'SKIRMISH (STANDARD BATTLE)' },
+          { value: 'DYNAMIC_THEATER', text: 'DYNAMIC THEATER (WAVE WINGS)' }
+        ]
+      },
+      difficulty: {
+        default: 'VETERAN',
+        options: [
+          { value: 'CADET', text: 'CADET (PERMISSIVE - 0.50x)' },
+          { value: 'VETERAN', text: 'VETERAN (CONTESTED - 1.00x)' },
+          { value: 'ELITE', text: 'ELITE (ACTIVE ZONE - 1.50x)' },
+          { value: 'ACE', text: 'ACE (HIGH-THREAT - 2.00x)' },
+          { value: 'MASTER', text: 'MASTER (AIR DENIAL - 2.60x)' },
+          { value: 'LEGEND', text: 'LEGEND (FORTRESS - 3.20x)' }
+        ]
+      },
+      doctrine: {
+        default: 'BALANCED',
+        options: [
+          { value: 'BALANCED', text: 'BALANCED (STANDARD ENGAGEMENT MIX)' },
+          { value: 'AGGRESSIVE', text: 'AGGRESSIVE (HIGH-G DOGFIGHTING)' },
+          { value: 'STANDOFF', text: 'STANDOFF (LONG-RANGE BVR PATROL)' }
+        ]
+      },
+      'blue-squadron': {
+        default: 'HANGAR',
+        options: [
+          { value: 'HANGAR', text: 'USE HANGAR ROSTER' },
+          { value: 'RANDOM', text: 'GENERATE RANDOM SQUADRON (3-8 UNITS)' }
+        ]
+      },
+      'blue-weapons': {
+        default: 'HANGAR',
+        options: [
+          { value: 'HANGAR', text: 'KEEP HANGAR STORES' },
+          { value: 'STANDARD', text: 'STANDARD LOADOUTS' },
+          { value: 'RANDOM', text: 'RANDOM LEGAL STORES' }
+        ]
+      },
+      'red-size': {
+        default: '7',
+        options: [
+          { value: '3', text: '3 AIRCRAFT (LIGHT FLIGHT)' },
+          { value: '5', text: '5 AIRCRAFT (MEDIUM SQUAD)' },
+          { value: '7', text: '7 AIRCRAFT (STANDARD WING)' },
+          { value: '9', text: '9 AIRCRAFT (HEAVY REGIMENT)' },
+          { value: '11', text: '11 AIRCRAFT (FULL BRIGADE)' },
+          { value: '13', text: '13 AIRCRAFT (MASS INVASION)' },
+          { value: '15', text: '15 AIRCRAFT (SATURATION FLEET)' }
+        ]
+      },
+      'red-weapons': {
+        default: 'DOCTRINE',
+        options: [
+          { value: 'DOCTRINE', text: 'DOCTRINE-BASED STORES' },
+          { value: 'RANDOM', text: 'RANDOM LEGAL STORES' }
+        ]
+      },
+      clouds: {
+        default: 'SCATTERED',
+        options: [
+          { value: 'CLEAR', text: 'CLEAR SKIES (0% RADAR ATTENUATION)' },
+          { value: 'LIGHT', text: 'LIGHT COVER (2 CLOUD CELLS)' },
+          { value: 'SCATTERED', text: 'SCATTERED (4 CLOUD CELLS)' },
+          { value: 'DENSE', text: 'DENSE OVERCAST (5 CLOUD CELLS)' }
+        ]
+      },
+      defenses: {
+        default: 'FULL',
+        options: [
+          { value: 'FULL', text: 'FULL IADS (S-400 + CIWS + EW)' },
+          { value: 'LIGHT', text: 'LIGHT DEFENSE (CIWS ONLY)' },
+          { value: 'OFF', text: 'NO GROUND DEFENSES' }
+        ]
+      },
+      civilians: {
+        default: 'ON',
+        options: [
+          { value: 'ON', text: 'ACTIVE (STRICT ROE - -600 VP UNVERIFIED)' },
+          { value: 'OFF', text: 'DISABLED (NO CIVILIAN FLIGHTS)' }
+        ]
+      }
+    };
+  }
+
+  static initDropdowns() {
+    if (typeof CustomDropdown === 'undefined') return;
+    const configs = this.getFieldConfigs();
+    Object.entries(configs).forEach(([key, cfg]) => {
+      CustomDropdown.setup(`cdd-me-${key}`, {
+        value: cfg.default,
+        options: cfg.options,
+        onChange: () => this.updatePreview()
+      });
+    });
+  }
+
   static syncStandardValues() {
     if (!this.game) return;
     const values = {
       scenario: this.game.scenarioMode,
       difficulty: this.game.aiDifficulty,
       doctrine: this.game.aiDoctrine,
-      'red-size': ({ CADET: '5', VETERAN: '7', ELITE: '9' })[this.game.aiDifficulty] || '11'
+      'red-size': ({ CADET: '5', VETERAN: '7', ELITE: '9', ACE: '11', MASTER: '11', LEGEND: '13' })[this.game.aiDifficulty] || '7'
     };
-    Object.entries(values).forEach(([key, value]) => {
-      const select = document.getElementById(`me-${key}`);
-      if (select && [...select.options].some(option => option.value === value)) select.value = value;
+    Object.entries(values).forEach(([key, val]) => {
+      const cdd = CustomDropdown.get(`cdd-me-${key}`);
+      if (cdd) cdd.setValue(val);
     });
   }
 
   static resetDraft() {
-    const defaults = {
-      scenario: 'SKIRMISH', difficulty: 'VETERAN', doctrine: 'BALANCED',
-      'blue-squadron': 'HANGAR', 'blue-weapons': 'HANGAR', 'red-size': '7',
-      'red-weapons': 'DOCTRINE', clouds: 'SCATTERED', defenses: 'FULL', civilians: 'ON'
-    };
-    Object.entries(defaults).forEach(([key, value]) => {
-      const select = document.getElementById(`me-${key}`);
-      if (select) select.value = value;
+    const configs = this.getFieldConfigs();
+    Object.entries(configs).forEach(([key, cfg]) => {
+      const cdd = CustomDropdown.get(`cdd-me-${key}`);
+      if (cdd) {
+        cdd.setValue(cfg.default);
+        cdd.setDisabled(false);
+      }
       const button = document.querySelector(`.mission-editor-random-toggle[data-random-for="${key}"]`);
       if (button) button.setAttribute('aria-pressed', 'false');
     });
@@ -82,13 +185,13 @@ class MissionEditor {
   }
 
   static readDraft() {
-    const keys = ['scenario', 'difficulty', 'doctrine', 'blue-squadron', 'blue-weapons', 'red-size', 'red-weapons', 'clouds', 'defenses', 'civilians'];
+    const configs = this.getFieldConfigs();
     const values = {};
     const randomize = {};
-    keys.forEach(key => {
-      const select = document.getElementById(`me-${key}`);
+    Object.keys(configs).forEach(key => {
+      const cdd = CustomDropdown.get(`cdd-me-${key}`);
       const button = document.querySelector(`.mission-editor-random-toggle[data-random-for="${key}"]`);
-      values[key] = select ? select.value : '';
+      values[key] = cdd ? cdd.getValue() : configs[key].default;
       randomize[key] = Boolean(button && button.getAttribute('aria-pressed') === 'true');
     });
     const inspectionToggle = document.getElementById('me-inspection-mode');
@@ -109,15 +212,13 @@ class MissionEditor {
   static updatePreview() {
     const draft = this.readDraft();
     Object.entries(draft.randomize).forEach(([key, randomize]) => {
-      const select = document.getElementById(`me-${key}`);
-      if (select) select.disabled = Boolean(randomize);
+      const cdd = CustomDropdown.get(`cdd-me-${key}`);
+      if (cdd) cdd.setDisabled(Boolean(randomize));
       const button = document.querySelector(`.mission-editor-random-toggle[data-random-for="${key}"]`);
       if (button) {
         button.classList.toggle('is-active', Boolean(randomize));
         button.setAttribute('aria-pressed', randomize ? 'true' : 'false');
-        button.textContent = randomize ? 'RANDOM ON' : 'RANDOM';
-        const fieldLabel = button.closest('.mission-editor-field')?.querySelector('label')?.textContent.trim() || key;
-        button.setAttribute('aria-label', `${randomize ? 'Random is on for' : 'Randomize'} ${fieldLabel}`);
+        button.textContent = randomize ? 'RANDOM: ON' : 'RANDOM';
       }
     });
     this.renderPreview(false);
@@ -125,21 +226,32 @@ class MissionEditor {
 
   static renderPreview(armed) {
     const preview = document.getElementById('mission-editor-preview');
+    const statusEl = document.getElementById('me-preview-status');
     if (!preview) return;
     const draft = this.readDraft();
-    const valueFor = key => {
-      if (draft.randomize[key]) return 'Random';
-      const select = document.getElementById(`me-${key}`);
-      const option = select && select.options[select.selectedIndex];
-      return option ? option.textContent.trim() : '—';
-    };
-    const lines = [
-      `MISSION  ·  Scenario: ${valueFor('scenario')}  ·  Difficulty: ${valueFor('difficulty')}  ·  Enemy style: ${valueFor('doctrine')}`,
-      `FORCES  ·  Your squadron: ${valueFor('blue-squadron')}  ·  Your weapons: ${valueFor('blue-weapons')}  ·  Enemy size: ${valueFor('red-size')}  ·  Enemy weapons: ${valueFor('red-weapons')}`,
-      `CONDITIONS  ·  Clouds: ${valueFor('clouds')}  ·  Air defenses: ${valueFor('defenses')}  ·  Civilian traffic: ${valueFor('civilians')}`
+    const val = key => draft.randomize[key] ? 'RANDOM' : (draft.values[key] || 'STANDARD');
+
+    const diffMultMap = { CADET: '0.5x', VETERAN: '1.0x', ELITE: '1.5x', ACE: '2.0x', MASTER: '2.6x', LEGEND: '3.2x' };
+    const diffVal = val('difficulty');
+    const diffTag = diffVal === 'RANDOM' ? 'RANDOM' : `${diffVal} [${diffMultMap[diffVal] || '1.0x'}]`;
+
+    const chips = [
+      `<span class="me-preview-chip"><b>SCENARIO:</b> ${val('scenario')}</span>`,
+      `<span class="me-preview-chip"><b>THREAT:</b> ${diffTag}</span>`,
+      `<span class="me-preview-chip"><b>DOCTRINE:</b> ${val('doctrine')}</span>`,
+      `<span class="me-preview-chip"><b>BLUE FORCE:</b> ${val('blue-squadron')} [${val('blue-weapons')}]</span>`,
+      `<span class="me-preview-chip"><b>RED FORCE:</b> ${val('red-size')} AC [${val('red-weapons')}]</span>`,
+      `<span class="me-preview-chip"><b>WEATHER:</b> ${val('clouds')}</span>`,
+      `<span class="me-preview-chip"><b>IADS:</b> ${val('defenses')}</span>`,
+      `<span class="me-preview-chip"><b>CIVILIAN ROE:</b> ${val('civilians')}</span>`,
+      `<span class="me-preview-chip" style="color:${draft.inspectionMode ? 'var(--stat-tier-2)' : 'var(--color-moon-mist)'};"><b>INSPECTION:</b> ${draft.inspectionMode ? 'ON' : 'OFF'}</span>`
     ];
-    preview.classList.toggle('armed', Boolean(armed));
-    preview.textContent = `${armed ? 'NEXT SORTIE · UNRANKED' : 'PREVIEW · NOT APPLIED'}\n${lines.join('\n')}\nINSPECTION MODE: ${draft.inspectionMode ? 'ON · FULL CONTACT VISIBILITY + EVENT EXPLANATIONS' : 'OFF'}\n${armed ? 'This sortie will not appear on the leaderboard.' : 'Use this setup to apply it to your next sortie.'}`;
+
+    preview.innerHTML = chips.join('');
+    if (statusEl) {
+      statusEl.textContent = armed ? 'ARMED FOR NEXT SORTIE' : 'NOT APPLIED';
+      statusEl.className = `me-preview-status ${armed ? 'armed' : 'unarmed'}`;
+    }
   }
 
   static updateStateLabel(text, armed) {
@@ -213,7 +325,7 @@ class MissionEditor {
     const defenses = choose('defenses', ['FULL', 'LIGHT', 'OFF']);
     const civilians = choose('civilians', ['ON', 'OFF']);
     const inspectionMode = Boolean(settings.inspectionMode);
-    this.updateStateLabel('EDITOR SORTIE · UNRANKED', true);
+    this.updateStateLabel('EDITOR SORTIE - UNRANKED', true);
     return { scenarioMode, difficulty, doctrine, blueSquadron, blueWeapons, redSize, redWeapons, clouds, defenses, civilians, inspectionMode, unranked: true };
   }
 

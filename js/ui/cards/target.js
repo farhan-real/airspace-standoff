@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Pylon Target Solution Submodule
+ * AIRSPACE STANDOFF: Target Solution Display
  * Displays verified target telemetry, ground/civilian classification and gun range proximity.
  */
 
@@ -38,7 +38,7 @@ class PylonTargetSolution {
         armorText = '0 HP (DISSIPATING)';
       } else if (validTarget.isDecoyDrone) {
         rawTgtName = `DECOY [${validTarget.mirroredModel || 'SPOOF'}]`;
-        classification = 'TACTICAL DECOY DRONE';
+        classification = 'AIR-LAUNCHED DECOY DRONE';
         armorText = `${Math.max(1, Math.round(validTarget.hp))} HP`;
       } else if (validTarget.isCivilian) {
         rawTgtName = validTarget.flightCode || 'CIVILIAN AIRLINER';
@@ -51,7 +51,7 @@ class PylonTargetSolution {
       } else {
         rawTgtName = window.formatAircraftDisplayName
           ? window.formatAircraftDisplayName(validTarget)
-          : `${validTarget.callsign || 'PILOT'} · ${validTarget.spec ? (validTarget.spec.name || validTarget.spec.id) : 'AIRCRAFT'}`;
+          : `${validTarget.callsign || 'PILOT'} - ${validTarget.spec ? (validTarget.spec.name || validTarget.spec.id) : 'AIRCRAFT'}`;
         const dispHp = validTarget.hp > 0.05 ? Math.max(1, Math.round(validTarget.hp)) : 0;
         armorText = `${dispHp}/${validTarget.maxHp} HP`;
         classification = validTarget.spec && validTarget.spec.role ? validTarget.spec.role : 'COMBAT AIRCRAFT';

@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Electronic Warfare Pods, Gunpods, Decoy Drones & Tactical Lasers
+ * AIRSPACE STANDOFF: Electronic Warfare Pods, Gunpods, Decoy Drones & Directed Energy
  */
 
 window.WEAPONS_PODS = {
@@ -103,7 +103,7 @@ window.WEAPONS_PODS = {
   },
   'PLSL_POD': {
     id: 'PLSL_POD',
-    name: 'PLSL Tactical Pulse Laser Pod',
+    name: 'PLSL Pulse Laser Pod',
     slots: 2,
     slotType: 'EXTERNAL',
     minRating: 'Type M',
@@ -134,7 +134,7 @@ window.WEAPONS_PODS = {
       'F-22A', 'Su-57', 'J-20', 'F-35A', 'F-15EX',
       'Kizilelma', 'S-70'
     ],
-    desc: 'Tactical pulse laser pod (15 pulses, 5 bursts) restricted to external pylons on advanced 5th-Gen platforms and superfighters.'
+    desc: 'Pulse laser pod (15 pulses, 5 bursts) restricted to external pylons on advanced 5th-Gen platforms and superfighters.'
   },
   'DE_POD': {
     id: 'DE_POD',
@@ -211,7 +211,7 @@ window.WEAPONS_PODS = {
   },
   'AN-ALQ-184': {
     id: 'AN-ALQ-184',
-    name: 'AN/ALQ-184 Tactical ECM Pod',
+    name: 'AN/ALQ-184 Electronic Countermeasure Pod',
     slots: 1,
     slotType: 'EXTERNAL',
     minRating: 'Type S',
@@ -245,7 +245,7 @@ window.WEAPONS_PODS = {
     behaviorDesc: 'Emits broadband microwave noise that degrades incoming active radar locks and search arrays across 95 km (45% suppression).',
     sigmaPylon: 0.15,
     category: 'POD',
-    desc: 'Broadband tactical radar jammer pod mounted on external pylons to degrade hostile radar detection.'
+    desc: 'Broadband radar jammer pod mounted on external pylons to degrade hostile radar detection.'
   },
   'AN-ALQ-249': {
     id: 'AN-ALQ-249',
@@ -264,11 +264,11 @@ window.WEAPONS_PODS = {
     behaviorDesc: 'Next Generation Jammer Mid-Band with GaN AESA transmitters. Delivers concentrated high-power beam jamming out to 125 km (60% suppression).',
     sigmaPylon: 0.20,
     category: 'POD',
-    desc: 'High-power GaN AESA tactical jamming pod mounted externally on heavy weapon stations.'
+    desc: 'High-power GaN AESA jamming pod mounted externally on heavy weapon stations.'
   },
   'TLS_POD': {
     id: 'TLS_POD',
-    name: 'TLS Tactical Laser Pod',
+    name: 'TLS High-Energy Laser Pod',
     slots: 4,
     slotType: 'EXTERNAL',
     minRating: 'Type H',

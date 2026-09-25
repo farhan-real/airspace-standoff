@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Decoy Drone Entity
+ * AIRSPACE STANDOFF: Air-Launched Decoy Drone Entity
  * Deploys autonomous decoy drones mirroring host aircraft radar signature
  */
 

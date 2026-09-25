@@ -48,14 +48,14 @@ window.TEMPLATES_STEALTH = {
     upgrades: ['SUPERCRUISE_VCE', 'GAN_AESA_CORE'],
     desc: 'Supercruising perimeter fighter using 7 of 8 stations pairing GaN AESA radar with 16 beyond-visual-range missiles.'
   },
-  'YF-23 Stratospheric Ghost Sniper': {
-    name: 'YF-23 Stratospheric Ghost Sniper',
+  'YF-23 High-Altitude Stealth Interceptor': {
+    name: 'YF-23 High-Altitude Stealth Interceptor',
     specId: 'YF-23',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'M61A2',
     weapons: ['AIM-260', 'AIM-260', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['RAM_NANO_COATING', 'SUPERCRUISE_VCE', 'GAN_AESA_CORE'],
-    desc: 'High-altitude sniper using 7 of 8 stations (~2,840 kg) firing 8 stealth AIM-260 missiles above FL500 without RWR warnings.'
+    desc: 'High-altitude interceptor using 7 of 8 stations (~2,840 kg) firing 8 stealth AIM-260 missiles above FL500 without RWR warnings.'
   },
   'F-35A Strike Fighter (JSF)': {
     name: 'F-35A Strike Fighter (JSF)',
@@ -111,8 +111,8 @@ window.TEMPLATES_STEALTH = {
     upgrades: ['SUPERCRUISE_VCE', 'GAN_AESA_CORE'],
     desc: 'Canard-delta heavy interceptor using 8 of 8 stations mounting the PL-21 ramjet and 8 dual-pulse PL-15E rockets.'
   },
-  'J-20 Extreme Standoff Perimeter Interceptor': {
-    name: 'J-20 Extreme Standoff Perimeter Interceptor',
+  'J-20 Long-Range Air Defense Interceptor': {
+    name: 'J-20 Long-Range Air Defense Interceptor',
     specId: 'J-20',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'GSH-30-1',
@@ -120,8 +120,8 @@ window.TEMPLATES_STEALTH = {
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'ADAPTIVE_ECCM_SUITE'],
     desc: 'Perimeter denial package using 8 of 8 stations (~3,490 kg) deploying 130 km PL-21 ramjets across the centerline.'
   },
-  'J-20 Tactical Theater Strike': {
-    name: 'J-20 Tactical Theater Strike',
+  'J-20 Maritime & Strike Interdiction': {
+    name: 'J-20 Maritime & Strike Interdiction',
     specId: 'J-20',
     roleCategory: 'STRIKE',
     chosenGunId: 'GSH-30-1',

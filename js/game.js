@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Master Game Orchestrator (150km x 100km Arena & Full Persistence)
- * Flight Lead spawns in formation center; mutual full detection in 2P mode.
+ * AIRSPACE STANDOFF: Master Game Orchestrator (150km x 100km Theater & Full Persistence)
  */
 
 if (typeof navigator !== 'undefined') {
@@ -13,6 +12,8 @@ if (typeof navigator !== 'undefined') {
 
 class AirspaceStandoffGame {
   constructor() {
+    this.installModalDOMTemplates();
+
     this.playerMode = '1P';
     this.scenarioMode = 'SKIRMISH';
     this.aiDifficulty = 'VETERAN';
@@ -87,6 +88,13 @@ class AirspaceStandoffGame {
     }
   }
 
+  installModalDOMTemplates() {
+    if (window.ModalDialogTemplates && typeof window.ModalDialogTemplates.install === 'function') window.ModalDialogTemplates.install();
+    if (window.ModalEditorTemplate && typeof window.ModalEditorTemplate.install === 'function') window.ModalEditorTemplate.install();
+    if (window.ModalDebriefTemplate && typeof window.ModalDebriefTemplate.install === 'function') window.ModalDebriefTemplate.install();
+    if (window.ModalPanelsTemplates && typeof window.ModalPanelsTemplates.install === 'function') window.ModalPanelsTemplates.install();
+  }
+
   setPlayerBudgetTier(tierKey) {
     const tierData = (window.BUDGET_TIERS && window.BUDGET_TIERS[tierKey]) || { budget: 400.0, multiplier: 1.0 };
     this.playerBudgetId = tierKey;
@@ -127,12 +135,12 @@ class AirspaceStandoffGame {
     const ind = document.getElementById('theater-mode-indicator');
     if (!ind) return;
     const diffMap = {
-      CADET: 'Permissive Sector (0.50x)',
-      VETERAN: 'Contested Airspace (1.00x)',
-      ELITE: 'Active Combat Zone (1.50x)',
-      ACE: 'High-Threat Grid (2.00x)',
-      MASTER: 'Air Denial Zone (2.60x)',
-      LEGEND: 'Fortress Airspace (3.20x)'
+      CADET: 'Low Threat Sector (0.50x)',
+      VETERAN: 'Contested Sector (1.00x)',
+      ELITE: 'High Threat Sector (1.50x)',
+      ACE: 'Severe Threat Sector (2.00x)',
+      MASTER: 'Air Defense Sector (2.60x)',
+      LEGEND: 'Hostile Airspace (3.20x)'
     };
     const bMap = {
       BUDGET_200: '200M (1.75x)',
@@ -144,7 +152,7 @@ class AirspaceStandoffGame {
     const diffTag = diffMap[this.aiDifficulty] || this.aiDifficulty;
     const bTag = bMap[this.playerBudgetId] || '400M (1.00x)';
     const modeTag = this.playerMode === '1P' ? (`1P VS AI [${diffTag}] [${bTag}]`) : '2P VERSUS';
-    const scenarioTag = this.scenarioMode === 'DYNAMIC_THEATER' ? 'DYNAMIC SQUADRON THEATER' : 'SKIRMISH';
+    const scenarioTag = this.scenarioMode === 'DYNAMIC_THEATER' ? 'DYNAMIC THEATER' : 'SKIRMISH';
     ind.textContent = `${modeTag} ${scenarioTag}`;
   }
 
@@ -154,7 +162,7 @@ class AirspaceStandoffGame {
 
   abortSortie() {
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
-    this.triggerGameOver(false, 'SORTIE ABORTED - TACTICAL WITHDRAWAL');
+    this.triggerGameOver(false, 'SORTIE ABORTED - WITHDRAWAL');
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 

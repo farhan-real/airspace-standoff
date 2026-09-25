@@ -12,8 +12,8 @@ window.TEMPLATES_DRONES = {
     upgrades: ['SWARM_AI_COPROCESSOR'],
     desc: 'Low-cost 18G swarm drone ($3.5M). Armed with PLSL-10 pulse laser and MAM micro-missiles to draw hostile fire.'
   },
-  'MQ-99 Tactical Micro-Missile Swarm': {
-    name: 'MQ-99 Tactical Micro-Missile Swarm',
+  'MQ-99 Micro-Missile Swarm': {
+    name: 'MQ-99 Micro-Missile Swarm',
     specId: 'MQ-99',
     roleCategory: 'SWARM & DRONES',
     chosenGunId: 'PLSL_LIGHT',
@@ -21,7 +21,6 @@ window.TEMPLATES_DRONES = {
     upgrades: ['SWARM_AI_COPROCESSOR'],
     desc: 'Pulse laser armed drone with double micro-missile saturation payload (16x) to overwhelm hostile defenses.'
   },
-
   'MQ-101 Collaborative Combat Aircraft (CCA)': {
     name: 'MQ-101 Collaborative Combat Aircraft (CCA)',
     specId: 'MQ-101',
@@ -40,7 +39,6 @@ window.TEMPLATES_DRONES = {
     upgrades: ['SWARM_AI_COPROCESSOR', 'SUPERCRUISE_VCE'],
     desc: 'High-speed 20G autonomous interceptor mounting the PLSL-20 medium pulse laser for medium-range directed-energy fire.'
   },
-
   'XQ-58A Loyal Wingman Escort': {
     name: 'XQ-58A Loyal Wingman Escort',
     specId: 'XQ-58A',
@@ -59,7 +57,6 @@ window.TEMPLATES_DRONES = {
     upgrades: ['SWARM_AI_COPROCESSOR', 'MADL_BATTLE_LINK'],
     desc: 'Collaborative combat aircraft fielding 8 internal AMRAAM missiles to extend the squadron missile magazine.'
   },
-
   'Kizilelma Carrier Combat UCAV': {
     name: 'Kizilelma Carrier Combat UCAV',
     specId: 'Kizilelma',
@@ -78,7 +75,6 @@ window.TEMPLATES_DRONES = {
     upgrades: ['SWARM_AI_COPROCESSOR', 'SUPERCRUISE_VCE'],
     desc: 'Ramjet Meteor armed autonomous carrier fighter capable of 16G maneuvers without biological pilot fatigue.'
   },
-
   'S-70 Heavy Strike UCAV': {
     name: 'S-70 Heavy Strike UCAV',
     specId: 'S-70',
@@ -97,7 +93,6 @@ window.TEMPLATES_DRONES = {
     upgrades: ['SWARM_AI_COPROCESSOR', 'RAM_NANO_COATING'],
     desc: 'Internal carriage of stealth cruise missiles to penetrate heavy enemy air defenses and destroy command nodes.'
   },
-
   'MQ-28 Collaborative Air Combat Node': {
     name: 'MQ-28 Collaborative Air Combat Node',
     specId: 'MQ-28',

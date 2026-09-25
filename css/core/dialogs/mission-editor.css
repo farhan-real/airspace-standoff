@@ -1,112 +1,173 @@
-/* AIRSPACE STANDOFF: Custom Mission Editor */
+/* AIRSPACE STANDOFF: Custom Mission Editor (Liquid Glass Theme) */
 
 #mission-editor-modal { z-index: 3600 !important; }
 
 .mission-editor-window {
-  width: min(94vw, 790px);
-  height: min(86vh, 760px);
-  height: min(86dvh, 760px);
+  width: min(94vw, 840px);
+  height: min(88vh, 790px);
+  height: min(88dvh, 790px);
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-modal);
   background: var(--glass-bg-modal);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-modal);
   box-shadow: var(--glass-shadow);
   font-family: var(--font-untitled-sans);
 }
 
-.mission-editor-header { flex-shrink: 0; }
+.mission-editor-header {
+  flex-shrink: 0;
+  background: var(--glass-bg);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--glass-highlight);
+}
+
+.mission-editor-header h2 {
+  font-size: 0.96rem;
+  color: var(--color-ice-highlight);
+  background: var(--gradient-ice-highlight);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-family: var(--font-aeonikpro);
+}
+
 .mission-editor-header .modal-title-row { gap: 10px; }
-.mission-editor-mark { color: var(--theme-accent); font-size: 1.35rem; }
-.mission-editor-kicker { display: block; margin-top: 2px; color: var(--color-moon-mist); font: 600 0.56rem var(--font-dotdigital); letter-spacing: 0.4px; }
+.mission-editor-kicker { display: block; margin-top: 2px; color: var(--color-moon-mist); font: 600 0.56rem var(--font-dotdigital); letter-spacing: 0.5px; }
 
 .mission-editor-body {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.mission-editor-intro {
-  margin: 0 0 13px;
+.mission-editor-intro-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--liquid-glass-bg);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-card);
+  box-shadow: var(--glass-highlight);
+  gap: 8px;
+}
+
+.mission-editor-intro-card p {
+  margin: 0;
   color: var(--color-moon-mist);
-  font-size: 0.72rem;
-  line-height: 1.55;
+  font-size: 0.66rem;
+  line-height: 1.45;
 }
 
-.mission-editor-intro b { color: var(--theme-accent); }
+.mission-editor-intro-card b { color: var(--theme-accent); }
+
+.mission-editor-unranked-badge {
+  font: 700 0.54rem var(--font-dotdigital);
+  color: var(--stat-tier-3);
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  padding: 3px 8px;
+  border-radius: var(--radius-badge);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
 
 .mission-editor-inspection-setting {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin: 0 0 11px;
-  padding: 10px 11px;
-  border: 1px solid rgba(125, 211, 252, 0.24);
+  padding: 10px 12px;
+  background: var(--liquid-glass-bg);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   border-left: 3px solid var(--theme-accent);
   border-radius: var(--radius-card);
-  background: rgba(8, 28, 46, 0.62);
+  box-shadow: var(--glass-shadow);
 }
 
-.mission-editor-inspection-setting > div { display: grid; gap: 4px; }
-.mission-editor-inspection-setting strong { color: var(--color-ice-highlight); font: 700 0.62rem var(--font-dotdigital); }
-.mission-editor-inspection-setting span { color: var(--color-moon-mist); font-size: 0.66rem; line-height: 1.4; }
+.me-insp-info { display: grid; gap: 4px; }
+.me-insp-head { display: flex; align-items: center; gap: 8px; }
+.me-insp-head strong { color: var(--color-ice-highlight); font: 700 0.64rem var(--font-dotdigital); letter-spacing: 0.4px; }
+
+.me-insp-pills { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+.me-insp-pill {
+  font: 600 0.48rem var(--font-dotdigital);
+  padding: 2px 6px;
+  border-radius: var(--radius-badge);
+  background: var(--theme-primary-dim);
+  color: var(--color-frost-glow);
+  border: 1px solid var(--glass-border);
+}
+
+.mission-editor-inspection-setting span.me-insp-desc { color: var(--color-moon-mist); font-size: 0.62rem; line-height: 1.4; }
 
 .mission-editor-inspection-toggle {
-  min-width: 54px;
-  padding: 7px 10px;
+  min-width: 68px;
+  height: 32px;
+  padding: 0 10px;
+  background: var(--liquid-glass-bg);
   border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-btn);
-  background: rgba(5, 10, 20, 0.85);
   color: var(--color-moon-mist);
-  font: 700 0.58rem var(--font-dotdigital);
+  font: 700 0.60rem var(--font-dotdigital);
   cursor: pointer;
+  letter-spacing: 0.5px;
+  box-shadow: var(--glass-highlight);
+  transition: all 0.14s ease;
 }
 
 .mission-editor-inspection-toggle.is-active {
-  color: #a7f3d0;
-  border-color: rgba(52, 211, 153, 0.6);
-  background: rgba(16, 185, 129, 0.13);
+  color: #ffffff;
+  border-color: var(--stat-tier-2);
+  background: rgba(16, 185, 129, 0.22);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
 }
 
 .mission-editor-section {
-  margin-top: 10px;
-  padding: 9px;
-  border: 1px solid rgba(125, 211, 252, 0.12);
+  padding: 10px 12px;
+  background: var(--liquid-glass-bg);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
-  background: rgba(5, 15, 29, 0.42);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .mission-editor-section h3 {
   display: flex;
   align-items: baseline;
   gap: 7px;
-  margin: 0 0 8px;
+  margin: 0;
   color: var(--color-ice-highlight);
-  font: 700 0.64rem var(--font-dotdigital);
-  letter-spacing: 0.35px;
+  font: 700 0.65rem var(--font-dotdigital);
+  letter-spacing: 0.4px;
 }
 
-.mission-editor-section h3 span {
-  color: var(--theme-accent);
-  font-size: 0.52rem;
-}
-
-.mission-editor-section > p {
-  margin: -3px 0 8px;
-  color: var(--color-moon-mist);
-  font-size: 0.62rem;
-  line-height: 1.4;
-}
+.mission-editor-section h3 span { color: var(--theme-accent); font-size: 0.54rem; }
 
 .mission-editor-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 7px;
+  gap: 8px;
 }
 
 .mission-editor-field {
@@ -115,103 +176,130 @@
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: auto auto;
   align-items: center;
-  gap: 6px 8px;
-  padding: 8px;
-  border: 1px solid rgba(125, 211, 252, 0.13);
+  gap: 5px 8px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  background: rgba(0, 0, 0, 0.34);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.14s ease;
 }
+
+.mission-editor-field:focus-within { border-color: var(--theme-accent); box-shadow: 0 0 12px var(--theme-primary-dim); }
 
 .mission-editor-field > label:first-child {
   grid-column: 1 / -1;
   color: var(--color-ice-highlight);
   font: 700 0.56rem var(--font-dotdigital);
-  letter-spacing: 0.25px;
+  letter-spacing: 0.3px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.mission-editor-field select {
-  width: 100%;
-  min-width: 0;
-  height: 32px;
-  padding: 0 8px;
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-input);
-  background: #071221;
-  color: #e2f2ff;
-  font: 600 0.63rem var(--font-dotdigital);
-  outline: none;
-}
-
-.mission-editor-field select:focus { border-color: var(--theme-accent); }
-.mission-editor-field select:disabled { opacity: 0.48; cursor: not-allowed; }
+.me-field-badge { font-size: 0.48rem; color: var(--theme-accent); font-weight: 600; }
 
 .mission-editor-random-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 58px;
-  height: 30px;
-  padding: 0 7px;
-  border: 1px solid rgba(125, 211, 252, 0.22);
-  border-radius: var(--radius-input);
-  background: rgba(8, 20, 36, 0.88);
+  min-width: 66px;
+  height: 32px;
+  padding: 0 8px;
+  background: var(--liquid-glass-bg);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-btn);
   color: var(--color-moon-mist);
   white-space: nowrap;
-  font: 700 0.49rem var(--font-dotdigital);
+  font: 700 0.50rem var(--font-dotdigital);
   cursor: pointer;
-  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+  letter-spacing: 0.4px;
+  box-shadow: var(--glass-highlight);
+  transition: all 0.14s ease;
 }
 
-.mission-editor-random-toggle:hover,
-.mission-editor-random-toggle:focus-visible {
-  border-color: var(--theme-accent);
-  outline: none;
+.mission-editor-random-toggle:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  color: #ffffff;
 }
 
 .mission-editor-random-toggle.is-active {
-  border-color: rgba(52, 211, 153, 0.6);
-  background: rgba(16, 185, 129, 0.13);
-  color: #a7f3d0;
+  background: var(--theme-primary);
+  border-color: var(--theme-accent);
+  color: #ffffff;
+  box-shadow: 0 0 12px var(--theme-primary-glow);
 }
 
-.mission-editor-preview {
-  margin-top: 10px;
-  padding: 8px 10px;
-  border-left: 2px solid var(--theme-accent);
-  background: rgba(56, 189, 248, 0.07);
-  color: var(--color-moon-mist);
-  font-size: 0.59rem;
-  line-height: 1.55;
-  white-space: pre-line;
-  overflow-wrap: anywhere;
+.mission-editor-preview-card {
+  background: var(--liquid-glass-bg);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-card);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--glass-shadow);
 }
 
-.mission-editor-preview.armed { color: #bbf7d0; border-left-color: var(--stat-tier-2); background: rgba(16, 185, 129, 0.08); }
+.me-preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 5px;
+}
+
+.me-preview-head span { font: 700 0.58rem var(--font-dotdigital); color: var(--theme-accent); letter-spacing: 0.5px; }
+.me-preview-status { font: 700 0.54rem var(--font-dotdigital); padding: 2px 7px; border-radius: var(--radius-badge); }
+.me-preview-status.armed { background: rgba(16, 185, 129, 0.18); color: var(--stat-tier-2); border: 1px solid rgba(16, 185, 129, 0.45); }
+.me-preview-status.unarmed { background: rgba(148, 163, 184, 0.12); color: var(--color-moon-mist); border: 1px solid var(--glass-border); }
+
+.me-preview-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.me-preview-chip {
+  font: 600 0.52rem var(--font-dotdigital);
+  padding: 3px 7px;
+  border-radius: var(--radius-badge);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--glass-border);
+  color: var(--color-pure-white);
+}
+
+.me-preview-chip b { color: var(--theme-accent); }
 
 .mission-editor-footer {
   flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  padding: 9px 14px;
+  padding: 10px 16px;
+  background: var(--glass-bg);
   border-top: 1px solid var(--glass-border);
-  background: rgba(4, 9, 22, 0.82);
+  box-shadow: var(--glass-highlight);
 }
 
-.mission-editor-open-btn { white-space: nowrap; }
 .mission-editor-state {
   color: var(--color-moon-mist);
-  font: 600 0.48rem var(--font-dotdigital);
+  font: 600 0.50rem var(--font-dotdigital);
   white-space: nowrap;
 }
 .mission-editor-state.armed { color: var(--stat-tier-2); }
 
-@media (max-width: 620px) {
-  .mission-editor-window { width: 96vw; height: 92dvh; }
-  .mission-editor-body { padding: 10px; }
+@media (max-width: 680px) {
+  .mission-editor-window {
+    width: 96vw;
+    height: 92dvh;
+    border-radius: var(--radius-card);
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: #040916 !important;
+  }
+  .mission-editor-body { padding: 8px 10px; gap: 8px; }
   .mission-editor-grid { grid-template-columns: 1fr; gap: 6px; }
   .mission-editor-section { padding: 8px; }
   .mission-editor-footer { padding: 8px 10px; }
-  .mission-editor-footer .hud-btn { padding-inline: 8px; font-size: 0.61rem; }
+  .mission-editor-footer .hud-btn { padding-inline: 8px; font-size: 0.62rem; }
   .mission-editor-state { display: none; }
 }
