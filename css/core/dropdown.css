@@ -225,3 +225,9 @@
     background: #040916 !important;
   }
 }
+
+@media (max-height: 550px) {
+  .custom-dropdown-menu {
+    max-height: min(150px, 38vh);
+  }
+}

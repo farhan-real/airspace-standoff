@@ -55,6 +55,15 @@ class InspectionModeController {
       };
     });
 
+    const handleResize = () => {
+      if (this.isOpen) {
+        this.resizeRadar();
+        this.render(true);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', () => setTimeout(handleResize, 100));
+
     window.addEventListener('keydown', (e) => {
       if (!this.enabled || ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
       if (e.code === 'KeyI') {
@@ -308,7 +317,8 @@ class InspectionModeController {
       const isBlue = e.team === (this.game.currentPvpCommander || 'friendly');
       const sensors = isBlue ? (this.game.hostileAircraft || []) : (this.game.alliedAircraft || []);
       const sIds = sensors.filter(s => s.hp > 0).map(s => s.id).join(',');
-      return `${this.activeTab}:${eid}:${sIds}`;
+      const hdgSector = Math.round(((e.heading || 0) * 180 / Math.PI) / 15);
+      return `${this.activeTab}:${eid}:${sIds}:${hdgSector}`;
     }
     if (this.activeTab === 'OVERVIEW') {
       return `${this.activeTab}:${eid}:${e.maxHp}:${(e.equippedWeapons || []).length}`;
