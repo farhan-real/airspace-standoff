@@ -197,9 +197,9 @@ class AutocannonBayRenderer {
             });
 
             const clouds = (game && game.simulation && game.simulation.weatherClouds) || [];
-            const inCloud = clouds.some(c => c.containsPoint(unit.x, unit.y) || c.containsPoint(validTarget.x, validTarget.y));
-            if (inCloud && gun.cloudScattering && gun.cloudScattering > 0) {
-              roundDmg *= (1.0 - gun.cloudScattering);
+            const cloudHits = typeof Physics !== 'undefined' ? Physics.countIntersectingClouds(unit.x, unit.y, validTarget.x, validTarget.y, clouds) : 0;
+            if (cloudHits > 0 && gun.cloudScattering && gun.cloudScattering > 0) {
+              roundDmg *= Math.max(0.10, Math.pow(1.0 - gun.cloudScattering, cloudHits));
             }
 
             if (validTarget.spec && validTarget.spec.category === 'STRIKE') roundDmg *= 0.60;

@@ -56,8 +56,7 @@ class InspectionModeController {
     });
 
     window.addEventListener('keydown', (e) => {
-      if (!this.enabled) return;
-      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+      if (!this.enabled || ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
       if (e.code === 'KeyI') {
         e.preventDefault();
         this.isOpen ? this.close() : this.open();
@@ -96,9 +95,7 @@ class InspectionModeController {
       toggle.classList.toggle('hidden', !this.enabled);
       toggle.textContent = this.isOpen ? 'CLOSE ANALYSIS' : 'INSPECTION';
     }
-    if (timeStop) {
-      timeStop.classList.toggle('hidden', !this.enabled);
-    }
+    if (timeStop) timeStop.classList.toggle('hidden', !this.enabled);
   }
 
   open() {
@@ -127,9 +124,7 @@ class InspectionModeController {
     const toggle = document.getElementById('btn-inspection-mode');
     if (toggle && this.enabled) toggle.textContent = 'INSPECTION';
     const timeStop = document.getElementById('inspection-time-stop');
-    if (timeStop) {
-      timeStop.classList.toggle('hidden', !this.enabled);
-    }
+    if (timeStop) timeStop.classList.toggle('hidden', !this.enabled);
     this.updateTimeStopButton();
   }
 
@@ -137,9 +132,8 @@ class InspectionModeController {
     if (!this.enabled) return;
     const sim = this.game && this.game.simulation;
     if (!sim) return;
-    if (sim.isPaused) {
-      sim.setTimeWarp(this.resumeWarp || 1);
-    } else {
+    if (sim.isPaused) sim.setTimeWarp(this.resumeWarp || 1);
+    else {
       this.resumeWarp = sim.timeWarp || 1;
       sim.setTimeWarp(0);
     }
@@ -152,10 +146,7 @@ class InspectionModeController {
     const btn = document.getElementById('inspection-time-stop');
     const sim = this.game && this.game.simulation;
     if (!btn || !sim) return;
-    if (!this.enabled) {
-      btn.classList.add('hidden');
-      return;
-    }
+    if (!this.enabled) { btn.classList.add('hidden'); return; }
     const stopped = Boolean(sim.isPaused);
     btn.textContent = stopped ? 'RESUME TIME' : 'STOP TIME';
     btn.classList.toggle('inspection-resume', stopped);
@@ -213,9 +204,7 @@ class InspectionModeController {
     this.render(true);
   }
 
-  getEntityId(e) {
-    return e ? (e.id || 'OBJ') : '';
-  }
+  getEntityId(e) { return e ? (e.id || 'OBJ') : ''; }
 
   getName(e) {
     if (!e) return 'Unknown Object';
@@ -250,7 +239,7 @@ class InspectionModeController {
       title: String(title || type),
       sourceName: this.getName(source),
       targetName: this.getName(target),
-      details: details
+      details
     };
     this.events.unshift(event);
     if (this.events.length > 500) this.events.pop();
@@ -276,14 +265,9 @@ class InspectionModeController {
     content.querySelectorAll('.inspection-accordion').forEach(acc => {
       const accId = acc.dataset.accordionId;
       if (accId) {
-        if (this.accordionStates.has(accId)) {
-          acc.open = this.accordionStates.get(accId);
-        } else {
-          this.accordionStates.set(accId, acc.open);
-        }
-        acc.addEventListener('toggle', () => {
-          this.accordionStates.set(accId, acc.open);
-        });
+        if (this.accordionStates.has(accId)) acc.open = this.accordionStates.get(accId);
+        else this.accordionStates.set(accId, acc.open);
+        acc.addEventListener('toggle', () => this.accordionStates.set(accId, acc.open));
       }
     });
 
@@ -355,11 +339,10 @@ class InspectionModeController {
 
         if (idsKey !== this._lastEntityIdsKey) {
           this._lastEntityIdsKey = idsKey;
-          const options = [
+          cdd.setOptions([
             { value: '', text: `CHOOSE OBJECT (${all.length})` },
             ...all.map(e => ({ value: this.getEntityId(e), text: this.getName(e) }))
-          ];
-          cdd.setOptions(options, curId);
+          ], curId);
         } else if (curId !== cdd.getValue()) {
           cdd.setValue(curId, false);
         }
@@ -412,10 +395,7 @@ class InspectionModeController {
     if (!listEl) return;
     if (countEl) countEl.textContent = `${this.events.length} EVENTS`;
 
-    if (this.events.length === this._lastEventsCount && this.focusedEvent === this._lastFocusedEvent) {
-      return;
-    }
-
+    if (this.events.length === this._lastEventsCount && this.focusedEvent === this._lastFocusedEvent) return;
     this._lastEventsCount = this.events.length;
     this._lastFocusedEvent = this.focusedEvent;
 

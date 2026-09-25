@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Tactical Combat Engine & Pylon Discharge Bus
- * Enforces verified ROE, multi-round gun pod bursts, and stores management.
+ * Enforces verified ROE, boresight limits, multi-round gun pod bursts, and stores management.
  */
 
 class CombatSystem {
@@ -33,6 +33,17 @@ class CombatSystem {
     }
 
     if (w.category === 'A2G' || w.isBunkerCracker) return false;
+
+    if (!w.isGunpod && w.category === 'A2A' && typeof sourceUnit.heading === 'number') {
+      const angleToTarget = Math.atan2(targetEntity.y - sourceUnit.y, targetEntity.x - sourceUnit.x);
+      let offBoresight = Math.abs(sourceUnit.heading - angleToTarget);
+      while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
+      const isRear = (w.trait === 'REAR_ENGAGE' || w.trait === 'ALL_ASPECT_BURST');
+      const isHobs = (w.trait === 'HOBS_VANE' || w.id === 'IRIS-T');
+      const maxOff = isRear ? Math.PI : (isHobs ? Math.PI * 0.65 : Math.PI * 0.45);
+      if (offBoresight > maxOff) return false;
+    }
+
     return w.category === 'A2A' || w.category === 'GUN' || w.isLaser === true;
   }
 
@@ -135,13 +146,6 @@ class CombatSystem {
             if (r === numRounds - 1 && this.game.radar) {
               this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `GUN POD BURST (${numRounds} RDS)`, '#fbbf24');
             }
-            if (r === numRounds - 1 && landedDmg <= 0 && this.game.inspection && this.game.inspection.enabled) {
-              const missDistance = targetEntity ? Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) : null;
-              this.game.inspection.recordEvent('GUN POD MISS', `${w.name || w.id} did not damage ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(targetEntity) : (targetEntity ? targetEntity.callsign || targetEntity.name || targetEntity.id : 'a target')}`, sourceUnit, targetEntity, {
-                rangeKm: missDistance, maximumRangeKm: w.rangeKm || 4.8, roundsFired: numRounds,
-                reason: !targetEntity ? 'No target was assigned' : (targetEntity.hp <= 0.05 ? 'Target was destroyed before the burst ended' : (missDistance > (w.rangeKm || 4.8) ? 'Target is outside the gun pod range' : 'No valid impact'))
-              });
-            }
           }
           if (r === numRounds - 1 && landedDmg > 0 && targetEntity.hp > 0.05 && this.game.simulation && this.game.simulation.scoring) {
             this.game.simulation.scoring.recordHitEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, damage: landedDmg });
@@ -171,9 +175,7 @@ class CombatSystem {
             }
             landedDmg += pulseDmg;
 
-            if (this.game.radar) {
-              this.game.radar.spawnExplosionFX(targetEntity.x, targetEntity.y, false);
-            }
+            if (this.game.radar) this.game.radar.spawnExplosionFX(targetEntity.x, targetEntity.y, false);
             if (p === numPulses - 1 && this.game.radar) {
               this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `LASER -${landedDmg.toFixed(1)}HP (${numPulses} PULSES)`, '#00f0ff');
             }
@@ -183,13 +185,6 @@ class CombatSystem {
           }
           if (p === numPulses - 1 && landedDmg > 0 && targetEntity.hp > 0.05 && this.game.simulation && this.game.simulation.scoring) {
             this.game.simulation.scoring.recordHitEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, damage: landedDmg });
-          }
-          if (p === numPulses - 1 && landedDmg <= 0 && this.game.inspection && this.game.inspection.enabled) {
-            const distance = targetEntity ? Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) : null;
-            this.game.inspection.recordEvent('DIRECTED ENERGY MISS', `${w.name || w.id} did not strike a target`, sourceUnit, targetEntity, {
-              rangeKm: distance, maximumRangeKm: w.rangeKm || 9,
-              reason: !targetEntity ? 'No target was assigned' : (targetEntity.hp <= 0.05 ? 'Target was destroyed before the pulse' : (distance > (w.rangeKm || 9) ? 'Target is outside laser range' : 'No valid beam contact'))
-            });
           }
         });
       }

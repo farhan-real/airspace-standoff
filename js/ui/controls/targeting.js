@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Targeting Controls & Contact Proximity Engine
+ * AIRSPACE STANDOFF: Targeting Controls & Contact Proximity Engine
  */
 
 class ControlsTargetingHandler {
@@ -52,6 +52,33 @@ class ControlsTargetingHandler {
     return detected;
   }
 
+  autoLock() {
+    const active = this.game.activeUnit;
+    if (!active || active.hp <= 0) return;
+
+    const targets = this.getDetectedTargets();
+    if (targets.length === 0) {
+      if (this.game.radar) this.game.radar.spawnCombatText(active.x, active.y, 'NO CONTACTS IN SECTOR', '#f97316');
+      if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+      return;
+    }
+
+    const halfConeRad = (((active.spec && active.spec.radarConeDeg ? active.spec.radarConeDeg : 120) / 2.0) * Math.PI) / 180.0;
+    const forwardTargets = targets.filter(t => {
+      const tgt = t.entity;
+      const angle = Math.atan2(tgt.y - active.y, tgt.x - active.x);
+      let diff = Math.abs((active.heading || 0) - angle);
+      while (diff > Math.PI) diff = Math.abs(diff - Math.PI * 2);
+      return diff <= halfConeRad;
+    });
+
+    const candidates = forwardTargets.length > 0 ? forwardTargets : targets;
+    const prioritized = candidates.filter(t => !t.entity.isCivilian && !t.entity.isGhost);
+    const chosen = (prioritized.length > 0 ? prioritized[0] : candidates[0]).entity;
+
+    this.lockTargetEntity(chosen);
+  }
+
   cycleTarget(direction = 1) {
     const active = this.game.activeUnit;
     if (!active || active.hp <= 0) return;
@@ -82,6 +109,8 @@ class ControlsTargetingHandler {
     const is2P = Boolean(this.game && this.game.playerMode === '2P');
 
     this.game.selectedTarget = target;
+    if (active) active.radarLockedTarget = target;
+
     const isKnown = is2P || (target.team === active.team) ||
       (typeof target.isIdentifiedBy === 'function' ? target.isIdentifiedBy(commanderTeam) : target.isIdentified);
 

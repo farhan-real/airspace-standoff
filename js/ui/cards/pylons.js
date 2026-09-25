@@ -278,7 +278,7 @@ class PylonBayRenderer {
 
       if (fireBtn) {
         fireBtn.disabled = !canFire;
-        if (pkResult.label === 'AIR ONLY' || pkResult.label === 'GROUND ONLY' || pkResult.label === 'IMMUNE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OUT OF RANGE') {
+        if (pkResult.label === 'AIR ONLY' || pkResult.label === 'GROUND ONLY' || pkResult.label === 'IMMUNE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OUT OF RANGE' || pkResult.label === 'OFF BORESIGHT') {
           fireBtn.textContent = pkResult.label;
         } else if (curTokens < tokenCost) {
           fireBtn.textContent = 'NEED TOK';

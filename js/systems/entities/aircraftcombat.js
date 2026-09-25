@@ -256,10 +256,11 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
         let sustainedDmg = baseDamage;
         const damageFactors = [];
         const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
-        const inCloud = clouds.some(c => c.containsPoint(this.x, this.y) || c.containsPoint(enemy.x, enemy.y));
+        const cloudHits = typeof Physics !== 'undefined' ? Physics.countIntersectingClouds(this.x, this.y, enemy.x, enemy.y, clouds) : 0;
 
-        if (inCloud && isEnergy && this.gun.cloudScattering) {
-          const factor = 1.0 - this.gun.cloudScattering; sustainedDmg *= factor;
+        if (cloudHits > 0 && isEnergy && this.gun.cloudScattering) {
+          const factor = Math.max(0.10, Math.pow(1.0 - this.gun.cloudScattering, cloudHits));
+          sustainedDmg *= factor;
           damageFactors.push({ cause: 'Cloud scattering', multiplier: factor });
         }
         if (isEnemy && !this.isAce) { sustainedDmg *= 0.65; damageFactors.push({ cause: 'AI gun damage scaling', multiplier: 0.65 }); }
@@ -283,19 +284,10 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
 
         const inspection = window.Game && window.Game.inspection;
         if (inspection && inspection.enabled) inspection.recordEvent('GUN BURST', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(this) : this.callsign} fired ${this.gun.name || this.gun.id} at ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(enemy) : (enemy.callsign || enemy.name || enemy.id)}`, this, enemy, {
-          gun: this.gun.name || this.gun.id,
-          rangeKm: dist,
-          maximumRangeKm: maxRange,
-          targetAngleDeg: angleDiff * 180 / Math.PI,
-          allowedHalfConeDeg: maxConeRad * 180 / Math.PI,
-          firingDps: totalGunDps,
-          simulationStepSec: dt,
-          baseDamage,
-          damageFactors,
-          finalDamage: hpBefore - enemy.hp,
-          hpBefore,
-          hpAfter: enemy.hp,
-          ammunitionRemaining: this.gunAmmo
+          gun: this.gun.name || this.gun.id, rangeKm: dist, maximumRangeKm: maxRange,
+          targetAngleDeg: angleDiff * 180 / Math.PI, allowedHalfConeDeg: maxConeRad * 180 / Math.PI,
+          firingDps: totalGunDps, simulationStepSec: dt, baseDamage, damageFactors,
+          finalDamage: hpBefore - enemy.hp, hpBefore, hpAfter: enemy.hp, ammunitionRemaining: this.gunAmmo
         });
 
         this.gunCooldown = (window.CONFIG && window.CONFIG.AUTO_GUN_COOLDOWN) || 0.50;

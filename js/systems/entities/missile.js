@@ -120,16 +120,6 @@ class MissileEntity {
     }
 
     if (this.target.hp <= 0.05) {
-      const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) {
-        inspection.recordEvent('TARGET LOST', `${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(this.target) : (this.target.callsign || this.target.name || this.target.id)} neutralized prior to missile arrival`, this.source, this.target, {
-          missileId: this.id,
-          missileAgeSec: this.age,
-          distanceRemainingKm: Math.hypot(this.target.x - this.x, this.target.y - this.y),
-          targetHp: this.target.hp,
-          outcome: 'Target lost before terminal intercept'
-        }, this);
-      }
       this.state = 'LOST_TRACK';
       this.active = false;
       this.lostReason = 'TARGET DESTROYED';
@@ -158,10 +148,11 @@ class MissileEntity {
 
     if (this.state === 'LOST_TRACK') return;
 
-    const inCloud = weatherClouds && weatherClouds.some(c => c.containsPoint(this.x, this.y) || c.containsPoint(this.target.x, this.target.y));
-    if (inCloud) {
-      this.cloudObscureTimer += dt;
-      if ((this.weapon.seeker === 'IIR' || this.weapon.seeker === 'EO' || this.weapon.seeker === 'OPT') && this.cloudObscureTimer >= ((window.CONFIG && window.CONFIG.CLOUD_IR_TIME_TO_LOSE_SEC) || 8.0)) {
+    const cloudHits = Physics.countIntersectingClouds(this.x, this.y, this.target.x, this.target.y, weatherClouds);
+    if (cloudHits > 0) {
+      this.cloudObscureTimer += dt * cloudHits;
+      const loseThreshold = ((window.CONFIG && window.CONFIG.CLOUD_IR_TIME_TO_LOSE_SEC) || 8.0);
+      if ((this.weapon.seeker === 'IIR' || this.weapon.seeker === 'EO' || this.weapon.seeker === 'OPT') && this.cloudObscureTimer >= loseThreshold) {
         this.triggerLostTrack('OBSCURED IN CLOUDS');
         return;
       }
@@ -219,29 +210,16 @@ class MissileEntity {
     const inspection = window.Game && window.Game.inspection;
     if (inspection && inspection.enabled) {
       inspection.recordEvent('TRACK TERMINATED', `${this.weapon.name || this.weapon.id} terminal track defeated (${reason})`, this.source, this.target, {
-        missileId: this.id,
-        reason,
-        stageBeforeLoss,
-        distanceToTargetKm: this.distanceToTarget,
-        distanceTraveledKm: this.distanceTraveled,
-        ageSec: this.age,
-        cloudObscureSec: this.cloudObscureTimer,
-        targetManeuver: this.target && this.target.activeManeuverId
+        missileId: this.id, reason, stageBeforeLoss, distanceToTargetKm: this.distanceToTarget,
+        distanceTraveledKm: this.distanceTraveled, ageSec: this.age, cloudObscureSec: this.cloudObscureTimer
       }, this);
     }
 
     const isLiveTarget = this.target && this.target.hp > 0.05 && !this.target.isCivilian && !this.target.isGhost && !this.target.isDecoyDrone;
     const isGenuineEvade = isLiveTarget && (
-      reason === 'KINETIC OVERSHOOT' ||
-      reason.includes('DOPPLER NOTCH') ||
-      reason.includes('COBRA') ||
-      reason.includes('BARREL ROLL') ||
-      reason.includes('SPLIT-S') ||
-      reason.includes('CHAFF') ||
-      reason.includes('PERCH') ||
-      reason.includes('BREAK') ||
-      reason.includes('DODGE') ||
-      reason === 'OBSCURED IN CLOUDS'
+      reason === 'KINETIC OVERSHOOT' || reason.includes('DOPPLER NOTCH') || reason.includes('COBRA') ||
+      reason.includes('BARREL ROLL') || reason.includes('SPLIT-S') || reason.includes('CHAFF') ||
+      reason.includes('PERCH') || reason.includes('BREAK') || reason.includes('DODGE') || reason === 'OBSCURED IN CLOUDS'
     );
 
     if (isGenuineEvade) {
@@ -271,10 +249,6 @@ class MissileEntity {
     const w = this.weapon;
     if (!tgt || tgt.hp <= 0.05) {
       this.active = false; this.isDead = true;
-      const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) {
-        inspection.recordEvent('INTERCEPT ABORTED', 'Target neutralized prior to terminal impact', this.source, tgt, { missileId: this.id, targetHp: tgt ? tgt.hp : null }, this);
-      }
       return;
     }
 
@@ -299,10 +273,6 @@ class MissileEntity {
     if (tgt.isGhost) {
       this.isDead = true;
       tgt.takeDamage();
-      const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) {
-        inspection.recordEvent('FALSE CONTACT DISSIPATION', 'Radar contact resolved as atmospheric clutter. Terminal track dropped.', this.source, tgt, { missileId: this.id, seeker: w.seeker, distanceToTargetKm: this.distanceToTarget }, this);
-      }
       this.triggerLostTrack('FALSE CONTACT DISSIPATED');
       return;
     }
@@ -310,10 +280,6 @@ class MissileEntity {
     if (tgt.isDecoyDrone) {
       this.isDead = true;
       tgt.takeDamage(w.damage || 1);
-      const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) {
-        inspection.recordEvent('DECOY SEDUCTION', 'Seeker intercepted air-launched decoy drone. Target aircraft cleared.', this.source, tgt, { missileId: this.id, seeker: w.seeker, decoyRcs: tgt.effectiveRcs, damage: w.damage || 1 }, this);
-      }
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, false);
         window.Game.radar.spawnCombatText(tgt.x, tgt.y, 'DECOY DESTROYED', '#c084fc');
@@ -326,20 +292,12 @@ class MissileEntity {
       const isEmitter = (tgt.type === 'S-400' || tgt.type === 'RADAR_ARRAY' || tgt.type === 'EW_JAMMER' || tgt.type === 'RADAR_VAN');
       const dmg = w.damage * ((w.trait === 'EMITTER_KILLER' && isEmitter) ? 3 : 1);
       const wasDead = tgt.hp <= 0;
-      const hpBefore = tgt.hp;
       tgt.takeDamage(dmg, w.isBunkerCracker);
       this.isDead = true;
-      const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) {
-        inspection.recordEvent('SURFACE IMPACT', `${w.name || w.id} hit ${tgt.name || tgt.type}`, this.source, tgt, {
-          missileId: this.id, weaponDamage: w.damage, emitterBonusApplied: dmg !== w.damage,
-          bunkerCracker: Boolean(w.isBunkerCracker), hpBefore, damageApplied: hpBefore - tgt.hp, hpAfter: tgt.hp
-        }, this);
-      }
       if (!wasDead && tgt.hp <= 0 && window.Game && window.Game.simulation) {
-        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
+        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       } else if (!wasDead && tgt.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
-        window.Game.simulation.scoring.recordHitEvent(this.team, tgt, this.source, { weapon: w, damage: dmg, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
+        window.Game.simulation.scoring.recordHitEvent(this.team, tgt, this.source, { weapon: w, damage: dmg, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       }
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, true);
@@ -349,15 +307,8 @@ class MissileEntity {
     }
 
     if (tgt.isCivilian) {
-      const hpBefore = tgt.hp;
       tgt.takeDamage(w.damage, this.source);
       this.isDead = true;
-      const inspection = window.Game && window.Game.inspection;
-      if (inspection && inspection.enabled) {
-        inspection.recordEvent('ROE VIOLATION', 'Non-combatant civilian aircraft struck. RoE penalty assessed.', this.source, tgt, {
-          missileId: this.id, weapon: w.name || w.id, hpBefore, damage: w.damage, hpAfter: tgt.hp
-        }, this);
-      }
       return;
     }
 
@@ -366,28 +317,7 @@ class MissileEntity {
       : { probability: 0.65, rawProbability: 0.65, factors: {} };
     const hitChance = impactModel.probability;
     const impactRoll = Math.random();
-    const hpBefore = tgt.hp;
-    const flightLeadReduction = tgt.isFlightLead ? (tgt.missileDamageReduction || 0) : 0;
-    const expectedDamage = flightLeadReduction ? Math.max(1, w.damage - flightLeadReduction) : w.damage;
     const hit = impactRoll <= hitChance;
-    const inspection = window.Game && window.Game.inspection;
-    if (inspection && inspection.enabled) {
-      inspection.recordEvent(hit ? 'MISSILE IMPACT' : 'MISSILE EVADED',
-        hit ? `${w.name || w.id} struck ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(tgt) : (tgt.callsign || tgt.name || tgt.id)}` : `${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(tgt) : (tgt.callsign || tgt.name || tgt.id)} evaded ${w.name || w.id}`,
-        this.source, tgt, {
-          missileId: this.id,
-          weapon: w.name || w.id,
-          distanceAtImpactKm: this.distanceToTarget,
-          targetHpBefore: hpBefore,
-          baseDamage: w.damage,
-          flightLeadDamageReduction: flightLeadReduction,
-          expectedDamageAfterReduction: expectedDamage,
-          hitProbability: hitChance,
-          impactRoll,
-          outcome: hit ? 'IMPACT CONFIRMED (roll <= probability)' : 'MISSILE DEFEATED (roll > probability)',
-          calculation: impactModel
-        }, this);
-    }
 
     if (hit) {
       this.isDead = true;
@@ -398,9 +328,9 @@ class MissileEntity {
       if (typeof tgt.applyActionStress === 'function') tgt.applyActionStress(0.35);
 
       if (tgt.hp <= 0 && window.Game && window.Game.simulation) {
-        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
+        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       } else if (tgt.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
-        window.Game.simulation.scoring.recordHitEvent(this.team, tgt, this.source, { weapon: w, damage: finalDamage, isSalvo: isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
+        window.Game.simulation.scoring.recordHitEvent(this.team, tgt, this.source, { weapon: w, damage: finalDamage, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       }
 
       if (w.trait === 'SHOCKWAVE_DETONATION' && typeof MissileKinetics !== 'undefined') {

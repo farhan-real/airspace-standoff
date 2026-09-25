@@ -32,6 +32,18 @@ const Physics = {
     return Math.atan2((tgtY + Math.sin(tgtHeading) * tgtKmPerSec * tGo) - mslY, (tgtX + Math.cos(tgtHeading) * tgtKmPerSec * tGo) - mslX);
   },
 
+  countIntersectingClouds(x1, y1, x2, y2, weatherClouds) {
+    if (!weatherClouds || weatherClouds.length === 0) return 0;
+    let count = 0;
+    for (const c of weatherClouds) {
+      const hits = typeof c.intersectsSegment === 'function'
+        ? c.intersectsSegment(x1, y1, x2, y2)
+        : (c.containsPoint(x1, y1) || c.containsPoint(x2, y2));
+      if (hits) count++;
+    }
+    return count;
+  },
+
   getRadarMaxDetectionRange(sensorUnit, targetUnit, weatherClouds) {
     if (!sensorUnit || !targetUnit || sensorUnit.hp <= 0 || targetUnit.hp <= 0) return 0.0;
     const baseR0 = sensorUnit.spec ? (sensorUnit.spec.R_0 || 75.0) : (sensorUnit.rangeKm || 48.0);
@@ -84,13 +96,10 @@ const Physics = {
       maxDetectDist *= (0.70 + (sensorUnit.spec && sensorUnit.spec.lookDownBonus ? sensorUnit.spec.lookDownBonus : 0.20));
     }
 
-    if (weatherClouds) {
-      for (const c of weatherClouds) {
-        if (c.containsPoint(targetUnit.x, targetUnit.y) || c.containsPoint(sensorUnit.x, sensorUnit.y)) {
-          maxDetectDist *= (1.0 - ((window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.50));
-          break;
-        }
-      }
+    const cloudHits = Physics.countIntersectingClouds(sensorUnit.x, sensorUnit.y, targetUnit.x, targetUnit.y, weatherClouds);
+    if (cloudHits > 0) {
+      const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.08;
+      maxDetectDist *= Math.pow(1.0 - atten, cloudHits);
     }
     return maxDetectDist;
   },
@@ -113,10 +122,11 @@ const Physics = {
     }
 
     const dist = Math.hypot(target.x - attacker.x, target.y - attacker.y);
+    const cloudHits = Physics.countIntersectingClouds(attacker.x, attacker.y, target.x, target.y, weatherClouds);
+
     if (weapon.isLaser || weapon.seeker === 'DIRECT_ENERGY') {
       if (dist > (weapon.rangeKm || 9.0)) return { pk: 0, label: 'OUT OF RANGE', color: '#64748b', arrow: '--', desc: `${Math.round(dist)}km > ${weapon.rangeKm || 9.0}km`, salvoCount: 0, hasMixedSeekers: false };
-      const inClouds = weatherClouds && weatherClouds.some(c => c.containsPoint(target.x, target.y) || c.containsPoint(attacker.x, attacker.y));
-      if (inClouds) return { pk: 25, label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: 'Thermal beam scattered in moisture clouds', salvoCount: 0, hasMixedSeekers: false };
+      if (cloudHits > 0) return { pk: Math.max(25, 95 - cloudHits * 25), label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: `${cloudHits} cloud cell${cloudHits > 1 ? 's' : ''} scattering beam`, salvoCount: 0, hasMixedSeekers: false };
       return { pk: 95, label: 'HITSCAN', color: '#00f0ff', arrow: '--', desc: 'Speed-of-light directed energy beam', salvoCount: 0, hasMixedSeekers: false };
     }
 
@@ -157,15 +167,21 @@ const Physics = {
       const trait = weapon.trait || '';
       if (trait === 'REAR_ENGAGE') isRearShot = true;
       else if (trait !== 'ALL_ASPECT_BURST') {
-        if (trait === 'HOBS_VANE' || weapon.id === 'IRIS-T') {
-          if (offBoresight > Math.PI * 0.5) offBoresightPenalty = (offBoresight - Math.PI * 0.5) * 0.16;
-        } else if (offBoresight > 0.6) {
+        const isHobs = (trait === 'HOBS_VANE' || weapon.id === 'IRIS-T');
+        const maxAngle = isHobs ? Math.PI * 0.65 : Math.PI * 0.45;
+        if (offBoresight > maxAngle) {
+          return { pk: 0, label: 'OFF BORESIGHT', color: '#ef4444', arrow: 'v', desc: 'Target outside forward acquisition cone', salvoCount: 0, hasMixedSeekers: false };
+        }
+        if (offBoresight > 0.6) {
           offBoresightPenalty = (offBoresight - 0.6) * 0.18;
         }
       }
     }
 
-    const weatherPenalty = (weatherClouds && (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT') && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
+    const weatherPenalty = (cloudHits > 0 && (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT'))
+      ? Math.min(0.40, cloudHits * 0.15)
+      : 0.0;
+
     const afterburnerBonus = ((weapon.seeker === 'IIR' || weapon.seeker === 'EO') && target.engineAlpha > 0.85) ? 0.15 : 0.0;
     const heavyBonus = weapon.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
 
@@ -242,7 +258,7 @@ const Physics = {
     else { label = 'POOR'; color = '#f43f5e'; }
 
     return {
-      pk: pkPercent, label: label, color: color, arrow: arrow,
+      pk: pkPercent, label, color, arrow,
       desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Over-the-shoulder lock' : 'Target solution locked'),
       salvoCount, hasMixedSeekers,
       breakdown: {

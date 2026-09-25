@@ -1,12 +1,12 @@
 /**
  * AIRSPACE STANDOFF: Inspection Weapons Analysis Engine
- * Features real-time in-place live telemetry updates without DOM recreation or hover flicker.
+ * Real-time telemetry, off-boresight angle checks, and cloud obstruction factor reporting.
  */
 
 class InspectionWeapons {
   static renderWeaponsDashboard(controller, entity) {
     if (!entity) {
-      return '<div class="inspection-empty"><b>NO WEAPON TARGET</b><span>Select an aircraft or missile to evaluate tactical solutions.</span></div>';
+      return '<div class="inspection-empty"><b>NO WEAPON TARGET</b><span>Select an aircraft or contact to evaluate tactical solutions.</span></div>';
     }
     if (entity.weapon && entity.target) {
       return this.renderInFlightMissileSolution(controller, entity);
@@ -51,28 +51,28 @@ class InspectionWeapons {
               if (seeker === 'ARH' || seeker === 'PASSIVE_RADAR') {
                 recTitle = 'DOPPLER NOTCH + CHAFF';
                 recSteps = [
-                  { name: 'Turn 90 deg Beam (Doppler Notch)', delta: '+48% Evasion', good: true, desc: 'Cuts radial closure velocity to zero, dropping missile pulse-Doppler tracking gate.' },
-                  { name: 'Deploy Chaff Salvo', delta: '+34% Evasion', good: true, desc: 'Creates false zero-Doppler radar bloom to seduce seeker away from aircraft.' },
-                  { name: 'Throttle to Corner Velocity', delta: '+20% Turn Authority', good: true, desc: 'Aligns speed with sOpt to execute a maximum-G defensive break turn.' }
+                  { name: 'Turn 90 deg Beam (Doppler Notch)', delta: '+48% Evasion', desc: 'Cuts radial closure velocity to zero, dropping missile tracking gate.' },
+                  { name: 'Deploy Chaff Salvo', delta: '+34% Evasion', desc: 'Creates false zero-Doppler radar bloom to seduce seeker away.' },
+                  { name: 'Throttle to Corner Velocity', delta: '+20% Turn Authority', desc: 'Aligns speed with sOpt to execute a maximum-G defensive break turn.' }
                 ];
               } else if (seeker === 'IIR' || seeker === 'EO') {
                 recTitle = 'THERMAL CUT + CLOUD DIVE';
                 recSteps = [
-                  { name: 'Pull Throttle to IDLE', delta: '+28% Evasion', good: true, desc: 'Cools engine exhaust plume and terminates afterburner thermal IR bloom.' },
-                  { name: 'Dive into Weather Clouds', delta: '+25% Evasion', good: true, desc: 'Moisture droplets scatter optical and imaging infrared matrix seekers.' },
-                  { name: 'High-G Barrel Roll Break', delta: '+45% Evasion', good: true, desc: 'Displaces aircraft outside proportional pursuit lead trajectory.' }
+                  { name: 'Pull Throttle to IDLE', delta: '+28% Evasion', desc: 'Cools engine exhaust plume and terminates afterburner thermal IR bloom.' },
+                  { name: 'Dive into Weather Clouds', delta: '+25% Evasion', desc: 'Moisture droplets scatter optical and imaging infrared matrix seekers.' },
+                  { name: 'High-G Barrel Roll Break', delta: '+45% Evasion', desc: 'Displaces aircraft outside proportional pursuit lead trajectory.' }
                 ];
               } else if (seeker === 'INS') {
                 recTitle = 'HIGH-G KINETIC BREAK';
                 recSteps = [
-                  { name: 'Hard 90 deg Break Turn', delta: '+55% Evasion', good: true, desc: 'Exploits wide turning radius of Mach 6.2 hypersonic missile to force kinetic overshoot.' },
-                  { name: 'Zoom Climb Trajectory', delta: '+25% Evasion', good: true, desc: 'Forces weapon to climb against gravity during terminal descent.' }
+                  { name: 'Hard 90 deg Break Turn', delta: '+55% Evasion', desc: 'Exploits wide turning radius of hypersonic missile to force overshoot.' },
+                  { name: 'Zoom Climb Trajectory', delta: '+25% Evasion', desc: 'Forces weapon to climb against gravity during terminal descent.' }
                 ];
               } else {
                 recTitle = 'PURSUIT DISRUPTION';
                 recSteps = [
-                  { name: 'Split-S Kinetic Dive', delta: '+45% Evasion', good: true, desc: 'Trades altitude for Mach sprint velocity out of weapon engagement basket.' },
-                  { name: 'High-G Spiral Evasion', delta: '+45% Evasion', good: true, desc: 'Induces rapid line-of-sight rotation spikes to exceed missile steering rate.' }
+                  { name: 'Split-S Kinetic Dive', delta: '+45% Evasion', desc: 'Trades altitude for sprint velocity out of weapon engagement basket.' },
+                  { name: 'High-G Spiral Evasion', delta: '+45% Evasion', desc: 'Induces rapid line-of-sight rotation spikes to exceed steering rate.' }
                 ];
               }
 
@@ -138,11 +138,20 @@ class InspectionWeapons {
     const dist = Math.hypot(target.x - firingAircraft.x, target.y - firingAircraft.y);
     const weapons = firingAircraft.equippedWeapons || [];
 
+    const angleToTarget = Math.atan2(target.y - firingAircraft.y, target.x - firingAircraft.x);
+    let offBoresight = Math.abs((firingAircraft.heading || 0) - angleToTarget);
+    while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
+    const offBoresightDeg = Math.round(offBoresight * 180 / Math.PI);
+
     const solutionsHtml = weapons.map((item, idx) => {
       const w = item.weapon;
       if (!w || w.isJammerPod || w.isDecoy || w.isDecoyDrone) return '';
 
       const accordionId = `wpn-${w.id}-${idx}`;
+      const isRear = (w.trait === 'REAR_ENGAGE' || w.trait === 'ALL_ASPECT_BURST');
+      const isHobs = (w.trait === 'HOBS_VANE' || w.id === 'IRIS-T');
+      const maxOff = isRear ? Math.PI : (isHobs ? Math.PI * 0.65 : Math.PI * 0.45);
+      const isOutsideCone = !isRear && (offBoresight > maxOff);
 
       const pkRes = (typeof Physics !== 'undefined')
         ? Physics.calcPk(w, firingAircraft, target, clouds)
@@ -165,9 +174,10 @@ class InspectionWeapons {
         { name: 'Target Kinetic Energy Deficit', val: `+${Math.round((bd.targetEnergyBonus || 0) * 100)}%`, good: true, desc: 'Target energy bled in prior turns delays defensive break.' }
       ].filter(f => !f.val.startsWith('0%') && !f.val.startsWith('+0%') && !f.val.startsWith('-0%'));
 
-      const outReason = dist < (w.minRangeKm || 1.0) ? 'TOO CLOSE' : 'OUT OF RANGE';
-      const pkClass = inRange ? (pk >= 70 ? 'positive' : (pk >= 45 ? 'neutral' : 'negative')) : 'negative';
-      const pkLabel = inRange ? `${pk}% [${pkRes.label}]` : outReason;
+      let outReason = isOutsideCone ? `OFF-BORESIGHT (${offBoresightDeg}\u00B0)` : (dist < (w.minRangeKm || 1.0) ? 'TOO CLOSE' : 'OUT OF RANGE');
+      const isValidSolution = inRange && !isOutsideCone;
+      const pkClass = isValidSolution ? (pk >= 70 ? 'positive' : (pk >= 45 ? 'neutral' : 'negative')) : 'negative';
+      const pkLabel = isValidSolution ? `${pk}% [${pkRes.label}]` : outReason;
 
       return `
         <details class="inspection-accordion" data-accordion-id="${accordionId}">
@@ -183,18 +193,22 @@ class InspectionWeapons {
           </summary>
           <div class="inspection-accordion-body">
             <div class="inspection-range-track">
-              <span class="inspection-range-fill ${inRange ? 'detecting' : ''}" style="width:${Math.min(100, (w.rangeKm / 150) * 100)}%;"></span>
+              <span class="inspection-range-fill ${isValidSolution ? 'detecting' : ''}" style="width:${Math.min(100, (w.rangeKm / 150) * 100)}%;"></span>
               <i class="inspection-distance-marker" style="left:${Math.min(100, (dist / 150) * 100)}%;"></i>
             </div>
             <div class="inspection-range-reading" style="display:flex; justify-content:space-between;">
               <span class="sol-dist-reading">Target Distance: <b>${dist.toFixed(1)} km</b></span>
               <span>Envelope: <b>${w.minRangeKm || 1.0} - ${w.rangeKm} km</b></span>
-              <span class="sol-status-text" style="color:${inRange ? 'var(--stat-tier-2)' : 'var(--stat-tier-5)'}; font-weight:700;">
-                ${inRange ? 'IN ENVELOPE' : outReason}
+              <span class="sol-status-text" style="color:${isValidSolution ? 'var(--stat-tier-2)' : 'var(--stat-tier-5)'}; font-weight:700;">
+                ${isValidSolution ? 'IN ENVELOPE' : outReason}
               </span>
             </div>
 
             <div class="inspection-factors-table" style="margin-top:6px;">
+              <div class="inspection-factor-row ${isOutsideCone ? 'negative' : 'positive'}">
+                <span class="factor-name">Boresight Angle Alignment<span class="factor-desc">Target angle relative to forward gimbal limits (${offBoresightDeg}\u00B0 off nose).</span></span>
+                <span class="factor-delta ${isOutsideCone ? 'negative' : 'positive'}">${isOutsideCone ? `BLIND ZONE (${offBoresightDeg}\u00B0)` : `IN GIMBAL ARC (${offBoresightDeg}\u00B0)`}</span>
+              </div>
               ${factorRows.map(row => `
                 <div class="inspection-factor-row ${row.good ? 'positive' : 'negative'}">
                   <span class="factor-name">${row.name}<span class="factor-desc">${row.desc}</span></span>
@@ -203,10 +217,10 @@ class InspectionWeapons {
               `).join('')}
             </div>
 
-            <div class="inspection-reason-box ${inRange && pk >= 70 ? '' : 'warning'}" style="margin-top:4px;">
-              <b>ASSESSMENT:</b> ${inRange
+            <div class="inspection-reason-box ${isValidSolution && pk >= 70 ? '' : 'warning'}" style="margin-top:4px;">
+              <b>ASSESSMENT:</b> ${isValidSolution
                 ? (pk >= 70 ? 'Optimal firing solution established. Direct hit anticipated; clear for release.' : 'Marginal engagement solution. Coordinate multi-missile salvo or close range to defeat evasive break.')
-                : (dist < (w.minRangeKm || 1.0) ? 'Target is inside minimum arming distance. Disengage with break turn.' : 'Target exceeds maximum aerodynamic reach. Advance power to close distance.')}
+                : (isOutsideCone ? `Target is outside forward weapon acquisition cone (${offBoresightDeg}\u00B0 off nose). Turn aircraft towards target to acquire lock.` : (dist < (w.minRangeKm || 1.0) ? 'Target is inside minimum arming distance. Disengage with break turn.' : 'Target exceeds maximum aerodynamic reach. Advance power to close distance.'))}
             </div>
           </div>
         </details>
@@ -369,6 +383,11 @@ class InspectionWeapons {
     if (!target || target.hp <= 0 || !firingAircraft) return;
     const dist = Math.hypot(target.x - firingAircraft.x, target.y - firingAircraft.y);
 
+    const angleToTarget = Math.atan2(target.y - firingAircraft.y, target.x - firingAircraft.x);
+    let offBoresight = Math.abs((firingAircraft.heading || 0) - angleToTarget);
+    while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
+    const offBoresightDeg = Math.round(offBoresight * 180 / Math.PI);
+
     const headTitle = content.querySelector('.sol-head-title');
     if (headTitle) headTitle.textContent = `FIRING SOLUTIONS VS ${controller.escape(controller.getName(target))} (${dist.toFixed(1)} km)`;
 
@@ -379,17 +398,23 @@ class InspectionWeapons {
       const acc = content.querySelector(`[data-accordion-id="wpn-${w.id}-${idx}"]`);
       if (!acc) return;
 
+      const isRear = (w.trait === 'REAR_ENGAGE' || w.trait === 'ALL_ASPECT_BURST');
+      const isHobs = (w.trait === 'HOBS_VANE' || w.id === 'IRIS-T');
+      const maxOff = isRear ? Math.PI : (isHobs ? Math.PI * 0.65 : Math.PI * 0.45);
+      const isOutsideCone = !isRear && (offBoresight > maxOff);
+
       const pkRes = (typeof Physics !== 'undefined')
         ? Physics.calcPk(w, firingAircraft, target, clouds) : { pk: 50, label: 'STANDBY' };
       const pk = pkRes.pk || 0;
       const inRange = (dist <= (w.rangeKm || 50) && dist >= (w.minRangeKm || 0.8));
+      const isValidSolution = inRange && !isOutsideCone;
 
       const sub = acc.querySelector('.sol-sub');
       if (sub) sub.textContent = `Range: ${dist.toFixed(1)} / ${w.rangeKm} km \u2022 ${w.seeker || 'GUIDED'} \u2022 ${w.damage} HP`;
 
-      const outReason = dist < (w.minRangeKm || 1.0) ? 'TOO CLOSE' : 'OUT OF RANGE';
-      const pkClass = inRange ? (pk >= 70 ? 'positive' : (pk >= 45 ? 'neutral' : 'negative')) : 'negative';
-      const pkLabel = inRange ? `${pk}% [${pkRes.label}]` : outReason;
+      let outReason = isOutsideCone ? `OFF-BORESIGHT (${offBoresightDeg}\u00B0)` : (dist < (w.minRangeKm || 1.0) ? 'TOO CLOSE' : 'OUT OF RANGE');
+      const pkClass = isValidSolution ? (pk >= 70 ? 'positive' : (pk >= 45 ? 'neutral' : 'negative')) : 'negative';
+      const pkLabel = isValidSolution ? `${pk}% [${pkRes.label}]` : outReason;
 
       const badge = acc.querySelector('.sol-pk-badge');
       if (badge) {
@@ -400,7 +425,7 @@ class InspectionWeapons {
       const fill = acc.querySelector('.inspection-range-fill');
       if (fill) {
         fill.style.width = `${Math.min(100, (w.rangeKm / 150) * 100)}%`;
-        fill.classList.toggle('detecting', inRange);
+        fill.classList.toggle('detecting', isValidSolution);
       }
 
       const marker = acc.querySelector('.inspection-distance-marker');
@@ -411,8 +436,8 @@ class InspectionWeapons {
 
       const statusText = acc.querySelector('.sol-status-text');
       if (statusText) {
-        statusText.textContent = inRange ? 'IN ENVELOPE' : outReason;
-        statusText.style.color = inRange ? 'var(--stat-tier-2)' : 'var(--stat-tier-5)';
+        statusText.textContent = isValidSolution ? 'IN ENVELOPE' : outReason;
+        statusText.style.color = isValidSolution ? 'var(--stat-tier-2)' : 'var(--stat-tier-5)';
       }
     });
   }

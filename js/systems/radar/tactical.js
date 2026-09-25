@@ -18,8 +18,15 @@ class RadarTacticalRenderer {
       if (!source || source.hp <= 0 || !source.radarLockedTarget || typeof source.x !== 'number') continue;
       const tgt = source.radarLockedTarget;
       if (!tgt || tgt.hp <= 0 || typeof tgt.x !== 'number') continue;
-
       if (source.isPassiveRadarOnlyEngagement) continue;
+
+      if (source.heading !== undefined && source.spec && source.spec.radarConeDeg < 360) {
+        let angleDiff = Math.abs(source.heading - Math.atan2(tgt.y - source.y, tgt.x - source.x));
+        while (angleDiff > Math.PI) angleDiff = Math.abs(angleDiff - Math.PI * 2);
+        if (angleDiff > (source.spec.radarConeDeg / 2.0) * (Math.PI / 180.0)) {
+          continue;
+        }
+      }
 
       const p1 = cam.toScreen(source.x, source.y);
       const p2 = cam.toScreen(tgt.x, tgt.y);
@@ -60,12 +67,9 @@ class RadarTacticalRenderer {
 
       for (const m of group) {
         if (typeof m.x !== 'number' || typeof m.y !== 'number') continue;
-
         const isOwn = (m.team === team);
 
-        if (!isOwn && m.isPassiveRadar && m.distanceToTarget > (m.pathRevealDistance || 20.0)) {
-          continue;
-        }
+        if (!isOwn && m.isPassiveRadar && m.distanceToTarget > (m.pathRevealDistance || 20.0)) continue;
 
         if (!isOwn && window.Game) {
           const detectedSet = (team === 'friendly') ? window.Game.detectedByBlue : window.Game.detectedByRed;
@@ -112,19 +116,17 @@ class RadarTacticalRenderer {
 
     for (const m of missiles) {
       if (!m || m.isDead || typeof m.x !== 'number') continue;
-
       const isOwn = (m.team === team);
 
       if (!isOwn && m.isPassiveRadar && m.age < (m.launchStealthDuration || 3.2) && m.distanceToTarget > (m.pathRevealDistance || 20.0)) {
         continue;
       }
-
       if (!isOwn && !detectedSet.has(m.id)) continue;
 
       const pos = cam.toScreen(m.x, m.y);
       const px = Math.round(pos.x);
       const py = Math.round(pos.y);
-      visibleMissiles.push({ m: m, px: px, py: py });
+      visibleMissiles.push({ m, px, py });
 
       if (m.trail && m.trail.length > 1) {
         for (let t = 0; t < m.trail.length - 1; t++) {
@@ -160,7 +162,6 @@ class RadarTacticalRenderer {
 
     if (visibleMissiles.length > 0) {
       const clusters = [];
-
       for (const item of visibleMissiles) {
         const m = item.m;
         const px = item.px;
@@ -173,34 +174,16 @@ class RadarTacticalRenderer {
         const mSpeed = (typeof m.speed === 'number' && !isNaN(m.speed)) ? m.speed : 2.4;
         const mStage = m.stage || 'BOOST';
 
-        let cluster = null;
-        for (const cl of clusters) {
-          if (cl.sourceId === sourceId && cl.weaponId === weaponId && cl.isBlue === isBlue && cl.isIdentified === isIdentified) {
-            if (Math.hypot(cl.px - px, cl.py - py) < 34) { cluster = cl; break; }
-          }
-        }
+        let cluster = clusters.find(cl => cl.sourceId === sourceId && cl.weaponId === weaponId && cl.isBlue === isBlue && cl.isIdentified === isIdentified && Math.hypot(cl.px - px, cl.py - py) < 34);
 
         if (cluster) {
           cluster.count++;
           if (distVal < cluster.minDist) cluster.minDist = distVal;
-          if (mSpeed > cluster.speed) {
-            cluster.speed = mSpeed;
-            cluster.stage = mStage;
-          }
+          if (mSpeed > cluster.speed) { cluster.speed = mSpeed; cluster.stage = mStage; }
         } else {
           clusters.push({
-            sourceId: sourceId,
-            weaponId: weaponId,
-            weaponName: (m.weapon && (m.weapon.id || m.weapon.name)) ? (m.weapon.id || m.weapon.name) : 'MSL',
-            isBlue: isBlue,
-            isIdentified: isIdentified,
-            isPassiveRadar: Boolean(m.isPassiveRadar),
-            count: 1,
-            minDist: distVal,
-            speed: mSpeed,
-            stage: mStage,
-            px: px,
-            py: py
+            sourceId, weaponId, weaponName: (m.weapon && (m.weapon.id || m.weapon.name)) ? (m.weapon.id || m.weapon.name) : 'MSL',
+            isBlue, isIdentified, isPassiveRadar: Boolean(m.isPassiveRadar), count: 1, minDist: distVal, speed: mSpeed, stage: mStage, px, py
           });
         }
       }

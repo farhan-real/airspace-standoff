@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Target Solution Display
- * Displays verified target telemetry, ground/civilian classification and gun range proximity.
+ * Displays verified target telemetry, ground/civilian classification, and boresight-aligned firing indicators.
  */
 
 class PylonTargetSolution {
@@ -63,6 +63,14 @@ class PylonTargetSolution {
       const isCiv = Boolean(validTarget.isCivilian);
       const isHostile = validTarget.team === 'hostile';
       const showAceColor = Boolean(validTarget.isAce && isKnown);
+
+      let inBoresight = false;
+      const angleToTarget = Math.atan2(validTarget.y - ay, validTarget.x - ax);
+      let offBoresight = Math.abs((activeUnit.heading || 0) - angleToTarget);
+      while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
+      const maxConeRad = ((activeUnit.gun && activeUnit.gun.coneAngleDeg ? activeUnit.gun.coneAngleDeg : 45) / 2.0) * (Math.PI / 180.0);
+      inBoresight = (offBoresight <= maxConeRad);
+
       const inGunRange = (activeUnit && activeUnit.gun && dist <= (activeUnit.gun.rangeKm || 4.6));
 
       targetBox.className = 'target-solution-box active-target';
@@ -71,8 +79,16 @@ class PylonTargetSolution {
         nameSpan.style.color = !isKnown ? '#f97316' : (showAceColor ? '#ffd700' : (validTarget.isGhost ? '#94a3b8' : (isHostile ? '#ff3366' : (isCiv ? '#7dd3fc' : '#00f0ff'))));
       }
       if (distSpan) {
-        distSpan.textContent = inGunRange ? `${dist.toFixed(1)} km [IN RANGE]` : `${dist.toFixed(1)} km`;
-        distSpan.style.color = inGunRange ? '#00f5a0' : '#38bdf8';
+        if (inGunRange && inBoresight) {
+          distSpan.textContent = `${dist.toFixed(1)} km [IN BORESIGHT]`;
+          distSpan.style.color = '#00f5a0';
+        } else if (inGunRange) {
+          distSpan.textContent = `${dist.toFixed(1)} km [OFF BORESIGHT]`;
+          distSpan.style.color = '#f97316';
+        } else {
+          distSpan.textContent = `${dist.toFixed(1)} km`;
+          distSpan.style.color = '#38bdf8';
+        }
       }
       if (altB) altB.textContent = tgtAlt;
       if (spdB) spdB.textContent = tgtSpeed;

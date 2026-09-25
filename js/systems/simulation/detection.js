@@ -30,6 +30,9 @@ class SimulationDetectionSystem {
       return;
     }
 
+    const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0);
+    const isUplinkActive = (liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold);
+
     for (const h of this.game.hostileAircraft) {
       if (!h || h.hp <= 0) continue;
       this.game.detectedByBlue.add(h.id);
@@ -38,13 +41,6 @@ class SimulationDetectionSystem {
       let highestProgressRate = 0.0;
       let isImmediateBurnThrough = false;
 
-      let inClouds = false;
-      if (this.sim.weatherClouds) {
-        for (const c of this.sim.weatherClouds) {
-          if (c.containsPoint(h.x, h.y)) { inClouds = true; break; }
-        }
-      }
-
       for (const sensor of blueSensors) {
         const maxDist = Physics.getRadarMaxDetectionRange(sensor, h, this.sim.weatherClouds);
         if (maxDist <= 0.0) continue;
@@ -52,13 +48,14 @@ class SimulationDetectionSystem {
 
         if (dist <= maxDist) {
           inSensorRange = true;
-          const irstOptical = sensor.hasIRST && (dist <= (inClouds ? 12.0 : 28.0));
+          const cloudHits = Physics.countIntersectingClouds(sensor.x, sensor.y, h.x, h.y, this.sim.weatherClouds);
+          const irstOptical = sensor.hasIRST && (dist <= (cloudHits > 0 ? 20.0 : 28.0));
           if (dist <= 18.0 || irstOptical) isImmediateBurnThrough = true;
 
           if (dist <= maxDist * 0.85) {
             const rangeFactor = Math.max(0.25, 1.0 - (dist / maxDist));
             let rate = (sensor.radarIdentifySpeed || 1.0) * rangeFactor;
-            if (inClouds) rate *= 0.60;
+            if (cloudHits > 0) rate *= Math.pow(0.85, cloudHits);
             if (rate > highestProgressRate) highestProgressRate = rate;
           }
         }
@@ -77,12 +74,15 @@ class SimulationDetectionSystem {
           h.isIdentified = true;
         }
       } else {
-        h.trackDurationBlue = Math.max(0.0, (h.trackDurationBlue || 0.0) - dt * 0.20);
+        h.trackDurationBlue = Math.max(0.0, (h.trackDurationBlue || 0.0) - dt * 0.25);
+        if (h.trackDurationBlue <= 0.0 && !isUplinkActive) {
+          h.identifiedByBlue = false;
+          h.isIdentified = false;
+        }
       }
     }
 
-    const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0);
-    if (liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold) {
+    if (isUplinkActive) {
       for (const h of liveHostiles) {
         this.game.detectedByBlue.add(h.id);
         h.trackDurationBlue = Math.max(h.trackDurationBlue || 0, 10.0);
@@ -115,6 +115,9 @@ class SimulationDetectionSystem {
       if (inRedSensor) {
         a.trackDurationRed = (a.trackDurationRed || 0) + dt;
         if (a.trackDurationRed >= baseAirIdTime) a.identifiedByRed = true;
+      } else {
+        a.trackDurationRed = Math.max(0.0, (a.trackDurationRed || 0.0) - dt * 0.25);
+        if (a.trackDurationRed <= 0.0) a.identifiedByRed = false;
       }
     }
 
@@ -242,23 +245,11 @@ class SimulationDetectionSystem {
       }
 
       const isEnemySide = (civ.x > 75.0);
-      let requiredTimeBlue = 5.5;
-
-      if (closestBlueDist > 95.0 || (isEnemySide && closestBlueDist > 65.0)) {
-        requiredTimeBlue = 20.0;
-      } else if (closestBlueDist > 65.0 || isEnemySide) {
-        requiredTimeBlue = 14.0;
-      } else if (closestBlueDist > 35.0) {
-        requiredTimeBlue = 8.5;
-      } else {
-        requiredTimeBlue = 4.5;
-      }
+      let requiredTimeBlue = (closestBlueDist > 95.0 || (isEnemySide && closestBlueDist > 65.0)) ? 20.0 : ((closestBlueDist > 65.0 || isEnemySide) ? 14.0 : (closestBlueDist > 35.0 ? 8.5 : 4.5));
 
       if (hasBlueDirectTrack) {
         civ.trackDurationBlue = (civ.trackDurationBlue || 0.0) + dt * Math.max(0.25, highestBlueRate);
-        if (civ.trackDurationBlue >= requiredTimeBlue) {
-          civ.identifiedByBlue = true;
-        }
+        if (civ.trackDurationBlue >= requiredTimeBlue) civ.identifiedByBlue = true;
       } else {
         civ.trackDurationBlue = Math.max(0.0, (civ.trackDurationBlue || 0.0) - dt * 0.15);
       }
@@ -268,16 +259,12 @@ class SimulationDetectionSystem {
       for (const sensor of redSensors) {
         const d = Math.hypot(civ.x - sensor.x, civ.y - sensor.y);
         if (d < closestRedDist) closestRedDist = d;
-        if (Physics.canRadarDetect(sensor, civ, this.sim.weatherClouds)) {
-          hasRedTrack = true;
-        }
+        if (Physics.canRadarDetect(sensor, civ, this.sim.weatherClouds)) hasRedTrack = true;
       }
       const requiredTimeRed = (closestRedDist < 50.0 || civ.x > 75.0) ? 5.0 : 14.0;
       if (hasRedTrack) {
         civ.trackDurationRed = (civ.trackDurationRed || 0.0) + dt;
-        if (civ.trackDurationRed >= requiredTimeRed) {
-          civ.identifiedByRed = true;
-        }
+        if (civ.trackDurationRed >= requiredTimeRed) civ.identifiedByRed = true;
       }
     }
   }

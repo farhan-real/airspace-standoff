@@ -117,7 +117,13 @@ class KeyboardControlsHandler {
         return;
       }
 
-      if (key === binds.CYCLE_TARGET || key === 'KeyT' || key === 'Tab' || key === 'Space') {
+      if (key === binds.AUTO_LOCK || key === 'Space') {
+        e.preventDefault();
+        if (this.sys.targeting) this.sys.targeting.autoLock();
+        return;
+      }
+
+      if (key === binds.CYCLE_TARGET || key === 'KeyT' || key === 'Tab') {
         e.preventDefault();
         this.sys.cycleTarget(1);
         return;
