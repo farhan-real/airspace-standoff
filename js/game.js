@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Master Game Orchestrator (150km x 100km Theater & Full Persistence)
+ * AIRSPACE STANDOFF: Master Game Orchestrator (150km x 100km Arena & Full Persistence)
  */
 
 if (typeof navigator !== 'undefined') {
@@ -13,7 +13,6 @@ if (typeof navigator !== 'undefined') {
 class AirspaceStandoffGame {
   constructor() {
     this.installModalDOMTemplates();
-
     this.playerMode = '1P';
     this.scenarioMode = 'SKIRMISH';
     this.aiDifficulty = 'VETERAN';
@@ -135,12 +134,12 @@ class AirspaceStandoffGame {
     const ind = document.getElementById('theater-mode-indicator');
     if (!ind) return;
     const diffMap = {
-      CADET: 'Low Threat Sector (0.50x)',
-      VETERAN: 'Contested Sector (1.00x)',
-      ELITE: 'High Threat Sector (1.50x)',
-      ACE: 'Severe Threat Sector (2.00x)',
-      MASTER: 'Air Defense Sector (2.60x)',
-      LEGEND: 'Hostile Airspace (3.20x)'
+      CADET: 'Permissive Sector (0.50x)',
+      VETERAN: 'Contested Airspace (1.00x)',
+      ELITE: 'Hostile Airspace (1.50x)',
+      ACE: 'High-Threat Sector (2.00x)',
+      MASTER: 'Air Denial Zone (2.60x)',
+      LEGEND: 'Extreme Threat Sector (3.20x)'
     };
     const bMap = {
       BUDGET_200: '200M (1.75x)',

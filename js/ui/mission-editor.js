@@ -58,10 +58,10 @@ class MissionEditor {
         options: [
           { value: 'CADET', text: 'CADET (PERMISSIVE - 0.50x)' },
           { value: 'VETERAN', text: 'VETERAN (CONTESTED - 1.00x)' },
-          { value: 'ELITE', text: 'ELITE (ACTIVE ZONE - 1.50x)' },
+          { value: 'ELITE', text: 'ELITE (HOSTILE - 1.50x)' },
           { value: 'ACE', text: 'ACE (HIGH-THREAT - 2.00x)' },
           { value: 'MASTER', text: 'MASTER (AIR DENIAL - 2.60x)' },
-          { value: 'LEGEND', text: 'LEGEND (FORTRESS - 3.20x)' }
+          { value: 'LEGEND', text: 'LEGEND (EXTREME THREAT - 3.20x)' }
         ]
       },
       doctrine: {

@@ -13,7 +13,7 @@ window.MANUAL_THEATER = [
         Hostile formations deploy specialized flight leads <img src="icons/diamond.svg" width="11" height="11" alt="Ace" class="manual-inline-ico">:
         <ul style="list-style:none;padding-left:0;margin-top:6px;">
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Realistic Kinematics:</b> Flight leads maneuver with realistic bank rates and bleed energy in sustained turns.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Airframe Scaling:</b> In Contested Sectors, Leads fly 4.5-gen fighters (Su-35S, Eurofighter, Rafale). Experimental fighters are reserved for severe threat sectors.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Airframe Scaling:</b> In Contested Airspace, Leads fly 4.5-gen fighters (Su-35S, Eurofighter, Rafale). Experimental fighters are reserved for severe threat sectors.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>High-Value Bounty:</b> Eliminating a designated flight lead awards an immediate <b>+850 Victory Point bounty</b>.</li>
         </ul>
       </div>
@@ -26,42 +26,42 @@ window.MANUAL_THEATER = [
           </thead>
           <tbody>
             <tr>
-              <td style="color:#8494ab;font-weight:800;">LOW THREAT SECTOR</td>
+              <td style="color:#8494ab;font-weight:800;">PERMISSIVE SECTOR</td>
               <td>0.50x VP</td>
               <td>150.0M CR</td>
               <td>0</td>
               <td>7.2s reaction cooldown, basic aerodynamic turns, no notching.</td>
             </tr>
             <tr>
-              <td style="color:#38bdf8;font-weight:800;">CONTESTED SECTOR</td>
+              <td style="color:#38bdf8;font-weight:800;">CONTESTED AIRSPACE</td>
               <td>1.00x VP</td>
               <td>260.0M CR</td>
               <td>1</td>
               <td>5.8s reaction cooldown, standard aerodynamic maneuvers, 4.5-gen flight lead.</td>
             </tr>
             <tr>
-              <td style="color:#00f0ff;font-weight:800;">HIGH THREAT SECTOR</td>
+              <td style="color:#00f0ff;font-weight:800;">HOSTILE AIRSPACE</td>
               <td>1.50x VP</td>
               <td>360.0M CR</td>
               <td>1</td>
               <td>4.4s reaction cooldown, standard maneuvers, single-missile volleys.</td>
             </tr>
             <tr>
-              <td style="color:#ffd700;font-weight:800;">SEVERE THREAT SECTOR</td>
+              <td style="color:#ffd700;font-weight:800;">HIGH-THREAT SECTOR</td>
               <td>2.00x VP</td>
               <td>460.0M CR</td>
               <td>2</td>
               <td>3.4s reaction cooldown, coordinated pincer attacks, 2 flight leads.</td>
             </tr>
             <tr>
-              <td style="color:#c084fc;font-weight:800;">AIR DEFENSE SECTOR</td>
+              <td style="color:#c084fc;font-weight:800;">AIR DENIAL ZONE</td>
               <td>2.60x VP</td>
               <td>560.0M CR</td>
               <td>2</td>
               <td>2.8s reaction cooldown, Doppler notching, post-stall maneuvers.</td>
             </tr>
             <tr>
-              <td style="color:#ff3366;font-weight:800;">HOSTILE AIRSPACE</td>
+              <td style="color:#ff3366;font-weight:800;">EXTREME THREAT SECTOR</td>
               <td>3.20x VP</td>
               <td>660.0M CR</td>
               <td>3</td>

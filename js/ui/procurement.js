@@ -53,10 +53,10 @@ class ProcurementManager {
       options: [
         { value: 'CADET', text: 'PERMISSIVE SECTOR (0.50x)' },
         { value: 'VETERAN', text: 'CONTESTED AIRSPACE (1.00x)' },
-        { value: 'ELITE', text: 'ACTIVE COMBAT ZONE (1.50x)' },
-        { value: 'ACE', text: 'HIGH-THREAT GRID (2.00x)' },
+        { value: 'ELITE', text: 'HOSTILE AIRSPACE (1.50x)' },
+        { value: 'ACE', text: 'HIGH-THREAT SECTOR (2.00x)' },
         { value: 'MASTER', text: 'AIR DENIAL ZONE (2.60x)' },
-        { value: 'LEGEND', text: 'FORTRESS AIRSPACE (3.20x)' }
+        { value: 'LEGEND', text: 'EXTREME THREAT SECTOR (3.20x)' }
       ],
       onChange: (val) => {
         this.game.aiDifficulty = val;
