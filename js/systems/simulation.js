@@ -45,49 +45,8 @@ class SimulationSystem {
   }
 
   captureReplayFrame(force = false) {
-    const lastFrame = this.replaySnapshots[this.replaySnapshots.length - 1];
-    if (!force && lastFrame && this.elapsedTimeSec - lastFrame.time < 1.0) return;
-
-    const snapshotAircraft = (aircraft) => ({
-      id: aircraft.id, team: aircraft.team, x: aircraft.x, y: aircraft.y,
-      heading: aircraft.heading, speed: aircraft.speed, hp: aircraft.hp, maxHp: aircraft.maxHp,
-      altFt: aircraft.altFt, callsign: aircraft.callsign,
-      model: aircraft.spec ? (aircraft.spec.name || aircraft.spec.id) : 'AIRCRAFT',
-      category: aircraft.spec ? aircraft.spec.category : 'MULTIROLE',
-      isAce: Boolean(aircraft.isAce), isFlightLead: Boolean(aircraft.isFlightLead),
-      isCoffin: Boolean(aircraft.isCoffin), isRTB: Boolean(aircraft.isRTB),
-      identified: Boolean(aircraft.isIdentifiedBy ? aircraft.isIdentifiedBy('friendly') : aircraft.isIdentified)
-    });
-
-    const frame = {
-      time: this.elapsedTimeSec,
-      alliedAircraft: this.game.alliedAircraft.map(snapshotAircraft),
-      hostileAircraft: this.game.hostileAircraft.map(snapshotAircraft),
-      surfaceUnits: this.game.surfaceUnits.map(unit => ({
-        id: unit.id, team: unit.team, type: unit.type, x: unit.x, y: unit.y,
-        hp: unit.hp, maxHp: unit.maxHp, name: unit.name, isIndestructible: Boolean(unit.isIndestructible)
-      })),
-      missiles: this.game.missiles.filter(m => !m.isDead).map(m => ({
-        id: m.id, team: m.team, x: m.x, y: m.y, heading: m.heading,
-        weapon: m.weapon ? (m.weapon.name || m.weapon.id) : 'MISSILE',
-        stage: m.stage, speed: m.speed, active: m.active,
-        trail: (m.trail || []).slice(0, 8).map(pt => ({ x: pt.x, y: pt.y }))
-      })),
-      civilianTraffic: this.civilianTraffic.map(civ => ({
-        id: civ.id, x: civ.x, y: civ.y, heading: civ.heading,
-        speed: civ.speed, hp: civ.hp, flightCode: civ.flightCode, identified: Boolean(civ.isIdentified)
-      })),
-      clouds: this.weatherClouds.map(c => ({ x: c.x, y: c.y, rx: c.rx, ry: c.ry })),
-      decoys: this.decoyDrones.map(d => ({
-        id: d.id, team: d.team, x: d.x, y: d.y, heading: d.heading, speed: d.speed, hp: d.hp, model: d.mirroredModel || 'DECOY'
-      }))
-    };
-
-    if (lastFrame && Math.abs(lastFrame.time - frame.time) < 0.001) {
-      this.replaySnapshots[this.replaySnapshots.length - 1] = frame;
-    } else {
-      this.replaySnapshots.push(frame);
-      if (this.replaySnapshots.length > 900) this.replaySnapshots.shift();
+    if (typeof AfterActionReplayCodec !== 'undefined') {
+      AfterActionReplayCodec.captureFrame(this, force);
     }
   }
 
@@ -106,54 +65,24 @@ class SimulationSystem {
   }
 
   initWeatherClouds() {
-    this.weatherClouds = [];
-    let s = (Date.now() ^ ((performance.now() * 1000) | 0)) >>> 0;
-    const rng = () => {
-      s = (s + 0x6D2B79F5) | 0;
-      let t = Math.imul(s ^ (s >>> 15), 1 | s);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-
-    const coverageCounts = { CLEAR: 0, LIGHT: 2, SCATTERED: 4, DENSE: 5 };
-    const configuredCount = coverageCounts[this.cloudCoverage];
-    const count = Number.isFinite(configuredCount) ? configuredCount : (rng() < 0.15 ? 2 : (rng() < 0.70 ? 3 : (rng() < 0.92 ? 4 : 5)));
-    const sizeProfiles = [{ rxMin: 25, rxMax: 32, ryMin: 16, ryMax: 22 }, { rxMin: 24, rxMax: 32, ryMin: 12, ryMax: 16 }, { rxMin: 18, rxMax: 25, ryMin: 13, ryMax: 18 }];
-    const sectors = [
-      { minX: 25, maxX: 65, minY: 18, maxY: 45 }, { minX: 85, maxX: 125, minY: 18, maxY: 45 },
-      { minX: 55, maxX: 95, minY: 35, maxY: 65 }, { minX: 25, maxX: 65, minY: 55, maxY: 82 }, { minX: 85, maxX: 125, minY: 55, maxY: 82 }
-    ].sort(() => rng() - 0.5);
-
-    for (let i = 0; i < count; i++) {
-      const sec = sectors[i % sectors.length];
-      const p = sizeProfiles[i % sizeProfiles.length];
-      const cx = sec.minX + rng() * (sec.maxX - sec.minX);
-      const cy = sec.minY + rng() * (sec.maxY - sec.minY);
-      const rx = p.rxMin + rng() * (p.rxMax - p.rxMin);
-      const ry = p.ryMin + rng() * (p.ryMax - p.ryMin);
-      const angle = rng() * Math.PI * 2;
-      const spd = 0.15 + rng() * 0.25;
-      this.weatherClouds.push(new WeatherCloud(cx, cy, rx, ry, Math.cos(angle) * spd, Math.sin(angle) * spd * 0.6));
+    if (typeof SimulationTrafficSystem !== 'undefined') {
+      this.weatherClouds = SimulationTrafficSystem.createClouds(this.cloudCoverage);
     }
   }
 
   initGhostContacts() {
     this.ghostContacts = [];
-    if (!this.weatherClouds || this.weatherClouds.length === 0) return;
-    const targetCloud = this.weatherClouds[Math.floor(Math.random() * this.weatherClouds.length)];
-    const gx = targetCloud.x + (Math.random() * targetCloud.rx * 0.8 - targetCloud.rx * 0.4);
-    const gy = targetCloud.y + (Math.random() * targetCloud.ry * 0.8 - targetCloud.ry * 0.4);
-    this.ghostContacts.push(new GhostContact(gx, gy, Math.PI + (Math.random() * 0.4 - 0.2), 0.80, 24000));
+    if (typeof SimulationTrafficSystem !== 'undefined') {
+      const g = SimulationTrafficSystem.createGhostContact(this.weatherClouds);
+      if (g) this.ghostContacts.push(g);
+    }
   }
 
   spawnCivilianFlight() {
     if (!this.civilianTrafficEnabled) return;
-    const pool = window.CIVILIAN_FLIGHTS || [{ code: 'CIV-401', name: 'Commercial Flight', speedMach: 0.78, altFt: 36000, rcs: 25.0 }];
-    const data = pool[Math.floor(Math.random() * pool.length)];
-    const fromLeft = Math.random() < 0.5;
-    const w = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
-    const h = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-    this.civilianTraffic.push(new CivilianAirliner(data, fromLeft ? -5 : (w + 5), 20 + Math.random() * (h - 40), fromLeft ? 0.05 : (Math.PI - 0.05)));
+    if (typeof SimulationTrafficSystem !== 'undefined') {
+      this.civilianTraffic.push(SimulationTrafficSystem.createCivilianFlight());
+    }
   }
 
   step(realDt) {
@@ -202,7 +131,7 @@ class SimulationSystem {
         }
         this.game.hostileAircraft.push(...redReinforcements);
         this.game.alliedAircraft.push(...blueReinforcements);
-        if (typeof this.game.ensureUniqueAircraftCallsigns === 'function') this.game.ensureUniqueAircraftCallsigns();
+        if (typeof SortieSpawner !== 'undefined') SortieSpawner.ensureUniqueAircraftCallsigns(this.game);
         this.logScoreEvent('friendly', 0, `REINFORCEMENTS: Wave ${this.currentWave} entered theater`);
       }
     }

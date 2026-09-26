@@ -78,29 +78,15 @@ class ProcurementManager {
   }
 
   setLeadAirframe(sIdx) {
-    this.game.procurementSquadron.forEach((item, idx) => { item.isLead = (idx === sIdx); });
-    this.activeBayIndex = sIdx;
-    this.updateUI();
-    if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+    if (typeof ProcurementActionDispatcher !== 'undefined') {
+      ProcurementActionDispatcher.setLeadAirframe(this, sIdx);
+    }
   }
 
   saveSquadronBayConfig(sIdx, callback) {
-    const item = this.game.procurementSquadron[sIdx];
-    if (!item) return;
-    const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
-    const defName = `${item.callsign || spec.name} Config`;
-
-    this.showPromptModal('SAVE PRESET', `Save Aircraft #${sIdx + 1} configuration as a preset:`, defName, (name) => {
-      if (name && name.trim()) {
-        this.customLoadouts.saveTemplate(name.trim(), {
-          name: name.trim(), specId: item.specId, roleCategory: 'CUSTOM', chosenGunId: item.chosenGunId || 'M61A2',
-          weapons: [...(item.weapons || [])], upgrades: [...(item.upgrades || [])],
-          desc: `User configuration based on ${spec.name} (${item.callsign}).`
-        });
-        this.showAlertModal('PRESET SAVED', `Configuration "${name.trim()}" saved to preset library.`);
-        if (callback) callback();
-      }
-    });
+    if (typeof ProcurementActionDispatcher !== 'undefined') {
+      ProcurementActionDispatcher.saveSquadronBayConfig(this, sIdx, callback);
+    }
   }
 
   initSquadronNameEditor() {
@@ -231,33 +217,21 @@ class ProcurementManager {
   }
 
   applyBuiltinPreset(type) {
-    this.game.procurementSquadron = ProcurementPresets.getBuiltinPreset(type);
-    if (this.game.procurementSquadron.length > 0 && !this.game.procurementSquadron.some(it => it && it.isLead)) {
-      this.game.procurementSquadron[0].isLead = true;
+    if (typeof ProcurementActionDispatcher !== 'undefined') {
+      ProcurementActionDispatcher.applyBuiltinPreset(this, type);
     }
-    this.activeBayIndex = 0;
-    this.updateUI();
-    this.renderCatalog();
   }
 
   applyCustomPreset(name) {
-    const data = this.customLoadouts.load(name);
-    if (data) {
-      this.game.procurementSquadron = data;
-      if (this.game.procurementSquadron.length > 0 && !this.game.procurementSquadron.some(it => it && it.isLead)) {
-        this.game.procurementSquadron[0].isLead = true;
-      }
-      this.activeBayIndex = 0;
-      this.updateUI();
-      this.renderCatalog();
+    if (typeof ProcurementActionDispatcher !== 'undefined') {
+      ProcurementActionDispatcher.applyCustomPreset(this, name);
     }
   }
 
   clearSquadron() {
-    this.game.procurementSquadron = [];
-    this.activeBayIndex = 0;
-    this.updateUI();
-    this.renderCatalog();
+    if (typeof ProcurementActionDispatcher !== 'undefined') {
+      ProcurementActionDispatcher.clearSquadron(this);
+    }
   }
 
   updateUI() {

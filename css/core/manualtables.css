@@ -1,0 +1,173 @@
+/* AIRSPACE STANDOFF: Tactical Flight Manual Cards, Tables & Formulas */
+
+.manual-classified-badge, .manual-ref-badge {
+  font-size: 0.60rem;
+  font-family: var(--font-dotdigital);
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  padding: 2px 7px;
+  border-radius: var(--radius-badge);
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.manual-classified-badge {
+  color: var(--stat-tier-3);
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.manual-ref-badge {
+  color: var(--theme-accent);
+  background: var(--theme-primary-dim);
+  border: 1px solid var(--glass-border);
+}
+
+.ge-subhead {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-ice-highlight);
+  font-family: var(--font-untitled-sans);
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ge-content, .ge-desc {
+  font-size: 0.78rem;
+  color: var(--color-moon-mist);
+  line-height: 1.6;
+}
+
+.ge-card {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ge-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.ge-formula-card {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  padding: 8px 12px;
+  font-family: var(--font-dotdigital);
+  font-size: 0.72rem;
+  color: var(--stat-tier-2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ge-formula-code {
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--glass-bg);
+  padding: 4px 8px;
+  border-radius: var(--radius-badge);
+  border-left: 2px solid var(--stat-tier-2);
+}
+
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-overflow-scrolling: touch;
+}
+
+.ge-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.72rem;
+  font-family: var(--font-untitled-sans);
+  min-width: 520px;
+}
+
+.ge-table thead {
+  background: rgba(6, 14, 30, 0.96);
+}
+
+.ge-table th {
+  text-align: left;
+  padding: 8px 10px;
+  background: transparent;
+  color: var(--color-ice-highlight);
+  font-family: var(--font-dotdigital);
+  font-size: 0.64rem;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.35);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.ge-table thead tr,
+.ge-table thead tr:hover,
+.ge-table thead tr:hover th {
+  background: transparent;
+}
+
+.ge-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--color-moon-mist);
+  line-height: 1.45;
+  transition: background-color 0.12s ease;
+}
+
+.ge-table tbody tr:hover td,
+.ge-table tr:hover td {
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.manual-inline-ico {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 2px;
+  object-fit: contain;
+}
+
+.manual-chevron-ico {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+  transform: rotate(-90deg);
+}
+
+.manual-key-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-badge);
+  padding: 2px 5px;
+  color: var(--color-frost-glow);
+  font-family: var(--font-dotdigital);
+  font-size: 0.62rem;
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .ge-grid-2 { grid-template-columns: 1fr; }
+}

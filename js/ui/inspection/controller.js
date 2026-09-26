@@ -240,21 +240,8 @@ class InspectionModeController {
   }
 
   recordEvent(type, title, source, target, details = {}) {
-    if (!this.enabled) return;
-    const sim = this.game && this.game.simulation;
-    const event = {
-      id: `EV_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
-      time: sim && sim.getElapsedTimeString ? sim.getElapsedTimeString() : '00:00',
-      type: String(type || 'TACTICAL EVENT'),
-      title: String(title || type),
-      sourceName: this.getName(source),
-      targetName: this.getName(target),
-      details
-    };
-    this.events.unshift(event);
-    if (this.events.length > 500) this.events.pop();
-    if (this.isOpen && this.activeTab === 'TRACE' && !this.focusedEvent) {
-      this.render();
+    if (typeof InspectionEventSystem !== 'undefined') {
+      InspectionEventSystem.recordEvent(this, type, title, source, target, details);
     }
   }
 
@@ -280,79 +267,16 @@ class InspectionModeController {
   }
 
   bindInteractions(content) {
-    content.querySelectorAll('.inspection-accordion').forEach(acc => {
-      const accId = acc.dataset.accordionId;
-      if (accId) {
-        if (this.accordionStates.has(accId)) acc.open = this.accordionStates.get(accId);
-        else this.accordionStates.set(accId, acc.open);
-        acc.addEventListener('toggle', () => this.accordionStates.set(accId, acc.open));
-      }
-    });
-
-    content.querySelectorAll('[data-insp-action="fly"]').forEach(btn => {
-      btn.onclick = () => {
-        this.game.activeUnit = this.selectedEntity;
-        if (this.game.avionics) {
-          this.game.avionics.renderFlightRoster();
-          this.game.avionics.updateActiveUnitMFD();
-        }
-        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-        this.render(true);
-      };
-    });
-
-    content.querySelectorAll('[data-insp-action="target"]').forEach(btn => {
-      btn.onclick = () => {
-        this.game.selectedTarget = this.selectedEntity;
-        if (this.game.avionics) this.game.avionics.updateActiveUnitMFD();
-        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-        this.render(true);
-      };
-    });
-
-    const backBtn = content.querySelector('#btn-trace-back-to-list');
-    if (backBtn) {
-      backBtn.onclick = () => {
-        this.focusedEvent = null;
-        this.render(true);
-      };
+    if (typeof InspectionEventSystem !== 'undefined') {
+      InspectionEventSystem.bindInteractions(this, content);
     }
-
-    content.querySelectorAll('.inspection-content .inspection-event-row').forEach(row => {
-      row.onclick = () => {
-        const id = row.getAttribute('data-ev-id');
-        this.focusedEvent = this.events.find(e => e.id === id) || null;
-        this.render(true);
-      };
-    });
   }
 
   computeStructureSignature() {
-    const e = this.selectedEntity;
-    if (!e) return `${this.activeTab}:none`;
-    const eid = this.getEntityId(e);
-    const tid = this.getEntityId(this.game.selectedTarget);
-
-    if (this.activeTab === 'WEAPONS') {
-      const inbounds = (this.game.missiles || []).filter(m => m.active && m.target && m.target.id === e.id).map(m => m.id).join(',');
-      const firingUnit = e.spec ? e : this.game.activeUnit;
-      const wpns = firingUnit ? (firingUnit.equippedWeapons || []).map(it => `${it.weapon ? it.weapon.id : ''}:${it.ammo}`).join(',') : '';
-      return `${this.activeTab}:${eid}:${tid}:${inbounds}:${wpns}`;
+    if (typeof InspectionEventSystem !== 'undefined') {
+      return InspectionEventSystem.computeStructureSignature(this);
     }
-    if (this.activeTab === 'SENSORS') {
-      const isBlue = e.team === (this.game.currentPvpCommander || 'friendly');
-      const sensors = isBlue ? (this.game.hostileAircraft || []) : (this.game.alliedAircraft || []);
-      const sIds = sensors.filter(s => s.hp > 0).map(s => s.id).join(',');
-      return `${this.activeTab}:${eid}:${sIds}`;
-    }
-    if (this.activeTab === 'OVERVIEW') {
-      const equipLen = (e.equippedWeapons || []).length;
-      return `${this.activeTab}:${eid}:${e.maxHp || 0}:${equipLen}`;
-    }
-    if (this.activeTab === 'TRACE') {
-      return `${this.activeTab}:${this.focusedEvent ? this.focusedEvent.id : `list:${this.events.length}`}`;
-    }
-    return `${this.activeTab}:${eid}`;
+    return `${this.activeTab}:${this.getEntityId(this.selectedEntity)}`;
   }
 
   render(force = false) {

@@ -5,26 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>AIRSPACE STANDOFF</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-
-  <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Core Theme & Modals -->
   <link rel="stylesheet" href="css/core/theme.css">
   <link rel="stylesheet" href="css/core/base.css">
   <link rel="stylesheet" href="css/core/dropdown.css">
   <link rel="stylesheet" href="css/core/tooltips.css">
   <link rel="stylesheet" href="css/core/codex.css">
   <link rel="stylesheet" href="css/core/manual.css">
+  <link rel="stylesheet" href="css/core/manualtables.css">
   <link rel="stylesheet" href="css/core/dialogs/dialogs.css">
   <link rel="stylesheet" href="css/core/dialogs/settings.css">
-  <link rel="stylesheet" href="css/core/dialogs/mission-editor.css">
+  <link rel="stylesheet" href="css/core/dialogs/editor.css">
   <link rel="stylesheet" href="css/core/dialogs/leaderboard.css">
   <link rel="stylesheet" href="css/core/dialogs/debrief.css">
-
-  <!-- HUD & Cockpit Displays -->
+  <link rel="stylesheet" href="css/core/dialogs/replay.css">
   <link rel="stylesheet" href="css/hud/banner.css">
   <link rel="stylesheet" href="css/hud/workspace.css">
   <link rel="stylesheet" href="css/hud/radar.css">
@@ -36,8 +32,6 @@
   <link rel="stylesheet" href="css/hud/flight/roster.css">
   <link rel="stylesheet" href="css/hud/tactical/sms.css">
   <link rel="stylesheet" href="css/hud/tactical/deck.css">
-
-  <!-- Procurement Hangar Management -->
   <link rel="stylesheet" href="css/procurement/layout.css">
   <link rel="stylesheet" href="css/procurement/header.css">
   <link rel="stylesheet" href="css/procurement/presets.css">
@@ -46,40 +40,23 @@
   <link rel="stylesheet" href="css/procurement/catalog/preconfig.css">
   <link rel="stylesheet" href="css/procurement/squadron/loadout.css">
   <link rel="stylesheet" href="css/procurement/squadron/hardware.css">
+  <link rel="stylesheet" href="css/procurement/squadron/stations.css">
 </head>
 <body>
-
 <div id="hud-floating-tooltip" class="hud-tooltip-box"></div>
-
-<!-- PROCUREMENT HANGAR (HOME SCREEN) -->
 <div id="procurement-modal" class="modal-backdrop active">
   <div class="procurement-window">
     <header class="procurement-header">
       <div class="title-group">
-        <h1 class="brand-title">
-          <span class="game-name">AIRSPACE STANDOFF</span>
-          <span class="hangar-badge">HANGAR</span>
-        </h1>
+        <h1 class="brand-title"><span class="game-name">AIRSPACE STANDOFF</span><span class="hangar-badge">HANGAR</span></h1>
         <div class="title-right-group">
           <button id="btn-proc-exit" class="hud-btn alert proc-exit-btn" title="Exit Application">EXIT</button>
-          <button id="btn-proc-leaderboard" class="hud-btn proc-leaderboard-btn" title="Top 10 High Scores">
-            <img src="icons/leaderboard.svg" class="btn-vector-ico" width="13" height="13" alt="Leaderboard">
-            <span>LEADERBOARD</span>
-          </button>
-          <button id="btn-proc-settings" class="hud-btn proc-settings-btn" title="Settings &amp; Controls">
-            <img src="icons/settings.svg" class="btn-vector-ico" width="13" height="13" alt="Settings">
-            <span>SETTINGS</span>
-          </button>
-          <button id="btn-open-glossary" class="hud-btn proc-manual-btn">
-            <img src="icons/manual.svg" class="btn-vector-ico" width="13" height="13" alt="Manual">
-            <span>MANUAL</span>
-          </button>
-          <button id="btn-edit-squadron-name" class="squad-callsign-tag" title="Click to rename squadron">
-            UNIT: <span id="display-squadron-name">7th Tactical Squadron</span>
-          </button>
+          <button id="btn-proc-leaderboard" class="hud-btn proc-leaderboard-btn" title="Top 10 High Scores"><img src="icons/leaderboard.svg" class="btn-vector-ico" width="13" height="13" alt="Leaderboard"><span>LEADERBOARD</span></button>
+          <button id="btn-proc-settings" class="hud-btn proc-settings-btn" title="Settings &amp; Controls"><img src="icons/settings.svg" class="btn-vector-ico" width="13" height="13" alt="Settings"><span>SETTINGS</span></button>
+          <button id="btn-open-glossary" class="hud-btn proc-manual-btn"><img src="icons/manual.svg" class="btn-vector-ico" width="13" height="13" alt="Manual"><span>MANUAL</span></button>
+          <button id="btn-edit-squadron-name" class="squad-callsign-tag" title="Click to rename squadron">UNIT: <span id="display-squadron-name">7th Tactical Squadron</span></button>
         </div>
       </div>
-
       <div class="mode-and-ai-controls">
         <div class="segmented-control" id="control-mode-group">
           <button id="mode-btn-1p" class="seg-btn active">SINGLE PLAYER</button>
@@ -89,45 +66,29 @@
           <button id="scenario-btn-skirmish" class="seg-btn active">SKIRMISH</button>
           <button id="scenario-btn-dynamic" class="seg-btn">DYNAMIC THEATER</button>
         </div>
-
         <div class="ai-config-group" id="ai-config-panel">
           <div id="cdd-budget"></div>
           <div id="cdd-difficulty"></div>
           <div id="cdd-doctrine"></div>
         </div>
-
         <span id="theater-mode-indicator" style="display:none;"></span>
-
         <div class="proc-right-actions">
-          <button id="btn-open-mission-editor" class="hud-btn mission-editor-open-btn" title="Build a custom, unranked mission">
-            <img src="icons/edit.svg" class="btn-vector-ico" width="13" height="13" alt="Edit">
-            <span>MISSION EDITOR</span>
-          </button>
+          <button id="btn-open-mission-editor" class="hud-btn mission-editor-open-btn" title="Build a custom, unranked mission"><img src="icons/edit.svg" class="btn-vector-ico" width="13" height="13" alt="Edit"><span>MISSION EDITOR</span></button>
           <span id="mission-editor-state" class="mission-editor-state">STANDARD MISSION</span>
-          <button id="btn-proc-fullscreen" class="hud-btn" title="Toggle Fullscreen">
-            <img src="icons/fullscreen.svg" class="btn-vector-ico" width="13" height="13" alt="Fullscreen">
-            <span>FULLSCREEN</span>
-          </button>
+          <button id="btn-proc-fullscreen" class="hud-btn" title="Toggle Fullscreen"><img src="icons/fullscreen.svg" class="btn-vector-ico" width="13" height="13" alt="Fullscreen"><span>FULLSCREEN</span></button>
         </div>
       </div>
-
       <div class="budget-display">
-        <div class="budget-line">
-          <span class="label">BUDGET:</span>
-          <span id="budget-counter" class="amount">0.0M / 400.0M CR</span>
-        </div>
+        <div class="budget-line"><span class="label">BUDGET:</span><span id="budget-counter" class="amount">0.0M / 400.0M CR</span></div>
         <span id="fleet-count" class="count-tag">0 / 16</span>
         <span id="proc-budget-subtext" class="proc-subtext-note" style="display:none;"></span>
       </div>
     </header>
-
     <div class="procurement-presets" id="procurement-presets-bar"></div>
-
     <div class="procurement-mobile-tabs" id="procurement-mobile-tabs">
       <button type="button" class="p-mob-tab active" id="btn-tab-hanger-shelf" data-target="shelf">ARMORY</button>
       <button type="button" class="p-mob-tab" id="btn-tab-flight-roster" data-target="roster">SQUADRON (<span id="mob-roster-count">0</span>)</button>
     </div>
-
     <div class="procurement-body">
       <div class="hanger-shelf" id="proc-hanger-shelf">
         <div class="shelf-tabs">
@@ -151,50 +112,38 @@
         <div id="squadron-list" class="squadron-container"></div>
       </div>
     </div>
-
     <footer class="procurement-footer">
       <div class="intel-summary" id="procurement-intel"></div>
       <button id="btn-scramble" class="scramble-btn" disabled>LAUNCH MISSION</button>
     </footer>
   </div>
 </div>
-
-<!-- MAIN BATTLE HUD WORKSPACE -->
 <div id="hud-container" class="hud-container">
   <header class="tactical-banner">
-
     <div id="pvp-switcher-bar" class="pvp-switcher hidden">
       <button id="btn-switch-blue" class="pvp-team-btn blue active">BLUE</button>
       <button id="btn-switch-red" class="pvp-team-btn red">RED</button>
     </div>
-
     <div class="banner-time-coords-cluster">
       <div class="match-timer-block">
         <span class="timer-label">TIME:</span>
         <span id="mission-clock" class="timer-digits">00:00</span>
       </div>
-
       <div class="time-warp-controls" id="time-warp-controls">
-        <button type="button" id="btn-time-pause" class="time-btn" title="Pause Simulation">
-          <img src="icons/pause.svg" width="10" height="10" alt="Pause">
-        </button>
+        <button type="button" id="btn-time-pause" class="time-btn" title="Pause Simulation"><img src="icons/pause.svg" width="10" height="10" alt="Pause"></button>
         <button type="button" id="btn-time-1x" class="time-btn active">1X</button>
         <button type="button" id="btn-time-2x" class="time-btn">2X</button>
         <button type="button" id="btn-time-4x" class="time-btn">4X</button>
       </div>
-
       <div class="command-token-cluster" id="command-token-cluster" title="Squadron Command Tokens">
         <div class="token-header-line">
           <span class="token-label">TOK:</span>
           <span id="token-value" class="token-digits">8.0 / 8.0</span>
           <span id="token-regen-rate" class="token-rate">+2.5/s</span>
         </div>
-        <div class="token-bar-track">
-          <div id="token-bar" class="token-bar-fill" style="width: 100%;"></div>
-        </div>
+        <div class="token-bar-track"><div id="token-bar" class="token-bar-fill" style="width: 100%;"></div></div>
       </div>
     </div>
-
     <div class="banner-score-controls-cluster">
       <div class="victory-tracker">
         <div class="vp-group ally"><span class="vp-tag">BLUE</span><span id="vp-ally" class="vp-value">0</span></div>
@@ -202,38 +151,23 @@
         <div class="vp-group hostile"><span class="vp-tag">RED</span><span id="vp-hostile" class="vp-value">0</span></div>
       </div>
     </div>
-
     <div class="banner-cam-controls" id="radar-cam-left-dock">
       <button id="cam-btn-zoom-in" class="cam-btn" title="Zoom In">+</button>
       <button id="cam-btn-zoom-out" class="cam-btn" title="Zoom Out">-</button>
       <button id="cam-btn-track" class="cam-btn" title="Track Active Aircraft">TRK</button>
       <button id="cam-btn-reset" class="cam-btn" title="Reset View">RST</button>
     </div>
-
     <div class="top-quick-actions">
-      <button id="btn-fullscreen-toggle" class="hud-btn small" title="Toggle Fullscreen">
-        <img src="icons/fullscreen.svg" class="btn-vector-ico" width="11" height="11" alt="Fullscreen">
-        <span>FULLSCREEN</span>
-      </button>
+      <button id="btn-fullscreen-toggle" class="hud-btn small" title="Toggle Fullscreen"><img src="icons/fullscreen.svg" class="btn-vector-ico" width="11" height="11" alt="Fullscreen"><span>FULLSCREEN</span></button>
       <button type="button" id="btn-inspection-mode" class="hud-btn small hidden" title="Open live mission analysis">INSPECTION</button>
       <button type="button" id="inspection-time-stop" class="hud-btn small alert hidden" aria-pressed="false" title="Stop or resume time in this sortie">STOP TIME</button>
       <button id="btn-audio-toggle" class="hud-btn small" title="Toggle Audio">AUDIO: ON</button>
-      <button id="btn-hud-glossary" class="hud-btn small">
-        <img src="icons/manual.svg" class="btn-vector-ico" width="11" height="11" alt="Manual">
-        <span>MANUAL</span>
-      </button>
-      <button id="btn-open-settings" class="hud-btn small">
-        <img src="icons/settings.svg" class="btn-vector-ico" width="11" height="11" alt="Settings">
-        <span>SETTINGS</span>
-      </button>
+      <button id="btn-hud-glossary" class="hud-btn small"><img src="icons/manual.svg" class="btn-vector-ico" width="11" height="11" alt="Manual"><span>MANUAL</span></button>
+      <button id="btn-open-settings" class="hud-btn small"><img src="icons/settings.svg" class="btn-vector-ico" width="11" height="11" alt="Settings"><span>SETTINGS</span></button>
       <button id="btn-abort-match" class="hud-btn small alert">ABORT</button>
     </div>
   </header>
-
-  <!-- COCKPIT WORKSPACE -->
   <div class="cockpit-workspace" id="cockpit-workspace">
-
-    <!-- LEFT: SQUADRON ROSTER -->
     <aside class="squadron-flight-data pane-item" id="pane-fleet">
       <div class="strip-header" id="fleet-strip-header">
         <span id="header-squadron-name">7TH TACTICAL SQUADRON</span>
@@ -245,35 +179,21 @@
         <div id="combat-score-log-list" class="score-log-container"></div>
       </div>
     </aside>
-
-    <!-- CENTER: RADAR VIEWPORT -->
     <main class="radar-viewport pane-item active" id="pane-radar">
       <canvas id="radar-canvas"></canvas>
-
       <div class="radar-flight-hud" id="radar-flight-hud">
         <div class="rfh-panel rfh-alt" title="Flight Level Altitude &amp; Vertical Speed Indicator">
           <span class="rfh-label">ALTITUDE</span>
-          <div class="rfh-val-box">
-            <span id="hud-alt-main" class="rfh-num">FL000</span>
-            <span id="hud-alt-arrow" class="rfh-arrow">--</span>
-          </div>
+          <div class="rfh-val-box"><span id="hud-alt-main" class="rfh-num">FL000</span><span id="hud-alt-arrow" class="rfh-arrow">--</span></div>
           <span id="hud-vsi" class="rfh-sub">0 fpm LVL</span>
         </div>
-
         <div class="rfh-panel rfh-speed" title="Indicated Mach and Airspeed">
           <span class="rfh-label">AIRSPEED</span>
-          <div class="rfh-val-box">
-            <span id="hud-speed-main" class="rfh-num">M 0.00</span>
-            <span id="hud-speed-arrow" class="rfh-arrow">--</span>
-          </div>
+          <div class="rfh-val-box"><span id="hud-speed-main" class="rfh-num">M 0.00</span><span id="hud-speed-arrow" class="rfh-arrow">--</span></div>
           <span id="hud-speed-sub" class="rfh-sub">0 km/h</span>
         </div>
-
         <div class="rfh-panel rfh-center rfh-details" title="Aircraft, Heading &amp; Turn Performance">
-          <div class="rfh-center-top">
-            <span id="hud-unit-callsign" class="rfh-cs">NO AIRCRAFT SELECTED</span>
-            <span id="hud-unit-model" class="rfh-model">--</span>
-          </div>
+          <div class="rfh-center-top"><span id="hud-unit-callsign" class="rfh-cs">NO AIRCRAFT SELECTED</span><span id="hud-unit-model" class="rfh-model">--</span></div>
           <div class="rfh-compass-strip">
             <span id="hud-hdg-cardinal" class="rfh-cardinal">N</span>
             <span id="hud-hdg-deg" class="rfh-deg">000&deg;</span>
@@ -284,15 +204,12 @@
           </div>
         </div>
       </div>
-
       <div id="radar-uplink-banner" class="radar-uplink-banner hidden"></div>
-
       <div class="rwr-warning-box" id="rwr-threat-indicator" title="Radar Warning Receiver">
         <span class="rwr-label">RWR</span>
         <span id="rwr-state" class="rwr-status clean">SEARCH CLEAR</span>
         <span id="rwr-threat-detail" class="rwr-subtext">NO EMISSIONS</span>
       </div>
-
       <div class="radar-bottom-controls-dock" id="radar-bottom-controls-dock">
         <div class="radar-floating-cam-bar" id="radar-floating-cam-bar">
           <button id="cam-btn-declutter" class="cam-btn declutter-btn prominent-cam-btn">DECLUTTER: OFF</button>
@@ -300,14 +217,11 @@
         </div>
         <button type="button" id="btn-mobile-open-fleet" class="cam-btn fleet-btn prominent-cam-btn">FLEET</button>
       </div>
-
       <div class="mobile-steering-overlay">
         <button id="mobile-steer-left" class="mobile-steer-btn">&lt; TURN LEFT</button>
         <button id="mobile-steer-right" class="mobile-steer-btn">TURN RIGHT &gt;</button>
       </div>
     </main>
-
-    <!-- LIVE SORTIE INSPECTION WORKSPACE -->
     <aside id="inspection-pane" class="inspection-pane hidden" aria-label="Mission inspection workspace">
       <div class="inspection-pane-header">
         <div>
@@ -330,11 +244,8 @@
       </nav>
       <div id="inspection-content" class="inspection-content"></div>
     </aside>
-
-    <!-- RIGHT: FLIGHT CONTROLS & WEAPONS SMS -->
     <aside class="active-unit-mfd pane-item" id="pane-mfd">
       <div class="strip-header">FLIGHT CONTROLS &amp; STORES MANAGEMENT</div>
-
       <div id="active-unit-details" class="unit-flight-box">
         <div class="unit-title-row" style="display:flex;justify-content:space-between;align-items:center;">
           <div class="unit-title" id="mfd-unit-name">NO AIRCRAFT SELECTED</div>
@@ -350,15 +261,12 @@
             <span id="mfd-ace-tag" class="ace-indicator hidden"><img src="icons/diamond.svg" width="9" height="9" alt="Ace" style="vertical-align:middle;margin-right:2px;">LEAD PILOT</span>
           </div>
         </div>
-
         <span id="selected-target-info" style="display:none;">TARGET: NONE</span>
-
         <div class="throttle-quadrant" id="throttle-quadrant" title="Engine Thrust Setting">
           <div class="throttle-meta-row">
             <span class="tq-label">ENGINE POWER</span>
             <span id="alpha-val" class="tq-val">50% CRUISE [M 0.75]</span>
           </div>
-
           <div class="throttle-track-wrap">
             <input type="range" id="engine-slider" min="20" max="100" value="50" class="military-throttle-slider" tabindex="-1" autocomplete="off">
             <div class="throttle-detents">
@@ -369,7 +277,6 @@
             </div>
           </div>
         </div>
-
         <div class="stress-container" id="stress-container-box">
           <div class="stress-label-row">
             <span id="stress-label-text">PILOT G-LOAD ACCUMULATION:</span>
@@ -379,35 +286,23 @@
           <div id="gloc-badge" class="gloc-badge hidden">G-LOC BLACKOUT</div>
           <div id="stress-warning-badge" class="stress-warn-badge hidden">TUNNEL VISION (-30% TURN EFFICIENCY)</div>
         </div>
-
         <div class="flight-actions-cluster">
           <div class="energy-trade-buttons">
             <button id="btn-pitch-dive" class="hud-btn small" title="Convert altitude into airspeed">DIVE</button>
             <button id="btn-pitch-climb" class="hud-btn small" title="Convert airspeed into altitude">CLIMB</button>
           </div>
-          <button id="btn-rtb-rearm" class="hud-btn small rtb-toggle-btn" title="Return to base for replenishment">
-            RETURN TO BASE
-          </button>
+          <button id="btn-rtb-rearm" class="hud-btn small rtb-toggle-btn" title="Return to base for replenishment">RETURN TO BASE</button>
         </div>
       </div>
-
-      <div class="pylon-bay">
-        <div id="pylon-rack" class="pylon-rack-grid"></div>
-      </div>
+      <div class="pylon-bay"><div id="pylon-rack" class="pylon-rack-grid"></div></div>
     </aside>
-
   </div>
-
   <footer class="tactical-deck-bay">
-    <div class="deck-header">
-      <span>FLIGHT MANEUVERS</span>
-      <span class="deck-alert" id="maneuver-alert">READY</span>
-    </div>
+    <div class="deck-header"><span>FLIGHT MANEUVERS</span><span class="deck-alert" id="maneuver-alert">READY</span></div>
     <div id="maneuver-deck" class="deck-grid"></div>
   </footer>
 </div>
 
-<!-- DATA & LOGIC SCRIPTS -->
 <script src="js/data/constants.js"></script>
 <script src="js/data/manual/basics.js"></script>
 <script src="js/data/manual/sensors.js"></script>
@@ -433,6 +328,7 @@
 <script src="js/data/weapons/pods.js"></script>
 <script src="js/data/weapons.js"></script>
 <script src="js/data/upgrades/components.js"></script>
+<script src="js/data/upgrades/advancedmaneuvers.js"></script>
 <script src="js/data/upgrades/maneuvers.js"></script>
 <script src="js/data/upgrades.js"></script>
 
@@ -445,13 +341,17 @@
 <script src="js/data/templates/experimental.js"></script>
 <script src="js/data/templates.js"></script>
 
-<!-- Engine Systems -->
 <script src="js/systems/engine/persistence.js"></script>
 <script src="js/systems/engine/rwr.js"></script>
+<script src="js/systems/engine/synth.js"></script>
 <script src="js/systems/engine/audio.js"></script>
 <script src="js/systems/engine/physics.js"></script>
+<script src="js/systems/engine/spawner.js"></script>
 
-<!-- Entities -->
+<script src="js/systems/missiles/guidance.js"></script>
+<script src="js/systems/missiles/kinetics.js"></script>
+<script src="js/systems/missiles/impact.js"></script>
+
 <script src="js/systems/entities/cloud.js"></script>
 <script src="js/systems/entities/civilian.js"></script>
 <script src="js/systems/entities/ghost.js"></script>
@@ -459,12 +359,10 @@
 <script src="js/systems/entities/buffs.js"></script>
 <script src="js/systems/entities/aircraft.js"></script>
 <script src="js/systems/entities/aircraftcombat.js"></script>
-<script src="js/systems/entities/missilekinetics.js"></script>
 <script src="js/systems/entities/missile.js"></script>
 <script src="js/systems/entities/surface.js"></script>
 <script src="js/systems/entities.js"></script>
 
-<!-- Radar Systems -->
 <script src="js/systems/radar/camera.js"></script>
 <script src="js/systems/radar/effects.js"></script>
 <script src="js/systems/radar/environment.js"></script>
@@ -475,28 +373,37 @@
 <script src="js/systems/radar/renderer.js"></script>
 <script src="js/systems/radar.js"></script>
 
-<!-- Combat & Simulation Systems -->
+<script src="js/systems/combat/guns.js"></script>
 <script src="js/systems/combat/combat.js"></script>
+<script src="js/systems/combat/planner.js"></script>
 <script src="js/systems/combat/fleet.js"></script>
 <script src="js/systems/combat/tactics.js"></script>
+<script src="js/systems/combat/evasion.js"></script>
 <script src="js/systems/combat/ai.js"></script>
+
 <script src="js/systems/simulation/scoring.js"></script>
-<script src="js/systems/simulation/timeline.js"></script>
-<script src="js/systems/simulation/replay.js"></script>
-<script src="js/systems/simulation/aar.js"></script>
+<script src="js/systems/simulation/debrief/timeline.js"></script>
+<script src="js/systems/simulation/debrief/stats.js"></script>
+<script src="js/systems/simulation/debrief/report.js"></script>
+<script src="js/systems/simulation/replay/codec.js"></script>
+<script src="js/systems/simulation/replay/player.js"></script>
 <script src="js/systems/simulation/detection.js"></script>
+<script src="js/systems/simulation/traffic.js"></script>
 <script src="js/systems/simulation.js"></script>
 
-<!-- Modular Modal DOM Templates -->
 <script src="js/ui/modals/dialogs.js"></script>
 <script src="js/ui/modals/editor.js"></script>
 <script src="js/ui/modals/debrief.js"></script>
 <script src="js/ui/modals/panels.js"></script>
 
-<!-- User Interface Systems -->
 <script src="js/ui/dropdown.js"></script>
 <script src="js/ui/settings.js"></script>
-<script src="js/ui/leaderboard.js"></script>
+<script src="js/ui/leaderboard/dossier.js"></script>
+<script src="js/ui/leaderboard/leaderboard.js"></script>
+<script src="js/ui/missioneditor/builder.js"></script>
+<script src="js/ui/missioneditor/editor.js"></script>
+<script src="js/ui/procurement/actions.js"></script>
+<script src="js/ui/procurement.js"></script>
 <script src="js/ui/avionics/roster.js"></script>
 <script src="js/ui/avionics/avionics.js"></script>
 <script src="js/ui/controls/targeting.js"></script>
@@ -507,11 +414,12 @@
 <script src="js/ui/cards/deck.js"></script>
 <script src="js/ui/cards/target.js"></script>
 <script src="js/ui/cards/autocannon.js"></script>
+<script src="js/ui/cards/updater.js"></script>
 <script src="js/ui/cards/pylons.js"></script>
 <script src="js/ui/cards.js"></script>
 
-<!-- Procurement Specifications Subsystems -->
 <script src="js/ui/procurement/specs/eval.js"></script>
+<script src="js/ui/procurement/specs/facilities.js"></script>
 <script src="js/ui/procurement/specs/views.js"></script>
 <script src="js/ui/procurement/specs/modal.js"></script>
 <script src="js/ui/procurement/specs/specs.js"></script>
@@ -522,14 +430,16 @@
 <script src="js/ui/procurement/dialogs/preconfig.js"></script>
 <script src="js/ui/procurement/catalog/airframes.js"></script>
 <script src="js/ui/procurement/catalog/shelf.js"></script>
+<script src="js/ui/procurement/squadron/stations.js"></script>
 <script src="js/ui/procurement/squadron/card.js"></script>
 <script src="js/ui/procurement/squadron/roster.js"></script>
 <script src="js/ui/procurement/equip.js"></script>
 <script src="js/ui/procurement/dialogs/dialog.js"></script>
-<script src="js/ui/procurement.js"></script>
-<script src="js/ui/mission-editor.js"></script>
 
-<!-- Live Sortie Inspection Subsystems -->
+<script src="js/ui/inspection/overview.js"></script>
+<script src="js/ui/inspection/solutions.js"></script>
+<script src="js/ui/inspection/events.js"></script>
+<script src="js/ui/inspection/radar.js"></script>
 <script src="js/ui/inspection/telemetry.js"></script>
 <script src="js/ui/inspection/weapons.js"></script>
 <script src="js/ui/inspection/views.js"></script>
