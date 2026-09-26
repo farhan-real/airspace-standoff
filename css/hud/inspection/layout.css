@@ -203,15 +203,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.inspection-events-dock {
-  flex: 0 0 clamp(90px, 20%, 150px);
-  min-height: 70px;
-  display: flex;
-  flex-direction: column;
-  background: rgba(0, 0, 0, 0.55);
-  border-top: 1px solid var(--glass-border);
-}
-
 .inspection-subhead {
   flex: 0 0 auto;
   display: flex;
@@ -231,13 +222,15 @@
   width: 100%;
   display: grid;
   gap: 1px;
-  padding: 4px 8px;
+  padding: 5px 8px;
   border: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.04);
   background: transparent;
   color: var(--color-frost-glow);
   text-align: left;
   cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.12s ease;
 }
 
 .inspection-event-row:hover,
@@ -268,7 +261,7 @@
   .inspection-layout .cockpit-workspace {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
-    grid-template-rows: minmax(130px, 26dvh) minmax(220px, 1fr) minmax(68px, 13dvh) !important;
+    grid-template-rows: minmax(130px, 28dvh) minmax(220px, 1fr) minmax(68px, 14dvh) !important;
   }
   .inspection-layout #pane-radar {
     grid-column: 1 !important;
@@ -284,12 +277,7 @@
   .inspection-layout #pane-mfd {
     grid-column: 1 !important;
     grid-row: 3 !important;
-    max-height: 13dvh !important;
-  }
-  .inspection-layout .inspection-events-dock {
-    display: flex !important;
-    flex: 0 0 clamp(70px, 18dvh, 95px);
-    min-height: 60px;
+    max-height: 14dvh !important;
   }
 }
 
@@ -310,10 +298,5 @@
   .inspection-layout #pane-mfd {
     grid-column: 3 !important;
     grid-row: 1 !important;
-  }
-  .inspection-layout .inspection-events-dock {
-    display: flex !important;
-    flex: 0 0 clamp(65px, 22dvh, 90px);
-    min-height: 55px;
   }
 }

@@ -19,8 +19,6 @@ class InspectionModeController {
     this.resumeWarp = 1;
     this._lastEntityIdsKey = '';
     this._lastStructureSig = '';
-    this._lastEventsCount = 0;
-    this._lastFocusedEvent = null;
     this.init();
   }
 
@@ -84,8 +82,6 @@ class InspectionModeController {
     this.activeTab = 'OVERVIEW';
     this._lastEntityIdsKey = '';
     this._lastStructureSig = '';
-    this._lastEventsCount = 0;
-    this._lastFocusedEvent = null;
     this.setEnemyDetails(true);
     this.setAvailable(this.enabled);
     if (this.enabled) {
@@ -252,7 +248,9 @@ class InspectionModeController {
     };
     this.events.unshift(event);
     if (this.events.length > 500) this.events.pop();
-    if (this.isOpen) this.renderEvents();
+    if (this.isOpen && this.activeTab === 'TRACE') {
+      this.render();
+    }
   }
 
   update() {
@@ -414,35 +412,6 @@ class InspectionModeController {
         }
       }
     }
-
-    this.renderEvents();
-  }
-
-  renderEvents() {
-    const listEl = document.getElementById('inspection-event-list');
-    const countEl = document.getElementById('inspection-event-count');
-    if (!listEl) return;
-    if (countEl) countEl.textContent = `${this.events.length} EVENTS`;
-
-    if (this.events.length === this._lastEventsCount && this.focusedEvent === this._lastFocusedEvent) return;
-    this._lastEventsCount = this.events.length;
-    this._lastFocusedEvent = this.focusedEvent;
-
-    listEl.innerHTML = this.events.slice(0, 30).map(ev => `
-      <button type="button" class="inspection-event-row ${this.focusedEvent && this.focusedEvent.id === ev.id ? 'focused' : ''}" data-ev-id="${ev.id}">
-        <span>[${ev.time}] ${ev.type}</span>
-        <b>${this.escape(ev.title)}</b>
-      </button>
-    `).join('') || '<p class="inspection-muted" style="padding:8px 10px;">Waiting for operational events...</p>';
-
-    listEl.querySelectorAll('.inspection-event-row').forEach(row => {
-      row.onclick = () => {
-        const id = row.getAttribute('data-ev-id');
-        this.focusedEvent = this.events.find(e => e.id === id) || null;
-        this.activeTab = 'TRACE';
-        this.render(true);
-      };
-    });
   }
 
   escape(s) {
