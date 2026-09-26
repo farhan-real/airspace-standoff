@@ -20,6 +20,7 @@ window.AIRCRAFT_STEALTH = {
     lookDownBonus: 0.35,
     sigma_0: 0.0001,
     beamSpike: 2.0,
+    thermalBloom: 0.55,
     M_max: 4500,
     G_limit: 9.5,
     isDrone: false,
@@ -34,7 +35,7 @@ window.AIRCRAFT_STEALTH = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Benchmark 5th-gen air dominance. 6 internal weapon bay slots (0 drag, VLO preserved) plus 2 optional external pylons (8 total slots).'
+    desc: 'Benchmark 5th-gen air dominance. Flat 2D vectoring nozzles with ceramic expansion tiles reduce IR exhaust bloom to 0.55x. 6 internal weapon bay slots plus 2 external pylons.'
   },
   'YF-23': {
     id: 'YF-23',
@@ -53,6 +54,7 @@ window.AIRCRAFT_STEALTH = {
     lookDownBonus: 0.32,
     sigma_0: 0.0001,
     beamSpike: 1.8,
+    thermalBloom: 0.45,
     M_max: 4200,
     G_limit: 9.0,
     isDrone: false,
@@ -67,7 +69,7 @@ window.AIRCRAFT_STEALTH = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Fastest stealth supercruiser in class (Mach 1.65). Features 6 internal bay slots and 2 external pylons (8 total slots).'
+    desc: 'High-speed stealth supercruiser (Mach 1.65). Upper fuselage trough-shielded exhaust lined with heat-ablating tiles reduces thermal signature to 0.45x, heavily degrading enemy IR tracking.'
   },
   'F-35A': {
     id: 'F-35A',
@@ -86,6 +88,7 @@ window.AIRCRAFT_STEALTH = {
     lookDownBonus: 0.45,
     sigma_0: 0.0003,
     beamSpike: 2.2,
+    thermalBloom: 0.70,
     M_max: 6000,
     G_limit: 9.0,
     isDrone: false,
@@ -100,7 +103,7 @@ window.AIRCRAFT_STEALTH = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Supreme battlespace sensor fusion ($38.0M). 4 internal weapon bay slots for clean stealth cruise, plus 4 external pylons for beast mode strike (8 total slots).'
+    desc: 'Supreme battlespace sensor fusion ($38.0M). Serrated nozzle edges and channeled bypass air provide 0.70x IR suppression. 4 internal weapon bay slots plus 4 external pylons.'
   },
   'Su-57': {
     id: 'Su-57',
@@ -119,6 +122,7 @@ window.AIRCRAFT_STEALTH = {
     lookDownBonus: 0.28,
     sigma_0: 0.004,
     beamSpike: 2.3,
+    thermalBloom: 0.75,
     M_max: 7500,
     G_limit: 9.5,
     isDrone: false,
@@ -133,7 +137,7 @@ window.AIRCRAFT_STEALTH = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Tandem main weapon bays and wing-root bays (4 internal slots) plus 4 external pylons (8 total slots).'
+    desc: '3D thrust-vectoring stealth dogfighter. Partial engine nacelle cooling and serrated nozzle shrouds provide 0.75x thermal bloom. 4 internal slots and 4 external pylons.'
   },
   'J-20': {
     id: 'J-20',
@@ -152,6 +156,7 @@ window.AIRCRAFT_STEALTH = {
     lookDownBonus: 0.30,
     sigma_0: 0.002,
     beamSpike: 2.4,
+    thermalBloom: 0.72,
     M_max: 7800,
     G_limit: 9.0,
     isDrone: false,
@@ -166,7 +171,7 @@ window.AIRCRAFT_STEALTH = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Ventral and lateral weapon bays provide 4 internal slots; supports 4 external wing pylons for standoff strikes (8 total slots).'
+    desc: 'Heavy stealth interceptor. Serrated nozzle tiles and S-duct shielding limit thermal bloom to 0.72x. Ventral and lateral bays provide 4 internal slots; supports 4 external pylons.'
   },
   'Su-75': {
     id: 'Su-75',
@@ -185,6 +190,7 @@ window.AIRCRAFT_STEALTH = {
     lookDownBonus: 0.25,
     sigma_0: 0.007,
     beamSpike: 2.1,
+    thermalBloom: 0.75,
     M_max: 5200,
     G_limit: 9.0,
     isDrone: false,
@@ -199,7 +205,7 @@ window.AIRCRAFT_STEALTH = {
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Accessible 5th-gen tactical fighter ($24.0M). Features 4 internal bay slots and 2 external weapon pylons (6 total slots).'
+    desc: 'Lightweight 5th-gen tactical fighter. Single engine with serrated vectoring nozzle provides 0.75x thermal bloom. 4 internal bay slots and 2 external pylons.'
   },
   'FC-31': {
     id: 'FC-31',
@@ -218,6 +224,7 @@ window.AIRCRAFT_STEALTH = {
     lookDownBonus: 0.30,
     sigma_0: 0.003,
     beamSpike: 2.2,
+    thermalBloom: 0.72,
     M_max: 6200,
     G_limit: 9.0,
     isDrone: false,
@@ -232,7 +239,7 @@ window.AIRCRAFT_STEALTH = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Twin-engine naval stealth platform. Deep central bay accommodates 4 internal slots; supports 4 external wing pylons (8 total slots).'
+    desc: 'Twin-engine naval stealth platform. Low-bypass engines with serrated stealth shrouds maintain a 0.72x thermal bloom. 4 internal slots and 4 external pylons.'
   },
   'J-35': {
     id: 'J-35',
@@ -251,6 +258,7 @@ window.AIRCRAFT_STEALTH = {
     lookDownBonus: 0.35,
     sigma_0: 0.0025,
     beamSpike: 2.2,
+    thermalBloom: 0.70,
     M_max: 6800,
     G_limit: 9.0,
     isDrone: false,
@@ -265,6 +273,6 @@ window.AIRCRAFT_STEALTH = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Naval carrier stealth fighter with 4 internal slots for clean supersonic egress, plus 4 external pylons for heavy strikes (8 total slots).'
+    desc: 'Carrier air wing stealth fighter. Low-bypass engines with channeled bypass cooling limit thermal signature to 0.70x. 4 internal slots and 4 external pylons.'
   }
 };

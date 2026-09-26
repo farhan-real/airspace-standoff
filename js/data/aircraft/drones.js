@@ -20,6 +20,7 @@ window.AIRCRAFT_DRONES = {
     lookDownBonus: 0.15,
     sigma_0: 0.05,
     beamSpike: 1.9,
+    thermalBloom: 0.40,
     M_max: 350,
     G_limit: 18.0,
     isDrone: true,
@@ -35,7 +36,7 @@ window.AIRCRAFT_DRONES = {
     totalSlots: 2,
     maxPylonRating: 'Type S',
     upgradeSockets: 2,
-    desc: 'Low-cost 18G swarm drone ($3.5M). 2 internal weapon bay slots (2 total slots) maintain zero drag and minimal radar cross section.'
+    desc: 'Low-cost 18G swarm drone ($3.5M). Compact micro-turbine produces minimal 0.40x thermal exhaust signature. 2 internal bay slots maintain zero drag.'
   },
   'MQ-101': {
     id: 'MQ-101',
@@ -54,6 +55,7 @@ window.AIRCRAFT_DRONES = {
     lookDownBonus: 0.20,
     sigma_0: 0.03,
     beamSpike: 1.9,
+    thermalBloom: 0.45,
     M_max: 450,
     G_limit: 20.0,
     isDrone: true,
@@ -69,7 +71,7 @@ window.AIRCRAFT_DRONES = {
     totalSlots: 2,
     maxPylonRating: 'Type S',
     upgradeSockets: 2,
-    desc: 'Supersonic interceptor drone (Mach 1.22, 20G limit). Carries 2 internal weapon bay slots with zero drag penalty (2 total slots).'
+    desc: 'Supersonic interceptor drone (Mach 1.22, 20G limit). Small low-bypass core maintains suppressed 0.45x thermal bloom. 2 internal weapon bay slots.'
   },
   'XQ-58A': {
     id: 'XQ-58A',
@@ -88,6 +90,7 @@ window.AIRCRAFT_DRONES = {
     lookDownBonus: 0.20,
     sigma_0: 0.04,
     beamSpike: 1.8,
+    thermalBloom: 0.50,
     M_max: 1300,
     G_limit: 18.0,
     isDrone: true,
@@ -103,7 +106,7 @@ window.AIRCRAFT_DRONES = {
     totalSlots: 4,
     maxPylonRating: 'Type M',
     upgradeSockets: 2,
-    desc: 'Stealth loyal wingman ($7.5M). 2 internal bay slots for BVR missiles and 2 external wing pylons (4 total slots).'
+    desc: 'Stealth loyal wingman. Serpentine inlet and recessed trapezoidal exhaust drop thermal signature to 0.50x. 2 internal bay slots and 2 external pylons.'
   },
   'Kizilelma': {
     id: 'Kizilelma',
@@ -122,6 +125,7 @@ window.AIRCRAFT_DRONES = {
     lookDownBonus: 0.25,
     sigma_0: 0.04,
     beamSpike: 2.3,
+    thermalBloom: 0.65,
     M_max: 2200,
     G_limit: 16.0,
     isDrone: true,
@@ -137,7 +141,7 @@ window.AIRCRAFT_DRONES = {
     totalSlots: 4,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Carrier-capable supersonic UCAV. 2 internal bay slots plus 2 external wing stations (4 total slots).'
+    desc: 'Carrier-capable supersonic UCAV. Turbofan with fuselage-faired nozzle limits thermal bloom to 0.65x. 2 internal bay slots plus 2 external wing stations.'
   },
   'S-70': {
     id: 'S-70',
@@ -156,6 +160,7 @@ window.AIRCRAFT_DRONES = {
     lookDownBonus: 0.25,
     sigma_0: 0.02,
     beamSpike: 1.5,
+    thermalBloom: 0.55,
     M_max: 4500,
     G_limit: 12.0,
     isDrone: true,
@@ -171,7 +176,7 @@ window.AIRCRAFT_DRONES = {
     totalSlots: 6,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Heavy 20-ton stealth flying-wing UCAV. 4 deep internal bay slots plus 2 external pylons (6 total slots).'
+    desc: 'Heavy 20-ton stealth flying-wing UCAV. Flat shielded exhaust nozzle provides 0.55x IR suppression. 4 deep internal bay slots plus 2 external pylons.'
   },
   'MQ-28': {
     id: 'MQ-28',
@@ -190,6 +195,7 @@ window.AIRCRAFT_DRONES = {
     lookDownBonus: 0.25,
     sigma_0: 0.05,
     beamSpike: 2.1,
+    thermalBloom: 0.50,
     M_max: 1800,
     G_limit: 15.0,
     isDrone: true,
@@ -205,7 +211,7 @@ window.AIRCRAFT_DRONES = {
     totalSlots: 4,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Collaborative combat aircraft with 2 internal bay stations plus 2 external wing pylons (4 total slots).'
+    desc: 'Collaborative combat aircraft. Dorsal flushed exhaust maintains 0.50x thermal signature. 2 internal bay stations plus 2 external wing pylons.'
   },
   'RQ-180': {
     id: 'RQ-180',
@@ -224,6 +230,7 @@ window.AIRCRAFT_DRONES = {
     lookDownBonus: 0.45,
     sigma_0: 0.0001,
     beamSpike: 1.3,
+    thermalBloom: 0.35,
     M_max: 950,
     G_limit: 8.0,
     isDrone: true,
@@ -239,6 +246,6 @@ window.AIRCRAFT_DRONES = {
     totalSlots: 2,
     maxPylonRating: 'Type S',
     upgradeSockets: 4,
-    desc: 'Ultra-low observable flying-wing drone ($16M, 0.0001m2 RCS). 2 internal bay slots with zero external drag (2 total slots).'
+    desc: 'High-altitude reconnaissance flying wing (0.0001m2 RCS). Top-surface diffusion troughs mix ambient sub-zero air, cutting thermal bloom to 0.35x. 2 internal bay slots.'
   }
 };

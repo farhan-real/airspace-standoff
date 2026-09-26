@@ -182,7 +182,14 @@ const Physics = {
       ? Math.min(0.40, cloudHits * 0.15)
       : 0.0;
 
-    const afterburnerBonus = ((weapon.seeker === 'IIR' || weapon.seeker === 'EO') && target.engineAlpha > 0.85) ? 0.15 : 0.0;
+    let targetThermalMultiplier = Number(target.thermalBloom !== undefined ? target.thermalBloom : 1.0);
+    if (target.irPenalty) targetThermalMultiplier *= (1.0 + target.irPenalty);
+
+    let thermalModifier = 0.0;
+    if (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT') {
+      thermalModifier = (targetThermalMultiplier - 1.0) * 0.22;
+    }
+
     const heavyBonus = weapon.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
 
     let jammerPenalty = 0.0;
@@ -245,7 +252,7 @@ const Physics = {
     const agilityDefenseBonus = (targetAgility - 0.85) * 0.18;
     const turnOptBonus = (turnOptEff - 0.70) * 0.15;
 
-    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate - agilityDefenseBonus - turnOptBonus + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + afterburnerBonus - jammerPenalty - shooterStressPenalty - offBoresightPenalty;
+    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate - agilityDefenseBonus - turnOptBonus + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + thermalModifier - jammerPenalty - shooterStressPenalty - offBoresightPenalty;
     const pkPercent = Math.round(Math.max(12, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = (dist >= sweetMin && dist <= sweetMax) ? (isClosing ? '^' : 'v') : (isClosing ? (dist > sweetMax ? '^' : 'v') : 'v');
@@ -266,7 +273,7 @@ const Physics = {
         aspectDifferenceRad: aspectDiff, aspectScore, offBoresightPenalty, rearShot: isRearShot,
         activeEvasion, passiveBaseline, effectiveDefenseEstimate, mixedSeekers: hasMixedSeekers,
         targetEnergy, energyBleedBonus, targetAgility, agilityDefenseBonus, turnEfficiency: turnOptEff,
-        turnEfficiencyPenalty: turnOptBonus, weatherPenalty, afterburnerBonus, heavyBonus,
+        turnEfficiencyPenalty: turnOptBonus, weatherPenalty, thermalModifier, targetThermalBloom: targetThermalMultiplier, heavyBonus,
         jammerPenalty, shooterStressPenalty, salvoBonus, salvoCount, preClampProbability: basePk,
         finalProbabilityPercent: pkPercent
       }

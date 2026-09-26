@@ -26,7 +26,7 @@ class Aircraft {
     const catalog = window.AIRCRAFT_CATALOG || {};
     this.spec = catalog[specId] ? JSON.parse(JSON.stringify(catalog[specId])) : {
       id: specId, name: specId, role: 'Fighter', category: 'MULTIROLE', cost: 18.0, hp: 4, AGI_0: 0.85, S_0: 0.95, sOpt: 0.65,
-      R_0: 75.0, radarType: 'Pulse-Doppler', radarConeDeg: 120, sigma_0: 1.0, M_max: 5000, G_limit: 9,
+      R_0: 75.0, radarType: 'Pulse-Doppler', radarConeDeg: 120, sigma_0: 1.0, thermalBloom: 1.0, M_max: 5000, G_limit: 9,
       builtInGun: 'M61A2', allowedGuns: ['M61A2'], gunRounds: 24, internalSlots: 0, externalSlots: 6, hasCenterline: true, centerlineSlots: 4, totalSlots: 6, maxPylonRating: 'Type M', upgradeSockets: 3
     };
     this.team = team;
@@ -62,8 +62,10 @@ class Aircraft {
     this.prevSpeed = this.speed;
     this.speedTrend = '--';
     this.energy = 1.0;
-    this.baseThermalBloom = 1.0;
-    this.thermalBloom = 1.0;
+
+    const baseThermal = Number(this.spec && this.spec.thermalBloom !== undefined ? this.spec.thermalBloom : 1.0);
+    this.baseThermalBloom = baseThermal;
+    this.thermalBloom = this.baseThermalBloom;
     this.thermalBloomTimer = 0.0;
 
     this.aceEvasionBonus = 0.0;
@@ -283,9 +285,12 @@ class Aircraft {
 
     if (this.thermalBloomTimer > 0) {
       this.thermalBloomTimer -= dt;
-      this.thermalBloom = 1.6;
+      this.thermalBloom = Math.max(1.6, (this.baseThermalBloom || 1.0) * 1.6);
     } else {
-      this.thermalBloom = this.baseThermalBloom || 1.0;
+      let currentThrottleMultiplier = 1.0;
+      if (this.engineAlpha > 0.85) currentThrottleMultiplier = 1.45;
+      else if (this.engineAlpha < 0.35) currentThrottleMultiplier = 0.70;
+      this.thermalBloom = (this.baseThermalBloom || 1.0) * currentThrottleMultiplier;
     }
 
     const recoveryRate = 0.09 * (this.engineAlpha || 0.50);

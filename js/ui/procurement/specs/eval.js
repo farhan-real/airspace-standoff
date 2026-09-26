@@ -72,6 +72,13 @@ class StatEvaluator {
         if (val <= 3.8) return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
+      case 'thermal_bloom':
+        if (val <= 0.50) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val <= 0.75) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val <= 1.00) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val <= 1.30) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
       case 'ordnance_mass':
       case 'component_mass':
       case 'deadweight':

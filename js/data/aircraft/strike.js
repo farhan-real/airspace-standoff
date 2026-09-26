@@ -20,6 +20,7 @@ window.AIRCRAFT_STRIKE = {
     lookDownBonus: 0.50,
     sigma_0: 5.0,
     beamSpike: 4.0,
+    thermalBloom: 0.80,
     M_max: 7200,
     G_limit: 6.5,
     isDrone: false,
@@ -34,7 +35,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Titanium bathtub armored close-support aircraft (7 HP). 10 external hardpoints plus an extra heavy centerline station.'
+    desc: 'Titanium bathtub armored CAS aircraft (7 HP). High-bypass TF34 non-afterburning turbofans are masked from below by the horizontal stabilizer, reducing lower-hemisphere IR bloom to 0.80x. 10 external hardpoints.'
   },
   'Su-25SM3': {
     id: 'Su-25SM3',
@@ -53,6 +54,7 @@ window.AIRCRAFT_STRIKE = {
     lookDownBonus: 0.40,
     sigma_0: 4.8,
     beamSpike: 3.8,
+    thermalBloom: 1.10,
     M_max: 6800,
     G_limit: 7.0,
     isDrone: false,
@@ -67,7 +69,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Titanium ground attacker ($11.5M, 7 HP) with 10 external stations for ordnance and an extra centerline station.'
+    desc: 'Titanium ground attacker ($11.5M, 7 HP). Twin non-afterburning R-195 turbojets without bypass cooling yield a 1.10x thermal signature. 10 external stations for ordnance.'
   },
   'Su-34': {
     id: 'Su-34',
@@ -86,6 +88,7 @@ window.AIRCRAFT_STRIKE = {
     lookDownBonus: 0.25,
     sigma_0: 3.50,
     beamSpike: 4.2,
+    thermalBloom: 1.25,
     M_max: 12000,
     G_limit: 7.5,
     isDrone: false,
@@ -100,7 +103,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 12,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Armored strike bomber with 12 external weapon stations and an extra centerline carriage certified for Kh-47M2 Kinzhal.'
+    desc: 'Armored strike bomber. Heavy afterburning AL-31F engines produce a 1.25x thermal signature. 12 external stations and centerline carriage certified for Kh-47M2 Kinzhal.'
   },
   'B-1B': {
     id: 'B-1B',
@@ -119,6 +122,7 @@ window.AIRCRAFT_STRIKE = {
     lookDownBonus: 0.30,
     sigma_0: 2.4,
     beamSpike: 4.2,
+    thermalBloom: 1.45,
     M_max: 18000,
     G_limit: 4.5,
     isDrone: false,
@@ -133,7 +137,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 14,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Variable-sweep supersonic heavy bomber. 6 internal bay slots, 8 external pylons (14 total slots), plus extra centerline mount.'
+    desc: 'Variable-sweep supersonic bomber. Four F101-GE-102 afterburning engines in paired nacelles generate a heavy 1.45x thermal exhaust signature. 6 internal slots and 8 external pylons.'
   },
   'Tu-160M': {
     id: 'Tu-160M',
@@ -152,6 +156,7 @@ window.AIRCRAFT_STRIKE = {
     lookDownBonus: 0.20,
     sigma_0: 15.0,
     beamSpike: 4.8,
+    thermalBloom: 1.60,
     M_max: 22000,
     G_limit: 3.5,
     isDrone: false,
@@ -166,7 +171,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 16,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Heavy supersonic strategic bomber (9 HP). 8 internal rotary bay slots, 8 external pylons (16 total slots), plus dual centerline mounts.'
+    desc: 'Heavy supersonic strategic bomber (9 HP). Four massive NK-32 afterburning turbofans generate a colossal 1.60x thermal bloom visible from deep standoff. 8 internal slots and dual centerline mounts.'
   },
   'B-21': {
     id: 'B-21',
@@ -185,6 +190,7 @@ window.AIRCRAFT_STRIKE = {
     lookDownBonus: 0.40,
     sigma_0: 0.0002,
     beamSpike: 1.4,
+    thermalBloom: 0.35,
     M_max: 15000,
     G_limit: 4.5,
     isDrone: false,
@@ -199,7 +205,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 16,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Very low observable flying wing (0.0002m2 RCS). 16 internal bay slots with zero external pylons for total stealth (16 total slots).'
+    desc: 'Very low observable flying wing. Top-surface flush conformal exhaust troughs with extreme cold-air diffusion drop thermal signature to 0.35x. 16 internal bay slots with zero external drag.'
   },
   'B-2A': {
     id: 'B-2A',
@@ -218,6 +224,7 @@ window.AIRCRAFT_STRIKE = {
     lookDownBonus: 0.40,
     sigma_0: 0.0001,
     beamSpike: 1.4,
+    thermalBloom: 0.38,
     M_max: 18000,
     G_limit: 4.0,
     isDrone: false,
@@ -232,6 +239,6 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 16,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Strategic stealth flying wing. Internal rotary launcher bays provide 16 internal slots with zero external drag (16 total slots).'
+    desc: 'Strategic stealth flying wing. Upper-surface slotted exhaust troughs blend bypass ambient air before discharge, suppressing IR signature to 0.38x. 16 internal rotary slots.'
   }
 };

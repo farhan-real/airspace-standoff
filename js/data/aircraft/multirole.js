@@ -20,6 +20,7 @@ window.AIRCRAFT_MULTIROLE = {
     lookDownBonus: 0.20,
     sigma_0: 1.10,
     beamSpike: 2.8,
+    thermalBloom: 1.00,
     M_max: 4200,
     G_limit: 9.0,
     isDrone: false,
@@ -34,7 +35,7 @@ window.AIRCRAFT_MULTIROLE = {
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Light tailless delta fighter ($11.5M). 6 external wing stations plus extra fuselage centerline pylon.'
+    desc: 'Light tailless delta fighter ($11.5M). Single SNECMA M53 engine produces standard 1.00x baseline thermal bloom. 6 external stations plus centerline pylon.'
   },
   'Tejas-MK2': {
     id: 'Tejas-MK2',
@@ -53,6 +54,7 @@ window.AIRCRAFT_MULTIROLE = {
     lookDownBonus: 0.25,
     sigma_0: 0.75,
     beamSpike: 2.6,
+    thermalBloom: 0.95,
     M_max: 4800,
     G_limit: 9.0,
     isDrone: false,
@@ -67,7 +69,7 @@ window.AIRCRAFT_MULTIROLE = {
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Compact canard-delta platform with 6 external wing stations plus extra fuselage centerline station.'
+    desc: 'Compact canard-delta platform. Single F414 engine in a compact fuselage limits thermal signature to 0.95x. 6 external wing stations plus centerline station.'
   },
   'F-16V': {
     id: 'F-16V',
@@ -86,6 +88,7 @@ window.AIRCRAFT_MULTIROLE = {
     lookDownBonus: 0.25,
     sigma_0: 1.20,
     beamSpike: 3.2,
+    thermalBloom: 1.00,
     M_max: 4500,
     G_limit: 9.0,
     isDrone: false,
@@ -100,7 +103,7 @@ window.AIRCRAFT_MULTIROLE = {
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Agile multirole baseline ($13.5M). 6 external wing pylons and extra centerline fuselage hardpoint.'
+    desc: 'Agile multirole baseline ($13.5M). Single afterburning F110 engine yields standard 1.00x thermal bloom. 6 external wing pylons and centerline hardpoint.'
   },
   'MiG-29K': {
     id: 'MiG-29K',
@@ -119,6 +122,7 @@ window.AIRCRAFT_MULTIROLE = {
     lookDownBonus: 0.20,
     sigma_0: 2.20,
     beamSpike: 3.5,
+    thermalBloom: 1.20,
     M_max: 5500,
     G_limit: 8.5,
     isDrone: false,
@@ -133,7 +137,7 @@ window.AIRCRAFT_MULTIROLE = {
     totalSlots: 8,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Naval carrier dogfighter ($14.5M). 8 external weapon stations with extra centerline hardpoint.'
+    desc: 'Naval carrier dogfighter. Twin RD-33MK engines produce a 1.20x thermal signature. 8 external weapon stations with extra centerline hardpoint.'
   },
   'JAS-39E': {
     id: 'JAS-39E',
@@ -152,6 +156,7 @@ window.AIRCRAFT_MULTIROLE = {
     lookDownBonus: 0.30,
     sigma_0: 0.80,
     beamSpike: 2.7,
+    thermalBloom: 0.85,
     M_max: 4200,
     G_limit: 9.0,
     isDrone: false,
@@ -166,7 +171,7 @@ window.AIRCRAFT_MULTIROLE = {
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Networked canard-delta interceptor. 6 external stations plus extra centerline station with datalink bonuses.'
+    desc: 'Networked canard-delta interceptor. F414G engine with active cooling conduits keeps thermal bloom down to 0.85x. 6 external stations plus centerline station.'
   },
   'F-18E': {
     id: 'F-18E',
@@ -185,6 +190,7 @@ window.AIRCRAFT_MULTIROLE = {
     lookDownBonus: 0.30,
     sigma_0: 1.00,
     beamSpike: 3.0,
+    thermalBloom: 1.05,
     M_max: 7000,
     G_limit: 7.5,
     isDrone: false,
@@ -199,7 +205,7 @@ window.AIRCRAFT_MULTIROLE = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Carrier strike platform ($17.5M). 8 external pylons and extra high-capacity centerline station.'
+    desc: 'Carrier strike platform. Twin F414-GE-400 engines produce a moderate 1.05x thermal exhaust signature. 8 external pylons and heavy centerline station.'
   },
   'F-2A': {
     id: 'F-2A',
@@ -218,6 +224,7 @@ window.AIRCRAFT_MULTIROLE = {
     lookDownBonus: 0.32,
     sigma_0: 1.10,
     beamSpike: 3.2,
+    thermalBloom: 1.05,
     M_max: 6000,
     G_limit: 9.0,
     isDrone: false,
@@ -232,7 +239,7 @@ window.AIRCRAFT_MULTIROLE = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Enlarged composite wing fighter with 8 external stations plus extra heavy centerline hardpoint.'
+    desc: 'Composite wing fighter. Single F110 engine yields 1.05x thermal signature. 8 external stations plus heavy centerline hardpoint.'
   },
   'KF-21': {
     id: 'KF-21',
@@ -251,6 +258,7 @@ window.AIRCRAFT_MULTIROLE = {
     lookDownBonus: 0.30,
     sigma_0: 0.15,
     beamSpike: 2.5,
+    thermalBloom: 0.85,
     M_max: 6500,
     G_limit: 9.0,
     isDrone: false,
@@ -265,6 +273,6 @@ window.AIRCRAFT_MULTIROLE = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: '4.5+ gen semi-stealth multirole airframe. 4 conformal internal slots, 4 external pylons (8 total slots), plus extra centerline mount.'
+    desc: '4.5+ gen semi-stealth multirole. Twin F414 engines with channeled bypass shielding maintain a reduced 0.85x thermal bloom. 4 conformal slots and 4 external pylons.'
   }
 };

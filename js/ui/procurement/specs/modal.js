@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Specifications Modal Renderer
- * Displays comprehensive airframe specifications with station breakdown, optimal corner speeds, and flight lead upgrades.
+ * Displays comprehensive airframe specifications with station breakdown, optimal corner speeds, and thermal suppression tiers.
  */
 
 class SpecsModalRenderer {
@@ -52,6 +52,18 @@ class SpecsModalRenderer {
     const baseSpike = (a.beamSpike !== undefined) ? a.beamSpike : 3.2;
     const rBeamSpike = rate('beam_spike', baseSpike);
     const spikePct = Math.round((baseSpike - 1.0) * 100);
+
+    const baseThermal = Number(a.thermalBloom !== undefined ? a.thermalBloom : 1.0);
+    const rThermal = rate('thermal_bloom', baseThermal);
+
+    let thermalDescription = `${baseThermal.toFixed(2)}x (Standard Turbofan Exhaust)`;
+    if (baseThermal <= 0.40) thermalDescription = `${baseThermal.toFixed(2)}x (Extreme Conformal Cold-Air Diffusion)`;
+    else if (baseThermal <= 0.50) thermalDescription = `${baseThermal.toFixed(2)}x (Trough-Shielded Exhaust Tiles)`;
+    else if (baseThermal <= 0.60) thermalDescription = `${baseThermal.toFixed(2)}x (2D Flat Heat-Ablating Nozzles)`;
+    else if (baseThermal <= 0.75) thermalDescription = `${baseThermal.toFixed(2)}x (Serrated Stealth Nozzles & Bypass Cooling)`;
+    else if (baseThermal <= 0.95) thermalDescription = `${baseThermal.toFixed(2)}x (Channeled Turbofan Bypass Mixing)`;
+    else if (baseThermal >= 1.40) thermalDescription = `${baseThermal.toFixed(2)}x (Heavy Stratospheric Turbofan Reheat Plume)`;
+    else if (baseThermal >= 1.20) thermalDescription = `${baseThermal.toFixed(2)}x (Twin High-Thrust Afterburning Exhaust)`;
 
     const rSlots = rate('pylon_slots', a.totalSlots || 6);
     const rMass = rate('payload_capacity', a.M_max || 5000);
@@ -107,7 +119,7 @@ class SpecsModalRenderer {
         <div class="inspect-stat-item"><span>AIRFRAME ARMOR INTEGRITY:</span><b class="${rHp.colorClass}">${a.hp || 4} HP</b></div>
       </div>
 
-      <div class="inspect-sec-head">2. SENSORS, OBSERVABILITY &amp; BEAM SIGNATURE</div>
+      <div class="inspect-sec-head">2. SENSORS, OBSERVABILITY &amp; THERMAL EMISSIONS</div>
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>RADAR ARRAY:</span><b>${a.radarType || 'Pulse-Doppler'}</b></div>
         <div class="inspect-stat-item"><span>INSTRUMENTED RANGE:</span><b class="${rRadar.colorClass}">${(a.R_0 || 75.0).toFixed(1)} km</b></div>
@@ -115,6 +127,7 @@ class SpecsModalRenderer {
         <div class="inspect-stat-item"><span>LOOK-DOWN CLUTTER FILTER:</span><b class="${rClutter.colorClass}">+${Math.round((a.lookDownBonus || 0.20) * 100)}%</b></div>
         <div class="inspect-stat-item"><span>BASE RCS (NOSE-ON):</span><b class="${rRcs.colorClass}">${a.sigma_0 || 1.0} m2 (${stealthClass})</b></div>
         <div class="inspect-stat-item"><span>BEAM EXPOSURE SPIKE:</span><b class="${rBeamSpike.colorClass}">${baseSpike.toFixed(1)}x (+${spikePct}% signature increase when turning broadside)</b></div>
+        <div class="inspect-stat-item"><span>IR THERMAL SIGNATURE:</span><b class="${rThermal.colorClass}">${thermalDescription}</b></div>
         <div class="inspect-stat-item"><span>COFFIN NEURAL FLIGHT:</span><b class="${a.isCoffin ? 'stat-tier-1' : 'stat-tier-3'}">${a.isCoffin ? 'MANUAL COFFIN (Zero stress, immune to G-LOC, +25% dodge bonus)' : 'HUMAN CREWED (Standard stress limits)'}</b></div>
       </div>
 

@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Guided Missile Kinematics & Terminal Impact Resolution
- * ProNav guidance with corner speed turn efficiency scaling maneuver evasion probability.
+ * ProNav guidance with corner speed turn efficiency and airframe thermal bloom modeling.
  */
 
 class MissileKinetics {
@@ -277,7 +277,15 @@ class MissileKinetics {
 
     const salvoBonus = Math.min(0.30, Math.max(0, (salvoCount || 1) - 1) * 0.12);
     const weatherPenalty = (weatherClouds && (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT') && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
-    const afterburnerBonus = ((w.seeker === 'IIR' || w.seeker === 'EO') && target.engineAlpha > 0.85) ? 0.15 : 0.0;
+
+    let targetThermalMultiplier = Number(target.thermalBloom !== undefined ? target.thermalBloom : 1.0);
+    if (target.irPenalty) targetThermalMultiplier *= (1.0 + target.irPenalty);
+
+    let thermalModifier = 0.0;
+    if (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT') {
+      thermalModifier = (targetThermalMultiplier - 1.0) * 0.22;
+    }
+
     const mixedSynergyBonus = hasMixedSeekers ? mixedBonusVal : 0.0;
 
     let energyTurnPenalty = 0.0;
@@ -290,7 +298,7 @@ class MissileKinetics {
     const agilityDefenseBonus = (targetAgility - 0.85) * 0.18;
     const turnOptBonus = (turnOptEff - 0.70) * 0.15;
 
-    const rawProb = (basePk * aspectScore) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + afterburnerBonus + heavyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
+    const rawProb = (basePk * aspectScore) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + thermalModifier + heavyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
     const probabilityFloor = isManeuvering ? 0.10 : (target.isAce ? 0.14 : (target.isCoffin ? 0.08 : (target.isFlightLead ? 0.10 : 0.12)));
     const probability = Math.max(probabilityFloor, Math.min(0.95, rawProb));
     return {
@@ -311,7 +319,8 @@ class MissileKinetics {
         mixedSeekers: hasMixedSeekers,
         salvoBonus,
         mixedSeekerBonus: mixedSynergyBonus,
-        afterburnerHeatBonus: afterburnerBonus,
+        thermalModifier,
+        targetThermalBloom: targetThermalMultiplier,
         heavyTargetBonus: heavyBonus,
         targetEnergyBonus: energyDeficitBonus,
         agilityPenalty: agilityDefenseBonus,

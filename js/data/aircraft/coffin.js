@@ -20,6 +20,7 @@ window.AIRCRAFT_COFFIN = {
     lookDownBonus: 0.35,
     sigma_0: 0.80,
     beamSpike: 3.5,
+    thermalBloom: 1.15,
     M_max: 10500,
     G_limit: 16.0,
     isDrone: false,
@@ -37,7 +38,7 @@ window.AIRCRAFT_COFFIN = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Manual COFFIN conversion. 10 external weapon stations (10 total slots) plus extra heavy centerline mount with 16G envelope.'
+    desc: 'Manual COFFIN conversion. 2D vectoring nozzles with ceramic expansion flaps yield 1.15x thermal bloom. 10 external weapon stations plus extra heavy centerline mount with 16G envelope.'
   },
   'Su-37-COFFIN': {
     id: 'Su-37-COFFIN',
@@ -56,6 +57,7 @@ window.AIRCRAFT_COFFIN = {
     lookDownBonus: 0.32,
     sigma_0: 0.50,
     beamSpike: 3.3,
+    thermalBloom: 1.20,
     M_max: 8800,
     G_limit: 16.0,
     isDrone: false,
@@ -73,7 +75,7 @@ window.AIRCRAFT_COFFIN = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Enclosed-cockpit super-maneuverable Flanker. 10 external stations (10 total slots) plus extra reinforced centerline station.'
+    desc: 'Enclosed-cockpit super-maneuverable Flanker. Round 3D TVC nozzles produce 1.20x thermal bloom. 10 external stations plus extra reinforced centerline station.'
   },
   'F-22C-COFFIN': {
     id: 'F-22C-COFFIN',
@@ -92,6 +94,7 @@ window.AIRCRAFT_COFFIN = {
     lookDownBonus: 0.40,
     sigma_0: 0.00005,
     beamSpike: 1.9,
+    thermalBloom: 0.50,
     M_max: 5200,
     G_limit: 18.0,
     isDrone: false,
@@ -109,7 +112,7 @@ window.AIRCRAFT_COFFIN = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Apex stealth COFFIN air dominance (0.00005m2 RCS). 6 internal bay slots with zero drag plus 2 external pylons (8 total slots).'
+    desc: 'Apex stealth COFFIN air dominance (0.00005m2 RCS). Advanced heat-absorption skin and cooled 2D vectoring tiles suppress thermal bloom to 0.50x. 6 internal bay slots plus 2 external pylons.'
   },
   'ADF-11F': {
     id: 'ADF-11F',
@@ -128,6 +131,7 @@ window.AIRCRAFT_COFFIN = {
     lookDownBonus: 0.40,
     sigma_0: 0.0008,
     beamSpike: 2.0,
+    thermalBloom: 0.55,
     M_max: 6500,
     G_limit: 20.0,
     isDrone: false,
@@ -145,6 +149,6 @@ window.AIRCRAFT_COFFIN = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Advanced superfighter with manual COFFIN interface. 4 internal bay slots, 4 external pylons (8 total slots), plus extra centerline rail.'
+    desc: 'Advanced superfighter with manual COFFIN interface. Internal heat sinks and shielded vectoring nozzles maintain 0.55x thermal bloom. 4 internal bay slots, 4 external pylons, plus centerline rail.'
   }
 };

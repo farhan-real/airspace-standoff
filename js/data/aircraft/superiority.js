@@ -20,6 +20,7 @@ window.AIRCRAFT_SUPERIORITY = {
     lookDownBonus: 0.35,
     sigma_0: 10.0,
     beamSpike: 4.5,
+    thermalBloom: 1.50,
     M_max: 9500,
     G_limit: 6.0,
     isDrone: false,
@@ -34,7 +35,7 @@ window.AIRCRAFT_SUPERIORITY = {
     totalSlots: 8,
     maxPylonRating: 'Type X',
     upgradeSockets: 3,
-    desc: 'Stratospheric interceptor (Mach 1.88 sprint). 8 external underwing pylons with an extra dedicated centerline station for Kh-47M2 Kinzhal.'
+    desc: 'Stratospheric interceptor (Mach 1.88 sprint). Colossal twin D-30F6 afterburning turbofans create a massive 1.50x thermal exhaust plume vulnerable to IR tracking. 8 external pylons with centerline Kinzhal station.'
   },
   'F-15EX': {
     id: 'F-15EX',
@@ -53,6 +54,7 @@ window.AIRCRAFT_SUPERIORITY = {
     lookDownBonus: 0.35,
     sigma_0: 8.0,
     beamSpike: 3.9,
+    thermalBloom: 1.20,
     M_max: 13500,
     G_limit: 9.0,
     isDrone: false,
@@ -67,7 +69,7 @@ window.AIRCRAFT_SUPERIORITY = {
     totalSlots: 14,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Heavy missile truck with 14 external weapon stations and an extra reinforced centerline station for extreme standoff weapons.'
+    desc: 'Heavy missile truck. Twin F110 engines with unshielded round convergent-divergent nozzles yield a 1.20x thermal signature. 14 external weapon stations with reinforced centerline carriage.'
   },
   'Su-35S': {
     id: 'Su-35S',
@@ -86,6 +88,7 @@ window.AIRCRAFT_SUPERIORITY = {
     lookDownBonus: 0.25,
     sigma_0: 1.50,
     beamSpike: 3.6,
+    thermalBloom: 1.25,
     M_max: 8000,
     G_limit: 9.0,
     isDrone: false,
@@ -100,7 +103,7 @@ window.AIRCRAFT_SUPERIORITY = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Air superiority fighter with 10 external wing and tandem fuselage stations, plus extra centerline mount.'
+    desc: 'Air superiority fighter. Twin AL-41F1S turbofans with unshielded 3D TVC nozzles produce 1.25x thermal bloom. 10 external wing and fuselage stations with centerline mount.'
   },
   'Su-30SM': {
     id: 'Su-30SM',
@@ -119,6 +122,7 @@ window.AIRCRAFT_SUPERIORITY = {
     lookDownBonus: 0.22,
     sigma_0: 3.5,
     beamSpike: 3.7,
+    thermalBloom: 1.25,
     M_max: 8200,
     G_limit: 9.0,
     isDrone: false,
@@ -133,7 +137,7 @@ window.AIRCRAFT_SUPERIORITY = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Tandem-cockpit multirole interceptor with 10 external weapon stations and extra centerline carriage capacity.'
+    desc: 'Tandem-cockpit multirole interceptor. Unshielded AL-31FP engines yield 1.25x thermal bloom. 10 external weapon stations and centerline carriage.'
   },
   'Eurofighter': {
     id: 'Eurofighter',
@@ -152,6 +156,7 @@ window.AIRCRAFT_SUPERIORITY = {
     lookDownBonus: 0.30,
     sigma_0: 0.50,
     beamSpike: 2.8,
+    thermalBloom: 0.90,
     M_max: 7500,
     G_limit: 9.0,
     isDrone: false,
@@ -166,7 +171,7 @@ window.AIRCRAFT_SUPERIORITY = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Canard-delta interceptor with 8 external underwing and semi-recessed fuselage stations, plus extra centerline pylon.'
+    desc: 'Canard-delta interceptor. EJ200 turbofans with advanced bypass air mixing limit thermal signature to 0.90x. 8 external stations plus centerline pylon.'
   },
   'Rafale-C': {
     id: 'Rafale-C',
@@ -185,6 +190,7 @@ window.AIRCRAFT_SUPERIORITY = {
     lookDownBonus: 0.35,
     sigma_0: 0.40,
     beamSpike: 2.7,
+    thermalBloom: 0.85,
     M_max: 7200,
     G_limit: 9.5,
     isDrone: false,
@@ -199,7 +205,7 @@ window.AIRCRAFT_SUPERIORITY = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Omnirole fighter with 8 external weapon stations and an extra centerline wet station for heavy standoff ordnance.'
+    desc: 'Omnirole fighter. Compact M88 engines with channeled bypass cooling keep thermal signature down to 0.85x. 8 external stations plus centerline wet station.'
   },
   'J-16': {
     id: 'J-16',
@@ -218,6 +224,7 @@ window.AIRCRAFT_SUPERIORITY = {
     lookDownBonus: 0.25,
     sigma_0: 4.5,
     beamSpike: 3.8,
+    thermalBloom: 1.25,
     M_max: 9500,
     G_limit: 8.5,
     isDrone: false,
@@ -232,7 +239,7 @@ window.AIRCRAFT_SUPERIORITY = {
     totalSlots: 12,
     maxPylonRating: 'Type X',
     upgradeSockets: 3,
-    desc: 'Heavy tandem-seat interceptor with 12 external weapon stations and extra centerline station certified for heavy missiles.'
+    desc: 'Heavy tandem-seat interceptor. Twin WS-10 engines with unshielded round nozzles produce 1.25x thermal bloom. 12 external stations and centerline carriage.'
   },
   'F-14D': {
     id: 'F-14D',
@@ -251,6 +258,7 @@ window.AIRCRAFT_SUPERIORITY = {
     lookDownBonus: 0.25,
     sigma_0: 4.0,
     beamSpike: 4.0,
+    thermalBloom: 1.30,
     M_max: 9200,
     G_limit: 7.5,
     isDrone: false,
@@ -265,6 +273,6 @@ window.AIRCRAFT_SUPERIORITY = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Carrier interceptor with 10 external fuselage and wing-glove stations, plus extra tunnel centerline rails.'
+    desc: 'Carrier interceptor. Widely separated twin F110 afterburning engines generate an intense 1.30x thermal exhaust signature. 10 external stations with tunnel rails.'
   }
 };

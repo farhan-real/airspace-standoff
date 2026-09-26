@@ -20,6 +20,7 @@ window.AIRCRAFT_EW = {
     lookDownBonus: 0.30,
     sigma_0: 2.20,
     beamSpike: 4.1,
+    thermalBloom: 1.20,
     M_max: 6500,
     G_limit: 7.5,
     isDrone: false,
@@ -35,7 +36,7 @@ window.AIRCRAFT_EW = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'SEAD hunter ($17.0M). 8 external stations for anti-radiation missiles plus extra centerline station.'
+    desc: 'SEAD hunter ($17.0M). Twin RB199 afterburning turbofans produce 1.20x thermal bloom. 8 external stations for anti-radiation missiles plus centerline station.'
   },
   'EF-111A': {
     id: 'EF-111A',
@@ -54,6 +55,7 @@ window.AIRCRAFT_EW = {
     lookDownBonus: 0.30,
     sigma_0: 3.00,
     beamSpike: 4.3,
+    thermalBloom: 1.30,
     M_max: 7500,
     G_limit: 7.0,
     isDrone: false,
@@ -69,7 +71,7 @@ window.AIRCRAFT_EW = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Supersonic jammer (Mach 1.28). 2 internal bay slots, 6 external stations (8 total slots), and extra centerline mount.'
+    desc: 'Supersonic jammer (Mach 1.28). Twin TF30 afterburning engines yield 1.30x thermal bloom. 2 internal bay slots, 6 external stations, and extra centerline mount.'
   },
   'EA-18G': {
     id: 'EA-18G',
@@ -88,6 +90,7 @@ window.AIRCRAFT_EW = {
     lookDownBonus: 0.35,
     sigma_0: 1.80,
     beamSpike: 3.2,
+    thermalBloom: 1.05,
     M_max: 6000,
     G_limit: 7.5,
     isDrone: false,
@@ -103,7 +106,7 @@ window.AIRCRAFT_EW = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Electronic attack fighter. 8 external stations plus extra centerline station for high-power AESA jamming pods.'
+    desc: 'Electronic attack fighter. Twin F414 turbofans produce a moderate 1.05x thermal signature. 8 external stations plus centerline station for high-power AESA jamming pods.'
   },
   'J-16D': {
     id: 'J-16D',
@@ -122,6 +125,7 @@ window.AIRCRAFT_EW = {
     lookDownBonus: 0.30,
     sigma_0: 3.20,
     beamSpike: 3.9,
+    thermalBloom: 1.25,
     M_max: 8500,
     G_limit: 8.0,
     isDrone: false,
@@ -137,6 +141,6 @@ window.AIRCRAFT_EW = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Heavy electronic attack fighter equipped with 10 external weapon stations plus extra centerline station.'
+    desc: 'Heavy electronic attack fighter. Twin WS-10 engines produce 1.25x thermal bloom. Equipped with 10 external weapon stations plus extra centerline station.'
   }
 };

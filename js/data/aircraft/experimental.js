@@ -20,6 +20,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     lookDownBonus: 0.28,
     sigma_0: 3.0,
     beamSpike: 3.8,
+    thermalBloom: 1.15,
     M_max: 9000,
     G_limit: 9.5,
     isDrone: false,
@@ -36,7 +37,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Technology demonstrator pairing canards with 2D TVC nozzles. 10 external pylons plus extra centerline mount.'
+    desc: 'Technology demonstrator pairing canards with 2D TVC nozzles. Rectangular nozzles slightly flatten exhaust plume (1.15x bloom). 10 external pylons plus centerline mount.'
   },
   'Su-47': {
     id: 'Su-47',
@@ -55,6 +56,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     lookDownBonus: 0.25,
     sigma_0: 1.8,
     beamSpike: 3.5,
+    thermalBloom: 1.20,
     M_max: 7500,
     G_limit: 10.0,
     isDrone: false,
@@ -71,7 +73,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Forward-swept wing demonstrator delivering extreme turn agility. 2 internal bay slots plus 6 external wing stations (8 total slots).'
+    desc: 'Forward-swept wing demonstrator with high turn agility. Unshielded twin turbofans yield 1.20x thermal bloom. 2 internal bay slots plus 6 external wing stations.'
   },
   'Su-37': {
     id: 'Su-37',
@@ -90,6 +92,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     lookDownBonus: 0.26,
     sigma_0: 2.0,
     beamSpike: 3.6,
+    thermalBloom: 1.25,
     M_max: 8000,
     G_limit: 10.0,
     isDrone: false,
@@ -106,7 +109,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: '3D thrust vectoring nozzles for Kulbit loops. 10 external weapon stations plus extra centerline carriage capacity.'
+    desc: '3D thrust vectoring demonstrator for post-stall Kulbit loops. Round vectoring nozzles produce 1.25x thermal bloom. 10 external stations plus centerline carriage.'
   },
   'X-29A': {
     id: 'X-29A',
@@ -125,6 +128,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     lookDownBonus: 0.20,
     sigma_0: 1.5,
     beamSpike: 3.0,
+    thermalBloom: 0.95,
     M_max: 4200,
     G_limit: 9.5,
     isDrone: false,
@@ -141,7 +145,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Forward-swept wing technology demonstrator ($19.0M). 6 external hardpoints delivering extreme pitch authority (6 total slots).'
+    desc: 'Forward-swept wing technology demonstrator ($19.0M). Single compact F404 turbofan produces 0.95x thermal signature. 6 external hardpoints.'
   },
   'X-02S': {
     id: 'X-02S',
@@ -160,6 +164,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     lookDownBonus: 0.35,
     sigma_0: 0.006,
     beamSpike: 2.1,
+    thermalBloom: 0.60,
     M_max: 6200,
     G_limit: 10.5,
     isDrone: false,
@@ -176,7 +181,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Variable-geometry stealth superfighter. 4 internal weapon bay slots, 4 external pylons (8 total slots), plus extra centerline rail.'
+    desc: 'Variable-geometry stealth superfighter. Shielded vectoring nozzles with active cooling suppress thermal bloom to 0.60x. 4 internal bay slots, 4 external pylons, and centerline rail.'
   },
   'ADFX-01': {
     id: 'ADFX-01',
@@ -195,6 +200,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     lookDownBonus: 0.35,
     sigma_0: 0.005,
     beamSpike: 2.2,
+    thermalBloom: 0.70,
     M_max: 7500,
     G_limit: 10.0,
     isDrone: false,
@@ -211,7 +217,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Forward-canted canard prototype airframe. 2 internal bay slots, 6 external stations (8 total slots), plus extra centerline heavy rail.'
+    desc: 'Forward-canted canard prototype airframe. Conformal nacelles with active heat dissipation maintain 0.70x thermal bloom. 2 internal bay slots, 6 external stations, and centerline heavy rail.'
   },
   'CFA-44': {
     id: 'CFA-44',
@@ -230,6 +236,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     lookDownBonus: 0.35,
     sigma_0: 0.004,
     beamSpike: 2.3,
+    thermalBloom: 0.75,
     M_max: 7800,
     G_limit: 11.0,
     isDrone: false,
@@ -246,7 +253,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Carrier interceptor with 4 internal slots, 6 external pylons (10 total slots), plus extra centerline rail.'
+    desc: 'Carrier interceptor. Twin 3D TVC engines with bypass cooling limit thermal signature to 0.75x. 4 internal slots, 6 external pylons, plus extra centerline rail.'
   },
   'DARKSTAR': {
     id: 'DARKSTAR',
@@ -265,6 +272,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     lookDownBonus: 0.45,
     sigma_0: 0.0001,
     beamSpike: 1.5,
+    thermalBloom: 0.65,
     M_max: 5000,
     G_limit: 5.0,
     isDrone: false,
@@ -281,6 +289,6 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 6,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Hypersonic scramjet penetrator. 4 internal weapon bay slots (0 drag at Mach 2.40) plus 2 external hardpoints (6 total slots).'
+    desc: 'Hypersonic scramjet penetrator. Active cryogenic airframe cooling and blended scramjet exhaust channels hold thermal bloom at 0.65x. 4 internal weapon bay slots and 2 external hardpoints.'
   }
 };
