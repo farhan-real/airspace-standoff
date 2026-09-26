@@ -82,7 +82,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 155px;
+  flex: 1 1 auto;
+  min-width: 0;
   display: inline-block;
 }
 

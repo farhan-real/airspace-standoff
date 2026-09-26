@@ -148,7 +148,7 @@ class InspectionViews {
         <span class="inspection-data-title">SENSORS &amp; STEALTH</span>
         <div class="inspection-data-row"><span class="inspection-data-label">Radar Array Model</span><b class="inspection-data-value">${spec.radarType || 'N/A'}</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Instrumented Range (R_0)</span><b class="inspection-data-value ${rRadar.colorClass}">${fmtNum(spec.R_0, 1)} km</b></div>
-        <div class="inspection-data-row"><span class="inspection-data-label">Radar Cross Section (RCS)</span><b class="inspection-data-value raw-rcs-val ${rRcs.colorClass}">${fmtNum(entity.effectiveRcs || spec.sigma_0, 5)} m&sup2;</b></div>
+        <div class="inspection-data-row"><span class="inspection-data-label">Radar Cross Section (RCS)</span><b class="inspection-data-value raw-rcs-val ${rRcs.colorClass}">${fmtNum(entity.effectiveRcs || spec.sigma_0, 5)} m²</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Beam Exposure Spike</span><b class="inspection-data-value ${rSpike.colorClass}">${fmtNum(spec.beamSpike, 1)}x</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Optical IRST / DAS Sensors</span><b class="inspection-data-value">${entity.hasIRST ? 'IRST Active' : 'Off'} | ${entity.hasDAS ? 'DAS 360' : 'Off'}</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Electronic Countermeasures</span><b class="inspection-data-value">${entity.jamEfficiency ? `${Math.round(entity.jamEfficiency * 100)}% ECM` : 'None'}</b></div>
@@ -233,7 +233,7 @@ class InspectionViews {
     const rawRcs = content.querySelector('.raw-rcs-val');
     if (rawRcs && entity.effectiveRcs !== undefined) {
       const rVal = rate('rcs', entity.effectiveRcs);
-      rawRcs.textContent = `${fmtNum(entity.effectiveRcs, 5)} m&sup2;`;
+      rawRcs.textContent = `${fmtNum(entity.effectiveRcs, 5)} m²`;
       rawRcs.className = `inspection-data-value raw-rcs-val ${rVal.colorClass}`;
     }
 

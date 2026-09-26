@@ -25,7 +25,7 @@ class AutocannonBayRenderer {
       gunBox.innerHTML = `
         <div class="mob-cannon-row">
           <div style="display:flex;align-items:center;gap:4px;overflow:hidden;min-width:0;flex:1;">
-            <span class="mob-pylon-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:85px;">${shortGunName}${podTag}</span>
+            <span class="mob-pylon-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1 1 auto;min-width:0;">${shortGunName}${podTag}</span>
             <span class="mob-pylon-cap" style="color:#00f0ff;flex-shrink:0;">${gunRangeKm}km</span>
             <span id="gun-ui-ammo" class="mob-pylon-cap" style="flex-shrink:0;">${activeUnit.gunAmmo || 0} RDS</span>
           </div>
@@ -46,7 +46,7 @@ class AutocannonBayRenderer {
       gunBox.innerHTML = `
         <div class="pylon-top-row">
           <div style="display:flex;align-items:center;gap:6px;overflow:hidden;min-width:0;flex:1;">
-            <span id="gun-ui-name" style="color:#f8fafc;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:145px;">${gunName}${podTag}</span>
+            <span id="gun-ui-name" style="color:#f8fafc;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1 1 auto;min-width:0;">${gunName}${podTag}</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
             <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${gun.id}">SPECS</button>

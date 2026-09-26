@@ -107,8 +107,10 @@ class RosterCardBuilder {
           </button>
           <div class="custom-dropdown-menu gun-menu">${gunOptsList}</div>
         </div>
-        <span class="gun-dmg-badge" style="color:#ffb830;font-size:0.64rem;font-weight:800;font-family:var(--font-mono);">${activeGunDmg} HP/s</span>
-        <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${activeGun ? activeGun.id : 'M61A2'}">SPECS</button>
+        <div class="su-gun-right-group">
+          <span class="gun-dmg-badge" style="color:#ffb830;font-size:0.64rem;font-weight:800;font-family:var(--font-mono);">${activeGunDmg} HP/s</span>
+          <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${activeGun ? activeGun.id : 'M61A2'}">SPECS</button>
+        </div>
       </div>
       <div class="unit-metric-strip">
         <div class="metric-block">

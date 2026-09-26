@@ -16,7 +16,43 @@
 
 .su-gun-selector-row:has(.custom-dropdown.open) { z-index: 5500; }
 .gun-sel-label { font-size: 0.62rem; font-family: var(--font-untitled-sans); color: var(--color-moon-mist); font-weight: 600; white-space: nowrap; flex-shrink: 0; }
-.gun-dmg-badge { flex-shrink: 0; white-space: nowrap; }
+
+.su-gun-dropdown {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.su-gun-dropdown .gun-sel-trigger {
+  width: 100%;
+  height: 26px;
+  padding: 3px 8px;
+  font-size: 0.68rem;
+  justify-content: space-between;
+}
+
+.su-gun-dropdown .cdd-val {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.su-gun-dropdown .gun-menu {
+  width: max-content;
+  min-width: 100%;
+  max-width: 340px;
+}
+
+.su-gun-right-group {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.gun-dmg-badge {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
 
 .unit-metric-strip {
   display: grid;

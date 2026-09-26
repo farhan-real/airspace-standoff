@@ -178,7 +178,7 @@ class InspectionRadarView {
                 <span class="factor-delta ${beamClass}">${beamText}</span>
               </div>
               <div class="inspection-factor-row ${rcsClass}">
-                <span class="factor-name">Target Radar Signature<span class="factor-desc">Effective RCS: ${rec.effectiveRcs.toFixed(rec.effectiveRcs < 0.01 ? 5 : 2)} m&sup2;.</span></span>
+                <span class="factor-name">Target Radar Signature<span class="factor-desc">Effective RCS: ${rec.effectiveRcs.toFixed(rec.effectiveRcs < 0.01 ? 5 : 2)} m².</span></span>
                 <span class="factor-delta ${rcsClass}">${rcsText}</span>
               </div>
               <div class="inspection-factor-row ${cloudClass} sensor-cloud-row">
@@ -223,4 +223,5 @@ class InspectionRadarView {
   }
 }
 
+window.InspectionRadar = InspectionRadarView;
 window.InspectionRadarView = InspectionRadarView;

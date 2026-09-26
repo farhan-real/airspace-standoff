@@ -217,7 +217,7 @@ class InspectionOverviewRenderer {
           <div>AIRCRAFT: <b style="color:var(--color-ice-highlight);">${controller.escape(c.model || c.name)}</b></div>
           <div>SPEED: <b class="ovr-civ-spd ${rSpd.colorClass}">Mach ${mach}</b></div>
           <div>ALTITUDE: <b class="ovr-civ-alt" style="color:var(--stat-tier-2);">${fl} (${altFt.toLocaleString()} ft)</b></div>
-          <div>RCS: <b class="${rRcs.colorClass}">${c.effectiveRcs || 25} m&sup2;</b></div>
+          <div>RCS: <b class="${rRcs.colorClass}">${c.effectiveRcs || 25} m²</b></div>
           <div>AIRFRAME: <b class="ovr-civ-hp ${rHp.colorClass}">${c.hp} / ${c.maxHp || 6} HP</b></div>
           <div>IDENTIFICATION: <b class="ovr-civ-id" style="color:var(--stat-tier-2);">${c.isIdentified ? 'VERIFIED CIVILIAN' : 'BOGEY [?]'}</b></div>
         </div>
@@ -235,7 +235,7 @@ class InspectionOverviewRenderer {
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font:600 0.64rem var(--font-dotdigital);">
           <div>MIRRORED PROFILE: <b style="color:var(--theme-accent);">${d.mirroredModel || 'FIGHTER'}</b></div>
-          <div>SPOOFED RCS: <b style="color:var(--stat-tier-3);">${(d.effectiveRcs || 1.0).toFixed(3)} m&sup2;</b></div>
+          <div>SPOOFED RCS: <b style="color:var(--stat-tier-3);">${(d.effectiveRcs || 1.0).toFixed(3)} m²</b></div>
           <div>AIRSPEED: <b>Mach ${(d.speed || 0.8).toFixed(2)}</b></div>
           <div>REMAINING LIFE: <b class="ovr-decoy-life" style="color:var(--stat-tier-2);">${Math.max(0, Math.round(d.lifespan - d.age))}s</b></div>
         </div>
