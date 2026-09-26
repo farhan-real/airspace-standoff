@@ -98,7 +98,7 @@ window.AIRCRAFT_STRIKE = {
     hasCenterline: true,
     centerlineSlots: 6,
     totalSlots: 12,
-    maxPylonRating: 'Type H',
+    maxPylonRating: 'Type X',
     upgradeSockets: 4,
     desc: 'Armored strike bomber with 12 external weapon stations and an extra centerline carriage certified for Kh-47M2 Kinzhal.'
   },

@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Master Aircraft Catalog Aggregator & Query Engine
+ * AIRSPACE STANDOFF: Master Aircraft Catalog Aggregator & Query Engine
  */
 
 window.AIRCRAFT_CATALOG = Object.assign(

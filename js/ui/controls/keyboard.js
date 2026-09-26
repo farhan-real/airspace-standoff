@@ -132,8 +132,8 @@ class KeyboardControlsHandler {
       if (key === binds.FIRE_GUN || key === 'KeyG') {
         e.preventDefault();
         const u = this.game.activeUnit;
-        if (u && u.hp > 0 && this.game.deckManager && this.game.deckManager.pylonBay) {
-          this.game.deckManager.pylonBay.fireAutocannonManual(u, this.game.selectedTarget);
+        if (u && u.hp > 0 && typeof AutocannonBayRenderer !== 'undefined') {
+          AutocannonBayRenderer.fireAutocannonManual(u, this.game.selectedTarget, this.game);
         }
         return;
       }

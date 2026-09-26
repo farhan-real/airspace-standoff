@@ -122,7 +122,7 @@ class ProcurementEquipHandler {
       const wSlotType = wpn.slotType || 'EXTERNAL';
 
       if (wSlotType === 'CENTERLINE') {
-        return Boolean(metrics && metrics.hasCenterline && metrics.centerlineUsed === 0);
+        return Boolean(metrics && metrics.hasCenterline && (metrics.centerlineUsed + wpn.slots <= metrics.centerlineCapacity));
       }
       if (wSlotType === 'INTERNAL') {
         return Boolean(metrics && (metrics.remainingInternal >= wpn.slots || metrics.remainingExternal >= wpn.slots));
@@ -235,8 +235,8 @@ class ProcurementEquipHandler {
       let assignedStation = targetStation;
 
       if (wSlotType === 'CENTERLINE') {
-        if (!metrics.hasCenterline || metrics.centerlineUsed > 0) {
-          this.pm.showAlertModal('CENTERLINE OCCUPIED', `${wpn.name} mounts on the centerline fuselage station, which is either unavailable or already occupied.`);
+        if (!metrics.hasCenterline || (metrics.centerlineUsed + wpn.slots > metrics.centerlineCapacity)) {
+          this.pm.showAlertModal('CENTERLINE CAPACITY EXCEEDED', `${wpn.name} (${wpn.slots} slots) exceeds centerline capacity (${metrics.centerlineCapacity} max slots).`);
           return;
         }
         assignedStation = 'CENTERLINE';

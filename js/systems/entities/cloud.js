@@ -4,6 +4,7 @@
 
 class WeatherCloud {
   constructor(x, y, rx, ry, driftVx, driftVy) {
+    this.id = 'CLOUD_' + Math.random().toString(36).substr(2, 6);
     this.x = x;
     this.y = y;
     this.rx = rx;

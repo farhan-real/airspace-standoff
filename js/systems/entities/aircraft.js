@@ -62,6 +62,7 @@ class Aircraft {
     this.prevSpeed = this.speed;
     this.speedTrend = '--';
     this.energy = 1.0;
+    this.baseThermalBloom = 1.0;
     this.thermalBloom = 1.0;
     this.thermalBloomTimer = 0.0;
 
@@ -283,8 +284,8 @@ class Aircraft {
     if (this.thermalBloomTimer > 0) {
       this.thermalBloomTimer -= dt;
       this.thermalBloom = 1.6;
-    } else if (this.spec.category !== 'EXPERIMENTAL') {
-      this.thermalBloom = 1.0;
+    } else {
+      this.thermalBloom = this.baseThermalBloom || 1.0;
     }
 
     const recoveryRate = 0.09 * (this.engineAlpha || 0.50);
@@ -318,6 +319,9 @@ class Aircraft {
     if (this.x > w - 2) { this.x = w - 2; this.heading = Math.PI - this.heading; }
     if (this.y < 2) { this.y = 2; this.heading = -this.heading; }
     if (this.y > h - 2) { this.y = h - 2; this.heading = -this.heading; }
+
+    while (this.heading < 0) this.heading += Math.PI * 2;
+    while (this.heading >= Math.PI * 2) this.heading -= Math.PI * 2;
   }
 }
 

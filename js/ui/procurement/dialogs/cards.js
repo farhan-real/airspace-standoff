@@ -28,7 +28,11 @@ class PreconfigCardsRenderer {
       const w = wpnMap[wId];
       if (!w) return '';
       const station = (typeof wEntry === 'object' && wEntry !== null && wEntry.station) ? wEntry.station : (w.slotType || 'EXT');
-      return `<span class="pc-item-pill wpn station-${String(station).toLowerCase()}" data-tag-title="${w.name} [${station}]" data-tag-tooltip="${w.rangeKm}km range &bull; ${w.damage} HP &bull; Station: ${station} &bull; ${w.ammoCount || 4}x count">${w.name.split(' ')[0]} (${w.ammoCount || 4}x)</span>`;
+      const isJammer = Boolean(w.isJammerPod);
+      const isDecoy = Boolean(w.isDecoy || w.isDecoyDrone);
+      const ammoTag = isJammer ? '[ECM]' : (isDecoy ? `(${w.ammoCount || 2}x)` : (w.ammoCount !== undefined ? `(${w.ammoCount}x)` : ''));
+      const tooltipAmmo = isJammer ? 'Continuous ECM Jammer' : `${w.ammoCount !== undefined ? w.ammoCount : 4}x count`;
+      return `<span class="pc-item-pill wpn station-${String(station).toLowerCase()}" data-tag-title="${w.name} [${station}]" data-tag-tooltip="${w.rangeKm}km range &bull; ${w.damage || 0} HP &bull; Station: ${station} &bull; ${tooltipAmmo}">${w.name.split(' ')[0]} ${ammoTag}</span>`;
     }).join('');
 
     const upgradesListHtml = (tpl.upgrades || []).map(uId => {

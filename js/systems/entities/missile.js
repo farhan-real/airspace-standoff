@@ -44,7 +44,11 @@ class MissileEntity {
     }
 
     const angleToTarget = Math.atan2(targetUnit.y - sourceUnit.y, targetUnit.x - sourceUnit.x);
-    let offBoresight = angleToTarget - sourceUnit.heading;
+    const srcHeading = (sourceUnit && typeof sourceUnit.heading === 'number' && !isNaN(sourceUnit.heading))
+      ? sourceUnit.heading
+      : angleToTarget;
+
+    let offBoresight = angleToTarget - srcHeading;
     while (offBoresight < -Math.PI) offBoresight += Math.PI * 2;
     while (offBoresight > Math.PI) offBoresight -= Math.PI * 2;
 
@@ -52,13 +56,13 @@ class MissileEntity {
     if (trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST') {
       this.heading = angleToTarget;
     } else if (trait === 'HOBS_VANE' || weapon.id === 'IRIS-T') {
-      this.heading = sourceUnit.heading + Math.max(-Math.PI * 0.5, Math.min(Math.PI * 0.5, offBoresight));
+      this.heading = srcHeading + Math.max(-Math.PI * 0.5, Math.min(Math.PI * 0.5, offBoresight));
     } else if (trait === 'SNAP_TURN' || trait === 'SWARM_RIPPLE') {
-      this.heading = sourceUnit.heading + Math.max(-1.05, Math.min(1.05, offBoresight));
+      this.heading = srcHeading + Math.max(-1.05, Math.min(1.05, offBoresight));
     } else if (weapon.category === 'A2A') {
-      this.heading = sourceUnit.heading + Math.max(-0.80, Math.min(0.80, offBoresight));
+      this.heading = srcHeading + Math.max(-0.80, Math.min(0.80, offBoresight));
     } else {
-      this.heading = sourceUnit.heading;
+      this.heading = srcHeading;
     }
 
     while (this.heading < 0) this.heading += Math.PI * 2;
@@ -280,6 +284,9 @@ class MissileEntity {
     if (tgt.isDecoyDrone) {
       this.isDead = true;
       tgt.takeDamage(w.damage || 1);
+      if (window.Game && window.Game.simulation) {
+        window.Game.simulation.recordKillEvent(this.team, tgt, this.source, { weapon: w, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
+      }
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, false);
         window.Game.radar.spawnCombatText(tgt.x, tgt.y, 'DECOY DESTROYED', '#c084fc');
@@ -307,7 +314,7 @@ class MissileEntity {
     }
 
     if (tgt.isCivilian) {
-      tgt.takeDamage(w.damage, this.source);
+      tgt.takeDamage(w.damage, this.source, w);
       this.isDead = true;
       return;
     }

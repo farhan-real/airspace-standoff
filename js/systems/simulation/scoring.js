@@ -200,6 +200,8 @@ class SimulationScoring {
       pts = 200;
     } else if (targetEntity.type === 'FUEL_DEPOT') {
       pts = cfg.VP_FUEL_DEPOT_DESTROYED || 200;
+    } else if (targetEntity.type === 'RADAR_VAN') {
+      pts = cfg.VP_RADAR_VAN_DESTROYED || 150;
     }
 
     if (targetEntity.isFlightLead) pts = Math.round(pts * 1.5);

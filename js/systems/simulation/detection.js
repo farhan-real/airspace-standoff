@@ -52,12 +52,10 @@ class SimulationDetectionSystem {
           const irstOptical = sensor.hasIRST && (dist <= (cloudHits > 0 ? 20.0 : 28.0));
           if (dist <= 18.0 || irstOptical) isImmediateBurnThrough = true;
 
-          if (dist <= maxDist * 0.85) {
-            const rangeFactor = Math.max(0.25, 1.0 - (dist / maxDist));
-            let rate = (sensor.radarIdentifySpeed || 1.0) * rangeFactor;
-            if (cloudHits > 0) rate *= Math.pow(0.85, cloudHits);
-            if (rate > highestProgressRate) highestProgressRate = rate;
-          }
+          const rangeFactor = Math.max(0.20, 1.0 - (dist / maxDist));
+          let rate = (sensor.radarIdentifySpeed || 1.0) * rangeFactor;
+          if (cloudHits > 0) rate *= Math.pow(0.85, cloudHits);
+          if (rate > highestProgressRate) highestProgressRate = rate;
         }
       }
 
@@ -67,7 +65,7 @@ class SimulationDetectionSystem {
         const requiredTime = isStealth ? (baseAirIdTime * stealthMult) : baseAirIdTime;
 
         if (isImmediateBurnThrough) h.trackDurationBlue += dt * 3.0;
-        else h.trackDurationBlue += dt * highestProgressRate;
+        else h.trackDurationBlue += dt * Math.max(0.25, highestProgressRate);
 
         if (h.trackDurationBlue >= requiredTime || (isImmediateBurnThrough && h.trackDurationBlue >= 1.5)) {
           h.identifiedByBlue = true;

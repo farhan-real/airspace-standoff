@@ -101,13 +101,20 @@ class ProcurementShelf {
     });
 
     catalogEl.querySelectorAll('.btn-equip-upgrade').forEach(btn => {
-      btn.textContent = active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP';
+      const upgId = btn.getAttribute('data-upg-id');
+      const upg = (window.UPGRADES_CATALOG || {})[upgId];
+      const isDisallowed = Boolean(upg && upg.isAllowed && activeSpec && !upg.isAllowed(activeSpec));
+      btn.disabled = isDisallowed;
+      btn.textContent = isDisallowed ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP');
     });
 
     catalogEl.querySelectorAll('.btn-equip-wpn').forEach(btn => {
       const wpnId = btn.getAttribute('data-wpn-id');
       const wpn = (window.WEAPONS_CATALOG || {})[wpnId];
-      const isRestricted = Boolean(wpn && wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId));
+      if (!wpn) return;
+      const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
+      const pylonRatingMismatch = activeSpec && (ratings.indexOf(wpn.minRating || 'Type S') > ratings.indexOf(activeSpec.maxPylonRating || 'Type M'));
+      const isRestricted = Boolean((wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId)) || pylonRatingMismatch);
       btn.disabled = isRestricted;
       btn.textContent = isRestricted ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP');
     });
@@ -167,12 +174,15 @@ class ProcurementShelf {
     const grid = document.createElement('div');
     grid.className = 'dense-sub-grid';
     const active = this.getActiveBaySummary();
+    const activeSpec = active ? (window.AIRCRAFT_CATALOG || {})[active.specId] : null;
 
     Object.values(window.UPGRADES_CATALOG || {}).forEach(upg => {
       const card = document.createElement('div');
       card.className = 'catalog-item-card';
 
-      card.setAttribute('draggable', 'true');
+      const isDisallowed = Boolean(upg && upg.isAllowed && activeSpec && !upg.isAllowed(activeSpec));
+
+      card.setAttribute('draggable', isDisallowed ? 'false' : 'true');
       card.dataset.dragType = 'upgrade';
       card.dataset.dragId = upg.id;
       card.dataset.dragName = upg.name;
@@ -187,13 +197,14 @@ class ProcurementShelf {
         <div class="cic-desc">${upg.desc}</div>
         <div style="display:flex;gap:6px;margin-top:4px;">
           <button type="button" class="spec-inspect-btn" data-inspect-type="upgrade" data-inspect-id="${upg.id}">[SPECS]</button>
-          <button type="button" class="btn-quick-equip btn-equip-upgrade" data-upg-id="${upg.id}" style="flex:1;">
-            ${active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP'}
+          <button type="button" class="btn-quick-equip btn-equip-upgrade" data-upg-id="${upg.id}" style="flex:1;" ${isDisallowed ? 'disabled' : ''}>
+            ${isDisallowed ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP')}
           </button>
         </div>`;
 
       card.querySelector('.btn-equip-upgrade').onclick = (e) => {
         e.stopPropagation();
+        if (isDisallowed) return;
         this.pm.equipItemDirectly({ type: 'upgrade', id: upg.id, name: upg.name });
       };
       grid.appendChild(card);
@@ -205,19 +216,23 @@ class ProcurementShelf {
     const grid = document.createElement('div');
     grid.className = 'dense-sub-grid';
     const active = this.getActiveBaySummary();
+    const activeSpec = active ? (window.AIRCRAFT_CATALOG || {})[active.specId] : null;
 
     Object.values(window.WEAPONS_CATALOG || {}).forEach(wpn => {
       if (filterCat === 'UTILITY') {
         if (wpn.category !== 'POD' && wpn.category !== 'GUN' && !wpn.isJammerPod && !wpn.isDecoy && !wpn.isLaser && !wpn.isGunpod) return;
       } else if (filterCat === 'A2A') {
-        if (wpn.category !== 'A2A' && !wpn.isGunpod) return;
+        if (wpn.category !== 'A2A') return;
       } else if (filterCat === 'A2G') {
-        if (wpn.category !== 'A2G' && !wpn.isGunpod && !wpn.isBunkerCracker) return;
+        if (wpn.category !== 'A2G' && !wpn.isBunkerCracker) return;
       } else if (filterCat && filterCat !== 'ALL' && wpn.category !== filterCat) return;
 
       const card = document.createElement('div');
       card.className = 'catalog-item-card';
-      const isRestricted = Boolean(wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId));
+
+      const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
+      const pylonRatingMismatch = activeSpec && (ratings.indexOf(wpn.minRating || 'Type S') > ratings.indexOf(activeSpec.maxPylonRating || 'Type M'));
+      const isRestricted = Boolean((wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId)) || pylonRatingMismatch);
       const wpnSlotWord = wpn.slots === 1 ? 'SLOT' : 'SLOTS';
       const typeBadge = wpn.isGunpod ? '<span class="badge-category" style="color:#fde047;border-color:#ca8a04;">GUN POD</span>' : '';
 
@@ -259,6 +274,7 @@ class ProcurementShelf {
 
       card.querySelector('.btn-equip-wpn').onclick = (e) => {
         e.stopPropagation();
+        if (isRestricted) return;
         this.pm.equipItemDirectly({ type: 'weapon', id: wpn.id, name: wpn.name });
       };
       grid.appendChild(card);

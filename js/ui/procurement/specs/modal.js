@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Specifications Modal Renderer
- * Displays comprehensive airframe specifications with station breakdown and optimal corner speeds.
+ * Displays comprehensive airframe specifications with station breakdown, optimal corner speeds, and flight lead upgrades.
  */
 
 class SpecsModalRenderer {
@@ -34,6 +34,8 @@ class SpecsModalRenderer {
   static renderAirframe(a, guns) {
     if (!a) return '<div class="inspect-desc-box">NO AIRFRAME DATA AVAILABLE</div>';
     guns = guns || window.AUTOCANNONS_CATALOG || {};
+
+    const inHangar = Boolean(document.getElementById('procurement-modal') && document.getElementById('procurement-modal').classList.contains('active'));
 
     const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
       ? window.StatEvaluator.rate
@@ -79,6 +81,10 @@ class SpecsModalRenderer {
     const centerlineDesc = a.hasCenterline
       ? `1 Heavy Station (${a.centerlineSlots || 6} Slots Max - Kinzhal Compatible)`
       : 'None';
+
+    const addBtnHtml = inHangar
+      ? '<button type="button" class="inspect-action-btn req-btn" id="inspect-btn-req">+ ADD TO SQUADRON</button>'
+      : '';
 
     return `
       <div class="inspect-type-banner">
@@ -130,8 +136,8 @@ class SpecsModalRenderer {
       </div>
 
       <div class="inspect-action-bar">
-        <button type="button" class="inspect-action-btn req-btn" id="inspect-btn-req">+ ADD TO SQUADRON</button>
-        <button type="button" class="inspect-action-btn close-btn" onclick="document.getElementById('system-inspect-modal').classList.remove('active');">CLOSE</button>
+        ${addBtnHtml}
+        <button type="button" class="inspect-action-btn close-btn" onclick="const m=document.getElementById('system-inspect-modal');if(m)m.classList.remove('active');if(window.Game&&window.Game.controls)window.Game.controls.autoUnpauseOnDialogClose();">CLOSE</button>
       </div>
     `;
   }
@@ -139,6 +145,7 @@ class SpecsModalRenderer {
   static renderWeapon(w) { return SpecsSubsystemViews.renderWeapon(w); }
   static renderGun(g) { return SpecsSubsystemViews.renderGun(g); }
   static renderUpgrade(u) { return SpecsSubsystemViews.renderUpgrade(u); }
+  static renderLeadBuffs(spec) { return SpecsSubsystemViews.renderLeadBuffs(spec); }
   static renderCivilian(c) { return SpecsSubsystemViews.renderCivilian(c); }
   static renderSurfaceUnit(s) { return SpecsSubsystemViews.renderSurfaceUnit(s); }
 }

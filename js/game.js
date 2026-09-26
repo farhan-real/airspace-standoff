@@ -271,7 +271,11 @@ class AirspaceStandoffGame {
         plan.isLead, false, initialAltFt
       );
       (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
-      (item.weapons || []).forEach(w => ac.installWeapon((typeof w === 'object' && w !== null) ? (w.id || w.specId) : w));
+      (item.weapons || []).forEach(w => {
+        const wId = (typeof w === 'object' && w !== null) ? (w.id || w.specId) : w;
+        const targetStation = (typeof w === 'object' && w !== null) ? w.station : null;
+        ac.installWeapon(wId, targetStation);
+      });
       ac.recalculateWeight();
       if (editorMission && editorMission.blueWeapons === 'RANDOM' && window.MissionEditor) {
         window.MissionEditor.applyRandomWeapons(ac);

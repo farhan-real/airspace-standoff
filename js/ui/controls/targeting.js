@@ -37,7 +37,7 @@ class ControlsTargetingHandler {
       }
     }
     for (const s of this.game.surfaceUnits) {
-      if (s && s.team === enemyTeamTag && s.hp > 0 && (is2P || (detectedSet && detectedSet.has(s.id)))) {
+      if (s && s.team === enemyTeamTag && s.hp > 0 && !s.isIndestructible && (is2P || (detectedSet && detectedSet.has(s.id)))) {
         detected.push({ entity: s, dist: Math.hypot(s.x - active.x, s.y - active.y) });
       }
     }
@@ -73,7 +73,7 @@ class ControlsTargetingHandler {
     });
 
     const candidates = forwardTargets.length > 0 ? forwardTargets : targets;
-    const prioritized = candidates.filter(t => !t.entity.isCivilian && !t.entity.isGhost);
+    const prioritized = candidates.filter(t => !t.entity.isCivilian && !t.entity.isGhost && !t.entity.isIndestructible);
     const chosen = (prioritized.length > 0 ? prioritized[0] : candidates[0]).entity;
 
     this.lockTargetEntity(chosen);

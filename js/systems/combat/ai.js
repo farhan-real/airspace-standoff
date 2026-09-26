@@ -34,11 +34,11 @@ class TacticalAICommander {
     const blueDecoys = (this.game.simulation && this.game.simulation.decoyDrones || []).filter(d => d.hp > 0 && d.team === 'friendly' && redDetected.has(d.id));
 
     const candidateAirTargets = visibleAllies.concat(blueDecoys);
-    const visibleBunkers = (this.game.surfaceUnits || []).filter(s => s.team === 'friendly' && s.hp > 0);
+    const visibleBunkers = (this.game.surfaceUnits || []).filter(s => s.team === 'friendly' && s.hp > 0 && !s.isIndestructible);
     const clouds = (this.game.simulation && this.game.simulation.weatherClouds) || [];
     const allMissiles = this.game.missiles || [];
 
-    this.coordinateAceTactics(aliveHostiles.filter(h => h.isAce), candidateAirTargets, clouds, allMissiles, profile, diffKey, dt);
+    this.coordinateAceTactics(aliveHostiles.filter(h => h.isAce), candidateAirTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt);
 
     for (const h of aliveHostiles) {
       if (!h.isAce) {
@@ -95,10 +95,17 @@ class TacticalAICommander {
 
       if (pylon.weapon.isLaser) {
         if (typeof AudioSys !== 'undefined') AudioSys.playLaser();
+        const wasAlive = tgt.hp > 0.05;
         tgt.hp = Math.max(0, tgt.hp - pylon.weapon.damage);
+        if (tgt.hp < 0.05) tgt.hp = 0;
         if (this.game.radar) {
           this.game.radar.spawnExplosionFX(tgt.x, tgt.y, false);
           this.game.radar.spawnCombatText(tgt.x, tgt.y, `LASER -${pylon.weapon.damage}HP`, '#f43f5e');
+        }
+        if (wasAlive && tgt.hp <= 0 && this.game.simulation && !tgt.isCivilian) {
+          this.game.simulation.recordKillEvent(shooter.team, tgt, shooter, { weapon: pylon.weapon, isSalvo: false, salvoCount: 1 });
+        } else if (wasAlive && tgt.hp > 0 && this.game.simulation && this.game.simulation.scoring) {
+          this.game.simulation.scoring.recordHitEvent(shooter.team, tgt, shooter, { weapon: pylon.weapon, damage: pylon.weapon.damage });
         }
       } else {
         this.game.missiles.push(new MissileEntity(pylon.weapon, shooter, tgt));
@@ -108,7 +115,7 @@ class TacticalAICommander {
     shooter.recalculateWeight();
   }
 
-  coordinateAceTactics(aces, candidateTargets, clouds, allMissiles, profile, diffKey, dt) {
+  coordinateAceTactics(aces, candidateTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt) {
     if (!aces || aces.length === 0) return;
 
     const aceBlunders = { CADET: 0.65, VETERAN: 0.50, ELITE: 0.38, ACE: 0.28, MASTER: 0.20, LEGEND: 0.15 };
@@ -117,6 +124,13 @@ class TacticalAICommander {
 
     for (const ace of aces) {
       if (ace.hp <= 0) continue;
+
+      const hasUsableAmmo = ace.equippedWeapons && ace.equippedWeapons.some(p => p && p.ammo > 0 && p.weapon && !p.weapon.isJammerPod && !p.weapon.isDecoy && !p.weapon.isDecoyDrone);
+      if (!hasUsableAmmo && !ace.isRTB) {
+        ace.orderRTB();
+        if (this.game.radar) this.game.radar.spawnCombatText(ace.x, ace.y, 'ACE BINGO AMMO: RTB', '#f59e0b');
+        continue;
+      }
 
       const incoming = (this.game.missiles || []).filter(m => m.active && m.target && m.target.id === ace.id);
       if (incoming.length > 0) {
@@ -131,7 +145,6 @@ class TacticalAICommander {
           const sOpt = (typeof ace.getOptimalCornerSpeed === 'function') ? ace.getOptimalCornerSpeed() : 0.90;
           const turnOptEff = ace.isCoffin ? 1.0 : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(ace.speed || 0.8, sOpt) : 0.85);
 
-          // Aces manage engine power towards optimal corner velocity during defensive breaks
           if (ace.speed > sOpt * 1.15) ace.engineAlpha = 0.35;
           else if (ace.speed < sOpt * 0.85) ace.engineAlpha = 0.85;
           else ace.engineAlpha = 0.65;
@@ -166,7 +179,9 @@ class TacticalAICommander {
       }
 
       if (typeof AIMissileTactics !== 'undefined') {
-        const acePlan = AIMissileTactics.selectAceTargetAndSalvo(ace, candidateTargets, clouds, allMissiles, diffKey);
+        const isStrikeAce = Boolean(ace.spec && ace.spec.role && (ace.spec.role.includes('Strike') || ace.spec.role.includes('Bomber')));
+        const targetsForAce = (isStrikeAce && visibleBunkers.length > 0) ? visibleBunkers.concat(candidateTargets) : candidateTargets;
+        const acePlan = AIMissileTactics.selectAceTargetAndSalvo(ace, targetsForAce, clouds, allMissiles, diffKey);
         if (acePlan && acePlan.target) {
           const tgt = acePlan.target;
           ace.radarLockedTarget = tgt;

@@ -230,7 +230,7 @@ window.AIRCRAFT_SUPERIORITY = {
     hasCenterline: true,
     centerlineSlots: 6,
     totalSlots: 12,
-    maxPylonRating: 'Type H',
+    maxPylonRating: 'Type X',
     upgradeSockets: 3,
     desc: 'Heavy tandem-seat interceptor with 12 external weapon stations and extra centerline station certified for heavy missiles.'
   },

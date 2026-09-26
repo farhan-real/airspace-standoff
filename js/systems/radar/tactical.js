@@ -1,4 +1,6 @@
-/* AIRSPACE STANDOFF: Radar Tactical Sub-Renderer: Radar Locks, Paths & Missile Volleys */
+/**
+ * AIRSPACE STANDOFF: Radar Tactical Sub-Renderer: Radar Locks, Paths & Missile Volleys
+ */
 
 class RadarTacticalRenderer {
   static drawSurface(...args) {
@@ -19,6 +21,8 @@ class RadarTacticalRenderer {
       const tgt = source.radarLockedTarget;
       if (!tgt || tgt.hp <= 0 || typeof tgt.x !== 'number') continue;
       if (source.isPassiveRadarOnlyEngagement) continue;
+
+      if (source.team !== team && detectedSet && !detectedSet.has(source.id)) continue;
 
       if (source.heading !== undefined && source.spec && source.spec.radarConeDeg < 360) {
         let angleDiff = Math.abs(source.heading - Math.atan2(tgt.y - source.y, tgt.x - source.x));

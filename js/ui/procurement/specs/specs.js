@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Procurement Specifications Coordinator & Tag-Only Tooltip Engine
- * Manages spec modal views for airframes, weapons, autocannons, and modular components in the hangar.
+ * Manages spec modal views for airframes, weapons, autocannons, modular components, civilians, surface units, and flight leads.
  */
 
 class ProcurementSpecs {
@@ -140,7 +140,11 @@ class ProcurementSpecs {
       titleEl.textContent = `ORDNANCE SPECIFICATION - ${(w.name || id).toUpperCase()}`;
       bodyEl.innerHTML = renderer.renderWeapon(w);
       const selBtn = bodyEl.querySelector('#inspect-btn-sel');
-      if (selBtn) selBtn.onclick = () => { this.pm.equipItemDirectly({ type: 'weapon', id: w.id, name: w.name }); modal.classList.remove('active'); };
+      if (selBtn) selBtn.onclick = () => {
+        this.pm.equipItemDirectly({ type: 'weapon', id: w.id, name: w.name });
+        modal.classList.remove('active');
+        if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
+      };
       modal.classList.add('active');
       return;
     }
@@ -158,7 +162,36 @@ class ProcurementSpecs {
       titleEl.textContent = `AVIONICS SUBSYSTEM SPECIFICATION - ${(u.name || id).toUpperCase()}`;
       bodyEl.innerHTML = renderer.renderUpgrade(u);
       const selUpg = bodyEl.querySelector('#inspect-btn-sel-upg');
-      if (selUpg) selUpg.onclick = () => { this.pm.equipItemDirectly({ type: 'upgrade', id: u.id, name: u.name }); modal.classList.remove('active'); };
+      if (selUpg) selUpg.onclick = () => {
+        this.pm.equipItemDirectly({ type: 'upgrade', id: u.id, name: u.name });
+        modal.classList.remove('active');
+        if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
+      };
+      modal.classList.add('active');
+      return;
+    }
+    if (type === 'lead') {
+      const a = aircraft[id];
+      if (!a) return;
+      titleEl.textContent = `FLIGHT LEAD DOCTRINE - ${(a.name || id).toUpperCase()}`;
+      bodyEl.innerHTML = renderer.renderLeadBuffs ? renderer.renderLeadBuffs(a) : '';
+      modal.classList.add('active');
+      return;
+    }
+    if (type === 'civilian') {
+      const pool = window.CIVILIAN_FLIGHTS || [];
+      const c = pool.find(f => f.code === id || f.name === id) || { code: id, name: id, speedMach: 0.78, altFt: 36000, rcs: 25.0 };
+      titleEl.textContent = `CIVILIAN AIRLINER SPECIFICATION - ${c.code || id}`;
+      bodyEl.innerHTML = renderer.renderCivilian ? renderer.renderCivilian(c) : '';
+      modal.classList.add('active');
+      return;
+    }
+    if (type === 'surface') {
+      let surf = (window.Game && window.Game.surfaceUnits) ? window.Game.surfaceUnits.find(u => u.type === id || u.name === id) : null;
+      if (!surf && typeof SurfaceUnit !== 'undefined') surf = new SurfaceUnit(id, 'hostile', 0, 0);
+      const s = surf || { type: id, name: id, hp: 6, maxHp: 6, desc: 'Surface tactical air-defense battery or logistics facility.' };
+      titleEl.textContent = `SURFACE INSTALLATION - ${(s.name || s.type || id).toUpperCase()}`;
+      bodyEl.innerHTML = renderer.renderSurfaceUnit ? renderer.renderSurfaceUnit(s) : '';
       modal.classList.add('active');
     }
   }

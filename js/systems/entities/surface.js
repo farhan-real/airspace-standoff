@@ -17,6 +17,7 @@ class SurfaceUnit {
     this.isJammerStation = false;
     this.isIndestructible = false;
     this.jamEfficiency = 0.0;
+    this.heading = (team === 'friendly') ? 0.0 : Math.PI;
 
     this.identifiedByBlue = true;
     this.identifiedByRed = true;
@@ -111,13 +112,16 @@ class SurfaceUnit {
       for (const plane of enemyAircraftList) {
         if (!plane || plane.hp <= 0 || plane.isCivilian) continue;
         const dist = Math.hypot(plane.x - this.x, plane.y - this.y);
-        if (dist <= this.rangeKm && plane.alt > 0.08) {
+        const altCheck = (typeof plane.altFt === 'number') ? (plane.altFt > 2500) : (plane.alt > 0.04);
+        if (dist <= this.rangeKm && altCheck) {
           const samWeapon = {
             id: this.team === 'friendly' ? 'MIM-104_SAM' : '48N6_SAM',
             name: 'Heavy SAM Missile',
             rangeKm: 52.0,
             speedMach: 5.2,
             seeker: 'ARH',
+            category: 'SAM',
+            trait: 'SURFACE_SAM',
             rcs: 0.12,
             lambda: 0.25,
             p: 1.0,

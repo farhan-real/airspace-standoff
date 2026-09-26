@@ -27,7 +27,7 @@ class AfterActionReportSystem {
       tEl.style.color = blueWon ? 'var(--color-ice-highlight)' : 'var(--color-red)';
     }
     if (dEl) {
-      const sortieNote = game.isMissionEditorMatch ? ' · CUSTOM EDITOR SORTIE · NOT LEADERBOARD RANKED' : '';
+      const sortieNote = game.isMissionEditorMatch ? ' - CUSTOM EDITOR SORTIE - NOT LEADERBOARD RANKED' : '';
       dEl.textContent = `${msg || 'OPERATIONAL SUMMARY'}${sortieNote}`;
     }
 
@@ -209,7 +209,7 @@ class AfterActionReportSystem {
     }));
 
     const archivedTimeline = (typeof AfterActionReportTimeline !== 'undefined' && AfterActionReportTimeline.getMergedTimelineEvents)
-      ? AfterActionReportTimeline.getMergedTimelineEvents(game)
+      ? AfterActionReportTimeline.getMergedTimelineEvents(game, blueWon)
       : ((game.simulation && game.simulation.timelineEvents) ? [...game.simulation.timelineEvents] : []);
 
     if (!game.isMissionEditorMatch && window.Persistence && window.Persistence.saveTopSortie) {
@@ -283,4 +283,4 @@ class AfterActionReportSystem {
   }
 }
 
-window.AfterActionReportSystem = AfterActionReportSystem; 
+window.AfterActionReportSystem = AfterActionReportSystem;

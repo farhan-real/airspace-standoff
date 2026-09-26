@@ -4,7 +4,7 @@
  */
 
 class AfterActionReportTimeline {
-  static getMergedTimelineEvents(game) {
+  static getMergedTimelineEvents(game, blueWon = false) {
     if (!game || !game.simulation) return [];
     const events = (game.simulation && game.simulation.timelineEvents) ? [...game.simulation.timelineEvents] : [];
 
@@ -29,15 +29,6 @@ class AfterActionReportTimeline {
         }
       }
     }
-    return events;
-  }
-
-  static renderTimeline(game, blueWon = false) {
-    const timelineListEl = document.getElementById('aar-timeline-list');
-    const toggleTimelineBtn = document.getElementById('btn-toggle-aar-timeline');
-    if (!timelineListEl || !game || !game.simulation) return;
-
-    const recordedEvents = AfterActionReportTimeline.getMergedTimelineEvents(game);
 
     if (blueWon) {
       const elapsed = game.simulation && Number.isFinite(game.simulation.elapsedTimeSec)
@@ -48,8 +39,9 @@ class AfterActionReportTimeline {
         ? game.simulation.scoring.calcTimeBonus(durSec, blueWon)
         : 0;
 
-      if (timeBonus > 0) {
-        recordedEvents.push({
+      const hasTimeBonus = events.some(ev => ev.type === 'time_bonus');
+      if (timeBonus > 0 && !hasTimeBonus) {
+        events.push({
           time: game.simulation.getElapsedTimeString ? game.simulation.getElapsedTimeString() : '00:00',
           type: 'time_bonus',
           team: 'friendly',
@@ -61,20 +53,33 @@ class AfterActionReportTimeline {
         });
       }
 
-      recordedEvents.push({
-        time: game.simulation.getElapsedTimeString ? game.simulation.getElapsedTimeString() : '00:00',
-        type: 'victory',
-        team: 'friendly',
-        source: game.squadronName || 'Blue Coalition',
-        sourceType: 'FLEET',
-        target: 'Hostile Airspace',
-        targetType: 'THEATER',
-        weapon: 'Air Superiority',
-        isSalvo: false,
-        salvoCount: 1,
-        salvoBreakdown: ''
-      });
+      const hasVictory = events.some(ev => ev.type === 'victory');
+      if (!hasVictory) {
+        events.push({
+          time: game.simulation.getElapsedTimeString ? game.simulation.getElapsedTimeString() : '00:00',
+          type: 'victory',
+          team: 'friendly',
+          source: game.squadronName || 'Blue Coalition',
+          sourceType: 'FLEET',
+          target: 'Hostile Airspace',
+          targetType: 'THEATER',
+          weapon: 'Air Superiority',
+          isSalvo: false,
+          salvoCount: 1,
+          salvoBreakdown: ''
+        });
+      }
     }
+
+    return events;
+  }
+
+  static renderTimeline(game, blueWon = false) {
+    const timelineListEl = document.getElementById('aar-timeline-list');
+    const toggleTimelineBtn = document.getElementById('btn-toggle-aar-timeline');
+    if (!timelineListEl || !game || !game.simulation) return;
+
+    const recordedEvents = AfterActionReportTimeline.getMergedTimelineEvents(game, blueWon);
 
     if (recordedEvents.length === 0) {
       timelineListEl.innerHTML = `

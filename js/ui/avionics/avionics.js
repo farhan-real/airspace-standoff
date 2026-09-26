@@ -120,7 +120,7 @@ class AvionicsUI {
       if (hudAltMain) { hudAltMain.textContent = 'FL000'; hudAltMain.style.color = '#8494ab'; }
       if (hudAltArrow) { hudAltArrow.textContent = '--'; hudAltArrow.className = 'rfh-arrow val-trend-flat'; }
       if (hudVsi) hudVsi.textContent = '0 fpm LVL';
-      if (hudCallsign) hudCallsign.textContent = 'NO CRAFT SELECTED';
+      if (hudCallsign) hudCallsign.textContent = 'NO AIRCRAFT SELECTED';
       if (hudModel) hudModel.textContent = '--';
       if (hudCardinal) hudCardinal.textContent = 'N';
       if (hudDeg) hudDeg.textContent = '000\u00B0';
@@ -140,7 +140,6 @@ class AvionicsUI {
     }
 
     const isFriendly = (u.team === 'friendly');
-    const modelCode = u.spec ? u.spec.id : 'AIRCRAFT';
     const modelName = u.spec ? u.spec.name : 'AIRCRAFT';
     const callsignText = String(u.callsign || 'PILOT').replace(/<[^>]*>/g, '');
     const displayName = window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : `${callsignText} - ${modelName}`;
@@ -194,11 +193,13 @@ class AvionicsUI {
     }
 
     if (hudCallsign) {
-      const badge = u.isAce ? ' ACE' : (u.isFlightLead ? ' LEAD' : '');
-      hudCallsign.textContent = `${modelCode}${badge}`;
+      const badge = u.isAce ? ' [ACE]' : (u.isFlightLead ? ' [LEAD]' : '');
+      hudCallsign.textContent = `${callsignText.toUpperCase()}${badge}`;
       hudCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00f0ff' : '#ff3366'));
     }
-    if (hudModel) hudModel.textContent = `${displayName} - ${u.spec ? u.spec.role : 'AIRCRAFT'}`;
+    if (hudModel) {
+      hudModel.textContent = `${modelName.toUpperCase()} - ${u.spec ? u.spec.role.toUpperCase() : 'AIRCRAFT'}`;
+    }
     if (hudCardinal) { hudCardinal.textContent = cardStr; hudCardinal.style.color = (cardStr === 'E') ? '#00f0ff' : (cardStr === 'W' ? '#00f5a0' : '#f8fafc'); }
     if (hudDeg) hudDeg.textContent = String(deg).padStart(3, '0') + '\u00B0';
 

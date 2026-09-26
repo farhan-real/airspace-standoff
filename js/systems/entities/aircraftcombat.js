@@ -59,7 +59,7 @@ Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
   let assignedStation = targetStation;
 
   if (wpnSlotType === 'CENTERLINE') {
-    if (!this.hasCenterline || this.getUsedCenterlineSlots() > 0) return false;
+    if (!this.hasCenterline || (this.getUsedCenterlineSlots() + wpn.slots > this.centerlineSlots)) return false;
     assignedStation = 'CENTERLINE';
   } else if (!assignedStation) {
     if (wpnSlotType === 'INTERNAL' && (this.getUsedInternalSlots() + wpn.slots <= this.internalSlots)) {
@@ -77,7 +77,7 @@ Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
       if (wpnSlotType === 'CENTERLINE') return false;
       if (this.getUsedExternalSlots() + wpn.slots > this.externalSlots) return false;
     } else if (assignedStation === 'CENTERLINE') {
-      if (wpnSlotType !== 'CENTERLINE' || !this.hasCenterline || this.getUsedCenterlineSlots() > 0) return false;
+      if (wpnSlotType !== 'CENTERLINE' || !this.hasCenterline || (this.getUsedCenterlineSlots() + wpn.slots > this.centerlineSlots)) return false;
     }
   }
 
@@ -252,8 +252,8 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
       if (angleDiff < maxConeRad) {
         if (isEnemy && !this.isAce && Math.random() < (diffKey === 'CADET' ? 0.60 : 0.40)) break;
 
-        const baseDamage = totalGunDps * dt;
-        let sustainedDmg = baseDamage;
+        const totalBurstDamage = (this.gun.damagePerBurst || (totalGunDps * 0.50));
+        let sustainedDmg = totalBurstDamage;
         const damageFactors = [];
         const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
         const cloudHits = typeof Physics !== 'undefined' ? Physics.countIntersectingClouds(this.x, this.y, enemy.x, enemy.y, clouds) : 0;
@@ -286,7 +286,7 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
         if (inspection && inspection.enabled) inspection.recordEvent('GUN BURST', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(this) : this.callsign} fired ${this.gun.name || this.gun.id} at ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(enemy) : (enemy.callsign || enemy.name || enemy.id)}`, this, enemy, {
           gun: this.gun.name || this.gun.id, rangeKm: dist, maximumRangeKm: maxRange,
           targetAngleDeg: angleDiff * 180 / Math.PI, allowedHalfConeDeg: maxConeRad * 180 / Math.PI,
-          firingDps: totalGunDps, simulationStepSec: dt, baseDamage, damageFactors,
+          firingDps: totalGunDps, simulationStepSec: dt, baseDamage: totalBurstDamage, damageFactors,
           finalDamage: hpBefore - enemy.hp, hpBefore, hpAfter: enemy.hp, ammunitionRemaining: this.gunAmmo
         });
 
