@@ -57,6 +57,10 @@ class LoadoutMetrics {
           assignedStation = 'CENTERLINE';
         } else if (wType === 'INTERNAL' && (internalUsed + wSlots <= internalCapacity)) {
           assignedStation = 'INTERNAL';
+        } else if (externalUsed + wSlots <= externalCapacity) {
+          assignedStation = 'EXTERNAL';
+        } else if (hasCenterline && (centerlineUsed + wSlots <= centerlineCapacity)) {
+          assignedStation = 'CENTERLINE';
         } else {
           assignedStation = 'EXTERNAL';
         }
@@ -86,7 +90,7 @@ class LoadoutMetrics {
     let hasTv = false;
     let hasTitaniumTub = false;
     let hasGanAesa = false;
-    let hasCoffin = Boolean(spec.isCoffin);
+    let hasCoffin = false;
 
     (upgradesList || []).forEach(uItem => {
       const uId = (typeof uItem === 'object' && uItem !== null) ? (uItem.id || uItem.specId) : uItem;
@@ -166,7 +170,7 @@ class LoadoutMetrics {
     const baseAgility = Number(spec.AGI_0 || 0.85);
     let loadedAgility = baseAgility;
     if (spec.thrustVector || hasTv) loadedAgility += 0.12;
-    if (hasCoffin || spec.isCoffin) loadedAgility *= 1.15;
+    if (hasCoffin && !spec.isCoffin) loadedAgility *= 1.15;
     if (hasTitaniumTub) loadedAgility *= 0.95;
     if (isLead) {
       if (spec.category === 'MULTIROLE') loadedAgility += 0.20;
@@ -222,10 +226,10 @@ class LoadoutMetrics {
       : '';
     let extPill = `<span class="station-slot-pill ext-pill">${externalUsed}/${externalCapacity} EXT</span>`;
     let ctrPill = hasCenterline
-      ? `<span class="station-slot-pill ctr-pill ${centerlineUsed > 0 ? 'occupied' : ''}">${centerlineUsed > 0 ? '1/1' : '0/1'} CTR</span>`
+      ? `<span class="station-slot-pill ctr-pill ${centerlineUsed > 0 ? 'occupied' : ''}">${centerlineUsed}/${centerlineCapacity} CTR</span>`
       : '';
 
-    const stationsBadgeHtml = `<span class="station-tag-box" data-tag-title="STATIONS BREAKDOWN" data-tag-tooltip="Internal Bay: ${internalUsed}/${internalCapacity} slots &bull; External Pylons: ${externalUsed}/${externalCapacity} slots &bull; Centerline: ${hasCenterline ? (centerlineUsed > 0 ? '1/1' : '0/1') : 'None'} (Total: ${baselineTotalSlots} Slots)">${intPill}${extPill}${ctrPill}</span>`;
+    const stationsBadgeHtml = `<span class="station-tag-box" data-tag-title="STATIONS BREAKDOWN" data-tag-tooltip="Internal Bay: ${internalUsed}/${internalCapacity} slots &bull; External Pylons: ${externalUsed}/${externalCapacity} slots &bull; Centerline: ${hasCenterline ? `${centerlineUsed}/${centerlineCapacity}` : 'None'} (Total: ${baselineTotalSlots} Slots)">${intPill}${extPill}${ctrPill}</span>`;
 
     return {
       spec, totalCost, costColorClass: costRating.colorClass,

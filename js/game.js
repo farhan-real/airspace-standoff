@@ -217,6 +217,7 @@ class AirspaceStandoffGame {
       this.simulation.ghostContacts = [];
       this.simulation.decoyDrones = [];
       this.simulation.ghostSpawnTimer = 0.0;
+      this.simulation._satelliteUplinkAnnouncedBlue = false;
       this.simulation.setTimeWarp(1);
       this.simulation.resetReplay();
       this.simulation.cloudCoverage = editorMission ? editorMission.clouds : 'RANDOM';

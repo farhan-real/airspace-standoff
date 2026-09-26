@@ -258,12 +258,13 @@ class AvionicsUI {
   updateRWRState() {
     let rwrState = 'clean';
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
+    const activeUnit = this.game.activeUnit;
     const lockingThreats = [];
 
-    if (this.game.missiles) {
+    if (this.game.missiles && activeUnit && activeUnit.hp > 0) {
       for (let i = 0; i < this.game.missiles.length; i++) {
         const m = this.game.missiles[i];
-        if (m.active && m.team !== commanderTeam && m.target && m.target.team === commanderTeam) {
+        if (m.active && m.team !== commanderTeam && m.target && m.target.id === activeUnit.id) {
           if (m.isPassiveRadar && m.distanceToTarget > (m.pathRevealDistance || 20.0)) {
             continue;
           }
@@ -286,15 +287,39 @@ class AvionicsUI {
         }
       }
     } else {
+      let hasLocks = false;
       let hasSweeps = false;
-      const hostileFleet = (commanderTeam === 'friendly') ? this.game.hostileAircraft : this.game.alliedAircraft;
-      for (const h of hostileFleet) {
-        if (h.hp > 0 && h.radarLockedTarget && h.radarLockedTarget.team === commanderTeam) {
-          hasSweeps = true; break;
+      if (activeUnit && activeUnit.hp > 0) {
+        const hostileFleet = (commanderTeam === 'friendly') ? this.game.hostileAircraft : this.game.alliedAircraft;
+        for (const h of hostileFleet) {
+          if (h.hp > 0 && h.radarLockedTarget && h.radarLockedTarget.id === activeUnit.id) {
+            hasLocks = true;
+            break;
+          }
+        }
+        if (!hasLocks) {
+          for (const h of hostileFleet) {
+            if (h.hp > 0) {
+              const dist = Math.hypot(h.x - activeUnit.x, h.y - activeUnit.y);
+              const r0 = (h.spec && h.spec.R_0) || 75.0;
+              if (dist <= r0) {
+                hasSweeps = true;
+                break;
+              }
+            }
+          }
         }
       }
-      rwrState = hasSweeps ? 'sweep' : 'clean';
-      if (detailEl) detailEl.textContent = hasSweeps ? 'HOSTILE RADAR SWEEP ACTIVE' : 'SECTOR SCAN CLEAR';
+      if (hasLocks) {
+        rwrState = 'lock';
+        if (detailEl) detailEl.textContent = 'HOSTILE RADAR LOCK ON CRAFT';
+      } else if (hasSweeps) {
+        rwrState = 'sweep';
+        if (detailEl) detailEl.textContent = 'HOSTILE RADAR SWEEP DETECTED';
+      } else {
+        rwrState = 'clean';
+        if (detailEl) detailEl.textContent = 'NO EMISSIONS DETECTED';
+      }
     }
 
     const indicator = document.getElementById('rwr-state');

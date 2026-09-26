@@ -101,11 +101,13 @@ class RadarTacticalRenderer {
         ctx.fillStyle = '#00f0ff';
         ctx.fillText('SALVO x' + friendlyCount, tx - 22, ty - 14);
         ctx.restore();
-      } else if (enemyCount > 1) {
+      }
+      if (enemyCount > 1) {
         ctx.save();
         ctx.font = '700 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
         ctx.fillStyle = '#ef4444';
-        ctx.fillText('INBOUND x' + enemyCount, tx - 22, ty - 14);
+        const yOff = (friendlyCount > 1) ? 22 : -14;
+        ctx.fillText('INBOUND x' + enemyCount, tx - 22, ty + yOff);
         ctx.restore();
       }
     });

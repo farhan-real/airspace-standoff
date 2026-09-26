@@ -40,7 +40,7 @@ class ModalEditorTemplate {
             </div>
 
             <div class="mission-editor-section">
-              <h3><span>01</span> THEATER SCENARIO &amp; THREAT LEVEL</h3>
+              <h3><span>01</span> THEATER SCENARIO &amp; DIFFICULTY</h3>
               <div class="mission-editor-grid">
                 <div class="mission-editor-field">
                   <label for="cdd-me-scenario">SCENARIO MODE <span class="me-field-badge">OBJECTIVE</span></label>
@@ -48,7 +48,7 @@ class ModalEditorTemplate {
                   <button type="button" class="mission-editor-random-toggle" data-random-for="scenario" aria-pressed="false">RANDOM</button>
                 </div>
                 <div class="mission-editor-field">
-                  <label for="cdd-me-difficulty">DIFFICULTY &amp; CONTESTATION <span class="me-field-badge">MULTIPLIER</span></label>
+                  <label for="cdd-me-difficulty">DIFFICULTY <span class="me-field-badge">MULTIPLIER</span></label>
                   <div id="cdd-me-difficulty" class="me-dropdown-container"></div>
                   <button type="button" class="mission-editor-random-toggle" data-random-for="difficulty" aria-pressed="false">RANDOM</button>
                 </div>

@@ -285,9 +285,11 @@ window.WEAPONS_PODS = {
     damagePerRound: 1.00,
     damagePerBurst: 3.0,
     cooldown: 2.8,
+    burstCooldown: 2.8,
     ammoCount: 12,
     ammoPerBurst: 3,
     isLaser: true,
+    isGunpod: true,
     sigmaPylon: 0.25,
     category: 'GUN',
     allowedAirframes: [

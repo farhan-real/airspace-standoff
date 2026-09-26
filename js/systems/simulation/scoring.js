@@ -217,10 +217,10 @@ class SimulationScoring {
     const logDesc = `${srcName} (${srcType}) destroyed ${tgtName} (${tgtType}) using ${wpnName}${salvoTag}`.trim();
 
     if (firingTeam === 'friendly') {
-      if (!isDecoy) this.game.stats.redLosses++;
+      if (isAircraft && !isDecoy) this.game.stats.redLosses++;
       this.logScoreEvent('friendly', pts, logDesc);
     } else {
-      if (!isDecoy) this.game.stats.blueLosses++;
+      if (isAircraft && !isDecoy) this.game.stats.blueLosses++;
       this.logScoreEvent('hostile', pts, logDesc);
     }
 

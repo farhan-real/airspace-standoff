@@ -93,14 +93,21 @@ class SurfaceUnit {
     this.identifiedByRed = Boolean(val);
   }
 
-  takeDamage(amount) {
+  takeDamage(amount, isBunkerCracker = false) {
     if (this.isIndestructible) {
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnCombatText(this.x, this.y, 'DEPOT INDESTRUCTIBLE', '#00f5a0');
       }
       return;
     }
-    this.hp = Math.max(0, this.hp - amount);
+    let effectiveDamage = amount;
+    if (this.type === 'BUNKER' && !isBunkerCracker) {
+      effectiveDamage = Math.max(0.1, amount * 0.20);
+      if (window.Game && window.Game.radar) {
+        window.Game.radar.spawnCombatText(this.x, this.y, 'BUNKER DEFLECTED (NON-PENETRATING)', '#fbbf24');
+      }
+    }
+    this.hp = Math.max(0, this.hp - effectiveDamage);
     if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(this.type === 'BUNKER');
   }
 
@@ -109,8 +116,14 @@ class SurfaceUnit {
     if (this.fireCooldown > 0) this.fireCooldown -= dt;
 
     if (this.type === 'S-400' && radarArrayActive && this.fireCooldown <= 0) {
+      const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
       for (const plane of enemyAircraftList) {
         if (!plane || plane.hp <= 0 || plane.isCivilian) continue;
+        const isDetected = is2P || (typeof plane.isIdentifiedBy === 'function'
+          ? plane.isIdentifiedBy(this.team)
+          : Boolean(plane.isIdentified));
+        if (!isDetected) continue;
+
         const dist = Math.hypot(plane.x - this.x, plane.y - this.y);
         const altCheck = (typeof plane.altFt === 'number') ? (plane.altFt > 2500) : (plane.alt > 0.04);
         if (dist <= this.rangeKm && altCheck) {
@@ -149,17 +162,21 @@ class SurfaceUnit {
         this.fireCooldown = this.cooldownMax;
 
         const inspection = window.Game && window.Game.inspection;
-        if (inspection && inspection.enabled) inspection.recordEvent('CIWS INTERCEPT', `${this.name} intercepted ${targetMissile.weapon.name || targetMissile.weapon.id}`, this, targetMissile.source, {
-          interceptedMissile: targetMissile.id,
-          missileWeapon: targetMissile.weapon.name || targetMissile.weapon.id,
-          missileTeam: targetMissile.team,
-          interceptionRangeKm: interceptionDistance,
-          maximumDefenseRadiusKm: this.rangeKm,
-          insideDefenseRadius: interceptionDistance <= this.rangeKm,
-          interceptCount: (window.Game.stats.defensiveIntercepts || 0) + 1
-        }, targetMissile);
+        if (inspection && inspection.enabled) {
+          inspection.recordEvent('CIWS INTERCEPT', `${this.name} intercepted ${targetMissile.weapon.name || targetMissile.weapon.id}`, this, targetMissile.source, {
+            interceptedMissile: targetMissile.id,
+            missileWeapon: targetMissile.weapon.name || targetMissile.weapon.id,
+            missileTeam: targetMissile.team,
+            interceptionRangeKm: interceptionDistance,
+            maximumDefenseRadiusKm: this.rangeKm,
+            insideDefenseRadius: interceptionDistance <= this.rangeKm,
+            interceptCount: (window.Game.stats.defensiveIntercepts || 0) + 1
+          }, targetMissile);
+        }
 
-        if (window.Game && window.Game.stats) window.Game.stats.defensiveIntercepts = (window.Game.stats.defensiveIntercepts || 0) + 1;
+        if (window.Game && window.Game.stats) {
+          window.Game.stats.defensiveIntercepts = (window.Game.stats.defensiveIntercepts || 0) + 1;
+        }
         if (window.Game && window.Game.simulation) {
           window.Game.simulation.logScoreEvent(this.team, 40, 'CIWS intercepted inbound missile');
         }

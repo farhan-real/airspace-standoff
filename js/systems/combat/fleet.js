@@ -73,21 +73,34 @@ const FleetGenerator = {
     const isStealth = (spec.internalSlots > 0);
     const isStrike = (spec.category === 'STRIKE');
 
-    const intBvr = ['AIM-120D', 'PL-15E', 'METEOR', 'AIM-260'];
-    const intWvr = ['AIM-9X-2', 'R-73', 'IRIS-T'];
-    const extBvr = ['R-37M', 'PL-21', 'AIM-260', 'METEOR', 'AIM-120D', 'PL-15E'];
-    const extWvr = ['PYTHON-5', 'AIM-9X-2', 'R-73', 'IRIS-T'];
+    const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
+    const specRatingIndex = ratings.indexOf(spec.maxPylonRating || 'Type M');
+
+    const isWeaponEligible = (w) => {
+      if (!w) return false;
+      const minIndex = ratings.indexOf(w.minRating || 'Type S');
+      if (minIndex > specRatingIndex) return false;
+      if (w.allowedAirframes && !w.allowedAirframes.includes(spec.id)) return false;
+      return true;
+    };
+
+    const intBvr = ['AIM-120D', 'PL-15E', 'METEOR', 'AIM-260'].filter(id => isWeaponEligible(wCatalog[id]));
+    const intWvr = ['AIM-9X-2', 'R-73', 'IRIS-T'].filter(id => isWeaponEligible(wCatalog[id]));
+    const extBvr = ['R-37M', 'PL-21', 'AIM-260', 'METEOR', 'AIM-120D', 'PL-15E'].filter(id => isWeaponEligible(wCatalog[id]));
+    const extWvr = ['PYTHON-5', 'AIM-9X-2', 'R-73', 'IRIS-T'].filter(id => isWeaponEligible(wCatalog[id]));
 
     const addWpn = (wId, station) => {
       const w = wCatalog[wId];
-      if (!w) return;
+      if (!w || !isWeaponEligible(w)) return false;
       weapons.push({ id: wId, station });
       totalCost += (w.cost || 0);
+      return true;
     };
 
     const addUpg = (uId) => {
       const u = uCatalog[uId];
       if (!u) return;
+      if (u.isAllowed && !u.isAllowed(spec)) return;
       upgrades.push(uId);
       totalCost += (u.cost || 0);
     };
@@ -108,7 +121,7 @@ const FleetGenerator = {
         addWpn('AIM-9X-2', 'INTERNAL');
         if (rng() < 0.70 && spec.externalSlots >= 2) addWpn('AIM-260', 'EXTERNAL');
       } else {
-        addWpn('R-37M', 'EXTERNAL');
+        if (!addWpn('R-37M', 'EXTERNAL')) addWpn('AIM-120D', 'EXTERNAL');
         addWpn('PL-15E', 'EXTERNAL');
         addWpn('R-73', 'EXTERNAL');
         if (spec.externalSlots >= 8) {
@@ -124,22 +137,25 @@ const FleetGenerator = {
       let intUsed = 0;
       while (intUsed < spec.internalSlots) {
         const rem = spec.internalSlots - intUsed;
-        const pick = (rem >= 2) ? intBvr[Math.floor(rng() * intBvr.length)] : intWvr[Math.floor(rng() * intWvr.length)];
+        const candidates = (rem >= 2 && intBvr.length > 0) ? intBvr : intWvr;
+        if (candidates.length === 0) break;
+        const pick = candidates[Math.floor(rng() * candidates.length)];
         const slots = (wCatalog[pick] && wCatalog[pick].slots) || 1;
         if (intUsed + slots <= spec.internalSlots) {
-          addWpn(pick, 'INTERNAL');
-          intUsed += slots;
+          if (addWpn(pick, 'INTERNAL')) intUsed += slots;
+          else break;
         } else break;
       }
       if ((rng() < 0.65 || doctrine === 'STANDOFF') && spec.externalSlots > 0) {
         let extUsed = 0;
         while (extUsed < spec.externalSlots) {
-          const pool = (doctrine === 'STANDOFF') ? extBvr : (rng() < 0.60 ? extBvr : extWvr);
+          const pool = (doctrine === 'STANDOFF' && extBvr.length > 0) ? extBvr : (rng() < 0.60 && extBvr.length > 0 ? extBvr : extWvr);
+          if (pool.length === 0) break;
           const pick = pool[Math.floor(rng() * pool.length)];
           const slots = (wCatalog[pick] && wCatalog[pick].slots) || 1;
           if (extUsed + slots <= spec.externalSlots) {
-            addWpn(pick, 'EXTERNAL');
-            extUsed += slots;
+            if (addWpn(pick, 'EXTERNAL')) extUsed += slots;
+            else break;
           } else break;
         }
       }
@@ -149,23 +165,26 @@ const FleetGenerator = {
       return { weapons, upgrades, totalCost };
     }
 
-    // Heavy missile trucks (F-15EX 14 slots, J-16 12 slots, Su-35S 10 slots) & conventional fighters
-    if (isStrike) addWpn(rng() < 0.5 ? 'AGM-158B' : 'GBU-39', 'EXTERNAL');
+    if (isStrike) {
+      if (isWeaponEligible(wCatalog['AGM-158B'])) addWpn(rng() < 0.5 ? 'AGM-158B' : 'GBU-39', 'EXTERNAL');
+      else addWpn('GBU-39', 'EXTERNAL');
+    }
 
     let usedSlots = weapons.reduce((s, it) => s + ((wCatalog[it.id] || {}).slots || 1), 0);
     let attempts = 0;
     while (usedSlots < spec.totalSlots && attempts < 16) {
       attempts++;
-      const pool = (doctrine === 'STANDOFF') ? extBvr : (rng() < 0.65 ? extBvr : extWvr);
+      const pool = (doctrine === 'STANDOFF' && extBvr.length > 0) ? extBvr : (rng() < 0.65 && extBvr.length > 0 ? extBvr : extWvr);
+      if (pool.length === 0) break;
       const pick = pool[Math.floor(rng() * pool.length)];
       const slots = (wCatalog[pick] && wCatalog[pick].slots) || 1;
       if (usedSlots + slots <= spec.totalSlots) {
-        addWpn(pick, 'EXTERNAL');
-        usedSlots += slots;
+        if (addWpn(pick, 'EXTERNAL')) usedSlots += slots;
       }
     }
 
-    if (spec.hasCenterline && (doctrine === 'STANDOFF' || spec.id === 'MiG-31BM')) {
+    const kinzhal = wCatalog['KINZHAL'];
+    if (spec.hasCenterline && (spec.centerlineSlots || 0) >= 6 && isWeaponEligible(kinzhal) && (doctrine === 'STANDOFF' || spec.id === 'MiG-31BM')) {
       addWpn('KINZHAL', 'CENTERLINE');
     }
 
@@ -204,7 +223,6 @@ const FleetGenerator = {
     let spentBudget = 0.0;
     let acesSpawned = 0;
 
-    // 1. ACE PILOTS: Planned immediately and checked against budget
     const aceCandidates = (diff === 'CADET' || diff === 'VETERAN')
       ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM', 'F-14D', 'Su-57', 'YF-23', 'J-20']
       : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'F-22C-COFFIN', 'Su-57', 'Su-47', 'Su-37-COFFIN', 'DARKSTAR', 'F-15-SMT-COFFIN'];
@@ -230,7 +248,6 @@ const FleetGenerator = {
       }
     }
 
-    // 2. ELECTRONIC WARFARE (EW) ESCORT: Planned immediately and checked against budget
     const ewChances = { CADET: 0.20, VETERAN: 0.55, ELITE: 0.80, ACE: 1.0, MASTER: 1.0, LEGEND: 1.0 };
     const ewChance = ewChances[diff] !== undefined ? ewChances[diff] : 0.55;
     const ewPool = (diff === 'CADET' || diff === 'VETERAN') ? ['Tornado-ECR', 'EF-111A', 'EA-18G'] : ['EA-18G', 'J-16D', 'EF-111A'];
@@ -252,7 +269,6 @@ const FleetGenerator = {
       }
     }
 
-    // 3. AIR SUPERIORITY & BALANCED SCREEN: Planned immediately
     const airSuperiorityPool = (doctrine === 'STANDOFF')
       ? ['MiG-31BM', 'F-15EX', 'J-16', 'Su-57', 'J-20', 'YF-23', 'F-14D', 'Eurofighter', 'Su-35S']
       : (doctrine === 'AGGRESSIVE')
@@ -278,7 +294,8 @@ const FleetGenerator = {
       const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng);
 
       if (spentBudget + planned.totalCost <= targetBudget) {
-        const isLead = (fleetItems.length === 0 && acesSpawned === 0);
+        const hasLead = fleetItems.some(it => it.isLead);
+        const isLead = !hasLead;
         fleetItems.push({
           specId: chosenId, isAce: false, isLead: isLead,
           callsign: isLead ? 'Saber Lead' : (callsigns.pop() || `Bandit ${fleetItems.length + 1}`),
@@ -287,9 +304,12 @@ const FleetGenerator = {
         });
         spentBudget += planned.totalCost;
       } else {
-        // Exceeds budget: reject the whole aircraft and finalize fleet
         break;
       }
+    }
+
+    if (fleetItems.length > 0 && !fleetItems.some(it => it.isLead)) {
+      fleetItems[0].isLead = true;
     }
 
     const spawnPlans = this.calculateFormationSpawns(fleetItems, 'hostile', theaterWidth, theaterHeight, rng);

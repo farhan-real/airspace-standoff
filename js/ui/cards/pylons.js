@@ -183,10 +183,6 @@ class PylonBayRenderer {
       if (!item || !item.weapon) return;
       const w = item.weapon;
 
-      if (item.cooldown && item.cooldown > 0) {
-        item.cooldown = Math.max(0, item.cooldown - 0.12);
-      }
-
       const ammoTag = cardEl.querySelector('.pylon-ammo-counter');
       if (ammoTag) ammoTag.textContent = isMobile ? `${item.ammo}/${item.maxAmmo}` : `${item.ammo} / ${item.maxAmmo}`;
       const pkTag = cardEl.querySelector('.pk-value-tag');
@@ -232,6 +228,8 @@ class PylonBayRenderer {
         if (fireBtn) {
           fireBtn.disabled = true;
           fireBtn.textContent = `RECHARGE (${item.cooldown.toFixed(1)}s)`;
+          fireBtn.style.color = '#94a3b8';
+          fireBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
         }
         return;
       }
@@ -248,6 +246,8 @@ class PylonBayRenderer {
         if (fireBtn) {
           fireBtn.disabled = true;
           fireBtn.textContent = (item.station === 'INTERNAL') ? 'EMPTY BAY' : 'DEPLETED (JETTISONED)';
+          fireBtn.style.color = '#94a3b8';
+          fireBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
         }
         cardEl.classList.add('depleted-rack');
         return;
@@ -261,13 +261,20 @@ class PylonBayRenderer {
         if (fireBtn) {
           fireBtn.disabled = !hasTokens;
           fireBtn.textContent = hasTokens ? `POD BURST (${w.damagePerBurst || 1.4} HP)` : 'NEED TOK';
+          fireBtn.style.color = '#ffffff';
+          fireBtn.style.borderColor = 'var(--theme-primary)';
         }
         return;
       }
 
       if (!validTarget) {
         if (pkFill) pkFill.style.width = '0%';
-        if (fireBtn) { fireBtn.disabled = true; fireBtn.textContent = 'SELECT TARGET'; }
+        if (fireBtn) {
+          fireBtn.disabled = true;
+          fireBtn.textContent = 'SELECT TARGET';
+          fireBtn.style.color = '#94a3b8';
+          fireBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        }
         return;
       }
 
@@ -280,12 +287,25 @@ class PylonBayRenderer {
         fireBtn.disabled = !canFire;
         if (pkResult.label === 'AIR ONLY' || pkResult.label === 'GROUND ONLY' || pkResult.label === 'IMMUNE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OUT OF RANGE' || pkResult.label === 'OFF BORESIGHT') {
           fireBtn.textContent = pkResult.label;
+          if (pkResult.label === 'OUT OF RANGE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OFF BORESIGHT') {
+            fireBtn.style.color = '#f87171';
+            fireBtn.style.borderColor = 'rgba(244, 63, 94, 0.4)';
+          } else {
+            fireBtn.style.color = '#94a3b8';
+            fireBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+          }
         } else if (curTokens < tokenCost) {
           fireBtn.textContent = 'NEED TOK';
+          fireBtn.style.color = '#fbbf24';
+          fireBtn.style.borderColor = 'rgba(251, 191, 36, 0.35)';
         } else if (pkResult.hasMixedSeekers) {
           fireBtn.textContent = `ENGAGE (EST. ${currentPk}% MIXED +25%)`;
+          fireBtn.style.color = '#ffffff';
+          fireBtn.style.borderColor = 'var(--theme-primary)';
         } else {
           fireBtn.textContent = `ENGAGE (EST. ${currentPk}%)`;
+          fireBtn.style.color = '#ffffff';
+          fireBtn.style.borderColor = 'var(--theme-primary)';
         }
       }
     });

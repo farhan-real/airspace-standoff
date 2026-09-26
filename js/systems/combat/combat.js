@@ -56,8 +56,9 @@ class CombatSystem {
     const tokenCost = cfg.TOKEN_ACTION_COST || 0.70;
     if (!this.game.consumeCurrentCommanderTokens(tokenCost)) return;
 
-    item.ammo--;
     const w = item.weapon;
+    const burstAmmo = (w.isGunpod || w.category === 'GUN') ? (w.ammoPerBurst || w.roundsPerBurst || 1) : 1;
+    item.ammo = Math.max(0, item.ammo - burstAmmo);
     sourceUnit.applyActionStress(0.08);
 
     if (w.isLaser || w.isGunpod || w.category === 'GUN') {
@@ -69,7 +70,6 @@ class CombatSystem {
     const isTargetIdentified = is2P || Boolean(
       targetEntity && (
         targetEntity.type ||
-        targetEntity.identifiedByBlue ||
         (typeof targetEntity.isIdentifiedBy === 'function' ? targetEntity.isIdentifiedBy(commanderTeam) : targetEntity.isIdentified)
       )
     );
@@ -119,8 +119,8 @@ class CombatSystem {
           if (targetEntity && targetEntity.hp > 0.05 && Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) <= (w.rangeKm || 4.8)) {
             const wasAlive = targetEntity.hp > 0.05;
             if (targetEntity.isGhost || targetEntity.isDecoyDrone) targetEntity.takeDamage(roundDmg);
-            else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(roundDmg, true);
-            else if (targetEntity.isCivilian) targetEntity.takeDamage(roundDmg, sourceUnit, w);
+            else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(roundDmg, false);
+            else if (targetEntity.isCivilian) targetEntity.takeDamage(roundDmg, sourceUnit, w, r === numRounds - 1);
             else {
               targetEntity.hp = Math.max(0, targetEntity.hp - roundDmg);
               if (targetEntity.hp < 0.05) targetEntity.hp = 0;
@@ -160,24 +160,30 @@ class CombatSystem {
       const pulseDmg = w.damagePerRound || (totalLaserDmg / numPulses);
       let landedDmg = 0;
 
+      const clouds = (this.game && this.game.simulation && this.game.simulation.weatherClouds) || [];
+      const cloudHits = (typeof Physics !== 'undefined' && targetEntity) ? Physics.countIntersectingClouds(sourceUnit.x, sourceUnit.y, targetEntity.x, targetEntity.y, clouds) : 0;
+      const cloudScatterFactor = cloudHits > 0 ? Math.max(0.15, Math.pow(0.55, cloudHits)) : 1.0;
+
       for (let p = 0; p < numPulses; p++) {
         this.scheduleWeaponPulse(p * 50, () => {
           if (!sourceUnit || sourceUnit.hp <= 0.05) return;
           if (targetEntity && targetEntity.hp > 0.05 && Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) <= (w.rangeKm || 9.0)) {
             const wasAlive = targetEntity.hp > 0.05;
-            if (targetEntity.isGhost || targetEntity.isDecoyDrone) targetEntity.takeDamage(pulseDmg);
-            else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(pulseDmg, true);
-            else if (targetEntity.isCivilian) targetEntity.takeDamage(pulseDmg, sourceUnit, w);
+            const effectivePulseDmg = pulseDmg * cloudScatterFactor;
+            if (targetEntity.isGhost || targetEntity.isDecoyDrone) targetEntity.takeDamage(effectivePulseDmg);
+            else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(effectivePulseDmg, false);
+            else if (targetEntity.isCivilian) targetEntity.takeDamage(effectivePulseDmg, sourceUnit, w, p === numPulses - 1);
             else {
-              targetEntity.hp = Math.max(0, targetEntity.hp - pulseDmg);
+              targetEntity.hp = Math.max(0, targetEntity.hp - effectivePulseDmg);
               if (targetEntity.hp < 0.05) targetEntity.hp = 0;
               if (typeof targetEntity.applyActionStress === 'function') targetEntity.applyActionStress(0.12);
             }
-            landedDmg += pulseDmg;
+            landedDmg += effectivePulseDmg;
 
             if (this.game.radar) this.game.radar.spawnExplosionFX(targetEntity.x, targetEntity.y, false);
             if (p === numPulses - 1 && this.game.radar) {
-              this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `LASER -${landedDmg.toFixed(1)}HP (${numPulses} PULSES)`, '#00f0ff');
+              const scatterTag = cloudHits > 0 ? ` (SCATTERED -${Math.round((1 - cloudScatterFactor) * 100)}%)` : '';
+              this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `LASER -${landedDmg.toFixed(1)}HP${scatterTag}`, '#00f0ff');
             }
             if (wasAlive && targetEntity.hp <= 0 && this.game.simulation && !targetEntity.isCivilian) {
               this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
@@ -207,11 +213,13 @@ class CombatSystem {
     unit.applyActionStress(0.18);
     unit.activeManeuverId = card.id;
     card.execute(unit);
-    if (this.game.inspection && this.game.inspection.enabled) this.game.inspection.recordEvent('MANEUVER ORDER', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(unit) : unit.callsign} executed ${card.name || card.title || card.id}`, unit, this.game.selectedTarget, {
-      maneuver: card.id, tokenCost: cost, before,
-      after: { speed: unit.speed, altitudeFt: unit.altFt, energy: unit.energy, stress: unit.stress, heading: unit.heading },
-      activeDurationSec: unit.activeManeuverTimer, evasionBonus: unit.activeManeuverBonus
-    });
+    if (this.game.inspection && this.game.inspection.enabled) {
+      this.game.inspection.recordEvent('MANEUVER ORDER', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(unit) : unit.callsign} executed ${card.name || card.title || card.id}`, unit, this.game.selectedTarget, {
+        maneuver: card.id, tokenCost: cost, before,
+        after: { speed: unit.speed, altitudeFt: unit.altFt, energy: unit.energy, stress: unit.stress, heading: unit.heading },
+        activeDurationSec: unit.activeManeuverTimer, evasionBonus: unit.activeManeuverBonus
+      });
+    }
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     if (this.game.deckManager) this.game.deckManager.renderManeuverHand(this.game.activeUnit);
   }

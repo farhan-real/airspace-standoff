@@ -53,7 +53,7 @@ class MissileEntity {
     while (offBoresight > Math.PI) offBoresight -= Math.PI * 2;
 
     const trait = weapon.trait || '';
-    if (trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST') {
+    if (trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST' || trait === 'SURFACE_SAM') {
       this.heading = angleToTarget;
     } else if (trait === 'HOBS_VANE' || weapon.id === 'IRIS-T') {
       this.heading = srcHeading + Math.max(-Math.PI * 0.5, Math.min(Math.PI * 0.5, offBoresight));
@@ -168,6 +168,19 @@ class MissileEntity {
     this.x += Math.cos(this.heading) * step;
     this.y += Math.sin(this.heading) * step;
     this.distanceTraveled += step;
+
+    const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
+    const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
+    const boundaryBuffer = 8.0;
+    if (this.x < -boundaryBuffer || this.x > mapW + boundaryBuffer || this.y < -boundaryBuffer || this.y > mapH + boundaryBuffer) {
+      this.isDead = true;
+      this.active = false;
+      return;
+    }
+
+    this.prevDistanceToTarget = this.distanceToTarget;
+    this.distanceToTarget = Math.hypot(this.target.x - this.x, this.target.y - this.y);
+    this.minDistanceReached = Math.min(this.minDistanceReached || this.distanceToTarget, this.distanceToTarget);
 
     if (this.distanceTraveled >= this.weapon.rangeKm) {
       this.triggerLostTrack('KINETIC EXHAUSTION');
@@ -314,8 +327,13 @@ class MissileEntity {
     }
 
     if (tgt.isCivilian) {
-      tgt.takeDamage(w.damage, this.source, w);
+      tgt.takeDamage(w.damage, this.source, w, true);
       this.isDead = true;
+      if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(true);
+      if (window.Game && window.Game.radar) {
+        window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, true);
+        window.Game.radar.spawnCombatText(tgt.x, tgt.y, `CIVILIAN HIT -${w.damage}HP`, '#f43f5e');
+      }
       return;
     }
 

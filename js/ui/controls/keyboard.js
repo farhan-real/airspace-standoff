@@ -21,11 +21,16 @@ class KeyboardControlsHandler {
       const u = this.game.activeUnit;
       if (!u || u.hp <= 0) return;
       const dt = 0.035;
-      if (this.keysHeld['ArrowLeft'] || this.keysHeld['KeyA']) {
+
+      const binds = (window.Settings && window.Settings.keybinds) ? window.Settings.keybinds : (window.DEFAULT_KEYBINDS || {});
+      const steerLeftBind = binds.STEER_LEFT || 'ArrowLeft';
+      const steerRightBind = binds.STEER_RIGHT || 'ArrowRight';
+
+      if (this.keysHeld[steerLeftBind] || this.keysHeld['ArrowLeft'] || this.keysHeld['KeyA']) {
         u.steerLeft(dt);
         if (this.game.avionics) this.game.avionics.updateActiveUnitMFD();
       }
-      if (this.keysHeld['ArrowRight'] || this.keysHeld['KeyD']) {
+      if (this.keysHeld[steerRightBind] || this.keysHeld['ArrowRight'] || this.keysHeld['KeyD']) {
         u.steerRight(dt);
         if (this.game.avionics) this.game.avionics.updateActiveUnitMFD();
       }
@@ -33,6 +38,10 @@ class KeyboardControlsHandler {
   }
 
   initKeyListeners() {
+    window.addEventListener('blur', () => {
+      this.keysHeld = {};
+    });
+
     window.addEventListener('keydown', (e) => {
       if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) {
         if (e.target.tagName === 'INPUT' && e.target.type === 'range') {

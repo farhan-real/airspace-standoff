@@ -31,10 +31,10 @@ window.AircraftRegistry = {
   isGunCompatible(spec, gun) {
     if (!spec || !gun) return false;
     if (gun.lockedTo && gun.lockedTo.length > 0) {
-      return gun.lockedTo.includes(spec.id);
+      if (!gun.lockedTo.includes(spec.id)) return false;
     }
     if (spec.allowedGuns && spec.allowedGuns.length > 0) {
-      return spec.allowedGuns.includes(gun.id);
+      if (!spec.allowedGuns.includes(gun.id)) return false;
     }
     return true;
   }

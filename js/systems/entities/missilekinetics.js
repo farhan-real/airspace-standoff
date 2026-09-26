@@ -129,11 +129,13 @@ class MissileKinetics {
     const prevDist = missile.prevDistanceToTarget;
     const tgt = missile.target;
 
-    if (missile.age < 0.8) return { shouldTrigger: false };
+    const minArmTime = Math.min(0.20, (missile.weapon.minRangeKm || 0.6) / Math.max(0.1, (missile.speed || 2.4) * 0.35));
+    if (missile.age < minArmTime) return { shouldTrigger: false };
+    if (!missile.hasStartedClosing && missile.age < 1.2) return { shouldTrigger: false };
     if (dist <= 0.65) return { shouldTrigger: true, isHitCandidate: true };
 
     if (missile.minDistanceReached <= 1.8 && dist > prevDist) {
-      if (prevDist <= 0.95) return { shouldTrigger: true, isHitCandidate: true };
+      if (missile.minDistanceReached <= 0.95) return { shouldTrigger: true, isHitCandidate: true };
       if (tgt && typeof tgt.x === 'number') {
         const forwardDot = (tgt.x - missile.x) * Math.cos(missile.heading) + (tgt.y - missile.y) * Math.sin(missile.heading);
         if (forwardDot <= 0) return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
@@ -249,11 +251,14 @@ class MissileKinetics {
       : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(target.speed || 0.8, sOpt) : 0.85);
     const turnOptFactor = Math.max(0.40, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
 
-    const notchBonus = (target.isNotching && (w.seeker === 'ARH' || w.seeker === 'PASSIVE_RADAR'))
+    const isRadar = (w.seeker === 'ARH' || w.seeker === 'PASSIVE_RADAR');
+    const isOptical = (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT');
+
+    const notchBonus = (target.isNotching && isRadar)
       ? (missile.source && missile.source.hasIRST ? 0.16 : 0.38 * (1.0 - (w.antiNotchBonus || 0)) * (0.6 + 0.4 * agilityScale))
       : 0.0;
     const chaffBonus = (target.cmTimer > 0)
-      ? (w.seeker === 'ARH' ? 0.34 * (1.0 - (w.decoyResistance || w.flareResistance || 0)) : 0.18)
+      ? (isRadar ? 0.34 * (1.0 - (w.decoyResistance || w.flareResistance || 0)) : (isOptical ? 0.18 * (1.0 - (w.decoyResistance || 0)) : 0.20))
       : 0.0;
 
     const primaryActiveEvasion = Math.max(activeManeuver * agilityScale * turnOptFactor, notchBonus, chaffBonus);
@@ -276,13 +281,13 @@ class MissileKinetics {
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
     const salvoBonus = Math.min(0.30, Math.max(0, (salvoCount || 1) - 1) * 0.12);
-    const weatherPenalty = (weatherClouds && (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT') && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
+    const weatherPenalty = (weatherClouds && isOptical && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
 
     let targetThermalMultiplier = Number(target.thermalBloom !== undefined ? target.thermalBloom : 1.0);
     if (target.irPenalty) targetThermalMultiplier *= (1.0 + target.irPenalty);
 
     let thermalModifier = 0.0;
-    if (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT') {
+    if (isOptical) {
       thermalModifier = (targetThermalMultiplier - 1.0) * 0.22;
     }
 
@@ -307,27 +312,13 @@ class MissileKinetics {
       probabilityFloor,
       probabilityCeiling: 0.95,
       factors: {
-        baseHitProbability: basePk,
-        aspectDifferenceRad: aspectDiff,
-        aspectScore,
-        activeManeuverEvasion: activeManeuver * agilityScale * turnOptFactor,
-        notchBonus,
-        chaffBonus,
-        combinedActiveEvasion: primaryActiveEvasion,
-        passiveEvasionBaseline: primaryPassiveBaseline,
-        effectiveDefense,
-        mixedSeekers: hasMixedSeekers,
-        salvoBonus,
-        mixedSeekerBonus: mixedSynergyBonus,
-        thermalModifier,
-        targetThermalBloom: targetThermalMultiplier,
-        heavyTargetBonus: heavyBonus,
-        targetEnergyBonus: energyDeficitBonus,
-        agilityPenalty: agilityDefenseBonus,
-        turnEfficiency: turnOptEff,
-        turnEfficiencyPenalty: turnOptBonus,
-        opticalWeatherPenalty: weatherPenalty,
-        excessiveTurnPenalty: energyTurnPenalty
+        baseHitProbability: basePk, aspectDifferenceRad: aspectDiff, aspectScore,
+        activeManeuverEvasion: activeManeuver * agilityScale * turnOptFactor, notchBonus, chaffBonus,
+        combinedActiveEvasion: primaryActiveEvasion, passiveEvasionBaseline: primaryPassiveBaseline,
+        effectiveDefense, mixedSeekers: hasMixedSeekers, salvoBonus, mixedSeekerBonus: mixedSynergyBonus,
+        thermalModifier, targetThermalBloom: targetThermalMultiplier, heavyTargetBonus: heavyBonus,
+        targetEnergyBonus: energyDeficitBonus, agilityPenalty: agilityDefenseBonus, turnEfficiency: turnOptEff,
+        turnEfficiencyPenalty: turnOptBonus, opticalWeatherPenalty: weatherPenalty, excessiveTurnPenalty: energyTurnPenalty
       }
     };
   }
@@ -337,7 +328,11 @@ class MissileKinetics {
     const blastRadiusKm = 8.5;
     const sourceUnit = missile.source;
     const firingTeam = missile.team;
-    const allTargets = [...(game.alliedAircraft || []), ...(game.hostileAircraft || [])];
+    const allTargets = [
+      ...(game.alliedAircraft || []),
+      ...(game.hostileAircraft || []),
+      ...(game.surfaceUnits || [])
+    ];
 
     if (game.radar) {
       game.radar.spawnExplosionFX(missile.x, missile.y, true);
@@ -352,11 +347,19 @@ class MissileKinetics {
         const falloff = 1.0 - (dist / blastRadiusKm);
         const aoeDamage = Math.max(1, Math.round(5.0 * falloff));
         const wasAlive = other.hp > 0;
-        other.hp = Math.max(0, other.hp - aoeDamage);
-        if (typeof other.applyActionStress === 'function') other.applyActionStress(0.30);
+
+        if (typeof SurfaceUnit !== 'undefined' && other instanceof SurfaceUnit) {
+          other.takeDamage(aoeDamage, false);
+        } else if (other.isCivilian && typeof other.takeDamage === 'function') {
+          other.takeDamage(aoeDamage, sourceUnit, missile.weapon, true);
+        } else {
+          other.hp = Math.max(0, other.hp - aoeDamage);
+          if (other.hp < 0.05) other.hp = 0;
+          if (typeof other.applyActionStress === 'function') other.applyActionStress(0.30);
+        }
 
         if (game.radar) game.radar.spawnCombatText(other.x, other.y, `BLAST -${aoeDamage}HP`, '#f59e0b');
-        if (wasAlive && other.hp <= 0 && game.simulation) {
+        if (wasAlive && other.hp <= 0 && game.simulation && !other.isCivilian) {
           game.simulation.recordKillEvent(firingTeam, other, sourceUnit, { weapon: missile.weapon, isSalvo: false, salvoCount: 1, salvoBreakdown: 'MPBM Secondary Blast' });
         }
       }

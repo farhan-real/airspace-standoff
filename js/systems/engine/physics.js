@@ -125,7 +125,7 @@ const Physics = {
     const cloudHits = Physics.countIntersectingClouds(attacker.x, attacker.y, target.x, target.y, weatherClouds);
 
     if (weapon.isLaser || weapon.seeker === 'DIRECT_ENERGY') {
-      if (dist > (weapon.rangeKm || 9.0)) return { pk: 0, label: 'OUT OF RANGE', color: '#64748b', arrow: '--', desc: `${Math.round(dist)}km > ${weapon.rangeKm || 9.0}km`, salvoCount: 0, hasMixedSeekers: false };
+      if (dist > (weapon.rangeKm || 9.0)) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist)}km > ${weapon.rangeKm || 9.0}km`, salvoCount: 0, hasMixedSeekers: false };
       if (cloudHits > 0) return { pk: Math.max(25, 95 - cloudHits * 25), label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: `${cloudHits} cloud cell${cloudHits > 1 ? 's' : ''} scattering beam`, salvoCount: 0, hasMixedSeekers: false };
       return { pk: 95, label: 'HITSCAN', color: '#00f0ff', arrow: '--', desc: 'Speed-of-light directed energy beam', salvoCount: 0, hasMixedSeekers: false };
     }
@@ -133,17 +133,20 @@ const Physics = {
     const isSurface = (typeof SurfaceUnit !== 'undefined' && target instanceof SurfaceUnit) || Boolean(target.type && !target.spec && !target.isCivilian);
     if (isSurface) {
       if (weapon.category === 'A2A') return { pk: 0, label: 'AIR ONLY', color: '#64748b', arrow: '--', desc: 'A2A munition requires air target', salvoCount: 0, hasMixedSeekers: false };
-    } else if (!target.isCivilian && !target.isGhost && !target.isDecoyDrone) {
+    } else {
       if (weapon.category === 'A2G' || weapon.isBunkerCracker) return { pk: 0, label: 'GROUND ONLY', color: '#64748b', arrow: '--', desc: 'A2G munition requires ground target', salvoCount: 0, hasMixedSeekers: false };
     }
 
-    if (isNaN(dist) || dist > (weapon.rangeKm || 100)) return { pk: 0, label: 'OUT OF RANGE', color: '#64748b', arrow: '--', desc: `${Math.round(dist || 0)}km > ${weapon.rangeKm || 100}km Max`, salvoCount: 0, hasMixedSeekers: false };
+    if (isNaN(dist) || dist > (weapon.rangeKm || 100)) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist || 0)}km > ${weapon.rangeKm || 100}km Max`, salvoCount: 0, hasMixedSeekers: false };
     const minR = weapon.minRangeKm || 1.2;
     if (dist < minR) return { pk: 15, label: 'TOO CLOSE', color: '#ef4444', arrow: 'v', desc: `Inside arming basket (<${minR}km)`, salvoCount: 0, hasMixedSeekers: false };
 
     const sweetMin = weapon.sweetSpotMin || (weapon.rangeKm * 0.15);
     const sweetMax = weapon.sweetSpotMax || (weapon.rangeKm * 0.70);
     const rangeScore = (dist < sweetMin) ? (0.70 + 0.30 * (dist / sweetMin)) : ((dist > sweetMax) ? Math.max(0.35, 1.0 - (dist - sweetMax) / (weapon.rangeKm - sweetMax)) : 1.0);
+
+    const isRadarSeeker = (weapon.seeker === 'ARH' || weapon.seeker === 'PASSIVE_RADAR');
+    const isOpticalSeeker = (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT');
 
     const angleToTarget = Math.atan2(target.y - attacker.y, target.x - attacker.x);
     let aspectScore = 0.90;
@@ -154,8 +157,7 @@ const Physics = {
     } else {
       aspectDiff = Math.abs((target.heading !== undefined ? target.heading : angleToTarget) - angleToTarget);
       while (aspectDiff > Math.PI) aspectDiff = Math.abs(aspectDiff - Math.PI * 2);
-      if (target.isNotching && (weapon.seeker === 'ARH' || weapon.seeker === 'PASSIVE_RADAR')) aspectScore = attacker.hasIRST ? 0.75 : 0.45;
-      else if (aspectDiff > 2.2) aspectScore = 1.00;
+      if (aspectDiff > 2.2) aspectScore = 1.00;
       else if (aspectDiff < 0.8) aspectScore = 0.85;
     }
 
@@ -178,7 +180,7 @@ const Physics = {
       }
     }
 
-    const weatherPenalty = (cloudHits > 0 && (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT'))
+    const weatherPenalty = (cloudHits > 0 && isOpticalSeeker)
       ? Math.min(0.40, cloudHits * 0.15)
       : 0.0;
 
@@ -186,7 +188,7 @@ const Physics = {
     if (target.irPenalty) targetThermalMultiplier *= (1.0 + target.irPenalty);
 
     let thermalModifier = 0.0;
-    if (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT') {
+    if (isOpticalSeeker) {
       thermalModifier = (targetThermalMultiplier - 1.0) * 0.22;
     }
 
@@ -232,10 +234,17 @@ const Physics = {
       : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(target.speed || 0.8, sOpt) : 0.85);
     const turnOptFactor = Math.max(0.40, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
 
+    const notchBonus = (target.isNotching && isRadarSeeker)
+      ? (attacker.hasIRST ? 0.16 : 0.38 * (1.0 - (weapon.antiNotchBonus || 0)) * (0.6 + 0.4 * agilityScale))
+      : 0.0;
+    const chaffBonus = (target.cmTimer > 0)
+      ? (isRadarSeeker ? 0.34 * (1.0 - (weapon.decoyResistance || weapon.flareResistance || 0)) : (isOpticalSeeker ? 0.18 * (1.0 - (weapon.decoyResistance || 0)) : 0.20))
+      : 0.0;
+
     const activeEvasion = Math.max(
       (target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? (target.activeManeuverBonus * agilityScale * turnOptFactor) : 0.0,
-      target.isNotching ? (0.28 * (0.6 + 0.4 * agilityScale)) : 0.0,
-      target.cmTimer > 0 ? 0.30 : 0.0
+      notchBonus,
+      chaffBonus
     );
     const passiveBaseline = Math.max(
       target.isCoffin ? (target.coffinDodgeBonus || 0.25) : 0.0,

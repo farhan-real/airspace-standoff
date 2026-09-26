@@ -28,6 +28,7 @@ class CivilianAirliner {
     this.trackDuration = 0.0;
     this.trackDurationBlue = 0.0;
     this.trackDurationRed = 0.0;
+    this.lastPenaltyTime = 0.0;
   }
 
   isIdentifiedBy(team) {
@@ -59,16 +60,20 @@ class CivilianAirliner {
     }
   }
 
-  takeDamage(amount, firingSource, weapon) {
+  takeDamage(amount, firingSource, weapon, isEndOfBurst = true) {
     const wasAlive = this.hp > 0.05;
     this.hp = Math.max(0, this.hp - amount);
     const firingTeam = (firingSource && firingSource.team) || 'friendly';
 
+    const now = (window.Game && window.Game.simulation) ? window.Game.simulation.elapsedTimeSec : performance.now() / 1000;
     if (window.Game && window.Game.simulation) {
-      if (wasAlive && this.hp > 0.05) {
-        window.Game.simulation.recordCivilianHit(firingTeam, this, firingSource, weapon);
-      } else if (wasAlive && this.hp <= 0.05) {
+      if (wasAlive && this.hp <= 0.05) {
         window.Game.simulation.recordCivilianShootdown(firingTeam, this, firingSource, weapon);
+      } else if (wasAlive && this.hp > 0.05 && isEndOfBurst) {
+        if (!this.lastPenaltyTime || (now - this.lastPenaltyTime) > 0.8) {
+          this.lastPenaltyTime = now;
+          window.Game.simulation.recordCivilianHit(firingTeam, this, firingSource, weapon);
+        }
       }
     }
   }

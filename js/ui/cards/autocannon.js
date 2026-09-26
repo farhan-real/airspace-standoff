@@ -157,7 +157,8 @@ class AutocannonBayRenderer {
 
     const mountedPods = AutocannonBayRenderer.getMountedGunpods(unit);
     mountedPods.forEach(p => {
-      p.ammo = Math.max(0, p.ammo - 1);
+      const podBurst = p.weapon.ammoPerBurst || p.weapon.roundsPerBurst || 4;
+      p.ammo = Math.max(0, p.ammo - podBurst);
       p.cooldown = p.weapon.burstCooldown || cd;
     });
 
@@ -212,7 +213,7 @@ class AutocannonBayRenderer {
             } else if (typeof SurfaceUnit !== 'undefined' && validTarget instanceof SurfaceUnit) {
               validTarget.takeDamage(roundDmg, true);
             } else if (validTarget.isCivilian && typeof validTarget.takeDamage === 'function') {
-              validTarget.takeDamage(roundDmg, unit, gun);
+              validTarget.takeDamage(roundDmg, unit, gun, r === numRounds - 1);
             } else {
               validTarget.hp = Math.max(0, validTarget.hp - roundDmg);
               if (validTarget.hp < 0.05) validTarget.hp = 0;
@@ -256,11 +257,21 @@ class AutocannonBayRenderer {
           }
         }
 
-        if (r === numRounds - 1 && game && game.radar) {
+        if (r === numRounds - 1 && game) {
           const podNote = mountedPods.length > 0 ? `+${mountedPods.length} PODS ` : '';
           if (roundsLanded > 0 && validTarget) {
-            game.radar.spawnCombatText(validTarget.x, validTarget.y, `${isDEW ? 'LASER' : 'BURST'} ${podNote}-${totalBurstDamage.toFixed(1)}HP (${roundsLanded}/${numRounds} RDS)`, '#00f0ff');
-          } else {
+            if (game.radar) {
+              game.radar.spawnCombatText(validTarget.x, validTarget.y, `${isDEW ? 'LASER' : 'BURST'} ${podNote}-${totalBurstDamage.toFixed(1)}HP (${roundsLanded}/${numRounds} RDS)`, '#00f0ff');
+            }
+            if (validTarget.hp > 0.05 && game.simulation && game.simulation.scoring && !validTarget.isCivilian) {
+              game.simulation.scoring.recordHitEvent(unit.team, validTarget, unit, {
+                weapon: gun,
+                damage: totalBurstDamage,
+                isSalvo: mountedPods.length > 0,
+                salvoCount: mountedPods.length + 1
+              });
+            }
+          } else if (game.radar) {
             game.radar.spawnCombatText(unit.x, unit.y, `${isDEW ? 'LASER PULSE' : 'STRAFE BURST'} (${numRounds} RDS)`, '#00f0ff');
           }
         }

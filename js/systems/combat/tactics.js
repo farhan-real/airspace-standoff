@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Tactical AI Missile Decision Engine
- * Difficulty-scaled launch sizing, inbound threat prediction, and relaxed normal doctrine.
+ * Difficulty-scaled launch sizing, inbound threat prediction, and verified ordnance matching.
  */
 
 class AIMissileTactics {
@@ -12,7 +12,7 @@ class AIMissileTactics {
     const availablePylons = [];
     for (let i = 0; i < shooter.equippedWeapons.length; i++) {
       const item = shooter.equippedWeapons[i];
-      if (item && item.ammo > 0 && item.weapon && !item.weapon.isJammerPod && !item.weapon.isDecoy) {
+      if (item && item.ammo > 0 && item.weapon && !item.weapon.isJammerPod && !item.weapon.isDecoy && !item.weapon.isDecoyDrone && !item.weapon.isGunpod && item.weapon.category !== 'GUN') {
         availablePylons.push({ index: i, item: item, weapon: item.weapon });
       }
     }
@@ -63,9 +63,9 @@ class AIMissileTactics {
         let offBoresight = Math.abs(shooter.heading - angleToTarget);
         while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
 
-        const isHOBS = (w.trait === 'HOBS_VANE' || w.trait === 'ALL_ASPECT_BURST' || w.trait === 'REAR_ENGAGE');
+        const isHOBS = (w.trait === 'HOBS_VANE' || w.trait === 'ALL_ASPECT_BURST' || w.trait === 'REAR_ENGAGE' || w.id === 'IRIS-T');
         const maxAngle = shooter.isAce ? (Math.PI / 3.0) : tier.maxOffAngle;
-        if (!isHOBS && offBoresight > maxAngle) continue;
+        if (!isSurface && !isHOBS && offBoresight > maxAngle) continue;
 
         const pkResult = Physics.calcPk(w, shooter, tgt, clouds);
         const pk = pkResult.pk || 0;
@@ -106,7 +106,7 @@ class AIMissileTactics {
     const availablePylons = [];
     for (let i = 0; i < ace.equippedWeapons.length; i++) {
       const item = ace.equippedWeapons[i];
-      if (item && item.ammo > 0 && item.weapon && !item.weapon.isJammerPod && !item.weapon.isDecoy) {
+      if (item && item.ammo > 0 && item.weapon && !item.weapon.isJammerPod && !item.weapon.isDecoy && !item.weapon.isDecoyDrone && !item.weapon.isGunpod && item.weapon.category !== 'GUN') {
         availablePylons.push({ index: i, item: item, weapon: item.weapon });
       }
     }
@@ -130,31 +130,41 @@ class AIMissileTactics {
       return prioB - prioA;
     });
 
-    const target = viableTargets[0];
-    const dist = Math.hypot(target.x - ace.x, target.y - ace.y);
+    for (const target of viableTargets) {
+      const dist = Math.hypot(target.x - ace.x, target.y - ace.y);
+      const isSurface = Boolean(target.type && !target.spec && !target.isCivilian);
 
-    availablePylons.sort((a, b) => {
-      const wa = a.weapon, wb = b.weapon;
-      let sa = 0, sb = 0;
-      if (dist <= 25.0 && (wa.seeker === 'IIR' || wa.seeker === 'EO' || wa.trait === 'HOBS_VANE')) sa += 40;
-      if (dist <= 25.0 && (wb.seeker === 'IIR' || wb.seeker === 'EO' || wb.trait === 'HOBS_VANE')) sb += 40;
-      if (dist >= 35.0 && wa.seeker === 'ARH') sa += 40;
-      if (dist >= 35.0 && wb.seeker === 'ARH') sb += 40;
-      return sb - sa;
-    });
+      const compatiblePylons = availablePylons.filter(p => {
+        const isA2G = Boolean(p.weapon.category === 'A2G' || p.weapon.isBunkerCracker);
+        return isA2G === isSurface;
+      });
+      if (compatiblePylons.length === 0) continue;
 
-    const primary = availablePylons[0];
-    if (!primary || dist > primary.weapon.rangeKm * 0.90 || dist < (primary.weapon.minRangeKm || 1.0)) return null;
+      compatiblePylons.sort((a, b) => {
+        const wa = a.weapon, wb = b.weapon;
+        let sa = 0, sb = 0;
+        if (dist <= 25.0 && (wa.seeker === 'IIR' || wa.seeker === 'EO' || wa.trait === 'HOBS_VANE' || wa.id === 'IRIS-T')) sa += 40;
+        if (dist <= 25.0 && (wb.seeker === 'IIR' || wb.seeker === 'EO' || wb.trait === 'HOBS_VANE' || wb.id === 'IRIS-T')) sb += 40;
+        if (dist >= 35.0 && wa.seeker === 'ARH') sa += 40;
+        if (dist >= 35.0 && wb.seeker === 'ARH') sb += 40;
+        return sb - sa;
+      });
 
-    const pylonsToFire = [primary];
-    const secondary = availablePylons.find(p => p.index !== primary.index && p.weapon.category === 'A2A' && dist <= p.weapon.rangeKm * 0.90 && dist >= (p.weapon.minRangeKm || 1.0));
+      const primary = compatiblePylons[0];
+      if (!primary || dist > primary.weapon.rangeKm * 0.90 || dist < (primary.weapon.minRangeKm || 1.0)) continue;
 
-    if (secondary && (target.hp >= 3 || target.isFlightLead || availablePylons.length >= 3)) {
-      const skipSalvo = blunderRoll && (diffKey === 'VETERAN' || diffKey === 'CADET');
-      if (!skipSalvo) pylonsToFire.push(secondary);
+      const pylonsToFire = [primary];
+      const secondary = compatiblePylons.find(p => p.index !== primary.index && dist <= p.weapon.rangeKm * 0.90 && dist >= (p.weapon.minRangeKm || 1.0));
+
+      if (secondary && (target.hp >= 3 || target.isFlightLead || compatiblePylons.length >= 3)) {
+        const skipSalvo = blunderRoll && (diffKey === 'VETERAN' || diffKey === 'CADET');
+        if (!skipSalvo) pylonsToFire.push(secondary);
+      }
+
+      return { target, pylonsToFire };
     }
 
-    return { target, pylonsToFire };
+    return null;
   }
 
   static estimateTargetEffectiveHp(target, allMissiles, team, diffKey) {

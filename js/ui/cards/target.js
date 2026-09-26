@@ -86,8 +86,8 @@ class PylonTargetSolution {
           distSpan.textContent = `${dist.toFixed(1)} km [OFF BORESIGHT]`;
           distSpan.style.color = '#f97316';
         } else {
-          distSpan.textContent = `${dist.toFixed(1)} km`;
-          distSpan.style.color = '#38bdf8';
+          distSpan.textContent = `${dist.toFixed(1)} km [OUT OF RANGE]`;
+          distSpan.style.color = '#ef4444';
         }
       }
       if (altB) altB.textContent = tgtAlt;

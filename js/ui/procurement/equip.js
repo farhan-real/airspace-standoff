@@ -125,9 +125,9 @@ class ProcurementEquipHandler {
         return Boolean(metrics && metrics.hasCenterline && (metrics.centerlineUsed + wpn.slots <= metrics.centerlineCapacity));
       }
       if (wSlotType === 'INTERNAL') {
-        return Boolean(metrics && (metrics.remainingInternal >= wpn.slots || metrics.remainingExternal >= wpn.slots));
+        return Boolean(metrics && (metrics.remainingInternal >= wpn.slots || metrics.remainingExternal >= wpn.slots || (metrics.hasCenterline && metrics.centerlineCapacity - metrics.centerlineUsed >= wpn.slots)));
       }
-      return Boolean(metrics && metrics.remainingExternal >= wpn.slots);
+      return Boolean(metrics && (metrics.remainingExternal >= wpn.slots || (metrics.hasCenterline && metrics.centerlineCapacity - metrics.centerlineUsed >= wpn.slots)));
     }
 
     if (itemData.type === 'upgrade') {
@@ -245,6 +245,8 @@ class ProcurementEquipHandler {
           assignedStation = 'INTERNAL';
         } else if (metrics.remainingExternal >= wpn.slots) {
           assignedStation = 'EXTERNAL';
+        } else if (metrics.hasCenterline && (metrics.centerlineCapacity - metrics.centerlineUsed >= wpn.slots)) {
+          assignedStation = 'CENTERLINE';
         } else {
           this.pm.showAlertModal('HARDPOINTS FULL', `Mounting ${wpn.name} (${wpn.slots} slots) exceeds available capacity on Aircraft #${sIdx + 1}.`);
           return;
@@ -266,6 +268,11 @@ class ProcurementEquipHandler {
           }
           if (metrics.remainingExternal < wpn.slots) {
             this.pm.showAlertModal('EXTERNAL PYLONS FULL', `External pylons only have ${metrics.remainingExternal} slots remaining (${wpn.slots} required).`);
+            return;
+          }
+        } else if (assignedStation === 'CENTERLINE') {
+          if (!metrics.hasCenterline || (metrics.centerlineUsed + wpn.slots > metrics.centerlineCapacity)) {
+            this.pm.showAlertModal('CENTERLINE FULL', `Centerline station only has ${metrics.centerlineCapacity - metrics.centerlineUsed} slots remaining (${wpn.slots} required).`);
             return;
           }
         }

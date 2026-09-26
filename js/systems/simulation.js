@@ -49,22 +49,13 @@ class SimulationSystem {
     if (!force && lastFrame && this.elapsedTimeSec - lastFrame.time < 1.0) return;
 
     const snapshotAircraft = (aircraft) => ({
-      id: aircraft.id,
-      team: aircraft.team,
-      x: aircraft.x,
-      y: aircraft.y,
-      heading: aircraft.heading,
-      speed: aircraft.speed,
-      hp: aircraft.hp,
-      maxHp: aircraft.maxHp,
-      altFt: aircraft.altFt,
-      callsign: aircraft.callsign,
+      id: aircraft.id, team: aircraft.team, x: aircraft.x, y: aircraft.y,
+      heading: aircraft.heading, speed: aircraft.speed, hp: aircraft.hp, maxHp: aircraft.maxHp,
+      altFt: aircraft.altFt, callsign: aircraft.callsign,
       model: aircraft.spec ? (aircraft.spec.name || aircraft.spec.id) : 'AIRCRAFT',
       category: aircraft.spec ? aircraft.spec.category : 'MULTIROLE',
-      isAce: Boolean(aircraft.isAce),
-      isFlightLead: Boolean(aircraft.isFlightLead),
-      isCoffin: Boolean(aircraft.isCoffin),
-      isRTB: Boolean(aircraft.isRTB),
+      isAce: Boolean(aircraft.isAce), isFlightLead: Boolean(aircraft.isFlightLead),
+      isCoffin: Boolean(aircraft.isCoffin), isRTB: Boolean(aircraft.isRTB),
       identified: Boolean(aircraft.isIdentifiedBy ? aircraft.isIdentifiedBy('friendly') : aircraft.isIdentified)
     });
 
@@ -74,25 +65,21 @@ class SimulationSystem {
       hostileAircraft: this.game.hostileAircraft.map(snapshotAircraft),
       surfaceUnits: this.game.surfaceUnits.map(unit => ({
         id: unit.id, team: unit.team, type: unit.type, x: unit.x, y: unit.y,
-        hp: unit.hp, maxHp: unit.maxHp, name: unit.name,
-        isIndestructible: Boolean(unit.isIndestructible)
+        hp: unit.hp, maxHp: unit.maxHp, name: unit.name, isIndestructible: Boolean(unit.isIndestructible)
       })),
-      missiles: this.game.missiles.filter(missile => !missile.isDead).map(missile => ({
-        id: missile.id, team: missile.team, x: missile.x, y: missile.y,
-        heading: missile.heading, weapon: missile.weapon ? (missile.weapon.name || missile.weapon.id) : 'MISSILE',
-        stage: missile.stage, speed: missile.speed, active: missile.active,
-        trail: (missile.trail || []).slice(0, 8).map(point => ({ x: point.x, y: point.y }))
+      missiles: this.game.missiles.filter(m => !m.isDead).map(m => ({
+        id: m.id, team: m.team, x: m.x, y: m.y, heading: m.heading,
+        weapon: m.weapon ? (m.weapon.name || m.weapon.id) : 'MISSILE',
+        stage: m.stage, speed: m.speed, active: m.active,
+        trail: (m.trail || []).slice(0, 8).map(pt => ({ x: pt.x, y: pt.y }))
       })),
-      civilianTraffic: this.civilianTraffic.map(civilian => ({
-        id: civilian.id, x: civilian.x, y: civilian.y, heading: civilian.heading,
-        speed: civilian.speed, hp: civilian.hp, flightCode: civilian.flightCode,
-        identified: Boolean(civilian.isIdentified)
+      civilianTraffic: this.civilianTraffic.map(civ => ({
+        id: civ.id, x: civ.x, y: civ.y, heading: civ.heading,
+        speed: civ.speed, hp: civ.hp, flightCode: civ.flightCode, identified: Boolean(civ.isIdentified)
       })),
-      clouds: this.weatherClouds.map(cloud => ({ x: cloud.x, y: cloud.y, rx: cloud.rx, ry: cloud.ry })),
-      decoys: this.decoyDrones.map(decoy => ({
-        id: decoy.id, team: decoy.team, x: decoy.x, y: decoy.y,
-        heading: decoy.heading, speed: decoy.speed, hp: decoy.hp,
-        model: decoy.mirroredModel || 'DECOY'
+      clouds: this.weatherClouds.map(c => ({ x: c.x, y: c.y, rx: c.rx, ry: c.ry })),
+      decoys: this.decoyDrones.map(d => ({
+        id: d.id, team: d.team, x: d.x, y: d.y, heading: d.heading, speed: d.speed, hp: d.hp, model: d.mirroredModel || 'DECOY'
       }))
     };
 
@@ -130,9 +117,7 @@ class SimulationSystem {
 
     const coverageCounts = { CLEAR: 0, LIGHT: 2, SCATTERED: 4, DENSE: 5 };
     const configuredCount = coverageCounts[this.cloudCoverage];
-    const count = Number.isFinite(configuredCount)
-      ? configuredCount
-      : (rng() < 0.15 ? 2 : (rng() < 0.70 ? 3 : (rng() < 0.92 ? 4 : 5)));
+    const count = Number.isFinite(configuredCount) ? configuredCount : (rng() < 0.15 ? 2 : (rng() < 0.70 ? 3 : (rng() < 0.92 ? 4 : 5)));
     const sizeProfiles = [{ rxMin: 25, rxMax: 32, ryMin: 16, ryMax: 22 }, { rxMin: 24, rxMax: 32, ryMin: 12, ryMax: 16 }, { rxMin: 18, rxMax: 25, ryMin: 13, ryMax: 18 }];
     const sectors = [
       { minX: 25, maxX: 65, minY: 18, maxY: 45 }, { minX: 85, maxX: 125, minY: 18, maxY: 45 },
@@ -267,7 +252,8 @@ class SimulationSystem {
     this.game.tokenBucketBlue = Math.min(maxToken, this.game.tokenBucketBlue + regenBlue * dt);
 
     const liveHostiles = this.game.hostileAircraft.filter(a => a.hp > 0);
-    const regenRed = baseRegen + perAcRegen * liveHostiles.length;
+    const hostileDatalinkTotal = liveHostiles.reduce((sum, h) => sum + (h.datalinkBonus || 0), 0);
+    const regenRed = baseRegen + perAcRegen * liveHostiles.length + hostileDatalinkTotal;
     this.game.tokenBucketRed = Math.min(maxToken, this.game.tokenBucketRed + regenRed * dt);
 
     const currentTokens = this.game.getCurrentCommanderTokenBucket();
@@ -314,20 +300,16 @@ class SimulationSystem {
 
     const allAlliesDead = this.game.alliedAircraft.length > 0 && this.game.alliedAircraft.every(a => a.hp <= 0);
     const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0);
-    const friendlyBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'friendly' && s.hp <= 0);
-    const hostileBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'hostile' && s.hp <= 0);
     const hasUpcomingWaves = this.game.scenarioMode === 'DYNAMIC_THEATER' && this.currentWave <= 3;
 
     if (allHostilesDead && !hasUpcomingWaves) {
+      const hostileBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'hostile' && s.hp <= 0);
       const winReason = hostileBunkerDestroyed
-        ? 'HOSTILE AIR FLEET NEUTRALIZED & COMMAND BUNKER DESTROYED'
-        : 'ALL HOSTILE AIR ASSETS NEUTRALIZED - AIR SUPERIORITY SECURED';
+        ? 'ALL HOSTILE AIR ASSETS NEUTRALIZED & COMMAND BUNKER DESTROYED'
+        : 'ALL HOSTILE AIR ASSETS NEUTRALIZED: AIR SUPERIORITY SECURED';
       this.game.triggerGameOver(true, winReason);
-    } else if (allAlliesDead && !hasUpcomingWaves) {
-      const loseReason = friendlyBunkerDestroyed
-        ? 'ALL ALLIED AIR ASSETS & COMMAND BUNKER DESTROYED'
-        : 'ALL ALLIED AIR ASSETS NEUTRALIZED';
-      this.game.triggerGameOver(false, loseReason);
+    } else if (allAlliesDead) {
+      this.game.triggerGameOver(false, 'ALL ALLIED AIR ASSETS NEUTRALIZED');
     }
   }
 }

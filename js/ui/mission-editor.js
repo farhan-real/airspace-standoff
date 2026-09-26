@@ -56,12 +56,12 @@ class MissionEditor {
       difficulty: {
         default: 'VETERAN',
         options: [
-          { value: 'CADET', text: 'CADET (PERMISSIVE - 0.50x)' },
-          { value: 'VETERAN', text: 'VETERAN (CONTESTED - 1.00x)' },
-          { value: 'ELITE', text: 'ELITE (HOSTILE - 1.50x)' },
-          { value: 'ACE', text: 'ACE (HIGH-THREAT - 2.00x)' },
-          { value: 'MASTER', text: 'MASTER (AIR DENIAL - 2.60x)' },
-          { value: 'LEGEND', text: 'LEGEND (EXTREME THREAT - 3.20x)' }
+          { value: 'CADET', text: 'PERMISSIVE SECTOR (0.50x)' },
+          { value: 'VETERAN', text: 'CONTESTED AIRSPACE (1.00x)' },
+          { value: 'ELITE', text: 'HOSTILE AIRSPACE (1.50x)' },
+          { value: 'ACE', text: 'HIGH-THREAT SECTOR (2.00x)' },
+          { value: 'MASTER', text: 'AIR DENIAL ZONE (2.60x)' },
+          { value: 'LEGEND', text: 'EXTREME THREAT SECTOR (3.20x)' }
         ]
       },
       doctrine: {
@@ -231,13 +231,20 @@ class MissionEditor {
     const draft = this.readDraft();
     const val = key => draft.randomize[key] ? 'RANDOM' : (draft.values[key] || 'STANDARD');
 
-    const diffMultMap = { CADET: '0.5x', VETERAN: '1.0x', ELITE: '1.5x', ACE: '2.0x', MASTER: '2.6x', LEGEND: '3.2x' };
+    const diffNames = {
+      CADET: 'PERMISSIVE SECTOR (0.50x)',
+      VETERAN: 'CONTESTED AIRSPACE (1.00x)',
+      ELITE: 'HOSTILE AIRSPACE (1.50x)',
+      ACE: 'HIGH-THREAT SECTOR (2.00x)',
+      MASTER: 'AIR DENIAL ZONE (2.60x)',
+      LEGEND: 'EXTREME THREAT SECTOR (3.20x)'
+    };
     const diffVal = val('difficulty');
-    const diffTag = diffVal === 'RANDOM' ? 'RANDOM' : `${diffVal} [${diffMultMap[diffVal] || '1.0x'}]`;
+    const diffTag = diffVal === 'RANDOM' ? 'RANDOM' : (diffNames[diffVal] || diffVal);
 
     const chips = [
       `<span class="me-preview-chip"><b>SCENARIO:</b> ${val('scenario')}</span>`,
-      `<span class="me-preview-chip"><b>THREAT:</b> ${diffTag}</span>`,
+      `<span class="me-preview-chip"><b>DIFFICULTY:</b> ${diffTag}</span>`,
       `<span class="me-preview-chip"><b>DOCTRINE:</b> ${val('doctrine')}</span>`,
       `<span class="me-preview-chip"><b>BLUE FORCE:</b> ${val('blue-squadron')} [${val('blue-weapons')}]</span>`,
       `<span class="me-preview-chip"><b>RED FORCE:</b> ${val('red-size')} AC [${val('red-weapons')}]</span>`,

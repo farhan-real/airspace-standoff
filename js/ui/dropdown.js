@@ -70,7 +70,7 @@ class CustomDropdown {
       wrapper: wrapper,
       trigger: trigger,
       menu: menu,
-      options: options,
+      options: [],
       currentValue: initialValue,
       disabled: false,
       _pendingOptions: null,
@@ -164,7 +164,7 @@ class CustomDropdown {
         const isIdentical = this.options.length === nextOpts.length &&
           nextOpts.every((opt, i) => opt.value === this.options[i].value && opt.text === this.options[i].text);
 
-        if (isIdentical) {
+        if (isIdentical && this.menu.children.length > 0) {
           if (curVal !== this.currentValue) {
             this.setValue(curVal, false);
           }

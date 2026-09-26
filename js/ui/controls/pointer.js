@@ -18,7 +18,6 @@ class PointerControlsHandler {
     const canvas = document.getElementById('radar-canvas');
     if (!canvas) return;
 
-    // Two-finger pinch-to-zoom
     canvas.addEventListener('touchstart', (e) => {
       if (e.touches.length === 2) {
         this.isDraggingMap = false;
@@ -48,7 +47,6 @@ class PointerControlsHandler {
       if (e.touches.length < 2) this.pinchStartDist = 0;
     }, { passive: false });
 
-    // Single-finger delta panning
     canvas.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       if (this.pinchStartDist > 0) return;
@@ -131,6 +129,7 @@ class PointerControlsHandler {
             if (typeof AudioSys !== 'undefined') AudioSys.playClick();
           } else {
             this.game.selectedTarget = entity;
+            if (this.game.activeUnit) this.game.activeUnit.radarLockedTarget = entity;
             if (this.game.radar) {
               this.game.radar.spawnCombatText(entity.x, entity.y, 'TARGET SELECTED', '#38bdf8');
               this.game.radar.spawnShockwave(entity.x, entity.y, '#38bdf8', 24);
@@ -212,14 +211,6 @@ class PointerControlsHandler {
         const pM = this.game.radar.toScreen(missile.x, missile.y);
         const distM = Math.hypot(pM.x - screenX, pM.y - screenY);
         if (distM <= maxRadiusPx) candidates.push({ entity: missile, distPx: distM });
-      }
-    }
-
-    if (inspectionOpen && this.game.radar && this.game.radar.cam) {
-      const mapPoint = this.game.radar.cam.toKm(screenX, screenY);
-      const clouds = (this.game.simulation && this.game.simulation.weatherClouds) || [];
-      for (const cloud of clouds) {
-        if (cloud.containsPoint(mapPoint.x, mapPoint.y)) candidates.push({ entity: cloud, distPx: 24 });
       }
     }
 

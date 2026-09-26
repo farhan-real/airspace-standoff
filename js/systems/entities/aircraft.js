@@ -279,6 +279,14 @@ class Aircraft {
     }
     if (this.cmTimer > 0) this.cmTimer -= dt;
     if (this.gunCooldown > 0) this.gunCooldown -= dt;
+
+    for (let i = 0; i < this.equippedWeapons.length; i++) {
+      const item = this.equippedWeapons[i];
+      if (item && item.cooldown > 0) {
+        item.cooldown = Math.max(0, item.cooldown - dt);
+      }
+    }
+
     if (!this.spec.isDrone && !this.isCoffin && this.stress > 0) {
       this.stress = Math.max(0.0, this.stress - 0.06 * dt);
     }

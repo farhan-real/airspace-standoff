@@ -96,18 +96,27 @@ class TacticalAICommander {
       if (pylon.weapon.isLaser) {
         if (typeof AudioSys !== 'undefined') AudioSys.playLaser();
         const wasAlive = tgt.hp > 0.05;
-        tgt.hp = Math.max(0, tgt.hp - pylon.weapon.damage);
-        if (tgt.hp < 0.05) tgt.hp = 0;
+        if (tgt.isGhost || tgt.isDecoyDrone) {
+          tgt.takeDamage(pylon.weapon.damage);
+        } else if (typeof SurfaceUnit !== 'undefined' && tgt instanceof SurfaceUnit) {
+          tgt.takeDamage(pylon.weapon.damage, false);
+        } else if (tgt.isCivilian && typeof tgt.takeDamage === 'function') {
+          tgt.takeDamage(pylon.weapon.damage, shooter, pylon.weapon, true);
+        } else {
+          tgt.hp = Math.max(0, tgt.hp - pylon.weapon.damage);
+          if (tgt.hp < 0.05) tgt.hp = 0;
+          if (typeof tgt.applyActionStress === 'function') tgt.applyActionStress(0.20);
+        }
         if (this.game.radar) {
           this.game.radar.spawnExplosionFX(tgt.x, tgt.y, false);
           this.game.radar.spawnCombatText(tgt.x, tgt.y, `LASER -${pylon.weapon.damage}HP`, '#f43f5e');
         }
         if (wasAlive && tgt.hp <= 0 && this.game.simulation && !tgt.isCivilian) {
           this.game.simulation.recordKillEvent(shooter.team, tgt, shooter, { weapon: pylon.weapon, isSalvo: false, salvoCount: 1 });
-        } else if (wasAlive && tgt.hp > 0 && this.game.simulation && this.game.simulation.scoring) {
+        } else if (wasAlive && tgt.hp > 0 && this.game.simulation && this.game.simulation.scoring && !tgt.isCivilian && (!tgt.isIndestructible)) {
           this.game.simulation.scoring.recordHitEvent(shooter.team, tgt, shooter, { weapon: pylon.weapon, damage: pylon.weapon.damage });
         }
-      } else {
+      } else if (!pylon.weapon.isGunpod && pylon.weapon.category !== 'GUN') {
         this.game.missiles.push(new MissileEntity(pylon.weapon, shooter, tgt));
         if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
       }
@@ -136,6 +145,7 @@ class TacticalAICommander {
       if (incoming.length > 0) {
         const nearest = incoming.reduce((min, m) => m.distanceToTarget < min.distanceToTarget ? m : min, incoming[0]);
         const isRadar = Boolean(nearest.weapon && (nearest.weapon.seeker === 'ARH' || nearest.weapon.seeker === 'PASSIVE_RADAR'));
+        const isOptical = Boolean(nearest.weapon && (nearest.weapon.seeker === 'IIR' || nearest.weapon.seeker === 'EO' || nearest.weapon.seeker === 'OPT'));
         const isStealth = Boolean(nearest.isStealthMissile || (nearest.rcs <= 0.005));
         const blunderedDefense = Math.random() < aceBlunderChance;
         const triggerDist = isStealth ? (blunderedDefense ? 4.5 : 6.5) : (blunderedDefense ? 7.5 : 11.0);
@@ -145,11 +155,36 @@ class TacticalAICommander {
           const sOpt = (typeof ace.getOptimalCornerSpeed === 'function') ? ace.getOptimalCornerSpeed() : 0.90;
           const turnOptEff = ace.isCoffin ? 1.0 : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(ace.speed || 0.8, sOpt) : 0.85);
 
-          if (ace.speed > sOpt * 1.15) ace.engineAlpha = 0.35;
-          else if (ace.speed < sOpt * 0.85) ace.engineAlpha = 0.85;
-          else ace.engineAlpha = 0.65;
+          if (isOptical && !blunderedDefense) {
+            ace.engineAlpha = 0.20;
+            let targetHeading = nearest.heading + (Math.random() < 0.5 ? 1.2 : -1.2);
+            if (clouds && clouds.length > 0) {
+              const nearestCloud = clouds.reduce((best, c) => {
+                const d = Math.hypot(c.x - ace.x, c.y - ace.y);
+                return d < best.d ? { cloud: c, d } : best;
+              }, { cloud: clouds[0], d: 999 });
 
-          if (isVeryHighDiff && isRadar && !blunderedDefense) {
+              if (nearestCloud.cloud && nearestCloud.d <= 25.0) {
+                targetHeading = Math.atan2(nearestCloud.cloud.y - ace.y, nearestCloud.cloud.x - ace.x);
+              }
+            }
+
+            let dAngle = targetHeading - ace.heading;
+            while (dAngle < -Math.PI) dAngle += Math.PI * 2;
+            while (dAngle > Math.PI) dAngle -= Math.PI * 2;
+            const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.85 : 1.35);
+            ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, dAngle));
+
+            ace.isNotching = false;
+            ace.activeManeuverId = 'BARREL_ROLL';
+            ace.activeManeuverTimer = 6.0;
+            ace.activeManeuverBonus = 0.45 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff);
+            if (ace.chaff > 0 && ace.cmTimer <= 0 && Math.random() < 0.60) ace.deployCountermeasures();
+          } else if (isVeryHighDiff && isRadar && !blunderedDefense) {
+            if (ace.speed > sOpt * 1.15) ace.engineAlpha = 0.35;
+            else if (ace.speed < sOpt * 0.85) ace.engineAlpha = 0.85;
+            else ace.engineAlpha = 0.65;
+
             const perpHeading = nearest.heading + Math.PI / 2;
             let dAngle = perpHeading - ace.heading;
             while (dAngle < -Math.PI) dAngle += Math.PI * 2;
@@ -163,6 +198,10 @@ class TacticalAICommander {
               if (ace.chaff > 0 && ace.cmTimer <= 0) ace.deployCountermeasures();
             }
           } else {
+            if (ace.speed > sOpt * 1.15) ace.engineAlpha = 0.35;
+            else if (ace.speed < sOpt * 0.85) ace.engineAlpha = 0.85;
+            else ace.engineAlpha = 0.65;
+
             const awayHeading = nearest.heading + (Math.random() < 0.5 ? 0.75 : -0.75);
             let dAngle = awayHeading - ace.heading;
             while (dAngle < -Math.PI) dAngle += Math.PI * 2;
@@ -198,8 +237,10 @@ class TacticalAICommander {
               if (this.game.tokenBucketRed < 0.70 || pylon.item.ammo <= 0) break;
               pylon.item.ammo--;
               this.game.tokenBucketRed = Math.max(0, this.game.tokenBucketRed - 0.70);
-              this.game.missiles.push(new MissileEntity(pylon.weapon, ace, tgt));
-              if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
+              if (!pylon.weapon.isGunpod && pylon.weapon.category !== 'GUN') {
+                this.game.missiles.push(new MissileEntity(pylon.weapon, ace, tgt));
+                if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
+              }
             }
             ace.recalculateWeight();
             this.aceSalvoTimer = isVeryHighDiff ? 3.4 : 5.2;

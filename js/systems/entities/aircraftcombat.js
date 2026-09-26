@@ -66,6 +66,8 @@ Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
       assignedStation = 'INTERNAL';
     } else if (this.getUsedExternalSlots() + wpn.slots <= this.externalSlots) {
       assignedStation = 'EXTERNAL';
+    } else if (this.hasCenterline && (this.getUsedCenterlineSlots() + wpn.slots <= this.centerlineSlots)) {
+      assignedStation = 'CENTERLINE';
     } else {
       return false;
     }
@@ -77,7 +79,7 @@ Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
       if (wpnSlotType === 'CENTERLINE') return false;
       if (this.getUsedExternalSlots() + wpn.slots > this.externalSlots) return false;
     } else if (assignedStation === 'CENTERLINE') {
-      if (wpnSlotType !== 'CENTERLINE' || !this.hasCenterline || (this.getUsedCenterlineSlots() + wpn.slots > this.centerlineSlots)) return false;
+      if (!this.hasCenterline || (this.getUsedCenterlineSlots() + wpn.slots > this.centerlineSlots)) return false;
     }
   }
 
@@ -161,12 +163,14 @@ Aircraft.prototype.deployCountermeasures = function() {
     this.cmTimer = 3.0;
     this.applyActionStress(0.08);
     const inspection = window.Game && window.Game.inspection;
-    if (inspection && inspection.enabled) inspection.recordEvent('COUNTERMEASURE', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(this) : this.callsign} deployed chaff`, this, null, {
-      remainingChaff: this.chaff, activeWindowSec: this.cmTimer, stressAfterDeployment: this.stress,
-      incomingMissiles: (window.Game.missiles || []).filter(missile => missile.active && missile.target && missile.target.id === this.id).map(missile => ({
-        weapon: missile.weapon && missile.weapon.name, seeker: missile.weapon && missile.weapon.seeker, distanceKm: missile.distanceToTarget
-      }))
-    });
+    if (inspection && inspection.enabled) {
+      inspection.recordEvent('COUNTERMEASURE', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(this) : this.callsign} deployed chaff`, this, null, {
+        remainingChaff: this.chaff, activeWindowSec: this.cmTimer, stressAfterDeployment: this.stress,
+        incomingMissiles: (window.Game.missiles || []).filter(missile => missile.active && missile.target && missile.target.id === this.id).map(missile => ({
+          weapon: missile.weapon && missile.weapon.name, seeker: missile.weapon && missile.weapon.seeker, distanceKm: missile.distanceToTarget
+        }))
+      });
+    }
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     return true;
   }
@@ -272,6 +276,7 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
         if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) { sustainedDmg *= 0.75; damageFactors.push({ cause: 'Shooter stress', multiplier: 0.75 }); }
 
         const hpBefore = enemy.hp;
+        const wasAlive = enemy.hp > 0.05;
         enemy.hp = Math.max(0, enemy.hp - sustainedDmg);
         if (enemy.hp < 0.05) enemy.hp = 0;
 
@@ -282,13 +287,22 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
         const burstRds = this.gun.roundsPerBurst || 4;
         this.gunAmmo = Math.max(0, this.gunAmmo - burstRds);
 
-        const inspection = window.Game && window.Game.inspection;
-        if (inspection && inspection.enabled) inspection.recordEvent('GUN BURST', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(this) : this.callsign} fired ${this.gun.name || this.gun.id} at ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(enemy) : (enemy.callsign || enemy.name || enemy.id)}`, this, enemy, {
-          gun: this.gun.name || this.gun.id, rangeKm: dist, maximumRangeKm: maxRange,
-          targetAngleDeg: angleDiff * 180 / Math.PI, allowedHalfConeDeg: maxConeRad * 180 / Math.PI,
-          firingDps: totalGunDps, simulationStepSec: dt, baseDamage: totalBurstDamage, damageFactors,
-          finalDamage: hpBefore - enemy.hp, hpBefore, hpAfter: enemy.hp, ammunitionRemaining: this.gunAmmo
+        activeGunpods.forEach(p => {
+          const podBurst = p.weapon.ammoPerBurst || p.weapon.roundsPerBurst || 4;
+          p.ammo = Math.max(0, p.ammo - podBurst);
+          p.cooldown = p.weapon.burstCooldown || (this.gun.burstCooldown || 0.50);
         });
+        this.recalculateWeight();
+
+        const inspection = window.Game && window.Game.inspection;
+        if (inspection && inspection.enabled) {
+          inspection.recordEvent('GUN BURST', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(this) : this.callsign} fired ${this.gun.name || this.gun.id} at ${window.formatCombatantDisplayName ? window.formatCombatantDisplayName(enemy) : (enemy.callsign || enemy.name || enemy.id)}`, this, enemy, {
+            gun: this.gun.name || this.gun.id, rangeKm: dist, maximumRangeKm: maxRange,
+            targetAngleDeg: angleDiff * 180 / Math.PI, allowedHalfConeDeg: maxConeRad * 180 / Math.PI,
+            firingDps: totalGunDps, simulationStepSec: dt, baseDamage: totalBurstDamage, damageFactors,
+            finalDamage: hpBefore - enemy.hp, hpBefore, hpAfter: enemy.hp, ammunitionRemaining: this.gunAmmo
+          });
+        }
 
         this.gunCooldown = (window.CONFIG && window.CONFIG.AUTO_GUN_COOLDOWN) || 0.50;
 
@@ -299,8 +313,10 @@ Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer)
           });
         }
 
-        if (enemy.hp <= 0 && window.Game && window.Game.simulation) {
+        if (wasAlive && enemy.hp <= 0 && window.Game && window.Game.simulation) {
           window.Game.simulation.recordKillEvent(this.team, enemy, this, { weapon: this.gun || { name: 'Autocannon' }, isSalvo: activeGunpods.length > 0, salvoCount: activeGunpods.length + 1 });
+        } else if (wasAlive && enemy.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
+          window.Game.simulation.scoring.recordHitEvent(this.team, enemy, this, { weapon: this.gun || { name: 'Autocannon' }, damage: sustainedDmg, isSalvo: activeGunpods.length > 0, salvoCount: activeGunpods.length + 1 });
         }
         break;
       }

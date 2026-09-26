@@ -86,6 +86,7 @@ window.MANEUVER_CARDS = [
     },
     execute: function(unit) {
       const game = window.Game;
+      unit.isNotching = false;
       unit.activeManeuverId = 'BARREL_ROLL';
       unit.activeManeuverTimer = 7.0;
 
@@ -136,6 +137,7 @@ window.MANEUVER_CARDS = [
     },
     execute: function(unit) {
       const game = window.Game;
+      unit.isNotching = false;
       unit.activeManeuverId = 'PUSH_COBRA';
       unit.activeManeuverTimer = 6.0;
 
@@ -185,6 +187,7 @@ window.MANEUVER_CARDS = [
     },
     execute: function(unit) {
       const game = window.Game;
+      unit.isNotching = false;
       unit.activeManeuverId = 'SPLIT_S';
       unit.dive();
       unit.heading = (unit.heading + Math.PI) % (Math.PI * 2);
@@ -233,6 +236,7 @@ window.MANEUVER_CARDS = [
     },
     execute: function(unit) {
       const game = window.Game;
+      unit.isNotching = false;
       unit.activeManeuverId = 'EMERGENCY_CM';
       unit.deployCountermeasures();
       unit.cmTimer = 8.0;
@@ -275,6 +279,7 @@ window.MANEUVER_CARDS = [
     },
     execute: function(unit) {
       const game = window.Game;
+      unit.isNotching = false;
       unit.activeManeuverId = 'ZOOM_CLIMB';
       unit.zoomClimb();
       unit.activeManeuverTimer = 8.0;

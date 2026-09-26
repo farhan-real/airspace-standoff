@@ -172,6 +172,11 @@ class InspectionModeController {
       btn.textContent = this.showEnemyDetails ? 'ENEMY: ON' : 'ENEMY: OFF';
       btn.classList.toggle('inspection-enemy-off', !this.showEnemyDetails);
     }
+
+    const commanderTeam = this.game.currentPvpCommander || 'friendly';
+    if (!this.showEnemyDetails && this.selectedEntity && this.selectedEntity.team !== commanderTeam) {
+      this.selectedEntity = this.game.activeUnit || null;
+    }
     this.render(true);
   }
 
@@ -186,7 +191,7 @@ class InspectionModeController {
       this.game.selectedTarget = entity;
       if (this.game.avionics) this.game.avionics.updateActiveUnitMFD();
       this.selectionNotice = `Locked ${this.getName(entity)} as combat target.`;
-      this.refreshAt = performance.now() + 450;
+      this.refreshAt = performance.now() + 150;
       this.render(true);
       return;
     }
@@ -205,7 +210,7 @@ class InspectionModeController {
     this.selectedEntity = entity;
     this.selectionNotice = '';
     this.focusedEvent = null;
-    this.refreshAt = performance.now() + 450;
+    this.refreshAt = performance.now() + 150;
     this.render(true);
   }
 
@@ -231,7 +236,7 @@ class InspectionModeController {
       ...((sim && sim.civilianTraffic) || []),
       ...((sim && sim.ghostContacts) || []),
       ...((sim && sim.decoyDrones) || [])
-    ].filter(e => e && (e.hp === undefined || e.hp > 0 || e.active));
+    ].filter(e => e && (e.hp === undefined || e.hp > 0 || (e.active && !e.isDead)));
   }
 
   recordEvent(type, title, source, target, details = {}) {
@@ -248,7 +253,7 @@ class InspectionModeController {
     };
     this.events.unshift(event);
     if (this.events.length > 500) this.events.pop();
-    if (this.isOpen && this.activeTab === 'TRACE') {
+    if (this.isOpen && this.activeTab === 'TRACE' && !this.focusedEvent) {
       this.render();
     }
   }
@@ -258,12 +263,18 @@ class InspectionModeController {
     this.updateTimeStopButton();
     if (!this.isOpen) return;
 
+    if (this.selectedEntity && this.selectedEntity.isDead) {
+      this.selectedEntity = this.game.activeUnit || null;
+      this.render(true);
+      return;
+    }
+
     const sim = this.game && this.game.simulation;
     if (sim && sim.isPaused) return;
 
     const now = performance.now();
     if (now >= this.refreshAt) {
-      this.refreshAt = now + 400;
+      this.refreshAt = now + 120;
       this.render(false);
     }
   }
@@ -324,21 +335,22 @@ class InspectionModeController {
 
     if (this.activeTab === 'WEAPONS') {
       const inbounds = (this.game.missiles || []).filter(m => m.active && m.target && m.target.id === e.id).map(m => m.id).join(',');
-      const wpns = (e.equippedWeapons || []).map((it, i) => `${it.weapon ? it.weapon.id : ''}:${it.ammo > 0}`).join(',');
+      const firingUnit = e.spec ? e : this.game.activeUnit;
+      const wpns = firingUnit ? (firingUnit.equippedWeapons || []).map(it => `${it.weapon ? it.weapon.id : ''}:${it.ammo}`).join(',') : '';
       return `${this.activeTab}:${eid}:${tid}:${inbounds}:${wpns}`;
     }
     if (this.activeTab === 'SENSORS') {
       const isBlue = e.team === (this.game.currentPvpCommander || 'friendly');
       const sensors = isBlue ? (this.game.hostileAircraft || []) : (this.game.alliedAircraft || []);
       const sIds = sensors.filter(s => s.hp > 0).map(s => s.id).join(',');
-      const hdgSector = Math.round(((e.heading || 0) * 180 / Math.PI) / 15);
-      return `${this.activeTab}:${eid}:${sIds}:${hdgSector}`;
+      return `${this.activeTab}:${eid}:${sIds}`;
     }
     if (this.activeTab === 'OVERVIEW') {
-      return `${this.activeTab}:${eid}:${e.maxHp}:${(e.equippedWeapons || []).length}`;
+      const equipLen = (e.equippedWeapons || []).length;
+      return `${this.activeTab}:${eid}:${e.maxHp || 0}:${equipLen}`;
     }
     if (this.activeTab === 'TRACE') {
-      return `${this.activeTab}:${this.focusedEvent ? this.focusedEvent.id : 'list'}:${this.events.length}`;
+      return `${this.activeTab}:${this.focusedEvent ? this.focusedEvent.id : `list:${this.events.length}`}`;
     }
     return `${this.activeTab}:${eid}`;
   }
