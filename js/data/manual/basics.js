@@ -9,7 +9,7 @@ window.MANUAL_BASICS = [
     title: 'SECTION 01: OPERATIONAL DOCTRINE, DEFENSE ALLOCATION & COMBAT ROE',
     desc: `
       <div class="ge-desc">
-        Welcome to <b>AIRSPACE STANDOFF</b>. You command an advanced fighter squadron in an contested electromagnetic combat arena. Master these foundational operational rules:
+        Welcome to <b>AIRSPACE STANDOFF</b>. You command an advanced fighter squadron in a contested airspace. Master these foundational operational rules:
       </div>
 
       <div class="ge-subhead">1. DEFENSE ALLOCATION ($400.0M BUDGET) &amp; FLIGHT LEAD SELECTION</div>
