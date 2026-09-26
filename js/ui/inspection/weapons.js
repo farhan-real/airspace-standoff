@@ -81,7 +81,7 @@ class InspectionWeapons {
                   <summary class="inspection-accordion-summary">
                     <div class="inspection-accordion-title">
                       <b style="color:#fecdd3;">${controller.escape(m.weapon ? m.weapon.name : 'MISSILE')}</b>
-                      <span class="threat-sub">From: ${controller.escape(controller.getName(m.source))} \u2022 ${d.toFixed(1)} km | ETA: ${etaSec}s</span>
+                      <span class="threat-sub">From: ${controller.escape(controller.getName(m.source))} &bull; ${d.toFixed(1)} km | ETA: ${etaSec}s</span>
                     </div>
                     <div class="inspection-accordion-meta">
                       <span class="factor-delta negative threat-badge">${pkPct}% Inbound Risk</span>
@@ -122,15 +122,20 @@ class InspectionWeapons {
       `;
     }
 
-    const target = isFriendly ? game.selectedTarget : (game.activeUnit && game.activeUnit.hp > 0 ? game.activeUnit : null);
-    const firingAircraft = isFriendly ? aircraft : (game.activeUnit && game.activeUnit.hp > 0 ? game.activeUnit : null);
+    const firingAircraft = aircraft;
+    const target = isFriendly
+      ? game.selectedTarget
+      : ((game.activeUnit && game.activeUnit.hp > 0) ? game.activeUnit : ((game.alliedAircraft && game.alliedAircraft.find(a => a.hp > 0)) || null));
 
     if (!target || target.hp <= 0 || !firingAircraft) {
+      const emptyMsg = isFriendly
+        ? 'Select an enemy aircraft or surface installation on radar to calculate firing solutions.'
+        : 'No operational friendly aircraft found to evaluate hostile firing solutions.';
       return `
         ${threatSectionHtml}
         <div class="inspection-empty">
           <b>NO ACTIVE WEAPON TARGET</b>
-          <span>Select an enemy aircraft or surface installation on radar to calculate firing solutions.</span>
+          <span>${emptyMsg}</span>
         </div>
       `;
     }
@@ -179,12 +184,37 @@ class InspectionWeapons {
       const pkClass = isValidSolution ? (pk >= 70 ? 'positive' : (pk >= 45 ? 'neutral' : 'negative')) : 'negative';
       const pkLabel = isValidSolution ? `${pk}% [${pkRes.label}]` : outReason;
 
+      let assessmentText = '';
+      if (isValidSolution) {
+        if (isFriendly) {
+          assessmentText = (pk >= 70)
+            ? 'Optimal firing solution established. Direct hit anticipated; clear for release.'
+            : 'Marginal engagement solution. Coordinate multi-missile salvo or close range to defeat evasive break.';
+        } else {
+          assessmentText = (pk >= 70)
+            ? `HIGH THREAT: Hostile has an optimal firing solution against ${controller.escape(controller.getName(target))}! Prepare Doppler notch or countermeasures.`
+            : 'Hostile firing solution is degraded by range or aspect geometry. Maintain evasive separation.';
+        }
+      } else if (isOutsideCone) {
+        assessmentText = isFriendly
+          ? `Target is outside forward weapon acquisition cone (${offBoresightDeg}\u00B0 off nose). Turn aircraft towards target to acquire lock.`
+          : `Hostile aircraft is pointing away (${offBoresightDeg}\u00B0 off your aircraft). Not currently aligned in their forward firing cone.`;
+      } else if (dist < (w.minRangeKm || 1.0)) {
+        assessmentText = isFriendly
+          ? 'Target is inside minimum arming distance. Disengage with break turn.'
+          : 'Hostile is inside minimum missile arming distance. Watch for close-range autocannon strafes.';
+      } else {
+        assessmentText = isFriendly
+          ? 'Target exceeds maximum aerodynamic reach. Advance power to close distance.'
+          : 'Your aircraft is beyond hostile missile maximum aerodynamic reach.';
+      }
+
       return `
         <details class="inspection-accordion" data-accordion-id="${accordionId}">
           <summary class="inspection-accordion-summary">
             <div class="inspection-accordion-title">
               <b>${idx + 1}. ${controller.escape(w.name || w.id)} (${item.ammo}/${item.maxAmmo})</b>
-              <span class="sol-sub">Range: ${dist.toFixed(1)} / ${w.rangeKm} km \u2022 ${w.seeker || 'GUIDED'} \u2022 ${w.damage} HP</span>
+              <span class="sol-sub">Range: ${dist.toFixed(1)} / ${w.rangeKm} km &bull; ${w.seeker || 'GUIDED'} &bull; ${w.damage} HP</span>
             </div>
             <div class="inspection-accordion-meta">
               <span class="factor-delta ${pkClass} sol-pk-badge">${pkLabel}</span>
@@ -218,23 +248,23 @@ class InspectionWeapons {
             </div>
 
             <div class="inspection-reason-box ${isValidSolution && pk >= 70 ? '' : 'warning'}" style="margin-top:4px;">
-              <b>ASSESSMENT:</b> ${isValidSolution
-                ? (pk >= 70 ? 'Optimal firing solution established. Direct hit anticipated; clear for release.' : 'Marginal engagement solution. Coordinate multi-missile salvo or close range to defeat evasive break.')
-                : (isOutsideCone ? `Target is outside forward weapon acquisition cone (${offBoresightDeg}\u00B0 off nose). Turn aircraft towards target to acquire lock.` : (dist < (w.minRangeKm || 1.0) ? 'Target is inside minimum arming distance. Disengage with break turn.' : 'Target exceeds maximum aerodynamic reach. Advance power to close distance.'))}
+              <b>ASSESSMENT:</b> ${assessmentText}
             </div>
           </div>
         </details>
       `;
     }).join('');
 
+    const titlePrefix = isFriendly ? 'FIRING SOLUTIONS VS' : 'HOSTILE WEAPON SOLUTIONS VS';
+
     return `
       ${threatSectionHtml}
       <section style="margin-top:6px;">
         <div class="inspection-subhead" style="padding:0 2px 4px 2px;">
-          <span class="sol-head-title">FIRING SOLUTIONS VS ${controller.escape(controller.getName(target))} (${dist.toFixed(1)} km)</span>
+          <span class="sol-head-title">${titlePrefix} ${controller.escape(controller.getName(target))} (${dist.toFixed(1)} km)</span>
           <span>EXPAND FOR DETAILS</span>
         </div>
-        ${solutionsHtml || '<p class="inspection-muted" style="padding:8px;">No combat weapons installed on active aircraft.</p>'}
+        ${solutionsHtml || '<p class="inspection-muted" style="padding:8px;">No combat weapons installed on aircraft.</p>'}
       </section>
     `;
   }
@@ -352,8 +382,10 @@ class InspectionWeapons {
 
     const commanderTeam = game.currentPvpCommander || 'friendly';
     const isFriendly = entity.team === commanderTeam;
-    const target = isFriendly ? game.selectedTarget : (game.activeUnit && game.activeUnit.hp > 0 ? game.activeUnit : null);
-    const firingAircraft = isFriendly ? entity : (game.activeUnit && game.activeUnit.hp > 0 ? game.activeUnit : null);
+    const firingAircraft = entity;
+    const target = isFriendly
+      ? game.selectedTarget
+      : ((game.activeUnit && game.activeUnit.hp > 0) ? game.activeUnit : ((game.alliedAircraft && game.alliedAircraft.find(a => a.hp > 0)) || null));
 
     const incoming = (game.missiles || []).filter(m => m.active && m.target && m.target.id === entity.id);
     incoming.forEach(m => {
@@ -364,7 +396,7 @@ class InspectionWeapons {
       const etaSec = (d / mSpeedKm).toFixed(1);
 
       const subEl = acc.querySelector('.threat-sub');
-      if (subEl) subEl.textContent = `From: ${controller.escape(controller.getName(m.source))} \u2022 ${d.toFixed(1)} km | ETA: ${etaSec}s`;
+      if (subEl) subEl.textContent = `From: ${controller.escape(controller.getName(m.source))} &bull; ${d.toFixed(1)} km | ETA: ${etaSec}s`;
 
       const machEl = acc.querySelector('.threat-mach');
       if (machEl) machEl.textContent = `Mach ${m.speed.toFixed(2)}`;
@@ -389,7 +421,11 @@ class InspectionWeapons {
     const offBoresightDeg = Math.round(offBoresight * 180 / Math.PI);
 
     const headTitle = content.querySelector('.sol-head-title');
-    if (headTitle) headTitle.textContent = `FIRING SOLUTIONS VS ${controller.escape(controller.getName(target))} (${dist.toFixed(1)} km)`;
+    if (headTitle) {
+      headTitle.textContent = isFriendly
+        ? `FIRING SOLUTIONS VS ${controller.escape(controller.getName(target))} (${dist.toFixed(1)} km)`
+        : `HOSTILE WEAPON SOLUTIONS VS ${controller.escape(controller.getName(target))} (${dist.toFixed(1)} km)`;
+    }
 
     const weapons = firingAircraft.equippedWeapons || [];
     weapons.forEach((item, idx) => {
@@ -410,7 +446,7 @@ class InspectionWeapons {
       const isValidSolution = inRange && !isOutsideCone;
 
       const sub = acc.querySelector('.sol-sub');
-      if (sub) sub.textContent = `Range: ${dist.toFixed(1)} / ${w.rangeKm} km \u2022 ${w.seeker || 'GUIDED'} \u2022 ${w.damage} HP`;
+      if (sub) sub.textContent = `Range: ${dist.toFixed(1)} / ${w.rangeKm} km &bull; ${w.seeker || 'GUIDED'} &bull; ${w.damage} HP`;
 
       let outReason = isOutsideCone ? `OFF-BORESIGHT (${offBoresightDeg}\u00B0)` : (dist < (w.minRangeKm || 1.0) ? 'TOO CLOSE' : 'OUT OF RANGE');
       const pkClass = isValidSolution ? (pk >= 70 ? 'positive' : (pk >= 45 ? 'neutral' : 'negative')) : 'negative';

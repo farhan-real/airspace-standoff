@@ -268,7 +268,7 @@
   .inspection-layout .cockpit-workspace {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
-    grid-template-rows: minmax(130px, 28dvh) minmax(200px, 1fr) minmax(68px, 14dvh) !important;
+    grid-template-rows: minmax(130px, 26dvh) minmax(220px, 1fr) minmax(68px, 13dvh) !important;
   }
   .inspection-layout #pane-radar {
     grid-column: 1 !important;
@@ -284,10 +284,12 @@
   .inspection-layout #pane-mfd {
     grid-column: 1 !important;
     grid-row: 3 !important;
-    max-height: 14dvh !important;
+    max-height: 13dvh !important;
   }
   .inspection-layout .inspection-events-dock {
-    display: none;
+    display: flex !important;
+    flex: 0 0 clamp(70px, 18dvh, 95px);
+    min-height: 60px;
   }
 }
 
@@ -310,6 +312,8 @@
     grid-row: 1 !important;
   }
   .inspection-layout .inspection-events-dock {
-    display: none;
+    display: flex !important;
+    flex: 0 0 clamp(65px, 22dvh, 90px);
+    min-height: 55px;
   }
 }

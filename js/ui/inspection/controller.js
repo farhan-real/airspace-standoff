@@ -300,6 +300,22 @@ class InspectionModeController {
         this.render(true);
       };
     });
+
+    const backBtn = content.querySelector('#btn-trace-back-to-list');
+    if (backBtn) {
+      backBtn.onclick = () => {
+        this.focusedEvent = null;
+        this.render(true);
+      };
+    }
+
+    content.querySelectorAll('.inspection-content .inspection-event-row').forEach(row => {
+      row.onclick = () => {
+        const id = row.getAttribute('data-ev-id');
+        this.focusedEvent = this.events.find(e => e.id === id) || null;
+        this.render(true);
+      };
+    });
   }
 
   computeStructureSignature() {
@@ -322,6 +338,9 @@ class InspectionModeController {
     }
     if (this.activeTab === 'OVERVIEW') {
       return `${this.activeTab}:${eid}:${e.maxHp}:${(e.equippedWeapons || []).length}`;
+    }
+    if (this.activeTab === 'TRACE') {
+      return `${this.activeTab}:${this.focusedEvent ? this.focusedEvent.id : 'list'}:${this.events.length}`;
     }
     return `${this.activeTab}:${eid}`;
   }

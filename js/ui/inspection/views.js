@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Inspection UI Component Views & Data Dossier
- * Structured tactical registries with clean, non-collapsible glass sections and real-time live telemetry updating.
+ * Structured tactical registries with clean glass sections and real-time live telemetry updating.
  */
 
 class InspectionViews {
@@ -86,7 +86,7 @@ class InspectionViews {
         <div class="inspection-metric">
           <div class="inspection-metric-top">
             <span class="inspection-metric-label">ALTITUDE &amp; HDG</span>
-            <b class="inspection-metric-value ovr-alt-val">${fl} \u2022 ${String(headingDeg).padStart(3, '0')}&deg;</b>
+            <b class="inspection-metric-value ovr-alt-val">${fl} &bull; ${String(headingDeg).padStart(3, '0')}&deg;</b>
           </div>
           <div class="inspection-meter"><i class="ovr-alt-meter" style="width:${Math.min(100, (altFt / 60000) * 100)}%;"></i></div>
           <small class="inspection-meter-note ovr-alt-note">${altFt.toLocaleString()} FT - ${a.vsiFpm > 200 ? 'CLIMBING' : (a.vsiFpm < -200 ? 'DIVING' : 'LEVEL')}</small>
@@ -173,7 +173,34 @@ class InspectionViews {
   }
 
   static renderEventTraceTab(controller, event) {
-    if (!event) return '<div class="inspection-empty"><b>NO EVENT SELECTED</b><span>Select a tactical event from the log below to inspect cause and effect telemetry.</span></div>';
+    if (!event) {
+      const events = controller.events || [];
+      if (events.length === 0) {
+        return `
+          <section class="inspection-card">
+            <h3>CAUSAL EVENT LOG</h3>
+            <p class="inspection-muted" style="margin-top:6px; line-height:1.5;">Waiting for tactical engagement events (missile launches, hits, kills, chaff deployments)...</p>
+          </section>
+        `;
+      }
+      return `
+        <section class="inspection-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0;">CAUSAL EVENT LOG</h3>
+            <span class="factor-chip neutral">${events.length} RECORDED</span>
+          </div>
+          <p class="inspection-muted" style="margin-top:4px;">Tap any tactical event to inspect detailed kinematics, hit probability factors, and causal telemetry.</p>
+          <div class="inspection-event-list" style="max-height:360px; overflow-y:auto; margin-top:8px;">
+            ${events.map(ev => `
+              <button type="button" class="inspection-event-row" data-ev-id="${ev.id}">
+                <span>[${ev.time}] ${ev.type}</span>
+                <b>${controller.escape(ev.title)}</b>
+              </button>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
 
     const d = event.details || {};
     const formatValue = (v) => {
@@ -193,9 +220,12 @@ class InspectionViews {
 
     return `
       <section class="inspection-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <button type="button" class="hud-btn small" id="btn-trace-back-to-list">&larr; ALL EVENTS</button>
+          <span class="factor-chip neutral">[${event.time}]</span>
+        </div>
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h3 style="margin:0;">${controller.escape(event.type)}</h3>
-          <span class="factor-chip neutral">[${event.time}]</span>
         </div>
         <p style="color:var(--color-ice-highlight); font:600 0.72rem var(--font-dotdigital); margin-top:5px; line-height:1.4;">
           ${controller.escape(event.title)}
@@ -230,7 +260,6 @@ class InspectionViews {
 
     const sections = [];
 
-    // 1. Identity & Faction
     sections.push(`
       <div class="inspection-data-section">
         <span class="inspection-data-title">TACTICAL IDENTITY &amp; FACTION</span>
@@ -242,7 +271,6 @@ class InspectionViews {
       </div>
     `);
 
-    // 2. Spatial Position & Kinematics
     sections.push(`
       <div class="inspection-data-section">
         <span class="inspection-data-title">POSITION &amp; SPATIAL KINEMATICS</span>
@@ -255,7 +283,6 @@ class InspectionViews {
       </div>
     `);
 
-    // 3. Aerodynamics & Flight Envelope
     if (isAircraft) {
       const sOpt = (typeof entity.getOptimalCornerSpeed === 'function') ? entity.getOptimalCornerSpeed() : 0.75;
       sections.push(`
@@ -271,7 +298,6 @@ class InspectionViews {
       `);
     }
 
-    // 4. Sensors & Signature
     sections.push(`
       <div class="inspection-data-section">
         <span class="inspection-data-title">SENSORS &amp; STEALTH</span>
@@ -284,7 +310,6 @@ class InspectionViews {
       </div>
     `);
 
-    // 5. Armament & Durability
     sections.push(`
       <div class="inspection-data-section">
         <span class="inspection-data-title">ARMAMENT &amp; DURABILITY</span>
@@ -309,7 +334,7 @@ class InspectionViews {
       if (distEl) distEl.textContent = `${dist.toFixed(1)} km`;
       const travEl = content.querySelector('.ovr-msl-traveled');
       if (travEl && entity.weapon) travEl.textContent = `${entity.distanceTraveled.toFixed(1)} / ${entity.weapon.rangeKm} km`;
-      const stageEl = content.querySelector('.ovr-msl-stage');
+      const stageEl = content.querySelector('.msl-live-stage');
       if (stageEl) stageEl.textContent = entity.stage || 'BOOST';
       return;
     }
@@ -346,7 +371,7 @@ class InspectionViews {
     if (headingDeg >= 360) headingDeg = 0;
 
     const altValEl = content.querySelector('.ovr-alt-val');
-    if (altValEl) altValEl.textContent = `${fl} \u2022 ${String(headingDeg).padStart(3, '0')}\u00B0`;
+    if (altValEl) altValEl.textContent = `${fl} &bull; ${String(headingDeg).padStart(3, '0')}&deg;`;
 
     const altMeter = content.querySelector('.ovr-alt-meter');
     if (altMeter) altMeter.style.width = `${Math.min(100, (altFt / 60000) * 100)}%`;
@@ -393,7 +418,7 @@ class InspectionViews {
     if (headingDeg >= 360) headingDeg = 0;
 
     const hdgVal = content.querySelector('.raw-hdg-val');
-    if (hdgVal) hdgVal.textContent = `${String(headingDeg).padStart(3, '0')}\u00B0 (${fmtNum(entity.heading, 3)} rad)`;
+    if (hdgVal) hdgVal.textContent = `${String(headingDeg).padStart(3, '0')}&deg; (${fmtNum(entity.heading, 3)} rad)`;
 
     const vsiVal = content.querySelector('.raw-vsi-val');
     if (vsiVal) vsiVal.textContent = `${Math.round(entity.vsiFpm || 0)} fpm`;
