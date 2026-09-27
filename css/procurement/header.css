@@ -1,5 +1,18 @@
 /* AIRSPACE STANDOFF: Hangar Operations Header Stylesheet */
 
+.procurement-top-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.procurement-window.header-hidden .procurement-top-scroll {
+  display: none !important;
+}
+
 .procurement-header {
   flex-shrink: 0;
   display: flex;
@@ -82,23 +95,14 @@
   transition: all 0.14s ease;
   gap: 6px;
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   box-shadow: var(--glass-highlight);
   flex-shrink: 0;
 }
 
-.squad-callsign-tag {
-  color: var(--stat-tier-3);
-}
-
-.proc-manual-btn,
-.proc-settings-btn,
-.proc-leaderboard-btn {
-  color: var(--color-frost-glow);
-}
+.squad-callsign-tag { color: var(--stat-tier-3); }
+.proc-manual-btn, .proc-settings-btn, .proc-leaderboard-btn { color: var(--color-frost-glow); }
 
 .proc-exit-btn {
   background: rgba(244, 63, 94, 0.15);
@@ -136,8 +140,6 @@
 .segmented-control {
   display: flex;
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-btn);
@@ -159,10 +161,7 @@
   white-space: nowrap;
 }
 
-.seg-btn:hover {
-  color: #ffffff;
-}
-
+.seg-btn:hover { color: #ffffff; }
 .seg-btn.active {
   background: var(--theme-primary);
   color: #ffffff;
@@ -211,8 +210,6 @@
   gap: 10px;
   font-family: var(--font-dotdigital);
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-btn);
@@ -239,14 +236,8 @@
   color: var(--color-ice-highlight);
 }
 
-.budget-display .amount .spent-val {
-  color: var(--stat-tier-2);
-}
-
-.budget-display .amount .spent-val.overbudget {
-  color: var(--stat-tier-5) !important;
-}
-
+.budget-display .amount .spent-val { color: var(--stat-tier-2); }
+.budget-display .amount .spent-val.overbudget { color: var(--stat-tier-5) !important; }
 .budget-display .amount .rem-val {
   font-size: 0.62rem;
   color: var(--color-moon-mist);
@@ -264,21 +255,23 @@
   font-weight: 600;
 }
 
+.is-android .procurement-header,
+.is-android .squad-callsign-tag,
+.is-android .proc-manual-btn,
+.is-android .proc-leaderboard-btn,
+.is-android .proc-settings-btn,
+.is-android .proc-exit-btn,
+.is-android .segmented-control,
+.is-android .budget-display {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background: #040916 !important;
+}
+
 @media (max-width: 1024px) {
-  .procurement-header {
-    padding-bottom: 4px;
-    gap: 4px;
-  }
-
-  .game-name {
-    font-size: 1.02rem;
-  }
-
-  .hangar-badge {
-    font-size: 0.60rem;
-    padding: 2px 6px;
-  }
-
+  .procurement-header { padding-bottom: 4px; gap: 4px; }
+  .game-name { font-size: 1.02rem; }
+  .hangar-badge { font-size: 0.60rem; padding: 2px 6px; }
   .title-group {
     overflow-x: auto;
     overflow-y: hidden;
@@ -286,37 +279,24 @@
     scrollbar-width: none;
     padding-bottom: 2px;
   }
-  .title-group::-webkit-scrollbar {
-    display: none;
-  }
-
-  .squad-callsign-tag,
-  .proc-leaderboard-btn,
-  .proc-settings-btn,
-  .proc-manual-btn,
-  .proc-exit-btn {
+  .title-group::-webkit-scrollbar { display: none; }
+  .squad-callsign-tag, .proc-leaderboard-btn, .proc-settings-btn, .proc-manual-btn, .proc-exit-btn {
     padding: 4px 8px;
     font-size: 0.68rem;
     height: 28px;
     gap: 4px;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: #040916 !important;
   }
-
-  .mode-and-ai-controls {
-    gap: 4px;
-    flex-wrap: wrap;
-    overflow: visible;
-  }
-
-  .seg-btn {
-    padding: 3px 6px;
-    font-size: 0.66rem;
-  }
-
+  .segmented-control,
   .budget-display {
-    padding: 3px 8px;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: #040916 !important;
   }
-
-  .budget-display .amount {
-    font-size: 0.78rem;
-  }
+  .mode-and-ai-controls { gap: 4px; flex-wrap: wrap; overflow: visible; }
+  .seg-btn { padding: 3px 6px; font-size: 0.66rem; }
+  .budget-display { padding: 3px 8px; }
+  .budget-display .amount { font-size: 0.78rem; }
 }

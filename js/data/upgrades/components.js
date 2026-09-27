@@ -165,7 +165,7 @@ window.UPGRADES_CATALOG = {
   },
   'ZOE_NEURAL_PROCESSOR': {
     id: 'ZOE_NEURAL_PROCESSOR',
-    name: 'Z.O.E. Autonomous Flight Computer',
+    name: 'Neural Autonomous Flight Computer',
     cost: 2.0,
     mass: 30,
     category: 'DATALINK',

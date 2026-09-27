@@ -186,6 +186,10 @@ class ProcurementManager {
       };
     }
 
+    if (typeof ProcurementActionDispatcher !== 'undefined' && ProcurementActionDispatcher.initCollapsibleHeader) {
+      ProcurementActionDispatcher.initCollapsibleHeader(this);
+    }
+
     this.renderDoctrinePresetsBar();
     this.renderCatalog();
   }

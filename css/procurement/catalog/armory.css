@@ -107,6 +107,8 @@
   transition: all 0.14s ease;
   box-shadow: var(--glass-shadow);
   contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 120px;
 }
 
 .catalog-item-card.selected,
@@ -206,28 +208,18 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .shelf-tab-btn:hover {
-    border-color: var(--glass-border-hover);
-    color: #ffffff;
-  }
+  .shelf-tab-btn:hover { border-color: var(--glass-border-hover); color: #ffffff; }
+  .catalog-item-card:hover { border-color: var(--glass-border-hover); background: var(--glass-bg-hover); }
+  .btn-quick-equip:hover { background: var(--theme-primary); color: #ffffff; border-color: var(--theme-accent); }
+}
 
-  .catalog-item-card:hover {
-    border-color: var(--glass-border-hover);
-    background: var(--glass-bg-hover);
-  }
-
-  .btn-quick-equip:hover {
-    background: var(--theme-primary);
-    color: #ffffff;
-    border-color: var(--theme-accent);
-  }
+.is-android .catalog-item-card {
+  box-shadow: none !important;
+  background: #030816 !important;
 }
 
 @media (max-width: 1024px) {
-  .shelf-helper-bar {
-    display: none !important;
-  }
-
+  .shelf-helper-bar { display: none !important; }
   .shelf-tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -250,7 +242,7 @@
   }
 
   .catalog-item-card {
-    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.14) !important;
+    box-shadow: none !important;
     background: #030816 !important;
   }
 }

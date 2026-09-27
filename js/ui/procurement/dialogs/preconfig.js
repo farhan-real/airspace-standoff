@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Aircraft Presets Modal Controller
+ * AIRSPACE STANDOFF: Aircraft Presets Modal Controller
  */
 
 class PreconfigModalController {
@@ -175,7 +175,7 @@ class PreconfigModalController {
       this.pm.showAlertModal('LIMIT REACHED', `Maximum squadron capacity of ${maxUnits} aircraft reached.`);
       return;
     }
-    const pool = window.CALLSIGN_POOL || ['Trigger', 'Mobius 1', 'Cipher', 'Viper'];
+    const pool = window.CALLSIGN_POOL || ['Trigger', 'Mobius', 'Cipher', 'Viper'];
     const assignedCallsign = pool[Math.floor(Math.random() * pool.length)];
     const isFirstCraft = (this.pm.game.procurementSquadron.length === 0);
 

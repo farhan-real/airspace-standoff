@@ -216,18 +216,32 @@ Aircraft.prototype.rearmStandardPackage = function() {
   this.countermeasures = baseCm;
   this.chaffFlares = baseCm;
   this.gunAmmo = (this.gun && this.gun.defaultAmmo) ? this.gun.defaultAmmo : 500;
-  for (const item of this.equippedWeapons) {
-    item.ammo = item.maxAmmo || item.ammo;
-    item.cooldown = 0.0;
-  }
-  if (this.hasMaldDecoy) this.maldDecoyCharges = 2;
-  if (this.equippedWeapons.length === 0) {
-    if (this.internalSlots > 0) {
-      this.installWeapon('AIM-120D', 'INTERNAL');
-      this.installWeapon('AIM-9X-2', 'INTERNAL');
-    } else {
-      this.installWeapon('AIM-120D', 'EXTERNAL');
-      this.installWeapon('AIM-9X-2', 'EXTERNAL');
+
+  // Friendly players and human commanders receive full stores rearm.
+  // Enemy AI fighters/aces operate on their assigned sortie payload and do not have unlimited missile replenishment.
+  const isHumanControlled = (this.team === 'friendly') || (window.Game && window.Game.playerMode === '2P');
+  if (isHumanControlled) {
+    for (const item of this.equippedWeapons) {
+      item.ammo = item.maxAmmo || item.ammo;
+      item.cooldown = 0.0;
+    }
+    if (this.hasMaldDecoy) this.maldDecoyCharges = 2;
+    if (this.equippedWeapons.length === 0) {
+      if (this.internalSlots > 0) {
+        this.installWeapon('AIM-120D', 'INTERNAL');
+        this.installWeapon('AIM-9X-2', 'INTERNAL');
+      } else {
+        this.installWeapon('AIM-120D', 'EXTERNAL');
+        this.installWeapon('AIM-9X-2', 'EXTERNAL');
+      }
+    }
+  } else {
+    // Enemy fighters do not get unlimited missiles; once expended, missile pylons remain depleted.
+    for (const item of this.equippedWeapons) {
+      item.cooldown = 0.0;
+      if (item.weapon && (item.weapon.isLaser || item.weapon.category === 'GUN')) {
+        item.ammo = item.maxAmmo || item.ammo;
+      }
     }
   }
   this.recalculateWeight();

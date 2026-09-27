@@ -21,7 +21,7 @@ class RosterCardBuilder {
     if (!item.upgrades) item.upgrades = [];
     if (!item.chosenGunId) item.chosenGunId = spec.builtInGun || 'M61A2';
     if (!item.callsign) {
-      const pool = window.CALLSIGN_POOL || ['Trigger', 'Mobius 1', 'Cipher'];
+      const pool = window.CALLSIGN_POOL || ['Trigger', 'Mobius', 'Cipher'];
       item.callsign = pool[(sIdx * 3) % pool.length] || `Viper ${sIdx + 1}`;
     }
 

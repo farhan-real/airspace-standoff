@@ -83,9 +83,12 @@ class AIEvasionHandler {
 
       const hasUsableAmmo = ace.equippedWeapons && ace.equippedWeapons.some(p => p && p.ammo > 0 && p.weapon && !p.weapon.isJammerPod && !p.weapon.isDecoy && !p.weapon.isDecoyDrone);
       if (!hasUsableAmmo && !ace.isRTB) {
-        ace.orderRTB();
-        if (game.radar) game.radar.spawnCombatText(ace.x, ace.y, 'ACE BINGO AMMO: RTB', '#f59e0b');
-        continue;
+        // When missile stores are exhausted, aces do not get unlimited missiles; they press into dogfights with guns if armed, or withdraw
+        if (!ace.gunAmmo || ace.gunAmmo <= 0) {
+          ace.orderRTB();
+          if (game.radar) game.radar.spawnCombatText(ace.x, ace.y, 'ACE BINGO AMMO: WITHDRAWING', '#f59e0b');
+          continue;
+        }
       }
 
       const incoming = (game.missiles || []).filter(m => m.active && m.target && m.target.id === ace.id);

@@ -39,6 +39,7 @@ body.safe-zone-on .procurement-window {
   gap: 8px;
   overflow: hidden;
   contain: layout;
+  transform: translateZ(0);
 }
 
 .hanger-shelf,
@@ -98,7 +99,31 @@ body.safe-zone-on .procurement-window {
   box-shadow: none;
 }
 
-/* Mobile GPU optimization: eliminate nested blur lag */
+.is-android .procurement-window {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 100dvh;
+  border-radius: 0;
+  padding: 6px 8px;
+  gap: 4px;
+  overflow-x: hidden;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background: #02050f !important;
+  box-shadow: none !important;
+}
+
+.is-android .hanger-shelf,
+.is-android .flight-roster {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background: #030816 !important;
+  box-shadow: none !important;
+}
+
 @media (max-width: 1024px) {
   .procurement-window {
     width: 100vw;
@@ -114,6 +139,7 @@ body.safe-zone-on .procurement-window {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background: #02050f !important;
+    box-shadow: none !important;
   }
 
   .hanger-shelf,
@@ -121,6 +147,7 @@ body.safe-zone-on .procurement-window {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background: #030816 !important;
+    box-shadow: none !important;
   }
 
   .scramble-btn {

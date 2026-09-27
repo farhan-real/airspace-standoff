@@ -87,7 +87,7 @@ class SortieSpawner {
 
     const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-    const callsignPool = [...(window.CALLSIGN_POOL || ['Trigger', 'Mobius 1', 'Cipher', 'Viper', 'Ghost', 'Talon'])].sort(() => Math.random() - 0.5);
+    const callsignPool = [...(window.CALLSIGN_POOL || ['Trigger', 'Mobius', 'Cipher', 'Viper', 'Ghost', 'Talon'])].sort(() => Math.random() - 0.5);
     const takeCallsign = () => callsignPool.length ? callsignPool.pop() : 'Viper';
 
     game.alliedAircraft = [];
@@ -147,9 +147,9 @@ class SortieSpawner {
 
     SortieSpawner.initSurfaceFacilities(game, mapW, mapH);
     if (editorMission && editorMission.defenses === 'LIGHT') {
-      game.surfaceUnits = game.surfaceUnits.filter(unit => unit.type !== 'S-400');
+      game.surfaceUnits = game.surfaceUnits.filter(unit => unit.type !== 'PANTSIR');
     } else if (editorMission && editorMission.defenses === 'OFF') {
-      game.surfaceUnits = game.surfaceUnits.filter(unit => unit.type !== 'S-400' && unit.type !== 'PANTSIR');
+      game.surfaceUnits = game.surfaceUnits.filter(unit => unit.type !== 'PANTSIR');
     }
     if (game.simulation) {
       game.simulation.civilianTraffic = [];
@@ -185,7 +185,8 @@ class SortieSpawner {
       new SurfaceUnit('BUNKER', 'friendly', 8, mapH / 2),
       new SurfaceUnit('RADAR_ARRAY', 'friendly', 10, mapH / 2 - 10),
       new SurfaceUnit('EW_JAMMER', 'friendly', 16, mapH / 2 - 20),
-      new SurfaceUnit('S-400', 'friendly', 16, 22),
+      // SAM sites disabled from spawning as they are too OP and annoying:
+      // new SurfaceUnit('S-400', 'friendly', 16, 22),
       new SurfaceUnit('PANTSIR', 'friendly', 14, mapH / 2 + 10),
       new SurfaceUnit('FUEL_DEPOT', 'friendly', 12, 16),
       new SurfaceUnit('AMMO_DUMP', 'friendly', 32, mapH / 2 - 10),
@@ -193,7 +194,8 @@ class SortieSpawner {
       new SurfaceUnit('BUNKER', 'hostile', mapW - 8, mapH / 2),
       new SurfaceUnit('RADAR_ARRAY', 'hostile', mapW - 10, mapH / 2 - 10),
       new SurfaceUnit('EW_JAMMER', 'hostile', mapW - 16, mapH / 2 - 20),
-      new SurfaceUnit('S-400', 'hostile', mapW - 16, 22),
+      // SAM sites disabled from spawning as they are too OP and annoying:
+      // new SurfaceUnit('S-400', 'hostile', mapW - 16, 22),
       new SurfaceUnit('PANTSIR', 'hostile', mapW - 14, mapH / 2 + 10),
       new SurfaceUnit('FUEL_DEPOT', 'hostile', mapW - 12, 16),
       new SurfaceUnit('AMMO_DUMP', 'hostile', mapW - 32, mapH / 2 + 10),

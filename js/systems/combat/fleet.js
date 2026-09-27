@@ -100,7 +100,7 @@ const FleetGenerator = {
       ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM', 'F-14D', 'Su-57', 'YF-23', 'J-20']
       : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'F-22C-COFFIN', 'Su-57', 'Su-47', 'Su-37-COFFIN', 'DARKSTAR', 'F-15-SMT-COFFIN'];
 
-    const aceCallsigns = ['Yellow 13', 'Pixy', 'Mihaly', 'Gault 1', 'Strigon 1', 'Wizard 1', 'Schwarze 1', 'Espada 1'].sort(() => rng() - 0.5);
+    const aceCallsigns = ['Yellow 13', 'Pixy', 'Mihaly', 'Gault', 'Strigon', 'Wizard', 'Schwarze', 'Espada'].sort(() => rng() - 0.5);
     const shuffledAces = [...aceCandidates].sort(() => rng() - 0.5);
 
     for (let a = 0; a < aceQuota; a++) {

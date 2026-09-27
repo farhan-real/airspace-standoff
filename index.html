@@ -46,45 +46,47 @@
 <div id="hud-floating-tooltip" class="hud-tooltip-box"></div>
 <div id="procurement-modal" class="modal-backdrop active">
   <div class="procurement-window">
-    <header class="procurement-header">
-      <div class="title-group">
-        <h1 class="brand-title"><span class="game-name">AIRSPACE STANDOFF</span><span class="hangar-badge">HANGAR</span></h1>
-        <div class="title-right-group">
-          <button id="btn-proc-exit" class="hud-btn alert proc-exit-btn" title="Exit Application">EXIT</button>
-          <button id="btn-proc-leaderboard" class="hud-btn proc-leaderboard-btn" title="Top 10 High Scores"><img src="icons/leaderboard.svg" class="btn-vector-ico" width="13" height="13" alt="Leaderboard"><span>LEADERBOARD</span></button>
-          <button id="btn-proc-settings" class="hud-btn proc-settings-btn" title="Settings &amp; Controls"><img src="icons/settings.svg" class="btn-vector-ico" width="13" height="13" alt="Settings"><span>SETTINGS</span></button>
-          <button id="btn-open-glossary" class="hud-btn proc-manual-btn"><img src="icons/manual.svg" class="btn-vector-ico" width="13" height="13" alt="Manual"><span>MANUAL</span></button>
-          <button id="btn-edit-squadron-name" class="squad-callsign-tag" title="Click to rename squadron">UNIT: <span id="display-squadron-name">7th Tactical Squadron</span></button>
+    <div class="procurement-top-scroll" id="procurement-top-scroll">
+      <header class="procurement-header">
+        <div class="title-group">
+          <h1 class="brand-title"><span class="game-name">AIRSPACE STANDOFF</span><span class="hangar-badge">HANGAR</span></h1>
+          <div class="title-right-group">
+            <button id="btn-proc-exit" class="hud-btn alert proc-exit-btn" title="Exit Application">EXIT</button>
+            <button id="btn-proc-leaderboard" class="hud-btn proc-leaderboard-btn" title="Top 10 High Scores"><img src="icons/leaderboard.svg" class="btn-vector-ico" width="13" height="13" alt="Leaderboard"><span>LEADERBOARD</span></button>
+            <button id="btn-proc-settings" class="hud-btn proc-settings-btn" title="Settings &amp; Controls"><img src="icons/settings.svg" class="btn-vector-ico" width="13" height="13" alt="Settings"><span>SETTINGS</span></button>
+            <button id="btn-open-glossary" class="hud-btn proc-manual-btn"><img src="icons/manual.svg" class="btn-vector-ico" width="13" height="13" alt="Manual"><span>MANUAL</span></button>
+            <button id="btn-edit-squadron-name" class="squad-callsign-tag" title="Click to rename squadron">UNIT: <span id="display-squadron-name">7th Tactical Squadron</span></button>
+          </div>
         </div>
-      </div>
-      <div class="mode-and-ai-controls">
-        <div class="segmented-control" id="control-mode-group">
-          <button id="mode-btn-1p" class="seg-btn active">SINGLE PLAYER</button>
-          <button id="mode-btn-2p" class="seg-btn">TWO PLAYER</button>
+        <div class="mode-and-ai-controls">
+          <div class="segmented-control" id="control-mode-group">
+            <button id="mode-btn-1p" class="seg-btn active">SINGLE PLAYER</button>
+            <button id="mode-btn-2p" class="seg-btn">TWO PLAYER</button>
+          </div>
+          <div class="segmented-control" id="scenario-mode-group">
+            <button id="scenario-btn-skirmish" class="seg-btn active">SKIRMISH</button>
+            <button id="scenario-btn-dynamic" class="seg-btn">DYNAMIC THEATER</button>
+          </div>
+          <div class="ai-config-group" id="ai-config-panel">
+            <div id="cdd-budget"></div>
+            <div id="cdd-difficulty"></div>
+            <div id="cdd-doctrine"></div>
+          </div>
+          <span id="theater-mode-indicator" style="display:none;"></span>
+          <div class="proc-right-actions">
+            <button id="btn-open-mission-editor" class="hud-btn mission-editor-open-btn" title="Build a custom, unranked mission"><img src="icons/edit.svg" class="btn-vector-ico" width="13" height="13" alt="Edit"><span>MISSION EDITOR</span></button>
+            <span id="mission-editor-state" class="mission-editor-state">STANDARD MISSION</span>
+            <button id="btn-proc-fullscreen" class="hud-btn" title="Toggle Fullscreen"><img src="icons/fullscreen.svg" class="btn-vector-ico" width="13" height="13" alt="Fullscreen"><span>FULLSCREEN</span></button>
+          </div>
         </div>
-        <div class="segmented-control" id="scenario-mode-group">
-          <button id="scenario-btn-skirmish" class="seg-btn active">SKIRMISH</button>
-          <button id="scenario-btn-dynamic" class="seg-btn">DYNAMIC THEATER</button>
+        <div class="budget-display">
+          <div class="budget-line"><span class="label">BUDGET:</span><span id="budget-counter" class="amount">0.0M / 400.0M CR</span></div>
+          <span id="fleet-count" class="count-tag">0 / 16</span>
+          <span id="proc-budget-subtext" class="proc-subtext-note" style="display:none;"></span>
         </div>
-        <div class="ai-config-group" id="ai-config-panel">
-          <div id="cdd-budget"></div>
-          <div id="cdd-difficulty"></div>
-          <div id="cdd-doctrine"></div>
-        </div>
-        <span id="theater-mode-indicator" style="display:none;"></span>
-        <div class="proc-right-actions">
-          <button id="btn-open-mission-editor" class="hud-btn mission-editor-open-btn" title="Build a custom, unranked mission"><img src="icons/edit.svg" class="btn-vector-ico" width="13" height="13" alt="Edit"><span>MISSION EDITOR</span></button>
-          <span id="mission-editor-state" class="mission-editor-state">STANDARD MISSION</span>
-          <button id="btn-proc-fullscreen" class="hud-btn" title="Toggle Fullscreen"><img src="icons/fullscreen.svg" class="btn-vector-ico" width="13" height="13" alt="Fullscreen"><span>FULLSCREEN</span></button>
-        </div>
-      </div>
-      <div class="budget-display">
-        <div class="budget-line"><span class="label">BUDGET:</span><span id="budget-counter" class="amount">0.0M / 400.0M CR</span></div>
-        <span id="fleet-count" class="count-tag">0 / 16</span>
-        <span id="proc-budget-subtext" class="proc-subtext-note" style="display:none;"></span>
-      </div>
-    </header>
-    <div class="procurement-presets" id="procurement-presets-bar"></div>
+      </header>
+      <div class="procurement-presets" id="procurement-presets-bar"></div>
+    </div>
     <div class="procurement-mobile-tabs" id="procurement-mobile-tabs">
       <button type="button" class="p-mob-tab active" id="btn-tab-hanger-shelf" data-target="shelf">ARMORY</button>
       <button type="button" class="p-mob-tab" id="btn-tab-flight-roster" data-target="roster">SQUADRON (<span id="mob-roster-count">0</span>)</button>

@@ -78,11 +78,15 @@ class TacticalAICommander {
     const res = AIMissileTactics.evaluateShooterWeapons(shooter, airTargets, bunkers, profile, clouds, diffKey, allMissiles);
 
     if (res.isBingo && !shooter.isRTB) {
+      // Hostile aircraft have strictly finite missiles. If gun ammo is available, they press into autocannon merge.
+      if (shooter.gunAmmo && shooter.gunAmmo > 0) {
+        return;
+      }
       const rtbRoll = Math.random();
       const rtbChances = { CADET: 0.20, VETERAN: 0.35, ELITE: 0.55, ACE: 0.75, MASTER: 0.85, LEGEND: 0.95 };
       if (rtbRoll < (rtbChances[diffKey] || 0.40)) {
         shooter.orderRTB();
-        if (this.game.radar) this.game.radar.spawnCombatText(shooter.x, shooter.y, 'BINGO AMMO: RTB REARM', '#f59e0b');
+        if (this.game.radar) this.game.radar.spawnCombatText(shooter.x, shooter.y, 'BINGO AMMO: WITHDRAWING', '#f59e0b');
       }
       return;
     }
