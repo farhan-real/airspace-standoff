@@ -3,7 +3,7 @@
  */
 
 class AIEvasionHandler {
-  static handleDefensiveBehavior(hostile, profile, diffKey, dt, missiles) {
+  static handleDefensiveBehavior(hostile, profile, diffKey, dt, missiles, isFocused = true) {
     if (!hostile || !missiles || hostile.hp <= 0) return;
     const incoming = missiles.filter(m => m.active && m.target && m.target.id === hostile.id);
     if (incoming.length === 0) return;
@@ -22,7 +22,10 @@ class AIEvasionHandler {
     };
 
     const tier = defTiers[diffKey] || defTiers.VETERAN;
-    const reactDistance = isStealth ? tier.stealthDist : tier.reactDist;
+
+    // Unfocused aircraft experience delayed perception and significantly higher blunder chance
+    const focusDistanceFactor = isFocused ? 1.0 : 0.60;
+    const reactDistance = (isStealth ? tier.stealthDist : tier.reactDist) * focusDistanceFactor;
     if (nearestMsl.distanceToTarget > reactDistance) return;
 
     const effAgi = (typeof hostile.getEffectiveAgility === 'function')
@@ -34,27 +37,34 @@ class AIEvasionHandler {
     const turnOptEff = hostile.isCoffin ? 1.0 : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(hostile.speed || 0.8, sOpt) : 0.85);
     const turnOptFactor = Math.max(0.40, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
 
-    if (Math.random() < (tier.blunderChance / agiFactor)) return;
+    const effectiveBlunderChance = isFocused
+      ? (tier.blunderChance / agiFactor)
+      : Math.min(0.85, (tier.blunderChance * 1.6) / agiFactor);
+
+    if (Math.random() < effectiveBlunderChance) return;
 
     const hasCm = (hostile.chaff > 0 || hostile.countermeasures > 0);
+    const cmChance = isFocused ? (tier.cmChance * agiFactor) : (tier.cmChance * 0.45);
     if (nearestMsl.distanceToTarget < 5.0 && hasCm && hostile.cmTimer <= 0) {
-      if (Math.random() < (tier.cmChance * agiFactor)) hostile.deployCountermeasures();
+      if (Math.random() < cmChance) hostile.deployCountermeasures();
     }
 
-    if (!isVeryHighDiff || !profile.usesDopplerNotch) {
+    // Unfocused aircraft cannot perform complex precision notching, only basic unassisted break turn
+    if (!isFocused || !isVeryHighDiff || !profile.usesDopplerNotch) {
       const awayHeading = nearestMsl.heading + (Math.random() < 0.5 ? 0.75 : -0.75);
       let diff = awayHeading - hostile.heading;
       while (diff < -Math.PI) diff += Math.PI * 2;
       while (diff > Math.PI) diff -= Math.PI * 2;
-      const turnCap = effAgi * tier.turnMult;
+      const turnCap = effAgi * tier.turnMult * (isFocused ? 1.0 : 0.65);
       hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
-      hostile.activeManeuverTimer = 5.0;
-      hostile.activeManeuverBonus = tier.bonus * agiFactor * turnOptFactor;
+      hostile.activeManeuverTimer = isFocused ? 5.0 : 3.0;
+      hostile.activeManeuverBonus = tier.bonus * agiFactor * turnOptFactor * (isFocused ? 1.0 : 0.60);
       hostile.activeManeuverId = 'BREAK_TURN';
       hostile.isNotching = false;
       return;
     }
 
+    // Focused units on high difficulty execute precision Doppler notching
     if (isVeryHighDiff && profile.usesDopplerNotch && nearestMsl.weapon && (nearestMsl.weapon.seeker === 'ARH' || nearestMsl.weapon.seeker === 'PASSIVE_RADAR')) {
       const desiredPerp = nearestMsl.heading + Math.PI / 2;
       let diff = desiredPerp - hostile.heading;
@@ -80,6 +90,7 @@ class AIEvasionHandler {
 
     for (const ace of aces) {
       if (ace.hp <= 0) continue;
+      const isFocused = aiCommander.isUnitFocused(ace.id);
 
       const hasUsableAmmo = ace.equippedWeapons && ace.equippedWeapons.some(p => p && p.ammo > 0 && p.weapon && !p.weapon.isJammerPod && !p.weapon.isDecoy && !p.weapon.isDecoyDrone);
       if (!hasUsableAmmo && !ace.isRTB) {
@@ -90,16 +101,18 @@ class AIEvasionHandler {
         }
       }
 
+      // 1. Ace defensive reaction: Aces possess individual pilot instincts, but unfocused aces suffer slight delay
       const incoming = (game.missiles || []).filter(m => m.active && m.target && m.target.id === ace.id);
       if (incoming.length > 0) {
         const nearest = incoming.reduce((min, m) => m.distanceToTarget < min.distanceToTarget ? m : min, incoming[0]);
         const isRadar = Boolean(nearest.weapon && (nearest.weapon.seeker === 'ARH' || nearest.weapon.seeker === 'PASSIVE_RADAR'));
         const isOptical = Boolean(nearest.weapon && (nearest.weapon.seeker === 'IIR' || nearest.weapon.seeker === 'EO' || nearest.weapon.seeker === 'OPT'));
         const isStealth = Boolean(nearest.isStealthMissile || (nearest.rcs <= 0.005));
-        const blunderedDefense = Math.random() < aceBlunderChance;
+
+        const blunderedDefense = Math.random() < (isFocused ? aceBlunderChance : Math.min(0.70, aceBlunderChance * 1.5));
         const triggerDist = isStealth ? (blunderedDefense ? 4.5 : 6.5) : (blunderedDefense ? 7.5 : 11.0);
 
-        if (nearest.distanceToTarget < triggerDist) {
+        if (nearest.distanceToTarget < triggerDist * (isFocused ? 1.0 : 0.70)) {
           const aceAgi = (typeof ace.getEffectiveAgility === 'function') ? ace.getEffectiveAgility() : (ace.spec ? ace.spec.AGI_0 : 1.15);
           const sOpt = (typeof ace.getOptimalCornerSpeed === 'function') ? ace.getOptimalCornerSpeed() : 0.90;
           const turnOptEff = ace.isCoffin ? 1.0 : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(ace.speed || 0.8, sOpt) : 0.85);
@@ -121,15 +134,16 @@ class AIEvasionHandler {
             let dAngle = targetHeading - ace.heading;
             while (dAngle < -Math.PI) dAngle += Math.PI * 2;
             while (dAngle > Math.PI) dAngle -= Math.PI * 2;
-            const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.85 : 1.35);
+            const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.85 : 1.35) * (isFocused ? 1.0 : 0.75);
             ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, dAngle));
 
             ace.isNotching = false;
             ace.activeManeuverId = 'BARREL_ROLL';
             ace.activeManeuverTimer = 6.0;
-            ace.activeManeuverBonus = 0.45 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff);
+            ace.activeManeuverBonus = 0.45 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff) * (isFocused ? 1.0 : 0.75);
             if (ace.chaff > 0 && ace.cmTimer <= 0 && Math.random() < 0.60) ace.deployCountermeasures();
-          } else if (isVeryHighDiff && isRadar && !blunderedDefense) {
+          } else if (isVeryHighDiff && isRadar && !blunderedDefense && isFocused) {
+            // High-difficulty Doppler notch requires active tactical focus
             if (ace.speed > sOpt * 1.15) ace.engineAlpha = 0.35;
             else if (ace.speed < sOpt * 0.85) ace.engineAlpha = 0.85;
             else ace.engineAlpha = 0.65;
@@ -155,16 +169,19 @@ class AIEvasionHandler {
             let dAngle = awayHeading - ace.heading;
             while (dAngle < -Math.PI) dAngle += Math.PI * 2;
             while (dAngle > Math.PI) dAngle -= Math.PI * 2;
-            const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.80 : (diffKey === 'VETERAN' ? 1.0 : 1.35));
+            const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.80 : (diffKey === 'VETERAN' ? 1.0 : 1.35)) * (isFocused ? 1.0 : 0.70);
             ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, dAngle));
             ace.isNotching = false;
             ace.activeManeuverId = 'BREAK_TURN';
             ace.activeManeuverTimer = 5.0;
-            ace.activeManeuverBonus = 0.38 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff);
+            ace.activeManeuverBonus = 0.38 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff) * (isFocused ? 1.0 : 0.70);
             if (ace.chaff > 0 && ace.cmTimer <= 0 && Math.random() < 0.45) ace.deployCountermeasures();
           }
         }
       }
+
+      // 2. Ace offensive weapon releases: ONLY authorized when the ace has commander attention!
+      if (!isFocused) continue;
 
       if (typeof AIMissileTactics !== 'undefined') {
         const isStrikeAce = Boolean(ace.spec && ace.spec.role && (ace.spec.role.includes('Strike') || ace.spec.role.includes('Bomber')));
