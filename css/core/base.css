@@ -82,6 +82,24 @@ body.pseudo-fullscreen #procurement-modal {
   width: 100vw !important;
 }
 
+:fullscreen,
+:-webkit-full-screen,
+:-moz-full-screen {
+  background-color: #000000 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+:fullscreen #hud-container,
+:-webkit-full-screen #hud-container,
+:fullscreen #procurement-modal,
+:-webkit-full-screen #procurement-modal {
+  width: 100vw !important;
+  height: 100dvh !important;
+}
+
 #radar-canvas {
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
