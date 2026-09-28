@@ -10,71 +10,81 @@ window.MANUAL_THEATER = [
     desc: `
       <div class="ge-subhead">THE 6 COMBAT DIFFICULTY TIERS</div>
       <div class="ge-desc">
-        Adversary forces do not operate with omniscient cheating; they reflect human combat aviators possessing distinct training, fatigue thresholds, reaction speeds, and operational planning discipline:
+        Adversary forces scale by pilot discipline, tactical planning, and armament density rather than overwhelming swarm numbers. Higher difficulty sectors deploy compact, top-tier squadrons that fully utilize their allocated budgets with advanced airframes, full weapon racks, and comprehensive avionics:
       </div>
 
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>SECTOR CONTESTATION</th><th>SCORE MULT</th><th>DECOY REJECT</th><th>NOTCH RATE</th><th>LAUNCH BASKET</th><th>ENERGY / EM DOCTRINE</th><th>PLANNING PROFILE</th></tr>
+            <tr><th>SECTOR CONTESTATION</th><th>SCORE MULT</th><th>SQUADRON SIZE</th><th>BUDGET</th><th>DECOY REJECT</th><th>NOTCH RATE</th><th>PLANNING PROFILE</th></tr>
           </thead>
           <tbody>
             <tr>
               <td style="color:#8494ab;font-weight:800;">PERMISSIVE SECTOR (CADET)</td>
               <td>0.50x</td>
-              <td>0% (Bites all)</td>
+              <td>3 - 4 Aircraft</td>
+              <td>150.0M CR</td>
               <td>0%</td>
-              <td>Max Range Edge</td>
-              <td>Over-burns afterburner; flat flight</td>
-              <td>Direct centerline charge</td>
+              <td>0%</td>
+              <td>Direct centerline charge; flat energy</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">CONTESTED AIRSPACE (VETERAN)</td>
               <td>1.00x</td>
+              <td>4 - 5 Aircraft</td>
+              <td>260.0M CR</td>
               <td>15%</td>
               <td>5%</td>
-              <td>55% - 85% Range</td>
-              <td>Nominal cruise; basic breaks</td>
-              <td>Standard sweep line</td>
+              <td>Standard sweep line; nominal cruise</td>
             </tr>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">HOSTILE AIRSPACE (ELITE)</td>
               <td>1.50x</td>
+              <td>5 - 6 Aircraft</td>
+              <td>360.0M CR</td>
               <td>30%</td>
               <td>15%</td>
-              <td>40% - 75% Sweet Spot</td>
-              <td>Corner speed awareness; climbs</td>
-              <td>Staged altitude sweep</td>
+              <td>Staged altitude sweep; 2-ship elements</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">HIGH-THREAT SECTOR (ACE)</td>
               <td>2.00x</td>
+              <td>6 - 7 Aircraft</td>
+              <td>460.0M CR</td>
               <td>45%</td>
               <td>25%</td>
-              <td>35% - 70% Sweet Spot</td>
-              <td>Disciplined; slips under G-load</td>
-              <td>Perimeter CAP hold</td>
+              <td>Perimeter CAP hold; 2 flight leads</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">AIR DENIAL ZONE (MASTER)</td>
               <td>2.60x</td>
+              <td>7 Aircraft</td>
+              <td>560.0M CR</td>
               <td>55%</td>
               <td>40%</td>
-              <td>Optimal P_k (35% - 60%)</td>
-              <td>Dynamic throttle modulation; dives</td>
-              <td>Offset corridor pincer</td>
+              <td>Offset corridor pincer; 2 flight leads</td>
             </tr>
             <tr>
               <td style="color:#ff3366;font-weight:800;">EXTREME THREAT SECTOR (LEGEND)</td>
               <td>3.20x</td>
+              <td>8 Aircraft</td>
+              <td>660.0M CR</td>
               <td>65%</td>
               <td>55%</td>
-              <td>High-P_k Energy Traps</td>
-              <td>High energy fighting; G-strain limits</td>
-              <td>Coordinated strike package</td>
+              <td>Coordinated strike package; 3 flight leads</td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="ge-subhead">FORCE COMPOSITION &amp; BUDGET UTILIZATION</div>
+      <div class="ge-desc">
+        To prevent visual clutter and unplayable missile saturation in advanced sectors, force scaling emphasizes airframe sophistication over raw numbers:
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Cadet &amp; Veteran (3 - 5 Aircraft):</b> Field budget-conscious 4th-generation multirole fighters (F-16V, Mirage 2000, MiG-29K, Tejas) with basic missile loads and few avionics upgrades.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Elite &amp; Ace (5 - 7 Aircraft):</b> Field 4.5-gen and 5th-gen platforms (Su-35S, Eurofighter, Rafale, F-15EX, Su-57, J-20) equipped with extended BVR missiles, GaN AESA radar cores, and 2 designated flight leads.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Master &amp; Legend (7 - 8 Aircraft):</b> Rather than deploying 12+ cheap aircraft, the adversary utilizes their 560M - 660M budget by outfitting 7 to 8 apex superfighters and stealth airframes (ADF-11F, CFA-44, X-02S, Su-57, F-22A, Darkstar) with maximum weapon racks (AIM-260, Meteor, R-37M, Kinzhal) and full 4-socket upgrade suites.</li>
+        </ul>
       </div>
 
       <div class="ge-subhead">THE 6 BEHAVIORAL DIMENSIONS</div>

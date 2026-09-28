@@ -1,9 +1,9 @@
 /**
- * AIRSPACE STANDOFF: Fleet Loadout Planner Submodule
- * Evaluates airframe station constraints and plans weapon and upgrade loadouts.
+ * AIRSPACE STANDOFF: Fleet Outfitter Submodule
+ * Evaluates airframe station constraints and equips weapon and upgrade suites matching threat tiers and doctrine.
  */
 
-class FleetLoadoutPlanner {
+class FleetOutfitter {
   static planAircraftLoadout(spec, isAce, doctrine, diff, rng) {
     const wCatalog = window.WEAPONS_CATALOG || {};
     const uCatalog = window.UPGRADES_CATALOG || {};
@@ -26,9 +26,13 @@ class FleetLoadoutPlanner {
       return true;
     };
 
-    const intBvr = ['AIM-120D', 'PL-15E', 'METEOR', 'AIM-260'].filter(id => isWeaponEligible(wCatalog[id]));
+    const topBvr = ['AIM-260', 'METEOR', 'R-37M', 'PL-21'].filter(id => isWeaponEligible(wCatalog[id]));
+    const standardBvr = ['AIM-120D', 'PL-15E', 'METEOR'].filter(id => isWeaponEligible(wCatalog[id]));
+    const intBvr = ['AIM-260', 'METEOR', 'AIM-120D', 'PL-15E'].filter(id => isWeaponEligible(wCatalog[id]));
     const intWvr = ['AIM-9X-2', 'R-73', 'IRIS-T'].filter(id => isWeaponEligible(wCatalog[id]));
-    const extBvr = ['R-37M', 'PL-21', 'AIM-260', 'METEOR', 'AIM-120D', 'PL-15E'].filter(id => isWeaponEligible(wCatalog[id]));
+    const extBvr = (['ACE', 'MASTER', 'LEGEND'].includes(diff) && topBvr.length > 0)
+      ? topBvr.concat(standardBvr)
+      : standardBvr;
     const extWvr = ['PYTHON-5', 'AIM-9X-2', 'R-73', 'IRIS-T'].filter(id => isWeaponEligible(wCatalog[id]));
 
     const addWpn = (wId, station) => {
@@ -41,18 +45,19 @@ class FleetLoadoutPlanner {
 
     const addUpg = (uId) => {
       const u = uCatalog[uId];
-      if (!u) return;
+      if (!u || upgrades.includes(uId)) return;
       if (u.isAllowed && !u.isAllowed(spec)) return;
       upgrades.push(uId);
       totalCost += (u.cost || 0);
     };
 
     if (isEW) {
-      addWpn(rng() < 0.5 ? 'AN-ALQ-99' : 'AN-ALQ-249', 'EXTERNAL');
+      addWpn(rng() < 0.6 ? 'AN-ALQ-249' : 'AN-ALQ-99', 'EXTERNAL');
       addWpn('AGM-88G', 'EXTERNAL');
       addWpn('AIM-120D', 'EXTERNAL');
       addUpg('ADAPTIVE_ECCM_SUITE');
       if (spec.upgradeSockets >= 2) addUpg('ESM_PASSIVE_SUITE');
+      if (spec.upgradeSockets >= 3 && ['ACE', 'MASTER', 'LEGEND'].includes(diff)) addUpg('GAN_AESA_CORE');
       return { weapons, upgrades, totalCost };
     }
 
@@ -61,9 +66,9 @@ class FleetLoadoutPlanner {
         addWpn('AIM-260', 'INTERNAL');
         addWpn('METEOR', 'INTERNAL');
         addWpn('AIM-9X-2', 'INTERNAL');
-        if (rng() < 0.70 && spec.externalSlots >= 2) addWpn('AIM-260', 'EXTERNAL');
+        if (spec.externalSlots >= 2) addWpn('AIM-260', 'EXTERNAL');
       } else {
-        if (!addWpn('R-37M', 'EXTERNAL')) addWpn('AIM-120D', 'EXTERNAL');
+        if (!addWpn('R-37M', 'EXTERNAL')) addWpn('AIM-260', 'EXTERNAL') || addWpn('AIM-120D', 'EXTERNAL');
         addWpn('PL-15E', 'EXTERNAL');
         addWpn('R-73', 'EXTERNAL');
         if (spec.externalSlots >= 8) {
@@ -71,7 +76,11 @@ class FleetLoadoutPlanner {
           addWpn('PYTHON-5', 'EXTERNAL');
         }
       }
-      if (spec.upgradeSockets >= 1) addUpg('GAN_AESA_CORE');
+      addUpg('GAN_AESA_CORE');
+      if (spec.upgradeSockets >= 2) addUpg('SUPERCRUISE_VCE');
+      if (spec.upgradeSockets >= 3 && spec.category === 'STEALTH') addUpg('RAM_NANO_COATING');
+      else if (spec.upgradeSockets >= 3) addUpg('THRUST_VECTOR');
+      if (spec.upgradeSockets >= 4) addUpg('ADAPTIVE_ECCM_SUITE');
       return { weapons, upgrades, totalCost };
     }
 
@@ -88,10 +97,10 @@ class FleetLoadoutPlanner {
           else break;
         } else break;
       }
-      if ((rng() < 0.65 || doctrine === 'STANDOFF') && spec.externalSlots > 0) {
+      if ((rng() < 0.70 || doctrine === 'STANDOFF') && spec.externalSlots > 0) {
         let extUsed = 0;
         while (extUsed < spec.externalSlots) {
-          const pool = (doctrine === 'STANDOFF' && extBvr.length > 0) ? extBvr : (rng() < 0.60 && extBvr.length > 0 ? extBvr : extWvr);
+          const pool = (doctrine === 'STANDOFF' && extBvr.length > 0) ? extBvr : (rng() < 0.65 && extBvr.length > 0 ? extBvr : extWvr);
           if (pool.length === 0) break;
           const pick = pool[Math.floor(rng() * pool.length)];
           const slots = (wCatalog[pick] && wCatalog[pick].slots) || 1;
@@ -101,15 +110,10 @@ class FleetLoadoutPlanner {
           } else break;
         }
       }
-      if (diff !== 'CADET' && spec.upgradeSockets >= 1) {
-        addUpg(rng() < 0.5 ? 'RAM_NANO_COATING' : 'GAN_AESA_CORE');
-      }
-      return { weapons, upgrades, totalCost };
-    }
-
-    if (isStrike) {
-      if (isWeaponEligible(wCatalog['AGM-158B'])) addWpn(rng() < 0.5 ? 'AGM-158B' : 'GBU-39', 'EXTERNAL');
+    } else if (isStrike) {
+      if (isWeaponEligible(wCatalog['AGM-158B'])) addWpn(rng() < 0.6 ? 'AGM-158B' : 'GBU-39', 'EXTERNAL');
       else addWpn('GBU-39', 'EXTERNAL');
+      if (isWeaponEligible(wCatalog['AGM-88G'])) addWpn('AGM-88G', 'EXTERNAL');
     }
 
     let usedSlots = weapons.reduce((s, it) => s + ((wCatalog[it.id] || {}).slots || 1), 0);
@@ -130,9 +134,19 @@ class FleetLoadoutPlanner {
       addWpn('KINZHAL', 'CENTERLINE');
     }
 
-    if (diff !== 'CADET' && spec.upgradeSockets >= 1) {
-      const pool = ['SUPERCRUISE_VCE', 'THRUST_VECTOR', 'GAN_AESA_CORE'];
-      addUpg(pool[Math.floor(rng() * pool.length)]);
+    const maxSockets = spec.upgradeSockets || 3;
+    let targetSockets = 1;
+    if (diff === 'CADET') targetSockets = rng() < 0.4 ? 0 : 1;
+    else if (diff === 'VETERAN') targetSockets = Math.min(maxSockets, 1 + Math.floor(rng() * 2));
+    else if (diff === 'ELITE') targetSockets = Math.min(maxSockets, 2 + Math.floor(rng() * 2));
+    else if (diff === 'ACE') targetSockets = Math.min(maxSockets, Math.max(2, maxSockets - 1));
+    else targetSockets = maxSockets;
+
+    const upgPool = ['SUPERCRUISE_VCE', 'THRUST_VECTOR', 'GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'RAM_NANO_COATING', 'EOTS_DUAL_OPTICS', 'DAS_360_OPTIC', 'TITANIUM_COCKPIT', 'MALD_DECOY_SYSTEM'];
+    const shuffledUpg = [...upgPool].sort(() => rng() - 0.5);
+    for (const uId of shuffledUpg) {
+      if (upgrades.length >= targetSockets) break;
+      addUpg(uId);
     }
 
     return { weapons, upgrades, totalCost };
@@ -140,4 +154,4 @@ class FleetLoadoutPlanner {
 }
 
 window.FleetOutfitter = FleetOutfitter;
-window.FleetLoadoutPlanner = FleetOutfitter; // Backward compatibility alias
+window.FleetLoadoutPlanner = FleetOutfitter;
