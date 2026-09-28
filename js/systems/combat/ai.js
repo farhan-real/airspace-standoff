@@ -8,7 +8,7 @@ class TacticalAICommander {
     this.game = gameEngine;
     this.focusedUnitIds = [];
     this.focusTimers = new Map();
-    this.actionCooldown = 1.6;
+    this.actionCooldown = 1.2;
     this.aceSalvoTimer = 0.0;
   }
 
@@ -17,49 +17,41 @@ class TacticalAICommander {
   }
 
   updateAttention(aliveHostiles, profile, diffKey, allMissiles, candidateAirTargets, dt) {
-    // 1. Prune dead or non-existent units
     const aliveIds = new Set(aliveHostiles.map(h => h.id));
     this.focusedUnitIds = this.focusedUnitIds.filter(id => aliveIds.has(id));
     for (const id of this.focusTimers.keys()) {
       if (!aliveIds.has(id)) this.focusTimers.delete(id);
     }
 
-    // 2. Decrement focus timers
     for (const id of this.focusedUnitIds) {
       const remaining = (this.focusTimers.get(id) || 0) - dt;
       this.focusTimers.set(id, Math.max(0, remaining));
     }
 
-    const maxSlots = profile.attentionSlots || (['ACE', 'MASTER', 'LEGEND'].includes(diffKey) ? 2 : 1);
+    const maxSlots = profile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
 
-    // 3. Evaluate urgency score for each alive hostile aircraft
     const scoredUnits = aliveHostiles.map(h => {
       let score = 0;
       const inbound = allMissiles.filter(m => m.active && m.target && m.target.id === h.id);
 
-      // Immediate missile threat: emergency attention shift
       if (inbound.length > 0) {
         const nearestDist = inbound.reduce((min, m) => Math.min(min, m.distanceToTarget || 99), 99);
-        if (nearestDist < 12.0) score += 120;
-        else if (nearestDist < 25.0) score += 75;
+        if (nearestDist < 12.0) score += 125;
+        else if (nearestDist < 25.0) score += 80;
         else score += 40;
-        score += (inbound.length - 1) * 30; // Salvo saturation pressure
+        score += (inbound.length - 1) * 25;
       }
 
-      // Hull integrity risk
       if (h.hp <= 2) score += 35;
 
-      // Offensive lock / engagement opportunity
       if (h.radarLockedTarget && h.radarLockedTarget.hp > 0) {
         const d = Math.hypot(h.radarLockedTarget.x - h.x, h.radarLockedTarget.y - h.y);
-        if (d <= 50.0) score += 40;
+        if (d <= 45.0) score += 40;
       }
 
-      // Tactical rank priority
       if (h.isAce) score += 25;
       else if (h.isFlightLead) score += 15;
 
-      // Cognitive inertia / task stickiness (prevents erratic jumping while attention span remains)
       const remainingTimer = this.focusTimers.get(h.id) || 0;
       if (this.focusedUnitIds.includes(h.id) && remainingTimer > 0) {
         score += 45;
@@ -70,9 +62,8 @@ class TacticalAICommander {
 
     scoredUnits.sort((a, b) => b.score - a.score);
 
-    // 4. Assign top slots
     const newFocus = [];
-    const span = profile.attentionSpanSec || 3.5;
+    const span = profile.attentionSpanSec || 3.2;
     for (let i = 0; i < Math.min(maxSlots, scoredUnits.length); i++) {
       const h = scoredUnits[i].unit;
       newFocus.push(h.id);
@@ -91,7 +82,7 @@ class TacticalAICommander {
 
     const diffKey = this.game.aiDifficulty || 'VETERAN';
     const profile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) || {
-      reactionCooldown: 5.8, attentionSpanSec: 4.8, attentionSlots: 1, engagementRangeRatio: 0.55,
+      reactionCooldown: 4.5, attentionSpanSec: 4.2, attentionSlots: 1, engagementRangeRatio: 0.55,
       evasionSkill: 0.24, blunderChance: 0.46, usesDopplerNotch: false
     };
 
@@ -107,15 +98,12 @@ class TacticalAICommander {
     const clouds = (this.game.simulation && this.game.simulation.weatherClouds) || [];
     const allMissiles = this.game.missiles || [];
 
-    // Update human-like attention allocation
     this.updateAttention(aliveHostiles, profile, diffKey, allMissiles, candidateAirTargets, dt);
 
-    // Evasive and offensive routines for aces
     if (typeof AIDefenseHandler !== 'undefined') {
       AIDefenseHandler.coordinateAceTactics(this, aliveHostiles.filter(h => h.isAce), candidateAirTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt);
     }
 
-    // Evasive and navigation routines for non-aces
     for (const h of aliveHostiles) {
       if (!h.isAce) {
         const isFocused = this.isUnitFocused(h.id);
@@ -126,42 +114,50 @@ class TacticalAICommander {
       }
     }
 
-    // Offensive weapon execution strictly for focused aircraft within available command tokens
     const tokenCost = (window.CONFIG && window.CONFIG.TOKEN_ACTION_COST) || 0.70;
+    const maxSlots = profile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
+
     if (this.actionCooldown <= 0 && this.game.tokenBucketRed >= tokenCost) {
       for (const focusedId of this.focusedUnitIds) {
         const shooter = aliveHostiles.find(h => h.id === focusedId && !h.isAce);
         if (!shooter || shooter.hp <= 0 || shooter.isRTB) continue;
         if (this.game.tokenBucketRed < tokenCost) break;
-        this.executeTacticalEngagements(shooter, candidateAirTargets, visibleBunkers, profile, clouds, diffKey, tokenCost, allMissiles);
+
+        const fired = this.executeTacticalEngagements(shooter, candidateAirTargets, visibleBunkers, profile, clouds, diffKey, tokenCost, allMissiles);
+        if (fired) {
+          const interUnitDelay = Math.max(0.30, (profile.reactionCooldown || 3.0) / (maxSlots * 1.6));
+          this.actionCooldown = interUnitDelay;
+          break;
+        }
       }
     }
   }
 
   executeTacticalEngagements(shooter, airTargets, bunkers, profile, clouds, diffKey, tokenCost, allMissiles) {
-    if (typeof AIMissileTactics === 'undefined') return;
+    if (typeof AIMissileTactics === 'undefined') return false;
     const res = AIMissileTactics.evaluateShooterWeapons(shooter, airTargets, bunkers, profile, clouds, diffKey, allMissiles);
 
     if (res.isBingo && !shooter.isRTB) {
-      if (shooter.gunAmmo && shooter.gunAmmo > 0) return;
+      if (shooter.gunAmmo && shooter.gunAmmo > 0) return false;
       const rtbRoll = Math.random();
       const rtbChances = { CADET: 0.20, VETERAN: 0.35, ELITE: 0.55, ACE: 0.75, MASTER: 0.85, LEGEND: 0.95 };
       if (rtbRoll < (rtbChances[diffKey] || 0.40)) {
         shooter.orderRTB();
         if (this.game.radar) this.game.radar.spawnCombatText(shooter.x, shooter.y, 'BINGO AMMO: WITHDRAWING', '#f59e0b');
       }
-      return;
+      return false;
     }
 
-    if (!res.plan || !res.plan.pylonsToFire || res.plan.pylonsToFire.length === 0) return;
+    if (!res.plan || !res.plan.pylonsToFire || res.plan.pylonsToFire.length === 0) return false;
     const plan = res.plan;
     const tgt = plan.target;
+    let anyFired = false;
 
     for (const pylon of plan.pylonsToFire) {
       if (this.game.tokenBucketRed < tokenCost || pylon.item.ammo <= 0) break;
       pylon.item.ammo--;
       this.game.tokenBucketRed = Math.max(0, this.game.tokenBucketRed - tokenCost);
-      this.actionCooldown = profile.reactionCooldown || 5.0;
+      anyFired = true;
 
       if (pylon.weapon.isLaser) {
         if (typeof AudioSys !== 'undefined') AudioSys.playLaser();
@@ -192,6 +188,7 @@ class TacticalAICommander {
       }
     }
     shooter.recalculateWeight();
+    return anyFired;
   }
 
   handleNavigation(hostile, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused) {
@@ -241,7 +238,6 @@ class TacticalAICommander {
       ? hostile.getEffectiveAgility()
       : ((hostile.spec && hostile.spec.AGI_0) ? hostile.spec.AGI_0 : 0.85);
 
-    // Focused units get active turning; unattended wingmen turn at a steady formation pace
     const focusAgiScale = isFocused ? 1.0 : 0.55;
     const turnCap = effAgi * tier.turnMult * focusAgiScale;
     hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));

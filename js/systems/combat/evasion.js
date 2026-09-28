@@ -22,9 +22,8 @@ class AIEvasionHandler {
     };
 
     const tier = defTiers[diffKey] || defTiers.VETERAN;
-
-    // Unfocused aircraft experience delayed perception and significantly higher blunder chance
-    const focusDistanceFactor = isFocused ? 1.0 : 0.60;
+    const isExperiencedTier = ['ACE', 'MASTER', 'LEGEND'].includes(diffKey);
+    const focusDistanceFactor = isFocused ? 1.0 : (isExperiencedTier ? 0.80 : 0.60);
     const reactDistance = (isStealth ? tier.stealthDist : tier.reactDist) * focusDistanceFactor;
     if (nearestMsl.distanceToTarget > reactDistance) return;
 
@@ -37,34 +36,33 @@ class AIEvasionHandler {
     const turnOptEff = hostile.isCoffin ? 1.0 : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(hostile.speed || 0.8, sOpt) : 0.85);
     const turnOptFactor = Math.max(0.40, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
 
+    const penalty = isExperiencedTier ? 1.3 : 1.6;
     const effectiveBlunderChance = isFocused
       ? (tier.blunderChance / agiFactor)
-      : Math.min(0.85, (tier.blunderChance * 1.6) / agiFactor);
+      : Math.min(0.85, (tier.blunderChance * penalty) / agiFactor);
 
     if (Math.random() < effectiveBlunderChance) return;
 
     const hasCm = (hostile.chaff > 0 || hostile.countermeasures > 0);
-    const cmChance = isFocused ? (tier.cmChance * agiFactor) : (tier.cmChance * 0.45);
+    const cmChance = isFocused ? (tier.cmChance * agiFactor) : (tier.cmChance * (isExperiencedTier ? 0.65 : 0.45));
     if (nearestMsl.distanceToTarget < 5.0 && hasCm && hostile.cmTimer <= 0) {
       if (Math.random() < cmChance) hostile.deployCountermeasures();
     }
 
-    // Unfocused aircraft cannot perform complex precision notching, only basic unassisted break turn
     if (!isFocused || !isVeryHighDiff || !profile.usesDopplerNotch) {
       const awayHeading = nearestMsl.heading + (Math.random() < 0.5 ? 0.75 : -0.75);
       let diff = awayHeading - hostile.heading;
       while (diff < -Math.PI) diff += Math.PI * 2;
       while (diff > Math.PI) diff -= Math.PI * 2;
-      const turnCap = effAgi * tier.turnMult * (isFocused ? 1.0 : 0.65);
+      const turnCap = effAgi * tier.turnMult * (isFocused ? 1.0 : (isExperiencedTier ? 0.80 : 0.65));
       hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
       hostile.activeManeuverTimer = isFocused ? 5.0 : 3.0;
-      hostile.activeManeuverBonus = tier.bonus * agiFactor * turnOptFactor * (isFocused ? 1.0 : 0.60);
+      hostile.activeManeuverBonus = tier.bonus * agiFactor * turnOptFactor * (isFocused ? 1.0 : 0.65);
       hostile.activeManeuverId = 'BREAK_TURN';
       hostile.isNotching = false;
       return;
     }
 
-    // Focused units on high difficulty execute precision Doppler notching
     if (isVeryHighDiff && profile.usesDopplerNotch && nearestMsl.weapon && (nearestMsl.weapon.seeker === 'ARH' || nearestMsl.weapon.seeker === 'PASSIVE_RADAR')) {
       const desiredPerp = nearestMsl.heading + Math.PI / 2;
       let diff = desiredPerp - hostile.heading;
@@ -101,7 +99,6 @@ class AIEvasionHandler {
         }
       }
 
-      // 1. Ace defensive reaction: Aces possess individual pilot instincts, but unfocused aces suffer slight delay
       const incoming = (game.missiles || []).filter(m => m.active && m.target && m.target.id === ace.id);
       if (incoming.length > 0) {
         const nearest = incoming.reduce((min, m) => m.distanceToTarget < min.distanceToTarget ? m : min, incoming[0]);
@@ -109,10 +106,10 @@ class AIEvasionHandler {
         const isOptical = Boolean(nearest.weapon && (nearest.weapon.seeker === 'IIR' || nearest.weapon.seeker === 'EO' || nearest.weapon.seeker === 'OPT'));
         const isStealth = Boolean(nearest.isStealthMissile || (nearest.rcs <= 0.005));
 
-        const blunderedDefense = Math.random() < (isFocused ? aceBlunderChance : Math.min(0.70, aceBlunderChance * 1.5));
+        const blunderedDefense = Math.random() < (isFocused ? aceBlunderChance : Math.min(0.60, aceBlunderChance * 1.35));
         const triggerDist = isStealth ? (blunderedDefense ? 4.5 : 6.5) : (blunderedDefense ? 7.5 : 11.0);
 
-        if (nearest.distanceToTarget < triggerDist * (isFocused ? 1.0 : 0.70)) {
+        if (nearest.distanceToTarget < triggerDist * (isFocused ? 1.0 : 0.80)) {
           const aceAgi = (typeof ace.getEffectiveAgility === 'function') ? ace.getEffectiveAgility() : (ace.spec ? ace.spec.AGI_0 : 1.15);
           const sOpt = (typeof ace.getOptimalCornerSpeed === 'function') ? ace.getOptimalCornerSpeed() : 0.90;
           const turnOptEff = ace.isCoffin ? 1.0 : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(ace.speed || 0.8, sOpt) : 0.85);
@@ -134,16 +131,15 @@ class AIEvasionHandler {
             let dAngle = targetHeading - ace.heading;
             while (dAngle < -Math.PI) dAngle += Math.PI * 2;
             while (dAngle > Math.PI) dAngle -= Math.PI * 2;
-            const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.85 : 1.35) * (isFocused ? 1.0 : 0.75);
+            const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.85 : 1.35) * (isFocused ? 1.0 : 0.80);
             ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, dAngle));
 
             ace.isNotching = false;
             ace.activeManeuverId = 'BARREL_ROLL';
             ace.activeManeuverTimer = 6.0;
-            ace.activeManeuverBonus = 0.45 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff) * (isFocused ? 1.0 : 0.75);
+            ace.activeManeuverBonus = 0.45 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff) * (isFocused ? 1.0 : 0.80);
             if (ace.chaff > 0 && ace.cmTimer <= 0 && Math.random() < 0.60) ace.deployCountermeasures();
           } else if (isVeryHighDiff && isRadar && !blunderedDefense && isFocused) {
-            // High-difficulty Doppler notch requires active tactical focus
             if (ace.speed > sOpt * 1.15) ace.engineAlpha = 0.35;
             else if (ace.speed < sOpt * 0.85) ace.engineAlpha = 0.85;
             else ace.engineAlpha = 0.65;
@@ -169,18 +165,17 @@ class AIEvasionHandler {
             let dAngle = awayHeading - ace.heading;
             while (dAngle < -Math.PI) dAngle += Math.PI * 2;
             while (dAngle > Math.PI) dAngle -= Math.PI * 2;
-            const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.80 : (diffKey === 'VETERAN' ? 1.0 : 1.35)) * (isFocused ? 1.0 : 0.70);
+            const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.80 : (diffKey === 'VETERAN' ? 1.0 : 1.35)) * (isFocused ? 1.0 : 0.75);
             ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, dAngle));
             ace.isNotching = false;
             ace.activeManeuverId = 'BREAK_TURN';
             ace.activeManeuverTimer = 5.0;
-            ace.activeManeuverBonus = 0.38 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff) * (isFocused ? 1.0 : 0.70);
+            ace.activeManeuverBonus = 0.38 * (aceAgi / 0.85) * Math.max(0.50, 0.50 + 0.50 * turnOptEff) * (isFocused ? 1.0 : 0.75);
             if (ace.chaff > 0 && ace.cmTimer <= 0 && Math.random() < 0.45) ace.deployCountermeasures();
           }
         }
       }
 
-      // 2. Ace offensive weapon releases: ONLY authorized when the ace has commander attention!
       if (!isFocused) continue;
 
       if (typeof AIMissileTactics !== 'undefined') {
@@ -198,7 +193,6 @@ class AIEvasionHandler {
           const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.75 : (diffKey === 'VETERAN' ? 0.95 : 1.30));
           ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, diff));
 
-          // Only fire if ace nose is aligned within weapon boresight limits
           if (aiCommander.aceSalvoTimer <= 0 && game.tokenBucketRed >= 0.70 && !ace.isRTB) {
             let canFireSalvo = true;
             for (const pylon of acePlan.pylonsToFire) {
@@ -220,7 +214,7 @@ class AIEvasionHandler {
                 }
               }
               ace.recalculateWeight();
-              aiCommander.aceSalvoTimer = isVeryHighDiff ? 3.4 : 5.2;
+              aiCommander.aceSalvoTimer = isVeryHighDiff ? 2.4 : 4.0;
             }
           }
         }
