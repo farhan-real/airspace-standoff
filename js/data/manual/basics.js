@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 1 to 3
- * Covers: Core Rules, Kinematics & Throttle, Corner Velocity & Gunnery
+ * Covers: Core Rules, Kinematics & Propulsion, G-Stress & COFFIN Interface
  */
 
 window.MANUAL_BASICS = [
@@ -139,24 +139,58 @@ window.MANUAL_BASICS = [
     id: 'ch3_stress_coffin',
     title: 'SECTION 03: AIRFRAME PAYLOAD RATIOS, PILOT G-LOAD & COFFIN INTERFACE',
     desc: `
-      <div class="ge-subhead">PAYLOAD RATIO (LOAD %) &amp; WEIGHT CALCULATIONS</div>
+      <div class="ge-subhead">1. PAYLOAD RATIO (LOAD %) &amp; WEIGHT CALCULATIONS</div>
       <div class="ge-formula-card">
         <span style="color:#94a3b8;font-size:0.62rem;">PAYLOAD RATIO FORMULATION:</span>
         <div class="ge-formula-code">Payload % = (Equipment Mass + External Drag Mass &times; 0.40) / Max Payload Mass &times; 100%</div>
       </div>
+      <div class="ge-desc">
+        Carriage weight directly degrades flight kinematics: Light (&le; 35%), Normal (36% - 60%), Heavy (61% - 80%), and Overload (&gt; 80%). Overloading external hardpoints reduces maximum sprint Mach by up to 25% and slows acceleration by up to 80%.
+      </div>
 
-      <div class="ge-subhead">PILOT G-LOAD FATIGUE, TUNNEL VISION &amp; G-LOC</div>
+      <div class="ge-subhead">2. PILOT G-LOAD FATIGUE, TUNNEL VISION &amp; G-LOC</div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #ffb830;">
           <b style="color:#ffb830;">TUNNEL VISION (STRESS &ge; 0.65)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Visual field constriction. Turn authority degrades by <b>30%</b>, weapon targeting accuracy decreases by <b>15%</b>, and defensive evasion drops by <b>50%</b>.
+            Visual field constriction caused by sustained blood pooling under high lateral Gs. Turn authority degrades by <b>30%</b>, weapon targeting accuracy decreases by <b>15%</b>, and defensive evasion drops by <b>50%</b>.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #ef4444;">
           <b style="color:#ef4444;">G-LOC BLACKOUT (STRESS &ge; 0.95)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Temporary loss of consciousness for <b>2.8 seconds</b>. The aircraft maintains current heading without maneuver authority.
+            G-induced Loss of Consciousness for <b>2.8 seconds</b>. The pilot collapses, controls freeze, and the aircraft continues on a ballistic heading without evasive capability until recovery.
+          </div>
+        </div>
+      </div>
+
+      <div class="ge-subhead">3. COFFIN (CONNECTION FOR FLIGHT INTERFACE) SYNTHETIC VISION</div>
+      <div class="ge-desc">
+        The <b>COFFIN Interface</b> replaces the conventional canopy with a sealed, armored titanium-alloy cockpit tub and high-density sensory liquid immersion tank. Multi-spectral optical camera arrays project a zero-latency, spherical 360&deg; synthetic vision panorama directly to the pilot:
+      </div>
+      <div class="ge-grid-2">
+        <div class="ge-card" style="border-left:3px solid #00f0ff;">
+          <b style="color:#00f0ff;">100% TURN EFFICIENCY LOCKED</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            COFFIN flight control computers bypass biological aerodynamic constraints. Turn rate authority is <b>permanently locked at 100% efficiency</b> across all speed regimes, completely immune to corner velocity mismatch penalties.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #00f5a0;">
+          <b style="color:#00f5a0;">ZERO G-STRESS &amp; G-LOC IMMUNITY</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Full-body pressurized fluid immersion and neural damping eliminate physical blood pooling. Pilots accumulate <b>zero G-fatigue stress</b> and possess absolute immunity to Tunnel Vision and G-LOC blackouts up to 20G structural limits.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #ffd700;">
+          <b style="color:#ffd700;">NEURAL EVASIVE DODGE (+24% TO +30%)</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Direct optic-nerve bus transmission eliminates neuromuscular latency. COFFIN airframes receive a constant passive <b>+24% to +30% evasive dodge bonus</b> against all incoming guided missiles.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #38bdf8;">
+          <b style="color:#38bdf8;">MANUAL CREWED FLIGHT CONTROL</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Unlike autonomous UCAV drones, COFFIN airframes (e.g. F-15 S/MT, Su-37, F-22C, ADF-11F) remain under <b>100% manual human pilot command</b>, blending machine reaction times with human tactical intuition.
           </div>
         </div>
       </div>

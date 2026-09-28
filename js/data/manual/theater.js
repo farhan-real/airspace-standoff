@@ -8,7 +8,7 @@ window.MANUAL_THEATER = [
     id: 'ch8_aces_difficulties',
     title: 'SECTION 08: ADVERSARY TACTICAL DOCTRINE, THREAT TIERS & PLANNING',
     desc: `
-      <div class="ge-subhead">THE 6 BEHAVIORAL DIMENSIONS</div>
+      <div class="ge-subhead">1. THE 6 BEHAVIORAL DIMENSIONS</div>
       <div class="ge-grid-2">
         <div class="ge-card">
           <b style="color:#38bdf8;">1. TARGET FOCUS &amp; DECOY IDENTIFICATION</b>
@@ -48,7 +48,7 @@ window.MANUAL_THEATER = [
         </div>
       </div>
 
-      <div class="ge-subhead">EXPLOITING ENEMY WEAKNESSES</div>
+      <div class="ge-subhead">2. EXPLOITING ENEMY WEAKNESSES</div>
       <div class="ge-card" style="border-left:3px solid #00f5a0;">
         <ul style="list-style:none;padding-left:0;font-size:0.72rem;line-height:1.55;color:#cbd5e1;">
           <li style="margin-bottom:5px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Exploit Approach Routes:</b> High-difficulty flights sweep around the outer edges. Fly stealth jets along the sides to hit them while their radars face inward.</li>
@@ -58,7 +58,7 @@ window.MANUAL_THEATER = [
         </ul>
       </div>
 
-      <div class="ge-subhead">THE 6 COMBAT DIFFICULTY TIERS</div>
+      <div class="ge-subhead">3. THE 6 COMBAT DIFFICULTY TIERS</div>
       <div class="ge-desc">
         Adversary forces scale across pilot discipline, tactical decision-making, and package coordination rather than mathematical cheating. Below is the operational comparison across all theater engagement tiers:
       </div>
@@ -98,7 +98,7 @@ window.MANUAL_THEATER = [
         </table>
       </div>
 
-      <div class="ge-subhead">AIRFRAME WEIGHT &amp; STEALTH RULES</div>
+      <div class="ge-subhead">4. AIRFRAME WEIGHT &amp; STEALTH RULES</div>
       <div class="ge-desc">
         Aerodynamic weight tuning and stealth cleanliness are applied selectively based on airframe design and tactical mission:
         <ul style="list-style:none;padding-left:0;margin-top:6px;">
@@ -109,7 +109,7 @@ window.MANUAL_THEATER = [
         </ul>
       </div>
 
-      <div class="ge-subhead">WEAPON RANGE CLASSES &amp; ORDNANCE PROFILES</div>
+      <div class="ge-subhead">5. WEAPON RANGE CLASSES &amp; ORDNANCE PROFILES</div>
       <div class="ge-desc">
         All missiles and weapons are unlocked from the start. Rather than loading random stores, the adversary plans aircraft loadouts by pairing complementary range classes to fulfill distinct tactical roles:
       </div>
@@ -134,7 +134,7 @@ window.MANUAL_THEATER = [
         </div>
       </div>
 
-      <div class="ge-subhead">LOADOUT ARCHITECTURE &amp; ROLE PLANNING</div>
+      <div class="ge-subhead">6. LOADOUT ARCHITECTURE &amp; ROLE PLANNING</div>
       <div class="ge-desc">
         All weapons are available from the start. Rather than loading identical static templates, the enemy plans loadouts via weighted rolls, assigning specialized roles while managing weight and stealth:
       </div>
@@ -169,7 +169,7 @@ window.MANUAL_THEATER = [
         </table>
       </div>
 
-      <div class="ge-subhead">ADVERSARY FLIGHT LEAD (ACE) SPECIFICATIONS</div>
+      <div class="ge-subhead">7. ADVERSARY FLIGHT LEAD (ACE) SPECIFICATIONS</div>
       <div class="ge-desc">
         Designated Aces operate as elite formation leaders. Regardless of difficulty tier, Aces are guaranteed a triple-tier armament package (ULR + Adv LR + SR) and significantly outperform their wingmen:
       </div>
@@ -208,7 +208,7 @@ window.MANUAL_THEATER = [
     title: 'SECTION 09: THEATER IADS, DEPOTS & SCORING',
     desc: `
       <div class="ge-desc">
-        The theater features an Integrated Air Defense System (IADS), logistics hubs, and scoring formulas.
+        The theater features an Integrated Air Defense System (IADS), strategic logistics hubs, and balanced scoring formulas.
       </div>
 
       <div class="ge-subhead">1. INTEGRATED AIR DEFENSE SYSTEMS (IADS)</div>
@@ -240,10 +240,26 @@ window.MANUAL_THEATER = [
               <td style="color:#c084fc;font-weight:800;">EW Jammer Station</td>
               <td>6 HP</td>
               <td>36.0 km</td>
-              <td>Projects microwave jamming that degrades hostile radar locks.</td>
+              <td>Projects microwave jamming that degrades hostile radar locks across 36 km.</td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="ge-subhead">2. THEATER LOGISTICS, DEPOTS &amp; COMBAT SCORING FORMULAS</div>
+      <div class="ge-grid-2">
+        <div class="ge-card">
+          <b style="color:var(--stat-tier-2);">STRATEGIC GROUND TARGETS &amp; VP VALUES</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Command Bunker (24 HP, +800 VP) &bull; SAM Battery (+300 VP) &bull; Radar Array (+250 VP) &bull; EW Jammer (+250 VP) &bull; CIWS (+200 VP) &bull; Fuel Depot (+200 VP) &bull; Mobile Radar (+150 VP). Munitions Centers are hardened indestructible safe zones.
+          </div>
+        </div>
+        <div class="ge-card">
+          <b style="color:var(--stat-tier-1);">AERIAL TARGETS &amp; SPEED RUN MULTIPLIER</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Combat aircraft kills award 150 VP base + 10x airframe cost (+850 VP ace bounty). Completing missions under 6 minutes awards a fast-clear speed bonus: <code>(360s - elapsed) &times; 2.5 VP</code>. Total score multiplies by difficulty and defense budget ratio.
+          </div>
+        </div>
       </div>
     `
   }

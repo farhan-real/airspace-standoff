@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Master Flight Manual Orchestrator & Stable Search Engine
+ * AIRSPACE STANDOFF: Master Flight Manual Orchestrator
  */
 
 window.TACTICAL_FLIGHT_MANUAL = [
@@ -19,9 +19,7 @@ window.initTacticalManual = function() {
   }
 
   const container = document.getElementById('glossary-modal-content');
-  const navContainer = document.getElementById('manual-quick-nav-bar');
   const searchInput = document.getElementById('manual-search-filter');
-  const modal = document.getElementById('glossary-modal');
   const searchActions = document.getElementById('manual-search-actions');
   const countEl = document.getElementById('manual-search-count');
   const prevBtn = document.getElementById('btn-manual-search-prev');
@@ -38,9 +36,9 @@ window.initTacticalManual = function() {
     { id: 'ch2_kinematics', label: '02: KINEMATICS & POWER' },
     { id: 'ch3_stress_coffin', label: '03: G-STRESS & COFFIN' },
     { id: 'ch4_radar_physics', label: '04: RADAR & STEALTH RCS' },
-    { id: 'ch5_classification_uplink', label: '05: DATALINK & SATELLITE' },
+    { id: 'ch5_classification_uplink', label: '05: SENSORS & UPLINK' },
     { id: 'ch6_weapons_salvos', label: '06: MISSILES & SALVOS' },
-    { id: 'ch7_defense_ew', label: '07: EW & NOTCH DEFENSE' },
+    { id: 'ch7_defense_ew', label: '07: DEFENSES & EW' },
     { id: 'ch8_aces_difficulties', label: '08: ACES & THREAT TIERS' },
     { id: 'ch9_logistics_scoring', label: '09: THEATER IADS & SCORING' },
     { id: 'ch10_mission_editor', label: '10: MISSION EDITOR' },
@@ -172,7 +170,7 @@ window.initTacticalManual = function() {
       c.innerHTML = `
         <div style="text-align:center;padding:40px;color:#8494ab;font-family:var(--font-mono);font-size:0.80rem;">
           <b style="color:var(--theme-accent);">NO PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
-          <p style="margin-top:6px;font-size:0.72rem;">Try "Mission Editor", "Inspection", "Replay", "Debrief", "Notch", "RCS", or "Controls".</p>
+          <p style="margin-top:6px;font-size:0.72rem;">Try "Mission Editor", "Inspection", "ProNav", "Salvo", "Uplink", "Notch", or "Controls".</p>
         </div>`;
       return;
     }
@@ -265,20 +263,13 @@ window.initTacticalManual = function() {
     };
   }
 
-  if (navContainer) {
-    navContainer.addEventListener('wheel', (e) => {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        navContainer.scrollLeft += e.deltaY;
-      }
-    }, { passive: false });
+  if (navPrevBtn) {
+    const nav = document.getElementById('manual-quick-nav-bar');
+    if (nav) navPrevBtn.onclick = () => nav.scrollBy({ left: -180, behavior: 'smooth' });
   }
-
-  if (navPrevBtn && navContainer) {
-    navPrevBtn.onclick = () => navContainer.scrollBy({ left: -180, behavior: 'smooth' });
-  }
-  if (navNextBtn && navContainer) {
-    navNextBtn.onclick = () => navContainer.scrollBy({ left: 180, behavior: 'smooth' });
+  if (navNextBtn) {
+    const nav = document.getElementById('manual-quick-nav-bar');
+    if (nav) navNextBtn.onclick = () => nav.scrollBy({ left: 180, behavior: 'smooth' });
   }
 
   if (container && container.children.length === 0) {

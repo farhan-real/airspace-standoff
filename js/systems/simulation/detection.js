@@ -1,7 +1,7 @@
 /**
  * AIRSPACE STANDOFF: Radar Signal Intelligence, Target Detection & Satellite Reveal Pipeline
  * All active aircraft are immediately tracked on radar as Phase 1: BOGEY [?].
- * Progressive NCTR and sensor tracking resolve positive identification into Phase 2: IDENTIFIED.
+ * Progressive sensor tracking resolves positive identification into Phase 2: IDENTIFIED.
  */
 
 class SimulationDetectionSystem {

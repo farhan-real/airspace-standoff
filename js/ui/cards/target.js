@@ -25,12 +25,12 @@ class PylonTargetSolution {
         (typeof validTarget.isIdentifiedBy === 'function' ? validTarget.isIdentifiedBy(commanderTeam) : validTarget.isIdentified);
 
       let rawTgtName = 'BOGEY [?]';
-      let classification = 'RAW DOPPLER TRACK [UNIDENTIFIED]';
+      let classification = 'UNIDENTIFIED RADAR TRACK';
       let armorText = 'UNKNOWN';
 
       if (!isKnown) {
         rawTgtName = 'BOGEY [?]';
-        classification = 'RAW DOPPLER TRACK [UNIDENTIFIED]';
+        classification = 'UNIDENTIFIED RADAR TRACK';
         armorText = 'UNKNOWN';
       } else if (validTarget.isGhost) {
         rawTgtName = `FALSE ECHO [${validTarget.ghostType || 'CLUTTER'}]`;

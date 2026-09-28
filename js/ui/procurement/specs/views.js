@@ -37,7 +37,7 @@ class SpecsSubsystemViews {
 
     let counterHint = '';
     if (w.isJammerPod) counterHint = 'Anti-Radiation Missiles (HOJ tracking) or IR/Optical seekers';
-    else if (w.isDecoy || w.isDecoyDrone) counterHint = 'Imaging Infrared/Optical seekers, close-in visual NCTR, or CIWS';
+    else if (w.isDecoy || w.isDecoyDrone) counterHint = 'Imaging Infrared/Optical seekers, close-in visual identification, or CIWS';
     else if (w.isLaser) counterHint = 'Dive into Weather Clouds (liquid moisture scatters beam) or maintain standoff beyond 9.0 km';
     else if (w.isGunpod) counterHint = 'Maintain BVR standoff beyond 5.0 km to exploit carrier weight';
     else if (w.seeker === 'ARH') counterHint = 'Beam 90 deg (Doppler Notch), deploy Chaff or ECM jammer pods';

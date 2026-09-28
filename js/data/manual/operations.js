@@ -6,54 +6,125 @@
 window.MANUAL_OPERATIONS = [
   {
     id: 'ch10_mission_editor',
-    title: 'SECTION 10: MISSION EDITOR & CUSTOM SORTIES',
+    title: 'SECTION 10: MISSION EDITOR & CUSTOM SORTIE GENERATOR',
     desc: `
       <div class="ge-desc">
-        Access <b>MISSION EDITOR</b> from the Hangar header bar to construct tailored combat scenarios. The live dossier updates dynamically to display force balance and engagement odds. Press <b>ARM SORTIE CONFIGURATION</b> to prepare the setup for your next launch.
+        Access the <b>MISSION EDITOR</b> from the Hangar header bar to construct tailored tactical engagements. Test airframe doctrines, force ratios, and weapon configurations in an unranked combat laboratory.
       </div>
 
-      <div class="ge-subhead">1. THEATER SCENARIO, OPPOSITION &amp; RANDOMIZATION</div>
-      <div class="ge-desc">
-        Configure operational parameters across <b>Scenario Mode, Threat Contestation, Combat Doctrine, Fleet Strengths, Ordnance Rules, Weather Clouds, Ground IADS Defenses,</b> and <b>Civilian RoE</b>.
-        <br><br>
-        <ul style="list-style:none;padding-left:0;">
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Adaptive Random Toggles:</b> Each field includes an independent <b>RANDOM</b> button. Enabling random on a parameter engages procedural theater generation for that specific field at launch time.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Force Ratio Balance:</b> Adjust enemy squadron size from 3 aircraft (Light Flight) up to 15 aircraft (Saturation Fleet) to test squadron survivability against asymmetric numbers.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Unranked Sortie Status:</b> All missions launched using custom editor configurations are flagged as unranked. They provide full debriefings and replays but do not submit scores to the Squadron Leaderboard.</li>
-        </ul>
+      <div class="ge-subhead">1. THEATER PARAMETERS &amp; FORCE BALANCE</div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>PARAMETER GROUP</th><th>OPTIONS &amp; SETTINGS</th><th>OPERATIONAL IMPACT</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#00f0ff;font-weight:800;">Scenario Mode</td>
+              <td>Skirmish vs Dynamic Theater</td>
+              <td>Skirmish deploys single wave clash; Dynamic Theater introduces reinforcing wave wings every 80 seconds.</td>
+            </tr>
+            <tr>
+              <td style="color:#00f5a0;font-weight:800;">Threat Contestation</td>
+              <td>Cadet (0.50x) through Legend (3.20x)</td>
+              <td>Adjusts AI reaction speed, Doppler notch discipline, salvo sizing, and formation pairing.</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">AI Combat Doctrine</td>
+              <td>Balanced, Aggressive, Standoff</td>
+              <td>Sets adversary priority between high-G dogfighting merges, balanced BVR, or long-range sniper volleys.</td>
+            </tr>
+            <tr>
+              <td style="color:#ffd700;font-weight:800;">Allied Blue Force</td>
+              <td>Hangar Roster vs Random (3-8 units)</td>
+              <td>Deploy your custom hangar squadron or generate a randomized balanced air wing within budget.</td>
+            </tr>
+            <tr>
+              <td style="color:#fbbf24;font-weight:800;">Hostile Red Fleet</td>
+              <td>3 Aircraft up to 15 Saturation Fleet</td>
+              <td>Scales enemy numbers from light element sweeps to full theater saturation invasions.</td>
+            </tr>
+            <tr>
+              <td style="color:#c084fc;font-weight:800;">Weather &amp; Clouds</td>
+              <td>Clear, Light, Scattered, Dense Overcast</td>
+              <td>Controls cloud cell counts, microwave radar attenuation (-8% per cell), and IR optical scattering.</td>
+            </tr>
+            <tr>
+              <td style="color:#f43f5e;font-weight:800;">Ground IADS Grid</td>
+              <td>Full (S-400 + CIWS + EW), Light, Off</td>
+              <td>Controls surface air-defense coverage, radar arrays, and command bunker defenses.</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">Civilian RoE Flights</td>
+              <td>Active (Strict RoE) vs Disabled</td>
+              <td>Toggles commercial airliner flights subject to strict -600 VP unverified launch penalties.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="ge-subhead">2. PROCEDURAL AIRCRAFT IDENTIFICATION</div>
-      <div class="ge-desc">
-        Every participating combatant receives a unique operational callsign and airframe designation (e.g. <b>Viper 2 - F-22A Raptor</b>). Numerical suffixes prevent telemetry overlap when deploying multiple identical airframes.
+      <div class="ge-subhead">2. PROCEDURAL RANDOMIZATION &amp; ARMING WORKFLOW</div>
+      <div class="ge-grid-2">
+        <div class="ge-card">
+          <b style="color:var(--stat-tier-2);">INDEPENDENT RANDOM TOGGLES</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Every parameter field features an independent <b>RANDOM</b> toggle button. Enabling random on a parameter engages dynamic procedural generation for that specific setting at launch time, allowing mixed custom and randomized sorties.
+          </div>
+        </div>
+        <div class="ge-card">
+          <b style="color:var(--stat-tier-3);">ARMED SORTIE CONFIGURATION</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Clicking <b>ARM SORTIE CONFIGURATION</b> locks the draft for your next launch. The hangar header status displays <code>EDITOR CONFIG ARMED</code>. Custom editor sorties are fully simulated with complete debriefs, but are flagged as <b>UNRANKED</b> to protect leaderboard integrity.
+          </div>
+        </div>
       </div>
     `
   },
   {
     id: 'ch11_inspection',
-    title: 'SECTION 11: INSPECTION MODE & VISUAL C4ISR ANALYSIS',
+    title: 'SECTION 11: INSPECTION MODE & LIVE C4ISR SORTIE ANALYSIS',
     desc: `
       <div class="ge-desc">
-        Engage <b>INSPECTION MODE</b> inside the Mission Editor prior to sortie launch. Inspection Mode unlocks an interactive C4ISR analysis workspace while keeping cockpit flight controls and missile launch systems fully active.
+        Enable <b>INSPECTION MODE</b> inside the Mission Editor to unlock an advanced real-time C4ISR telemetry workspace while keeping cockpit flight controls, banking, and missile releases fully functional.
       </div>
 
-      <div class="ge-subhead">1. SELECTION &amp; COMBAT CONTROLS</div>
-      <ul style="list-style:none;padding-left:0;font-size:0.74rem;line-height:1.6;">
-        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Seamless Selection:</b> Tap contacts on the radar scope or select them from the HUD dropdown menu. Friendly aircraft can be taken over directly; hostile contacts are immediately acquired as target locks.</li>
-        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Enemy Filter Switch:</b> Toggle <b>ENEMY: ON/OFF</b> to inspect enemy telemetry or maintain focus on your active fighter while acquiring targets.</li>
-        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Simulation Time-Stop:</b> Press <b>STOP TIME</b> in the header bar to freeze combat physics for deep telemetry analysis, then resume when ready.</li>
-      </ul>
+      <div class="ge-subhead">1. WORKSPACE CONTROLS &amp; SIMULATION TIME-STOP</div>
+      <div class="ge-card">
+        <ul style="list-style:none;padding-left:0;font-size:0.72rem;line-height:1.6;color:#cbd5e1;">
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Contact Selection:</b> Tap any aircraft, surface site, or in-flight missile on the radar display or choose from the HUD dropdown to immediately focus telemetry.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Enemy Filter Switch (ENEMY: ON/OFF):</b> Toggles hostile telemetry analysis on or off. With Enemy Off, tapping an enemy blip locks them as your weapon target while keeping friendly aircraft telemetry active.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Simulation Time-Stop (STOP TIME / RESUME TIME):</b> Freezes combat simulation physics in place. Allows deep analysis of radar envelopes, aspect angles, and missile kill probability before resuming.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Concurrent Combat Controls:</b> Flight steering keys, throttle adjustment, and weapon triggers remain fully active during inspection analysis.</li>
+        </ul>
+      </div>
 
-      <div class="ge-subhead">2. VISUAL DIAGNOSTIC WORKSPACE TABS</div>
+      <div class="ge-subhead">2. THE 5 DIAGNOSTIC WORKSPACE TABS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
-          <thead><tr><th>WORKSPACE TAB</th><th>INTELLIGENCE DISPLAY</th></tr></thead>
+          <thead>
+            <tr><th>WORKSPACE TAB</th><th>DIAGNOSTIC DISPLAY &amp; TACTICAL TELEMETRY</th></tr>
+          </thead>
           <tbody>
-            <tr><td><b>OVERVIEW</b></td><td>Visual segmented armor health pips, Mach corner velocity turn-efficiency gauge, altitude tape, energy reserve meter, and store station inventory.</td></tr>
-            <tr><td><b>SENSORS</b></td><td>Stealth radar cross-section spectrum bar, aspect spike factors, and horizontal range-versus-distance comparison tracks for all opposing radars.</td></tr>
-            <tr><td><b>WEAPONS</b></td><td>Dynamic hit probability gauge (P_k percentage arc), green advantage chips, red disadvantage chips, and inbound threat warnings.</td></tr>
-            <tr><td><b>EVENTS</b></td><td>Chronological Causal Log recording missile launches, intercepts, chaff deployments, and kill events with plain-language summaries.</td></tr>
-            <tr><td><b>DATA</b></td><td>Complete raw telemetry registry and aircraft flight-path trail coordinates for advanced technical analysis.</td></tr>
+            <tr>
+              <td style="color:#00f0ff;font-weight:800;">OVERVIEW</td>
+              <td>Segmented armor integrity pips, Mach corner velocity turn efficiency gauge, flight level altitude and VSI rate, kinetic energy recovery meter, and complete stores inventory.</td>
+            </tr>
+            <tr>
+              <td style="color:#00f5a0;font-weight:800;">SENSORS</td>
+              <td>Onboard radar specifications, active target locks, stealth RCS spectrum bar, aspect spike factors (nose-on, beam 90&deg;, tail), and horizontal range-versus-distance comparison tracks for all contacts in beam.</td>
+            </tr>
+            <tr>
+              <td style="color:#ffd700;font-weight:800;">WEAPONS</td>
+              <td>Dynamic hit probability (P_k percentage gauge), factor-by-factor breakdown (proportional navigation, energy deficit, cloud scattering), and inbound threat alerts with step-by-step countermeasure protocols.</td>
+            </tr>
+            <tr>
+              <td style="color:#c084fc;font-weight:800;">TRACE</td>
+              <td>Chronological Causal Log recording weapon launches, missile intercepts, chaff deployments, and kill events. Tap any event to inspect detailed launch range, speed, and probability factors.</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">DATA</td>
+              <td>Complete raw telemetry registry: exact spatial coordinates (km), flight level, Mach airspeed, heading in degrees and radians, G-load stress, and hardware components.</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -64,20 +135,38 @@ window.MANUAL_OPERATIONS = [
     title: 'SECTION 12: MISSION DEBRIEFS, REPLAYS & SQUADRON ARCHIVE',
     desc: `
       <div class="ge-desc">
-        Upon sortie completion or mission abort, the After Action Report provides complete performance metrics, pilot podium rankings, chronological engagement timelines, and interactive mission replays.
+        Upon sortie completion or mission abort, the After Action Report provides complete performance metrics, pilot podium rankings, chronological engagement timelines, and interactive tactical mission replays.
       </div>
 
       <div class="ge-subhead">1. SORTIE REPLAY CONTROLS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
-          <thead><tr><th>CONTROL</th><th>FUNCTION</th></tr></thead>
+          <thead>
+            <tr><th>CONTROL</th><th>FUNCTION</th></tr>
+          </thead>
           <tbody>
-            <tr><td><b>Play / Pause</b></td><td>Start or suspend recorded playback.</td></tr>
+            <tr><td><b>Play / Pause</b></td><td>Start or suspend recorded sortie playback.</td></tr>
             <tr><td><b>Restart</b></td><td>Rewind replay to mission launch coordinates.</td></tr>
-            <tr><td><b>Speed</b></td><td>Toggle playback rate across 0.5x, 1x, and 2x.</td></tr>
-            <tr><td><b>Timeline Scrubber</b></td><td>Drag timeline slider to inspect any point in the engagement, or click key event chips to jump directly to decisive missile impacts.</td></tr>
+            <tr><td><b>Speed Selector</b></td><td>Toggle playback rate across 0.5x, 1x, and 2x simulation velocity.</td></tr>
+            <tr><td><b>Timeline Scrubber</b></td><td>Drag timeline slider to inspect any second of the engagement, or click key event chips to jump directly to decisive missile impacts.</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="ge-subhead">2. AFTER ACTION REPORT (AAR) &amp; PILOT PODIUM RANKINGS</div>
+      <div class="ge-grid-2">
+        <div class="ge-card">
+          <b style="color:var(--stat-tier-1);">SORTIE ACE PODIUM</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Highlights the top 3 highest scoring pilots across friendly and hostile fleets. Displays individual air-to-air kills, missile evasions, and total victory points earned.
+          </div>
+        </div>
+        <div class="ge-card">
+          <b style="color:var(--theme-accent);">HISTORICAL SQUADRON DOSSIER</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Top 10 ranked missions are saved to local persistent storage. Revisit previous debriefs, examine participating rosters, and re-watch recorded tactical replays from the Leaderboard.
+          </div>
+        </div>
       </div>
     `
   }
