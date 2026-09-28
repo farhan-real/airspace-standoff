@@ -124,6 +124,18 @@ class InspectionSolutionsRenderer {
 
     const factorRows = [
       { name: 'Base Seeker Warhead Guidance', val: `+${Math.round((factors.baseHitProbability || 0.8) * 100)}%`, type: 'positive', desc: 'Seeker tracking accuracy in standard flight regime.' },
+      factors.kineticRetention !== undefined ? {
+        name: 'Aerodynamic Energy Retention (Lambda/p)',
+        val: `${Math.round(((factors.kineticRetention || 1.0) - 1.0) * 100)}%`,
+        type: (factors.kineticRetention || 1.0) >= 0.85 ? 'positive' : ((factors.kineticRetention || 1.0) >= 0.65 ? 'warning' : 'negative'),
+        desc: `Ballistic drag decay over flight path (lambda: ${factors.lambda !== undefined ? factors.lambda : 0.4}, p: ${factors.pExp !== undefined ? factors.pExp : 1.0}).`
+      } : null,
+      (factors.pulseSurgeBonus && factors.pulseSurgeBonus > 0) ? {
+        name: 'Secondary Pulse Kinetic Surge',
+        val: `+${Math.round(factors.pulseSurgeBonus * 100)}%`,
+        type: 'positive',
+        desc: 'Terminal rocket pulse ignition countering target evasive maneuvers.'
+      } : null,
       { name: 'Aspect Angle Trajectory Multiplier', val: `${Math.round(((factors.aspectScore || 1.0) - 1.0) * 100)}%`, type: (factors.aspectScore || 1.0) >= 0.95 ? 'positive' : 'warning', desc: 'Target presentation geometry relative to missile velocity vector.' },
       { name: 'Target Active Maneuver Evasion', val: `-${Math.round((factors.activeManeuverEvasion || 0) * 100)}%`, type: 'negative', desc: 'Target aerodynamic break turn generating proportional pursuit lag.' },
       { name: 'Doppler Notch Gate Break', val: `-${Math.round((factors.notchBonus || 0) * 100)}%`, type: 'negative', desc: 'Target 90 deg beaming aspect cuts radial closure velocity.' },
@@ -135,7 +147,7 @@ class InspectionSolutionsRenderer {
       { name: 'Target Kinetic Energy Deficit', val: `+${Math.round((factors.targetEnergyBonus || 0) * 100)}%`, type: 'positive', desc: 'Target energy bled in prior turns delays defensive break.' },
       { name: 'Cloud Moisture Attenuation', val: `-${Math.round((factors.opticalWeatherPenalty || 0) * 100)}%`, type: (factors.opticalWeatherPenalty || 0) <= 0.15 ? 'warning' : 'negative', desc: 'Moisture droplets scattering optical / IR seeker tracker.' },
       { name: 'Excessive Lead Turn Energy Drain', val: `-${Math.round((factors.excessiveTurnPenalty || 0) * 100)}%`, type: 'negative', desc: 'Severe steering angle bled missile kinetic velocity.' }
-    ].filter(f => !f.val.startsWith('0%') && !f.val.startsWith('+0%') && !f.val.startsWith('-0%'));
+    ].filter(Boolean).filter(f => !f.val.startsWith('0%') && !f.val.startsWith('+0%') && !f.val.startsWith('-0%'));
 
     const mSpeedKm = Math.max(0.4, missile.speed * 0.35);
     const etaSec = (dist / mSpeedKm).toFixed(1);

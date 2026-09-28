@@ -140,6 +140,10 @@ class AIMissileTactics {
       });
       if (compatiblePylons.length === 0) continue;
 
+      const angleToTarget = Math.atan2(target.y - ace.y, target.x - ace.x);
+      let offBoresight = Math.abs((ace.heading || 0) - angleToTarget);
+      while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
+
       compatiblePylons.sort((a, b) => {
         const wa = a.weapon, wb = b.weapon;
         let sa = 0, sb = 0;
@@ -152,6 +156,9 @@ class AIMissileTactics {
 
       const primary = compatiblePylons[0];
       if (!primary || dist > primary.weapon.rangeKm * 0.90 || dist < (primary.weapon.minRangeKm || 1.0)) continue;
+
+      const isHOBS = (primary.weapon.trait === 'HOBS_VANE' || primary.weapon.trait === 'ALL_ASPECT_BURST' || primary.weapon.trait === 'REAR_ENGAGE' || primary.weapon.id === 'IRIS-T');
+      if (!isSurface && !isHOBS && offBoresight > 0.85) continue;
 
       const pylonsToFire = [primary];
       const secondary = compatiblePylons.find(p => p.index !== primary.index && dist <= p.weapon.rangeKm * 0.90 && dist >= (p.weapon.minRangeKm || 1.0));

@@ -83,7 +83,6 @@ class AIEvasionHandler {
 
       const hasUsableAmmo = ace.equippedWeapons && ace.equippedWeapons.some(p => p && p.ammo > 0 && p.weapon && !p.weapon.isJammerPod && !p.weapon.isDecoy && !p.weapon.isDecoyDrone);
       if (!hasUsableAmmo && !ace.isRTB) {
-        // When missile stores are exhausted, aces do not get unlimited missiles; they press into dogfights with guns if armed, or withdraw
         if (!ace.gunAmmo || ace.gunAmmo <= 0) {
           ace.orderRTB();
           if (game.radar) game.radar.spawnCombatText(ace.x, ace.y, 'ACE BINGO AMMO: WITHDRAWING', '#f59e0b');
@@ -182,18 +181,30 @@ class AIEvasionHandler {
           const turnRateCap = aceAgi * (diffKey === 'CADET' ? 0.75 : (diffKey === 'VETERAN' ? 0.95 : 1.30));
           ace.heading += Math.max(-turnRateCap * dt, Math.min(turnRateCap * dt, diff));
 
+          // Only fire if ace nose is aligned within weapon boresight limits
           if (aiCommander.aceSalvoTimer <= 0 && game.tokenBucketRed >= 0.70 && !ace.isRTB) {
+            let canFireSalvo = true;
             for (const pylon of acePlan.pylonsToFire) {
-              if (game.tokenBucketRed < 0.70 || pylon.item.ammo <= 0) break;
-              pylon.item.ammo--;
-              game.tokenBucketRed = Math.max(0, game.tokenBucketRed - 0.70);
-              if (!pylon.weapon.isGunpod && pylon.weapon.category !== 'GUN') {
-                game.missiles.push(new MissileEntity(pylon.weapon, ace, tgt));
-                if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
+              const isHOBS = (pylon.weapon.trait === 'HOBS_VANE' || pylon.weapon.trait === 'ALL_ASPECT_BURST' || pylon.weapon.trait === 'REAR_ENGAGE' || pylon.weapon.id === 'IRIS-T');
+              if (!isHOBS && Math.abs(diff) > 0.65) {
+                canFireSalvo = false;
+                break;
               }
             }
-            ace.recalculateWeight();
-            aiCommander.aceSalvoTimer = isVeryHighDiff ? 3.4 : 5.2;
+
+            if (canFireSalvo) {
+              for (const pylon of acePlan.pylonsToFire) {
+                if (game.tokenBucketRed < 0.70 || pylon.item.ammo <= 0) break;
+                pylon.item.ammo--;
+                game.tokenBucketRed = Math.max(0, game.tokenBucketRed - 0.70);
+                if (!pylon.weapon.isGunpod && pylon.weapon.category !== 'GUN') {
+                  game.missiles.push(new MissileEntity(pylon.weapon, ace, tgt));
+                  if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
+                }
+              }
+              ace.recalculateWeight();
+              aiCommander.aceSalvoTimer = isVeryHighDiff ? 3.4 : 5.2;
+            }
           }
         }
       }

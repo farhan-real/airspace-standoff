@@ -56,13 +56,13 @@ class MissileEntity {
     if (trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST' || trait === 'SURFACE_SAM') {
       this.heading = angleToTarget;
     } else if (trait === 'HOBS_VANE' || weapon.id === 'IRIS-T') {
-      this.heading = srcHeading + Math.max(-Math.PI * 0.5, Math.min(Math.PI * 0.5, offBoresight));
+      this.heading = angleToTarget;
     } else if (trait === 'SNAP_TURN' || trait === 'SWARM_RIPPLE') {
-      this.heading = srcHeading + Math.max(-1.05, Math.min(1.05, offBoresight));
+      this.heading = srcHeading + Math.max(-1.10, Math.min(1.10, offBoresight));
     } else if (weapon.category === 'A2A') {
-      this.heading = srcHeading + Math.max(-0.80, Math.min(0.80, offBoresight));
+      this.heading = srcHeading + Math.max(-0.65, Math.min(0.65, offBoresight));
     } else {
-      this.heading = srcHeading;
+      this.heading = angleToTarget;
     }
 
     while (this.heading < 0) this.heading += Math.PI * 2;
@@ -142,12 +142,6 @@ class MissileEntity {
     if (typeof MissileKinetics !== 'undefined') {
       MissileKinetics.updateSpeedAndFlight(this, dt, dist);
       MissileKinetics.computeGuidance(this, dt);
-    } else {
-      const desiredLead = Physics.calcLeadInterceptAngle(this.x, this.y, this.speed, this.target.x, this.target.y, this.target.heading || 0, this.target.speed || 0);
-      let diff = desiredLead - this.heading;
-      while (diff < -Math.PI) diff += Math.PI * 2;
-      while (diff > Math.PI) diff -= Math.PI * 2;
-      this.heading += Math.max(-2.5 * dt, Math.min(2.5 * dt, diff));
     }
 
     if (this.state === 'LOST_TRACK') return;

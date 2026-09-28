@@ -29,33 +29,46 @@ class MissileGuidanceSystem {
     const vrx = vtx - vmx;
     const vry = vty - vmy;
 
-    const losRate = (dx * vry - dy * vrx) / Math.max(0.04, dist * dist);
+    const safeDist = Math.max(2.0, dist);
+    const losRate = (dx * vry - dy * vrx) / (safeDist * safeDist);
     const closingVel = -((dx * vrx + dy * vry) / Math.max(0.1, dist));
 
-    if (!missile.hasStartedClosing && headingDiffToLos < Math.PI * 0.55 && (closingVel > 0.1 || dist < missile.prevDistanceToTarget)) {
+    if (!missile.hasStartedClosing && (closingVel > 0.05 || dist < missile.prevDistanceToTarget)) {
       missile.hasStartedClosing = true;
     }
 
-    let N = 4.0;
-    if (tgt.activeManeuverTimer > 0) {
-      if (tgt.isNotching && missile.weapon && (missile.weapon.seeker === 'ARH' || missile.weapon.seeker === 'PASSIVE_RADAR')) N = 0.6;
-      else if (tgt.activeManeuverId === 'BARREL_ROLL') N = 1.2;
-      else if (tgt.activeManeuverId === 'BREAK_TURN') N = 2.4;
+    const desiredLead = (typeof Physics !== 'undefined')
+      ? Physics.calcLeadInterceptAngle(missile.x, missile.y, missile.speed, tgt.x, tgt.y, tgtHdg, tgt.speed || 0.8)
+      : los;
+    let leadDiff = desiredLead - missile.heading;
+    while (leadDiff < -Math.PI) leadDiff += Math.PI * 2;
+    while (leadDiff > Math.PI) leadDiff -= Math.PI * 2;
+
+    const maxRate = (typeof MissileKinetics !== 'undefined') ? MissileKinetics.getMaxTurnRate(missile) : 2.2;
+    let turnRate = 0.0;
+
+    // Phase 1: Rapid convergence onto lead collision triangle
+    if (Math.abs(leadDiff) > 0.25 || closingVel <= 0.1 || dist <= 2.0 || headingDiffToLos > Math.PI * 0.35) {
+      turnRate = Math.sign(leadDiff) * maxRate;
+    } else {
+      // Phase 2: Proportional Navigation guidance once aligned
+      let N = 4.0;
+      if (tgt.activeManeuverTimer > 0) {
+        if (tgt.isNotching && missile.weapon && (missile.weapon.seeker === 'ARH' || missile.weapon.seeker === 'PASSIVE_RADAR')) N = 0.6;
+        else if (tgt.activeManeuverId === 'BARREL_ROLL') N = 1.2;
+        else if (tgt.activeManeuverId === 'BREAK_TURN') N = 2.4;
+      }
+      const proNavTurn = N * (closingVel / vm) * losRate;
+      turnRate = proNavTurn + leadDiff * 1.8;
     }
 
-    let diff = los - missile.heading;
-    while (diff < -Math.PI) diff += Math.PI * 2;
-    while (diff > Math.PI) diff -= Math.PI * 2;
-
-    let turnRate = (closingVel > 0.1 && dist > 1.5) ? (N * (closingVel / vm) * losRate) : (diff * (dist <= 1.5 ? 4.5 : (tgt.activeManeuverTimer > 0 ? 1.5 : 2.5)));
-    const maxRate = (typeof MissileKinetics !== 'undefined') ? MissileKinetics.getMaxTurnRate(missile) : 2.0;
     const clampedRate = Math.max(-maxRate, Math.min(maxRate, turnRate));
     missile.heading += clampedRate * dt;
     while (missile.heading < 0) missile.heading += Math.PI * 2;
     while (missile.heading >= Math.PI * 2) missile.heading -= Math.PI * 2;
 
     missile.cumulativeTurn = (missile.cumulativeTurn || 0) + Math.abs(clampedRate * dt);
-    if (missile.hasStartedClosing && missile.cumulativeTurn > Math.PI * 2.2 && dist <= 1.8 && missile.age > 1.5) {
+    if (missile.hasStartedClosing && missile.cumulativeTurn > Math.PI * 1.5 && missile.age > 1.2) {
       missile.triggerLostTrack('KINETIC OVERSHOOT');
     }
   }
@@ -67,22 +80,49 @@ class MissileGuidanceSystem {
 
     const minArmTime = Math.min(0.20, (missile.weapon.minRangeKm || 0.6) / Math.max(0.1, (missile.speed || 2.4) * 0.35));
     if (missile.age < minArmTime) return { shouldTrigger: false };
-    if (!missile.hasStartedClosing && missile.age < 1.2) return { shouldTrigger: false };
+    if (!missile.hasStartedClosing && missile.age < 0.8) return { shouldTrigger: false };
+
+    // Direct / proximity detonation basket
     if (dist <= 0.65) return { shouldTrigger: true, isHitCandidate: true };
 
-    if (missile.minDistanceReached <= 1.8 && dist > prevDist) {
-      if (missile.minDistanceReached <= 0.95) return { shouldTrigger: true, isHitCandidate: true };
+    // Closest Point of Approach (CPA) check:
+    if (missile.hasStartedClosing && dist > prevDist) {
+      if (missile.minDistanceReached <= 0.95) {
+        return { shouldTrigger: true, isHitCandidate: true };
+      }
       if (tgt && typeof tgt.x === 'number') {
         const forwardDot = (tgt.x - missile.x) * Math.cos(missile.heading) + (tgt.y - missile.y) * Math.sin(missile.heading);
-        if (forwardDot <= 0) return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
+        if (forwardDot <= 0.1 || dist > missile.minDistanceReached + 0.3) {
+          return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
+        }
       }
     }
+
+    // Terminal flyby protection to eliminate orbital looping
+    if (missile.hasStartedClosing && (missile.cumulativeTurn || 0) > Math.PI * 1.5 && missile.age > 1.2) {
+      return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
+    }
+
     return { shouldTrigger: false };
   }
 
   static explainHitProbability(missile, target, weatherClouds, salvoCount) {
     const w = missile.weapon || {};
     const basePk = (w.T_0 || 0.80);
+
+    // Aerodynamic kinetic energy retention curve powered by lambda and p
+    const lambda = (w.lambda !== undefined) ? w.lambda : 0.40;
+    const pExp = (w.p !== undefined) ? w.p : 1.0;
+    const normDist = Math.max(0.0, Math.min(1.0, missile.distanceTraveled / Math.max(1.0, w.rangeKm || 40.0)));
+    let kineticRetention = Math.max(0.20, 1.0 - lambda * Math.pow(normDist, pExp));
+
+    let pulseSurgeBonus = 0.0;
+    if (w.trait === 'DUAL_PULSE_SURGE') {
+      if (missile.stage === 'PULSE 2' || missile.hasIgnitedPulseTwo || missile.distanceToTarget <= 25.0) {
+        pulseSurgeBonus = 0.18;
+        kineticRetention = Math.min(1.0, kineticRetention + pulseSurgeBonus);
+      }
+    }
 
     const isManeuvering = (target.activeManeuverTimer > 0 && target.glocTimer <= 0);
     const activeManeuver = isManeuvering ? (target.activeManeuverBonus || 0.45) : 0.0;
@@ -158,7 +198,7 @@ class MissileGuidanceSystem {
     const agilityDefenseBonus = (targetAgility - 0.85) * 0.18;
     const turnOptBonus = (turnOptEff - 0.70) * 0.15;
 
-    const rawProb = (basePk * aspectScore) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + thermalModifier + heavyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
+    const rawProb = (basePk * aspectScore * kineticRetention) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + thermalModifier + heavyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
     const probabilityFloor = isManeuvering ? 0.10 : (target.isAce ? 0.14 : (target.isCoffin ? 0.08 : (target.isFlightLead ? 0.10 : 0.12)));
     const probability = Math.max(probabilityFloor, Math.min(0.95, rawProb));
     return {
@@ -167,13 +207,31 @@ class MissileGuidanceSystem {
       probabilityFloor,
       probabilityCeiling: 0.95,
       factors: {
-        baseHitProbability: basePk, aspectDifferenceRad: aspectDiff, aspectScore,
-        activeManeuverEvasion: activeManeuver * agilityScale * turnOptFactor, notchBonus, chaffBonus,
-        combinedActiveEvasion: primaryActiveEvasion, passiveEvasionBaseline: primaryPassiveBaseline,
-        effectiveDefense, mixedSeekers: hasMixedSeekers, salvoBonus, mixedSeekerBonus: mixedSynergyBonus,
-        thermalModifier, targetThermalBloom: targetThermalMultiplier, heavyTargetBonus: heavyBonus,
-        targetEnergyBonus: energyDeficitBonus, agilityPenalty: agilityDefenseBonus, turnEfficiency: turnOptEff,
-        turnEfficiencyPenalty: turnOptBonus, opticalWeatherPenalty: weatherPenalty, excessiveTurnPenalty: energyTurnPenalty
+        baseHitProbability: basePk,
+        kineticRetention,
+        lambda,
+        pExp,
+        pulseSurgeBonus,
+        aspectDifferenceRad: aspectDiff,
+        aspectScore,
+        activeManeuverEvasion: activeManeuver * agilityScale * turnOptFactor,
+        notchBonus,
+        chaffBonus,
+        combinedActiveEvasion: primaryActiveEvasion,
+        passiveEvasionBaseline: primaryPassiveBaseline,
+        effectiveDefense,
+        mixedSeekers: hasMixedSeekers,
+        salvoBonus,
+        mixedSeekerBonus: mixedSynergyBonus,
+        thermalModifier,
+        targetThermalBloom: targetThermalMultiplier,
+        heavyTargetBonus: heavyBonus,
+        targetEnergyBonus: energyDeficitBonus,
+        agilityPenalty: agilityDefenseBonus,
+        turnEfficiency: turnOptEff,
+        turnEfficiencyPenalty: turnOptBonus,
+        opticalWeatherPenalty: weatherPenalty,
+        excessiveTurnPenalty: energyTurnPenalty
       }
     };
   }

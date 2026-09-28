@@ -141,9 +141,17 @@ const Physics = {
     const minR = weapon.minRangeKm || 1.2;
     if (dist < minR) return { pk: 15, label: 'TOO CLOSE', color: '#ef4444', arrow: 'v', desc: `Inside arming basket (<${minR}km)`, salvoCount: 0, hasMixedSeekers: false };
 
-    const sweetMin = weapon.sweetSpotMin || (weapon.rangeKm * 0.15);
-    const sweetMax = weapon.sweetSpotMax || (weapon.rangeKm * 0.70);
-    const rangeScore = (dist < sweetMin) ? (0.70 + 0.30 * (dist / sweetMin)) : ((dist > sweetMax) ? Math.max(0.35, 1.0 - (dist - sweetMax) / (weapon.rangeKm - sweetMax)) : 1.0);
+    // Aerodynamic kinetic energy retention curve powered by lambda and p
+    const lambda = (weapon.lambda !== undefined) ? weapon.lambda : 0.40;
+    const pExp = (weapon.p !== undefined) ? weapon.p : 1.0;
+    const normDist = Math.max(0.0, Math.min(1.0, dist / (weapon.rangeKm || 100.0)));
+    let rangeScore = Math.max(0.20, 1.0 - lambda * Math.pow(normDist, pExp));
+
+    let pulseSurgeBonus = 0.0;
+    if (weapon.trait === 'DUAL_PULSE_SURGE' && (dist <= 25.0 || normDist >= 0.60)) {
+      pulseSurgeBonus = 0.16;
+      rangeScore = Math.min(1.0, rangeScore + pulseSurgeBonus);
+    }
 
     const isRadarSeeker = (weapon.seeker === 'ARH' || weapon.seeker === 'PASSIVE_RADAR');
     const isOpticalSeeker = (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT');
@@ -264,7 +272,7 @@ const Physics = {
     const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate - agilityDefenseBonus - turnOptBonus + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + thermalModifier - jammerPenalty - shooterStressPenalty - offBoresightPenalty;
     const pkPercent = Math.round(Math.max(12, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
     const isClosing = (aspectDiff > 1.8);
-    const arrow = (dist >= sweetMin && dist <= sweetMax) ? (isClosing ? '^' : 'v') : (isClosing ? (dist > sweetMax ? '^' : 'v') : 'v');
+    const arrow = isClosing ? '^' : 'v';
 
     let label = 'MARGINAL';
     let color = '#f59e0b';
@@ -278,7 +286,8 @@ const Physics = {
       desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Over-the-shoulder lock' : 'Target solution locked'),
       salvoCount, hasMixedSeekers,
       breakdown: {
-        weaponBasePk: weapon.T_0 || 0.80, rangeKm: dist, rangeScore, sweetMinKm: sweetMin, sweetMaxKm: sweetMax,
+        weaponBasePk: weapon.T_0 || 0.80, rangeKm: dist, rangeScore,
+        lambda, pExp, pulseSurgeBonus,
         aspectDifferenceRad: aspectDiff, aspectScore, offBoresightPenalty, rearShot: isRearShot,
         activeEvasion, passiveBaseline, effectiveDefenseEstimate, mixedSeekers: hasMixedSeekers,
         targetEnergy, energyBleedBonus, targetAgility, agilityDefenseBonus, turnEfficiency: turnOptEff,

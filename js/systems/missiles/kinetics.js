@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Guided Missile Kinematics & Terminal Impact Resolution
- * ProNav guidance with corner speed turn efficiency and airframe thermal bloom modeling.
+ * ProNav guidance with corner speed turn efficiency, aerodynamic ballistic decay, and staging.
  */
 
 class MissileKinetics {
@@ -26,15 +26,15 @@ class MissileKinetics {
   static getMaxTurnRate(missile) {
     const w = missile.weapon || {};
     const trait = w.trait || '';
-    let baseRate = 1.6;
+    let baseRate = 1.8;
 
     if (trait === 'SNAP_TURN' || trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST') baseRate = 3.8;
     else if (trait === 'HOBS_VANE') baseRate = 3.5;
     else if (w.category === 'A2A' && (w.rangeKm || 40) <= 35) baseRate = 3.2;
-    else if (trait === 'RAMJET_SUSTAINED' || trait === 'STEALTH_SEEKER' || trait === 'DUAL_PULSE_SURGE') baseRate = 2.2;
-    else if (w.category === 'A2A') baseRate = 2.0;
-    else if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') baseRate = 1.0;
-    else if (trait === 'STEALTH_CRUISE' || trait === 'GLIDE_SATURATION') baseRate = 0.8;
+    else if (trait === 'RAMJET_SUSTAINED' || trait === 'STEALTH_SEEKER' || trait === 'DUAL_PULSE_SURGE') baseRate = 2.4;
+    else if (w.category === 'A2A') baseRate = 2.2;
+    else if (trait === 'LOFTED_HYPERSONIC' || trait === 'HYPERSONIC_IMPACT') baseRate = 1.2;
+    else if (trait === 'STEALTH_CRUISE' || trait === 'GLIDE_SATURATION') baseRate = 0.9;
 
     if (missile.distanceToTarget && missile.distanceToTarget <= 3.5) baseRate = Math.max(baseRate, 3.2);
     else if (!missile.hasStartedClosing && missile.age <= 2.5) baseRate = Math.max(baseRate, 2.6);
@@ -83,7 +83,12 @@ class MissileKinetics {
 
   static updateSpeedAndFlight(missile, dt, distToTarget) {
     const w = missile.weapon || {};
+    const maxRange = Math.max(1.0, w.rangeKm || 40.0);
+    const normDist = Math.max(0.0, Math.min(1.0, missile.distanceTraveled / maxRange));
+    const lambda = (w.lambda !== undefined) ? w.lambda : 0.40;
+    const pExp = (w.p !== undefined) ? w.p : 1.0;
 
+    // 1. Initial Boost Phase
     if (missile.age <= missile.boostDuration) {
       missile.stage = 'BOOST';
       const needed = Math.max(0.1, missile.peakSpeed - missile.launchSpeed);
@@ -92,6 +97,7 @@ class MissileKinetics {
       return;
     }
 
+    // 2. Dual-Pulse Rocket Engine Staging (e.g. PL-15E)
     if (w.trait === 'DUAL_PULSE_SURGE') {
       if (!missile.hasIgnitedPulseTwo && distToTarget <= 22.0) {
         missile.hasIgnitedPulseTwo = true;
@@ -101,19 +107,30 @@ class MissileKinetics {
           window.Game.radar.spawnShockwave(missile.x, missile.y, '#00f0ff', 24);
         }
       }
+
       if (missile.pulseTwoTimer > 0) {
         missile.pulseTwoTimer -= dt;
         missile.stage = 'PULSE 2';
-        missile.speed = Math.min(missile.peakSpeed + 0.9, missile.speed + 3.2 * dt);
+        const surgeSpeed = missile.peakSpeed + 0.90;
+        missile.speed = Math.min(surgeSpeed, missile.speed + 3.2 * dt);
+        return;
+      }
+
+      if (missile.hasIgnitedPulseTwo) {
+        missile.stage = 'TERMINAL';
+        const terminalSurgePeak = missile.peakSpeed + 0.90;
+        const terminalRetention = Math.max(0.85, 1.0 - (lambda * 0.25) * Math.pow(normDist, pExp));
+        missile.speed = Math.max(missile.peakSpeed, terminalSurgePeak * terminalRetention);
         return;
       }
     }
 
+    // 3. Stratospheric Lofting & Plunging Trajectories (e.g. R-37M, Kinzhal)
     if (missile.isLofting) {
       if (distToTarget > 28.0) {
         missile.stage = 'LOFT';
         missile.alt = Math.min(0.95, (missile.alt || 0.5) + 0.16 * dt);
-        if (missile.speed < missile.peakSpeed * 0.85) missile.speed += 2.2 * dt;
+        if (missile.speed < missile.peakSpeed * 0.88) missile.speed += 2.2 * dt;
       } else {
         missile.stage = 'DIVE';
         missile.alt = Math.max(0.18, (missile.alt || 0.5) - 0.28 * dt);
@@ -122,47 +139,64 @@ class MissileKinetics {
       return;
     }
 
+    // 4. Air-Breathing Ramjets: Near-Constant Sustained Velocity across Operational Envelope
     if (w.trait === 'RAMJET_SUSTAINED' || w.trait === 'EXTREME_STANDOFF') {
-      missile.stage = (distToTarget <= 16.0) ? 'TERMINAL' : 'RAMJET';
-      missile.speed = Math.max(missile.peakSpeed, missile.speed);
-      return;
-    }
-
-    if (w.trait === 'STEALTH_CRUISE') {
-      missile.stage = (distToTarget <= 15.0) ? 'TERMINAL' : 'CRUISE';
-      missile.speed = w.speedMach || 0.85;
-      return;
-    }
-    if (w.trait === 'GLIDE_SATURATION') {
-      missile.stage = 'GLIDE';
-      missile.speed = w.speedMach || 0.80;
-      return;
-    }
-
-    if (w.trait === 'STEALTH_SEEKER') {
-      if (distToTarget <= 20.0) missile.stage = 'TERMINAL';
-      else if (missile.age <= (missile.boostDuration + 14.0)) {
-        missile.stage = 'SUSTAIN';
-        missile.speed = Math.max(missile.peakSpeed * 0.95, missile.speed);
+      if (missile.distanceTraveled < maxRange) {
+        missile.stage = (distToTarget <= 16.0) ? 'TERMINAL' : 'RAMJET';
+        missile.speed = missile.peakSpeed;
         return;
-      } else missile.stage = 'COAST';
-    } else if (distToTarget <= 18.0) missile.stage = 'TERMINAL';
+      }
+      missile.stage = 'COAST';
+      missile.speed = Math.max(0.40, missile.speed - 1.2 * dt);
+      return;
+    }
+
+    // 5. Powered Cruise Missiles (e.g. AGM-158B JASSM-ER)
+    if (w.trait === 'STEALTH_CRUISE') {
+      if (missile.distanceTraveled < maxRange) {
+        missile.stage = (distToTarget <= 15.0) ? 'TERMINAL' : 'CRUISE';
+        missile.speed = w.speedMach || 0.85;
+        return;
+      }
+      missile.stage = 'COAST';
+      missile.speed = Math.max(0.35, missile.speed - 0.8 * dt);
+      return;
+    }
+
+    // 6. Standoff Gliders (e.g. GBU-39 SDB)
+    if (w.trait === 'GLIDE_SATURATION') {
+      missile.stage = (distToTarget <= 12.0) ? 'TERMINAL' : 'GLIDE';
+      const glideRetention = Math.max(0.40, 1.0 - lambda * Math.pow(normDist, pExp));
+      missile.speed = Math.max(0.35, (w.speedMach || 0.80) * glideRetention);
+      return;
+    }
+
+    // 7. Boost-Sustain Motors (e.g. AIM-260 JATM)
+    if (w.trait === 'STEALTH_SEEKER') {
+      if (distToTarget <= 20.0) {
+        missile.stage = 'TERMINAL';
+      } else if (missile.age <= (missile.boostDuration + 14.0)) {
+        missile.stage = 'SUSTAIN';
+        missile.speed = Math.max(missile.peakSpeed * 0.96, missile.speed);
+        return;
+      } else {
+        missile.stage = 'COAST';
+      }
+      const sustainRetention = Math.max(0.40, 1.0 - lambda * Math.pow(normDist, pExp));
+      missile.speed = Math.max(2.4, missile.peakSpeed * sustainRetention);
+      return;
+    }
+
+    // 8. Dynamic Aerodynamic Ballistic Decay via Lambda & p
+    if (distToTarget <= 18.0) missile.stage = 'TERMINAL';
     else if (w.seeker === 'PASSIVE_RADAR') missile.stage = 'HOMING';
     else if (w.trait === 'DUAL_PULSE_SURGE') missile.stage = 'MIDCOURSE';
     else if (w.category === 'A2A') missile.stage = (w.rangeKm <= 35) ? 'TERMINAL' : (missile.age < 12.0 ? 'MIDCOURSE' : 'COAST');
     else missile.stage = 'COAST';
 
-    const minSustain = (w.speedMach && w.speedMach < 1.5)
-      ? (w.speedMach * 0.85)
-      : ((w.category === 'A2A' && (w.rangeKm || 40) <= 35) ? 1.65 : 2.0);
-    missile.speed = Math.max(minSustain, missile.speed - 0.05 * dt);
-  }
-
-  static resolveHitProbability(missile, target, weatherClouds, salvoCount) {
-    if (typeof MissileGuidanceSystem !== 'undefined') {
-      return MissileGuidanceSystem.resolveHitProbability(missile, target, weatherClouds, salvoCount);
-    }
-    return 0.65;
+    const energyRetention = Math.max(0.25, 1.0 - lambda * Math.pow(normDist, pExp));
+    const targetBallisticSpeed = missile.peakSpeed * energyRetention;
+    missile.speed = Math.max(0.40, targetBallisticSpeed);
   }
 
   static explainHitProbability(missile, target, weatherClouds, salvoCount) {
