@@ -13,20 +13,27 @@ if (typeof navigator !== 'undefined') {
 class AirspaceStandoffGame {
   constructor() {
     this.installModalDOMTemplates();
-    this.playerMode = '1P';
-    this.scenarioMode = 'SKIRMISH';
-    this.aiDifficulty = 'VETERAN';
-    this.aiDoctrine = 'BALANCED';
+
+    const savedSettings = (window.Persistence && typeof window.Persistence.getGameplaySettings === 'function')
+      ? window.Persistence.getGameplaySettings()
+      : null;
+
+    this.playerMode = (savedSettings && savedSettings.playerMode) || '1P';
+    this.scenarioMode = (savedSettings && savedSettings.scenarioMode) || 'SKIRMISH';
+    this.aiDifficulty = (savedSettings && savedSettings.aiDifficulty) || 'VETERAN';
+    this.aiDoctrine = (savedSettings && savedSettings.aiDoctrine) || 'BALANCED';
+    this.playerBudgetId = (savedSettings && savedSettings.playerBudgetId) || 'BUDGET_400';
+
+    const bTierData = (window.BUDGET_TIERS && window.BUDGET_TIERS[this.playerBudgetId]) || { budget: 400.0 };
+    this.budgetMax = bTierData.budget || 400.0;
+    this.budgetRemaining = this.budgetMax;
+
     this.pendingMissionEditorSettings = null;
     this.missionEditorBaseSettings = null;
     this.activeMissionEditorConfig = null;
     this.isMissionEditorMatch = false;
     this.inspectionModeEnabled = false;
     this.currentPvpCommander = 'friendly';
-
-    this.playerBudgetId = 'BUDGET_400';
-    this.budgetMax = 400.0;
-    this.budgetRemaining = 400.0;
 
     let initialSquadronName = (window.Persistence && window.Persistence.getSquadronName()) || '7th Tactical Squadron';
     if (!initialSquadronName || initialSquadronName.toLowerCase().includes('wardog')) {
@@ -86,6 +93,9 @@ class AirspaceStandoffGame {
       }
       this.setSquadronName(this.squadronName);
     }
+
+    this.setPlayerBudgetTier(this.playerBudgetId);
+    this.updateModeIndicator();
   }
 
   installModalDOMTemplates() {
@@ -96,6 +106,17 @@ class AirspaceStandoffGame {
     if (typeof window.initTacticalManual === 'function') window.initTacticalManual();
   }
 
+  saveGameplaySettings() {
+    if (!window.Persistence || typeof window.Persistence.saveGameplaySettings !== 'function') return;
+    window.Persistence.saveGameplaySettings({
+      playerMode: this.playerMode,
+      scenarioMode: this.scenarioMode,
+      aiDifficulty: this.aiDifficulty,
+      aiDoctrine: this.aiDoctrine,
+      playerBudgetId: this.playerBudgetId
+    });
+  }
+
   setPlayerBudgetTier(tierKey) {
     const tierData = (window.BUDGET_TIERS && window.BUDGET_TIERS[tierKey]) || { budget: 400.0, multiplier: 1.0 };
     this.playerBudgetId = tierKey;
@@ -103,6 +124,7 @@ class AirspaceStandoffGame {
     const subtextEl = document.getElementById('proc-budget-subtext');
     if (subtextEl) subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) UP TO 16 UNITS`;
     this.updateModeIndicator();
+    this.saveGameplaySettings();
     if (this.procurement) this.procurement.updateUI();
   }
 

@@ -333,12 +333,19 @@ class ControlsSystem {
     const pvpSwitcher = document.getElementById('pvp-switcher-bar');
 
     if (btn1p && btn2p) {
+      const is1p = (this.game.playerMode === '1P');
+      btn1p.classList.toggle('active', is1p);
+      btn2p.classList.toggle('active', !is1p);
+      if (aiPanel) aiPanel.style.display = is1p ? 'flex' : 'none';
+      if (pvpSwitcher) pvpSwitcher.classList.toggle('hidden', is1p);
+
       btn1p.onclick = () => {
         this.game.playerMode = '1P';
         btn1p.classList.add('active'); btn2p.classList.remove('active');
         if (aiPanel) aiPanel.style.display = 'flex';
         if (pvpSwitcher) pvpSwitcher.classList.add('hidden');
         this.game.updateModeIndicator();
+        this.game.saveGameplaySettings();
       };
       btn2p.onclick = () => {
         this.game.playerMode = '2P';
@@ -346,19 +353,26 @@ class ControlsSystem {
         if (aiPanel) aiPanel.style.display = 'none';
         if (pvpSwitcher) pvpSwitcher.classList.remove('hidden');
         this.game.updateModeIndicator();
+        this.game.saveGameplaySettings();
       };
     }
 
     if (btnSkirmish && btnDynamic) {
+      const isSkirmish = (this.game.scenarioMode === 'SKIRMISH');
+      btnSkirmish.classList.toggle('active', isSkirmish);
+      btnDynamic.classList.toggle('active', !isSkirmish);
+
       btnSkirmish.onclick = () => {
         this.game.scenarioMode = 'SKIRMISH';
         btnSkirmish.classList.add('active'); btnDynamic.classList.remove('active');
         this.game.updateModeIndicator();
+        this.game.saveGameplaySettings();
       };
       btnDynamic.onclick = () => {
         this.game.scenarioMode = 'DYNAMIC_THEATER';
         btnDynamic.classList.add('active'); btnSkirmish.classList.remove('active');
         this.game.updateModeIndicator();
+        this.game.saveGameplaySettings();
       };
     }
 

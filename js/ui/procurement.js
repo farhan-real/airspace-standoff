@@ -62,6 +62,7 @@ class ProcurementManager {
       onChange: (val) => {
         this.game.aiDifficulty = val;
         this.game.updateModeIndicator();
+        this.game.saveGameplaySettings();
       }
     });
 
@@ -73,7 +74,10 @@ class ProcurementManager {
         { value: 'AGGRESSIVE', text: 'AGGRESSIVE' },
         { value: 'STANDOFF', text: 'STAND-OFF' }
       ],
-      onChange: (val) => { this.game.aiDoctrine = val; }
+      onChange: (val) => {
+        this.game.aiDoctrine = val;
+        this.game.saveGameplaySettings();
+      }
     });
   }
 

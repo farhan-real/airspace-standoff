@@ -1,7 +1,8 @@
 /**
  * AIRSPACE STANDOFF: Persistence Engine
  * Saves and loads: Sortie Match History, Top 10 High Scores, Full Debriefing Records,
- * Last Squadron Used, Custom Aircraft Templates, Custom Loadouts, Squadron Designation.
+ * Last Squadron Used, Custom Aircraft Templates, Custom Loadouts, Squadron Designation,
+ * and Gameplay Configuration Settings.
  */
 
 class PersistenceEngine {
@@ -104,6 +105,15 @@ class PersistenceEngine {
       } catch (err) {}
     }
     return name;
+  }
+
+  saveGameplaySettings(settings) {
+    if (!settings) return;
+    this.set('GAMEPLAY_SETTINGS', settings);
+  }
+
+  getGameplaySettings() {
+    return this.get('GAMEPLAY_SETTINGS', null);
   }
 }
 
