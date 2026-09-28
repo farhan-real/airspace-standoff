@@ -63,8 +63,8 @@ const FleetGenerator = {
   },
 
   planAircraftLoadout(spec, isAce, doctrine, diff, rng) {
-    if (typeof FleetLoadoutPlanner !== 'undefined') {
-      return FleetLoadoutPlanner.planAircraftLoadout(spec, isAce, doctrine, diff, rng);
+    if (typeof FleetOutfitter !== 'undefined') {
+      return FleetOutfitter.planAircraftLoadout(spec, isAce, doctrine, diff, rng);
     }
     return { weapons: [], upgrades: [], totalCost: spec.cost || 20.0 };
   },

@@ -139,4 +139,5 @@ class FleetLoadoutPlanner {
   }
 }
 
-window.FleetLoadoutPlanner = FleetLoadoutPlanner;
+window.FleetOutfitter = FleetOutfitter;
+window.FleetLoadoutPlanner = FleetOutfitter; // Backward compatibility alias
