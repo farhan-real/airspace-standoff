@@ -16,6 +16,10 @@ class TacticalRadarRenderer {
     this.cam = new RadarCameraController(this.canvas, this.cssWidth, this.cssHeight);
     this.fx = new RadarEffectsSystem(this.cam);
 
+    this.inspectionDetectedSet = new Set();
+    this.emptyDetectedSet = new Set();
+    this.boundCleanCanvasText = this.cleanCanvasText.bind(this);
+
     this.resize();
     window.addEventListener('resize', () => this.resize());
     window.addEventListener('orientationchange', () => {
@@ -49,7 +53,7 @@ class TacticalRadarRenderer {
   cleanCanvasText(str) {
     if (str === undefined || str === null) return '';
     let s = String(str);
-    s = s.replace(/\u00e2\u20ac\u00a2|Ã¢â‚¬Â¢|&bull;|\|/g, ' ');
+    s = s.replace(/\u00e2\u20ac\u00a2|ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢|&bull;|\|/g, ' ');
     s = s.replace(/\s+/g, ' ');
     if (!s.includes('<') && !s.includes('\\') && !s.includes('{') && !s.includes('katex')) {
       return s.trim();
@@ -117,11 +121,9 @@ class TacticalRadarRenderer {
       const rect = this.canvas.getBoundingClientRect();
       const kmBefore = this.toKm(e.clientX - rect.left, e.clientY - rect.top);
       this.cam.zoom = Math.max(this.cam.minZoom, Math.min(this.cam.maxZoom, this.cam.zoom * (e.deltaY < 0 ? 1.15 : 0.87)));
-      const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
-      const effScaleX = (this.cssWidth / cfg.THEATER_WIDTH_KM) * this.cam.zoom;
-      const effScaleY = (this.cssHeight / cfg.THEATER_HEIGHT_KM) * this.cam.zoom;
-      this.cam.panX = kmBefore.x - ((e.clientX - rect.left) / effScaleX);
-      this.cam.panY = kmBefore.y - ((e.clientY - rect.top) / effScaleY);
+      this.cam.updateScales();
+      this.cam.panX = kmBefore.x - ((e.clientX - rect.left) / this.cam.effScaleX);
+      this.cam.panY = kmBefore.y - ((e.clientY - rect.top) / this.cam.effScaleY);
     }, { passive: false });
 
     this.syncControlButtons();
@@ -153,11 +155,21 @@ class TacticalRadarRenderer {
     bind('cam-btn-ground-mob', toggleGround);
   }
 
+  addEntityIds(set, list) {
+    if (!list) return;
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      if (item && item.id) set.add(item.id);
+    }
+  }
+
   render(state) {
     if (!this.ctx || !this.canvas) return;
     const ctx = this.ctx;
     const w = this.cssWidth;
     const h = this.cssHeight;
+
+    this.cam.updateScales();
 
     const allied = (state && state.alliedAircraft) || [];
     const hostiles = (state && state.hostileAircraft) || [];
@@ -179,19 +191,22 @@ class TacticalRadarRenderer {
     const commanderTeam = (window.Game && window.Game.currentPvpCommander) || 'friendly';
     const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
 
-    const detectedSet = is2P || (state && state.inspectionMode)
-      ? new Set([
-          ...allied.map(a => a.id),
-          ...hostiles.map(h => h.id),
-          ...surface.map(s => s.id),
-          ...missiles.map(m => m.id),
-          ...civilians.map(c => c.id),
-          ...ghosts.map(g => g.id),
-          ...decoys.map(d => d.id)
-        ])
-      : ((commanderTeam === 'friendly')
-        ? (window.Game && window.Game.detectedByBlue ? window.Game.detectedByBlue : new Set())
-        : (window.Game && window.Game.detectedByRed ? window.Game.detectedByRed : new Set()));
+    let detectedSet;
+    if (is2P || (state && state.inspectionMode)) {
+      this.inspectionDetectedSet.clear();
+      this.addEntityIds(this.inspectionDetectedSet, allied);
+      this.addEntityIds(this.inspectionDetectedSet, hostiles);
+      this.addEntityIds(this.inspectionDetectedSet, surface);
+      this.addEntityIds(this.inspectionDetectedSet, missiles);
+      this.addEntityIds(this.inspectionDetectedSet, civilians);
+      this.addEntityIds(this.inspectionDetectedSet, ghosts);
+      this.addEntityIds(this.inspectionDetectedSet, decoys);
+      detectedSet = this.inspectionDetectedSet;
+    } else if (commanderTeam === 'friendly') {
+      detectedSet = (window.Game && window.Game.detectedByBlue) ? window.Game.detectedByBlue : this.emptyDetectedSet;
+    } else {
+      detectedSet = (window.Game && window.Game.detectedByRed) ? window.Game.detectedByRed : this.emptyDetectedSet;
+    }
 
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, w, h);
@@ -203,40 +218,44 @@ class TacticalRadarRenderer {
     }
 
     if (typeof RadarTacticalSurfaceRenderer !== 'undefined') {
-      RadarTacticalSurfaceRenderer.drawSurface(ctx, this.cam, surface, commanderTeam, detectedSet, activeUnit, this.selectedTarget, w, this.declutterMode, this.cleanCanvasText.bind(this));
-      RadarTacticalSurfaceRenderer.drawCivilianTraffic(ctx, this.cam, civilians, detectedSet, activeUnit, this.declutterMode, w, this.cleanCanvasText.bind(this));
+      RadarTacticalSurfaceRenderer.drawSurface(ctx, this.cam, surface, commanderTeam, detectedSet, activeUnit, this.selectedTarget, w, this.declutterMode, this.boundCleanCanvasText);
+      RadarTacticalSurfaceRenderer.drawCivilianTraffic(ctx, this.cam, civilians, detectedSet, activeUnit, this.declutterMode, w, this.boundCleanCanvasText);
     }
 
     if (typeof RadarTacticalRenderer !== 'undefined') {
-      RadarTacticalRenderer.drawRadarLocks(ctx, this.cam, allied.concat(hostiles), activeUnit, commanderTeam, detectedSet);
+      RadarTacticalRenderer.drawRadarLocks(ctx, this.cam, allied, hostiles, activeUnit, commanderTeam, detectedSet);
       RadarTacticalRenderer.drawSalvoCoordinations(ctx, this.cam, missiles, commanderTeam);
-      RadarTacticalRenderer.drawMissiles(ctx, this.cam, missiles, commanderTeam, detectedSet, this.declutterMode, this.cleanCanvasText.bind(this));
+      RadarTacticalRenderer.drawMissiles(ctx, this.cam, missiles, commanderTeam, detectedSet, this.declutterMode, this.boundCleanCanvasText);
     }
 
     if (typeof RadarContactsAuxRenderer !== 'undefined') {
-      RadarContactsAuxRenderer.drawGhostContacts(ctx, this.cam, ghosts, detectedSet, this.selectedTarget, activeUnit, this.zoom, this.cleanCanvasText.bind(this));
-      RadarContactsAuxRenderer.drawDecoyDrones(ctx, this.cam, decoys, detectedSet, commanderTeam, activeUnit, this.cleanCanvasText.bind(this));
+      RadarContactsAuxRenderer.drawGhostContacts(ctx, this.cam, ghosts, detectedSet, this.selectedTarget, activeUnit, this.zoom, this.boundCleanCanvasText);
+      RadarContactsAuxRenderer.drawDecoyDrones(ctx, this.cam, decoys, detectedSet, commanderTeam, activeUnit, this.boundCleanCanvasText);
     }
 
     if (typeof RadarContactsRenderer !== 'undefined') {
-      RadarContactsRenderer.drawAircraft(ctx, this.cam, hostiles, 'hostile', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode, this.cleanCanvasText.bind(this));
-      RadarContactsRenderer.drawAircraft(ctx, this.cam, allied, 'friendly', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode, this.cleanCanvasText.bind(this));
+      RadarContactsRenderer.drawAircraft(ctx, this.cam, hostiles, 'hostile', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode, this.boundCleanCanvasText);
+      RadarContactsRenderer.drawAircraft(ctx, this.cam, allied, 'friendly', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode, this.boundCleanCanvasText);
     }
 
-    const liveHostiles = hostiles.filter(a => a && a.hp > 0);
+    let liveHostileCount = 0;
+    for (let i = 0; i < hostiles.length; i++) {
+      const hst = hostiles[i];
+      if (hst && hst.hp > 0) liveHostileCount++;
+    }
     const uplinkThreshold = (window.CONFIG && window.CONFIG.UPLINK_THRESHOLD_FIGHTERS !== undefined) ? window.CONFIG.UPLINK_THRESHOLD_FIGHTERS : 3;
-    const shouldShowUplink = (!is2P && commanderTeam === 'friendly' && liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold);
+    const shouldShowUplink = (!is2P && commanderTeam === 'friendly' && liveHostileCount > 0 && liveHostileCount <= uplinkThreshold);
 
     const uplinkBannerEl = document.getElementById('radar-uplink-banner');
     if (uplinkBannerEl) {
       if (shouldShowUplink) {
-        uplinkBannerEl.textContent = `SATELLITE RADAR UPLINK: ${liveHostiles.length} HOSTILE${liveHostiles.length > 1 ? 'S' : ''} REMAINING (PINPOINTED)`;
+        uplinkBannerEl.textContent = `SATELLITE RADAR UPLINK: ${liveHostileCount} HOSTILE${liveHostileCount > 1 ? 'S' : ''} REMAINING (PINPOINTED)`;
         uplinkBannerEl.classList.remove('hidden');
       } else {
         uplinkBannerEl.classList.add('hidden');
       }
     } else if (shouldShowUplink && typeof RadarEnvironmentRenderer !== 'undefined') {
-      RadarEnvironmentRenderer.drawUplinkBanner(ctx, liveHostiles.length, w, h);
+      RadarEnvironmentRenderer.drawUplinkBanner(ctx, liveHostileCount, w, h);
     }
 
     if (this.hoveredContact && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0) && typeof this.hoveredContact.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {

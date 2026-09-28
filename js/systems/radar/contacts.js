@@ -21,9 +21,16 @@ class RadarContactsRenderer {
     const mainCol = isBlue ? '#00f0ff' : '#ef4444';
     const isMobile = (cssWidth < 800);
 
-    const liveEnemies = list.filter(a => a && a.hp > 0.05);
-    const uplinkThreshold = (window.CONFIG && window.CONFIG.UPLINK_THRESHOLD_FIGHTERS !== undefined) ? window.CONFIG.UPLINK_THRESHOLD_FIGHTERS : 3;
-    const isLastFew = (!is2P && isEnemy && liveEnemies.length > 0 && liveEnemies.length <= uplinkThreshold);
+    let isLastFew = false;
+    if (!is2P && isEnemy) {
+      let liveCount = 0;
+      for (let i = 0; i < list.length; i++) {
+        const item = list[i];
+        if (item && item.hp > 0.05) liveCount++;
+      }
+      const uplinkThreshold = (window.CONFIG && window.CONFIG.UPLINK_THRESHOLD_FIGHTERS !== undefined) ? window.CONFIG.UPLINK_THRESHOLD_FIGHTERS : 3;
+      isLastFew = (liveCount > 0 && liveCount <= uplinkThreshold);
+    }
 
     ctx.save();
     if (!isMobile) {
@@ -41,9 +48,8 @@ class RadarContactsRenderer {
         a.heading = isBlue ? 0.0 : Math.PI;
       }
 
-      const pos = cam.toScreen(a.x, a.y);
-      const px = Math.round(pos.x);
-      const py = Math.round(pos.y);
+      const px = Math.round(cam.toScreenX ? cam.toScreenX(a.x) : cam.toScreen(a.x, a.y).x);
+      const py = Math.round(cam.toScreenY ? cam.toScreenY(a.y) : cam.toScreen(a.x, a.y).y);
       const isSelected = activeUnit && activeUnit.id === a.id;
       const isTgt = selectedTarget && selectedTarget.id === a.id;
       const isIdentified = is2P || isBlue || (typeof a.isIdentifiedBy === 'function' ? a.isIdentifiedBy(commanderTeam) : a.isIdentified);
@@ -58,13 +64,14 @@ class RadarContactsRenderer {
 
       const margin = 20;
       const cssHeight = cam.cssHeight || 500;
-      const clampedX = Math.max(margin, Math.min(cssWidth - margin, pos.x));
-      const clampedY = Math.max(margin, Math.min(cssHeight - margin, pos.y));
-      const isOffScreen = (pos.x !== clampedX || pos.y !== clampedY);
+      const clampedX = Math.max(margin, Math.min(cssWidth - margin, px));
+      const clampedY = Math.max(margin, Math.min(cssHeight - margin, py));
+      const isOffScreen = (px !== clampedX || py !== clampedY);
 
       if (isOffScreen) {
         if (typeof RadarContactsAuxRenderer !== 'undefined') {
-          RadarContactsAuxRenderer.drawOffscreenIndicator(ctx, pos, clampedX, clampedY, cssWidth, cssHeight, isIdentified, isAce, isBlue, safeModel, relDistKm);
+          const rawPos = { x: px, y: py };
+          RadarContactsAuxRenderer.drawOffscreenIndicator(ctx, rawPos, clampedX, clampedY, cssWidth, cssHeight, isIdentified, isAce, isBlue, safeModel, relDistKm);
         }
         continue;
       }
