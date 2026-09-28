@@ -199,6 +199,7 @@ class LeaderboardDossierRenderer {
           <b style="color:${col};white-space:nowrap;">+${(ev.points || 0).toLocaleString()} VP</b>
         </div>`;
     } else if (isHit) {
+      const dmg = (typeof ev.damage === 'number' && Number.isFinite(ev.damage)) ? Number(ev.damage.toFixed(1)) : (ev.damage || 2);
       return `
         <div class="timeline-entry hit">
           <div class="timeline-main-info">
@@ -207,7 +208,7 @@ class LeaderboardDossierRenderer {
             <span class="timeline-combatant"><b>${ev.source || 'PILOT'}</b> (${ev.sourceType || 'AIRCRAFT'})</span>
             <span>struck</span>
             <span class="timeline-combatant"><b>${ev.target || 'TARGET'}</b> (${ev.targetType || 'TARGET'})</span>
-            <span class="timeline-weapon-tag">with <b>${ev.weapon || 'Missile'}</b> (-${ev.damage || 2} HP)</span>
+            <span class="timeline-weapon-tag">with <b>${ev.weapon || 'Missile'}</b> (-${dmg} HP)</span>
             ${salvoBadge}
           </div>
           <b style="color:#64748b;white-space:nowrap;">STRIKE</b>

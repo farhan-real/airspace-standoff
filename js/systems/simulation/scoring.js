@@ -128,7 +128,8 @@ class SimulationScoring {
     const isSalvo = Boolean(details.isSalvo || (details.salvoCount > 1));
     const salvoCount = details.salvoCount || (isSalvo ? 2 : 1);
     const salvoBreakdown = details.salvoBreakdown || (isSalvo ? `x${salvoCount}` : '');
-    const dmg = details.damage || 2;
+    const rawDamage = details.damage !== undefined ? Number(details.damage) : 2;
+    const dmg = Number.isFinite(rawDamage) ? Number(rawDamage.toFixed(1)) : 2;
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(),

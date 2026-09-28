@@ -141,6 +141,7 @@ class AfterActionReportTimeline {
           `;
         } else if (isHit) {
           const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge" style="color:#38bdf8;font-size:0.56rem;margin-left:4px;">[Salvo: ${ev.salvoBreakdown || ('x' + ev.salvoCount)}]</span>` : '';
+          const dmg = (typeof ev.damage === 'number' && Number.isFinite(ev.damage)) ? Number(ev.damage.toFixed(1)) : (ev.damage || 2);
           return `
             <div class="timeline-entry hit">
               <div class="timeline-main-info">
@@ -149,7 +150,7 @@ class AfterActionReportTimeline {
                 <span class="timeline-combatant"><b>${ev.source}</b> (${ev.sourceType || 'AIRCRAFT'})</span>
                 <span>struck</span>
                 <span class="timeline-combatant"><b>${ev.target}</b> (${ev.targetType || 'TARGET'})</span>
-                <span class="timeline-weapon-tag">with <b>${ev.weapon || 'Missile'}</b> (-${ev.damage || 2} HP)</span>
+                <span class="timeline-weapon-tag">with <b>${ev.weapon || 'Missile'}</b> (-${dmg} HP)</span>
                 ${salvoBadge}
               </div>
               <b style="color:#64748b;white-space:nowrap;">STRIKE</b>
