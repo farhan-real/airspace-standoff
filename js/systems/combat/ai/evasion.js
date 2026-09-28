@@ -95,19 +95,44 @@ class AIEvasionHandler {
     if (!aces || aces.length === 0) return;
     const game = aiCommander.game;
 
+    const aceTiers = {
+      CADET:   { delay: 3.8, notchRate: 0.20, climbAlt: 28000, throttleMod: false },
+      VETERAN: { delay: 3.2, notchRate: 0.30, climbAlt: 32000, throttleMod: true },
+      ELITE:   { delay: 2.4, notchRate: 0.45, climbAlt: 36000, throttleMod: true },
+      ACE:     { delay: 1.8, notchRate: 0.55, climbAlt: 38000, throttleMod: true },
+      MASTER:  { delay: 1.4, notchRate: 0.65, climbAlt: 40000, throttleMod: true },
+      LEGEND:  { delay: 1.1, notchRate: 0.70, climbAlt: 42000, throttleMod: true }
+    };
+    const aceTier = aceTiers[diffKey] || aceTiers.VETERAN;
+
     for (const ace of aces) {
       if (ace.hp <= 0) continue;
       const isFocused = aiCommander.isUnitFocused(ace.id);
 
+      // Winchester check: Covered retreat toward surface SAM / CIWS umbrella
       const hasAmmo = ace.equippedWeapons && ace.equippedWeapons.some(p => p && p.ammo > 0 && p.weapon && !p.weapon.isJammerPod && !p.weapon.isDecoy && !p.weapon.isDecoyDrone);
       if (!hasAmmo && !ace.isRTB) {
         if (!ace.gunAmmo || ace.gunAmmo <= 0) {
           ace.orderRTB();
-          continue;
         }
       }
 
-      this.handleDefensiveBehavior(ace, profile, diffKey, dt, allMissiles, isFocused);
+      if (ace.isRTB) {
+        const coveredHeading = aiCommander.planning.getCoveredEgressHeading(ace);
+        let diff = coveredHeading - ace.heading;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        ace.heading += Math.max(-1.8 * dt, Math.min(1.8 * dt, diff));
+        continue;
+      }
+
+      // 3D Altitude Staging: Ace climbs to high-altitude perch
+      if (aceTier.climbAlt && Math.abs((ace.altFt || 28000) - aceTier.climbAlt) > 3500) {
+        ace.targetAltFt = aceTier.climbAlt;
+      }
+
+      const aceProfile = Object.assign({}, profile, { notchChance: aceTier.notchRate });
+      this.handleDefensiveBehavior(ace, aceProfile, diffKey, dt, allMissiles, isFocused);
       if (!isFocused) continue;
 
       if (typeof AIMissileTactics !== 'undefined') {
@@ -125,6 +150,14 @@ class AIEvasionHandler {
 
           const aceAgi = (typeof ace.getEffectiveAgility === 'function') ? ace.getEffectiveAgility() : (ace.spec ? ace.spec.AGI_0 : 1.15);
           ace.heading += Math.max(-aceAgi * 1.1 * dt, Math.min(aceAgi * 1.1 * dt, diff));
+
+          // Active Corner-Speed Throttle Control in Pursuit Turns
+          if (aceTier.throttleMod && Math.abs(diff) > 0.35) {
+            const sOpt = (typeof ace.getOptimalCornerSpeed === 'function') ? ace.getOptimalCornerSpeed() : 0.80;
+            if (ace.speed > sOpt * 1.12) ace.engineAlpha = 0.40;
+            else if (ace.speed < sOpt * 0.88) ace.engineAlpha = 0.85;
+            else ace.engineAlpha = 0.65;
+          }
 
           if (aiCommander.aceSalvoTimer <= 0 && game.tokenBucketRed >= 0.70 && !ace.isRTB) {
             let canFire = true;
@@ -144,7 +177,7 @@ class AIEvasionHandler {
                 }
               }
               ace.recalculateWeight();
-              aiCommander.aceSalvoTimer = ['MASTER', 'LEGEND'].includes(diffKey) ? 2.5 : 3.8;
+              aiCommander.aceSalvoTimer = aceTier.delay;
             }
           }
         }

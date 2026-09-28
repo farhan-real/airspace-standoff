@@ -7,7 +7,6 @@ class FleetOutfitter {
   static planAircraftLoadout(spec, isAce, doctrine, diff, rng) {
     const wCatalog = window.WEAPONS_CATALOG || {};
     const uCatalog = window.UPGRADES_CATALOG || {};
-    const gCatalog = window.AUTOCANNONS_CATALOG || {};
     const weapons = [];
     const upgrades = [];
     let totalCost = spec.cost || 20.0;
@@ -50,13 +49,41 @@ class FleetOutfitter {
       totalCost += (u.cost || 0);
     };
 
-    // Gun & Directed-Energy scaling on high difficulties
-    if (['MASTER', 'LEGEND'].includes(diff) && spec.allowedGuns) {
-      if (spec.allowedGuns.includes('EML_GUN') && rng() < 0.65) chosenGunId = 'EML_GUN';
-      else if (spec.allowedGuns.includes('DE-PULSE') && rng() < 0.75) chosenGunId = 'DE-PULSE';
+    // Gun scaling on flagships for Master and Legend
+    if ((isAce || ['MASTER', 'LEGEND'].includes(diff)) && spec.allowedGuns) {
+      if (spec.allowedGuns.includes('EML_GUN') && rng() < 0.70) chosenGunId = 'EML_GUN';
+      else if (spec.allowedGuns.includes('DE-PULSE') && rng() < 0.80) chosenGunId = 'DE-PULSE';
       else if (spec.allowedGuns.includes('PLSL_HEAVY') && rng() < 0.70) chosenGunId = 'PLSL_HEAVY';
       else if (spec.allowedGuns.includes('PLSL_MED') && rng() < 0.65) chosenGunId = 'PLSL_MED';
       else if (isHeavyTruck && spec.allowedGuns.includes('GPU-5A') && rng() < 0.50) chosenGunId = 'GPU-5A';
+    }
+
+    // Dedicated Ace Outfitting: Guaranteed Triple-Tier ULR + Adv LR + SR
+    if (isAce) {
+      const ulrChoice = class1Ulr[Math.floor(rng() * class1Ulr.length)] || (class2Lr[0] || 'METEOR');
+      const lrChoice = class2Lr[Math.floor(rng() * class2Lr.length)] || 'METEOR';
+      const srChoice = ['PYTHON-5', 'IRIS-T'].filter(id => isEligible(wCatalog[id]))[0] || (class4Sr[0] || 'AIM-9X-2');
+
+      if (spec.internalSlots > 0) {
+        addWpn(isEligible(wCatalog['AIM-260']) ? 'AIM-260' : ulrChoice, 'INTERNAL');
+        addWpn(lrChoice, 'INTERNAL');
+        addWpn(srChoice, 'INTERNAL');
+        if (spec.externalSlots >= 2) addWpn(ulrChoice, 'EXTERNAL');
+      } else {
+        addWpn(ulrChoice, 'EXTERNAL');
+        addWpn(lrChoice, 'EXTERNAL');
+        addWpn(srChoice, 'EXTERNAL');
+        if (spec.externalSlots >= 6) addWpn(lrChoice, 'EXTERNAL');
+        if (spec.externalSlots >= 8) addWpn(srChoice, 'EXTERNAL');
+      }
+
+      const aceSockets = ['MASTER', 'LEGEND'].includes(diff) ? Math.min(spec.upgradeSockets || 4, 4) : 3;
+      const aceUpgPool = ['GAN_AESA_CORE', 'THRUST_VECTOR', 'SUPERCRUISE_VCE', 'RAM_NANO_COATING', 'ADAPTIVE_ECCM_SUITE', 'COFFIN_OPTICAL_BUS'];
+      for (const uId of aceUpgPool) {
+        if (upgrades.length >= aceSockets) break;
+        addUpg(uId);
+      }
+      return { weapons, upgrades, totalCost, chosenGunId };
     }
 
     // Contextual Aerodynamic Policies: Weight Discipline & Clean Stealth Bays
@@ -72,12 +99,12 @@ class FleetOutfitter {
       enforceCleanStealth = (rng() < (cleanChances[diff] || 0.0));
     }
 
-    // Role Assignment
+    // Standard Non-Ace Role Assignment
     let role = 'SWEEP';
     if (isEW) role = 'SEAD';
     else if (isStrike) role = 'STRIKE';
     else if (enforceCleanStealth && class1Ulr.includes('AIM-260')) role = 'AMBUSH';
-    else if ((isAce || ['MASTER', 'LEGEND'].includes(diff)) && class1Ulr.length > 0 && rng() < 0.45) role = 'SNIPER';
+    else if (['MASTER', 'LEGEND'].includes(diff) && class1Ulr.length > 0 && rng() < 0.45) role = 'SNIPER';
     else if (doctrine === 'STANDOFF' && class1Ulr.length > 0) role = 'SNIPER';
 
     const ulrWeights = { CADET: 0.0, VETERAN: 0.05, ELITE: 0.15, ACE: 0.35, MASTER: 0.50, LEGEND: 0.65 };
@@ -142,8 +169,7 @@ class FleetOutfitter {
       addWpn(rollWvr(), 'INTERNAL');
       if (spec.internalSlots >= 4) addWpn(rollBvr(false), 'INTERNAL');
     } else {
-      // SWEEP Role (Balanced BVR + WVR, optionally Mixed-Seeker)
-      const primaryBvr = rollBvr(isAce || ['MASTER', 'LEGEND'].includes(diff));
+      const primaryBvr = rollBvr(['MASTER', 'LEGEND'].includes(diff));
       const primaryWvr = rollWvr();
 
       if (spec.internalSlots > 0) {
@@ -165,7 +191,7 @@ class FleetOutfitter {
       }
     }
 
-    // Upgrade Sockets Allocation
+    // Standard Upgrade Sockets Allocation
     const maxSockets = spec.upgradeSockets || 3;
     let targetSockets = 1;
     if (diff === 'CADET') targetSockets = rng() < 0.40 ? 0 : 1;

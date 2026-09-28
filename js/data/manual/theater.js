@@ -89,7 +89,7 @@ window.MANUAL_THEATER = [
             <tr><td><b>Mixed Missiles (Radar + Heat)</b></td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#38bdf8;">10% Mixed pair</td><td style="color:#fbbf24;">25% Mixed pair</td><td style="color:#fbbf24;">35% Mixed pair</td></tr>
             <tr><td><b>Speed &amp; Turn Control</b></td><td style="color:#94a3b8;">Burns afterburner; turns flat</td><td style="color:#38bdf8;">Normal cruising speed</td><td style="color:#38bdf8;">Uses best turn speed</td><td style="color:#fbbf24;">Good turn speed (slips under stress)</td><td style="color:#fbbf24;">Smooth throttle control in turns</td><td style="color:#fbbf24;">Expert speed and energy management</td></tr>
             <tr><td><b>3D Altitude Fighting</b></td><td style="color:#94a3b8;">Rarely changes altitude</td><td style="color:#94a3b8;">Occasional climbs</td><td style="color:#38bdf8;">Climbs when needed</td><td style="color:#fbbf24;">Climbs to high perch</td><td style="color:#fbbf24;">High and low spread</td><td style="color:#f43f5e;">Aggressive climbs and dives</td></tr>
-            <tr><td><b>Formation Teamwork</b></td><td style="color:#94a3b8;">Scattered and solo</td><td style="color:#38bdf8;">Loose trail follow</td><td style="color:#fbbf24;">2-Plane pairs</td><td style="color:#fbbf24;">Pairs protecting each other</td><td style="color:#fbbf24;">High and low spread</td><td style="color:#fbbf24;">Two-sided attack</td></tr>
+            <tr><td><b>Formation Teamwork</b></td><td style="color:#94a3b8;">Scattered and solo</td><td style="color:#38bdf8;">Loose trail follow</td><td style="color:#fbbf24;">2-Plane pairs</td><td style="color:#fbbf24;">Pairs protecting each other</td><td style="color:#fbbf24;">High-low bracket</td><td style="color:#fbbf24;">Two-sided attack</td></tr>
             <tr><td><b>Attack Approach Route</b></td><td style="color:#94a3b8;">Straight charge down center</td><td style="color:#94a3b8;">Straight flight path</td><td style="color:#fbbf24;">High altitude sweep</td><td style="color:#38bdf8;">Holds on outer edge</td><td style="color:#fbbf24;">Flank attack from side</td><td style="color:#fbbf24;">Attacks from multiple angles</td></tr>
             <tr><td><b>Target Priority &amp; Role</b></td><td style="color:#94a3b8;">Attacks anything nearby</td><td style="color:#38bdf8;">Fighters fight, bombers strike</td><td style="color:#fbbf24;">Prioritizes dangerous targets</td><td style="color:#fbbf24;">Protects bombers and strikes</td><td style="color:#fbbf24;">Blinds radar before bombing</td><td style="color:#f43f5e;">Timed radar kills then strikes</td></tr>
             <tr><td><b>Missile Ammo Saving</b></td><td style="color:#94a3b8;">Fires all missiles immediately</td><td style="color:#94a3b8;">Fires long-range missiles quickly</td><td style="color:#38bdf8;">Keeps 1 dogfight missile safe</td><td style="color:#fbbf24;">Saves missiles for good shots</td><td style="color:#fbbf24;">Only uses best missiles on key targets</td><td style="color:#fbbf24;">Saves reserve ammo, retreats if empty</td></tr>
@@ -153,8 +153,8 @@ window.MANUAL_THEATER = [
             </tr>
           </thead>
           <tbody>
-            <tr><td><b>Primary Assigned Roles</b></td><td style="color:#94a3b8;">100% Generic Sweep</td><td style="color:#38bdf8;">Sweep + Basic Strike</td><td style="color:#38bdf8;">Sweep, Strike, SEAD</td><td style="color:#fbbf24;">Snipers + Agile Flankers</td><td style="color:#fbbf24;">Integrated Combat Team</td><td style="color:#f43f5e;">Full Apex Package</td></tr>
-            <tr><td><b>Ultra-Long Chance (110 - 135 km)</b></td><td style="color:#94a3b8;">0% (No ULR snipes)</td><td style="color:#94a3b8;">5% (Rare roll)</td><td style="color:#38bdf8;">15% (Lead only)</td><td style="color:#f43f5e;">35% (Sniper elements)</td><td style="color:#f43f5e;">50% (High priority)</td><td style="color:#f43f5e;">65% (Apex standoff)</td></tr>
+            <tr><td><b>Primary Assigned Roles</b></td><td style="color:#94a3b8;">100% Generic Sweep</td><td style="color:#38bdf8;">Sweep + Basic Strike</td><td style="color:#38bdf8;">Sweep, Strike, SEAD</td><td style="color:#fbbf24;">Snipers + Agile Flankers</td><td style="color:#fbbf24;">Integrated Combat Team</td><td style="color:#f43f5e;">Full Top-Tier Package</td></tr>
+            <tr><td><b>Ultra-Long Chance (110 - 135 km)</b></td><td style="color:#94a3b8;">0% (No ULR snipes)</td><td style="color:#94a3b8;">5% (Rare roll)</td><td style="color:#38bdf8;">15% (Lead only)</td><td style="color:#f43f5e;">35% (Sniper elements)</td><td style="color:#f43f5e;">50% (High priority)</td><td style="color:#f43f5e;">65% (Extreme standoff)</td></tr>
             <tr><td><b>Ramjet BVR Chance (78 - 95 km)</b></td><td style="color:#94a3b8;">15%</td><td style="color:#38bdf8;">30% (Standard)</td><td style="color:#fbbf24;">50% (Meteor/PL-15E)</td><td style="color:#fbbf24;">45%</td><td style="color:#38bdf8;">40%</td><td style="color:#fbbf24;">30%</td></tr>
             <tr><td><b>Medium BVR Chance (60 - 75 km)</b></td><td style="color:#94a3b8;">85% (Main AMRAAM)</td><td style="color:#38bdf8;">65%</td><td style="color:#38bdf8;">35%</td><td style="color:#38bdf8;">20%</td><td style="color:#38bdf8;">10%</td><td style="color:#94a3b8;">5%</td></tr>
             <tr><td><b>Dogfight WVR Seeker Selection</b></td><td style="color:#94a3b8;">100% Basic HOBS</td><td style="color:#38bdf8;">85% Standard / 15% Rear</td><td style="color:#38bdf8;">60% Standard / 40% Rear</td><td style="color:#fbbf24;">40% Python-5 / IRIS-T</td><td style="color:#fbbf24;">75% Python-5 / IRIS-T</td><td style="color:#fbbf24;">85% Rear-Shot &amp; Filter</td></tr>
@@ -165,6 +165,39 @@ window.MANUAL_THEATER = [
             <tr><td><b>Guns &amp; Directed-Energy</b></td><td style="color:#94a3b8;">Standard cannon</td><td style="color:#38bdf8;">Standard cannon</td><td style="color:#38bdf8;">Standard cannon</td><td style="color:#38bdf8;">Tuned burst discipline</td><td style="color:#f43f5e;">Laser / Pod upgrades</td><td style="color:#f43f5e;">DE-PULSE / Railgun / Lasers</td></tr>
             <tr><td><b>Upgrade Sockets Filled</b></td><td style="color:#94a3b8;">0 - 1 Socket</td><td style="color:#38bdf8;">1 - 2 Sockets</td><td style="color:#fbbf24;">2 - 3 Sockets</td><td style="color:#fbbf24;">3 Sockets</td><td style="color:#fbbf24;">3 - 4 Sockets</td><td style="color:#f43f5e;">4 Full Sockets</td></tr>
             <tr><td><b>Budget Procurement Rule</b></td><td style="color:#94a3b8;">1-by-1 plan, stop &gt;150M</td><td style="color:#38bdf8;">1-by-1 plan, stop &gt;260M</td><td style="color:#38bdf8;">1-by-1 plan, stop &gt;360M</td><td style="color:#fbbf24;">1-by-1 plan, stop &gt;460M</td><td style="color:#fbbf24;">1-by-1 plan, stop &gt;560M</td><td style="color:#f43f5e;">1-by-1 plan, stop &gt;660M</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ge-subhead">ADVERSARY FLIGHT LEAD (ACE) SPECIFICATIONS</div>
+      <div class="ge-desc">
+        Designated Aces operate as elite formation leaders. Regardless of difficulty tier, Aces are guaranteed a triple-tier armament package (ULR + Adv LR + SR) and significantly outperform their wingmen:
+      </div>
+
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr>
+              <th>ACE CAPABILITY &amp; TACTIC</th>
+              <th style="color:#38bdf8;">CONTESTED (VETERAN)</th>
+              <th style="color:#00f0ff;">HOSTILE (ELITE)</th>
+              <th style="color:#ffd700;">HIGH-THREAT (ACE)</th>
+              <th style="color:#c084fc;">AIR DENIAL (MASTER)</th>
+              <th style="color:#ff3366;">EXTREME THREAT (LEGEND)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Ace Count in Squadron</b></td><td style="color:#38bdf8;">1 Ace Flight Lead</td><td style="color:#38bdf8;">1 Ace Flight Lead</td><td style="color:#fbbf24;">2 Coordinated Aces</td><td style="color:#fbbf24;">2 Coordinated Aces</td><td style="color:#f43f5e;">3 Top Aces</td></tr>
+            <tr><td><b>Typical Airframe Class</b></td><td style="color:#38bdf8;">4.5-Gen (Su-35, Typhoon)</td><td style="color:#38bdf8;">5th-Gen Stealth (Su-57, F-22)</td><td style="color:#fbbf24;">Top Stealth / Prototype</td><td style="color:#fbbf24;">Experimental Flagship</td><td style="color:#f43f5e;">Superfighter (ADF-11F, CFA-44)</td></tr>
+            <tr><td><b>Upgrade Sockets Filled</b></td><td style="color:#38bdf8;">3 Sockets Minimum</td><td style="color:#38bdf8;">3 Sockets Minimum</td><td style="color:#38bdf8;">3 Sockets Minimum</td><td style="color:#fbbf24;">4 Sockets Minimum</td><td style="color:#f43f5e;">4 Full Sockets</td></tr>
+            <tr><td><b>Cannon System</b></td><td style="color:#38bdf8;">Standard Ballistic</td><td style="color:#38bdf8;">Standard Ballistic</td><td style="color:#38bdf8;">Tuned Ballistic</td><td style="color:#f43f5e;">DE-PULSE / EML Railgun</td><td style="color:#f43f5e;">DE-PULSE / EML Railgun</td></tr>
+            <tr><td><b>Reaction Delay</b></td><td style="color:#38bdf8;">3.2s (Fast)</td><td style="color:#38bdf8;">2.4s (Sharp)</td><td style="color:#fbbf24;">1.8s (Quick snap)</td><td style="color:#fbbf24;">1.4s (Instant)</td><td style="color:#f43f5e;">1.1s (Fastest snap)</td></tr>
+            <tr><td><b>Radar Notch Defense (Beam 90&deg;)</b></td><td style="color:#38bdf8;">30% (Turns beam)</td><td style="color:#38bdf8;">45% (Turns beam)</td><td style="color:#fbbf24;">55% (Disciplined)</td><td style="color:#fbbf24;">65% (40% in close merge)</td><td style="color:#f43f5e;">70% (45% in close merge)</td></tr>
+            <tr><td><b>Decoy Drone Rejection Rate</b></td><td style="color:#38bdf8;">40% Filter rate</td><td style="color:#38bdf8;">55% Filter rate</td><td style="color:#fbbf24;">65% Filter rate</td><td style="color:#fbbf24;">75% Filter rate</td><td style="color:#f43f5e;">80% Filter rate</td></tr>
+            <tr><td><b>Dual-Missile Synergy Chance</b></td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#38bdf8;">15% Radar + Heat</td><td style="color:#fbbf24;">25% Radar + Heat</td><td style="color:#fbbf24;">40% Radar + Heat</td><td style="color:#f43f5e;">50% Radar + Heat</td></tr>
+            <tr><td><b>Altitude Staging</b></td><td style="color:#38bdf8;">Climbs to FL320</td><td style="color:#38bdf8;">Climbs to FL360</td><td style="color:#fbbf24;">FL380 High perch</td><td style="color:#fbbf24;">FL400+ Supercruise</td><td style="color:#f43f5e;">High-low 3D split</td></tr>
+            <tr><td><b>Corner Speed Control (sOpt)</b></td><td style="color:#38bdf8;">Active throttle control</td><td style="color:#38bdf8;">Active throttle control</td><td style="color:#fbbf24;">Strict turn throttle cut</td><td style="color:#fbbf24;">Strict energy traps</td><td style="color:#f43f5e;">Expert 3D energy mastery</td></tr>
+            <tr><td><b>Retreat Route (Winchester)</b></td><td style="color:#38bdf8;">Direct to home base</td><td style="color:#38bdf8;">Direct to home base</td><td style="color:#fbbf24;">Covered retreat to SAMs</td><td style="color:#fbbf24;">Covered retreat to SAMs</td><td style="color:#fbbf24;">Covered retreat to SAMs</td></tr>
           </tbody>
         </table>
       </div>
