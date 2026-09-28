@@ -69,7 +69,7 @@ const FleetGenerator = {
     if (typeof FleetLoadoutPlanner !== 'undefined') {
       return FleetLoadoutPlanner.planAircraftLoadout(spec, isAce, doctrine, diff, rng);
     }
-    return { weapons: [], upgrades: [], totalCost: spec.cost || 20.0 };
+    return { weapons: [], upgrades: [], totalCost: spec.cost || 20.0, chosenGunId: spec.builtInGun || 'M61A2' };
   },
 
   generateHostileFleet(difficultyKey, doctrineKey, theaterWidth, theaterHeight, options = {}) {
@@ -85,15 +85,7 @@ const FleetGenerator = {
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
 
-    const targetAircraftCounts = {
-      CADET: 3,
-      VETERAN: 4,
-      ELITE: 5,
-      ACE: 6,
-      MASTER: 7,
-      LEGEND: 8
-    };
-
+    const targetAircraftCounts = { CADET: 3, VETERAN: 4, ELITE: 5, ACE: 6, MASTER: 7, LEGEND: 8 };
     const configuredCount = Number.isFinite(Number(options.aircraftCount)) ? Number(options.aircraftCount) : null;
     const targetBudget = configuredCount !== null ? Number.POSITIVE_INFINITY : (diffProfile.budgetCap || 260.0);
     const basePlanes = targetAircraftCounts[diff] || 5;
@@ -124,6 +116,7 @@ const FleetGenerator = {
           fleetItems.push({
             specId, isAce: true, isLead: (a === 0),
             callsign: aceCallsigns[a % aceCallsigns.length] || `Ace ${a + 1}`,
+            chosenGunId: planned.chosenGunId,
             plannedWeapons: planned.weapons,
             plannedUpgrades: planned.upgrades
           });
@@ -134,9 +127,7 @@ const FleetGenerator = {
 
     const ewChances = { CADET: 0.10, VETERAN: 0.35, ELITE: 0.60, ACE: 0.85, MASTER: 1.0, LEGEND: 1.0 };
     const ewChance = ewChances[diff] !== undefined ? ewChances[diff] : 0.40;
-    const ewPool = (diff === 'CADET' || diff === 'VETERAN')
-      ? ['Tornado-ECR', 'EF-111A']
-      : ['EA-18G', 'J-16D', 'EF-111A'];
+    const ewPool = (diff === 'CADET' || diff === 'VETERAN') ? ['Tornado-ECR', 'EF-111A'] : ['EA-18G', 'J-16D', 'EF-111A'];
 
     if (rng() < ewChance && fleetItems.length < maxPlanes) {
       const specId = ewPool[Math.floor(rng() * ewPool.length)];
@@ -147,6 +138,7 @@ const FleetGenerator = {
           fleetItems.push({
             specId, isAce: false, isLead: false,
             callsign: `Raven ${fleetItems.length + 1}`,
+            chosenGunId: planned.chosenGunId,
             plannedWeapons: planned.weapons,
             plannedUpgrades: planned.upgrades
           });
@@ -166,17 +158,11 @@ const FleetGenerator = {
       const roll = rng();
       let candidatePool;
 
-      if (diff === 'CADET') {
-        candidatePool = (roll < 0.75) ? lowTierPool : midTierPool;
-      } else if (diff === 'VETERAN') {
-        candidatePool = (roll < 0.60) ? midTierPool : (roll < 0.85 ? highTierPool : lowTierPool);
-      } else if (diff === 'ELITE') {
-        candidatePool = (roll < 0.65) ? highTierPool : (roll < 0.90 ? apexPool : midTierPool);
-      } else if (diff === 'ACE') {
-        candidatePool = (roll < 0.55) ? apexPool : highTierPool;
-      } else {
-        candidatePool = (roll < 0.70) ? apexPool : highTierPool;
-      }
+      if (diff === 'CADET') candidatePool = (roll < 0.75) ? lowTierPool : midTierPool;
+      else if (diff === 'VETERAN') candidatePool = (roll < 0.60) ? midTierPool : (roll < 0.85 ? highTierPool : lowTierPool);
+      else if (diff === 'ELITE') candidatePool = (roll < 0.65) ? highTierPool : (roll < 0.90 ? apexPool : midTierPool);
+      else if (diff === 'ACE') candidatePool = (roll < 0.55) ? apexPool : highTierPool;
+      else candidatePool = (roll < 0.70) ? apexPool : highTierPool;
 
       const chosenId = candidatePool[Math.floor(rng() * candidatePool.length)];
       const spec = catalog[chosenId];
@@ -184,12 +170,14 @@ const FleetGenerator = {
 
       const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng);
 
+      // Sequential 1-by-1 planning & rejection rule: reject on budget exceed and finalize
       if (spentBudget + planned.totalCost <= targetBudget) {
         const hasLead = fleetItems.some(it => it.isLead);
         const isLead = !hasLead;
         fleetItems.push({
           specId: chosenId, isAce: false, isLead: isLead,
           callsign: isLead ? 'Saber Lead' : (callsigns.pop() || `Bandit ${fleetItems.length + 1}`),
+          chosenGunId: planned.chosenGunId,
           plannedWeapons: planned.weapons,
           plannedUpgrades: planned.upgrades
         });
@@ -211,7 +199,7 @@ const FleetGenerator = {
       const heading = Math.PI + (rng() * 0.16 - 0.08);
       const altFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(rng() * 16) * 1000);
       const unit = new Aircraft(
-        item.specId, 'hostile', plan.x, plan.y, heading, null,
+        item.specId, 'hostile', plan.x, plan.y, heading, item.chosenGunId || null,
         item.callsign, item.isAce ? 'Elite Ace Cadre' : 'Hostile Intercept Wing',
         plan.isLead, plan.isAce, altFt
       );

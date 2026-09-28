@@ -8,56 +8,6 @@ window.MANUAL_THEATER = [
     id: 'ch8_aces_difficulties',
     title: 'SECTION 08: ADVERSARY TACTICAL DOCTRINE, THREAT TIERS & PLANNING',
     desc: `
-      <div class="ge-subhead">THE 6 COMBAT DIFFICULTY TIERS</div>
-      <div class="ge-desc">
-        Adversary forces scale across pilot discipline, tactical decision-making, and package coordination rather than mathematical cheating. Below is the operational comparison matrix across all theater engagement tiers:
-      </div>
-
-      <div class="table-scroll-wrapper">
-        <table class="ge-table">
-          <thead>
-            <tr>
-              <th>TACTICAL ELEMENT</th>
-              <th style="color:#8494ab;">PERMISSIVE SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">(CADET)</span></th>
-              <th style="color:#38bdf8;">CONTESTED AIRSPACE<br><span style="font-size:0.52rem;opacity:0.7;">(VETERAN)</span></th>
-              <th style="color:#00f0ff;">HOSTILE AIRSPACE<br><span style="font-size:0.52rem;opacity:0.7;">(ELITE)</span></th>
-              <th style="color:#ffd700;">HIGH-THREAT SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">(ACE)</span></th>
-              <th style="color:#c084fc;">AIR DENIAL ZONE<br><span style="font-size:0.52rem;opacity:0.7;">(MASTER)</span></th>
-              <th style="color:#ff3366;">EXTREME THREAT<br><span style="font-size:0.52rem;opacity:0.7;">(LEGEND)</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td><b>Score Multiplier</b></td><td style="color:#94a3b8;font-weight:700;">0.50x</td><td style="color:#38bdf8;font-weight:700;">1.00x</td><td style="color:#38bdf8;font-weight:700;">1.50x</td><td style="color:#f43f5e;font-weight:700;">2.00x</td><td style="color:#f43f5e;font-weight:700;">2.60x</td><td style="color:#f43f5e;font-weight:700;">3.20x</td></tr>
-            <tr><td><b>Squadron Size</b></td><td style="color:#38bdf8;">3 - 4 Aircraft</td><td style="color:#38bdf8;">4 - 5 Aircraft</td><td style="color:#38bdf8;">5 - 6 Aircraft</td><td style="color:#fbbf24;">6 - 7 Aircraft</td><td style="color:#fbbf24;">7 Aircraft</td><td style="color:#f43f5e;">8 Aircraft</td></tr>
-            <tr><td><b>Defense Budget Cap</b></td><td style="color:#94a3b8;">150.0M CR</td><td style="color:#38bdf8;">260.0M CR</td><td style="color:#fbbf24;">360.0M CR</td><td style="color:#fbbf24;">460.0M CR</td><td style="color:#fbbf24;">560.0M CR</td><td style="color:#f43f5e;">660.0M CR</td></tr>
-            <tr><td><b>Reaction Delay</b></td><td style="color:#94a3b8;">6.5s - 7.5s (Sluggish)</td><td style="color:#38bdf8;">4.5s - 5.5s (Human)</td><td style="color:#fbbf24;">3.4s - 4.0s (Trained)</td><td style="color:#fbbf24;">2.6s - 3.0s (Sharp)</td><td style="color:#fbbf24;">2.0s - 2.4s (Fast)</td><td style="color:#f43f5e;">1.6s - 1.9s (Instant)</td></tr>
-            <tr><td><b>Target Focus Slots</b></td><td style="color:#38bdf8;">1 Target at a time</td><td style="color:#38bdf8;">1 Target at a time</td><td style="color:#fbbf24;">2 Targets tracked</td><td style="color:#fbbf24;">2 Targets tracked</td><td style="color:#fbbf24;">2 - 3 Targets tracked</td><td style="color:#f43f5e;">3 Targets tracked</td></tr>
-            <tr><td><b>Decoy Drone Defense</b></td><td style="color:#94a3b8;">0% (Chases all decoys)</td><td style="color:#94a3b8;">15% spot rate</td><td style="color:#38bdf8;">30% spot rate</td><td style="color:#38bdf8;">45% spot rate</td><td style="color:#38bdf8;">55% spot rate</td><td style="color:#fbbf24;">65% spot rate</td></tr>
-            <tr><td><b>Radar Notch (Beam 90&deg;)</b></td><td style="color:#94a3b8;">0% (Never turns beam)</td><td style="color:#94a3b8;">5% (Rare turn)</td><td style="color:#38bdf8;">15% (Basic turn)</td><td style="color:#38bdf8;">25% (Turns beam)</td><td style="color:#38bdf8;">40% (Turns beam)</td><td style="color:#fbbf24;">55% (Disciplined turn)</td></tr>
-            <tr><td><b>Firing Distance</b></td><td style="color:#94a3b8;">Fires at max distance (Easy to dodge)</td><td style="color:#fbbf24;">55% - 85% Max distance</td><td style="color:#fbbf24;">Best hit range (40% - 75%)</td><td style="color:#f43f5e;">Deadly hit range (35% - 70%)</td><td style="color:#f43f5e;">Top missile speed and accuracy</td><td style="color:#f43f5e;">Lethal high-speed missile traps</td></tr>
-            <tr><td><b>Missiles per Attack</b></td><td style="color:#38bdf8;">1 Missile only</td><td style="color:#38bdf8;">1 Missile only</td><td style="color:#38bdf8;">1 - 2 Missiles</td><td style="color:#fbbf24;">2-Missile volley</td><td style="color:#fbbf24;">2-Missile volley</td><td style="color:#f43f5e;">2 - 3 Missile volley</td></tr>
-            <tr><td><b>Mixed Missiles (Radar + Heat)</b></td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#38bdf8;">10% Mixed pair</td><td style="color:#fbbf24;">25% Mixed pair</td><td style="color:#fbbf24;">35% Mixed pair</td></tr>
-            <tr><td><b>Speed &amp; Turn Control</b></td><td style="color:#94a3b8;">Burns afterburner; turns flat</td><td style="color:#38bdf8;">Normal cruising speed</td><td style="color:#38bdf8;">Uses best turn speed</td><td style="color:#fbbf24;">Good turn speed (slips under stress)</td><td style="color:#fbbf24;">Smooth throttle control in turns</td><td style="color:#fbbf24;">Expert speed and energy management</td></tr>
-            <tr><td><b>3D Altitude Fighting</b></td><td style="color:#94a3b8;">Rarely changes altitude</td><td style="color:#94a3b8;">Occasional climbs</td><td style="color:#38bdf8;">Climbs when needed</td><td style="color:#fbbf24;">Climbs to high perch</td><td style="color:#fbbf24;">High and low spread</td><td style="color:#f43f5e;">Aggressive climbs and dives</td></tr>
-            <tr><td><b>Formation Teamwork</b></td><td style="color:#94a3b8;">Scattered and solo</td><td style="color:#38bdf8;">Loose trail follow</td><td style="color:#fbbf24;">2-Plane pairs</td><td style="color:#fbbf24;">Pairs protecting each other</td><td style="color:#fbbf24;">High and low spread</td><td style="color:#fbbf24;">Two-sided attack</td></tr>
-            <tr><td><b>Attack Approach Route</b></td><td style="color:#94a3b8;">Straight charge down center</td><td style="color:#94a3b8;">Straight flight path</td><td style="color:#fbbf24;">High altitude sweep</td><td style="color:#38bdf8;">Holds on outer edge</td><td style="color:#fbbf24;">Flank attack from side</td><td style="color:#fbbf24;">Attacks from multiple angles</td></tr>
-            <tr><td><b>Target Priority &amp; Role</b></td><td style="color:#94a3b8;">Attacks anything nearby</td><td style="color:#38bdf8;">Fighters fight, bombers strike</td><td style="color:#fbbf24;">Prioritizes dangerous targets</td><td style="color:#fbbf24;">Protects bombers and strikes</td><td style="color:#fbbf24;">Blinds radar before bombing</td><td style="color:#f43f5e;">Timed radar kills then strikes</td></tr>
-            <tr><td><b>Missile Ammo Saving</b></td><td style="color:#94a3b8;">Fires all missiles immediately</td><td style="color:#94a3b8;">Fires long-range missiles quickly</td><td style="color:#38bdf8;">Keeps 1 dogfight missile safe</td><td style="color:#fbbf24;">Saves missiles for good shots</td><td style="color:#fbbf24;">Only uses best missiles on key targets</td><td style="color:#fbbf24;">Saves reserve ammo, retreats if empty</td></tr>
-            <tr><td><b>Reaction if Flight Lead Dies</b></td><td style="color:#94a3b8;">Complete panic and scatter</td><td style="color:#94a3b8;">Confused and stalls (5.0s)</td><td style="color:#38bdf8;">Hesitates (4.0s)</td><td style="color:#38bdf8;">Wingman takes charge (3.5s)</td><td style="color:#38bdf8;">Falls back to defense patrol (2.5s)</td><td style="color:#f43f5e;">Switches to defense instantly (1.8s)</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="ge-subhead">FORCE COMPOSITION &amp; BUDGET ALLOCATION</div>
-      <div class="ge-desc">
-        To prevent screen clutter and unplayable missile swarms in advanced sectors, difficulty scales by aircraft sophistication rather than raw numbers:
-        <ul style="list-style:none;padding-left:0;margin-top:6px;">
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Permissive Sector &amp; Contested Airspace (3 - 5 Aircraft):</b> Field budget-friendly 4th-generation fighters (F-16V, Mirage 2000, MiG-29K, Tejas) with standard missile loads and few system upgrades.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Hostile Airspace &amp; High-Threat Sector (5 - 7 Aircraft):</b> Field 4.5-gen and 5th-gen fighters (Su-35S, Eurofighter, Rafale, F-15EX, Su-57, J-20) equipped with long-range radar missiles, advanced sensors, and designated flight leads.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Air Denial Zone &amp; Extreme Threat Sector (7 - 8 Aircraft):</b> Rather than deploying 12+ weak planes, the enemy spends their large 560M - 660M budget by equipping 7 to 8 top-tier stealth superfighters (ADF-11F, CFA-44, X-02S, Su-57, F-22A, Darkstar) with maximum missile racks and full system upgrades.</li>
-        </ul>
-      </div>
-
       <div class="ge-subhead">THE 6 BEHAVIORAL DIMENSIONS</div>
       <div class="ge-grid-2">
         <div class="ge-card">
@@ -106,6 +56,117 @@ window.MANUAL_THEATER = [
           <li style="margin-bottom:5px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Use Decoy Drones (MALD):</b> Even the best enemy aces have a 35% mistake rate against decoys. Launch decoys ahead of your squad to soak up their first missile volley.</li>
           <li style="margin-bottom:5px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Drain Their Speed (Energy Trap):</b> Enemy pilots try to keep optimal turn speed, but if you make them dodge multiple missiles in a row, they will bleed off all their speed and become easy targets.</li>
         </ul>
+      </div>
+
+      <div class="ge-subhead">THE 6 COMBAT DIFFICULTY TIERS</div>
+      <div class="ge-desc">
+        Adversary forces scale across pilot discipline, tactical decision-making, and package coordination rather than mathematical cheating. Below is the operational comparison across all theater engagement tiers:
+      </div>
+
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr>
+              <th>TACTICAL ELEMENT</th>
+              <th style="color:#8494ab;">PERMISSIVE SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">(CADET)</span></th>
+              <th style="color:#38bdf8;">CONTESTED AIRSPACE<br><span style="font-size:0.52rem;opacity:0.7;">(VETERAN)</span></th>
+              <th style="color:#00f0ff;">HOSTILE AIRSPACE<br><span style="font-size:0.52rem;opacity:0.7;">(ELITE)</span></th>
+              <th style="color:#ffd700;">HIGH-THREAT SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">(ACE)</span></th>
+              <th style="color:#c084fc;">AIR DENIAL ZONE<br><span style="font-size:0.52rem;opacity:0.7;">(MASTER)</span></th>
+              <th style="color:#ff3366;">EXTREME THREAT<br><span style="font-size:0.52rem;opacity:0.7;">(LEGEND)</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Score Multiplier</b></td><td style="color:#94a3b8;font-weight:700;">0.50x</td><td style="color:#38bdf8;font-weight:700;">1.00x</td><td style="color:#38bdf8;font-weight:700;">1.50x</td><td style="color:#f43f5e;font-weight:700;">2.00x</td><td style="color:#f43f5e;font-weight:700;">2.60x</td><td style="color:#f43f5e;font-weight:700;">3.20x</td></tr>
+            <tr><td><b>Squadron Size</b></td><td style="color:#38bdf8;">3 - 4 Aircraft</td><td style="color:#38bdf8;">4 - 5 Aircraft</td><td style="color:#38bdf8;">5 - 6 Aircraft</td><td style="color:#fbbf24;">6 - 7 Aircraft</td><td style="color:#fbbf24;">7 Aircraft</td><td style="color:#f43f5e;">8 Aircraft</td></tr>
+            <tr><td><b>Defense Budget Cap</b></td><td style="color:#94a3b8;">150.0M CR</td><td style="color:#38bdf8;">260.0M CR</td><td style="color:#fbbf24;">360.0M CR</td><td style="color:#fbbf24;">460.0M CR</td><td style="color:#fbbf24;">560.0M CR</td><td style="color:#f43f5e;">660.0M CR</td></tr>
+            <tr><td><b>Reaction Delay</b></td><td style="color:#94a3b8;">6.5s - 7.5s (Sluggish)</td><td style="color:#38bdf8;">4.5s - 5.5s (Human)</td><td style="color:#fbbf24;">3.4s - 4.0s (Trained)</td><td style="color:#fbbf24;">2.6s - 3.0s (Sharp)</td><td style="color:#fbbf24;">2.0s - 2.4s (Fast)</td><td style="color:#f43f5e;">1.6s - 1.9s (Instant)</td></tr>
+            <tr><td><b>Target Focus Slots</b></td><td style="color:#38bdf8;">1 Target at a time</td><td style="color:#38bdf8;">1 Target at a time</td><td style="color:#fbbf24;">2 Targets tracked</td><td style="color:#fbbf24;">2 Targets tracked</td><td style="color:#fbbf24;">2 - 3 Targets tracked</td><td style="color:#f43f5e;">3 Targets tracked</td></tr>
+            <tr><td><b>Decoy Drone Defense</b></td><td style="color:#94a3b8;">0% (Chases all decoys)</td><td style="color:#94a3b8;">15% spot rate</td><td style="color:#38bdf8;">30% spot rate</td><td style="color:#38bdf8;">45% spot rate</td><td style="color:#38bdf8;">55% spot rate</td><td style="color:#fbbf24;">65% spot rate</td></tr>
+            <tr><td><b>Radar Notch (Beam 90&deg;)</b></td><td style="color:#94a3b8;">0% (Never turns beam)</td><td style="color:#94a3b8;">5% (Rare turn)</td><td style="color:#38bdf8;">15% (Basic turn)</td><td style="color:#38bdf8;">25% (Turns beam)</td><td style="color:#38bdf8;">40% (Turns beam)</td><td style="color:#fbbf24;">55% (Disciplined turn)</td></tr>
+            <tr><td><b>Firing Distance</b></td><td style="color:#94a3b8;">Fires at max distance (Easy to dodge)</td><td style="color:#fbbf24;">55% - 85% Max distance</td><td style="color:#fbbf24;">Best hit range (40% - 75%)</td><td style="color:#f43f5e;">Deadly hit range (35% - 70%)</td><td style="color:#f43f5e;">Top missile speed and accuracy</td><td style="color:#f43f5e;">Lethal high-speed missile traps</td></tr>
+            <tr><td><b>Missiles per Attack</b></td><td style="color:#38bdf8;">1 Missile only</td><td style="color:#38bdf8;">1 Missile only</td><td style="color:#38bdf8;">1 - 2 Missiles</td><td style="color:#fbbf24;">2-Missile volley</td><td style="color:#fbbf24;">2-Missile volley</td><td style="color:#f43f5e;">2 - 3 Missile volley</td></tr>
+            <tr><td><b>Mixed Missiles (Radar + Heat)</b></td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#38bdf8;">10% Mixed pair</td><td style="color:#fbbf24;">25% Mixed pair</td><td style="color:#fbbf24;">35% Mixed pair</td></tr>
+            <tr><td><b>Speed &amp; Turn Control</b></td><td style="color:#94a3b8;">Burns afterburner; turns flat</td><td style="color:#38bdf8;">Normal cruising speed</td><td style="color:#38bdf8;">Uses best turn speed</td><td style="color:#fbbf24;">Good turn speed (slips under stress)</td><td style="color:#fbbf24;">Smooth throttle control in turns</td><td style="color:#fbbf24;">Expert speed and energy management</td></tr>
+            <tr><td><b>3D Altitude Fighting</b></td><td style="color:#94a3b8;">Rarely changes altitude</td><td style="color:#94a3b8;">Occasional climbs</td><td style="color:#38bdf8;">Climbs when needed</td><td style="color:#fbbf24;">Climbs to high perch</td><td style="color:#fbbf24;">High and low spread</td><td style="color:#f43f5e;">Aggressive climbs and dives</td></tr>
+            <tr><td><b>Formation Teamwork</b></td><td style="color:#94a3b8;">Scattered and solo</td><td style="color:#38bdf8;">Loose trail follow</td><td style="color:#fbbf24;">2-Plane pairs</td><td style="color:#fbbf24;">Pairs protecting each other</td><td style="color:#fbbf24;">High and low spread</td><td style="color:#fbbf24;">Two-sided attack</td></tr>
+            <tr><td><b>Attack Approach Route</b></td><td style="color:#94a3b8;">Straight charge down center</td><td style="color:#94a3b8;">Straight flight path</td><td style="color:#fbbf24;">High altitude sweep</td><td style="color:#38bdf8;">Holds on outer edge</td><td style="color:#fbbf24;">Flank attack from side</td><td style="color:#fbbf24;">Attacks from multiple angles</td></tr>
+            <tr><td><b>Target Priority &amp; Role</b></td><td style="color:#94a3b8;">Attacks anything nearby</td><td style="color:#38bdf8;">Fighters fight, bombers strike</td><td style="color:#fbbf24;">Prioritizes dangerous targets</td><td style="color:#fbbf24;">Protects bombers and strikes</td><td style="color:#fbbf24;">Blinds radar before bombing</td><td style="color:#f43f5e;">Timed radar kills then strikes</td></tr>
+            <tr><td><b>Missile Ammo Saving</b></td><td style="color:#94a3b8;">Fires all missiles immediately</td><td style="color:#94a3b8;">Fires long-range missiles quickly</td><td style="color:#38bdf8;">Keeps 1 dogfight missile safe</td><td style="color:#fbbf24;">Saves missiles for good shots</td><td style="color:#fbbf24;">Only uses best missiles on key targets</td><td style="color:#fbbf24;">Saves reserve ammo, retreats if empty</td></tr>
+            <tr><td><b>Reaction if Flight Lead Dies</b></td><td style="color:#94a3b8;">Complete panic and scatter</td><td style="color:#94a3b8;">Confused and stalls (5.0s)</td><td style="color:#38bdf8;">Hesitates (4.0s)</td><td style="color:#38bdf8;">Wingman takes charge (3.5s)</td><td style="color:#38bdf8;">Falls back to defense patrol (2.5s)</td><td style="color:#f43f5e;">Switches to defense instantly (1.8s)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ge-subhead">AIRFRAME WEIGHT &amp; STEALTH RULES</div>
+      <div class="ge-desc">
+        Aerodynamic weight tuning and stealth cleanliness are applied selectively based on airframe design and tactical mission:
+        <ul style="list-style:none;padding-left:0;margin-top:6px;">
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Heavy Missile Trucks (F-15EX, J-20, MiG-31BM, Su-34):</b> Never restricted to light weight. They intentionally carry heavy external racks (Wr = 70% - 90%) and oversized standoff missiles (R-37M, PL-21, Kinzhal) to maximize missile magazine capacity.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Agile Dogfighters (Rafale, Su-35S, Eurofighter):</b> On higher difficulties, they selectively roll lightweight loadouts (Wr &le; 50%) with fewer heavy bombs, preserving 100% corner-speed turn authority.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Stealth Cleanliness:</b> Stealth jets (F-22A, YF-23, Su-57) only enforce pure internal bays when assigned the Ambush role. In other roles, they mount external rails for extra missile firepower.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Natural Fleet Variance:</b> The adversary plans aircraft one by one against the sector budget. When an aircraft overflows the budget, it is rejected and the fleet finalizes, producing natural 7 to 8 plane variations without artificial clutter.</li>
+        </ul>
+      </div>
+
+      <div class="ge-subhead">WEAPON RANGE CLASSES &amp; ORDNANCE PROFILES</div>
+      <div class="ge-desc">
+        All missiles and weapons are unlocked from the start. Rather than loading random stores, the adversary plans aircraft loadouts by pairing complementary range classes to fulfill distinct tactical roles:
+      </div>
+      <div class="ge-grid-2">
+        <div class="ge-card">
+          <b style="color:var(--stat-tier-1);">THE 4 WEAPON RANGE CLASSES</b>
+          <div style="font-size:0.70rem;color:#cbd5e1;line-height:1.45;">
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>ULR (Ultra-Long: 110 - 135 km):</b> AIM-260, R-37M, PL-21, Kinzhal.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>LR (Long-Range: 78 - 95 km):</b> Meteor ramjet, PL-15E dual-pulse, AGM-88G.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>MR (Medium-Range: 60 - 75 km):</b> AIM-120D AMRAAM, MPBM burst.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>SR (Dogfight: 20 - 35 km):</b> Python-5 (rear shot), IRIS-T, AIM-9X-2, R-73.
+          </div>
+        </div>
+        <div class="ge-card">
+          <b style="color:var(--theme-accent);">ROLE-BASED ORDNANCE PROFILES</b>
+          <div style="font-size:0.70rem;color:#cbd5e1;line-height:1.45;">
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Standoff Sniper (ULR + LR):</b> High-altitude missile trucks holding outer range.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Air Dominance Sweep (LR/MR + SR):</b> Balanced forward air superiority fighters.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Stealth Ambush (ULR + SR):</b> Clean internal bays firing BVR then rear dogfight kills.<br>
+            <img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Heavy Strike / SEAD:</b> Centerline bunker busters and jamming escorts.
+          </div>
+        </div>
+      </div>
+
+      <div class="ge-subhead">LOADOUT ARCHITECTURE &amp; ROLE PLANNING</div>
+      <div class="ge-desc">
+        All weapons are available from the start. Rather than loading identical static templates, the enemy plans loadouts via weighted rolls, assigning specialized roles while managing weight and stealth:
+      </div>
+
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr>
+              <th>LOADOUT &amp; WEAPON PARAMETER</th>
+              <th style="color:#8494ab;">PERMISSIVE (CADET)</th>
+              <th style="color:#38bdf8;">CONTESTED (VETERAN)</th>
+              <th style="color:#00f0ff;">HOSTILE (ELITE)</th>
+              <th style="color:#ffd700;">HIGH-THREAT (ACE)</th>
+              <th style="color:#c084fc;">AIR DENIAL (MASTER)</th>
+              <th style="color:#ff3366;">EXTREME THREAT (LEGEND)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Primary Assigned Roles</b></td><td style="color:#94a3b8;">100% Generic Sweep</td><td style="color:#38bdf8;">Sweep + Basic Strike</td><td style="color:#38bdf8;">Sweep, Strike, SEAD</td><td style="color:#fbbf24;">Snipers + Agile Flankers</td><td style="color:#fbbf24;">Integrated Combat Team</td><td style="color:#f43f5e;">Full Apex Package</td></tr>
+            <tr><td><b>Ultra-Long Chance (110 - 135 km)</b></td><td style="color:#94a3b8;">0% (No ULR snipes)</td><td style="color:#94a3b8;">5% (Rare roll)</td><td style="color:#38bdf8;">15% (Lead only)</td><td style="color:#f43f5e;">35% (Sniper elements)</td><td style="color:#f43f5e;">50% (High priority)</td><td style="color:#f43f5e;">65% (Apex standoff)</td></tr>
+            <tr><td><b>Ramjet BVR Chance (78 - 95 km)</b></td><td style="color:#94a3b8;">15%</td><td style="color:#38bdf8;">30% (Standard)</td><td style="color:#fbbf24;">50% (Meteor/PL-15E)</td><td style="color:#fbbf24;">45%</td><td style="color:#38bdf8;">40%</td><td style="color:#fbbf24;">30%</td></tr>
+            <tr><td><b>Medium BVR Chance (60 - 75 km)</b></td><td style="color:#94a3b8;">85% (Main AMRAAM)</td><td style="color:#38bdf8;">65%</td><td style="color:#38bdf8;">35%</td><td style="color:#38bdf8;">20%</td><td style="color:#38bdf8;">10%</td><td style="color:#94a3b8;">5%</td></tr>
+            <tr><td><b>Dogfight WVR Seeker Selection</b></td><td style="color:#94a3b8;">100% Basic HOBS</td><td style="color:#38bdf8;">85% Standard / 15% Rear</td><td style="color:#38bdf8;">60% Standard / 40% Rear</td><td style="color:#fbbf24;">40% Python-5 / IRIS-T</td><td style="color:#fbbf24;">75% Python-5 / IRIS-T</td><td style="color:#fbbf24;">85% Rear-Shot &amp; Filter</td></tr>
+            <tr><td><b>Heavy Centerline Station</b></td><td style="color:#94a3b8;">0% (Clean station)</td><td style="color:#94a3b8;">0% (Clean station)</td><td style="color:#38bdf8;">20% Standoff rail</td><td style="color:#fbbf24;">40% Heavy ordnance</td><td style="color:#f43f5e;">65% Kinzhal / MPBM</td><td style="color:#f43f5e;">65% Kinzhal / MPBM</td></tr>
+            <tr><td><b>Dogfighter Weight Limit (Wr &le; 50%)</b></td><td style="color:#94a3b8;">0% (Overloads racks)</td><td style="color:#94a3b8;">0% (Standard racks)</td><td style="color:#38bdf8;">30% Agile tuning</td><td style="color:#fbbf24;">50% Agile tuning</td><td style="color:#fbbf24;">60% Agile tuning</td><td style="color:#fbbf24;">65% Agile tuning</td></tr>
+            <tr><td><b>Heavy Truck Loadout (F-15EX, J-20)</b></td><td style="color:#38bdf8;">Full 70% - 90% load</td><td style="color:#38bdf8;">Full 70% - 90% load</td><td style="color:#38bdf8;">Full 70% - 90% load</td><td style="color:#38bdf8;">Full 70% - 90% load</td><td style="color:#38bdf8;">Full 70% - 90% load</td><td style="color:#38bdf8;">Full 70% - 90% load</td></tr>
+            <tr><td><b>Stealth Clean Bay Policy</b></td><td style="color:#94a3b8;">0% (External drag)</td><td style="color:#94a3b8;">0% (External drag)</td><td style="color:#38bdf8;">35% Clean VLO bays</td><td style="color:#38bdf8;">45% Clean VLO bays</td><td style="color:#fbbf24;">55% Clean VLO bays</td><td style="color:#fbbf24;">60% Clean VLO bays</td></tr>
+            <tr><td><b>Guns &amp; Directed-Energy</b></td><td style="color:#94a3b8;">Standard cannon</td><td style="color:#38bdf8;">Standard cannon</td><td style="color:#38bdf8;">Standard cannon</td><td style="color:#38bdf8;">Tuned burst discipline</td><td style="color:#f43f5e;">Laser / Pod upgrades</td><td style="color:#f43f5e;">DE-PULSE / Railgun / Lasers</td></tr>
+            <tr><td><b>Upgrade Sockets Filled</b></td><td style="color:#94a3b8;">0 - 1 Socket</td><td style="color:#38bdf8;">1 - 2 Sockets</td><td style="color:#fbbf24;">2 - 3 Sockets</td><td style="color:#fbbf24;">3 Sockets</td><td style="color:#fbbf24;">3 - 4 Sockets</td><td style="color:#f43f5e;">4 Full Sockets</td></tr>
+            <tr><td><b>Budget Procurement Rule</b></td><td style="color:#94a3b8;">1-by-1 plan, stop &gt;150M</td><td style="color:#38bdf8;">1-by-1 plan, stop &gt;260M</td><td style="color:#38bdf8;">1-by-1 plan, stop &gt;360M</td><td style="color:#fbbf24;">1-by-1 plan, stop &gt;460M</td><td style="color:#fbbf24;">1-by-1 plan, stop &gt;560M</td><td style="color:#f43f5e;">1-by-1 plan, stop &gt;660M</td></tr>
+          </tbody>
+        </table>
       </div>
     `
   },
