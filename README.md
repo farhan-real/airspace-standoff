@@ -2,6 +2,7 @@
 
 [![Platform](https://img.shields.io/badge/PLATFORM-DESKTOP_%7C_MOBILE_%7C_TABLET-10b981?style=for-the-badge)](#platform-support--controls)
 [![Dependencies](https://img.shields.io/badge/DEPENDENCIES-ZERO-6366f1?style=for-the-badge)](#technology-stack)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](./LICENSE)
 
 ---
 
@@ -9,7 +10,7 @@
 
 Modern air combat has outgrown the cockpit heroics of the past. Battles are decided beyond visual range, hundreds of kilometers away, by sensor fusion, radar physics, and brutal missile energy envelopes.
 
-You do not fly the jet; you dictate the battle. Stationed at a high-contrast C4ISR tactical radar terminal, you command an entire combat air wing across 15,000 km² of contested sky. Coordinate multi-ship formations, manage aspect-dependent Radar Cross-Sections (RCS), and exploit enemy blind spots while strictly regulating your own emissions.
+You don't just fly the jet, you dictate the battle. Stationed at a high-contrast C4ISR tactical radar terminal, you command an entire combat air wing across 15,000 km² of contested sky. Coordinate multi-ship formations, manage aspect-dependent Radar Cross-Sections (RCS), and exploit enemy blind spots while strictly regulating your own emissions.
 
 **Missiles finish the fight, but information wins it.** Every blip on your scope is an incomplete puzzle: jamming strobes, ghost returns, and fleeting datalink tracks. Sift ground truth from electronic deception, sever the enemy's situational awareness, and strike while they are still flying blind. In modern air warfare, whoever commands the data commands the sky.
 
