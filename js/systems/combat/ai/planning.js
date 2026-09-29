@@ -233,16 +233,31 @@ class AIPlanningSystem {
   getCoveredEgressHeading(unit) {
     const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
-    const friendlySurface = (this.game.surfaceUnits || []).filter(s => s.team === 'hostile' && s.hp > 0 && (s.type === 'PANTSIR' || s.type === 'S-400' || s.type === 'BUNKER'));
+    const isBlue = Boolean(unit && unit.team === 'friendly');
+    const homeX = isBlue ? 10.0 : (mapW - 10.0);
+    const homeY = mapH / 2.0;
 
-    if (friendlySurface.length > 0) {
-      const nearest = friendlySurface.reduce((min, s) => {
+    const teamUnits = (this.game.surfaceUnits || []).filter(s => s && s.team === unit.team && s.hp > 0);
+
+    const airDefenses = teamUnits.filter(s => s.type === 'S-400' || s.type === 'PANTSIR');
+    if (airDefenses.length > 0) {
+      const nearestDefense = airDefenses.reduce((best, s) => {
         const d = Math.hypot(s.x - unit.x, s.y - unit.y);
-        return d < min.d ? { s, d } : min;
-      }, { s: friendlySurface[0], d: 999 }).s;
-      return Math.atan2(nearest.y - unit.y, nearest.x - unit.x);
+        return d < best.d ? { s, d } : best;
+      }, { s: airDefenses[0], d: 9999 }).s;
+      return Math.atan2(nearestDefense.y - unit.y, nearestDefense.x - unit.x);
     }
-    return Math.atan2((mapH / 2) - unit.y, (mapW - 10) - unit.x);
+
+    const baseInstallations = teamUnits.filter(s => s.type === 'BUNKER' || s.type === 'AMMO_DUMP' || s.type === 'EW_JAMMER');
+    if (baseInstallations.length > 0) {
+      const nearestBase = baseInstallations.reduce((best, s) => {
+        const d = Math.hypot(s.x - unit.x, s.y - unit.y);
+        return d < best.d ? { s, d } : best;
+      }, { s: baseInstallations[0], d: 9999 }).s;
+      return Math.atan2(nearestBase.y - unit.y, nearestBase.x - unit.x);
+    }
+
+    return Math.atan2(homeY - unit.y, homeX - unit.x);
   }
 }
 

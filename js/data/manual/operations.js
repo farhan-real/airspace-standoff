@@ -151,7 +151,7 @@ window.MANUAL_OPERATIONS = [
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">Squadron Posture</td>
-              <td>Indicates high-level doctrine: <code>OFFENSIVE SWEEP</code> (active engagement) vs <code>DEFENSIVE HOLD</code> (retreat toward surface SAM umbrella when fleet survival drops below 25-40%).</td>
+              <td>Indicates high-level doctrine: <code>OFFENSIVE SWEEP</code> (active engagement) vs <code>DEFENSIVE HOLD</code> (retreat toward fortified base perimeter, taking SAM cover if batteries are active, when fleet survival drops below 25-40%).</td>
             </tr>
             <tr>
               <td style="color:#f43f5e;font-weight:800;">Formation Role</td>

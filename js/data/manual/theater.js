@@ -43,7 +43,7 @@ window.MANUAL_THEATER = [
         <div class="ge-card">
           <b style="color:#00f0ff;">6. APPROACH ROUTES &amp; MISSION PLANNING</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            High-tier squadrons plan flank routes (some high on the edges, some low). When low on missiles or damaged, they plan a safe retreat toward their ground missile batteries.
+            High-tier squadrons plan flank routes (some high on the edges, some low). When low on missiles or damaged, they plan a covered retreat toward their fortified base line (and active SAM/CIWS batteries if operational).
           </div>
         </div>
       </div>
@@ -240,6 +240,7 @@ window.MANUAL_THEATER = [
           <thead>
             <tr>
               <th>ACE CAPABILITY &amp; TACTIC</th>
+              <th style="color:#8494ab;">PERMISSIVE SECTOR</th>
               <th style="color:#38bdf8;">CONTESTED AIRSPACE</th>
               <th style="color:#00f0ff;">HOSTILE AIRSPACE</th>
               <th style="color:#ffd700;">HIGH-THREAT SECTOR</th>
@@ -248,22 +249,23 @@ window.MANUAL_THEATER = [
             </tr>
           </thead>
           <tbody>
-            <tr><td><b>Ace Count in Squadron</b></td><td style="color:#38bdf8;">1 Ace Flight Lead</td><td style="color:#38bdf8;">1 Ace Flight Lead</td><td style="color:#fbbf24;">2 Coordinated Aces</td><td style="color:#fbbf24;">2 Coordinated Aces</td><td style="color:#f43f5e;">3 Top Aces</td></tr>
-            <tr><td><b>Typical Airframe Class</b></td><td style="color:#38bdf8;">4.5-Gen (Su-35, Typhoon)</td><td style="color:#38bdf8;">5th-Gen Stealth (Su-57, F-22)</td><td style="color:#fbbf24;">Top Stealth / Prototype</td><td style="color:#fbbf24;">Experimental Flagship</td><td style="color:#f43f5e;">Superfighter (ADF-11F, CFA-44)</td></tr>
-            <tr><td><b>Upgrade Sockets Filled</b></td><td style="color:#38bdf8;">3 Sockets Minimum</td><td style="color:#38bdf8;">3 Sockets Minimum</td><td style="color:#38bdf8;">3 Sockets Minimum</td><td style="color:#fbbf24;">4 Sockets Minimum</td><td style="color:#f43f5e;">4 Full Sockets</td></tr>
-            <tr><td><b>Cannon System</b></td><td style="color:#38bdf8;">Standard Ballistic</td><td style="color:#38bdf8;">Standard Ballistic</td><td style="color:#38bdf8;">Tuned Ballistic</td><td style="color:#f43f5e;">DE-PULSE / EML Railgun</td><td style="color:#f43f5e;">DE-PULSE / EML Railgun</td></tr>
-            <tr><td><b>Reaction Delay</b></td><td style="color:#38bdf8;">3.2s (Fast)</td><td style="color:#38bdf8;">2.4s (Sharp)</td><td style="color:#fbbf24;">1.8s (Quick snap)</td><td style="color:#fbbf24;">1.4s (Instant)</td><td style="color:#f43f5e;">1.1s (Fastest snap)</td></tr>
-            <tr><td><b>Radar Notch Defense (Beam 90&deg;)</b></td><td style="color:#38bdf8;">30% (Turns beam)</td><td style="color:#38bdf8;">45% (Turns beam)</td><td style="color:#fbbf24;">55% (Disciplined)</td><td style="color:#fbbf24;">65% (40% in close merge)</td><td style="color:#f43f5e;">70% (45% in close merge)</td></tr>
-            <tr><td><b>Decoy Drone Rejection Rate</b></td><td style="color:#38bdf8;">40% Filter rate</td><td style="color:#38bdf8;">55% Filter rate</td><td style="color:#fbbf24;">65% Filter rate</td><td style="color:#fbbf24;">75% Filter rate</td><td style="color:#80% Filter rate</td></tr>
-            <tr><td><b>Dual-Missile Synergy Chance</b></td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#38bdf8;">15% Radar + Heat</td><td style="color:#fbbf24;">25% Radar + Heat</td><td style="color:#fbbf24;">40% Radar + Heat</td><td style="color:#50% Radar + Heat</td></tr>
-            <tr><td><b>Altitude Staging</b></td><td style="color:#38bdf8;">Climbs to FL320</td><td style="color:#38bdf8;">Climbs to FL360</td><td style="color:#fbbf24;">FL380 High perch</td><td style="color:#fbbf24;">FL400+ Supercruise</td><td style="color:#f43f5e;">High-low 3D split</td></tr>
-            <tr><td><b>Corner Speed Control (sOpt)</b></td><td style="color:#38bdf8;">Active throttle control</td><td style="color:#38bdf8;">Active throttle control</td><td style="color:#fbbf24;">Strict turn throttle cut</td><td style="color:#fbbf24;">Strict energy traps</td><td style="color:#f43f5e;">Expert 3D energy mastery</td></tr>
-            <tr><td><b>Retreat Route (Winchester)</b></td><td style="color:#38bdf8;">Direct to home base</td><td style="color:#38bdf8;">Direct to home base</td><td style="color:#fbbf24;">Covered retreat to SAMs</td><td style="color:#fbbf24;">Covered retreat to SAMs</td><td style="color:#fbbf24;">Covered retreat to SAMs</td></tr>
+            <tr><td><b>Ace Count in Squadron</b></td><td style="color:#8494ab;">0 Aces (No Ace Cadre)</td><td style="color:#38bdf8;">1 Ace Flight Lead</td><td style="color:#00f0ff;">1 Ace Flight Lead</td><td style="color:#ffd700;">2 Coordinated Aces</td><td style="color:#c084fc;">2 Coordinated Aces</td><td style="color:#ff3366;">3 Top Aces</td></tr>
+            <tr><td><b>Typical Airframe Class</b></td><td style="color:#8494ab;">N/A (Standard Flight)</td><td style="color:#38bdf8;">4.5-Gen (Su-35, Typhoon)</td><td style="color:#00f0ff;">5th-Gen Stealth (Su-57, F-22)</td><td style="color:#ffd700;">Top Stealth / Prototype</td><td style="color:#c084fc;">Experimental Flagship</td><td style="color:#ff3366;">Superfighter (ADF-11F, CFA-44)</td></tr>
+            <tr><td><b>Upgrade Sockets Filled</b></td><td style="color:#8494ab;">0 - 1 Sockets</td><td style="color:#38bdf8;">3 Sockets Minimum</td><td style="color:#00f0ff;">3 Sockets Minimum</td><td style="color:#ffd700;">3 Sockets Minimum</td><td style="color:#c084fc;">4 Sockets Minimum</td><td style="color:#ff3366;">4 Full Sockets</td></tr>
+            <tr><td><b>Cannon System</b></td><td style="color:#8494ab;">Standard Ballistic</td><td style="color:#38bdf8;">Standard Ballistic</td><td style="color:#00f0ff;">Standard Ballistic</td><td style="color:#ffd700;">Tuned Ballistic</td><td style="color:#c084fc;">DE-PULSE / EML Railgun</td><td style="color:#ff3366;">DE-PULSE / EML Railgun</td></tr>
+            <tr><td><b>Reaction Delay</b></td><td style="color:#8494ab;">3.8s (Baseline Lead)</td><td style="color:#38bdf8;">3.2s (Fast)</td><td style="color:#00f0ff;">2.4s (Sharp)</td><td style="color:#ffd700;">1.8s (Quick snap)</td><td style="color:#c084fc;">1.4s (Instant)</td><td style="color:#ff3366;">1.1s (Fastest snap)</td></tr>
+            <tr><td><b>Radar Notch Defense (Beam 90&deg;)</b></td><td style="color:#8494ab;">25% (Basic turn)</td><td style="color:#38bdf8;">30% (Turns beam)</td><td style="color:#00f0ff;">45% (Turns beam)</td><td style="color:#ffd700;">55% (Disciplined)</td><td style="color:#c084fc;">65% (40% in close merge)</td><td style="color:#ff3366;">70% (45% in close merge)</td></tr>
+            <tr><td><b>Decoy Drone Rejection Rate</b></td><td style="color:#8494ab;">35% Filter rate</td><td style="color:#38bdf8;">40% Filter rate</td><td style="color:#00f0ff;">55% Filter rate</td><td style="color:#ffd700;">65% Filter rate</td><td style="color:#c084fc;">75% Filter rate</td><td style="color:#ff3366;">80% Filter rate</td></tr>
+            <tr><td><b>Dual-Missile Synergy Chance</b></td><td style="color:#8494ab;">0% (Single type)</td><td style="color:#38bdf8;">0% (Single type)</td><td style="color:#00f0ff;">15% Radar + Heat</td><td style="color:#ffd700;">25% Radar + Heat</td><td style="color:#c084fc;">40% Radar + Heat</td><td style="color:#ff3366;">50% Radar + Heat</td></tr>
+            <tr><td><b>Altitude Staging</b></td><td style="color:#8494ab;">Maintains FL240</td><td style="color:#38bdf8;">Climbs to FL320</td><td style="color:#00f0ff;">Climbs to FL360</td><td style="color:#ffd700;">FL380 High perch</td><td style="color:#c084fc;">FL400+ Supercruise</td><td style="color:#ff3366;">High-low 3D split</td></tr>
+            <tr><td><b>Corner Speed Control (sOpt)</b></td><td style="color:#8494ab;">Basic throttle cruise</td><td style="color:#38bdf8;">Active throttle control</td><td style="color:#00f0ff;">Active throttle control</td><td style="color:#ffd700;">Strict turn throttle cut</td><td style="color:#c084fc;">Strict energy traps</td><td style="color:#ff3366;">Expert 3D energy mastery</td></tr>
+            <tr><td><b>Retreat Route (Winchester)</b></td><td style="color:#8494ab;">Direct to home base</td><td style="color:#38bdf8;">Direct to home base</td><td style="color:#00f0ff;">Direct to home base</td><td style="color:#ffd700;">Covered perimeter retreat (SAM cover if active)</td><td style="color:#c084fc;">Covered perimeter retreat (SAM cover if active)</td><td style="color:#ff3366;">Covered perimeter retreat (SAM cover if active)</td></tr>
           </tbody>
         </table>
       </div>
 
       <div class="ge-subhead">9. INTEGRATED AIR DEFENSE SYSTEMS (IADS)</div>
+      <div class="ge-desc" style="font-size:0.68rem;color:var(--color-moon-mist);margin-bottom:6px;"><b>NOTE:</b> Surface SAM batteries are currently offline by theater command directive. When active in operational scenarios, they establish the long-range engagement envelopes described below.</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>

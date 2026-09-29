@@ -161,6 +161,8 @@ class SurfaceUnit {
         targetMissile.isDead = true;
         this.fireCooldown = this.cooldownMax;
 
+        const interceptPoints = (window.CONFIG && window.CONFIG.VP_MISSILE_INTERCEPT) || 40;
+
         const inspection = window.Game && window.Game.inspection;
         if (inspection && inspection.enabled) {
           inspection.recordEvent('CIWS INTERCEPT', `${this.name} intercepted ${targetMissile.weapon.name || targetMissile.weapon.id}`, this, targetMissile.source, {
@@ -178,7 +180,7 @@ class SurfaceUnit {
           window.Game.stats.defensiveIntercepts = (window.Game.stats.defensiveIntercepts || 0) + 1;
         }
         if (window.Game && window.Game.simulation) {
-          window.Game.simulation.logScoreEvent(this.team, 40, 'CIWS intercepted inbound missile');
+          window.Game.simulation.logScoreEvent(this.team, interceptPoints, 'CIWS intercepted inbound missile');
         }
 
         if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(false);
