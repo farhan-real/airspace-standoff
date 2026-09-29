@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: AI Mission Planning Subsystem
- * Ingress profiles, formation element pairing, role-based tasking, and command succession.
+ * Flight paths, formation element pairing, role-based tasking, and difficulty-tiered flight vectors.
  */
 
 class AIPlanningSystem {
@@ -9,7 +9,7 @@ class AIPlanningSystem {
     this.game = commander.game;
     this.successionTimers = new Map();
     this.elementPairs = new Map();
-    this.ingressWaypoints = new Map();
+    this.flightWaypoints = new Map();
     this.posture = 'OFFENSIVE_SWEEP';
     this.postureTimer = 0.0;
   }
@@ -17,7 +17,7 @@ class AIPlanningSystem {
   reset() {
     this.successionTimers.clear();
     this.elementPairs.clear();
-    this.ingressWaypoints.clear();
+    this.flightWaypoints.clear();
     this.posture = 'OFFENSIVE_SWEEP';
     this.postureTimer = 0.0;
   }
@@ -111,7 +111,7 @@ class AIPlanningSystem {
     }
     if (!isWingman || !lead) return null;
 
-    const spacingKm = (profile.formationDoctrine === 'HIGH_LOW_BRACKET' || profile.formationDoctrine === 'PINCER_PAIRS') ? 7.0 : 4.5;
+    const spacingKm = (profile.formationDoctrine === 'HIGH_LOW_BRACKET' || profile.formationDoctrine === 'CROSSFIRE_PAIRS') ? 7.0 : 4.5;
     const perpAngle = (lead.heading || 0) + Math.PI / 2;
     return {
       x: lead.x + Math.cos(perpAngle) * spacingKm,
@@ -122,20 +122,112 @@ class AIPlanningSystem {
 
   getPlannedAltitude(unit, profile, diffKey) {
     if (!profile.verticalCombat) return unit.altFt || 28000;
-    const spec = unit.spec || {};
-    const cat = spec.category || 'MULTIROLE';
+    const role = unit.tacticalRole || (unit.spec && unit.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
 
-    if (cat === 'SUPERIORITY' || cat === 'STEALTH' || spec.id === 'DARKSTAR') {
+    if (role === 'SNIPER') {
+      if (diffKey === 'LEGEND') return unit.spec && unit.spec.id === 'DARKSTAR' ? 58000 : 50000;
+      if (diffKey === 'MASTER') return 46000;
+      if (diffKey === 'ACE') return 42000;
       return 38000;
     }
-    if (cat === 'STRIKE' || cat === 'CAS') {
+
+    if (role === 'STRIKE') {
+      if (diffKey === 'LEGEND') return 5500;
+      if (diffKey === 'MASTER') return 8000;
+      if (diffKey === 'ACE') return 11000;
       return 14000;
     }
+
+    if (role === 'SEAD') {
+      if (diffKey === 'LEGEND') return 36000;
+      if (diffKey === 'MASTER') return 34000;
+      if (diffKey === 'ACE') return 32000;
+      return 30000;
+    }
+
+    if (role === 'AMBUSH') {
+      if (diffKey === 'LEGEND') return 42000;
+      if (diffKey === 'MASTER') return 40000;
+      if (diffKey === 'ACE') return 36000;
+      return 32000;
+    }
+
     if (profile.formationDoctrine === 'HIGH_LOW_BRACKET') {
       const isWingman = [...this.elementPairs.values()].includes(unit.id);
-      return isWingman ? 18000 : 34000;
+      return isWingman ? 20000 : 34000;
     }
-    return 26000;
+
+    return 28000;
+  }
+
+  getSniperVector(unit, target, dist, diffKey) {
+    const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+
+    if (diffKey === 'LEGEND') {
+      if (dist < 46.0) {
+        return { heading: directAngle + Math.PI, throttle: 1.0, isCrank: false };
+      }
+      if (dist > 90.0) {
+        return { heading: directAngle, throttle: 0.90, isCrank: false };
+      }
+      const crankAngle = directAngle + (Math.sin(unit.age || 0) > 0 ? 1.15 : -1.15);
+      return { heading: crankAngle, throttle: 0.65, isCrank: true };
+    }
+
+    if (diffKey === 'MASTER') {
+      if (dist < 44.0) {
+        const dragHeading = directAngle + (Math.PI * 0.85);
+        return { heading: dragHeading, throttle: 0.85, isCrank: false };
+      }
+      if (dist > 85.0) {
+        return { heading: directAngle, throttle: 0.85, isCrank: false };
+      }
+      const crankAngle = directAngle + (Math.sin(unit.age || 0) > 0 ? 1.0 : -1.0);
+      return { heading: crankAngle, throttle: 0.60, isCrank: true };
+    }
+
+    if (diffKey === 'ACE') {
+      if (dist < 42.0) {
+        const retrogradeAngle = directAngle + (Math.PI * 0.75);
+        return { heading: retrogradeAngle, throttle: 0.50, isCrank: false };
+      }
+      if (dist > 80.0) {
+        return { heading: directAngle, throttle: 0.80, isCrank: false };
+      }
+      return { heading: directAngle, throttle: 0.60, isCrank: false };
+    }
+
+    if (dist < 38.0) {
+      return { heading: directAngle + (Math.PI / 2), throttle: 0.50, isCrank: false };
+    }
+    return { heading: directAngle, throttle: 0.65, isCrank: false };
+  }
+
+  getAmbushVector(unit, target, dist, diffKey) {
+    const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+
+    if (diffKey === 'LEGEND') {
+      if (dist <= 30.0) return { heading: directAngle, throttle: 0.85 };
+      const corridorY = unit.y < 50 ? 12.0 : 88.0;
+      const flankTargetX = target.x + 8.0;
+      return { heading: Math.atan2(corridorY - unit.y, flankTargetX - unit.x), throttle: 0.80 };
+    }
+
+    if (diffKey === 'MASTER') {
+      if (dist <= 34.0) return { heading: directAngle, throttle: 0.80 };
+      const corridorY = unit.y < 50 ? 14.0 : 86.0;
+      return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.75 };
+    }
+
+    if (diffKey === 'ACE') {
+      if (dist <= 36.0) return { heading: directAngle, throttle: 0.75 };
+      const corridorY = unit.y < 50 ? 16.0 : 84.0;
+      return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.70 };
+    }
+
+    if (dist <= 35.0) return { heading: directAngle, throttle: 0.70 };
+    const corridorY = unit.y < 50 ? 18.0 : 82.0;
+    return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.65 };
   }
 
   getCoveredEgressHeading(unit) {

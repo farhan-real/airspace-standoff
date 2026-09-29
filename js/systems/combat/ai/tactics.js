@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Tactical AI Missile Decision Engine
- * Scaled launch sizing, inbound threat prediction, decoy discrimination, and role-based target prioritization.
+ * Scaled launch sizing, inbound threat prediction, decoy discrimination, and difficulty-tiered target prioritization.
  */
 
 class AIMissileTactics {
@@ -52,14 +52,35 @@ class AIMissileTactics {
     let possibleTargets = [];
     if (role === 'SEAD') {
       const seadEmitters = bunkers.filter(s => s.type === 'RADAR_ARRAY' || s.type === 'EW_JAMMER' || s.type === 'S-400' || s.type === 'PANTSIR' || s.type === 'RADAR_VAN');
+      if (['MASTER', 'LEGEND'].includes(diffKey)) {
+        seadEmitters.sort((a, b) => {
+          const score = type => (type === 'RADAR_ARRAY' ? 40 : (type === 'EW_JAMMER' ? 30 : (type === 'S-400' ? 25 : 10)));
+          return score(b.type) - score(a.type);
+        });
+      }
       const otherBunkers = bunkers.filter(s => !seadEmitters.includes(s));
       possibleTargets = seadEmitters.concat(otherBunkers).concat(airTargets);
     } else if (role === 'STRIKE') {
-      possibleTargets = bunkers.concat(airTargets);
+      if (['MASTER', 'LEGEND'].includes(diffKey)) {
+        const primaryBunkers = bunkers.filter(s => s.type === 'BUNKER' || s.type === 'FUEL_DEPOT');
+        const secondary = bunkers.filter(s => !primaryBunkers.includes(s));
+        possibleTargets = primaryBunkers.concat(secondary).concat(airTargets);
+      } else {
+        possibleTargets = bunkers.concat(airTargets);
+      }
     } else if (role === 'SNIPER') {
-      const highPrioAir = airTargets.filter(t => t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
-      const remainingAir = airTargets.filter(t => !highPrioAir.includes(t));
-      possibleTargets = highPrioAir.concat(remainingAir).concat(bunkers);
+      if (['MASTER', 'LEGEND'].includes(diffKey)) {
+        const sniperAir = airTargets.filter(t => {
+          const dist = Math.hypot(t.x - shooter.x, t.y - shooter.y);
+          return dist >= 45.0 && (t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
+        });
+        const remainingAir = airTargets.filter(t => !sniperAir.includes(t));
+        possibleTargets = sniperAir.concat(remainingAir).concat(bunkers);
+      } else {
+        const highPrioAir = airTargets.filter(t => t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
+        const remainingAir = airTargets.filter(t => !highPrioAir.includes(t));
+        possibleTargets = highPrioAir.concat(remainingAir).concat(bunkers);
+      }
     } else {
       possibleTargets = airTargets.concat(bunkers);
     }
@@ -111,8 +132,19 @@ class AIMissileTactics {
           else if (w.seeker === 'ARH') score -= 18;
         }
 
-        if (role === 'SEAD' && isSurface && (tgt.type === 'RADAR_ARRAY' || tgt.type === 'S-400')) score += 40;
-        if (role === 'SNIPER' && dist >= 50.0) score += 25;
+        if (role === 'SEAD' && isSurface) {
+          if (tgt.type === 'RADAR_ARRAY') score += (['MASTER', 'LEGEND'].includes(diffKey) ? 55 : 40);
+          else if (tgt.type === 'EW_JAMMER' || tgt.type === 'S-400') score += 35;
+        }
+        if (role === 'SNIPER' && dist >= 50.0) {
+          score += (['MASTER', 'LEGEND'].includes(diffKey) ? 35 : 22);
+        }
+        if (role === 'AMBUSH' && ['MASTER', 'LEGEND'].includes(diffKey)) {
+          let aspectOffNose = Math.abs((tgt.heading || 0) - Math.atan2(shooter.y - tgt.y, shooter.x - tgt.x));
+          while (aspectOffNose > Math.PI) aspectOffNose = Math.abs(aspectOffNose - Math.PI * 2);
+          if (aspectOffNose >= 1.0 && aspectOffNose <= 2.1) score += 28;
+        }
+
         if (tgt.isFlightLead) score += 18;
         if (tgt.hp <= 2) score += 16;
         if (diffKey === 'CADET') score += (Math.random() * 30 - 15);

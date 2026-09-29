@@ -119,7 +119,7 @@ window.MANUAL_OPERATIONS = [
 
       <div class="ge-subhead">3. AI TACTICAL COGNITION &amp; ATTENTION TELEMETRY</div>
       <div class="ge-desc">
-        When an enemy aircraft is selected during inspection, the <b>OVERVIEW</b> tab displays the <b>AI TACTICAL COGNITION</b> dossier, revealing the adversary's cognitive state, command hierarchy, and active mission role:
+        When an enemy aircraft is selected during inspection, the <b>OVERVIEW</b> tab displays the <b>AI TACTICAL COGNITION</b> dossier, revealing the adversary's cognitive state, command hierarchy, and difficulty-scaled role execution:
       </div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
@@ -129,7 +129,7 @@ window.MANUAL_OPERATIONS = [
           <tbody>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">Tactical Role</td>
-              <td>Displays active combat mission: <code>STANDOFF SNIPER</code> (holds 45-80 km perimeter), <code>SEAD ESCORT</code> (hunts surface radar arrays/SAMs), <code>STRIKE INTERDICTION</code> (low-altitude bunker attack), <code>STEALTH AMBUSH</code> (outer flank broadside vectors), <code>AIR DOMINANCE SWEEP</code> (forward fighter merge), or <code>COMMAND FLAGSHIP</code> (ace lead).</td>
+              <td>Displays active combat mission: <code>STANDOFF SNIPER</code> (holds tiered 45-90 km perimeter and crank vectors), <code>SEAD ESCORT</code> (hunts surface radar arrays/SAMs), <code>STRIKE INTERDICTION</code> (low-altitude deck penetration), <code>STEALTH AMBUSH</code> (outer flank broadside vectors), <code>AIR DOMINANCE SWEEP</code> (forward fighter merge), or <code>COMMAND FLAGSHIP</code> (ace lead).</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Commander Focus</td>

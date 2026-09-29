@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Inspection Cognition & AI Attention Submodule
- * Displays live AI cognitive focus slots, tactical role missions, and succession states for enemy aircraft.
+ * Displays live AI cognitive focus slots, difficulty-tiered tactical roles, and succession states for enemy aircraft.
  */
 
 window.INSP_SVG = window.INSP_SVG || {
@@ -22,20 +22,48 @@ class InspectionCognitionRenderer {
     return roleMap[rawRole] || (rawRole ? String(rawRole).replace(/_/g, ' ') : 'AIR DOMINANCE SWEEP');
   }
 
-  static getRoleAssessment(rawRole, isAce, isActivelyControlled, focusCount, maxSlots) {
+  static getRoleAssessment(rawRole, isAce, isActivelyControlled, focusCount, maxSlots, diffKey) {
     if (isAce) {
+      if (diffKey === 'LEGEND') return 'Apex Ace Command: Coordinates multi-axis volleys, utilizes directed-energy lasers, and executes sub-second defensive breaks.';
+      if (diffKey === 'MASTER') return 'Master Ace Lead: Operating stratospheric energy perch with railgun/pulse-laser snipes and high-G Kulbit capability.';
       return 'Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.';
     }
-    const roleAssessments = {
-      'SNIPER': 'Holding standoff perimeter (45 to 80 km) to unleash ultra-long-range radar-guided volleys without merging.',
-      'SEAD': 'Actively suppressing allied air defense nodes; anti-radiation missiles cued to radar emitters.',
-      'STRIKE': 'Executing low-altitude ingress to deliver heavy ordnance against strategic ground installations.',
-      'AMBUSH': 'Operating with low-observable clean internal bay profile to set up surprise broadside BVR shots.',
-      'SWEEP': 'Offensive combat sweep maneuvering to engage allied fighters in direct air merges.'
-    };
-    if (roleAssessments[rawRole]) {
-      return roleAssessments[rawRole];
+
+    if (rawRole === 'SNIPER') {
+      if (diffKey === 'LEGEND') return 'Apex F-Pole Skate: Stratospheric FL500 cruise, maintaining 46 to 90 km standoff and cranking 65 deg off boresight to deny return fire.';
+      if (diffKey === 'MASTER') return 'Stratospheric Energy Skate: Cruising FL460, holding 50 to 85 km range and performing tactical retrograde drags to drain incoming missiles.';
+      if (diffKey === 'ACE') return 'Distance Drag & Standoff: Cruising FL420 at 50 to 80 km range, executing 135 deg retrograde turns when targets close inside 45 km.';
+      return 'Standoff Perimeter: Holding 45 to 75 km range at FL380, turning beam perpendicular if targets approach inside 38 km.';
     }
+
+    if (rawRole === 'SEAD') {
+      if (diffKey === 'LEGEND') return 'Surgical IADS Dismantling: Actively blinding Early Warning Radars and Jammer stations first to disable S-400 batteries without radiating.';
+      if (diffKey === 'MASTER') return 'Emitter Standoff & Shielding: Projecting GaN AESA jamming while geolocating and neutralizing surface radar arrays with AGM-88Gs.';
+      if (diffKey === 'ACE') return 'Threat-Hierarchy SEAD: Actively prioritizing S-400 and Early Warning Radars over secondary ground units, flying FL320 approach.';
+      return 'Air Defense Suppression: Actively seeking surface radar stations and air-defense batteries with anti-radiation missiles.';
+    }
+
+    if (rawRole === 'STRIKE') {
+      if (diffKey === 'LEGEND') return 'Deck-Skimming Attack Run: Low-altitude approach at FL055 beneath sensor horizon, executing synchronized standoff cruise missile releases.';
+      if (diffKey === 'MASTER') return 'Low-Altitude Standoff Run: Flying FL080 along low-threat alleys, delivering Kinzhal or JASSM-ER strikes on command bunkers.';
+      if (diffKey === 'ACE') return 'Terrain-Masked Strike: Flying FL110 approach with pop-up delivery at 25 km to release glide bombs onto command infrastructure.';
+      return 'Low-Altitude Approach: Flying FL140 below radar coverage directly toward allied command bunkers and fuel depots.';
+    }
+
+    if (rawRole === 'AMBUSH') {
+      if (diffKey === 'LEGEND') return 'Crossfire Stealth Bracket: Deep outer flank approach at FL420, attacking player beam aspects from behind the frontline with clean bays.';
+      if (diffKey === 'MASTER') return 'Silent Lateral Ambush: Operating along boundary corridors at FL400 with zero pylon drag to launch surprise broadside BVR volleys.';
+      if (diffKey === 'ACE') return 'Offset Corridor Approach: Flying FL360 along northern or southern sector edges, exploiting player beam RCS spikes at 40 km.';
+      return 'Lateral Corridor Flanking: Flying outer boundaries at FL320 to acquire broadside locks with internal stealth missiles.';
+    }
+
+    if (rawRole === 'SWEEP') {
+      if (diffKey === 'LEGEND') return 'Dynamic 3D Air Dominance: High-speed fighter merge, utilizing optimal cornering throttle cuts and post-stall snapshot bursts.';
+      if (diffKey === 'MASTER') return 'Tactical Drag & Intercept: High-Low element pairing, pulling defenders into turning dogfights while wingmen take high-off-boresight shots.';
+      if (diffKey === 'ACE') return 'Defensive Screen & Merge: Patrolling FL280 to engage allied fighters and clear corridors for friendly snipers and strike craft.';
+      return 'Offensive Combat Sweep: Maneuvering to engage allied fighters directly in forward air merges.';
+    }
+
     return isActivelyControlled
       ? 'Commander attention active. Target steering, energy optimization, and missile release solutions are actively processed.'
       : `Aircraft is on autonomous patrol awaiting an available commander focus slot (${focusCount}/${maxSlots} currently engaged).`;
@@ -50,6 +78,7 @@ class InspectionCognitionRenderer {
     const isActivelyControlled = Boolean(prof.isFocused);
     const isAce = Boolean(prof.isAce);
     const focusTimerSec = Math.max(0, prof.remainingFocus || 0);
+    const diffKey = controller.game && controller.game.aiDifficulty ? controller.game.aiDifficulty : 'VETERAN';
 
     const postureText = String(prof.posture || 'OFFENSIVE_SWEEP').replace(/_/g, ' ');
     const roleText = prof.roleInFormation || (isAce ? 'Ace Interceptor' : 'Independent Element');
@@ -72,7 +101,7 @@ class InspectionCognitionRenderer {
       : (isActivelyControlled ? `LOCKED (${focusTimerSec.toFixed(1)}s)` : 'WAITING FOR SLOT');
     const focusValColor = isAce ? '#ffd700' : (isActivelyControlled ? 'var(--color-red)' : 'var(--color-moon-mist)');
 
-    const assessmentText = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots);
+    const assessmentText = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots, diffKey);
 
     return `
       <section class="inspection-card insp-cognition-card ${cardClass}" data-insp-enemy-cognition="${aircraft.id}">
@@ -160,6 +189,7 @@ class InspectionCognitionRenderer {
     const isActivelyControlled = Boolean(prof.isFocused);
     const isAce = Boolean(prof.isAce);
     const focusTimerSec = Math.max(0, prof.remainingFocus || 0);
+    const diffKey = controller.game && controller.game.aiDifficulty ? controller.game.aiDifficulty : 'VETERAN';
 
     card.classList.toggle('active-focus', isActivelyControlled || isAce);
 
@@ -219,7 +249,7 @@ class InspectionCognitionRenderer {
 
     const summaryText = card.querySelector('.cog-summary-text');
     if (summaryText) {
-      summaryText.textContent = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots);
+      summaryText.textContent = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots, diffKey);
     }
   }
 }

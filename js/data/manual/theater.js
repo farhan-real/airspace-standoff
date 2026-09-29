@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 8 to 9
- * Threat tiers, adversary flight lead cadre, tactical combat roles, IADS & scoring formulas.
+ * Threat tiers, adversary flight lead cadre, difficulty-scaled tactical roles, IADS & scoring formulas.
  */
 
 window.MANUAL_THEATER = [
@@ -89,7 +89,7 @@ window.MANUAL_THEATER = [
             <tr><td><b>Mixed Missiles (Radar + Heat)</b></td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#38bdf8;">10% Mixed pair</td><td style="color:#fbbf24;">25% Mixed pair</td><td style="color:#fbbf24;">35% Mixed pair</td></tr>
             <tr><td><b>Speed &amp; Turn Control</b></td><td style="color:#94a3b8;">Burns afterburner; turns flat</td><td style="color:#38bdf8;">Normal cruising speed</td><td style="color:#38bdf8;">Uses best turn speed</td><td style="color:#fbbf24;">Good turn speed (slips under stress)</td><td style="color:#fbbf24;">Smooth throttle control in turns</td><td style="color:#fbbf24;">Expert speed and energy management</td></tr>
             <tr><td><b>3D Altitude Fighting</b></td><td style="color:#94a3b8;">Rarely changes altitude</td><td style="color:#94a3b8;">Occasional climbs</td><td style="color:#38bdf8;">Climbs when needed</td><td style="color:#fbbf24;">Climbs to high perch</td><td style="color:#fbbf24;">High and low spread</td><td style="color:#f43f5e;">Aggressive climbs and dives</td></tr>
-            <tr><td><b>Formation Teamwork</b></td><td style="color:#94a3b8;">Scattered and solo</td><td style="color:#38bdf8;">Loose trail follow</td><td style="color:#fbbf24;">2-Plane pairs</td><td style="color:#fbbf24;">Pairs protecting each other</td><td style="color:#fbbf24;">High-low bracket</td><td style="color:#fbbf24;">Two-sided attack</td></tr>
+            <tr><td><b>Formation Teamwork</b></td><td style="color:#94a3b8;">Scattered and solo</td><td style="color:#38bdf8;">Loose trail follow</td><td style="color:#fbbf24;">2-Plane pairs</td><td style="color:#fbbf24;">Pairs protecting each other</td><td style="color:#fbbf24;">High-low bracket</td><td style="color:#fbbf24;">Crossfire pairs</td></tr>
             <tr><td><b>Attack Approach Route</b></td><td style="color:#94a3b8;">Straight charge down center</td><td style="color:#94a3b8;">Straight flight path</td><td style="color:#fbbf24;">High altitude sweep</td><td style="color:#38bdf8;">Holds on outer edge</td><td style="color:#fbbf24;">Flank attack from side</td><td style="color:#fbbf24;">Attacks from multiple angles</td></tr>
             <tr><td><b>Target Priority &amp; Role</b></td><td style="color:#94a3b8;">Attacks anything nearby</td><td style="color:#38bdf8;">Fighters fight, bombers strike</td><td style="color:#fbbf24;">Prioritizes dangerous targets</td><td style="color:#fbbf24;">Protects bombers and strikes</td><td style="color:#fbbf24;">Blinds radar before bombing</td><td style="color:#f43f5e;">Timed radar kills then strikes</td></tr>
             <tr><td><b>Missile Ammo Saving</b></td><td style="color:#94a3b8;">Fires all missiles immediately</td><td style="color:#94a3b8;">Fires long-range missiles quickly</td><td style="color:#38bdf8;">Keeps 1 dogfight missile safe</td><td style="color:#fbbf24;">Saves missiles for good shots</td><td style="color:#fbbf24;">Only uses best missiles on key targets</td><td style="color:#fbbf24;">Saves reserve ammo, retreats if empty</td></tr>
@@ -109,57 +109,63 @@ window.MANUAL_THEATER = [
         </ul>
       </div>
 
-      <div class="ge-subhead">5. TACTICAL COMBAT ROLES &amp; IN-FLIGHT BEHAVIOR</div>
+      <div class="ge-subhead">5. TACTICAL COMBAT ROLES &amp; DIFFICULTY INTELLIGENCE</div>
       <div class="ge-desc">
-        Each adversary aircraft operates under an assigned combat role that governs its armament, in-flight navigation, altitude staging, and target priority:
+        Adversary aircraft operate under designated combat roles that scale in tactical intelligence across difficulty settings:
       </div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
           <b style="color:#00f0ff;">STANDOFF SNIPER</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Armament:</b> Ultra-Long-Range (ULR) missiles (AIM-260, R-37M, PL-21) and sustained ramjets (Meteor).<br>
-            <b>Navigation:</b> High altitude perch (FL400). Holds standoff perimeter (45 to 80 km). If targets close inside 42 km, turns perpendicular to maintain range rather than charging into a visual dogfight.<br>
-            <b>Target Priority:</b> Enemy Flight Leads, Aces, and heavy bombers.
+            <b>Elite:</b> Cruises FL380, holds 45 to 75 km range, turns beam if targets approach inside 38 km.<br>
+            <b>Ace:</b> Cruises FL420, holds 50 to 80 km, executes 135&deg; retrograde turns inside 45 km to drag out enemy missiles.<br>
+            <b>Master:</b> Stratospheric FL460 cruise. Executes a 65&deg; crank off boresight at radar gimbal limits to drag out return fire.<br>
+            <b>Legend:</b> Stratospheric FL500 cruise. Executes supersonic drag-away skates and long-range LPI missile volleys.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #c084fc;">
           <b style="color:#c084fc;">SEAD ESCORT (AIR DEFENSE SUPPRESSION)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Armament:</b> High-power microwave jamming pods (AN-ALQ-249/99) and AGM-88G anti-radiation missiles.<br>
-            <b>Navigation:</b> Medium altitude (FL320) trailing forward fighters. Actively steers toward allied surface radar arrays, SAM batteries, and EW stations.<br>
-            <b>Target Priority:</b> Active radar emitters and surface air-defense installations.
+            <b>Elite:</b> Actively steers toward surface radars and SAMs, firing AGM-88Gs within 35 km.<br>
+            <b>Ace:</b> Approaches at FL320. Prioritizes S-400 batteries and Early Warning Radars over secondary ground units.<br>
+            <b>Master:</b> Approaches at FL340. Projects GaN AESA jamming while geolocating and neutralizing surface radar arrays.<br>
+            <b>Legend:</b> Surgical IADS breakdown. Destroys Early Warning Radars first to blind S-400 batteries without radiating.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #f97316;">
           <b style="color:#f97316;">STRIKE INTERDICTION</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Armament:</b> Heavy centerline hypersonic weapons (Kinzhal), stealth cruise missiles (JASSM-ER), or glide bombs (GBU-39).<br>
-            <b>Navigation:</b> Low altitude ingress (FL120) below early-warning radar coverage directly toward allied base facilities.<br>
-            <b>Target Priority:</b> Command bunkers, fuel farms, and strategic logistics hubs.
+            <b>Elite:</b> Approaches at FL140 directly toward command bunkers and fuel depots.<br>
+            <b>Ace:</b> Flies at FL110 beneath radar horizons with pop-up delivery at 25 km to release glide bombs.<br>
+            <b>Master:</b> Flies FL080 along low-threat alleys, delivering standoff Kinzhal or JASSM-ER strikes on command bunkers.<br>
+            <b>Legend:</b> Deck-skimming attack run at FL055, delivering synchronized hypersonic strikes beneath sensor coverage.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #14b8a6;">
           <b style="color:#2dd4bf;">STEALTH AMBUSH</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Armament:</b> Clean internal bays (zero external drag, minimum RCS) armed with stealth BVR and over-the-shoulder missiles.<br>
-            <b>Navigation:</b> Ingresses along outer lateral theater corridors (outer Y boundaries) to set up offset broadside shots before turning inward.<br>
-            <b>Target Priority:</b> High-threat fighters vulnerable from beam and rear aspects.
+            <b>Elite:</b> Flies outer boundaries at FL320 to acquire broadside locks with internal stealth missiles.<br>
+            <b>Ace:</b> Flies FL360 along northern or southern sector edges, exploiting player beam RCS spikes at 40 km.<br>
+            <b>Master:</b> Boundary flight path at FL400 with zero pylon drag to launch surprise broadside BVR volleys.<br>
+            <b>Legend:</b> Crossfire stealth bracket. Deep outer flank approach at FL420, attacking player beam aspects from behind the frontline with clean bays.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #00f5a0;">
           <b style="color:#00f5a0;">AIR DOMINANCE SWEEP</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Armament:</b> Balanced dual-pulse BVR missiles and high-off-boresight dogfight heat-seekers.<br>
-            <b>Navigation:</b> Cruising altitude (FL260–FL340). Drives forward intercepts, maintaining optimal corner speed (sOpt) during combat turns.<br>
-            <b>Target Priority:</b> Nearest active fighter threats to clear contested airspace.
+            <b>Elite:</b> Controls airspeed to maintain optimal corner speed (sOpt) during combat turns.<br>
+            <b>Ace:</b> High-Low bracket formation. Screens friendly snipers and bombers while engaging player fighters.<br>
+            <b>Master:</b> Tactical drag maneuvers. Leads defenders into tight circles to bleed energy while wingmen attack.<br>
+            <b>Legend:</b> 3D air combat wing. Executes post-stall Cobras, mixed-seeker salvos, and high-AOA snapshot bursts.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #ffd700;">
           <b style="color:#ffd700;">COMMAND FLAGSHIP (ACE CADRE)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Armament:</b> Directed-energy lasers (PLSL, DE-Pulse), EML railguns, or ADMM multi-target pods with 4 full upgrade sockets.<br>
-            <b>Navigation:</b> High-energy 3D vertical fighting, coordinated salvo releases, and instant reaction speeds (1.1s to 1.8s).<br>
-            <b>Target Priority:</b> Opposing squadron leaders and high-scoring combatants.
+            <b>Elite:</b> Single Ace with advanced prototype airframe and 2.4s reaction latency.<br>
+            <b>Ace:</b> Two coordinated Aces with 1.8s reactions, high-altitude perch, and post-stall Kulbit capability.<br>
+            <b>Master:</b> Two Flagship Aces with 1.4s reactions, railguns/lasers, zero G-LOC (COFFIN), and 65% notch rate.<br>
+            <b>Legend:</b> Three Apex Aces with 1.1s reactions, coordinating theater-wide strikes with directed-energy and hypersonic weapons.
           </div>
         </div>
       </div>
@@ -248,8 +254,8 @@ window.MANUAL_THEATER = [
             <tr><td><b>Cannon System</b></td><td style="color:#38bdf8;">Standard Ballistic</td><td style="color:#38bdf8;">Standard Ballistic</td><td style="color:#38bdf8;">Tuned Ballistic</td><td style="color:#f43f5e;">DE-PULSE / EML Railgun</td><td style="color:#f43f5e;">DE-PULSE / EML Railgun</td></tr>
             <tr><td><b>Reaction Delay</b></td><td style="color:#38bdf8;">3.2s (Fast)</td><td style="color:#38bdf8;">2.4s (Sharp)</td><td style="color:#fbbf24;">1.8s (Quick snap)</td><td style="color:#fbbf24;">1.4s (Instant)</td><td style="color:#f43f5e;">1.1s (Fastest snap)</td></tr>
             <tr><td><b>Radar Notch Defense (Beam 90&deg;)</b></td><td style="color:#38bdf8;">30% (Turns beam)</td><td style="color:#38bdf8;">45% (Turns beam)</td><td style="color:#fbbf24;">55% (Disciplined)</td><td style="color:#fbbf24;">65% (40% in close merge)</td><td style="color:#f43f5e;">70% (45% in close merge)</td></tr>
-            <tr><td><b>Decoy Drone Rejection Rate</b></td><td style="color:#38bdf8;">40% Filter rate</td><td style="color:#38bdf8;">55% Filter rate</td><td style="color:#fbbf24;">65% Filter rate</td><td style="color:#fbbf24;">75% Filter rate</td><td style="color:#f43f5e;">80% Filter rate</td></tr>
-            <tr><td><b>Dual-Missile Synergy Chance</b></td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#38bdf8;">15% Radar + Heat</td><td style="color:#fbbf24;">25% Radar + Heat</td><td style="color:#fbbf24;">40% Radar + Heat</td><td style="color:#f43f5e;">50% Radar + Heat</td></tr>
+            <tr><td><b>Decoy Drone Rejection Rate</b></td><td style="color:#38bdf8;">40% Filter rate</td><td style="color:#38bdf8;">55% Filter rate</td><td style="color:#fbbf24;">65% Filter rate</td><td style="color:#fbbf24;">75% Filter rate</td><td style="color:#80% Filter rate</td></tr>
+            <tr><td><b>Dual-Missile Synergy Chance</b></td><td style="color:#94a3b8;">0% (Single type)</td><td style="color:#38bdf8;">15% Radar + Heat</td><td style="color:#fbbf24;">25% Radar + Heat</td><td style="color:#fbbf24;">40% Radar + Heat</td><td style="color:#50% Radar + Heat</td></tr>
             <tr><td><b>Altitude Staging</b></td><td style="color:#38bdf8;">Climbs to FL320</td><td style="color:#38bdf8;">Climbs to FL360</td><td style="color:#fbbf24;">FL380 High perch</td><td style="color:#fbbf24;">FL400+ Supercruise</td><td style="color:#f43f5e;">High-low 3D split</td></tr>
             <tr><td><b>Corner Speed Control (sOpt)</b></td><td style="color:#38bdf8;">Active throttle control</td><td style="color:#38bdf8;">Active throttle control</td><td style="color:#fbbf24;">Strict turn throttle cut</td><td style="color:#fbbf24;">Strict energy traps</td><td style="color:#f43f5e;">Expert 3D energy mastery</td></tr>
             <tr><td><b>Retreat Route (Winchester)</b></td><td style="color:#38bdf8;">Direct to home base</td><td style="color:#38bdf8;">Direct to home base</td><td style="color:#fbbf24;">Covered retreat to SAMs</td><td style="color:#fbbf24;">Covered retreat to SAMs</td><td style="color:#fbbf24;">Covered retreat to SAMs</td></tr>
