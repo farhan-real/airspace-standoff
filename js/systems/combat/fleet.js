@@ -69,13 +69,13 @@ const FleetGenerator = {
     if (typeof FleetLoadoutPlanner !== 'undefined') {
       return FleetLoadoutPlanner.planAircraftLoadout(spec, isAce, doctrine, diff, rng);
     }
-    return { weapons: [], upgrades: [], totalCost: spec.cost || 20.0, chosenGunId: spec.builtInGun || 'M61A2' };
+    return { weapons: [], upgrades: [], totalCost: spec.cost || 20.0, chosenGunId: spec.builtInGun || 'M61A2', role: 'SWEEP' };
   },
 
   generateHostileFleet(difficultyKey, doctrineKey, theaterWidth, theaterHeight, options = {}) {
     const diff = difficultyKey || 'VETERAN';
     const doctrine = doctrineKey || 'BALANCED';
-    const diffProfile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diff]) || { budgetCap: 290.0, aceCount: 1 };
+    const diffProfile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diff]) || { budgetCap: 330.0, aceCount: 1 };
 
     let s = (Date.now() ^ ((performance.now() * 1000) | 0) ^ 0x9E3779B9) >>> 0;
     const rng = () => {
@@ -87,11 +87,13 @@ const FleetGenerator = {
 
     const targetAircraftCounts = { CADET: 3, VETERAN: 4, ELITE: 5, ACE: 6, MASTER: 7, LEGEND: 8 };
     const configuredCount = Number.isFinite(Number(options.aircraftCount)) ? Number(options.aircraftCount) : null;
-    const targetBudget = configuredCount !== null ? Number.POSITIVE_INFINITY : (diffProfile.budgetCap || 290.0);
+    const targetBudget = configuredCount !== null ? Number.POSITIVE_INFINITY : (diffProfile.budgetCap || 330.0);
     const basePlanes = targetAircraftCounts[diff] || 5;
+
+    const extraVariance = (diff === 'MASTER' || diff === 'LEGEND') ? 3 : 2;
     const maxPlanes = configuredCount !== null
       ? Math.max(3, Math.min(16, Math.floor(configuredCount)))
-      : Math.max(3, basePlanes + Math.floor(rng() * 2));
+      : Math.max(3, basePlanes + Math.floor(rng() * (extraVariance + 1)));
 
     const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : 1;
     const catalog = window.AIRCRAFT_CATALOG || {};
@@ -115,6 +117,7 @@ const FleetGenerator = {
         if (spentBudget + planned.totalCost <= targetBudget) {
           fleetItems.push({
             specId, isAce: true, isLead: (a === 0),
+            role: planned.role || (a === 0 ? 'FLAGSHIP' : 'SWEEP'),
             callsign: aceCallsigns[a % aceCallsigns.length] || `Ace ${a + 1}`,
             chosenGunId: planned.chosenGunId,
             plannedWeapons: planned.weapons,
@@ -137,6 +140,7 @@ const FleetGenerator = {
         if (spentBudget + planned.totalCost <= targetBudget) {
           fleetItems.push({
             specId, isAce: false, isLead: false,
+            role: planned.role || 'SEAD',
             callsign: `Raven ${fleetItems.length + 1}`,
             chosenGunId: planned.chosenGunId,
             plannedWeapons: planned.weapons,
@@ -188,6 +192,7 @@ const FleetGenerator = {
         const isLead = !hasLead;
         fleetItems.push({
           specId: chosenId, isAce: false, isLead: isLead,
+          role: planned.role || 'SWEEP',
           callsign: isLead ? 'Saber Lead' : (callsigns.pop() || `Bandit ${fleetItems.length + 1}`),
           chosenGunId: planned.chosenGunId,
           plannedWeapons: planned.weapons,
@@ -219,6 +224,8 @@ const FleetGenerator = {
         item.callsign, item.isAce ? 'Elite Ace Cadre' : 'Hostile Intercept Wing',
         plan.isLead, plan.isAce, altFt
       );
+
+      unit.tacticalRole = item.role || 'SWEEP';
 
       (item.plannedWeapons || []).forEach(w => unit.installWeapon(w.id, w.station));
       (item.plannedUpgrades || []).forEach(u => unit.installUpgrade(u));
@@ -256,7 +263,11 @@ const FleetGenerator = {
     return plans.map(p => {
       const heading = isBlue ? (Math.random() * 0.16 - 0.08) : (Math.PI + (Math.random() * 0.16 - 0.08));
       const ac = new Aircraft(p.item.specId, team, p.x, p.y, heading, null, p.item.callsign, sqName, p.item.isLead, p.item.isAce, 28000);
-      if (ac.spec && ac.spec.category === 'EW') {
+      const isEW = Boolean(ac.spec && ac.spec.category === 'EW');
+      const isStrike = Boolean(ac.spec && ac.spec.category === 'STRIKE');
+      ac.tacticalRole = isEW ? 'SEAD' : (isStrike ? 'STRIKE' : 'SWEEP');
+
+      if (isEW) {
         ac.installWeapon('AN-ALQ-99', 'EXTERNAL');
         ac.installWeapon('AGM-88G', 'EXTERNAL');
         ac.installWeapon('AIM-120D', 'EXTERNAL');

@@ -119,7 +119,7 @@ window.MANUAL_OPERATIONS = [
 
       <div class="ge-subhead">3. AI TACTICAL COGNITION &amp; ATTENTION TELEMETRY</div>
       <div class="ge-desc">
-        When an enemy aircraft is selected during inspection, the <b>OVERVIEW</b> tab displays the <b>AI TACTICAL COGNITION</b> dossier, revealing the adversary's cognitive state and command hierarchy:
+        When an enemy aircraft is selected during inspection, the <b>OVERVIEW</b> tab displays the <b>AI TACTICAL COGNITION</b> dossier, revealing the adversary's cognitive state, command hierarchy, and active mission role:
       </div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
@@ -128,27 +128,31 @@ window.MANUAL_OPERATIONS = [
           </thead>
           <tbody>
             <tr>
-              <td style="color:#00f0ff;font-weight:800;">Commander Focus</td>
+              <td style="color:#00f0ff;font-weight:800;">Tactical Role</td>
+              <td>Displays active combat mission: <code>STANDOFF SNIPER</code> (holds 45-80 km perimeter), <code>SEAD ESCORT</code> (hunts surface radar arrays/SAMs), <code>STRIKE INTERDICTION</code> (low-altitude bunker attack), <code>STEALTH AMBUSH</code> (outer flank broadside vectors), <code>AIR DOMINANCE SWEEP</code> (forward fighter merge), or <code>COMMAND FLAGSHIP</code> (ace lead).</td>
+            </tr>
+            <tr>
+              <td style="color:#00f5a0;font-weight:800;">Commander Focus</td>
               <td>Displays whether the airframe is currently locked into an active attention slot and shows the countdown timer (in seconds) before focus is re-evaluated.</td>
             </tr>
             <tr>
-              <td style="color:#00f5a0;font-weight:800;">Active Focus Slots</td>
+              <td style="color:#38bdf8;font-weight:800;">Active Focus Slots</td>
               <td>Shows current bandwidth utilization against total cognitive capacity (e.g. 1 slot on Cadet/Veteran, 2 on Elite/Ace, up to 3 on Master/Legend).</td>
             </tr>
             <tr>
-              <td style="color:#38bdf8;font-weight:800;">Squadron Posture</td>
+              <td style="color:#ffd700;font-weight:800;">Squadron Posture</td>
               <td>Indicates high-level doctrine: <code>OFFENSIVE SWEEP</code> (active engagement) vs <code>DEFENSIVE HOLD</code> (retreat toward surface SAM umbrella when fleet survival drops below 25-40%).</td>
             </tr>
             <tr>
-              <td style="color:#ffd700;font-weight:800;">Formation Role</td>
+              <td style="color:#f43f5e;font-weight:800;">Formation Role</td>
               <td>Reveals tactical placement: Flight Lead, Wingman (with designated element partner callsign), or Independent Element.</td>
             </tr>
             <tr>
-              <td style="color:#f43f5e;font-weight:800;">Chain of Command</td>
+              <td style="color:#c084fc;font-weight:800;">Chain of Command</td>
               <td>Reports command health. If the enemy Flight Lead is eliminated, surviving wingmen enter a <code>COMMAND DISRUPTION</code> state with a hesitation timer (6.0s on Cadet down to 1.8s on Legend) where weapons are locked and throttle drops to 40%.</td>
             </tr>
             <tr>
-              <td style="color:#c084fc;font-weight:800;">Behavioral Discipline</td>
+              <td style="color:#fbbf24;font-weight:800;">Behavioral Discipline</td>
               <td>Displays probability ratings for executing Doppler notching break turns and filtering MALD decoy drones under current combat stress.</td>
             </tr>
           </tbody>
@@ -164,7 +168,7 @@ window.MANUAL_OPERATIONS = [
           <tbody>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">OVERVIEW</td>
-              <td>Segmented armor integrity pips, Mach corner velocity turn efficiency gauge, flight level altitude and VSI rate, kinetic energy recovery meter, AI cognition dossier (for enemies), and complete stores inventory.</td>
+              <td>Segmented armor integrity pips, Mach corner velocity turn efficiency gauge, flight level altitude and VSI rate, kinetic energy recovery meter, AI cognition dossier (with active tactical role and behavioral assessment for enemies), and complete stores inventory.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">SENSORS</td>

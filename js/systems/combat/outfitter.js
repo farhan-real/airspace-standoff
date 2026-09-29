@@ -49,7 +49,6 @@ class FleetOutfitter {
       totalCost += (u.cost || 0);
     };
 
-    // Gun scaling on flagships for Master and Legend
     if ((isAce || ['MASTER', 'LEGEND'].includes(diff)) && spec.allowedGuns) {
       if (spec.allowedGuns.includes('EML_GUN') && rng() < 0.70) chosenGunId = 'EML_GUN';
       else if (spec.allowedGuns.includes('DE-PULSE') && rng() < 0.80) chosenGunId = 'DE-PULSE';
@@ -58,8 +57,14 @@ class FleetOutfitter {
       else if (isHeavyTruck && spec.allowedGuns.includes('GPU-5A') && rng() < 0.50) chosenGunId = 'GPU-5A';
     }
 
-    // Dedicated Ace Outfitting: Guaranteed Triple-Tier ULR + Adv LR + SR
     if (isAce) {
+      let aceRole = 'SWEEP';
+      if (class1Ulr.length > 0 && (doctrine === 'STANDOFF' || rng() < 0.55)) {
+        aceRole = 'SNIPER';
+      } else if (spec.isCoffin || spec.category === 'EXPERIMENTAL') {
+        aceRole = 'FLAGSHIP';
+      }
+
       const ulrChoice = class1Ulr[Math.floor(rng() * class1Ulr.length)] || (class2Lr[0] || 'METEOR');
       const lrChoice = class2Lr[Math.floor(rng() * class2Lr.length)] || 'METEOR';
       const srChoice = ['PYTHON-5', 'IRIS-T'].filter(id => isEligible(wCatalog[id]))[0] || (class4Sr[0] || 'AIM-9X-2');
@@ -83,10 +88,9 @@ class FleetOutfitter {
         if (upgrades.length >= aceSockets) break;
         addUpg(uId);
       }
-      return { weapons, upgrades, totalCost, chosenGunId };
+      return { weapons, upgrades, totalCost, chosenGunId, role: aceRole };
     }
 
-    // Contextual Aerodynamic Policies: Weight Discipline & Clean Stealth Bays
     let enforceLightweight = false;
     if (isAgileDogfighter && !isHeavyTruck) {
       const lightChances = { CADET: 0.0, VETERAN: 0.0, ELITE: 0.30, ACE: 0.50, MASTER: 0.60, LEGEND: 0.65 };
@@ -99,7 +103,6 @@ class FleetOutfitter {
       enforceCleanStealth = (rng() < (cleanChances[diff] || 0.0));
     }
 
-    // Standard Non-Ace Role Assignment
     let role = 'SWEEP';
     if (isEW) role = 'SEAD';
     else if (isStrike) role = 'STRIKE';
@@ -128,7 +131,6 @@ class FleetOutfitter {
       return class4Sr[Math.floor(rng() * class4Sr.length)] || 'AIM-9X-2';
     };
 
-    // Role-Based Weapons Allocation
     if (role === 'SEAD') {
       addWpn(rng() < 0.60 ? 'AN-ALQ-249' : 'AN-ALQ-99', 'EXTERNAL');
       addWpn('AGM-88G', 'EXTERNAL');
@@ -136,7 +138,7 @@ class FleetOutfitter {
       addUpg('ADAPTIVE_ECCM_SUITE');
       if (spec.upgradeSockets >= 2) addUpg('ESM_PASSIVE_SUITE');
       if (spec.upgradeSockets >= 3 && ['ACE', 'MASTER', 'LEGEND'].includes(diff)) addUpg('GAN_AESA_CORE');
-      return { weapons, upgrades, totalCost, chosenGunId };
+      return { weapons, upgrades, totalCost, chosenGunId, role };
     }
 
     if (role === 'STRIKE') {
@@ -191,7 +193,6 @@ class FleetOutfitter {
       }
     }
 
-    // Standard Upgrade Sockets Allocation
     const maxSockets = spec.upgradeSockets || 3;
     let targetSockets = 1;
     if (diff === 'CADET') targetSockets = rng() < 0.40 ? 0 : 1;
@@ -207,7 +208,7 @@ class FleetOutfitter {
       addUpg(uId);
     }
 
-    return { weapons, upgrades, totalCost, chosenGunId };
+    return { weapons, upgrades, totalCost, chosenGunId, role };
   }
 }
 

@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Tactical AI Missile Decision Engine
- * Scaled launch sizing, inbound threat prediction, decoy discrimination, and mixed salvos.
+ * Scaled launch sizing, inbound threat prediction, decoy discrimination, and role-based target prioritization.
  */
 
 class AIMissileTactics {
@@ -47,8 +47,23 @@ class AIMissileTactics {
       return { isBingo: false, plan: null };
     }
 
-    const isBomber = Boolean(shooter.spec && shooter.spec.role && (shooter.spec.role.includes('Strike') || shooter.spec.role.includes('Bomber')));
-    const possibleTargets = (isBomber && bunkers.length > 0) ? bunkers.concat(airTargets) : airTargets.concat(bunkers);
+    const role = shooter.tacticalRole || (shooter.spec && shooter.spec.category === 'EW' ? 'SEAD' : (shooter.spec && shooter.spec.category === 'STRIKE' ? 'STRIKE' : 'SWEEP'));
+
+    let possibleTargets = [];
+    if (role === 'SEAD') {
+      const seadEmitters = bunkers.filter(s => s.type === 'RADAR_ARRAY' || s.type === 'EW_JAMMER' || s.type === 'S-400' || s.type === 'PANTSIR' || s.type === 'RADAR_VAN');
+      const otherBunkers = bunkers.filter(s => !seadEmitters.includes(s));
+      possibleTargets = seadEmitters.concat(otherBunkers).concat(airTargets);
+    } else if (role === 'STRIKE') {
+      possibleTargets = bunkers.concat(airTargets);
+    } else if (role === 'SNIPER') {
+      const highPrioAir = airTargets.filter(t => t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
+      const remainingAir = airTargets.filter(t => !highPrioAir.includes(t));
+      possibleTargets = highPrioAir.concat(remainingAir).concat(bunkers);
+    } else {
+      possibleTargets = airTargets.concat(bunkers);
+    }
+
     if (possibleTargets.length === 0) return { isBingo: false, plan: null };
 
     const requiredPk = tier.minPk || 45;
@@ -96,6 +111,8 @@ class AIMissileTactics {
           else if (w.seeker === 'ARH') score -= 18;
         }
 
+        if (role === 'SEAD' && isSurface && (tgt.type === 'RADAR_ARRAY' || tgt.type === 'S-400')) score += 40;
+        if (role === 'SNIPER' && dist >= 50.0) score += 25;
         if (tgt.isFlightLead) score += 18;
         if (tgt.hp <= 2) score += 16;
         if (diffKey === 'CADET') score += (Math.random() * 30 - 15);

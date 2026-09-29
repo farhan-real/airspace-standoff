@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Inspection Cognition & AI Attention Submodule
- * Displays live AI cognitive focus slots, mission posture, and succession states for enemy aircraft.
+ * Displays live AI cognitive focus slots, tactical role missions, and succession states for enemy aircraft.
  */
 
 window.INSP_SVG = window.INSP_SVG || {
@@ -10,6 +10,37 @@ window.INSP_SVG = window.INSP_SVG || {
 };
 
 class InspectionCognitionRenderer {
+  static getTacticalRoleLabel(rawRole) {
+    const roleMap = {
+      'SNIPER': 'STANDOFF SNIPER',
+      'SEAD': 'SEAD ESCORT',
+      'STRIKE': 'STRIKE INTERDICTION',
+      'AMBUSH': 'STEALTH AMBUSH',
+      'SWEEP': 'AIR DOMINANCE SWEEP',
+      'FLAGSHIP': 'COMMAND FLAGSHIP'
+    };
+    return roleMap[rawRole] || (rawRole ? String(rawRole).replace(/_/g, ' ') : 'AIR DOMINANCE SWEEP');
+  }
+
+  static getRoleAssessment(rawRole, isAce, isActivelyControlled, focusCount, maxSlots) {
+    if (isAce) {
+      return 'Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.';
+    }
+    const roleAssessments = {
+      'SNIPER': 'Holding standoff perimeter (45 to 80 km) to unleash ultra-long-range radar-guided volleys without merging.',
+      'SEAD': 'Actively suppressing allied air defense nodes; anti-radiation missiles cued to radar emitters.',
+      'STRIKE': 'Executing low-altitude ingress to deliver heavy ordnance against strategic ground installations.',
+      'AMBUSH': 'Operating with low-observable clean internal bay profile to set up surprise broadside BVR shots.',
+      'SWEEP': 'Offensive combat sweep maneuvering to engage allied fighters in direct air merges.'
+    };
+    if (roleAssessments[rawRole]) {
+      return roleAssessments[rawRole];
+    }
+    return isActivelyControlled
+      ? 'Commander attention active. Target steering, energy optimization, and missile release solutions are actively processed.'
+      : `Aircraft is on autonomous patrol awaiting an available commander focus slot (${focusCount}/${maxSlots} currently engaged).`;
+  }
+
   static renderCognitionCard(controller, aircraft) {
     if (!aircraft || !aircraft.spec) return '';
     const ai = controller.game && controller.game.ai;
@@ -23,6 +54,8 @@ class InspectionCognitionRenderer {
     const postureText = String(prof.posture || 'OFFENSIVE_SWEEP').replace(/_/g, ' ');
     const roleText = prof.roleInFormation || (isAce ? 'Ace Interceptor' : 'Independent Element');
     const pairDetail = prof.pairedUnit ? ` ${window.INSP_SVG.dot} Pair: ${prof.pairedUnit.callsign || 'Wingman'}` : '';
+
+    const tacticalRoleLabel = this.getTacticalRoleLabel(prof.tacticalRole);
 
     let successionHtml = '<b>Normal decision cycle</b>';
     if (prof.isHesitating) {
@@ -39,6 +72,8 @@ class InspectionCognitionRenderer {
       : (isActivelyControlled ? `LOCKED (${focusTimerSec.toFixed(1)}s)` : 'WAITING FOR SLOT');
     const focusValColor = isAce ? '#ffd700' : (isActivelyControlled ? 'var(--color-red)' : 'var(--color-moon-mist)');
 
+    const assessmentText = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots);
+
     return `
       <section class="inspection-card insp-cognition-card ${cardClass}" data-insp-enemy-cognition="${aircraft.id}">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -51,6 +86,11 @@ class InspectionCognitionRenderer {
         </div>
 
         <div class="insp-cognition-grid">
+          <div class="insp-cognition-field">
+            <span>TACTICAL ROLE:</span>
+            <b class="cog-tactical-role-val" style="color:var(--stat-tier-1);">${tacticalRoleLabel}</b>
+          </div>
+
           <div class="insp-cognition-field">
             <span>COMMANDER FOCUS:</span>
             <b class="cog-focus-val" style="color:${focusValColor};">
@@ -102,13 +142,7 @@ class InspectionCognitionRenderer {
 
         <div class="inspection-reason-box ${isActivelyControlled || isAce ? 'warning' : ''}" style="margin-top:6px;">
           <b>COGNITIVE ASSESSMENT:</b>
-          <span class="cog-summary-text">
-            ${isAce
-              ? `Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.`
-              : (isActivelyControlled
-                ? `Commander attention active. Target steering, energy optimization, and missile release solutions are actively processed.`
-                : `Aircraft is on autonomous patrol awaiting an available commander focus slot (${prof.activeFocusCount}/${prof.maxSlots} currently engaged).`)}
-          </span>
+          <span class="cog-summary-text">${assessmentText}</span>
         </div>
       </section>
     `;
@@ -133,6 +167,11 @@ class InspectionCognitionRenderer {
     if (chip) {
       chip.className = `factor-chip ${isAce ? 'warning' : (isActivelyControlled ? 'negative' : 'neutral')} cog-status-chip`;
       chip.textContent = isAce ? 'ELITE ACE CADRE' : (isActivelyControlled ? 'ACTIVELY CONTROLLED' : 'AUTONOMOUS PATROL');
+    }
+
+    const tacticalRoleVal = card.querySelector('.cog-tactical-role-val');
+    if (tacticalRoleVal) {
+      tacticalRoleVal.textContent = this.getTacticalRoleLabel(prof.tacticalRole);
     }
 
     const focusVal = card.querySelector('.cog-focus-val');
@@ -180,11 +219,7 @@ class InspectionCognitionRenderer {
 
     const summaryText = card.querySelector('.cog-summary-text');
     if (summaryText) {
-      summaryText.textContent = isAce
-        ? `Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.`
-        : (isActivelyControlled
-          ? `Commander attention active. Target steering, energy optimization, and missile release solutions are actively processed.`
-          : `Aircraft is on autonomous patrol awaiting an available commander focus slot (${prof.activeFocusCount}/${prof.maxSlots} currently engaged).`);
+      summaryText.textContent = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots);
     }
   }
 }

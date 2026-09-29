@@ -37,6 +37,10 @@ class Aircraft {
     this.isAce = Boolean(isAce);
     this.isFlightLead = Boolean(isFlightLead);
 
+    const isEW = (this.spec.category === 'EW' || this.spec.isEW);
+    const isStrike = (this.spec.category === 'STRIKE');
+    this.tacticalRole = isEW ? 'SEAD' : (isStrike ? 'STRIKE' : 'SWEEP');
+
     let rawCallsign = callsign || this.generateRandomCallsign();
     if (rawCallsign.toLowerCase().includes('wardog')) rawCallsign = rawCallsign.replace(/wardog/gi, 'Viper');
     this.callsign = rawCallsign;

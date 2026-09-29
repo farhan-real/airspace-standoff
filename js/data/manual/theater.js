@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 8 to 9
- * Threat tiers, adversary flight lead cadre, IADS & scoring formulas.
+ * Threat tiers, adversary flight lead cadre, tactical combat roles, IADS & scoring formulas.
  */
 
 window.MANUAL_THEATER = [
@@ -78,8 +78,8 @@ window.MANUAL_THEATER = [
           </thead>
           <tbody>
             <tr><td><b>Score Multiplier</b></td><td style="color:#94a3b8;font-weight:700;">0.50x</td><td style="color:#38bdf8;font-weight:700;">1.00x</td><td style="color:#38bdf8;font-weight:700;">1.50x</td><td style="color:#f43f5e;font-weight:700;">2.00x</td><td style="color:#f43f5e;font-weight:700;">2.60x</td><td style="color:#f43f5e;font-weight:700;">3.20x</td></tr>
-            <tr><td><b>Squadron Size</b></td><td style="color:#38bdf8;">3 - 4 Aircraft</td><td style="color:#38bdf8;">4 - 5 Aircraft</td><td style="color:#38bdf8;">5 - 6 Aircraft</td><td style="color:#fbbf24;">6 - 7 Aircraft</td><td style="color:#fbbf24;">7 - 8 Aircraft</td><td style="color:#f43f5e;">8 - 9 Aircraft</td></tr>
-            <tr><td><b>Defense Budget Cap</b></td><td style="color:#94a3b8;">170.0M CR</td><td style="color:#38bdf8;">290.0M CR</td><td style="color:#fbbf24;">400.0M CR</td><td style="color:#fbbf24;">520.0M CR</td><td style="color:#fbbf24;">620.0M CR</td><td style="color:#f43f5e;">740.0M CR</td></tr>
+            <tr><td><b>Squadron Size</b></td><td style="color:#38bdf8;">3 - 5 Aircraft</td><td style="color:#38bdf8;">4 - 6 Aircraft</td><td style="color:#38bdf8;">5 - 7 Aircraft</td><td style="color:#fbbf24;">6 - 8 Aircraft</td><td style="color:#fbbf24;">7 - 10 Aircraft</td><td style="color:#f43f5e;">8 - 11 Aircraft</td></tr>
+            <tr><td><b>Defense Budget Cap</b></td><td style="color:#94a3b8;">190.0M CR</td><td style="color:#38bdf8;">330.0M CR</td><td style="color:#fbbf24;">450.0M CR</td><td style="color:#fbbf24;">570.0M CR</td><td style="color:#fbbf24;">700.0M CR</td><td style="color:#f43f5e;">820.0M CR</td></tr>
             <tr><td><b>Reaction Delay</b></td><td style="color:#94a3b8;">6.5s - 7.5s (Sluggish)</td><td style="color:#38bdf8;">4.5s - 5.5s (Human)</td><td style="color:#fbbf24;">3.4s - 4.0s (Trained)</td><td style="color:#fbbf24;">2.6s - 3.0s (Sharp)</td><td style="color:#fbbf24;">2.0s - 2.4s (Fast)</td><td style="color:#f43f5e;">1.6s - 1.9s (Instant)</td></tr>
             <tr><td><b>Target Focus Slots</b></td><td style="color:#38bdf8;">1 Target at a time</td><td style="color:#38bdf8;">1 Target at a time</td><td style="color:#fbbf24;">2 Targets tracked</td><td style="color:#fbbf24;">2 Targets tracked</td><td style="color:#fbbf24;">2 - 3 Targets tracked</td><td style="color:#f43f5e;">3 Targets tracked</td></tr>
             <tr><td><b>Decoy Drone Defense</b></td><td style="color:#94a3b8;">0% (Chases all decoys)</td><td style="color:#94a3b8;">15% spot rate</td><td style="color:#38bdf8;">30% spot rate</td><td style="color:#38bdf8;">45% spot rate</td><td style="color:#38bdf8;">55% spot rate</td><td style="color:#fbbf24;">65% spot rate</td></tr>
@@ -105,11 +105,66 @@ window.MANUAL_THEATER = [
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Heavy Missile Trucks (F-15EX, J-20, MiG-31BM, Su-34):</b> Never restricted to light weight. They intentionally carry heavy external racks (Wr = 70% - 90%) and oversized standoff missiles (R-37M, PL-21, Kinzhal) to maximize missile magazine capacity.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Agile Dogfighters (Rafale, Su-35S, Eurofighter):</b> On higher difficulties, they selectively roll lightweight loadouts (Wr &le; 50%) with fewer heavy bombs, preserving 100% corner-speed turn authority.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Stealth Cleanliness:</b> Stealth jets (F-22A, YF-23, Su-57) only enforce pure internal bays when assigned the Ambush role. In other roles, they mount external rails for extra missile firepower.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Natural Fleet Variance:</b> The adversary plans aircraft one by one against the sector budget. When an aircraft proposal overflows the budget, it is rejected and affordable escorts are evaluated before finalization, producing natural 7 to 9 plane variations without artificial clutter.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Natural Fleet Variance:</b> The adversary plans aircraft one by one against the sector budget. When an aircraft proposal overflows the budget, it is rejected and affordable escorts are evaluated before finalization, producing natural 7 to 11 plane variations without artificial clutter.</li>
         </ul>
       </div>
 
-      <div class="ge-subhead">5. WEAPON RANGE CLASSES &amp; ORDNANCE PROFILES</div>
+      <div class="ge-subhead">5. TACTICAL COMBAT ROLES &amp; IN-FLIGHT BEHAVIOR</div>
+      <div class="ge-desc">
+        Each adversary aircraft operates under an assigned combat role that governs its armament, in-flight navigation, altitude staging, and target priority:
+      </div>
+      <div class="ge-grid-2">
+        <div class="ge-card" style="border-left:3px solid #00f0ff;">
+          <b style="color:#00f0ff;">STANDOFF SNIPER</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            <b>Armament:</b> Ultra-Long-Range (ULR) missiles (AIM-260, R-37M, PL-21) and sustained ramjets (Meteor).<br>
+            <b>Navigation:</b> High altitude perch (FL400). Holds standoff perimeter (45 to 80 km). If targets close inside 42 km, turns perpendicular to maintain range rather than charging into a visual dogfight.<br>
+            <b>Target Priority:</b> Enemy Flight Leads, Aces, and heavy bombers.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #c084fc;">
+          <b style="color:#c084fc;">SEAD ESCORT (AIR DEFENSE SUPPRESSION)</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            <b>Armament:</b> High-power microwave jamming pods (AN-ALQ-249/99) and AGM-88G anti-radiation missiles.<br>
+            <b>Navigation:</b> Medium altitude (FL320) trailing forward fighters. Actively steers toward allied surface radar arrays, SAM batteries, and EW stations.<br>
+            <b>Target Priority:</b> Active radar emitters and surface air-defense installations.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #f97316;">
+          <b style="color:#f97316;">STRIKE INTERDICTION</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            <b>Armament:</b> Heavy centerline hypersonic weapons (Kinzhal), stealth cruise missiles (JASSM-ER), or glide bombs (GBU-39).<br>
+            <b>Navigation:</b> Low altitude ingress (FL120) below early-warning radar coverage directly toward allied base facilities.<br>
+            <b>Target Priority:</b> Command bunkers, fuel farms, and strategic logistics hubs.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #14b8a6;">
+          <b style="color:#2dd4bf;">STEALTH AMBUSH</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            <b>Armament:</b> Clean internal bays (zero external drag, minimum RCS) armed with stealth BVR and over-the-shoulder missiles.<br>
+            <b>Navigation:</b> Ingresses along outer lateral theater corridors (outer Y boundaries) to set up offset broadside shots before turning inward.<br>
+            <b>Target Priority:</b> High-threat fighters vulnerable from beam and rear aspects.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #00f5a0;">
+          <b style="color:#00f5a0;">AIR DOMINANCE SWEEP</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            <b>Armament:</b> Balanced dual-pulse BVR missiles and high-off-boresight dogfight heat-seekers.<br>
+            <b>Navigation:</b> Cruising altitude (FL260–FL340). Drives forward intercepts, maintaining optimal corner speed (sOpt) during combat turns.<br>
+            <b>Target Priority:</b> Nearest active fighter threats to clear contested airspace.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #ffd700;">
+          <b style="color:#ffd700;">COMMAND FLAGSHIP (ACE CADRE)</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            <b>Armament:</b> Directed-energy lasers (PLSL, DE-Pulse), EML railguns, or ADMM multi-target pods with 4 full upgrade sockets.<br>
+            <b>Navigation:</b> High-energy 3D vertical fighting, coordinated salvo releases, and instant reaction speeds (1.1s to 1.8s).<br>
+            <b>Target Priority:</b> Opposing squadron leaders and high-scoring combatants.
+          </div>
+        </div>
+      </div>
+
+      <div class="ge-subhead">6. WEAPON RANGE CLASSES &amp; ORDNANCE PROFILES</div>
       <div class="ge-desc">
         All missiles and weapons are unlocked from the start. Rather than loading random stores, the adversary plans aircraft loadouts by pairing complementary range classes to fulfill distinct tactical roles:
       </div>
@@ -134,7 +189,7 @@ window.MANUAL_THEATER = [
         </div>
       </div>
 
-      <div class="ge-subhead">6. LOADOUT ARCHITECTURE &amp; ROLE PLANNING</div>
+      <div class="ge-subhead">7. LOADOUT ARCHITECTURE &amp; ROLE PLANNING</div>
       <div class="ge-desc">
         All weapons are available from the start. Rather than loading identical static templates, the enemy plans loadouts via weighted rolls, assigning specialized roles while managing weight and stealth:
       </div>
@@ -164,12 +219,12 @@ window.MANUAL_THEATER = [
             <tr><td><b>Stealth Clean Bay Policy</b></td><td style="color:#94a3b8;">0% (External drag)</td><td style="color:#94a3b8;">0% (External drag)</td><td style="color:#38bdf8;">35% Clean VLO bays</td><td style="color:#38bdf8;">45% Clean VLO bays</td><td style="color:#fbbf24;">55% Clean VLO bays</td><td style="color:#fbbf24;">60% Clean VLO bays</td></tr>
             <tr><td><b>Guns &amp; Directed-Energy</b></td><td style="color:#94a3b8;">Standard cannon</td><td style="color:#38bdf8;">Standard cannon</td><td style="color:#38bdf8;">Standard cannon</td><td style="color:#38bdf8;">Tuned burst discipline</td><td style="color:#f43f5e;">Laser / Pod upgrades</td><td style="color:#f43f5e;">DE-PULSE / Railgun / Lasers</td></tr>
             <tr><td><b>Upgrade Sockets Filled</b></td><td style="color:#94a3b8;">0 - 1 Socket</td><td style="color:#38bdf8;">1 - 2 Sockets</td><td style="color:#fbbf24;">2 - 3 Sockets</td><td style="color:#fbbf24;">3 Sockets</td><td style="color:#fbbf24;">3 - 4 Sockets</td><td style="color:#f43f5e;">4 Full Sockets</td></tr>
-            <tr><td><b>Budget Procurement Rule</b></td><td style="color:#94a3b8;">1-by-1 plan, stop >170M</td><td style="color:#38bdf8;">1-by-1 plan, stop >290M</td><td style="color:#38bdf8;">1-by-1 plan, stop >400M</td><td style="color:#fbbf24;">1-by-1 plan, stop >520M</td><td style="color:#fbbf24;">1-by-1 plan, stop >620M</td><td style="color:#f43f5e;">1-by-1 plan, stop >740M</td></tr>
+            <tr><td><b>Budget Procurement Rule</b></td><td style="color:#94a3b8;">1-by-1 plan, stop >190M</td><td style="color:#38bdf8;">1-by-1 plan, stop >330M</td><td style="color:#38bdf8;">1-by-1 plan, stop >450M</td><td style="color:#fbbf24;">1-by-1 plan, stop >570M</td><td style="color:#fbbf24;">1-by-1 plan, stop >700M</td><td style="color:#f43f5e;">1-by-1 plan, stop >820M</td></tr>
           </tbody>
         </table>
       </div>
 
-      <div class="ge-subhead">7. ADVERSARY FLIGHT LEAD (ACE) SPECIFICATIONS</div>
+      <div class="ge-subhead">8. ADVERSARY FLIGHT LEAD (ACE) SPECIFICATIONS</div>
       <div class="ge-desc">
         Designated Aces operate as elite formation leaders. Regardless of difficulty tier, Aces are guaranteed a triple-tier armament package (ULR + Adv LR + SR) and significantly outperform their wingmen:
       </div>
@@ -202,7 +257,7 @@ window.MANUAL_THEATER = [
         </table>
       </div>
 
-      <div class="ge-subhead">8. INTEGRATED AIR DEFENSE SYSTEMS (IADS)</div>
+      <div class="ge-subhead">9. INTEGRATED AIR DEFENSE SYSTEMS (IADS)</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
@@ -237,7 +292,7 @@ window.MANUAL_THEATER = [
         </table>
       </div>
 
-      <div class="ge-subhead">9. THEATER LOGISTICS, DEPOTS &amp; COMBAT SCORING FORMULAS</div>
+      <div class="ge-subhead">10. THEATER LOGISTICS, DEPOTS &amp; COMBAT SCORING FORMULAS</div>
       <div class="ge-grid-2">
         <div class="ge-card">
           <b style="color:var(--stat-tier-2);">STRATEGIC GROUND TARGETS &amp; VP VALUES</b>

@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Tactical AI Commander
- * Human-like attention allocation, cognitive bandwidth slots, mission planning, and tactical execution.
+ * Human-like attention allocation, cognitive bandwidth slots, mission planning, and role-directed tactical execution.
  */
 
 window.AI_ACE_PROFILES = {
@@ -59,6 +59,8 @@ class TacticalAICommander {
       }
     }
 
+    const tacticalRole = (unit && unit.tacticalRole) ? unit.tacticalRole : (unit && unit.spec && unit.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
+
     return {
       isAce,
       isFocused,
@@ -67,6 +69,7 @@ class TacticalAICommander {
       activeFocusCount,
       diffKey,
       posture,
+      tacticalRole,
       isHesitating,
       successionTimer,
       roleInFormation,
@@ -269,11 +272,25 @@ class TacticalAICommander {
       return;
     }
 
+    const role = hostile.tacticalRole || (hostile.spec && hostile.spec.category === 'EW' ? 'SEAD' : (hostile.spec && hostile.spec.category === 'STRIKE' ? 'STRIKE' : 'SWEEP'));
+
     let target = null;
-    const isBomber = Boolean(hostile.spec && hostile.spec.role && (hostile.spec.role.includes('Strike') || hostile.spec.role.includes('Bomber')));
-    if (isBomber && visibleBunkers.length > 0) target = visibleBunkers[0];
-    else if (candidateAirTargets.length > 0) {
-      target = candidateAirTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), candidateAirTargets[0]);
+    if (role === 'SEAD') {
+      const hostileRadars = (this.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0 && (s.type === 'RADAR_ARRAY' || s.type === 'EW_JAMMER' || s.type === 'S-400' || s.type === 'PANTSIR' || s.type === 'RADAR_VAN'));
+      if (hostileRadars.length > 0) target = hostileRadars[0];
+      else if (candidateAirTargets.length > 0) target = candidateAirTargets[0];
+    } else if (role === 'STRIKE') {
+      const strikeTargets = (this.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0 && (s.type === 'BUNKER' || s.type === 'FUEL_DEPOT' || !s.isIndestructible));
+      if (strikeTargets.length > 0) target = strikeTargets[0];
+      else if (candidateAirTargets.length > 0) target = candidateAirTargets[0];
+    } else if (candidateAirTargets.length > 0) {
+      if (role === 'SNIPER') {
+        const priorityTargets = candidateAirTargets.filter(t => t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
+        const pool = priorityTargets.length > 0 ? priorityTargets : candidateAirTargets;
+        target = pool.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), pool[0]);
+      } else {
+        target = candidateAirTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), candidateAirTargets[0]);
+      }
     }
 
     const wingmanOffset = this.planning.getWingmanOffset(hostile, profile);
@@ -288,7 +305,10 @@ class TacticalAICommander {
     const tier = navTiers[diffKey] || navTiers.VETERAN;
 
     if (profile.verticalCombat) {
-      const targetAlt = this.planning.getPlannedAltitude(hostile, profile, diffKey);
+      let targetAlt = this.planning.getPlannedAltitude(hostile, profile, diffKey);
+      if (role === 'SNIPER') targetAlt = 40000;
+      else if (role === 'SEAD') targetAlt = 32000;
+      else if (role === 'STRIKE') targetAlt = 12000;
       if (Math.abs(hostile.altFt - targetAlt) > 4000) {
         hostile.targetAltFt = targetAlt;
       }
@@ -311,20 +331,35 @@ class TacticalAICommander {
     hostile.radarLockedTarget = target;
     const dist = Math.hypot(target.x - hostile.x, target.y - hostile.y);
 
-    if (dist < tier.overshootDist) {
+    let desiredHeading = Math.atan2(target.y - hostile.y, target.x - hostile.x);
+
+    if (role === 'SNIPER' && ['ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diffKey)) {
+      if (dist < 42.0) {
+        const directAngle = Math.atan2(target.y - hostile.y, target.x - hostile.x);
+        desiredHeading = directAngle + (Math.PI / 2);
+        hostile.engineAlpha = 0.50;
+      } else if (dist > 85.0) {
+        desiredHeading = Math.atan2(target.y - hostile.y, target.x - hostile.x);
+        hostile.engineAlpha = 0.85;
+      } else {
+        desiredHeading = Math.atan2(target.y - hostile.y, target.x - hostile.x);
+        hostile.engineAlpha = 0.65;
+      }
+    } else if (role === 'AMBUSH' && dist > 35.0 && ['ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diffKey)) {
+      const targetY = hostile.y < 50 ? 18.0 : 82.0;
+      desiredHeading = Math.atan2(targetY - hostile.y, target.x - hostile.x);
+      hostile.engineAlpha = 0.70;
+    } else if (dist < tier.overshootDist) {
       const closingDiff = Math.abs(hostile.heading - (target.heading || 0));
       if (closingDiff > 1.8 && Math.random() < tier.overshootChance) {
         hostile.engineAlpha = tier.throttle;
         return;
       }
+    } else if (wingmanOffset && dist > 20.0) {
+      desiredHeading = Math.atan2(wingmanOffset.y - hostile.y, wingmanOffset.x - hostile.x);
     }
 
-    let targetHeading = Math.atan2(target.y - hostile.y, target.x - hostile.x);
-    if (wingmanOffset && dist > 20.0) {
-      targetHeading = Math.atan2(wingmanOffset.y - hostile.y, wingmanOffset.x - hostile.x);
-    }
-
-    let diff = targetHeading - hostile.heading;
+    let diff = desiredHeading - hostile.heading;
     while (diff < -Math.PI) diff += Math.PI * 2;
     while (diff > Math.PI) diff -= Math.PI * 2;
 
@@ -337,12 +372,14 @@ class TacticalAICommander {
     hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
 
     const sOpt = (typeof hostile.getOptimalCornerSpeed === 'function') ? hostile.getOptimalCornerSpeed() : 0.75;
-    if (['ACE', 'MASTER', 'LEGEND'].includes(diffKey) && Math.abs(diff) > 0.40) {
-      if (hostile.speed > sOpt * 1.15) hostile.engineAlpha = 0.40;
-      else if (hostile.speed < sOpt * 0.85) hostile.engineAlpha = 0.85;
-      else hostile.engineAlpha = 0.65;
-    } else {
-      hostile.engineAlpha = isFocused ? tier.throttle : 0.50;
+    if (role !== 'SNIPER') {
+      if (['ACE', 'MASTER', 'LEGEND'].includes(diffKey) && Math.abs(diff) > 0.40) {
+        if (hostile.speed > sOpt * 1.15) hostile.engineAlpha = 0.40;
+        else if (hostile.speed < sOpt * 0.85) hostile.engineAlpha = 0.85;
+        else hostile.engineAlpha = 0.65;
+      } else {
+        hostile.engineAlpha = isFocused ? tier.throttle : 0.50;
+      }
     }
   }
 }
