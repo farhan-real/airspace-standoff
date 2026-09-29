@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Fleet Formation & Dynamic Hostile Fleet Generator (150km x 100km Theater)
- * Natural probability-based fleet generation with priority ace loading and budget rejection finalization.
+ * AIRSPACE STANDOFF: Fleet Formation & Dynamic Fleet Generator (150km x 100km Theater)
+ * Supports friendly and hostile fleet generation with priority ace loading and budget rejection finalization.
  */
 
 const FleetGenerator = {
@@ -66,18 +66,16 @@ const FleetGenerator = {
     if (typeof FleetOutfitter !== 'undefined') {
       return FleetOutfitter.planAircraftLoadout(spec, isAce, doctrine, diff, rng);
     }
-    if (typeof FleetLoadoutPlanner !== 'undefined') {
-      return FleetLoadoutPlanner.planAircraftLoadout(spec, isAce, doctrine, diff, rng);
-    }
     return { weapons: [], upgrades: [], totalCost: spec.cost || 20.0, chosenGunId: spec.builtInGun || 'M61A2', role: 'SWEEP' };
   },
 
-  generateHostileFleet(difficultyKey, doctrineKey, theaterWidth, theaterHeight, options = {}) {
+  generateFleet(team, difficultyKey, doctrineKey, theaterWidth, theaterHeight, options = {}) {
+    const isBlue = (team === 'friendly');
     const diff = difficultyKey || 'VETERAN';
     const doctrine = doctrineKey || 'BALANCED';
     const diffProfile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diff]) || { budgetCap: 330.0, aceCount: 1 };
 
-    let s = (Date.now() ^ ((performance.now() * 1000) | 0) ^ 0x9E3779B9) >>> 0;
+    let s = (Date.now() ^ ((performance.now() * 1000) | 0) ^ (isBlue ? 0x12345678 : 0x9E3779B9)) >>> 0;
     const rng = () => {
       s = (s + 0x6D2B79F5) | 0;
       let t = Math.imul(s ^ (s >>> 15), 1 | s);
@@ -86,14 +84,15 @@ const FleetGenerator = {
     };
 
     const maxSquadronSize = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
-    const configuredCount = Number.isFinite(Number(options.aircraftCount))
-      ? Math.max(1, Math.min(maxSquadronSize, Math.floor(options.aircraftCount)))
-      : null;
-    const targetBudget = configuredCount !== null ? Number.POSITIVE_INFINITY : (diffProfile.budgetCap || 330.0);
-    const targetCountLimit = configuredCount !== null ? configuredCount : maxSquadronSize;
+    const targetBudget = Number.isFinite(Number(options.budget)) && Number(options.budget) > 0
+      ? Number(options.budget)
+      : (diffProfile.budgetCap || 330.0);
 
     const catalog = window.AIRCRAFT_CATALOG || {};
-    const callsigns = [...(window.CALLSIGN_POOL || ['Viper', 'Ghost', 'Talon', 'Reaper', 'Bandit'])].sort(() => rng() - 0.5);
+    const callsignPool = isBlue
+      ? (window.CALLSIGN_POOL || ['Trigger', 'Mobius', 'Cipher', 'Viper', 'Ghost'])
+      : ['Bandit', 'Outlaw', 'Razor', 'Havoc', 'Stalker', 'Cobra'];
+    const callsigns = [...callsignPool].sort(() => rng() - 0.5);
 
     const fleetItems = [];
     let spentBudget = 0.0;
@@ -103,11 +102,13 @@ const FleetGenerator = {
       ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM', 'F-14D', 'Su-57', 'YF-23', 'J-20']
       : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'F-22C-COFFIN', 'Su-57', 'Su-47', 'Su-37-COFFIN', 'DARKSTAR', 'F-15-SMT-COFFIN'];
 
-    const aceCallsigns = ['Yellow 13', 'Pixy', 'Mihaly', 'Gault', 'Strigon', 'Wizard', 'Schwarze', 'Espada'].sort(() => rng() - 0.5);
+    const aceCallsigns = isBlue
+      ? ['Apex Lead', 'Saber Lead', 'Ghost Lead', 'Viper Ace', 'Archangel'].sort(() => rng() - 0.5)
+      : ['Yellow 13', 'Pixy', 'Mihaly', 'Gault', 'Strigon', 'Wizard', 'Schwarze', 'Espada'].sort(() => rng() - 0.5);
     const shuffledAces = [...aceCandidates].sort(() => rng() - 0.5);
 
     for (let a = 0; a < aceQuota; a++) {
-      if (configuredCount !== null && fleetItems.length >= configuredCount) break;
+      if (fleetItems.length >= maxSquadronSize) break;
       const specId = shuffledAces[a % shuffledAces.length];
       const spec = catalog[specId];
       if (spec) {
@@ -124,7 +125,7 @@ const FleetGenerator = {
             plannedUpgrades: planned.upgrades
           });
           spentBudget += planned.totalCost;
-        } else if (configuredCount === null && fleetItems.length > 0) {
+        } else if (fleetItems.length > 0) {
           break;
         }
       }
@@ -134,7 +135,7 @@ const FleetGenerator = {
     const ewChance = ewChances[diff] !== undefined ? ewChances[diff] : 0.40;
     const ewPool = (diff === 'CADET' || diff === 'VETERAN') ? ['Tornado-ECR', 'EF-111A'] : ['EA-18G', 'J-16D', 'EF-111A'];
 
-    if (rng() < ewChance && fleetItems.length < targetCountLimit) {
+    if (rng() < ewChance && fleetItems.length < maxSquadronSize) {
       const specId = ewPool[Math.floor(rng() * ewPool.length)];
       const spec = catalog[specId];
       if (spec) {
@@ -145,7 +146,7 @@ const FleetGenerator = {
             isAce: false,
             isLead: false,
             role: planned.role || 'SEAD',
-            callsign: `Raven ${fleetItems.length + 1}`,
+            callsign: isBlue ? `Raven ${fleetItems.length + 1}` : `Shadow ${fleetItems.length + 1}`,
             chosenGunId: planned.chosenGunId,
             plannedWeapons: planned.weapons,
             plannedUpgrades: planned.upgrades
@@ -160,7 +161,7 @@ const FleetGenerator = {
     const midTierPool = ['Eurofighter', 'Rafale-C', 'Su-35S', 'F-15EX', 'KF-21', 'F-18E', 'F-2A', 'J-16', 'Su-30SM', 'MiG-31BM', 'JAS-39E'];
     const lowTierPool = ['F-16V', 'Mirage-2000', 'Tejas-MK2', 'MiG-29K', 'X-29A', 'Tornado-ECR'];
 
-    while (fleetItems.length < targetCountLimit) {
+    while (fleetItems.length < maxSquadronSize) {
       const roll = rng();
       let candidatePool;
 
@@ -184,13 +185,13 @@ const FleetGenerator = {
           isAce: false,
           isLead: isLead,
           role: planned.role || 'SWEEP',
-          callsign: isLead ? 'Saber Lead' : (callsigns.pop() || `Bandit ${fleetItems.length + 1}`),
+          callsign: isLead ? (isBlue ? 'Flight Lead' : 'Saber Lead') : (callsigns.pop() || `${isBlue ? 'Blue' : 'Bandit'} ${fleetItems.length + 1}`),
           chosenGunId: planned.chosenGunId,
           plannedWeapons: planned.weapons,
           plannedUpgrades: planned.upgrades
         });
         spentBudget += planned.totalCost;
-      } else if (configuredCount === null) {
+      } else {
         break;
       }
     }
@@ -205,7 +206,7 @@ const FleetGenerator = {
           isAce: false,
           isLead: true,
           role: 'SWEEP',
-          callsign: 'Saber Lead',
+          callsign: isBlue ? 'Flight Lead' : 'Saber Lead',
           chosenGunId: planned.chosenGunId,
           plannedWeapons: planned.weapons,
           plannedUpgrades: planned.upgrades
@@ -217,16 +218,18 @@ const FleetGenerator = {
       fleetItems[0].isLead = true;
     }
 
-    const spawnPlans = this.calculateFormationSpawns(fleetItems, 'hostile', theaterWidth, theaterHeight, rng);
-    const hostileSquadron = [];
+    const spawnPlans = this.calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rng);
+    const squadron = [];
 
     spawnPlans.forEach(plan => {
       const item = plan.item;
-      const heading = Math.PI + (rng() * 0.16 - 0.08);
+      const heading = isBlue ? (rng() * 0.16 - 0.08) : (Math.PI + (rng() * 0.16 - 0.08));
       const altFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(rng() * 16) * 1000);
+      const defaultSquadName = isBlue ? (options.squadronName || 'Allied Strike Wing') : (item.isAce ? 'Elite Ace Cadre' : 'Hostile Intercept Wing');
+
       const unit = new Aircraft(
-        item.specId, 'hostile', plan.x, plan.y, heading, item.chosenGunId || null,
-        item.callsign, item.isAce ? 'Elite Ace Cadre' : 'Hostile Intercept Wing',
+        item.specId, team, plan.x, plan.y, heading, item.chosenGunId || null,
+        item.callsign, defaultSquadName,
         plan.isLead, plan.isAce, altFt
       );
 
@@ -235,11 +238,15 @@ const FleetGenerator = {
       (item.plannedWeapons || []).forEach(w => unit.installWeapon(w.id, w.station));
       (item.plannedUpgrades || []).forEach(u => unit.installUpgrade(u));
       unit.recalculateWeight();
-      hostileSquadron.push(unit);
+      squadron.push(unit);
     });
 
-    hostileSquadron.sort((a, b) => (b.isAce ? 1 : 0) - (a.isAce ? 1 : 0) || (b.isFlightLead ? 1 : 0) - (a.isFlightLead ? 1 : 0));
-    return hostileSquadron;
+    squadron.sort((a, b) => (b.isAce ? 1 : 0) - (a.isAce ? 1 : 0) || (b.isFlightLead ? 1 : 0) - (a.isFlightLead ? 1 : 0));
+    return squadron;
+  },
+
+  generateHostileFleet(difficultyKey, doctrineKey, theaterWidth, theaterHeight, options = {}) {
+    return this.generateFleet('hostile', difficultyKey, doctrineKey, theaterWidth, theaterHeight, options);
   },
 
   generateDynamicSquadronWave(waveIndex, team, theaterWidth, theaterHeight, difficultyKey) {

@@ -73,12 +73,12 @@ window.MANUAL_THEATER = [
               <th style="color:#00f0ff;">HOSTILE AIRSPACE<br><span style="font-size:0.52rem;opacity:0.7;">(ELITE)</span></th>
               <th style="color:#ffd700;">HIGH-THREAT SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">(ACE)</span></th>
               <th style="color:#c084fc;">AIR DENIAL ZONE<br><span style="font-size:0.52rem;opacity:0.7;">(MASTER)</span></th>
-              <th style="color:#ff3366;">EXTREME THREAT<br><span style="font-size:0.52rem;opacity:0.7;">(LEGEND)</span></th>
+              <th style="color:#ff3366;">EXTREME THREAT SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">(LEGEND)</span></th>
             </tr>
           </thead>
           <tbody>
             <tr><td><b>Score Multiplier</b></td><td style="color:#94a3b8;font-weight:700;">0.50x</td><td style="color:#38bdf8;font-weight:700;">1.00x</td><td style="color:#38bdf8;font-weight:700;">1.50x</td><td style="color:#f43f5e;font-weight:700;">2.00x</td><td style="color:#f43f5e;font-weight:700;">2.60x</td><td style="color:#f43f5e;font-weight:700;">3.20x</td></tr>
-            <tr><td><b>Estimated Squadron Size</b></td><td style="color:#38bdf8;">8 - 10 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(8-10 Sweepers)</span></td><td style="color:#38bdf8;">8 - 10 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(1 Ace, 5-7 Sweepers, 1-2 Strike, 0-1 SEAD)</span></td><td style="color:#38bdf8;">7 - 9 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(1 Ace, 4-5 Sweepers, 1-2 Snipers, 1 SEAD)</span></td><td style="color:#fbbf24;">8 - 10 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(2 Aces, 3-4 Sweepers, 2 Snipers, 1 Ambush, 1 SEAD)</span></td><td style="color:#fbbf24;">10 - 12 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(2 Flagship Aces, 4-5 Sweepers, 2 Snipers, 1-2 Ambush, 1 SEAD)</span></td><td style="color:#f43f5e;">11 - 13 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(3 Apex Aces, 4-5 Sweepers, 2 Snipers, 2 Ambush, 1 SEAD)</span></td></tr>
+            <tr><td><b>Estimated Fleet Size</b></td><td style="color:#38bdf8;">8 - 10 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(8-10 Sweepers)</span></td><td style="color:#38bdf8;">8 - 10 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(1 Ace, 5-7 Sweepers, 1-2 Strike, 0-1 SEAD)</span></td><td style="color:#38bdf8;">7 - 9 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(1 Ace, 4-5 Sweepers, 1-2 Snipers, 1 SEAD)</span></td><td style="color:#fbbf24;">8 - 10 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(2 Aces, 3-4 Sweepers, 2 Snipers, 1 Ambush, 1 SEAD)</span></td><td style="color:#fbbf24;">10 - 12 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(2 Flagship Aces, 4-5 Sweepers, 2 Snipers, 1-2 Ambush, 1 SEAD)</span></td><td style="color:#f43f5e;">11 - 13 Aircraft<br><span style="font-size:0.50rem;color:var(--color-moon-mist);">(3 Apex Aces, 4-5 Sweepers, 2 Snipers, 2 Ambush, 1 SEAD)</span></td></tr>
             <tr><td><b>Defense Budget Cap</b></td><td style="color:#94a3b8;">190.0M CR</td><td style="color:#38bdf8;">330.0M CR</td><td style="color:#fbbf24;">450.0M CR</td><td style="color:#fbbf24;">570.0M CR</td><td style="color:#fbbf24;">700.0M CR</td><td style="color:#f43f5e;">820.0M CR</td></tr>
             <tr><td><b>Reaction Delay</b></td><td style="color:#94a3b8;">6.5s - 7.5s (Sluggish)</td><td style="color:#38bdf8;">4.5s - 5.5s (Human)</td><td style="color:#fbbf24;">3.4s - 4.0s (Trained)</td><td style="color:#fbbf24;">2.6s - 3.0s (Sharp)</td><td style="color:#fbbf24;">2.0s - 2.4s (Fast)</td><td style="color:#f43f5e;">1.6s - 1.9s (Instant)</td></tr>
             <tr><td><b>Target Focus Slots</b></td><td style="color:#38bdf8;">1 Target at a time</td><td style="color:#38bdf8;">1 Target at a time</td><td style="color:#fbbf24;">2 Targets tracked</td><td style="color:#fbbf24;">2 Targets tracked</td><td style="color:#fbbf24;">2 - 3 Targets tracked</td><td style="color:#f43f5e;">3 Targets tracked</td></tr>
@@ -105,7 +105,7 @@ window.MANUAL_THEATER = [
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Heavy Missile Trucks (F-15EX, J-20, MiG-31BM, Su-34):</b> Never restricted to light weight. They intentionally carry heavy external racks (Wr = 70% - 90%) and oversized standoff missiles (R-37M, PL-21, Kinzhal) to maximize missile magazine capacity.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Agile Dogfighters (Rafale, Su-35S, Eurofighter):</b> On higher difficulties, they selectively roll lightweight loadouts (Wr &le; 50%) with fewer heavy bombs, preserving 100% corner-speed turn authority.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Stealth Cleanliness:</b> Stealth jets (F-22A, YF-23, Su-57) only enforce pure internal bays when assigned the Ambush role. In other roles, they mount external rails for extra missile firepower.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Natural Fleet Sizing &amp; Rejection Finalization:</b> Fleet size is not governed by hardcoded plane limits. The adversary drafts aircraft sequentially against the sector defense budget, loading elite Aces first. Standard aircraft are then drawn based on role and tier probabilities. The moment an aircraft proposal exceeds the remaining budget, it is rejected and fleet generation instantly finalizes. Fleet sizes emerge naturally from unit costs and role drafting: 8-10 aircraft on Cadet and Veteran (light-to-medium sweepers), 7-9 on Elite (heavier 5th-gen/apex packages with 1 Ace), 8-10 on Ace (2 Aces, snipers and stealth ambushers), 10-12 on Master (2 Flagship Aces, air denial team), and 11-13 on Legend (3 Apex Aces with full saturation strike packages).</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Natural Fleet Sizing &amp; Rejection Finalization:</b> Fleet size is not governed by hardcoded plane limits. The adversary drafts aircraft sequentially against the sector defense budget, loading elite Aces first. Standard aircraft are then drawn based on role and tier probabilities. The moment an aircraft proposal exceeds the remaining budget, it is rejected and fleet generation instantly finalizes. Fleet sizes emerge naturally from unit costs and role drafting: 8-10 aircraft on Permissive Sector and Contested Airspace (light-to-medium sweepers), 7-9 on Hostile Airspace (heavier 5th-gen/apex packages with 1 Ace), 8-10 on High-Threat Sector (2 Aces, snipers and stealth ambushers), 10-12 on Air Denial Zone (2 Flagship Aces, air denial team), and 11-13 on Extreme Threat Sector (3 Apex Aces with full saturation strike packages).</li>
         </ul>
       </div>
 
@@ -117,55 +117,55 @@ window.MANUAL_THEATER = [
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
           <b style="color:#00f0ff;">STANDOFF SNIPER</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Elite:</b> Cruises FL380, holds 45 to 75 km range, turns beam if targets approach inside 38 km.<br>
-            <b>Ace:</b> Cruises FL420, holds 50 to 80 km, executes 135&deg; retrograde turns inside 45 km to drag out enemy missiles.<br>
-            <b>Master:</b> Stratospheric FL460 cruise. Executes a 65&deg; crank off boresight at radar gimbal limits to drag out return fire.<br>
-            <b>Legend:</b> Stratospheric FL500 cruise. Executes supersonic drag-away skates and long-range LPI missile volleys.
+            <b>Hostile Airspace:</b> Cruises FL380, holds 45 to 75 km range, turns beam if targets approach inside 38 km.<br>
+            <b>High-Threat Sector:</b> Cruises FL420, holds 50 to 80 km, executes 135&deg; retrograde turns inside 45 km to drag out enemy missiles.<br>
+            <b>Air Denial Zone:</b> Stratospheric FL460 cruise. Executes a 65&deg; crank off boresight at radar gimbal limits to drag out return fire.<br>
+            <b>Extreme Threat Sector:</b> Stratospheric FL500 cruise. Executes supersonic drag-away skates and long-range LPI missile volleys.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #c084fc;">
           <b style="color:#c084fc;">SEAD ESCORT (AIR DEFENSE SUPPRESSION)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Elite:</b> Actively steers toward surface radars and SAMs, firing AGM-88Gs within 35 km.<br>
-            <b>Ace:</b> Approaches at FL320. Prioritizes S-400 batteries and Early Warning Radars over secondary ground units.<br>
-            <b>Master:</b> Approaches at FL340. Projects GaN AESA jamming while geolocating and neutralizing surface radar arrays.<br>
-            <b>Legend:</b> Surgical IADS breakdown. Destroys Early Warning Radars first to blind S-400 batteries without radiating.
+            <b>Hostile Airspace:</b> Actively steers toward surface radars and SAMs, firing AGM-88Gs within 35 km.<br>
+            <b>High-Threat Sector:</b> Approaches at FL320. Prioritizes S-400 batteries and Early Warning Radars over secondary ground units.<br>
+            <b>Air Denial Zone:</b> Approaches at FL340. Projects GaN AESA jamming while geolocating and neutralizing surface radar arrays.<br>
+            <b>Extreme Threat Sector:</b> Surgical IADS breakdown. Destroys Early Warning Radars first to blind S-400 batteries without radiating.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #f97316;">
           <b style="color:#f97316;">STRIKE INTERDICTION</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Elite:</b> Approaches at FL140 directly toward command bunkers and fuel depots.<br>
-            <b>Ace:</b> Flies at FL110 beneath radar horizons with pop-up delivery at 25 km to release glide bombs.<br>
-            <b>Master:</b> Flies FL080 along low-threat alleys, delivering standoff Kinzhal or JASSM-ER strikes on command bunkers.<br>
-            <b>Legend:</b> Deck-skimming attack run at FL055, delivering synchronized hypersonic strikes beneath sensor coverage.
+            <b>Hostile Airspace:</b> Approaches at FL140 directly toward command bunkers and fuel depots.<br>
+            <b>High-Threat Sector:</b> Flies at FL110 beneath radar horizons with pop-up delivery at 25 km to release glide bombs.<br>
+            <b>Air Denial Zone:</b> Flies FL080 along low-threat alleys, delivering standoff Kinzhal or JASSM-ER strikes on command bunkers.<br>
+            <b>Extreme Threat Sector:</b> Deck-skimming attack run at FL055, delivering synchronized hypersonic strikes beneath sensor coverage.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #14b8a6;">
           <b style="color:#2dd4bf;">STEALTH AMBUSH</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Elite:</b> Flies outer boundaries at FL320 to acquire broadside locks with internal stealth missiles.<br>
-            <b>Ace:</b> Flies FL360 along northern or southern sector edges, exploiting player beam RCS spikes at 40 km.<br>
-            <b>Master:</b> Boundary flight path at FL400 with zero pylon drag to launch surprise broadside BVR volleys.<br>
-            <b>Legend:</b> Crossfire stealth bracket. Deep outer flank approach at FL420, attacking player beam aspects from behind the frontline with clean bays.
+            <b>Hostile Airspace:</b> Flies outer boundaries at FL320 to acquire broadside locks with internal stealth missiles.<br>
+            <b>High-Threat Sector:</b> Flies FL360 along northern or southern sector edges, exploiting player beam RCS spikes at 40 km.<br>
+            <b>Air Denial Zone:</b> Boundary flight path at FL400 with zero pylon drag to launch surprise broadside BVR volleys.<br>
+            <b>Extreme Threat Sector:</b> Crossfire stealth bracket. Deep outer flank approach at FL420, attacking player beam aspects from behind the frontline with clean bays.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #00f5a0;">
           <b style="color:#00f5a0;">AIR DOMINANCE SWEEP</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Elite:</b> Controls airspeed to maintain optimal corner speed (sOpt) during combat turns.<br>
-            <b>Ace:</b> High-Low bracket formation. Screens friendly snipers and bombers while engaging player fighters.<br>
-            <b>Master:</b> Tactical drag maneuvers. Leads defenders into tight circles to bleed energy while wingmen attack.<br>
-            <b>Legend:</b> 3D air combat wing. Executes post-stall Cobras, mixed-seeker salvos, and high-AOA snapshot bursts.
+            <b>Hostile Airspace:</b> Controls airspeed to maintain optimal corner speed (sOpt) during combat turns.<br>
+            <b>High-Threat Sector:</b> High-Low bracket formation. Screens friendly snipers and bombers while engaging player fighters.<br>
+            <b>Air Denial Zone:</b> Tactical drag maneuvers. Leads defenders into tight circles to bleed energy while wingmen attack.<br>
+            <b>Extreme Threat Sector:</b> 3D air combat wing. Executes post-stall Cobras, mixed-seeker salvos, and high-AOA snapshot bursts.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #ffd700;">
           <b style="color:#ffd700;">COMMAND FLAGSHIP (ACE CADRE)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Elite:</b> Single Ace with advanced prototype airframe and 2.4s reaction latency.<br>
-            <b>Ace:</b> Two coordinated Aces with 1.8s reactions, high-altitude perch, and post-stall Kulbit capability.<br>
-            <b>Master:</b> Two Flagship Aces with 1.4s reactions, railguns/lasers, zero G-LOC (COFFIN), and 65% notch rate.<br>
-            <b>Legend:</b> Three Apex Aces with 1.1s reactions, coordinating theater-wide strikes with directed-energy and hypersonic weapons.
+            <b>Hostile Airspace:</b> Single Ace with advanced prototype airframe and 2.4s reaction latency.<br>
+            <b>High-Threat Sector:</b> Two coordinated Aces with 1.8s reactions, high-altitude perch, and post-stall Kulbit capability.<br>
+            <b>Air Denial Zone:</b> Two Flagship Aces with 1.4s reactions, railguns/lasers, zero G-LOC (COFFIN), and 65% notch rate.<br>
+            <b>Extreme Threat Sector:</b> Three Apex Aces with 1.1s reactions, coordinating theater-wide strikes with directed-energy and hypersonic weapons.
           </div>
         </div>
       </div>
@@ -205,12 +205,12 @@ window.MANUAL_THEATER = [
           <thead>
             <tr>
               <th>LOADOUT &amp; WEAPON PARAMETER</th>
-              <th style="color:#8494ab;">PERMISSIVE (CADET)</th>
-              <th style="color:#38bdf8;">CONTESTED (VETERAN)</th>
-              <th style="color:#00f0ff;">HOSTILE (ELITE)</th>
-              <th style="color:#ffd700;">HIGH-THREAT (ACE)</th>
-              <th style="color:#c084fc;">AIR DENIAL (MASTER)</th>
-              <th style="color:#ff3366;">EXTREME THREAT (LEGEND)</th>
+              <th style="color:#8494ab;">PERMISSIVE SECTOR</th>
+              <th style="color:#38bdf8;">CONTESTED AIRSPACE</th>
+              <th style="color:#00f0ff;">HOSTILE AIRSPACE</th>
+              <th style="color:#ffd700;">HIGH-THREAT SECTOR</th>
+              <th style="color:#c084fc;">AIR DENIAL ZONE</th>
+              <th style="color:#ff3366;">EXTREME THREAT SECTOR</th>
             </tr>
           </thead>
           <tbody>
@@ -240,11 +240,11 @@ window.MANUAL_THEATER = [
           <thead>
             <tr>
               <th>ACE CAPABILITY &amp; TACTIC</th>
-              <th style="color:#38bdf8;">CONTESTED (VETERAN)</th>
-              <th style="color:#00f0ff;">HOSTILE (ELITE)</th>
-              <th style="color:#ffd700;">HIGH-THREAT (ACE)</th>
-              <th style="color:#c084fc;">AIR DENIAL (MASTER)</th>
-              <th style="color:#ff3366;">EXTREME THREAT (LEGEND)</th>
+              <th style="color:#38bdf8;">CONTESTED AIRSPACE</th>
+              <th style="color:#00f0ff;">HOSTILE AIRSPACE</th>
+              <th style="color:#ffd700;">HIGH-THREAT SECTOR</th>
+              <th style="color:#c084fc;">AIR DENIAL ZONE</th>
+              <th style="color:#ff3366;">EXTREME THREAT SECTOR</th>
             </tr>
           </thead>
           <tbody>

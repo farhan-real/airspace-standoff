@@ -1,6 +1,7 @@
 /* AIRSPACE STANDOFF: Core Dialogs & System Inspection Window */
 
-#tactical-dialog-modal { z-index: 3500 !important; }
+#tactical-dialog-modal { z-index: 4500 !important; }
+#mission-editor-modal { z-index: 3600 !important; }
 #system-inspect-modal { z-index: 3200 !important; }
 #leaderboard-modal { z-index: 3000 !important; }
 #settings-modal { z-index: 3000 !important; }

@@ -61,27 +61,27 @@ class ModalEditorTemplate {
             </div>
 
             <div class="mission-editor-section">
-              <h3><span>02</span> FORCE BALANCE &amp; AIR WINGS</h3>
+              <h3><span>02</span> FORCE BALANCE &amp; PROCUREMENT</h3>
               <div class="mission-editor-grid">
                 <div class="mission-editor-field">
-                  <label for="cdd-me-blue-squadron">ALLIED SQUADRON (BLUE) <span class="me-field-badge">AIRFRAMES</span></label>
-                  <div id="cdd-me-blue-squadron" class="me-dropdown-container"></div>
-                  <button type="button" class="mission-editor-random-toggle" data-random-for="blue-squadron" aria-pressed="false">RANDOM</button>
+                  <label for="cdd-me-blue-fleet">ALLIED FLEET (BLUE) <span class="me-field-badge">DOCTRINE</span></label>
+                  <div id="cdd-me-blue-fleet" class="me-dropdown-container"></div>
+                  <button type="button" class="mission-editor-random-toggle" data-random-for="blue-fleet" aria-pressed="false">RANDOM</button>
                 </div>
                 <div class="mission-editor-field">
-                  <label for="cdd-me-blue-weapons">ALLIED WEAPONS (BLUE) <span class="me-field-badge">STORES</span></label>
-                  <div id="cdd-me-blue-weapons" class="me-dropdown-container"></div>
-                  <button type="button" class="mission-editor-random-toggle" data-random-for="blue-weapons" aria-pressed="false">RANDOM</button>
+                  <label for="cdd-me-blue-budget">ALLIED BUDGET (BLUE) <button type="button" class="me-custom-btn" data-custom-budget="blue" title="Enter custom budget value">CUSTOM</button></label>
+                  <div id="cdd-me-blue-budget" class="me-dropdown-container"></div>
+                  <button type="button" class="mission-editor-random-toggle" data-random-for="blue-budget" aria-pressed="false">RANDOM</button>
                 </div>
                 <div class="mission-editor-field">
-                  <label for="cdd-me-red-size">ENEMY FLEET SIZE (RED) <span class="me-field-badge">NUMBERS</span></label>
-                  <div id="cdd-me-red-size" class="me-dropdown-container"></div>
-                  <button type="button" class="mission-editor-random-toggle" data-random-for="red-size" aria-pressed="false">RANDOM</button>
+                  <label for="cdd-me-red-fleet">ENEMY FLEET (RED) <span class="me-field-badge">DOCTRINE</span></label>
+                  <div id="cdd-me-red-fleet" class="me-dropdown-container"></div>
+                  <button type="button" class="mission-editor-random-toggle" data-random-for="red-fleet" aria-pressed="false">RANDOM</button>
                 </div>
                 <div class="mission-editor-field">
-                  <label for="cdd-me-red-weapons">ENEMY WEAPONS (RED) <span class="me-field-badge">STORES</span></label>
-                  <div id="cdd-me-red-weapons" class="me-dropdown-container"></div>
-                  <button type="button" class="mission-editor-random-toggle" data-random-for="red-weapons" aria-pressed="false">RANDOM</button>
+                  <label for="cdd-me-red-budget">ENEMY BUDGET (RED) <button type="button" class="me-custom-btn" data-custom-budget="red" title="Enter custom budget value">CUSTOM</button></label>
+                  <div id="cdd-me-red-budget" class="me-dropdown-container"></div>
+                  <button type="button" class="mission-editor-random-toggle" data-random-for="red-budget" aria-pressed="false">RANDOM</button>
                 </div>
               </div>
             </div>

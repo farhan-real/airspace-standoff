@@ -26,7 +26,7 @@ window.MANUAL_OPERATIONS = [
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Threat Contestation</td>
-              <td>Cadet (0.50x) through Legend (3.20x)</td>
+              <td>Permissive Sector (0.50x) through Extreme Threat Sector (3.20x)</td>
               <td>Adjusts AI reaction speed, Doppler notch discipline, salvo sizing, and formation pairing.</td>
             </tr>
             <tr>
@@ -36,13 +36,23 @@ window.MANUAL_OPERATIONS = [
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">Allied Blue Force</td>
-              <td>Hangar Roster vs Random (3-8 units)</td>
-              <td>Deploy your custom hangar squadron or generate a randomized balanced air wing within budget.</td>
+              <td>Hangar Fleet or Sector Difficulty Fleet</td>
+              <td>Deploy your custom hangar fleet (budget locked to hangar) or deploy an autonomous fleet using any sector difficulty tier (Permissive Sector through Extreme Threat Sector) with independent budget configuration.</td>
+            </tr>
+            <tr>
+              <td style="color:#ffd700;font-weight:800;">Allied Blue Budget</td>
+              <td>Standard Tiers or Custom Credit Value (10M - 2500M)</td>
+              <td>Configures expenditure allowance for blue fleet. Displays default budget for selected sector difficulty (e.g. 330M Default). Tap CUSTOM to enter any tailored credit amount. Automatically locks when Hangar is selected.</td>
             </tr>
             <tr>
               <td style="color:#fbbf24;font-weight:800;">Hostile Red Fleet</td>
-              <td>3 Aircraft up to 15 Saturation Fleet</td>
-              <td>Scales enemy numbers from light element sweeps to full theater saturation invasions.</td>
+              <td>Sector Difficulty Fleet or Hangar Mirror</td>
+              <td>Select adversary fleet based on any sector difficulty doctrine (Permissive Sector through Extreme Threat Sector) or deploy an exact mirror of your current Hangar fleet.</td>
+            </tr>
+            <tr>
+              <td style="color:#fbbf24;font-weight:800;">Hostile Red Budget</td>
+              <td>Standard Tiers or Custom Credit Value (10M - 2500M)</td>
+              <td>Configures adversary defense budget with difficulty default indicator or custom entered value. Rejection finalization applies naturally as soon as an aircraft exceeds the budget.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">Weather &amp; Clouds</td>

@@ -65,73 +65,98 @@ class SortieSpawner {
     const aarTimelineEl = document.getElementById('aar-timeline-list');
     if (aarTimelineEl) aarTimelineEl.innerHTML = '';
 
-    let launchSquadron = game.procurementSquadron || [];
-    if (editorMission && editorMission.blueSquadron === 'RANDOM' && window.MissionEditor) {
-      launchSquadron = window.MissionEditor.createRandomSquadron(game, editorMission);
-    }
-    if (editorMission && editorMission.blueWeapons === 'STANDARD' && typeof FleetGenerator !== 'undefined') {
-      launchSquadron = launchSquadron.map(item => {
-        if (!item) return item;
-        const spec = (window.AIRCRAFT_CATALOG || {})[item.specId];
-        if (!spec) return item;
-        const loadout = FleetGenerator.planAircraftLoadout(spec, false, editorMission.doctrine, editorMission.difficulty, Math.random);
-        return { ...item, weapons: loadout.weapons || [] };
-      });
-    }
-    if (launchSquadron.length === 0) {
-      const fallbackSquadron = (typeof ProcurementPresets !== 'undefined')
-        ? ProcurementPresets.getBuiltinPreset('stealth') : [];
-      if (!editorMission) game.procurementSquadron = fallbackSquadron;
-      launchSquadron = fallbackSquadron;
-    }
-
     const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
     const callsignPool = [...(window.CALLSIGN_POOL || ['Trigger', 'Mobius', 'Cipher', 'Viper', 'Ghost', 'Talon'])].sort(() => Math.random() - 0.5);
     const takeCallsign = () => callsignPool.length ? callsignPool.pop() : 'Viper';
 
     game.alliedAircraft = [];
-    let chosenLeadIdx = launchSquadron.findIndex(it => it && it.isLead);
-    if (chosenLeadIdx === -1) chosenLeadIdx = 0;
-    launchSquadron.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
+    const isBlueProcedural = editorMission && editorMission.blueFleet && editorMission.blueFleet !== 'HANGAR';
 
-    const spawnPlans = FleetGenerator.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH);
-    spawnPlans.forEach(plan => {
-      const item = plan.item;
-      if (!item) return;
-      const heading = (Math.random() * 0.16 - 0.08);
-      const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(Math.random() * 18) * 1000);
-
-      const ac = new Aircraft(
-        item.specId, 'friendly', plan.x, plan.y, heading, item.chosenGunId,
-        item.callsign || takeCallsign(), game.squadronName || '7th Tactical Squadron',
-        plan.isLead, false, initialAltFt
-      );
-      (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
-      (item.weapons || []).forEach(w => {
-        const wId = (typeof w === 'object' && w !== null) ? (w.id || w.specId) : w;
-        const targetStation = (typeof w === 'object' && w !== null) ? w.station : null;
-        ac.installWeapon(wId, targetStation);
+    if (isBlueProcedural && typeof FleetGenerator !== 'undefined') {
+      game.alliedAircraft = FleetGenerator.generateFleet('friendly', editorMission.blueFleet, editorMission.doctrine, mapW, mapH, {
+        budget: editorMission.blueBudget,
+        squadronName: game.squadronName || '7th Tactical Squadron'
       });
-      ac.recalculateWeight();
-      if (editorMission && editorMission.blueWeapons === 'RANDOM' && window.MissionEditor) {
-        window.MissionEditor.applyRandomWeapons(ac);
+    } else {
+      let launchSquadron = game.procurementSquadron || [];
+      if (launchSquadron.length === 0) {
+        launchSquadron = (typeof ProcurementPresets !== 'undefined') ? ProcurementPresets.getBuiltinPreset('stealth') : [];
+        game.procurementSquadron = launchSquadron;
       }
-      ac.speed = ac.getTargetMach();
-      ac.prevSpeed = ac.speed;
-      ac.speedTrend = '--';
-      game.alliedAircraft.push(ac);
-    });
 
-    game.hostileAircraft = (typeof FleetGenerator !== 'undefined')
-      ? FleetGenerator.generateHostileFleet(game.aiDifficulty, game.aiDoctrine, mapW, mapH,
-        editorMission ? { aircraftCount: editorMission.redSize } : {}) : [];
+      let chosenLeadIdx = launchSquadron.findIndex(it => it && it.isLead);
+      if (chosenLeadIdx === -1) chosenLeadIdx = 0;
+      launchSquadron.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
+
+      const spawnPlans = FleetGenerator.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH);
+      spawnPlans.forEach(plan => {
+        const item = plan.item;
+        if (!item) return;
+        const heading = (Math.random() * 0.16 - 0.08);
+        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(Math.random() * 18) * 1000);
+
+        const ac = new Aircraft(
+          item.specId, 'friendly', plan.x, plan.y, heading, item.chosenGunId,
+          item.callsign || takeCallsign(), game.squadronName || '7th Tactical Squadron',
+          plan.isLead, false, initialAltFt
+        );
+        (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
+        (item.weapons || []).forEach(w => {
+          const wId = (typeof w === 'object' && w !== null) ? (w.id || w.specId) : w;
+          const targetStation = (typeof w === 'object' && w !== null) ? w.station : null;
+          ac.installWeapon(wId, targetStation);
+        });
+        ac.recalculateWeight();
+        ac.speed = ac.getTargetMach();
+        ac.prevSpeed = ac.speed;
+        ac.speedTrend = '--';
+        game.alliedAircraft.push(ac);
+      });
+    }
+
+    game.hostileAircraft = [];
+    const isRedHangarMirror = editorMission && editorMission.redFleet === 'HANGAR';
+
+    if (isRedHangarMirror) {
+      let mirrorSquadron = game.procurementSquadron || [];
+      if (mirrorSquadron.length === 0) {
+        mirrorSquadron = (typeof ProcurementPresets !== 'undefined') ? ProcurementPresets.getBuiltinPreset('stealth') : [];
+      }
+
+      const spawnPlans = FleetGenerator.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH);
+      spawnPlans.forEach(plan => {
+        const item = plan.item;
+        if (!item) return;
+        const heading = Math.PI + (Math.random() * 0.16 - 0.08);
+        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(Math.random() * 18) * 1000);
+        const ac = new Aircraft(
+          item.specId, 'hostile', plan.x, plan.y, heading, item.chosenGunId,
+          `Red ${item.callsign || 'Bandit'}`, 'Red Aggressor Wing',
+          plan.isLead, false, initialAltFt
+        );
+        (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
+        (item.weapons || []).forEach(w => {
+          const wId = (typeof w === 'object' && w !== null) ? (w.id || w.specId) : w;
+          const targetStation = (typeof w === 'object' && w !== null) ? w.station : null;
+          ac.installWeapon(wId, targetStation);
+        });
+        ac.recalculateWeight();
+        ac.speed = ac.getTargetMach();
+        ac.prevSpeed = ac.speed;
+        ac.speedTrend = '--';
+        game.hostileAircraft.push(ac);
+      });
+    } else {
+      const redDiff = (editorMission && editorMission.redFleet) ? editorMission.redFleet : game.aiDifficulty;
+      const redBudget = (editorMission && editorMission.redBudget) ? Number(editorMission.redBudget) : null;
+      game.hostileAircraft = (typeof FleetGenerator !== 'undefined')
+        ? FleetGenerator.generateHostileFleet(redDiff, game.aiDoctrine, mapW, mapH, { budget: redBudget })
+        : [];
+    }
 
     game.hostileAircraft.forEach(h => {
       h.recalculateWeight();
-      if (editorMission && editorMission.redWeapons === 'RANDOM' && window.MissionEditor) {
-        window.MissionEditor.applyRandomWeapons(h);
-      }
       h.speed = h.getTargetMach();
       h.prevSpeed = h.speed;
       h.speedTrend = '--';
@@ -185,8 +210,6 @@ class SortieSpawner {
       new SurfaceUnit('BUNKER', 'friendly', 8, mapH / 2),
       new SurfaceUnit('RADAR_ARRAY', 'friendly', 10, mapH / 2 - 10),
       new SurfaceUnit('EW_JAMMER', 'friendly', 16, mapH / 2 - 20),
-      // SAM sites disabled from spawning as they are too OP and annoying:
-      // new SurfaceUnit('S-400', 'friendly', 16, 22),
       new SurfaceUnit('PANTSIR', 'friendly', 14, mapH / 2 + 10),
       new SurfaceUnit('FUEL_DEPOT', 'friendly', 12, 16),
       new SurfaceUnit('AMMO_DUMP', 'friendly', 32, mapH / 2 - 10),
@@ -194,8 +217,6 @@ class SortieSpawner {
       new SurfaceUnit('BUNKER', 'hostile', mapW - 8, mapH / 2),
       new SurfaceUnit('RADAR_ARRAY', 'hostile', mapW - 10, mapH / 2 - 10),
       new SurfaceUnit('EW_JAMMER', 'hostile', mapW - 16, mapH / 2 - 20),
-      // SAM sites disabled from spawning as they are too OP and annoying:
-      // new SurfaceUnit('S-400', 'hostile', mapW - 16, 22),
       new SurfaceUnit('PANTSIR', 'hostile', mapW - 14, mapH / 2 + 10),
       new SurfaceUnit('FUEL_DEPOT', 'hostile', mapW - 12, 16),
       new SurfaceUnit('AMMO_DUMP', 'hostile', mapW - 32, mapH / 2 + 10),

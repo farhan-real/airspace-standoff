@@ -199,6 +199,29 @@
 
 .me-field-badge { font-size: 0.48rem; color: var(--theme-accent); font-weight: 600; }
 
+.me-custom-btn {
+  background: var(--theme-primary-dim);
+  border: 1px solid var(--theme-accent);
+  color: var(--color-ice-highlight);
+  border-radius: var(--radius-badge);
+  padding: 1px 6px;
+  font: 700 0.50rem var(--font-dotdigital);
+  cursor: pointer;
+  transition: all 0.14s ease;
+  letter-spacing: 0.4px;
+}
+
+.me-custom-btn:hover:not(:disabled) {
+  background: var(--theme-primary);
+  color: #ffffff;
+}
+
+.me-custom-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
 .mission-editor-random-toggle {
   display: inline-flex;
   align-items: center;
