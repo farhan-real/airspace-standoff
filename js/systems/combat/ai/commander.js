@@ -17,6 +17,50 @@ class TacticalAICommander {
     return this.focusedUnitIds.includes(unitId);
   }
 
+  getCognitiveProfile(unitId) {
+    const isFocused = this.isUnitFocused(unitId);
+    const remainingFocus = this.focusTimers.get(unitId) || 0;
+    const diffKey = this.game.aiDifficulty || 'VETERAN';
+    const profile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) || {};
+    const maxSlots = profile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
+    const activeFocusCount = this.focusedUnitIds.length;
+    const isHesitating = this.planning ? this.planning.isHesitating(unitId) : false;
+    const successionTimer = this.planning ? (this.planning.successionTimers.get(unitId) || 0) : 0;
+    const posture = this.planning ? this.planning.posture : 'OFFENSIVE_SWEEP';
+
+    let roleInFormation = 'Independent Element';
+    let pairedUnit = null;
+    if (this.planning && this.planning.elementPairs) {
+      for (const [leadId, wingId] of this.planning.elementPairs.entries()) {
+        if (leadId === unitId) {
+          roleInFormation = 'Element Leader';
+          pairedUnit = (this.game.hostileAircraft || []).find(h => h.id === wingId) || null;
+          break;
+        } else if (wingId === unitId) {
+          roleInFormation = 'Wingman';
+          pairedUnit = (this.game.hostileAircraft || []).find(h => h.id === leadId) || null;
+          break;
+        }
+      }
+    }
+
+    return {
+      isFocused,
+      remainingFocus,
+      maxSlots,
+      activeFocusCount,
+      diffKey,
+      posture,
+      isHesitating,
+      successionTimer,
+      roleInFormation,
+      pairedUnit,
+      reactionCooldown: profile.reactionCooldown || 3.0,
+      notchChance: profile.notchChance || 0,
+      decoyDiscrimination: profile.decoyDiscrimination || 0
+    };
+  }
+
   updateAttention(aliveHostiles, profile, diffKey, allMissiles, candidateAirTargets, dt) {
     const aliveIds = new Set(aliveHostiles.map(h => h.id));
     this.focusedUnitIds = this.focusedUnitIds.filter(id => aliveIds.has(id));

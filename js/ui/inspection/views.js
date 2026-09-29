@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Inspection UI Component Views & Data Dossier
- * Structured tactical registries with clean glass sections and real-time live telemetry updating.
+ * Structured tactical registries with clean glass sections and live telemetry updates with small SVGs.
  */
 
 class InspectionViews {
@@ -81,6 +81,7 @@ class InspectionViews {
   static renderRawDataTab(controller, entity) {
     if (!entity) return '<div class="inspection-empty"><b>NO OBJECT SELECTED</b></div>';
 
+    const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
     const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
       ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
 
@@ -110,7 +111,7 @@ class InspectionViews {
 
       aeroSection = `
         <div class="inspection-data-section">
-          <span class="inspection-data-title">AERODYNAMICS &amp; ENVELOPE</span>
+          <span class="inspection-data-title">AERODYNAMICS AND ENVELOPE</span>
           <div class="inspection-data-row"><span class="inspection-data-label">Airframe Base Rating</span><b class="inspection-data-value ${rBaseAgi.colorClass}">${fmtNum(spec.AGI_0)} (Design Spec)</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">Live Turn Authority</span><b class="inspection-data-value raw-live-agility ${rLiveAgi.colorClass}">${fmtNum(effAgi)} (${Math.round(turnEff * 100)}% Corner Opt)</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">Corner Velocity (sOpt)</span><b class="inspection-data-value ${rOptSpd.colorClass}">Mach ${fmtNum(sOpt)} (${Math.round(sOpt * 1225)} km/h)</b></div>
@@ -122,9 +123,28 @@ class InspectionViews {
       `;
     }
 
+    let cognitionRawSection = '';
+    const commanderTeam = controller.game.currentPvpCommander || 'friendly';
+    const isEnemy = entity.team && entity.team !== commanderTeam;
+    if (isEnemy && controller.game.ai && typeof controller.game.ai.getCognitiveProfile === 'function') {
+      const prof = controller.game.ai.getCognitiveProfile(entity.id);
+      cognitionRawSection = `
+        <div class="inspection-data-section">
+          <span class="inspection-data-title">AI COGNITION AND TACTICAL PROFILE</span>
+          <div class="inspection-data-row"><span class="inspection-data-label">Focus State</span><b class="inspection-data-value raw-cog-state" style="color:${prof.isFocused ? 'var(--color-red)' : 'var(--stat-tier-2)'};">${prof.isFocused ? `ACTIVELY CONTROLLED (${prof.remainingFocus.toFixed(1)}s)` : 'AUTONOMOUS PATROL'}</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">Bandwidth Slots</span><b class="inspection-data-value">${prof.activeFocusCount} / ${prof.maxSlots} Slots Occupied</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">Squadron Posture</span><b class="inspection-data-value">${prof.posture}</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">Formation Assignment</span><b class="inspection-data-value">${prof.roleInFormation}</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">Command Disruption</span><b class="inspection-data-value">${prof.isHesitating ? `HESITATING (${prof.successionTimer.toFixed(1)}s)` : 'NORMAL'}</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">Notch Discipline</span><b class="inspection-data-value">${Math.round(prof.notchChance * 100)}%</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">Decoy Filter Rate</span><b class="inspection-data-value">${Math.round(prof.decoyDiscrimination * 100)}%</b></div>
+        </div>
+      `;
+    }
+
     return `
       <div class="inspection-data-section">
-        <span class="inspection-data-title">TACTICAL IDENTITY &amp; FACTION</span>
+        <span class="inspection-data-title">TACTICAL IDENTITY AND FACTION</span>
         <div class="inspection-data-row"><span class="inspection-data-label">Callsign / Name</span><b class="inspection-data-value">${controller.escape(entity.callsign || entity.name || entity.flightCode || entity.id)}</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Airframe Model</span><b class="inspection-data-value">${spec.name || entity.model || 'Standard'}</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Category / Role</span><b class="inspection-data-value">${spec.category || entity.type || 'Combatant'}</b></div>
@@ -133,29 +153,30 @@ class InspectionViews {
       </div>
 
       <div class="inspection-data-section">
-        <span class="inspection-data-title">POSITION &amp; SPATIAL KINEMATICS</span>
+        <span class="inspection-data-title">POSITION AND SPATIAL KINEMATICS</span>
         <div class="inspection-data-row"><span class="inspection-data-label">Coordinates (X, Y)</span><b class="inspection-data-value raw-coords-val">${fmtNum(entity.x, 1)} km, ${fmtNum(entity.y, 1)} km</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Flight Level</span><b class="inspection-data-value raw-fl-val">FL${Math.round((entity.altFt || 0) / 100)} (${Math.round(entity.altFt || 0).toLocaleString()} ft)</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Airspeed</span><b class="inspection-data-value raw-spd-val ${rSpd.colorClass}">Mach ${fmtNum(entity.speed)} (${Math.round((entity.speed || 0) * 1225)} km/h)</b></div>
-        <div class="inspection-data-row"><span class="inspection-data-label">Heading</span><b class="inspection-data-value raw-hdg-val">${String(headingDeg).padStart(3, '0')}&deg; (${fmtNum(entity.heading, 3)} rad)</b></div>
+        <div class="inspection-data-row"><span class="inspection-data-label">Heading</span><b class="inspection-data-value raw-hdg-val">${String(headingDeg).padStart(3, '0')}${sDeg} (${fmtNum(entity.heading, 3)} rad)</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Vertical Speed</span><b class="inspection-data-value raw-vsi-val">${Math.round(entity.vsiFpm || 0)} fpm</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Total Distance Traveled</span><b class="inspection-data-value raw-dist-val">${fmtNum(entity.distanceTraveled, 1)} km</b></div>
       </div>
 
       ${aeroSection}
+      ${cognitionRawSection}
 
       <div class="inspection-data-section">
-        <span class="inspection-data-title">SENSORS &amp; STEALTH</span>
+        <span class="inspection-data-title">SENSORS AND STEALTH</span>
         <div class="inspection-data-row"><span class="inspection-data-label">Radar Array Model</span><b class="inspection-data-value">${spec.radarType || 'N/A'}</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Instrumented Range (R_0)</span><b class="inspection-data-value ${rRadar.colorClass}">${fmtNum(spec.R_0, 1)} km</b></div>
-        <div class="inspection-data-row"><span class="inspection-data-label">Radar Cross Section (RCS)</span><b class="inspection-data-value raw-rcs-val ${rRcs.colorClass}">${fmtNum(entity.effectiveRcs || spec.sigma_0, 5)} m²</b></div>
+        <div class="inspection-data-row"><span class="inspection-data-label">Radar Cross Section (RCS)</span><b class="inspection-data-value raw-rcs-val ${rRcs.colorClass}">${fmtNum(entity.effectiveRcs || spec.sigma_0, 5)} sq m</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Beam Exposure Spike</span><b class="inspection-data-value ${rSpike.colorClass}">${fmtNum(spec.beamSpike, 1)}x</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Optical IRST / DAS Sensors</span><b class="inspection-data-value">${entity.hasIRST ? 'IRST Active' : 'Off'} | ${entity.hasDAS ? 'DAS 360' : 'Off'}</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Electronic Countermeasures</span><b class="inspection-data-value">${entity.jamEfficiency ? `${Math.round(entity.jamEfficiency * 100)}% ECM` : 'None'}</b></div>
       </div>
 
       <div class="inspection-data-section">
-        <span class="inspection-data-title">ARMAMENT &amp; DURABILITY</span>
+        <span class="inspection-data-title">ARMAMENT AND DURABILITY</span>
         <div class="inspection-data-row"><span class="inspection-data-label">Hull Durability (HP)</span><b class="inspection-data-value raw-hp-val ${rHp.colorClass}">${fmtNum(entity.hp, 1)} / ${entity.maxHp || 4} HP</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Autocannon System</span><b class="inspection-data-value raw-gun-ammo">${entity.gun ? entity.gun.name : 'None'} (${entity.gunAmmo || 0} rds)</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Countermeasure Dispenser</span><b class="inspection-data-value raw-chaff-val">${entity.chaff || 0} chaff salvos</b></div>
@@ -173,6 +194,7 @@ class InspectionViews {
 
   static updateRawLive(controller, entity, content) {
     if (!entity || !content) return;
+    const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
     const fmtNum = (n, dec = 2) => (typeof n === 'number' && Number.isFinite(n)) ? n.toFixed(dec) : 'N/A';
     const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
       ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
@@ -195,7 +217,7 @@ class InspectionViews {
     if (headingDeg >= 360) headingDeg = 0;
 
     const hdgVal = content.querySelector('.raw-hdg-val');
-    if (hdgVal) hdgVal.textContent = `${String(headingDeg).padStart(3, '0')}&deg; (${fmtNum(entity.heading, 3)} rad)`;
+    if (hdgVal) hdgVal.innerHTML = `${String(headingDeg).padStart(3, '0')}${sDeg} (${fmtNum(entity.heading, 3)} rad)`;
 
     const vsiVal = content.querySelector('.raw-vsi-val');
     if (vsiVal) vsiVal.textContent = `${Math.round(entity.vsiFpm || 0)} fpm`;
@@ -233,7 +255,7 @@ class InspectionViews {
     const rawRcs = content.querySelector('.raw-rcs-val');
     if (rawRcs && entity.effectiveRcs !== undefined) {
       const rVal = rate('rcs', entity.effectiveRcs);
-      rawRcs.textContent = `${fmtNum(entity.effectiveRcs, 5)} m²`;
+      rawRcs.textContent = `${fmtNum(entity.effectiveRcs, 5)} sq m`;
       rawRcs.className = `inspection-data-value raw-rcs-val ${rVal.colorClass}`;
     }
 
@@ -255,6 +277,13 @@ class InspectionViews {
       const rLiveAgi = rate('agility', effAgi);
       liveAgi.textContent = `${fmtNum(effAgi)} (${Math.round(turnEff * 100)}% Corner Opt)`;
       liveAgi.className = `inspection-data-value raw-live-agility ${rLiveAgi.colorClass}`;
+    }
+
+    const cogVal = content.querySelector('.raw-cog-state');
+    if (cogVal && controller.game.ai && typeof controller.game.ai.getCognitiveProfile === 'function') {
+      const prof = controller.game.ai.getCognitiveProfile(entity.id);
+      cogVal.textContent = prof.isFocused ? `ACTIVELY CONTROLLED (${prof.remainingFocus.toFixed(1)}s)` : 'AUTONOMOUS PATROL';
+      cogVal.style.color = prof.isFocused ? 'var(--color-red)' : 'var(--stat-tier-2)';
     }
   }
 }

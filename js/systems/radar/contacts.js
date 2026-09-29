@@ -18,6 +18,7 @@ class RadarContactsRenderer {
     const isBlue = (team === 'friendly');
     const isEnemy = (team !== commanderTeam);
     const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
+    const isInspection = Boolean(window.Game && window.Game.inspection && (window.Game.inspection.isOpen || window.Game.inspection.enabled));
     const mainCol = isBlue ? '#00f0ff' : '#ef4444';
     const isMobile = (cssWidth < 800);
 
@@ -74,6 +75,12 @@ class RadarContactsRenderer {
           RadarContactsAuxRenderer.drawOffscreenIndicator(ctx, rawPos, clampedX, clampedY, cssWidth, cssHeight, isIdentified, isAce, isBlue, safeModel, relDistKm);
         }
         continue;
+      }
+
+      if (isEnemy && isInspection && window.Game && window.Game.ai && typeof window.Game.ai.isUnitFocused === 'function' && window.Game.ai.isUnitFocused(a.id)) {
+        if (typeof RadarContactsAuxRenderer !== 'undefined') {
+          RadarContactsAuxRenderer.drawEnemyControlArrow(ctx, px, py);
+        }
       }
 
       if (isSelected && a.hp > 0.05 && a.gun) {

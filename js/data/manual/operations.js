@@ -82,7 +82,7 @@ window.MANUAL_OPERATIONS = [
   },
   {
     id: 'ch11_inspection',
-    title: 'SECTION 11: INSPECTION MODE & LIVE C4ISR SORTIE ANALYSIS',
+    title: 'SECTION 11: INSPECTION MODE, LIVE C4ISR &amp; AI COGNITION ANALYSIS',
     desc: `
       <div class="ge-desc">
         Enable <b>INSPECTION MODE</b> inside the Mission Editor to unlock an advanced real-time C4ISR telemetry workspace while keeping cockpit flight controls, banking, and missile releases fully functional.
@@ -98,7 +98,64 @@ window.MANUAL_OPERATIONS = [
         </ul>
       </div>
 
-      <div class="ge-subhead">2. THE 5 DIAGNOSTIC WORKSPACE TABS</div>
+      <div class="ge-subhead">2. ACTIVE AI CONTROL ARROWS (RADAR VIEWPORT SYMBOLOGY)</div>
+      <div class="ge-desc">
+        In Inspection Mode, the radar viewport renders a small, dedicated downward-pointing arrow directly above every enemy aircraft currently under active AI commander control:
+      </div>
+      <div class="ge-grid-2">
+        <div class="ge-card" style="border-left:3px solid var(--color-red);">
+          <b style="color:var(--color-red);">ACTIVE AI CONTROL ARROW</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            An inverted chevron arrow rendered at the top of the contact pointing straight down indicates that the AI Commander is currently dedicating an active cognitive attention slot to that airframe. The unit is actively executing aggressive steering, energy optimization, or computing firing solutions.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid var(--color-moon-mist);">
+          <b style="color:var(--color-moon-mist);">STANDBY / AUTONOMOUS PATROL</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Enemy aircraft without an arrow are flying on autonomous standby patrol awaiting a free attention slot. They adhere to basic navigation guidelines but lack real-time tactical commander guidance until prioritized.
+          </div>
+        </div>
+      </div>
+
+      <div class="ge-subhead">3. AI TACTICAL COGNITION &amp; ATTENTION TELEMETRY</div>
+      <div class="ge-desc">
+        When an enemy aircraft is selected during inspection, the <b>OVERVIEW</b> tab displays the <b>AI TACTICAL COGNITION</b> dossier, revealing the adversary's cognitive state and command hierarchy:
+      </div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>COGNITIVE PARAMETER</th><th>OPERATIONAL FUNCTION &amp; TACTICAL SIGNIFICANCE</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#00f0ff;font-weight:800;">Commander Focus</td>
+              <td>Displays whether the airframe is currently locked into an active attention slot and shows the countdown timer (in seconds) before focus is re-evaluated.</td>
+            </tr>
+            <tr>
+              <td style="color:#00f5a0;font-weight:800;">Active Focus Slots</td>
+              <td>Shows current bandwidth utilization against total cognitive capacity (e.g. 1 slot on Cadet/Veteran, 2 on Elite/Ace, up to 3 on Master/Legend).</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">Squadron Posture</td>
+              <td>Indicates high-level doctrine: <code>OFFENSIVE SWEEP</code> (active engagement) vs <code>DEFENSIVE HOLD</code> (retreat toward surface SAM umbrella when fleet survival drops below 25-40%).</td>
+            </tr>
+            <tr>
+              <td style="color:#ffd700;font-weight:800;">Formation Role</td>
+              <td>Reveals tactical placement: Flight Lead, Wingman (with designated element partner callsign), or Independent Element.</td>
+            </tr>
+            <tr>
+              <td style="color:#f43f5e;font-weight:800;">Chain of Command</td>
+              <td>Reports command health. If the enemy Flight Lead is eliminated, surviving wingmen enter a <code>COMMAND DISRUPTION</code> state with a hesitation timer (6.0s on Cadet down to 1.8s on Legend) where weapons are locked and throttle drops to 40%.</td>
+            </tr>
+            <tr>
+              <td style="color:#c084fc;font-weight:800;">Behavioral Discipline</td>
+              <td>Displays probability ratings for executing Doppler notching break turns and filtering MALD decoy drones under current combat stress.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ge-subhead">4. THE 5 DIAGNOSTIC WORKSPACE TABS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
@@ -107,11 +164,11 @@ window.MANUAL_OPERATIONS = [
           <tbody>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">OVERVIEW</td>
-              <td>Segmented armor integrity pips, Mach corner velocity turn efficiency gauge, flight level altitude and VSI rate, kinetic energy recovery meter, and complete stores inventory.</td>
+              <td>Segmented armor integrity pips, Mach corner velocity turn efficiency gauge, flight level altitude and VSI rate, kinetic energy recovery meter, AI cognition dossier (for enemies), and complete stores inventory.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">SENSORS</td>
-              <td>Onboard radar specifications, active target locks, stealth RCS spectrum bar, aspect spike factors (nose-on, beam 90&deg;, tail), and horizontal range-versus-distance comparison tracks for all contacts in beam.</td>
+              <td>Onboard radar specifications, active target locks, stealth RCS spectrum bar, aspect spike factors (nose-on, beam 90 deg, tail), and horizontal range-versus-distance comparison tracks for all contacts in beam.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">WEAPONS</td>
@@ -123,7 +180,7 @@ window.MANUAL_OPERATIONS = [
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">DATA</td>
-              <td>Complete raw telemetry registry: exact spatial coordinates (km), flight level, Mach airspeed, heading in degrees and radians, G-load stress, and hardware components.</td>
+              <td>Complete raw telemetry registry: exact spatial coordinates (km), flight level, Mach airspeed, heading in degrees and radians, G-load stress, hardware components, and raw AI cognitive variables.</td>
             </tr>
           </tbody>
         </table>

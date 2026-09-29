@@ -1,8 +1,22 @@
 /**
- * AIRSPACE STANDOFF // Radar Auxiliary Contacts: Ghosts, Decoys & Off-Screen Indicators
+ * AIRSPACE STANDOFF: Radar Auxiliary Contacts, Ghost Echoes & Inspection Controls
  */
 
 class RadarContactsAuxRenderer {
+  static drawEnemyControlArrow(ctx, px, py) {
+    ctx.save();
+    ctx.strokeStyle = '#f43f5e';
+    ctx.lineWidth = 1.8;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(px - 4, py - 16);
+    ctx.lineTo(px, py - 11);
+    ctx.lineTo(px + 4, py - 16);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   static drawGhostContacts(ctx, cam, ghosts, detectedSet, selectedTarget, activeUnit, zoom, cleanFn) {
     if (!ghosts || ghosts.length === 0) return;
     ctx.save();

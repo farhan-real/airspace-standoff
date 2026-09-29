@@ -16,6 +16,7 @@ class InspectionRadarView {
     while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
     const offBoresightDeg = Math.round(offBoresight * 180 / Math.PI);
 
+    const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
     const isOptical = (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT');
     const cloudAtten = cloudHits > 0 ? (isOptical ? `${cloudHits * 15}% Optical Scatter` : `${cloudHits * 8}% RF Attenuation`) : 'Clear Track';
 
@@ -26,7 +27,7 @@ class InspectionRadarView {
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font:600 0.64rem var(--font-dotdigital);">
           <div>SEEKER HEAD: <b style="color:var(--stat-tier-2);">${w.seeker || 'GUIDED'}</b></div>
           <div>FLIGHT STAGE: <b style="color:var(--stat-tier-3);">${missile.stage || 'BOOST'}</b></div>
-          <div>BORESIGHT OFFSET: <b style="color:${offBoresightDeg <= 30 ? 'var(--stat-tier-2)' : 'var(--stat-tier-4)'};">${offBoresightDeg}&deg; off seeker line</b></div>
+          <div>BORESIGHT OFFSET: <b style="color:${offBoresightDeg <= 30 ? 'var(--stat-tier-2)' : 'var(--stat-tier-4)'};">${offBoresightDeg}${sDeg} off seeker line</b></div>
           <div>CLOUD IMPACT: <b style="color:${cloudHits > 0 ? 'var(--stat-tier-5)' : 'var(--stat-tier-2)'};">${cloudAtten}</b></div>
         </div>
         <div style="margin-top:8px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); font:600 0.62rem var(--font-dotdigital); display:flex; justify-content:space-between;">
@@ -64,6 +65,10 @@ class InspectionRadarView {
       return this.renderMissileSeekerDashboard(controller, selectedEntity);
     }
 
+    const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
+    const sDot = window.INSP_SVG ? window.INSP_SVG.dot : '';
+    const sPm = window.INSP_SVG ? window.INSP_SVG.pm : '';
+
     const game = controller.game;
     const commanderTeam = game.currentPvpCommander || 'friendly';
     const isFriendly = selectedEntity.team === commanderTeam;
@@ -100,7 +105,7 @@ class InspectionRadarView {
         : Boolean(rec.detects && rec.scanner.radarLockedTarget && rec.scanner.radarLockedTarget.id === selectedEntity.id);
 
       let statusClass = 'negative';
-      let statusText = `OFF-BORESIGHT (${rec.offBoresightDeg}&deg;)`;
+      let statusText = `OFF-BORESIGHT (${rec.offBoresightDeg}${sDeg})`;
       if (rec.inCone) {
         if (isLocked) {
           statusClass = 'positive';
@@ -115,12 +120,12 @@ class InspectionRadarView {
       }
 
       let beamClass = 'negative';
-      let beamText = `Outside Radar Cone (${rec.offBoresightDeg}&deg; > &plusmn;${rec.halfConeDeg}&deg;)`;
+      let beamText = `Outside Radar Cone (${rec.offBoresightDeg}${sDeg} > ${sPm}${rec.halfConeDeg}${sDeg})`;
       if (rec.inCone) {
         beamClass = (rec.offBoresightDeg <= rec.halfConeDeg * 0.65) ? 'positive' : 'warning';
         beamText = (rec.offBoresightDeg <= rec.halfConeDeg * 0.65)
-          ? `Boresight Aligned (${rec.offBoresightDeg}&deg; off nose)`
-          : `Outer Gimbal Arc (${rec.offBoresightDeg}&deg; off nose)`;
+          ? `Boresight Aligned (${rec.offBoresightDeg}${sDeg} off nose)`
+          : `Outer Gimbal Arc (${rec.offBoresightDeg}${sDeg} off nose)`;
       }
 
       let rcsClass = 'warning';
@@ -143,8 +148,8 @@ class InspectionRadarView {
         cloudDesc = `${rec.cloudHits} overlapping cloud cells: severe microwave radar scattering.`;
       } else if (!rec.inCone) {
         cloudClass = 'negative';
-        cloudText = `NO RADAR SIGHT (${rec.offBoresightDeg}&deg;)`;
-        cloudDesc = `Target is ${rec.offBoresightDeg}&deg; off nose in rear blind zone; no forward radar line of sight.`;
+        cloudText = `NO RADAR SIGHT (${rec.offBoresightDeg}${sDeg})`;
+        cloudDesc = `Target is ${rec.offBoresightDeg}${sDeg} off nose in rear blind zone; no forward radar line of sight.`;
       }
 
       return `
@@ -152,7 +157,7 @@ class InspectionRadarView {
           <summary class="inspection-accordion-summary">
             <div class="inspection-accordion-title">
               <b>${otherName}</b>
-              <span class="sensor-sub">Dist: ${rec.distanceKm.toFixed(1)} km | ${rec.inCone ? `Reach: ${rec.rangeKm.toFixed(1)} km` : `Forward Reach: ${rec.forwardRangeKm.toFixed(1)} km (Blind)`} &bull; ${rec.targetAspect}</span>
+              <span class="sensor-sub">Dist: ${rec.distanceKm.toFixed(1)} km | ${rec.inCone ? `Reach: ${rec.rangeKm.toFixed(1)} km` : `Forward Reach: ${rec.forwardRangeKm.toFixed(1)} km (Blind)`} ${sDot} ${rec.targetAspect}</span>
             </div>
             <div class="inspection-accordion-meta">
               <span class="factor-delta ${statusClass}">${statusText}</span>
@@ -168,17 +173,17 @@ class InspectionRadarView {
               <span class="sensor-dist-val">Distance: <b>${rec.distanceKm.toFixed(1)} km</b></span>
               <span class="sensor-reach-val">${rec.inCone ? `Radar Reach: <b>${rec.rangeKm.toFixed(1)} km</b>` : `Forward Reach: <b>${rec.forwardRangeKm.toFixed(1)} km (Blind)</b>`}</span>
               <span class="sensor-margin-val" style="color:${rec.detects ? (rec.marginKm < 15 ? 'var(--stat-tier-3)' : 'var(--stat-tier-2)') : 'var(--stat-tier-5)'}; font-weight:700;">
-                ${!rec.inCone ? `BLIND SECTOR (${rec.offBoresightDeg}&deg;)` : (rec.marginKm >= 0 ? `+${rec.marginKm.toFixed(1)} km margin` : `${rec.marginKm.toFixed(1)} km shortfall`)}
+                ${!rec.inCone ? `BLIND SECTOR (${rec.offBoresightDeg}${sDeg})` : (rec.marginKm >= 0 ? `+${rec.marginKm.toFixed(1)} km margin` : `${rec.marginKm.toFixed(1)} km shortfall`)}
               </span>
             </div>
 
             <div class="inspection-factors-table" style="margin-top:6px;">
               <div class="inspection-factor-row ${beamClass} sensor-beam-row">
-                <span class="factor-name">Radar Beam Alignment<span class="factor-desc">Target angle relative to forward gimbal limits (&plusmn;${rec.halfConeDeg}&deg;).</span></span>
+                <span class="factor-name">Radar Beam Alignment<span class="factor-desc">Target angle relative to forward gimbal limits (${sPm}${rec.halfConeDeg}${sDeg}).</span></span>
                 <span class="factor-delta ${beamClass}">${beamText}</span>
               </div>
               <div class="inspection-factor-row ${rcsClass}">
-                <span class="factor-name">Target Radar Signature<span class="factor-desc">Effective RCS: ${rec.effectiveRcs.toFixed(rec.effectiveRcs < 0.01 ? 5 : 2)} m².</span></span>
+                <span class="factor-name">Target Radar Signature<span class="factor-desc">Effective RCS: ${rec.effectiveRcs.toFixed(rec.effectiveRcs < 0.01 ? 5 : 2)} sq m</span></span>
                 <span class="factor-delta ${rcsClass}">${rcsText}</span>
               </div>
               <div class="inspection-factor-row ${cloudClass} sensor-cloud-row">
@@ -188,7 +193,7 @@ class InspectionRadarView {
             </div>
 
             <div class="inspection-reason-box ${rec.detects ? (rec.marginKm < 15 ? 'warning' : '') : 'warning'}" style="margin-top:4px;">
-              <b>RADAR ASSESSMENT:</b> ${!rec.inCone ? `NO RADAR SIGHT: Target is in rear blind sector (${rec.offBoresightDeg}&deg; off nose, outside &plusmn;${rec.halfConeDeg}&deg; radar cone). Turn towards target to acquire radar track.` : (rec.detects ? (rec.marginKm < 15 ? `Marginal radar track: target is near horizon boundary (${rec.marginKm.toFixed(1)} km margin). Maneuvering may drop track.` : `Solid radar track established. Target is ${Math.abs(rec.marginKm).toFixed(1)} km inside reliable firing and detection envelope.`) : `Target is beyond radar detection horizon by ${Math.abs(rec.marginKm).toFixed(1)} km.`)}
+              <b>RADAR ASSESSMENT:</b> ${!rec.inCone ? `NO RADAR SIGHT: Target is in rear blind sector (${rec.offBoresightDeg}${sDeg} off nose, outside ${sPm}${rec.halfConeDeg}${sDeg} radar cone). Turn towards target to acquire radar track.` : (rec.detects ? (rec.marginKm < 15 ? `Marginal radar track: target is near horizon boundary (${rec.marginKm.toFixed(1)} km margin). Maneuvering may drop track.` : `Solid radar track established. Target is ${Math.abs(rec.marginKm).toFixed(1)} km inside reliable firing and detection envelope.`) : `Target is beyond radar detection horizon by ${Math.abs(rec.marginKm).toFixed(1)} km.`)}
             </div>
           </div>
         </details>
@@ -202,7 +207,7 @@ class InspectionRadarView {
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font:600 0.64rem var(--font-dotdigital);">
           <div>RADAR: <b style="color:var(--color-ice-highlight);">${radarName}</b></div>
           <div>BASE RANGE: <b style="color:var(--stat-tier-2);">${radarRange} km</b></div>
-          <div>SCAN CONE: <b style="color:var(--theme-accent);">${scanCone >= 360 ? '360&deg; (OMNI)' : `&plusmn;${Math.round(scanCone / 2)}&deg;`}</b></div>
+          <div>SCAN CONE: <b style="color:var(--theme-accent);">${scanCone >= 360 ? `360${sDeg} (OMNI)` : `${sPm}${Math.round(scanCone / 2)}${sDeg}`}</b></div>
           <div>LOOK-DOWN: <b style="color:var(--stat-tier-3);">+${lookDown}%</b></div>
         </div>
         <div style="margin-top:8px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); font:600 0.62rem var(--font-dotdigital); display:flex; justify-content:space-between;">
@@ -214,7 +219,7 @@ class InspectionRadarView {
       </section>
       <section style="margin-top:4px;">
         <div class="inspection-subhead" style="padding:0 2px 4px 2px;">
-          <span class="sensor-in-reach-count">${isFriendly ? 'CONTACTS IN THEATER & RADAR ENVELOPES' : 'ALLIED SENSORS TRACKING TARGET'} (${records.filter(r => r.detects).length}/${records.length} IN REACH)</span>
+          <span class="sensor-in-reach-count">${isFriendly ? 'CONTACTS IN THEATER AND RADAR ENVELOPES' : 'ALLIED SENSORS TRACKING TARGET'} (${records.filter(r => r.detects).length}/${records.length} IN REACH)</span>
           <span>EXPAND FOR DETAILS</span>
         </div>
         ${contactRowsHtml || '<p class="inspection-muted" style="padding:8px;">No contacts detected in radar search sector.</p>'}

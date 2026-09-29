@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Inspection Overview Submodule
- * Structural armor pips, flight envelope metrics, and inventory overviews.
+ * Structural armor pips, flight envelope metrics, and inventory overviews with inline SVG iconography.
  */
 
 class InspectionOverviewRenderer {
@@ -60,7 +60,18 @@ class InspectionOverviewRenderer {
     const gunName = a.gun ? a.gun.name : 'Autocannon';
     const gunAmmo = a.gunAmmo || 0;
 
+    const commanderTeam = controller.game.currentPvpCommander || 'friendly';
+    const isEnemy = a.team && a.team !== commanderTeam;
+    const cognitionHtml = (isEnemy && typeof InspectionCognitionRenderer !== 'undefined')
+      ? InspectionCognitionRenderer.renderCognitionCard(controller, a)
+      : '';
+
+    const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
+    const sDot = window.INSP_SVG ? window.INSP_SVG.dot : '';
+
     return `
+      ${cognitionHtml}
+
       <section class="inspection-card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h3 style="margin:0;">AIRCRAFT CONDITION</h3>
@@ -87,11 +98,11 @@ class InspectionOverviewRenderer {
 
         <div class="inspection-metric">
           <div class="inspection-metric-top">
-            <span class="inspection-metric-label">ALTITUDE &amp; HDG</span>
-            <b class="inspection-metric-value ovr-alt-val" style="color:var(--color-ice-highlight);">${fl} &bull; ${String(headingDeg).padStart(3, '0')}&deg;</b>
+            <span class="inspection-metric-label">ALTITUDE AND HDG</span>
+            <b class="inspection-metric-value ovr-alt-val" style="color:var(--color-ice-highlight);">${fl} ${sDot} ${String(headingDeg).padStart(3, '0')}${sDeg}</b>
           </div>
           <div class="inspection-meter"><i class="ovr-alt-meter" style="width:${Math.min(100, (altFt / 60000) * 100)}%;"></i></div>
-          <small class="inspection-meter-note ovr-alt-note">${altFt.toLocaleString()} FT - ${a.vsiFpm > 200 ? 'CLIMBING' : (a.vsiFpm < -200 ? 'DIVING' : 'LEVEL')}</small>
+          <small class="inspection-meter-note ovr-alt-note">${altFt.toLocaleString()} FT ${sDot} ${a.vsiFpm > 200 ? 'CLIMBING' : (a.vsiFpm < -200 ? 'DIVING' : 'LEVEL')}</small>
         </div>
 
         <div class="inspection-metric">
@@ -114,7 +125,7 @@ class InspectionOverviewRenderer {
       </section>
 
       <section class="inspection-card">
-        <h3>GUN &amp; STORES INVENTORY</h3>
+        <h3>GUN AND STORES INVENTORY</h3>
         <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.06); font:600 0.64rem var(--font-dotdigital);">
           <span style="color:var(--color-moon-mist);">${gunName}</span>
           <b class="ovr-gun-ammo" style="color:var(--stat-tier-2);">${gunAmmo} RDS</b>
@@ -217,7 +228,7 @@ class InspectionOverviewRenderer {
           <div>AIRCRAFT: <b style="color:var(--color-ice-highlight);">${controller.escape(c.model || c.name)}</b></div>
           <div>SPEED: <b class="ovr-civ-spd ${rSpd.colorClass}">Mach ${mach}</b></div>
           <div>ALTITUDE: <b class="ovr-civ-alt" style="color:var(--stat-tier-2);">${fl} (${altFt.toLocaleString()} ft)</b></div>
-          <div>RCS: <b class="${rRcs.colorClass}">${c.effectiveRcs || 25} m²</b></div>
+          <div>RCS: <b class="${rRcs.colorClass}">${c.effectiveRcs || 25} sq m</b></div>
           <div>AIRFRAME: <b class="ovr-civ-hp ${rHp.colorClass}">${c.hp} / ${c.maxHp || 6} HP</b></div>
           <div>IDENTIFICATION: <b class="ovr-civ-id" style="color:var(--stat-tier-2);">${c.isIdentified ? 'VERIFIED CIVILIAN' : 'BOGEY [?]'}</b></div>
         </div>
@@ -235,7 +246,7 @@ class InspectionOverviewRenderer {
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font:600 0.64rem var(--font-dotdigital);">
           <div>MIRRORED PROFILE: <b style="color:var(--theme-accent);">${d.mirroredModel || 'FIGHTER'}</b></div>
-          <div>SPOOFED RCS: <b style="color:var(--stat-tier-3);">${(d.effectiveRcs || 1.0).toFixed(3)} m²</b></div>
+          <div>SPOOFED RCS: <b style="color:var(--stat-tier-3);">${(d.effectiveRcs || 1.0).toFixed(3)} sq m</b></div>
           <div>AIRSPEED: <b>Mach ${(d.speed || 0.8).toFixed(2)}</b></div>
           <div>REMAINING LIFE: <b class="ovr-decoy-life" style="color:var(--stat-tier-2);">${Math.max(0, Math.round(d.lifespan - d.age))}s</b></div>
         </div>
@@ -306,6 +317,10 @@ class InspectionOverviewRenderer {
 
     if (!entity.spec) return;
 
+    if (typeof InspectionCognitionRenderer !== 'undefined') {
+      InspectionCognitionRenderer.updateLive(controller, entity, content);
+    }
+
     const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
       ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
 
@@ -345,14 +360,17 @@ class InspectionOverviewRenderer {
     if (headingDeg < 0) headingDeg += 360;
     if (headingDeg >= 360) headingDeg = 0;
 
+    const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
+    const sDot = window.INSP_SVG ? window.INSP_SVG.dot : '';
+
     const altValEl = content.querySelector('.ovr-alt-val');
-    if (altValEl) altValEl.textContent = `${fl} &bull; ${String(headingDeg).padStart(3, '0')}&deg;`;
+    if (altValEl) altValEl.innerHTML = `${fl} ${sDot} ${String(headingDeg).padStart(3, '0')}${sDeg}`;
 
     const altMeter = content.querySelector('.ovr-alt-meter');
     if (altMeter) altMeter.style.width = `${Math.min(100, (altFt / 60000) * 100)}%`;
 
     const altNote = content.querySelector('.ovr-alt-note');
-    if (altNote) altNote.textContent = `${altFt.toLocaleString()} FT - ${entity.vsiFpm > 200 ? 'CLIMBING' : (entity.vsiFpm < -200 ? 'DIVING' : 'LEVEL')}`;
+    if (altNote) altNote.innerHTML = `${altFt.toLocaleString()} FT ${sDot} ${entity.vsiFpm > 200 ? 'CLIMBING' : (entity.vsiFpm < -200 ? 'DIVING' : 'LEVEL')}`;
 
     const energyPct = Math.round((entity.energy !== undefined ? entity.energy : 1) * 100);
     const energyValEl = content.querySelector('.ovr-energy-val');

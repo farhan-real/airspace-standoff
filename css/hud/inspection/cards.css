@@ -316,3 +316,64 @@
 
 .inspection-data-label { color: var(--color-moon-mist); }
 .inspection-data-value { color: var(--color-pure-white); text-align: right; }
+
+.insp-cognition-card {
+  border-left: 3px solid var(--theme-accent);
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.12) 0%, rgba(4, 9, 22, 0.85) 100%);
+}
+
+.insp-cognition-card.active-focus {
+  border-left-color: var(--color-red);
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.16) 0%, rgba(4, 9, 22, 0.88) 100%);
+}
+
+.insp-cognition-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 8px;
+  margin-top: 6px;
+  font: 600 0.62rem var(--font-dotdigital);
+}
+
+.insp-cognition-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.insp-cognition-field span {
+  color: var(--color-moon-mist);
+  font-size: 0.58rem;
+}
+
+.insp-cognition-field b {
+  color: var(--color-pure-white);
+  font-size: 0.62rem;
+}
+
+.insp-ico-deg {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  vertical-align: 0.42em;
+  margin-left: 1px;
+}
+
+.insp-ico-dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  vertical-align: 0.18em;
+  margin: 0 4px;
+  opacity: 0.75;
+}
+
+.insp-ico-pm {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  vertical-align: -0.05em;
+  margin-right: 1px;
+}

@@ -1,10 +1,11 @@
 /**
  * AIRSPACE STANDOFF: Inspection Solutions Submodule
- * Ground target solutions and in-flight missile hit probability cards.
+ * Ground target solutions and in-flight missile hit probability cards with inline SVG iconography.
  */
 
 class InspectionSolutionsRenderer {
   static renderGroundTargetSolutions(controller, firingAircraft, target) {
+    const sDot = window.INSP_SVG ? window.INSP_SVG.dot : '';
     const game = controller.game;
     const clouds = (game && game.simulation && game.simulation.weatherClouds) || [];
     const dist = Math.hypot(target.x - firingAircraft.x, target.y - firingAircraft.y);
@@ -43,7 +44,7 @@ class InspectionSolutionsRenderer {
             <summary class="inspection-accordion-summary">
               <div class="inspection-accordion-title">
                 <b>${idx + 1}. ${controller.escape(w.name || w.id)} (${item.ammo}/${item.maxAmmo})</b>
-                <span class="sol-sub">Range: ${w.rangeKm} km &bull; Air-to-Air Munition</span>
+                <span class="sol-sub">Range: ${w.rangeKm} km ${sDot} Air-to-Air Munition</span>
               </div>
               <div class="inspection-accordion-meta">
                 <span class="factor-delta negative">AIR TARGET ONLY</span>
@@ -72,7 +73,7 @@ class InspectionSolutionsRenderer {
           <summary class="inspection-accordion-summary">
             <div class="inspection-accordion-title">
               <b>${idx + 1}. ${controller.escape(w.name || w.id)} (${item.ammo}/${item.maxAmmo})</b>
-              <span class="sol-sub">Range: ${dist.toFixed(1)} / ${w.rangeKm} km &bull; ${w.seeker || 'GROUND'} &bull; ${w.damage} HP</span>
+              <span class="sol-sub">Range: ${dist.toFixed(1)} / ${w.rangeKm} km ${sDot} ${w.seeker || 'GROUND'} ${sDot} ${w.damage} HP</span>
             </div>
             <div class="inspection-accordion-meta">
               <span class="factor-delta ${pkClass} sol-pk-badge">${isValid ? `${pk}% [${pkRes.label}]` : 'OUT OF RANGE'}</span>
@@ -108,6 +109,7 @@ class InspectionSolutionsRenderer {
   }
 
   static renderInFlightMissileSolution(controller, missile) {
+    const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
     const w = missile.weapon || {};
     const tgt = missile.target;
     const game = controller.game;
@@ -138,12 +140,12 @@ class InspectionSolutionsRenderer {
       } : null,
       { name: 'Aspect Angle Trajectory Multiplier', val: `${Math.round(((factors.aspectScore || 1.0) - 1.0) * 100)}%`, type: (factors.aspectScore || 1.0) >= 0.95 ? 'positive' : 'warning', desc: 'Target presentation geometry relative to missile velocity vector.' },
       { name: 'Target Active Maneuver Evasion', val: `-${Math.round((factors.activeManeuverEvasion || 0) * 100)}%`, type: 'negative', desc: 'Target aerodynamic break turn generating proportional pursuit lag.' },
-      { name: 'Doppler Notch Gate Break', val: `-${Math.round((factors.notchBonus || 0) * 100)}%`, type: 'negative', desc: 'Target 90 deg beaming aspect cuts radial closure velocity.' },
+      { name: 'Doppler Notch Gate Break', val: `-${Math.round((factors.notchBonus || 0) * 100)}%`, type: 'negative', desc: `Target 90${sDeg} beaming aspect cuts radial closure velocity.` },
       { name: 'Chaff Decoy Seduction', val: `-${Math.round((factors.chaffBonus || 0) * 100)}%`, type: 'negative', desc: 'Dispersed chaff bloom creating competing radar reflections.' },
       { name: 'Target Corner Speed Efficiency', val: `-${Math.round((factors.turnEfficiencyPenalty || 0) * 100)}%`, type: (factors.turnEfficiencyPenalty || 0) <= 0.08 ? 'warning' : 'negative', desc: 'Target maneuver authority matching optimal corner speed.' },
       therm > 0
-        ? { name: 'Target Afterburner Thermal Plume', val: `+${Math.round(therm * 100)}%`, type: 'positive', desc: 'Target wet thrust creates high-contrast IR thermal beacon.' }
-        : { name: 'Suppressed Thermal IR Exhaust', val: `${Math.round(therm * 100)}%`, type: 'warning', desc: 'Target engine cooling or idle throttle suppresses infrared seeker tracking.' },
+        ? { name: 'Target Afterburner Heat Plume', val: `+${Math.round(therm * 100)}%`, type: 'positive', desc: 'Target wet thrust creates high-contrast IR thermal beacon.' }
+        : { name: 'Suppressed Thermal IR Exhaust', val: `${Math.round(therm * 100)}%`, type: 'warning', desc: 'Target engine cooling or idle throttle reduces infrared seeker tracking.' },
       { name: 'Target Kinetic Energy Deficit', val: `+${Math.round((factors.targetEnergyBonus || 0) * 100)}%`, type: 'positive', desc: 'Target energy bled in prior turns delays defensive break.' },
       { name: 'Cloud Moisture Attenuation', val: `-${Math.round((factors.opticalWeatherPenalty || 0) * 100)}%`, type: (factors.opticalWeatherPenalty || 0) <= 0.15 ? 'warning' : 'negative', desc: 'Moisture droplets scattering optical / IR seeker tracker.' },
       { name: 'Excessive Lead Turn Energy Drain', val: `-${Math.round((factors.excessiveTurnPenalty || 0) * 100)}%`, type: 'negative', desc: 'Severe steering angle bled missile kinetic velocity.' }
