@@ -17,10 +17,11 @@ class InspectionCognitionRenderer {
 
     const prof = ai.getCognitiveProfile(aircraft.id);
     const isActivelyControlled = Boolean(prof.isFocused);
+    const isAce = Boolean(prof.isAce);
     const focusTimerSec = Math.max(0, prof.remainingFocus || 0);
 
     const postureText = String(prof.posture || 'OFFENSIVE_SWEEP').replace(/_/g, ' ');
-    const roleText = prof.roleInFormation || 'Independent Element';
+    const roleText = prof.roleInFormation || (isAce ? 'Ace Interceptor' : 'Independent Element');
     const pairDetail = prof.pairedUnit ? ` ${window.INSP_SVG.dot} Pair: ${prof.pairedUnit.callsign || 'Wingman'}` : '';
 
     let successionHtml = '<b>Normal decision cycle</b>';
@@ -28,22 +29,32 @@ class InspectionCognitionRenderer {
       successionHtml = `<b style="color:var(--stat-tier-4);">Command disruption (${prof.successionTimer.toFixed(1)}s hesitation)</b>`;
     }
 
+    const cardClass = isAce ? 'active-focus' : (isActivelyControlled ? 'active-focus' : '');
+    const headerColor = isAce ? '#ffd700' : (isActivelyControlled ? 'var(--color-red)' : 'var(--theme-accent)');
+    const statusChipText = isAce ? 'ELITE ACE CADRE' : (isActivelyControlled ? 'ACTIVELY CONTROLLED' : 'AUTONOMOUS PATROL');
+    const statusChipClass = isAce ? 'warning' : (isActivelyControlled ? 'negative' : 'neutral');
+
+    const focusValText = isAce
+      ? (isActivelyControlled ? `LOCKED (ACE CADRE ${focusTimerSec.toFixed(1)}s)` : `ACE STANDBY (${focusTimerSec.toFixed(1)}s)`)
+      : (isActivelyControlled ? `LOCKED (${focusTimerSec.toFixed(1)}s)` : 'WAITING FOR SLOT');
+    const focusValColor = isAce ? '#ffd700' : (isActivelyControlled ? 'var(--color-red)' : 'var(--color-moon-mist)');
+
     return `
-      <section class="inspection-card insp-cognition-card ${isActivelyControlled ? 'active-focus' : ''}" data-insp-enemy-cognition="${aircraft.id}">
+      <section class="inspection-card insp-cognition-card ${cardClass}" data-insp-enemy-cognition="${aircraft.id}">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="margin:0; color:${isActivelyControlled ? 'var(--color-red)' : 'var(--theme-accent)'};">
-            AI TACTICAL COGNITION
+          <h3 style="margin:0; color:${headerColor};">
+            ${isAce ? 'ACE PILOT COGNITION' : 'AI TACTICAL COGNITION'}
           </h3>
-          <span class="factor-chip ${isActivelyControlled ? 'negative' : 'neutral'} cog-status-chip">
-            ${isActivelyControlled ? 'ACTIVELY CONTROLLED' : 'AUTONOMOUS PATROL'}
+          <span class="factor-chip ${statusChipClass} cog-status-chip">
+            ${statusChipText}
           </span>
         </div>
 
         <div class="insp-cognition-grid">
           <div class="insp-cognition-field">
             <span>COMMANDER FOCUS:</span>
-            <b class="cog-focus-val" style="color:${isActivelyControlled ? 'var(--color-red)' : 'var(--color-moon-mist)'};">
-              ${isActivelyControlled ? `LOCKED (${focusTimerSec.toFixed(1)}s)` : 'WAITING FOR SLOT'}
+            <b class="cog-focus-val" style="color:${focusValColor};">
+              ${focusValText}
             </b>
           </div>
 
@@ -59,7 +70,7 @@ class InspectionCognitionRenderer {
 
           <div class="insp-cognition-field">
             <span>FORMATION ROLE:</span>
-            <b class="cog-role-val">${roleText}${pairDetail}</b>
+            <b class="cog-role-val" style="color:${isAce ? '#ffd700' : 'var(--color-pure-white)'};">${roleText}${pairDetail}</b>
           </div>
 
           <div class="insp-cognition-field">
@@ -69,26 +80,34 @@ class InspectionCognitionRenderer {
 
           <div class="insp-cognition-field">
             <span>REACTION LATENCY:</span>
-            <b>${prof.reactionCooldown.toFixed(1)}s delay</b>
+            <b class="cog-reaction-val" style="color:${isAce ? 'var(--stat-tier-1)' : 'var(--color-pure-white)'};">
+              ${prof.reactionCooldown.toFixed(1)}s ${isAce ? '(Ace Reflex)' : 'delay'}
+            </b>
           </div>
 
           <div class="insp-cognition-field">
             <span>DOPPLER NOTCH:</span>
-            <b>${Math.round(prof.notchChance * 100)}% discipline</b>
+            <b class="cog-notch-val" style="color:${isAce ? 'var(--stat-tier-2)' : 'var(--color-pure-white)'};">
+              ${Math.round(prof.notchChance * 100)}% ${isAce ? '(High-G)' : 'discipline'}
+            </b>
           </div>
 
           <div class="insp-cognition-field">
             <span>DECOY DISCRIMINATION:</span>
-            <b>${Math.round(prof.decoyDiscrimination * 100)}% filter rate</b>
+            <b class="cog-decoy-val" style="color:${isAce ? 'var(--stat-tier-1)' : 'var(--color-pure-white)'};">
+              ${Math.round(prof.decoyDiscrimination * 100)}% ${isAce ? '(Signal Filter)' : 'filter rate'}
+            </b>
           </div>
         </div>
 
-        <div class="inspection-reason-box ${isActivelyControlled ? 'warning' : ''}" style="margin-top:6px;">
+        <div class="inspection-reason-box ${isActivelyControlled || isAce ? 'warning' : ''}" style="margin-top:6px;">
           <b>COGNITIVE ASSESSMENT:</b>
           <span class="cog-summary-text">
-            ${isActivelyControlled
-              ? `Commander attention active. Target steering, energy optimization, and missile release solutions are actively processed.`
-              : `Aircraft is on autonomous patrol awaiting an available commander focus slot (${prof.activeFocusCount}/${prof.maxSlots} currently engaged).`}
+            ${isAce
+              ? `Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.`
+              : (isActivelyControlled
+                ? `Commander attention active. Target steering, energy optimization, and missile release solutions are actively processed.`
+                : `Aircraft is on autonomous patrol awaiting an available commander focus slot (${prof.activeFocusCount}/${prof.maxSlots} currently engaged).`)}
           </span>
         </div>
       </section>
@@ -105,20 +124,23 @@ class InspectionCognitionRenderer {
 
     const prof = ai.getCognitiveProfile(aircraft.id);
     const isActivelyControlled = Boolean(prof.isFocused);
+    const isAce = Boolean(prof.isAce);
     const focusTimerSec = Math.max(0, prof.remainingFocus || 0);
 
-    card.classList.toggle('active-focus', isActivelyControlled);
+    card.classList.toggle('active-focus', isActivelyControlled || isAce);
 
     const chip = card.querySelector('.cog-status-chip');
     if (chip) {
-      chip.className = `factor-chip ${isActivelyControlled ? 'negative' : 'neutral'} cog-status-chip`;
-      chip.textContent = isActivelyControlled ? 'ACTIVELY CONTROLLED' : 'AUTONOMOUS PATROL';
+      chip.className = `factor-chip ${isAce ? 'warning' : (isActivelyControlled ? 'negative' : 'neutral')} cog-status-chip`;
+      chip.textContent = isAce ? 'ELITE ACE CADRE' : (isActivelyControlled ? 'ACTIVELY CONTROLLED' : 'AUTONOMOUS PATROL');
     }
 
     const focusVal = card.querySelector('.cog-focus-val');
     if (focusVal) {
-      focusVal.textContent = isActivelyControlled ? `LOCKED (${focusTimerSec.toFixed(1)}s)` : 'WAITING FOR SLOT';
-      focusVal.style.color = isActivelyControlled ? 'var(--color-red)' : 'var(--color-moon-mist)';
+      focusVal.textContent = isAce
+        ? (isActivelyControlled ? `LOCKED (ACE CADRE ${focusTimerSec.toFixed(1)}s)` : `ACE STANDBY (${focusTimerSec.toFixed(1)}s)`)
+        : (isActivelyControlled ? `LOCKED (${focusTimerSec.toFixed(1)}s)` : 'WAITING FOR SLOT');
+      focusVal.style.color = isAce ? '#ffd700' : (isActivelyControlled ? 'var(--color-red)' : 'var(--color-moon-mist)');
     }
 
     const slotsVal = card.querySelector('.cog-slots-val');
@@ -130,7 +152,8 @@ class InspectionCognitionRenderer {
     const roleVal = card.querySelector('.cog-role-val');
     if (roleVal) {
       const pairDetail = prof.pairedUnit ? ` ${window.INSP_SVG.dot} Pair: ${prof.pairedUnit.callsign || 'Wingman'}` : '';
-      roleVal.innerHTML = `${prof.roleInFormation || 'Independent Element'}${pairDetail}`;
+      roleVal.innerHTML = `${prof.roleInFormation || (isAce ? 'Ace Interceptor' : 'Independent Element')}${pairDetail}`;
+      roleVal.style.color = isAce ? '#ffd700' : 'var(--color-pure-white)';
     }
 
     const succVal = card.querySelector('.cog-succession-val');
@@ -140,11 +163,28 @@ class InspectionCognitionRenderer {
         : '<b>Normal decision cycle</b>';
     }
 
+    const reactionVal = card.querySelector('.cog-reaction-val');
+    if (reactionVal) {
+      reactionVal.textContent = `${prof.reactionCooldown.toFixed(1)}s ${isAce ? '(Ace Reflex)' : 'delay'}`;
+    }
+
+    const notchVal = card.querySelector('.cog-notch-val');
+    if (notchVal) {
+      notchVal.textContent = `${Math.round(prof.notchChance * 100)}% ${isAce ? '(High-G)' : 'discipline'}`;
+    }
+
+    const decoyVal = card.querySelector('.cog-decoy-val');
+    if (decoyVal) {
+      decoyVal.textContent = `${Math.round(prof.decoyDiscrimination * 100)}% ${isAce ? '(Signal Filter)' : 'filter rate'}`;
+    }
+
     const summaryText = card.querySelector('.cog-summary-text');
     if (summaryText) {
-      summaryText.textContent = isActivelyControlled
-        ? `Commander attention active. Target steering, energy optimization, and missile release solutions are actively processed.`
-        : `Aircraft is on autonomous patrol awaiting an available commander focus slot (${prof.activeFocusCount}/${prof.maxSlots} currently engaged).`;
+      summaryText.textContent = isAce
+        ? `Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.`
+        : (isActivelyControlled
+          ? `Commander attention active. Target steering, energy optimization, and missile release solutions are actively processed.`
+          : `Aircraft is on autonomous patrol awaiting an available commander focus slot (${prof.activeFocusCount}/${prof.maxSlots} currently engaged).`);
     }
   }
 }

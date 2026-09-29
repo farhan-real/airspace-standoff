@@ -9,6 +9,7 @@ class AIEvasionHandler {
     const incoming = missiles.filter(m => m.active && m.target && m.target.id === hostile.id);
     if (incoming.length === 0) return;
 
+    const isAce = Boolean(hostile.isAce);
     const nearestMsl = incoming.reduce((min, m) => (m.distanceToTarget < min.distanceToTarget ? m : min), incoming[0]);
     const isStealth = Boolean(nearestMsl.isStealthMissile || (nearestMsl.rcs <= 0.005));
 
@@ -21,9 +22,13 @@ class AIEvasionHandler {
       LEGEND:  { reactDist: 10.5, stealthDist: 6.5, blunderChance: 0.12, cmChance: 0.60, turnMult: 0.90, bonus: 0.52 }
     };
     const tier = defTiers[diffKey] || defTiers.VETERAN;
+    const aceProf = (window.AI_ACE_PROFILES && window.AI_ACE_PROFILES[diffKey]);
+
+    const reactDistance = isAce ? Math.max(tier.reactDist + 2.5, 9.0) : tier.reactDist;
+    const stealthDistance = isAce ? Math.max(tier.stealthDist + 1.8, 5.8) : tier.stealthDist;
 
     const focusFactor = isFocused ? 1.0 : (['ACE', 'MASTER', 'LEGEND'].includes(diffKey) ? 0.82 : 0.60);
-    const triggerDistance = (isStealth ? tier.stealthDist : tier.reactDist) * focusFactor;
+    const triggerDistance = (isStealth ? stealthDistance : reactDistance) * focusFactor;
     if (nearestMsl.distanceToTarget > triggerDistance) return;
 
     const effAgi = (typeof hostile.getEffectiveAgility === 'function')
@@ -35,33 +40,34 @@ class AIEvasionHandler {
     const turnOptEff = hostile.isCoffin ? 1.0 : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(hostile.speed || 0.8, sOpt) : 0.85);
     const turnOptFactor = Math.max(0.40, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
 
+    const baseBlunder = isAce && aceProf ? aceProf.blunderChance : tier.blunderChance;
     const effectiveBlunderChance = isFocused
-      ? (tier.blunderChance / agiFactor)
-      : Math.min(0.85, (tier.blunderChance * 1.35) / agiFactor);
+      ? (baseBlunder / agiFactor)
+      : Math.min(0.85, (baseBlunder * 1.35) / agiFactor);
 
     if (Math.random() < effectiveBlunderChance) return;
 
     const hasCm = (hostile.chaff > 0 || hostile.countermeasures > 0);
-    if (nearestMsl.distanceToTarget < 5.0 && hasCm && hostile.cmTimer <= 0) {
-      if (diffKey === 'CADET' && Math.random() < 0.35) {
-        hostile.deployCountermeasures();
-      } else if (Math.random() < tier.cmChance * agiFactor) {
+    const cmThreshold = isAce ? 7.5 : 5.0;
+    const cmProbability = isAce ? 0.75 : tier.cmChance;
+    if (nearestMsl.distanceToTarget < cmThreshold && hasCm && hostile.cmTimer <= 0) {
+      if (Math.random() < cmProbability * agiFactor) {
         hostile.deployCountermeasures();
       }
     }
 
     const isOptical = Boolean(nearestMsl.weapon && (nearestMsl.weapon.seeker === 'IIR' || nearestMsl.weapon.seeker === 'EO' || nearestMsl.weapon.seeker === 'OPT'));
-    if (isOptical && ['ACE', 'MASTER', 'LEGEND'].includes(diffKey)) {
+    if (isOptical && (isAce || ['ACE', 'MASTER', 'LEGEND'].includes(diffKey))) {
       hostile.engineAlpha = 0.20;
     }
 
     const isRadar = Boolean(nearestMsl.weapon && (nearestMsl.weapon.seeker === 'ARH' || nearestMsl.weapon.seeker === 'PASSIVE_RADAR'));
-    const baseNotchChance = profile.notchChance !== undefined ? profile.notchChance : 0.0;
-    const closeRangeDegradation = (nearestMsl.distanceToTarget < 15.0) ? 0.50 : 1.0;
+    const baseNotchChance = isAce && aceProf ? aceProf.notchChance : (profile.notchChance !== undefined ? profile.notchChance : 0.0);
+    const closeRangeDegradation = (nearestMsl.distanceToTarget < 15.0) ? (isAce ? 0.75 : 0.50) : 1.0;
     const effectiveNotchChance = baseNotchChance * closeRangeDegradation;
 
     if (isRadar && Math.random() < effectiveNotchChance) {
-      const toleranceDeg = profile.notchToleranceDeg !== undefined ? profile.notchToleranceDeg : 20;
+      const toleranceDeg = isAce ? 12 : (profile.notchToleranceDeg !== undefined ? profile.notchToleranceDeg : 20);
       const angleJitterRad = ((Math.random() * 2 - 1) * toleranceDeg * Math.PI) / 180.0;
       const desiredPerp = nearestMsl.heading + (Math.PI / 2) + angleJitterRad;
 
@@ -73,7 +79,7 @@ class AIEvasionHandler {
       if (Math.abs(diff) < 0.25) {
         hostile.isNotching = true;
         hostile.activeManeuverTimer = 6.0;
-        hostile.activeManeuverBonus = tier.bonus * agiFactor * turnOptFactor;
+        hostile.activeManeuverBonus = (tier.bonus + (isAce ? 0.15 : 0)) * agiFactor * turnOptFactor;
         hostile.activeManeuverId = 'DOPPLER_NOTCH';
         return;
       }
@@ -83,10 +89,10 @@ class AIEvasionHandler {
     let diff = awayHeading - hostile.heading;
     while (diff < -Math.PI) diff += Math.PI * 2;
     while (diff > Math.PI) diff -= Math.PI * 2;
-    const turnCap = effAgi * tier.turnMult * (isFocused ? 1.0 : 0.75);
+    const turnCap = effAgi * tier.turnMult * (isFocused ? 1.0 : 0.75) * (isAce ? 1.15 : 1.0);
     hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
     hostile.activeManeuverTimer = isFocused ? 5.0 : 3.0;
-    hostile.activeManeuverBonus = tier.bonus * agiFactor * turnOptFactor * (isFocused ? 1.0 : 0.70);
+    hostile.activeManeuverBonus = (tier.bonus + (isAce ? 0.12 : 0)) * agiFactor * turnOptFactor * (isFocused ? 1.0 : 0.70);
     hostile.activeManeuverId = 'BREAK_TURN';
     hostile.isNotching = false;
   }
@@ -94,14 +100,15 @@ class AIEvasionHandler {
   static coordinateAceTactics(aiCommander, aces, candidateTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt) {
     if (!aces || aces.length === 0) return;
     const game = aiCommander.game;
+    const aceProf = (window.AI_ACE_PROFILES && window.AI_ACE_PROFILES[diffKey]) || {};
 
     const aceTiers = {
-      CADET:   { delay: 3.8, notchRate: 0.20, climbAlt: 28000, throttleMod: false },
-      VETERAN: { delay: 3.2, notchRate: 0.30, climbAlt: 32000, throttleMod: true },
-      ELITE:   { delay: 2.4, notchRate: 0.45, climbAlt: 36000, throttleMod: true },
-      ACE:     { delay: 1.8, notchRate: 0.55, climbAlt: 38000, throttleMod: true },
-      MASTER:  { delay: 1.4, notchRate: 0.65, climbAlt: 40000, throttleMod: true },
-      LEGEND:  { delay: 1.1, notchRate: 0.70, climbAlt: 42000, throttleMod: true }
+      CADET:   { delay: 3.8, notchRate: 0.25, climbAlt: 28000, throttleMod: true },
+      VETERAN: { delay: 3.2, notchRate: 0.35, climbAlt: 32000, throttleMod: true },
+      ELITE:   { delay: 2.4, notchRate: 0.50, climbAlt: 36000, throttleMod: true },
+      ACE:     { delay: 1.8, notchRate: 0.60, climbAlt: 38000, throttleMod: true },
+      MASTER:  { delay: 1.4, notchRate: 0.70, climbAlt: 40000, throttleMod: true },
+      LEGEND:  { delay: 1.1, notchRate: 0.75, climbAlt: 42000, throttleMod: true }
     };
     const aceTier = aceTiers[diffKey] || aceTiers.VETERAN;
 
@@ -109,7 +116,6 @@ class AIEvasionHandler {
       if (ace.hp <= 0) continue;
       const isFocused = aiCommander.isUnitFocused(ace.id);
 
-      // Winchester check: Covered retreat toward surface SAM / CIWS umbrella
       const hasAmmo = ace.equippedWeapons && ace.equippedWeapons.some(p => p && p.ammo > 0 && p.weapon && !p.weapon.isJammerPod && !p.weapon.isDecoy && !p.weapon.isDecoyDrone);
       if (!hasAmmo && !ace.isRTB) {
         if (!ace.gunAmmo || ace.gunAmmo <= 0) {
@@ -126,19 +132,18 @@ class AIEvasionHandler {
         continue;
       }
 
-      // 3D Altitude Staging: Ace climbs to high-altitude perch
       if (aceTier.climbAlt && Math.abs((ace.altFt || 28000) - aceTier.climbAlt) > 3500) {
         ace.targetAltFt = aceTier.climbAlt;
       }
 
-      const aceProfile = Object.assign({}, profile, { notchChance: aceTier.notchRate });
-      this.handleDefensiveBehavior(ace, aceProfile, diffKey, dt, allMissiles, isFocused);
+      const mergedAceProfile = Object.assign({}, profile, aceProf, { notchChance: aceTier.notchRate });
+      this.handleDefensiveBehavior(ace, mergedAceProfile, diffKey, dt, allMissiles, isFocused);
       if (!isFocused) continue;
 
       if (typeof AIMissileTactics !== 'undefined') {
         const isStrikeAce = Boolean(ace.spec && ace.spec.role && (ace.spec.role.includes('Strike') || ace.spec.role.includes('Bomber')));
         const targetsForAce = (isStrikeAce && visibleBunkers.length > 0) ? visibleBunkers.concat(candidateTargets) : candidateTargets;
-        const acePlan = AIMissileTactics.selectAceTargetAndSalvo(ace, targetsForAce, clouds, allMissiles, diffKey, profile);
+        const acePlan = AIMissileTactics.selectAceTargetAndSalvo(ace, targetsForAce, clouds, allMissiles, diffKey, mergedAceProfile);
 
         if (acePlan && acePlan.target) {
           const tgt = acePlan.target;
@@ -151,7 +156,6 @@ class AIEvasionHandler {
           const aceAgi = (typeof ace.getEffectiveAgility === 'function') ? ace.getEffectiveAgility() : (ace.spec ? ace.spec.AGI_0 : 1.15);
           ace.heading += Math.max(-aceAgi * 1.1 * dt, Math.min(aceAgi * 1.1 * dt, diff));
 
-          // Active Corner-Speed Throttle Control in Pursuit Turns
           if (aceTier.throttleMod && Math.abs(diff) > 0.35) {
             const sOpt = (typeof ace.getOptimalCornerSpeed === 'function') ? ace.getOptimalCornerSpeed() : 0.80;
             if (ace.speed > sOpt * 1.12) ace.engineAlpha = 0.40;

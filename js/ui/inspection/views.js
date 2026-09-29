@@ -131,13 +131,15 @@ class InspectionViews {
       cognitionRawSection = `
         <div class="inspection-data-section">
           <span class="inspection-data-title">AI COGNITION AND TACTICAL PROFILE</span>
+          <div class="inspection-data-row"><span class="inspection-data-label">Pilot Cadre</span><b class="inspection-data-value" style="color:${prof.isAce ? '#ffd700' : 'var(--color-pure-white)'};">${prof.isAce ? 'ELITE ACE (SUPERIOR PROFILE)' : 'STANDARD COMBATANT'}</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">Focus State</span><b class="inspection-data-value raw-cog-state" style="color:${prof.isFocused ? 'var(--color-red)' : 'var(--stat-tier-2)'};">${prof.isFocused ? `ACTIVELY CONTROLLED (${prof.remainingFocus.toFixed(1)}s)` : 'AUTONOMOUS PATROL'}</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">Bandwidth Slots</span><b class="inspection-data-value">${prof.activeFocusCount} / ${prof.maxSlots} Slots Occupied</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">Squadron Posture</span><b class="inspection-data-value">${prof.posture}</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">Formation Assignment</span><b class="inspection-data-value">${prof.roleInFormation}</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">Command Disruption</span><b class="inspection-data-value">${prof.isHesitating ? `HESITATING (${prof.successionTimer.toFixed(1)}s)` : 'NORMAL'}</b></div>
-          <div class="inspection-data-row"><span class="inspection-data-label">Notch Discipline</span><b class="inspection-data-value">${Math.round(prof.notchChance * 100)}%</b></div>
-          <div class="inspection-data-row"><span class="inspection-data-label">Decoy Filter Rate</span><b class="inspection-data-value">${Math.round(prof.decoyDiscrimination * 100)}%</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">Reaction Latency</span><b class="inspection-data-value" style="color:${prof.isAce ? 'var(--stat-tier-1)' : 'var(--color-pure-white)'};">${prof.reactionCooldown.toFixed(1)}s</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">Notch Discipline</span><b class="inspection-data-value" style="color:${prof.isAce ? 'var(--stat-tier-2)' : 'var(--color-pure-white)'};">${Math.round(prof.notchChance * 100)}%</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">Decoy Filter Rate</span><b class="inspection-data-value" style="color:${prof.isAce ? 'var(--stat-tier-1)' : 'var(--color-pure-white)'};">${Math.round(prof.decoyDiscrimination * 100)}%</b></div>
         </div>
       `;
     }

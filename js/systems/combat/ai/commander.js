@@ -3,6 +3,15 @@
  * Human-like attention allocation, cognitive bandwidth slots, mission planning, and tactical execution.
  */
 
+window.AI_ACE_PROFILES = {
+  CADET:   { reactionCooldown: 3.8, notchChance: 0.25, decoyDiscrimination: 0.35, blunderChance: 0.20, mixedSeekerChance: 0.00, salvoMaxMissiles: 1 },
+  VETERAN: { reactionCooldown: 3.2, notchChance: 0.35, decoyDiscrimination: 0.45, blunderChance: 0.12, mixedSeekerChance: 0.15, salvoMaxMissiles: 2 },
+  ELITE:   { reactionCooldown: 2.4, notchChance: 0.50, decoyDiscrimination: 0.60, blunderChance: 0.06, mixedSeekerChance: 0.25, salvoMaxMissiles: 2 },
+  ACE:     { reactionCooldown: 1.8, notchChance: 0.60, decoyDiscrimination: 0.70, blunderChance: 0.02, mixedSeekerChance: 0.35, salvoMaxMissiles: 2 },
+  MASTER:  { reactionCooldown: 1.4, notchChance: 0.70, decoyDiscrimination: 0.80, blunderChance: 0.00, mixedSeekerChance: 0.45, salvoMaxMissiles: 3 },
+  LEGEND:  { reactionCooldown: 1.1, notchChance: 0.75, decoyDiscrimination: 0.85, blunderChance: 0.00, mixedSeekerChance: 0.55, salvoMaxMissiles: 3 }
+};
+
 class TacticalAICommander {
   constructor(gameEngine) {
     this.game = gameEngine;
@@ -18,26 +27,32 @@ class TacticalAICommander {
   }
 
   getCognitiveProfile(unitId) {
+    const unit = (this.game.hostileAircraft || []).find(h => h.id === unitId) ||
+                 (this.game.alliedAircraft || []).find(a => a.id === unitId);
+    const isAce = Boolean(unit && unit.isAce);
     const isFocused = this.isUnitFocused(unitId);
     const remainingFocus = this.focusTimers.get(unitId) || 0;
     const diffKey = this.game.aiDifficulty || 'VETERAN';
-    const profile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) || {};
-    const maxSlots = profile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
+    const baseProfile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) || {};
+    const aceProfile = (window.AI_ACE_PROFILES && window.AI_ACE_PROFILES[diffKey]) || baseProfile;
+
+    const maxSlots = baseProfile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
     const activeFocusCount = this.focusedUnitIds.length;
     const isHesitating = this.planning ? this.planning.isHesitating(unitId) : false;
     const successionTimer = this.planning ? (this.planning.successionTimers.get(unitId) || 0) : 0;
     const posture = this.planning ? this.planning.posture : 'OFFENSIVE_SWEEP';
 
-    let roleInFormation = 'Independent Element';
+    let roleInFormation = isAce ? (unit && unit.isFlightLead ? 'Ace Flight Lead' : 'Ace Interceptor') : 'Independent Element';
     let pairedUnit = null;
+
     if (this.planning && this.planning.elementPairs) {
       for (const [leadId, wingId] of this.planning.elementPairs.entries()) {
         if (leadId === unitId) {
-          roleInFormation = 'Element Leader';
+          roleInFormation = isAce ? 'Ace Element Lead' : 'Element Leader';
           pairedUnit = (this.game.hostileAircraft || []).find(h => h.id === wingId) || null;
           break;
         } else if (wingId === unitId) {
-          roleInFormation = 'Wingman';
+          roleInFormation = isAce ? 'Ace Escort' : 'Wingman';
           pairedUnit = (this.game.hostileAircraft || []).find(h => h.id === leadId) || null;
           break;
         }
@@ -45,6 +60,7 @@ class TacticalAICommander {
     }
 
     return {
+      isAce,
       isFocused,
       remainingFocus,
       maxSlots,
@@ -55,9 +71,10 @@ class TacticalAICommander {
       successionTimer,
       roleInFormation,
       pairedUnit,
-      reactionCooldown: profile.reactionCooldown || 3.0,
-      notchChance: profile.notchChance || 0,
-      decoyDiscrimination: profile.decoyDiscrimination || 0
+      reactionCooldown: isAce ? aceProfile.reactionCooldown : (baseProfile.reactionCooldown || 3.0),
+      notchChance: isAce ? aceProfile.notchChance : (baseProfile.notchChance || 0),
+      decoyDiscrimination: isAce ? aceProfile.decoyDiscrimination : (baseProfile.decoyDiscrimination || 0),
+      blunderChance: isAce ? aceProfile.blunderChance : (baseProfile.blunderChance || 0.3)
     };
   }
 
@@ -91,8 +108,8 @@ class TacticalAICommander {
         if (d <= 45.0) score += 35;
       }
 
-      if (h.isAce) score += 20;
-      else if (h.isFlightLead) score += 15;
+      if (h.isAce) score += 55;
+      else if (h.isFlightLead) score += 20;
 
       const remainingTimer = this.focusTimers.get(h.id) || 0;
       if (this.focusedUnitIds.includes(h.id) && remainingTimer > 0) score += 40;
@@ -108,7 +125,7 @@ class TacticalAICommander {
       const h = scoredUnits[i].unit;
       newFocus.push(h.id);
       if (!this.focusedUnitIds.includes(h.id) || (this.focusTimers.get(h.id) || 0) <= 0) {
-        this.focusTimers.set(h.id, span);
+        this.focusTimers.set(h.id, h.isAce ? span * 1.25 : span);
       }
     }
     this.focusedUnitIds = newFocus;

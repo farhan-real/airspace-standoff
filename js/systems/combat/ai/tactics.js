@@ -1,11 +1,14 @@
 /**
  * AIRSPACE STANDOFF: Tactical AI Missile Decision Engine
- * Difficulty-scaled launch sizing, inbound threat prediction, decoy discrimination, and mixed salvos.
+ * Scaled launch sizing, inbound threat prediction, decoy discrimination, and mixed salvos.
  */
 
 class AIMissileTactics {
   static filterCandidateTargets(shooter, rawTargets, profile, diffKey) {
-    const descChance = profile.decoyDiscrimination !== undefined ? profile.decoyDiscrimination : 0.20;
+    const isAce = Boolean(shooter && shooter.isAce);
+    const aceProf = (window.AI_ACE_PROFILES && window.AI_ACE_PROFILES[diffKey]);
+    const descChance = isAce && aceProf ? aceProf.decoyDiscrimination : (profile.decoyDiscrimination !== undefined ? profile.decoyDiscrimination : 0.20);
+
     return rawTargets.filter(t => {
       if (!t || t.hp <= 0.05) return false;
       if (t.isDecoyDrone || t.isGhost) {
@@ -121,7 +124,8 @@ class AIMissileTactics {
     }
     if (availablePylons.length === 0) return null;
 
-    const filtered = this.filterCandidateTargets(ace, candidateTargets, profile || {}, diffKey);
+    const aceProf = (window.AI_ACE_PROFILES && window.AI_ACE_PROFILES[diffKey]) || profile;
+    const filtered = this.filterCandidateTargets(ace, candidateTargets, aceProf, diffKey);
     const viableTargets = filtered.filter(t => t && t.hp > 0 && !t.isCivilian);
     if (viableTargets.length === 0) return null;
 
@@ -154,10 +158,11 @@ class AIMissileTactics {
       if (!isSurface && !isHOBS && offBoresight > 0.85) continue;
 
       const pylonsToFire = [primary];
-      const maxSalvo = (profile && profile.salvoMaxMissiles) ? profile.salvoMaxMissiles : 2;
+      const maxSalvo = aceProf.salvoMaxMissiles || profile.salvoMaxMissiles || 2;
 
       if (maxSalvo >= 2 && target.hp >= 3) {
-        const tryMixed = profile && (Math.random() < (profile.mixedSeekerChance || 0));
+        const mixedChance = aceProf.mixedSeekerChance !== undefined ? aceProf.mixedSeekerChance : (profile.mixedSeekerChance || 0);
+        const tryMixed = Math.random() < mixedChance;
         let secondary = null;
 
         if (tryMixed) {
@@ -193,7 +198,9 @@ class AIMissileTactics {
       return { target: tgt, pylonsToFire, primaryWeapon: w };
     }
 
-    const maxSalvo = (profile && profile.salvoMaxMissiles) ? profile.salvoMaxMissiles : 2;
+    const isAce = Boolean(shooter && shooter.isAce);
+    const aceProf = (window.AI_ACE_PROFILES && window.AI_ACE_PROFILES[diffKey]) || profile;
+    const maxSalvo = isAce ? (aceProf.salvoMaxMissiles || 2) : (profile.salvoMaxMissiles || 2);
     if (maxSalvo < 2) return { target: tgt, pylonsToFire, primaryWeapon: w };
 
     const totalAmmoLeft = availablePylons.reduce((sum, p) => sum + (p.item.ammo || 0), 0);
@@ -203,7 +210,8 @@ class AIMissileTactics {
     const remaining = availablePylons.filter(p => p.index !== match.pylon.index && p.weapon.category === 'A2A');
     if (remaining.length === 0) return { target: tgt, pylonsToFire, primaryWeapon: w };
 
-    const tryMixed = profile && (Math.random() < (profile.mixedSeekerChance || 0));
+    const mixedChance = isAce ? (aceProf.mixedSeekerChance || 0) : (profile.mixedSeekerChance || 0);
+    const tryMixed = Math.random() < mixedChance;
     if (tryMixed) {
       const isRf = s => (s === 'ARH' || s === 'PASSIVE_RADAR' || s === 'INS');
       const primeIsRf = isRf(w.seeker);
