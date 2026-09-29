@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Fleet Outfitter Submodule
- * Evaluates airframe constraints, weapon classes, contextual aerodynamics, and role planning.
+ * Evaluates airframe constraints, weapon classes, contextual aerodynamics, and tactical role planning.
  */
 
 class FleetOutfitter {
@@ -14,9 +14,11 @@ class FleetOutfitter {
 
     const isEW = (spec.category === 'EW' || spec.isEW);
     const isStrike = (spec.category === 'STRIKE');
+    const isDrone = (spec.category === 'DRONES' || spec.isDrone);
     const isStealth = (spec.internalSlots > 0 && spec.category === 'STEALTH');
     const isHeavyTruck = ['F-15EX', 'MiG-31BM', 'J-16', 'Su-34', 'A-10C', 'B-1B', 'Tu-160M'].includes(spec.id);
-    const isAgileDogfighter = ['Rafale-C', 'Eurofighter', 'Su-35S', 'Mirage-2000', 'F-16V', 'Gripen', 'Tejas-MK2'].includes(spec.id);
+    const isAgileDogfighter = ['Rafale-C', 'Eurofighter', 'Su-35S', 'Mirage-2000', 'F-16V', 'Gripen', 'Tejas-MK2', 'Su-47', 'X-29A', 'Su-37'].includes(spec.id);
+    const isHighSpeed = (spec.S_0 >= 1.25 || ['MiG-31BM', 'DARKSTAR', 'F-15EX', 'YF-23', 'F-14D', 'Tu-160M'].includes(spec.id));
 
     const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
     const specRatingIndex = ratings.indexOf(spec.maxPylonRating || 'Type M');
@@ -59,10 +61,14 @@ class FleetOutfitter {
 
     if (isAce) {
       let aceRole = 'SWEEP';
-      if (class1Ulr.length > 0 && (doctrine === 'STANDOFF' || rng() < 0.55)) {
+      if (class1Ulr.length > 0 && (doctrine === 'STANDOFF' || rng() < 0.45)) {
         aceRole = 'SNIPER';
       } else if (spec.isCoffin || spec.category === 'EXPERIMENTAL') {
         aceRole = 'FLAGSHIP';
+      } else if (isHighSpeed && rng() < 0.40) {
+        aceRole = 'INTERCEPT';
+      } else if (isAgileDogfighter && rng() < 0.50) {
+        aceRole = 'DOGFIGHT';
       }
 
       const ulrChoice = class1Ulr[Math.floor(rng() * class1Ulr.length)] || (class2Lr[0] || 'METEOR');
@@ -104,11 +110,25 @@ class FleetOutfitter {
     }
 
     let role = 'SWEEP';
-    if (isEW) role = 'SEAD';
-    else if (isStrike) role = 'STRIKE';
-    else if (enforceCleanStealth && class1Ulr.includes('AIM-260')) role = 'AMBUSH';
-    else if (['MASTER', 'LEGEND'].includes(diff) && class1Ulr.length > 0 && rng() < 0.45) role = 'SNIPER';
-    else if (doctrine === 'STANDOFF' && class1Ulr.length > 0) role = 'SNIPER';
+    if (isEW) {
+      role = 'SEAD';
+    } else if (isDrone) {
+      role = 'SWARM';
+    } else if (isStrike) {
+      role = 'STRIKE';
+    } else if (isStealth && (enforceCleanStealth || rng() < 0.45)) {
+      role = 'AMBUSH';
+    } else if (isHeavyTruck && class1Ulr.length > 0 && rng() < 0.60) {
+      role = 'SNIPER';
+    } else if (isHighSpeed && (doctrine === 'AGGRESSIVE' || rng() < 0.45)) {
+      role = 'INTERCEPT';
+    } else if (isAgileDogfighter && (doctrine === 'AGGRESSIVE' || rng() < 0.45)) {
+      role = 'DOGFIGHT';
+    } else if (doctrine === 'STANDOFF' && class1Ulr.length > 0) {
+      role = 'SNIPER';
+    } else if (rng() < 0.22 && !['DARKSTAR', 'B-1B', 'Tu-160M', 'A-10C'].includes(spec.id)) {
+      role = 'ESCORT';
+    }
 
     const ulrWeights = { CADET: 0.0, VETERAN: 0.05, ELITE: 0.15, ACE: 0.35, MASTER: 0.50, LEGEND: 0.65 };
     const rollBvr = (allowUlr = true) => {
@@ -141,6 +161,14 @@ class FleetOutfitter {
       return { weapons, upgrades, totalCost, chosenGunId, role };
     }
 
+    if (role === 'SWARM') {
+      addWpn(isEligible(wCatalog['MAM']) ? 'MAM' : rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      if (spec.externalSlots >= 2) addWpn(rollWvr(), 'EXTERNAL');
+      addUpg('SWARM_AI_COPROCESSOR');
+      if (spec.upgradeSockets >= 2) addUpg('SUPERCRUISE_VCE');
+      return { weapons, upgrades, totalCost, chosenGunId, role };
+    }
+
     if (role === 'STRIKE') {
       if (spec.hasCenterline && isEligible(wCatalog['KINZHAL']) && (diff === 'LEGEND' || rng() < 0.50)) {
         addWpn('KINZHAL', 'CENTERLINE');
@@ -170,6 +198,31 @@ class FleetOutfitter {
       addWpn('AIM-260', 'INTERNAL');
       addWpn(rollWvr(), 'INTERNAL');
       if (spec.internalSlots >= 4) addWpn(rollBvr(false), 'INTERNAL');
+      addUpg('RAM_NANO_COATING');
+      if (spec.upgradeSockets >= 2) addUpg('EOTS_DUAL_OPTICS');
+    } else if (role === 'INTERCEPT') {
+      const fastBvr = rollBvr(true);
+      addWpn(fastBvr, spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      addUpg('SUPERCRUISE_VCE');
+      if (spec.upgradeSockets >= 2) addUpg('GAN_AESA_CORE');
+    } else if (role === 'DOGFIGHT') {
+      addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      if (spec.externalSlots >= 4 && !enforceLightweight && rng() < 0.40) {
+        const podChoice = spec.category === 'MULTIROLE' ? 'SUU-23A' : 'SPPU-22';
+        if (isEligible(wCatalog[podChoice])) addWpn(podChoice, 'EXTERNAL');
+      }
+      addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      if (spec.thrustVector) addUpg('THRUST_VECTOR');
+      addUpg('EOTS_DUAL_OPTICS');
+    } else if (role === 'ESCORT') {
+      addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      if (spec.externalSlots >= 4) addWpn(rollBvr(false), 'EXTERNAL');
+      addUpg('MADL_BATTLE_LINK');
+      if (spec.upgradeSockets >= 2) addUpg('EXPANDED_CM_DISPENSER');
     } else {
       const primaryBvr = rollBvr(['MASTER', 'LEGEND'].includes(diff));
       const primaryWvr = rollWvr();

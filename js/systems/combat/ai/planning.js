@@ -131,6 +131,24 @@ class AIPlanningSystem {
       return 38000;
     }
 
+    if (role === 'INTERCEPT') {
+      if (diffKey === 'LEGEND' || diffKey === 'MASTER') return 42000;
+      if (diffKey === 'ACE') return 38000;
+      return 34000;
+    }
+
+    if (role === 'DOGFIGHT') {
+      return 20000;
+    }
+
+    if (role === 'SWARM') {
+      return 18000;
+    }
+
+    if (role === 'ESCORT') {
+      return 28000;
+    }
+
     if (role === 'STRIKE') {
       if (diffKey === 'LEGEND') return 5500;
       if (diffKey === 'MASTER') return 8000;
@@ -201,6 +219,23 @@ class AIPlanningSystem {
       return { heading: directAngle + (Math.PI / 2), throttle: 0.50, isCrank: false };
     }
     return { heading: directAngle, throttle: 0.65, isCrank: false };
+  }
+
+  getInterceptVector(unit, target, dist) {
+    const interceptAngle = (typeof Physics !== 'undefined')
+      ? Physics.calcLeadInterceptAngle(unit.x, unit.y, unit.speed || 1.1, target.x, target.y, target.heading || 0, target.speed || 0.8)
+      : Math.atan2(target.y - unit.y, target.x - unit.x);
+    const sprintThrottle = dist > 30.0 ? 1.0 : 0.85;
+    return { heading: interceptAngle, throttle: sprintThrottle };
+  }
+
+  getDogfightVector(unit, target, dist) {
+    const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+    const sOpt = (typeof unit.getOptimalCornerSpeed === 'function') ? unit.getOptimalCornerSpeed() : 0.75;
+    let targetThrottle = 0.65;
+    if (unit.speed > sOpt * 1.10) targetThrottle = 0.35;
+    else if (unit.speed < sOpt * 0.90) targetThrottle = 0.85;
+    return { heading: directAngle, throttle: targetThrottle };
   }
 
   getAmbushVector(unit, target, dist, diffKey) {

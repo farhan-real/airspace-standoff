@@ -100,7 +100,7 @@ const FleetGenerator = {
     const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : (diff === 'CADET' ? 0 : 1);
     const aceCandidates = (diff === 'CADET' || diff === 'VETERAN')
       ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM', 'F-14D', 'Su-57', 'YF-23', 'J-20']
-      : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'F-22C-COFFIN', 'Su-57', 'Su-47', 'Su-37-COFFIN', 'DARKSTAR', 'F-15-SMT-COFFIN'];
+      : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'DARKSTAR', 'F-22C-COFFIN', 'Su-57', 'YF-23', 'F-22A', 'F-15EX'];
 
     const aceCallsigns = isBlue
       ? ['Apex Lead', 'Saber Lead', 'Ghost Lead', 'Viper Ace', 'Archangel'].sort(() => rng() - 0.5)
@@ -156,20 +156,38 @@ const FleetGenerator = {
       }
     }
 
-    const apexPool = ['ADF-11F', 'CFA-44', 'X-02S', 'F-22C-COFFIN', 'Su-57', 'YF-23', 'F-22A', 'J-20', 'DARKSTAR', 'Su-47', 'F-15-SMT-COFFIN', 'F-15EX'];
-    const highTierPool = ['Su-57', 'F-22A', 'YF-23', 'J-20', 'F-15EX', 'Eurofighter', 'Rafale-C', 'Su-35S', 'Su-37', 'MiG-31BM', 'F-35A', 'Su-30SM'];
-    const midTierPool = ['Eurofighter', 'Rafale-C', 'Su-35S', 'F-15EX', 'KF-21', 'F-18E', 'F-2A', 'J-16', 'Su-30SM', 'MiG-31BM', 'JAS-39E'];
-    const lowTierPool = ['F-16V', 'Mirage-2000', 'Tejas-MK2', 'MiG-29K', 'X-29A', 'Tornado-ECR'];
+    const apexPool = ['ADF-11F', 'CFA-44', 'X-02S', 'ADFX-01', 'DARKSTAR'];
+    const highTierPool = [
+      'Su-57', 'F-22A', 'YF-23', 'J-20', 'F-15EX', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN',
+      'Su-47', 'F-15-SMTD', 'F-35A', 'Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'MiG-31BM', 'Su-30SM',
+      'B-1B', 'Su-34'
+    ];
+    const midTierPool = [
+      'F-15EX', 'Eurofighter', 'Rafale-C', 'Su-35S', 'KF-21', 'F-18E', 'F-2A', 'J-16', 'Su-30SM',
+      'MiG-31BM', 'JAS-39E', 'Su-34', 'A-10C', 'Su-25SM3', 'S-70', 'Su-75', 'FC-31', 'J-35'
+    ];
+    const lowTierPool = [
+      'F-15EX', 'F-16V', 'Mirage-2000', 'Tejas-MK2', 'MiG-29K', 'X-29A', 'Tornado-ECR', 'A-10C', 'Su-25SM3'
+    ];
+    const dronePool = ['MQ-99', 'MQ-101', 'XQ-58A', 'Kizilelma', 'MQ-28', 'RQ-180'];
 
     while (fleetItems.length < maxSquadronSize) {
       const roll = rng();
       let candidatePool;
 
-      if (diff === 'CADET') candidatePool = (roll < 0.75) ? lowTierPool : midTierPool;
-      else if (diff === 'VETERAN') candidatePool = (roll < 0.60) ? midTierPool : (roll < 0.85 ? highTierPool : lowTierPool);
-      else if (diff === 'ELITE') candidatePool = (roll < 0.65) ? highTierPool : (roll < 0.90 ? apexPool : midTierPool);
-      else if (diff === 'ACE') candidatePool = (roll < 0.55) ? apexPool : highTierPool;
-      else candidatePool = (roll < 0.70) ? apexPool : highTierPool;
+      if (diff === 'CADET') {
+        candidatePool = (roll < 0.20) ? highTierPool : ((roll < 0.65) ? midTierPool : lowTierPool);
+      } else if (diff === 'VETERAN') {
+        candidatePool = (roll < 0.45) ? highTierPool : ((roll < 0.80) ? midTierPool : ((roll < 0.90) ? apexPool : lowTierPool));
+      } else if (diff === 'ELITE') {
+        candidatePool = (roll < 0.50) ? highTierPool : ((roll < 0.75) ? apexPool : ((roll < 0.90) ? midTierPool : dronePool));
+      } else if (diff === 'ACE') {
+        candidatePool = (roll < 0.45) ? highTierPool : ((roll < 0.80) ? apexPool : ((roll < 0.92) ? midTierPool : dronePool));
+      } else if (diff === 'MASTER') {
+        candidatePool = (roll < 0.45) ? apexPool : ((roll < 0.85) ? highTierPool : ((roll < 0.93) ? midTierPool : dronePool));
+      } else {
+        candidatePool = (roll < 0.55) ? apexPool : ((roll < 0.90) ? highTierPool : ((roll < 0.95) ? midTierPool : dronePool));
+      }
 
       const chosenId = candidatePool[Math.floor(rng() * candidatePool.length)];
       const spec = catalog[chosenId];
@@ -197,7 +215,7 @@ const FleetGenerator = {
     }
 
     if (fleetItems.length === 0) {
-      const fallbackId = lowTierPool[0] || 'F-16V';
+      const fallbackId = lowTierPool[0] || 'F-15EX';
       const spec = catalog[fallbackId];
       if (spec) {
         const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng);
@@ -224,13 +242,15 @@ const FleetGenerator = {
     spawnPlans.forEach(plan => {
       const item = plan.item;
       const heading = isBlue ? (rng() * 0.16 - 0.08) : (Math.PI + (rng() * 0.16 - 0.08));
-      const altFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(rng() * 16) * 1000);
+      const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(rng() * 18) * 1000);
       const defaultSquadName = isBlue ? (options.squadronName || 'Allied Strike Wing') : (item.isAce ? 'Elite Ace Cadre' : 'Hostile Intercept Wing');
+      const midY = theaterHeight / 2.0;
+      const spawnY = plan.isLead ? midY : plan.y;
 
       const unit = new Aircraft(
-        item.specId, team, plan.x, plan.y, heading, item.chosenGunId || null,
+        item.specId, team, plan.x, spawnY, heading, item.chosenGunId || null,
         item.callsign, defaultSquadName,
-        plan.isLead, plan.isAce, altFt
+        plan.isLead, plan.isAce, initialAltFt
       );
 
       unit.tacticalRole = item.role || 'SWEEP';
@@ -273,23 +293,44 @@ const FleetGenerator = {
     }
 
     const plans = this.calculateFormationSpawns(items, team, theaterWidth, theaterHeight);
+    const midY = theaterHeight / 2.0;
     const waveSquadron = plans.map(p => {
       const heading = isBlue ? (Math.random() * 0.16 - 0.08) : (Math.PI + (Math.random() * 0.16 - 0.08));
-      const ac = new Aircraft(p.item.specId, team, p.x, p.y, heading, null, p.item.callsign, sqName, p.item.isLead, p.item.isAce, 28000);
-      const isEW = Boolean(ac.spec && ac.spec.category === 'EW');
-      const isStrike = Boolean(ac.spec && ac.spec.category === 'STRIKE');
-      ac.tacticalRole = isEW ? 'SEAD' : (isStrike ? 'STRIKE' : 'SWEEP');
+      const spawnY = p.item.isLead ? midY : p.y;
+      const ac = new Aircraft(p.item.specId, team, p.x, spawnY, heading, null, p.item.callsign, sqName, p.item.isLead, p.item.isAce, 28000);
 
-      if (isEW) {
+      const isEW = Boolean(ac.spec && (ac.spec.category === 'EW' || ac.spec.isEW));
+      const isStrike = Boolean(ac.spec && ac.spec.category === 'STRIKE');
+      const isDrone = Boolean(ac.spec && (ac.spec.category === 'DRONES' || ac.spec.isDrone));
+      const isStealth = Boolean(ac.spec && ac.spec.category === 'STEALTH');
+      const isAgile = Boolean(ac.spec && ['Su-35S', 'Rafale-C', 'Eurofighter', 'Su-37', 'Su-47'].includes(ac.spec.id));
+      const isHighSpeed = Boolean(ac.spec && (ac.spec.S_0 >= 1.25 || ['MiG-31BM', 'F-15EX', 'DARKSTAR'].includes(ac.spec.id)));
+
+      if (isEW) ac.tacticalRole = 'SEAD';
+      else if (isDrone) ac.tacticalRole = 'SWARM';
+      else if (isStrike) ac.tacticalRole = 'STRIKE';
+      else if (isStealth) ac.tacticalRole = 'AMBUSH';
+      else if (isHighSpeed) ac.tacticalRole = 'INTERCEPT';
+      else if (isAgile) ac.tacticalRole = 'DOGFIGHT';
+      else ac.tacticalRole = 'SWEEP';
+
+      if (ac.tacticalRole === 'SEAD') {
         ac.installWeapon('AN-ALQ-99', 'EXTERNAL');
         ac.installWeapon('AGM-88G', 'EXTERNAL');
         ac.installWeapon('AIM-120D', 'EXTERNAL');
-      } else if (ac.internalSlots > 0) {
+      } else if (ac.tacticalRole === 'STRIKE') {
+        ac.installWeapon('GBU-39', 'EXTERNAL');
+        ac.installWeapon('AIM-120D', ac.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+        ac.installWeapon('AIM-9X-2', ac.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      } else if (ac.tacticalRole === 'SWARM') {
+        ac.installWeapon('MAM', ac.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+        ac.installWeapon('AIM-9X-2', ac.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      } else if (ac.tacticalRole === 'AMBUSH' && ac.internalSlots > 0) {
         ac.installWeapon('AIM-120D', 'INTERNAL');
         ac.installWeapon('AIM-9X-2', 'INTERNAL');
       } else {
-        ac.installWeapon('AIM-120D', 'EXTERNAL');
-        ac.installWeapon('AIM-9X-2', 'EXTERNAL');
+        ac.installWeapon('AIM-120D', ac.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+        ac.installWeapon('AIM-9X-2', ac.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       }
       ac.recalculateWeight();
       return ac;

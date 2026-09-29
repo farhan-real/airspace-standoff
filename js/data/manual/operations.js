@@ -139,7 +139,7 @@ window.MANUAL_OPERATIONS = [
           <tbody>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">Tactical Role</td>
-              <td>Displays active combat mission: <code>STANDOFF SNIPER</code> (holds tiered 45-90 km perimeter and crank vectors), <code>SEAD ESCORT</code> (hunts surface radar arrays/SAMs), <code>STRIKE INTERDICTION</code> (low-altitude deck penetration), <code>STEALTH AMBUSH</code> (outer flank broadside vectors), <code>AIR DOMINANCE SWEEP</code> (forward fighter merge), or <code>COMMAND FLAGSHIP</code> (ace lead).</td>
+              <td>Displays active combat mission: <code>STANDOFF SNIPER</code> (holds 50-85 km perimeter and retrograde drag angles), <code>HIGH-SPEED INTERCEPTOR</code> (supersonic dash and high-Mach BVR closure), <code>WVR DOGFIGHTER</code> (close-range visual merge with corner-speed snapshots), <code>SWARM FLIGHT SCREEN</code> (flank picket drawing fire with ripple micro-missiles), <code>FORMATION ESCORT</code> (tight defensive screen shielding lead or strike assets), <code>SEAD ESCORT</code> (hunts surface radar arrays/SAMs with anti-radiation missiles), <code>STRIKE INTERDICTION</code> (low-deck cruise missile/glide bomb delivery), <code>STEALTH AMBUSH</code> (unannounced broadside BVR volleys from boundary corridors), <code>AIR DOMINANCE SWEEP</code> (forward air combat merge), or <code>COMMAND FLAGSHIP</code> (ace superfighter lead).</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Commander Focus</td>

@@ -13,6 +13,10 @@ class InspectionCognitionRenderer {
   static getTacticalRoleLabel(rawRole) {
     const roleMap = {
       'SNIPER': 'STANDOFF SNIPER',
+      'INTERCEPT': 'HIGH-SPEED INTERCEPTOR',
+      'DOGFIGHT': 'WVR DOGFIGHTER',
+      'SWARM': 'SWARM FLIGHT SCREEN',
+      'ESCORT': 'FORMATION ESCORT',
       'SEAD': 'SEAD ESCORT',
       'STRIKE': 'STRIKE INTERDICTION',
       'AMBUSH': 'STEALTH AMBUSH',
@@ -27,6 +31,22 @@ class InspectionCognitionRenderer {
       if (diffKey === 'LEGEND') return 'Apex Ace Command: Coordinates multi-axis volleys, utilizes directed-energy lasers, and executes sub-second defensive breaks.';
       if (diffKey === 'MASTER') return 'Master Ace Lead: Operating stratospheric energy perch with railgun/pulse-laser snipes and high-G Kulbit capability.';
       return 'Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.';
+    }
+
+    if (rawRole === 'INTERCEPT') {
+      return 'High-Speed Intercept: Pushing afterburner thrust to achieve maximum supersonic closure against high-priority aerial targets.';
+    }
+
+    if (rawRole === 'DOGFIGHT') {
+      return 'Close-Range Dogfight: Seeking visual-range merge (< 20 km), modulating throttle into optimal corner speed for high-G snapshots and autocannon bursts.';
+    }
+
+    if (rawRole === 'SWARM') {
+      return 'Unmanned Swarm Screen: Flanking formation edges to draw enemy missile fire and deploy saturation micro-missile volleys.';
+    }
+
+    if (rawRole === 'ESCORT') {
+      return 'Close Formation Escort: Maintaining tight perimeter coverage around the flight lead and engaging incoming interceptors.';
     }
 
     if (rawRole === 'SNIPER') {

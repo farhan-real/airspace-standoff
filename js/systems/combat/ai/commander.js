@@ -197,60 +197,10 @@ class TacticalAICommander {
   }
 
   executeTacticalEngagements(shooter, airTargets, bunkers, profile, clouds, diffKey, tokenCost, allMissiles) {
-    if (typeof AIMissileTactics === 'undefined') return false;
-    const res = AIMissileTactics.evaluateShooterWeapons(shooter, airTargets, bunkers, profile, clouds, diffKey, allMissiles);
-
-    if (res.isBingo && !shooter.isRTB) {
-      if (shooter.gunAmmo && shooter.gunAmmo > 0) return false;
-      const rtbRoll = Math.random();
-      const rtbChances = { CADET: 0.15, VETERAN: 0.30, ELITE: 0.50, ACE: 0.65, MASTER: 0.80, LEGEND: 0.90 };
-      if (rtbRoll < (rtbChances[diffKey] || 0.40)) {
-        shooter.orderRTB();
-      }
-      return false;
+    if (typeof AIMissileTactics !== 'undefined') {
+      return AIMissileTactics.executeTacticalEngagements(this, shooter, airTargets, bunkers, profile, clouds, diffKey, tokenCost, allMissiles);
     }
-
-    if (!res.plan || !res.plan.pylonsToFire || res.plan.pylonsToFire.length === 0) return false;
-    const plan = res.plan;
-    const tgt = plan.target;
-    let anyFired = false;
-
-    for (const pylon of plan.pylonsToFire) {
-      if (this.game.tokenBucketRed < tokenCost || pylon.item.ammo <= 0) break;
-      pylon.item.ammo--;
-      this.game.tokenBucketRed = Math.max(0, this.game.tokenBucketRed - tokenCost);
-      anyFired = true;
-
-      if (pylon.weapon.isLaser) {
-        if (typeof AudioSys !== 'undefined') AudioSys.playLaser();
-        const wasAlive = tgt.hp > 0.05;
-        if (tgt.isGhost || tgt.isDecoyDrone) {
-          tgt.takeDamage(pylon.weapon.damage);
-        } else if (typeof SurfaceUnit !== 'undefined' && tgt instanceof SurfaceUnit) {
-          tgt.takeDamage(pylon.weapon.damage, false);
-        } else if (tgt.isCivilian && typeof tgt.takeDamage === 'function') {
-          tgt.takeDamage(pylon.weapon.damage, shooter, pylon.weapon, true);
-        } else {
-          tgt.hp = Math.max(0, tgt.hp - pylon.weapon.damage);
-          if (tgt.hp < 0.05) tgt.hp = 0;
-          if (typeof tgt.applyActionStress === 'function') tgt.applyActionStress(0.20);
-        }
-        if (this.game.radar) {
-          this.game.radar.spawnExplosionFX(tgt.x, tgt.y, false);
-          this.game.radar.spawnCombatText(tgt.x, tgt.y, `LASER -${pylon.weapon.damage}HP`, '#f43f5e');
-        }
-        if (wasAlive && tgt.hp <= 0 && this.game.simulation && !tgt.isCivilian) {
-          this.game.simulation.recordKillEvent(shooter.team, tgt, shooter, { weapon: pylon.weapon, isSalvo: false, salvoCount: 1 });
-        } else if (wasAlive && tgt.hp > 0 && this.game.simulation && this.game.simulation.scoring && !tgt.isCivilian && (!tgt.isIndestructible)) {
-          this.game.simulation.scoring.recordHitEvent(shooter.team, tgt, shooter, { weapon: pylon.weapon, damage: pylon.weapon.damage });
-        }
-      } else if (!pylon.weapon.isGunpod && pylon.weapon.category !== 'GUN') {
-        this.game.missiles.push(new MissileEntity(pylon.weapon, shooter, tgt));
-        if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
-      }
-    }
-    shooter.recalculateWeight();
-    return anyFired;
+    return false;
   }
 
   handleNavigation(hostile, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused) {
@@ -272,29 +222,20 @@ class TacticalAICommander {
       return;
     }
 
-    const role = hostile.tacticalRole || (hostile.spec && hostile.spec.category === 'EW' ? 'SEAD' : (hostile.spec && hostile.spec.category === 'STRIKE' ? 'STRIKE' : 'SWEEP'));
+    const role = hostile.tacticalRole || (hostile.spec && hostile.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
 
     let target = null;
     if (role === 'SEAD') {
       const hostileRadars = (this.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0 && (s.type === 'RADAR_ARRAY' || s.type === 'EW_JAMMER' || s.type === 'S-400' || s.type === 'PANTSIR' || s.type === 'RADAR_VAN'));
       if (hostileRadars.length > 0) {
-        if (['MASTER', 'LEGEND'].includes(diffKey)) {
-          const priorityRadar = hostileRadars.find(s => s.type === 'RADAR_ARRAY') || hostileRadars.find(s => s.type === 'EW_JAMMER') || hostileRadars[0];
-          target = priorityRadar;
-        } else {
-          target = hostileRadars[0];
-        }
+        target = hostileRadars[0];
       } else if (candidateAirTargets.length > 0) {
         target = candidateAirTargets[0];
       }
     } else if (role === 'STRIKE') {
       const strikeTargets = (this.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0 && (s.type === 'BUNKER' || s.type === 'FUEL_DEPOT' || !s.isIndestructible));
       if (strikeTargets.length > 0) {
-        if (['MASTER', 'LEGEND'].includes(diffKey)) {
-          target = strikeTargets.find(s => s.type === 'BUNKER') || strikeTargets[0];
-        } else {
-          target = strikeTargets[0];
-        }
+        target = strikeTargets[0];
       } else if (candidateAirTargets.length > 0) {
         target = candidateAirTargets[0];
       }
@@ -303,6 +244,8 @@ class TacticalAICommander {
         const priorityTargets = candidateAirTargets.filter(t => t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
         const pool = priorityTargets.length > 0 ? priorityTargets : candidateAirTargets;
         target = pool.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), pool[0]);
+      } else if (role === 'DOGFIGHT') {
+        target = candidateAirTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), candidateAirTargets[0]);
       } else {
         target = candidateAirTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), candidateAirTargets[0]);
       }
@@ -342,13 +285,20 @@ class TacticalAICommander {
 
     hostile.radarLockedTarget = target;
     const dist = Math.hypot(target.x - hostile.x, target.y - hostile.y);
-
     let desiredHeading = Math.atan2(target.y - hostile.y, target.x - hostile.x);
 
     if (role === 'SNIPER' && ['ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diffKey)) {
       const sniperMove = this.planning.getSniperVector(hostile, target, dist, diffKey);
       desiredHeading = sniperMove.heading;
       hostile.engineAlpha = sniperMove.throttle;
+    } else if (role === 'INTERCEPT') {
+      const interceptMove = this.planning.getInterceptVector(hostile, target, dist);
+      desiredHeading = interceptMove.heading;
+      hostile.engineAlpha = interceptMove.throttle;
+    } else if (role === 'DOGFIGHT') {
+      const dogfightMove = this.planning.getDogfightVector(hostile, target, dist);
+      desiredHeading = dogfightMove.heading;
+      hostile.engineAlpha = dogfightMove.throttle;
     } else if (role === 'AMBUSH' && ['ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diffKey)) {
       const ambushMove = this.planning.getAmbushVector(hostile, target, dist, diffKey);
       desiredHeading = ambushMove.heading;
@@ -376,7 +326,7 @@ class TacticalAICommander {
     hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
 
     const sOpt = (typeof hostile.getOptimalCornerSpeed === 'function') ? hostile.getOptimalCornerSpeed() : 0.75;
-    if (role !== 'SNIPER') {
+    if (role !== 'SNIPER' && role !== 'INTERCEPT') {
       if (['ACE', 'MASTER', 'LEGEND'].includes(diffKey) && Math.abs(diff) > 0.40) {
         if (hostile.speed > sOpt * 1.15) hostile.engineAlpha = 0.40;
         else if (hostile.speed < sOpt * 0.85) hostile.engineAlpha = 0.85;
