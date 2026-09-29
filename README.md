@@ -188,3 +188,10 @@ python3 -m http.server 8000
 Then open `http://localhost:8000`.
 
 *Fully playable on both desktop and mobile/tablet touchscreens.*
+
+---
+
+## License
+
+This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.  
+See the [LICENSE](./LICENSE) file for the full license text.
