@@ -102,7 +102,7 @@ window.MANUAL_SENSORS = [
           <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Standard Identification Time:</b> Standard fighters take about <b>5.5 seconds</b> of steady radar tracking to identify. Stealth aircraft take about <b>11.0 seconds</b> because their shape deflects radar signals.</li>
           <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Close-Range Identification:</b> Closing within <b>18.0 km</b> burns through enemy radar jammers and identifies targets in under 2 seconds.</li>
           <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Optical IRST Cameras:</b> Aircraft equipped with nose-mounted optical cameras (like the Su-35S, Rafale, and Eurofighter) can visually identify targets from <b>28.0 km</b> away in clear skies, completely ignoring radar jammers.</li>
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Two-Player Mode:</b> In Two-Player mode, all aircraft are identified from the start so both commanders can engage immediately.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Two-Player Mode:</b> In Two-Player mode, both commanders engage with identical cloned rosters (same airframes, guns, weapons, and upgrades) deployed in randomized formation orders for competitive parity, and all aircraft are identified from the start.</li>
         </ul>
       </div>
 

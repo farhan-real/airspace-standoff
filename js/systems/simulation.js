@@ -114,7 +114,7 @@ class SimulationSystem {
     for (const decoy of this.decoyDrones) decoy.update(dt);
     this.decoyDrones = this.decoyDrones.filter(d => d.hp > 0);
 
-    if (this.game.scenarioMode === 'DYNAMIC_THEATER') {
+    if (this.game.scenarioMode === 'DYNAMIC_THEATER' && this.game.playerMode !== '2P') {
       this.waveSpawnTimer += dt;
       if (this.waveSpawnTimer >= 80.0 && this.currentWave <= 3) {
         this.waveSpawnTimer = 0.0;
@@ -229,7 +229,7 @@ class SimulationSystem {
 
     const allAlliesDead = this.game.alliedAircraft.length > 0 && this.game.alliedAircraft.every(a => a.hp <= 0);
     const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0);
-    const hasUpcomingWaves = this.game.scenarioMode === 'DYNAMIC_THEATER' && this.currentWave <= 3;
+    const hasUpcomingWaves = this.game.scenarioMode === 'DYNAMIC_THEATER' && this.game.playerMode !== '2P' && this.currentWave <= 3;
 
     if (allHostilesDead && !hasUpcomingWaves) {
       const hostileBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'hostile' && s.hp <= 0);
