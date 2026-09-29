@@ -115,7 +115,7 @@ window.CIVILIAN_FLIGHTS = [
 window.AI_DIFFICULTIES = {
   CADET: {
     name: 'Permissive Sector',
-    budgetCap: 150.0,
+    budgetCap: 170.0,
     scoreMultiplier: 0.50,
     reactionCooldown: 7.0,
     attentionSpanSec: 5.5,
@@ -139,7 +139,7 @@ window.AI_DIFFICULTIES = {
   },
   VETERAN: {
     name: 'Contested Airspace',
-    budgetCap: 260.0,
+    budgetCap: 290.0,
     scoreMultiplier: 1.00,
     reactionCooldown: 5.0,
     attentionSpanSec: 4.2,
@@ -163,7 +163,7 @@ window.AI_DIFFICULTIES = {
   },
   ELITE: {
     name: 'Hostile Airspace',
-    budgetCap: 360.0,
+    budgetCap: 400.0,
     scoreMultiplier: 1.50,
     reactionCooldown: 3.6,
     attentionSpanSec: 3.4,
@@ -187,7 +187,7 @@ window.AI_DIFFICULTIES = {
   },
   ACE: {
     name: 'High-Threat Sector',
-    budgetCap: 460.0,
+    budgetCap: 520.0,
     scoreMultiplier: 2.00,
     reactionCooldown: 2.8,
     attentionSpanSec: 2.8,
@@ -211,7 +211,7 @@ window.AI_DIFFICULTIES = {
   },
   MASTER: {
     name: 'Air Denial Zone',
-    budgetCap: 560.0,
+    budgetCap: 620.0,
     scoreMultiplier: 2.60,
     reactionCooldown: 2.2,
     attentionSpanSec: 2.2,
@@ -235,7 +235,7 @@ window.AI_DIFFICULTIES = {
   },
   LEGEND: {
     name: 'Extreme Threat Sector',
-    budgetCap: 660.0,
+    budgetCap: 740.0,
     scoreMultiplier: 3.20,
     reactionCooldown: 1.7,
     attentionSpanSec: 1.8,

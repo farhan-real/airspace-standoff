@@ -75,7 +75,7 @@ const FleetGenerator = {
   generateHostileFleet(difficultyKey, doctrineKey, theaterWidth, theaterHeight, options = {}) {
     const diff = difficultyKey || 'VETERAN';
     const doctrine = doctrineKey || 'BALANCED';
-    const diffProfile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diff]) || { budgetCap: 260.0, aceCount: 1 };
+    const diffProfile = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diff]) || { budgetCap: 290.0, aceCount: 1 };
 
     let s = (Date.now() ^ ((performance.now() * 1000) | 0) ^ 0x9E3779B9) >>> 0;
     const rng = () => {
@@ -87,11 +87,11 @@ const FleetGenerator = {
 
     const targetAircraftCounts = { CADET: 3, VETERAN: 4, ELITE: 5, ACE: 6, MASTER: 7, LEGEND: 8 };
     const configuredCount = Number.isFinite(Number(options.aircraftCount)) ? Number(options.aircraftCount) : null;
-    const targetBudget = configuredCount !== null ? Number.POSITIVE_INFINITY : (diffProfile.budgetCap || 260.0);
+    const targetBudget = configuredCount !== null ? Number.POSITIVE_INFINITY : (diffProfile.budgetCap || 290.0);
     const basePlanes = targetAircraftCounts[diff] || 5;
     const maxPlanes = configuredCount !== null
       ? Math.max(3, Math.min(16, Math.floor(configuredCount)))
-      : Math.max(3, basePlanes + (['CADET', 'VETERAN', 'ELITE', 'ACE'].includes(diff) ? Math.floor(rng() * 2) : 0));
+      : Math.max(3, basePlanes + Math.floor(rng() * 2));
 
     const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : 1;
     const catalog = window.AIRCRAFT_CATALOG || {};
@@ -153,16 +153,29 @@ const FleetGenerator = {
     const lowTierPool = ['F-16V', 'Mirage-2000', 'Tejas-MK2', 'MiG-29K', 'X-29A', 'Tornado-ECR'];
 
     let screenAttempts = 0;
-    while (fleetItems.length < maxPlanes && screenAttempts < maxPlanes * 20) {
+    let consecutiveRejections = 0;
+    while (fleetItems.length < maxPlanes && screenAttempts < maxPlanes * 25) {
       screenAttempts++;
+      const remainingBudget = targetBudget - spentBudget;
+
+      if (remainingBudget < 14.0 && fleetItems.length >= basePlanes) {
+        break;
+      }
+
       const roll = rng();
       let candidatePool;
 
-      if (diff === 'CADET') candidatePool = (roll < 0.75) ? lowTierPool : midTierPool;
-      else if (diff === 'VETERAN') candidatePool = (roll < 0.60) ? midTierPool : (roll < 0.85 ? highTierPool : lowTierPool);
-      else if (diff === 'ELITE') candidatePool = (roll < 0.65) ? highTierPool : (roll < 0.90 ? apexPool : midTierPool);
-      else if (diff === 'ACE') candidatePool = (roll < 0.55) ? apexPool : highTierPool;
-      else candidatePool = (roll < 0.70) ? apexPool : highTierPool;
+      if (remainingBudget < 28.0) {
+        candidatePool = lowTierPool;
+      } else if (remainingBudget < 45.0) {
+        candidatePool = (diff === 'CADET') ? lowTierPool : midTierPool;
+      } else {
+        if (diff === 'CADET') candidatePool = (roll < 0.75) ? lowTierPool : midTierPool;
+        else if (diff === 'VETERAN') candidatePool = (roll < 0.60) ? midTierPool : (roll < 0.85 ? highTierPool : lowTierPool);
+        else if (diff === 'ELITE') candidatePool = (roll < 0.65) ? highTierPool : (roll < 0.90 ? apexPool : midTierPool);
+        else if (diff === 'ACE') candidatePool = (roll < 0.55) ? apexPool : highTierPool;
+        else candidatePool = (roll < 0.70) ? apexPool : highTierPool;
+      }
 
       const chosenId = candidatePool[Math.floor(rng() * candidatePool.length)];
       const spec = catalog[chosenId];
@@ -170,7 +183,6 @@ const FleetGenerator = {
 
       const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng);
 
-      // Sequential 1-by-1 planning & rejection rule: reject on budget exceed and finalize
       if (spentBudget + planned.totalCost <= targetBudget) {
         const hasLead = fleetItems.some(it => it.isLead);
         const isLead = !hasLead;
@@ -182,8 +194,12 @@ const FleetGenerator = {
           plannedUpgrades: planned.upgrades
         });
         spentBudget += planned.totalCost;
-      } else if (fleetItems.length >= Math.max(3, maxPlanes - 2)) {
-        break;
+        consecutiveRejections = 0;
+      } else {
+        consecutiveRejections++;
+        if (fleetItems.length >= basePlanes && (consecutiveRejections >= 4 || remainingBudget < 20.0)) {
+          break;
+        }
       }
     }
 

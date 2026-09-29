@@ -78,8 +78,8 @@ window.MANUAL_THEATER = [
           </thead>
           <tbody>
             <tr><td><b>Score Multiplier</b></td><td style="color:#94a3b8;font-weight:700;">0.50x</td><td style="color:#38bdf8;font-weight:700;">1.00x</td><td style="color:#38bdf8;font-weight:700;">1.50x</td><td style="color:#f43f5e;font-weight:700;">2.00x</td><td style="color:#f43f5e;font-weight:700;">2.60x</td><td style="color:#f43f5e;font-weight:700;">3.20x</td></tr>
-            <tr><td><b>Squadron Size</b></td><td style="color:#38bdf8;">3 - 4 Aircraft</td><td style="color:#38bdf8;">4 - 5 Aircraft</td><td style="color:#38bdf8;">5 - 6 Aircraft</td><td style="color:#fbbf24;">6 - 7 Aircraft</td><td style="color:#fbbf24;">7 Aircraft</td><td style="color:#f43f5e;">8 Aircraft</td></tr>
-            <tr><td><b>Defense Budget Cap</b></td><td style="color:#94a3b8;">150.0M CR</td><td style="color:#38bdf8;">260.0M CR</td><td style="color:#fbbf24;">360.0M CR</td><td style="color:#fbbf24;">460.0M CR</td><td style="color:#fbbf24;">560.0M CR</td><td style="color:#f43f5e;">660.0M CR</td></tr>
+            <tr><td><b>Squadron Size</b></td><td style="color:#38bdf8;">3 - 4 Aircraft</td><td style="color:#38bdf8;">4 - 5 Aircraft</td><td style="color:#38bdf8;">5 - 6 Aircraft</td><td style="color:#fbbf24;">6 - 7 Aircraft</td><td style="color:#fbbf24;">7 - 8 Aircraft</td><td style="color:#f43f5e;">8 - 9 Aircraft</td></tr>
+            <tr><td><b>Defense Budget Cap</b></td><td style="color:#94a3b8;">170.0M CR</td><td style="color:#38bdf8;">290.0M CR</td><td style="color:#fbbf24;">400.0M CR</td><td style="color:#fbbf24;">520.0M CR</td><td style="color:#fbbf24;">620.0M CR</td><td style="color:#f43f5e;">740.0M CR</td></tr>
             <tr><td><b>Reaction Delay</b></td><td style="color:#94a3b8;">6.5s - 7.5s (Sluggish)</td><td style="color:#38bdf8;">4.5s - 5.5s (Human)</td><td style="color:#fbbf24;">3.4s - 4.0s (Trained)</td><td style="color:#fbbf24;">2.6s - 3.0s (Sharp)</td><td style="color:#fbbf24;">2.0s - 2.4s (Fast)</td><td style="color:#f43f5e;">1.6s - 1.9s (Instant)</td></tr>
             <tr><td><b>Target Focus Slots</b></td><td style="color:#38bdf8;">1 Target at a time</td><td style="color:#38bdf8;">1 Target at a time</td><td style="color:#fbbf24;">2 Targets tracked</td><td style="color:#fbbf24;">2 Targets tracked</td><td style="color:#fbbf24;">2 - 3 Targets tracked</td><td style="color:#f43f5e;">3 Targets tracked</td></tr>
             <tr><td><b>Decoy Drone Defense</b></td><td style="color:#94a3b8;">0% (Chases all decoys)</td><td style="color:#94a3b8;">15% spot rate</td><td style="color:#38bdf8;">30% spot rate</td><td style="color:#38bdf8;">45% spot rate</td><td style="color:#38bdf8;">55% spot rate</td><td style="color:#fbbf24;">65% spot rate</td></tr>
@@ -105,7 +105,7 @@ window.MANUAL_THEATER = [
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Heavy Missile Trucks (F-15EX, J-20, MiG-31BM, Su-34):</b> Never restricted to light weight. They intentionally carry heavy external racks (Wr = 70% - 90%) and oversized standoff missiles (R-37M, PL-21, Kinzhal) to maximize missile magazine capacity.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Agile Dogfighters (Rafale, Su-35S, Eurofighter):</b> On higher difficulties, they selectively roll lightweight loadouts (Wr &le; 50%) with fewer heavy bombs, preserving 100% corner-speed turn authority.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Stealth Cleanliness:</b> Stealth jets (F-22A, YF-23, Su-57) only enforce pure internal bays when assigned the Ambush role. In other roles, they mount external rails for extra missile firepower.</li>
-          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Natural Fleet Variance:</b> The adversary plans aircraft one by one against the sector budget. When an aircraft overflows the budget, it is rejected and the fleet finalizes, producing natural 7 to 8 plane variations without artificial clutter.</li>
+          <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Natural Fleet Variance:</b> The adversary plans aircraft one by one against the sector budget. When an aircraft proposal overflows the budget, it is rejected and affordable escorts are evaluated before finalization, producing natural 7 to 9 plane variations without artificial clutter.</li>
         </ul>
       </div>
 
@@ -164,7 +164,7 @@ window.MANUAL_THEATER = [
             <tr><td><b>Stealth Clean Bay Policy</b></td><td style="color:#94a3b8;">0% (External drag)</td><td style="color:#94a3b8;">0% (External drag)</td><td style="color:#38bdf8;">35% Clean VLO bays</td><td style="color:#38bdf8;">45% Clean VLO bays</td><td style="color:#fbbf24;">55% Clean VLO bays</td><td style="color:#fbbf24;">60% Clean VLO bays</td></tr>
             <tr><td><b>Guns &amp; Directed-Energy</b></td><td style="color:#94a3b8;">Standard cannon</td><td style="color:#38bdf8;">Standard cannon</td><td style="color:#38bdf8;">Standard cannon</td><td style="color:#38bdf8;">Tuned burst discipline</td><td style="color:#f43f5e;">Laser / Pod upgrades</td><td style="color:#f43f5e;">DE-PULSE / Railgun / Lasers</td></tr>
             <tr><td><b>Upgrade Sockets Filled</b></td><td style="color:#94a3b8;">0 - 1 Socket</td><td style="color:#38bdf8;">1 - 2 Sockets</td><td style="color:#fbbf24;">2 - 3 Sockets</td><td style="color:#fbbf24;">3 Sockets</td><td style="color:#fbbf24;">3 - 4 Sockets</td><td style="color:#f43f5e;">4 Full Sockets</td></tr>
-            <tr><td><b>Budget Procurement Rule</b></td><td style="color:#94a3b8;">1-by-1 plan, stop &gt;150M</td><td style="color:#38bdf8;">1-by-1 plan, stop &gt;260M</td><td style="color:#38bdf8;">1-by-1 plan, stop &gt;360M</td><td style="color:#fbbf24;">1-by-1 plan, stop &gt;460M</td><td style="color:#fbbf24;">1-by-1 plan, stop &gt;560M</td><td style="color:#f43f5e;">1-by-1 plan, stop &gt;660M</td></tr>
+            <tr><td><b>Budget Procurement Rule</b></td><td style="color:#94a3b8;">1-by-1 plan, stop >170M</td><td style="color:#38bdf8;">1-by-1 plan, stop >290M</td><td style="color:#38bdf8;">1-by-1 plan, stop >400M</td><td style="color:#fbbf24;">1-by-1 plan, stop >520M</td><td style="color:#fbbf24;">1-by-1 plan, stop >620M</td><td style="color:#f43f5e;">1-by-1 plan, stop >740M</td></tr>
           </tbody>
         </table>
       </div>
@@ -201,17 +201,8 @@ window.MANUAL_THEATER = [
           </tbody>
         </table>
       </div>
-    `
-  },
-  {
-    id: 'ch9_logistics_scoring',
-    title: 'SECTION 09: THEATER IADS, DEPOTS & SCORING',
-    desc: `
-      <div class="ge-desc">
-        The theater features an Integrated Air Defense System (IADS), strategic logistics hubs, and balanced scoring formulas.
-      </div>
 
-      <div class="ge-subhead">1. INTEGRATED AIR DEFENSE SYSTEMS (IADS)</div>
+      <div class="ge-subhead">8. INTEGRATED AIR DEFENSE SYSTEMS (IADS)</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
@@ -246,7 +237,7 @@ window.MANUAL_THEATER = [
         </table>
       </div>
 
-      <div class="ge-subhead">2. THEATER LOGISTICS, DEPOTS &amp; COMBAT SCORING FORMULAS</div>
+      <div class="ge-subhead">9. THEATER LOGISTICS, DEPOTS &amp; COMBAT SCORING FORMULAS</div>
       <div class="ge-grid-2">
         <div class="ge-card">
           <b style="color:var(--stat-tier-2);">STRATEGIC GROUND TARGETS &amp; VP VALUES</b>

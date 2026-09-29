@@ -151,7 +151,7 @@ class MissionEditor {
       scenario: this.game.scenarioMode,
       difficulty: this.game.aiDifficulty,
       doctrine: this.game.aiDoctrine,
-      'red-size': ({ CADET: '3', VETERAN: '5', ELITE: '5', ACE: '7', MASTER: '7', LEGEND: '7' })[this.game.aiDifficulty] || '5'
+      'red-size': ({ CADET: '3', VETERAN: '5', ELITE: '5', ACE: '7', MASTER: '7', LEGEND: '9' })[this.game.aiDifficulty] || '5'
     };
     Object.entries(values).forEach(([key, val]) => {
       const cdd = CustomDropdown.get(`cdd-me-${key}`);
