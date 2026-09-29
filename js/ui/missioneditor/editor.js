@@ -151,7 +151,7 @@ class MissionEditor {
       scenario: this.game.scenarioMode,
       difficulty: this.game.aiDifficulty,
       doctrine: this.game.aiDoctrine,
-      'red-size': ({ CADET: '3', VETERAN: '5', ELITE: '5', ACE: '7', MASTER: '7', LEGEND: '9' })[this.game.aiDifficulty] || '5'
+      'red-size': ({ CADET: '9', VETERAN: '9', ELITE: '9', ACE: '11', MASTER: '11', LEGEND: '13' })[this.game.aiDifficulty] || '9'
     };
     Object.entries(values).forEach(([key, val]) => {
       const cdd = CustomDropdown.get(`cdd-me-${key}`);
@@ -326,7 +326,7 @@ class MissionEditor {
     const doctrine = choose('doctrine', ['BALANCED', 'AGGRESSIVE', 'STANDOFF']);
     const blueSquadron = choose('blue-squadron', blueSquadronOptions);
     const blueWeapons = choose('blue-weapons', ['HANGAR', 'STANDARD', 'RANDOM']);
-    const redSize = Math.max(3, Math.min(15, parseInt(choose('red-size', ['3', '5', '7', '9', '11', '13', '15']), 10) || 5));
+    const redSize = Math.max(3, Math.min(15, parseInt(choose('red-size', ['3', '5', '7', '9', '11', '13', '15']), 10) || 9));
     const redWeapons = choose('red-weapons', ['DOCTRINE', 'RANDOM']);
     const clouds = choose('clouds', ['CLEAR', 'LIGHT', 'SCATTERED', 'DENSE']);
     const defenses = choose('defenses', ['FULL', 'LIGHT', 'OFF']);
