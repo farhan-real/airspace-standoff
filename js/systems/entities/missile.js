@@ -158,6 +158,8 @@ class MissileEntity {
       this.cloudObscureTimer = Math.max(0, this.cloudObscureTimer - dt * 2.0);
     }
 
+    this.prevDistanceToTarget = this.distanceToTarget;
+
     const step = (this.speed * 0.35) * dt;
     this.x += Math.cos(this.heading) * step;
     this.y += Math.sin(this.heading) * step;
@@ -172,7 +174,6 @@ class MissileEntity {
       return;
     }
 
-    this.prevDistanceToTarget = this.distanceToTarget;
     this.distanceToTarget = Math.hypot(this.target.x - this.x, this.target.y - this.y);
     this.minDistanceReached = Math.min(this.minDistanceReached || this.distanceToTarget, this.distanceToTarget);
 
@@ -204,7 +205,7 @@ class MissileEntity {
           this.resolveTerminalEngagement(weatherClouds);
         }
       }
-    } else if (dist <= 0.8) {
+    } else if (dist <= 0.85) {
       this.resolveTerminalEngagement(weatherClouds);
     }
   }

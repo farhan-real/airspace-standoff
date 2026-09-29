@@ -141,7 +141,6 @@ const Physics = {
     const minR = weapon.minRangeKm || 1.2;
     if (dist < minR) return { pk: 15, label: 'TOO CLOSE', color: '#ef4444', arrow: 'v', desc: `Inside arming basket (<${minR}km)`, salvoCount: 0, hasMixedSeekers: false };
 
-    // Aerodynamic kinetic energy retention curve powered by lambda and p
     const lambda = (weapon.lambda !== undefined) ? weapon.lambda : 0.40;
     const pExp = (weapon.p !== undefined) ? weapon.p : 1.0;
     const normDist = Math.max(0.0, Math.min(1.0, dist / (weapon.rangeKm || 100.0)));
@@ -166,7 +165,7 @@ const Physics = {
       aspectDiff = Math.abs((target.heading !== undefined ? target.heading : angleToTarget) - angleToTarget);
       while (aspectDiff > Math.PI) aspectDiff = Math.abs(aspectDiff - Math.PI * 2);
       if (aspectDiff > 2.2) aspectScore = 1.00;
-      else if (aspectDiff < 0.8) aspectScore = 0.85;
+      else if (aspectDiff < 0.8) aspectScore = isOpticalSeeker ? 1.05 : 0.95;
     }
 
     let offBoresightPenalty = 0.0;
@@ -197,7 +196,8 @@ const Physics = {
 
     let thermalModifier = 0.0;
     if (isOpticalSeeker) {
-      thermalModifier = (targetThermalMultiplier - 1.0) * 0.22;
+      const baseThermalBoost = aspectDiff < 0.8 ? 0.10 : 0.0;
+      thermalModifier = (targetThermalMultiplier - 1.0) * 0.22 + baseThermalBoost;
     }
 
     const heavyBonus = weapon.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
@@ -250,7 +250,7 @@ const Physics = {
       : 0.0;
 
     const activeEvasion = Math.max(
-      (target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? (target.activeManeuverBonus * agilityScale * turnOptFactor) : 0.0,
+      (target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? (target.activeManeuverBonus * turnOptFactor) : 0.0,
       notchBonus,
       chaffBonus
     );
@@ -266,11 +266,11 @@ const Physics = {
 
     const energyBleedBonus = (1.0 - targetEnergy) * 0.25;
     const shooterStressPenalty = (attacker.stress >= 0.65 && !attacker.isCoffin && !attacker.spec.isDrone) ? 0.15 : 0.0;
-    const agilityDefenseBonus = (targetAgility - 0.85) * 0.18;
-    const turnOptBonus = (turnOptEff - 0.70) * 0.15;
+    const agilityDefenseBonus = (targetAgility - 0.85) * 0.12;
+    const turnOptBonus = (turnOptEff - 0.70) * 0.10;
 
     const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate - agilityDefenseBonus - turnOptBonus + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + thermalModifier - jammerPenalty - shooterStressPenalty - offBoresightPenalty;
-    const pkPercent = Math.round(Math.max(12, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
+    const pkPercent = Math.round(Math.max(15, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = isClosing ? '^' : 'v';
 

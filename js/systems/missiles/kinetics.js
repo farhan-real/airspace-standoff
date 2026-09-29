@@ -88,7 +88,6 @@ class MissileKinetics {
     const lambda = (w.lambda !== undefined) ? w.lambda : 0.40;
     const pExp = (w.p !== undefined) ? w.p : 1.0;
 
-    // 1. Initial Boost Phase
     if (missile.age <= missile.boostDuration) {
       missile.stage = 'BOOST';
       const needed = Math.max(0.1, missile.peakSpeed - missile.launchSpeed);
@@ -97,7 +96,6 @@ class MissileKinetics {
       return;
     }
 
-    // 2. Dual-Pulse Rocket Engine Staging (e.g. PL-15E)
     if (w.trait === 'DUAL_PULSE_SURGE') {
       if (!missile.hasIgnitedPulseTwo && distToTarget <= 22.0) {
         missile.hasIgnitedPulseTwo = true;
@@ -125,7 +123,6 @@ class MissileKinetics {
       }
     }
 
-    // 3. Stratospheric Lofting & Plunging Trajectories (e.g. R-37M, Kinzhal)
     if (missile.isLofting) {
       if (distToTarget > 28.0) {
         missile.stage = 'LOFT';
@@ -139,7 +136,6 @@ class MissileKinetics {
       return;
     }
 
-    // 4. Air-Breathing Ramjets: Near-Constant Sustained Velocity across Operational Envelope
     if (w.trait === 'RAMJET_SUSTAINED' || w.trait === 'EXTREME_STANDOFF') {
       if (missile.distanceTraveled < maxRange) {
         missile.stage = (distToTarget <= 16.0) ? 'TERMINAL' : 'RAMJET';
@@ -151,7 +147,6 @@ class MissileKinetics {
       return;
     }
 
-    // 5. Powered Cruise Missiles (e.g. AGM-158B JASSM-ER)
     if (w.trait === 'STEALTH_CRUISE') {
       if (missile.distanceTraveled < maxRange) {
         missile.stage = (distToTarget <= 15.0) ? 'TERMINAL' : 'CRUISE';
@@ -163,7 +158,6 @@ class MissileKinetics {
       return;
     }
 
-    // 6. Standoff Gliders (e.g. GBU-39 SDB)
     if (w.trait === 'GLIDE_SATURATION') {
       missile.stage = (distToTarget <= 12.0) ? 'TERMINAL' : 'GLIDE';
       const glideRetention = Math.max(0.40, 1.0 - lambda * Math.pow(normDist, pExp));
@@ -171,7 +165,6 @@ class MissileKinetics {
       return;
     }
 
-    // 7. Boost-Sustain Motors (e.g. AIM-260 JATM)
     if (w.trait === 'STEALTH_SEEKER') {
       if (distToTarget <= 20.0) {
         missile.stage = 'TERMINAL';
@@ -187,7 +180,6 @@ class MissileKinetics {
       return;
     }
 
-    // 8. Dynamic Aerodynamic Ballistic Decay via Lambda & p
     if (distToTarget <= 18.0) missile.stage = 'TERMINAL';
     else if (w.seeker === 'PASSIVE_RADAR') missile.stage = 'HOMING';
     else if (w.trait === 'DUAL_PULSE_SURGE') missile.stage = 'MIDCOURSE';
