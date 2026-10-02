@@ -6,13 +6,13 @@
 
 ---
 
-**Air superiority isn't won with reflexes. It's calculated in silence.**
+**Air superiority isn't achieved with reflexes. It's won through precision.**
 
 Modern air combat has outgrown the cockpit heroics of the past. Battles are decided beyond visual range, hundreds of kilometers away, by sensor fusion, radar physics, and brutal missile energy envelopes.
 
 You don't just fly the jet, you dictate the battle. Stationed at a high-contrast C4ISR tactical radar terminal, you command an entire combat air wing across 15,000 km² of contested sky. Coordinate multi-ship formations, manage aspect-dependent Radar Cross-Sections (RCS), and exploit enemy blind spots while strictly regulating your own emissions.
 
-**Missiles finish the fight, but information wins it.** Every blip on your scope is an incomplete puzzle: jamming strobes, ghost returns, and fleeting datalink tracks. Sift ground truth from electronic deception, sever the enemy's situational awareness, and strike while they are still flying blind. In modern air warfare, whoever commands the data commands the sky.
+**Missiles start the fight, but information wins it.** Sift ground truth from electronic deception, sever the enemy's situational awareness, and strike while they are still flying blind. In modern air warfare, whoever commands the data commands the sky.
 
 ---
 
@@ -60,15 +60,15 @@ Missiles in *AIRSPACE STANDOFF* do not use scripted hit rolls or guaranteed trac
 
 #### Propulsion & Staging
 * **Solid Boost-Sustain:** Rapid rocket ignition followed by aerodynamic drag decay.
-* **Dual-Pulse Surge:** Motor burns out in cruise, then ignites a secondary pulse within 22 km to surge +0.9 Mach into terminal evasion.
-* **Continuous Ramjets:** Variable-flow ramjet maintains sustained Mach 4.2+ with zero drag decay across its maximum range.
+* **Dual-Pulse Surge:** Motor burns out in cruise, then ignites a secondary pulse within 22 km to surge additional speed into terminal evasion.
+* **Continuous Ramjets:** Variable-flow ramjet maintains sustained supersonic speeds with zero drag decay across its maximum range.
 * **Multi-Missile Salvos:** Consecutive missiles degrade target maneuver agility by **25% per weapon**. Pairing an Active Radar missile with an Infrared missile triggers a **+25% Mixed-Seeker Dilemma** that punishes conflicting defensive moves.
 
 ---
 
 ### 3. Humanized Cognitive AI & Command Succession
 
-Adversary pilots operate under authentic human-performance constraints rather than artificial game boosts:
+Adversary pilots operate under authentic human-performance constraints rather than artificial stats:
 
 ```
 [ENEMY COMMANDER]
@@ -77,10 +77,9 @@ Adversary pilots operate under authentic human-performance constraints rather th
     └── Unfocused ────────────► [Reserve UCAV] (Autonomous Standby Patrol)
 ```
 
-* **Finite Attention Allocation:** Commanders allocate between 1 and 3 simultaneous focus slots depending on theater difficulty.
-* **Active Control Arrows:** In Inspection Mode, enemy aircraft actively steered by the AI display a dedicated downward chevron arrow (`v`) directly above their radar blip. Bandits without arrows fly on autonomous standby patrol.
+* **Finite Attention Allocation:** Commanders control between 1 and 3 aircraft at a time depending on difficulty.
 * **Chain of Command Disruption:** Eliminating an enemy flight lead triggers command disruption. Surviving wingmen freeze their offensive pursuit, drop throttle to 40%, and hesitate for up to 6.0 seconds while leadership reorganizes.
-* **Adversary Ace Cadre:** High-threat sectors deploy designated Aces featuring triple-tier weapon loadouts (ultra-long standoff, ramjet BVR, and all-aspect dogfight), disciplined Doppler notching, and optimal corner-speed throttle control.
+* **Enemy Aces:** High-threat sectors deploy designated Aces featuring triple-tier weapon loadouts (ultra-long standoff, ramjet BVR, and all-aspect dogfight), disciplined Doppler notching, and optimal corner-speed throttle control.
 
 ---
 
@@ -124,7 +123,7 @@ Toggle **Inspection Mode** during any mission to access real-time C4ISR telemetr
 - **EVENTS:** Chronological causal log of launches, impacts, and decoys
 - **DATA:** Raw telemetry, coordinates, Mach velocity, G-stress, and states
 
-**Simulation Time-Stop:** Freeze simulation physics at any millisecond to evaluate sensor geometry, line-of-sight aspect angles, and missile kill probability before resuming.
+**Simulation Time-Stop:** Freeze simulation physics at any second to evaluate sensor data, line-of-sight aspect angles, and missile kill probability before resuming.
 
 **AI Tactical Cognition Dossier:** Inspect any enemy aircraft to see active attention slots, focus timers, squadron posture, formation pairings, and chain-of-command disruption status.
 
@@ -165,11 +164,11 @@ Toggle **Inspection Mode** during any mission to access real-time C4ISR telemetr
 | Layer | Implementation | Highlights |
 | :--- | :--- | :--- |
 | **Simulation & Physics** | Pure Vanilla JavaScript (ES6+) | Discrete numerical integration, true ProNav guidance, fourth-root radar equation |
-| **Rendering Engine** | HTML5 Canvas 2D | Uncapped 60 FPS rendering, device pixel ratio scaling, dirty-rect HUD layers |
+| **Rendering Engine** | HTML5 Canvas 2D | Uncapped 60 FPS rendering and device pixel ratio scaling |
 | **Audio Architecture** | Web Audio API | 100% procedural sound synthesis (turbines, cannon bursts, rocket motors, RWR tones) |
-| **User Interface** | Modular Vanilla CSS | Pitch-black liquid-glass theme, responsive flex/grid layouts, SVG iconography |
-| **Data Persistence** | Client-Side Web Storage | LocalStorage debrief dossiers, full sortie replay delta frames, custom presets |
-| **Dependencies** | None (Zero Dependencies) | Zero third-party runtime frameworks, zero build steps, zero bundle bloat |
+| **User Interface** | Modular Vanilla CSS | Pitch-black liquid-glass theme, responsive flex/grid layouts, SVG icons|
+| **Data Persistence** | Client-Side Web Storage | Full sortie replays, custom aircraft presets |
+| **Dependencies** | None (Zero Dependencies) | Zero third-party runtime frameworks or build steps |
 
 ---
 
