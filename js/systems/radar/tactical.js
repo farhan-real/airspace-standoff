@@ -21,17 +21,23 @@ class RadarTacticalRenderer {
     if (Array.isArray(craftB)) listB = craftB;
     else { active = craftB; commanderTeam = activeUnit; detSet = team; }
 
+    ctx.save();
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([3, 4]);
+
     this.renderLocksForList(ctx, cam, listA, active, commanderTeam, detSet);
     if (listB) this.renderLocksForList(ctx, cam, listB, active, commanderTeam, detSet);
+
+    ctx.restore();
   }
 
   static renderLocksForList(ctx, cam, list, activeUnit, team, detectedSet) {
     if (!list || list.length === 0) return;
     for (let i = 0; i < list.length; i++) {
       const source = list[i];
-      if (!source || source.hp <= 0 || !source.radarLockedTarget || typeof source.x !== 'number') continue;
+      if (!source || source.hp <= 0.05 || !source.radarLockedTarget || typeof source.x !== 'number') continue;
       const tgt = source.radarLockedTarget;
-      if (!tgt || tgt.hp <= 0 || typeof tgt.x !== 'number') continue;
+      if (!tgt || tgt.hp <= 0.05 || typeof tgt.x !== 'number') continue;
       if (source.team !== team && detectedSet && !detectedSet.has(source.id)) continue;
 
       const p1x = Math.round(cam.toScreenX ? cam.toScreenX(source.x) : cam.toScreen(source.x, source.y).x);
@@ -39,17 +45,13 @@ class RadarTacticalRenderer {
       const p2x = Math.round(cam.toScreenX ? cam.toScreenX(tgt.x) : cam.toScreen(tgt.x, tgt.y).x);
       const p2y = Math.round(cam.toScreenY ? cam.toScreenY(tgt.y) : cam.toScreen(tgt.x, tgt.y).y);
 
-      ctx.save();
       ctx.beginPath();
       ctx.moveTo(p1x, p1y);
       ctx.lineTo(p2x, p2y);
       ctx.strokeStyle = (activeUnit && activeUnit.id === source.id)
         ? '#00f0ff'
         : (source.team !== team && tgt.team === team ? '#ef4444' : 'rgba(0, 240, 255, 0.35)');
-      ctx.lineWidth = 1.2;
-      ctx.setLineDash([3, 4]);
       ctx.stroke();
-      ctx.restore();
     }
   }
 
@@ -62,7 +64,7 @@ class RadarTacticalRenderer {
 
     for (let i = 0; i < missiles.length; i++) {
       const m = missiles[i];
-      if (!m || !m.active || !m.target || m.target.hp <= 0 || typeof m.target.x !== 'number') continue;
+      if (!m || !m.active || !m.target || m.target.hp <= 0.05 || typeof m.target.x !== 'number') continue;
       let group = groupMap.get(m.target.id);
       if (!group) {
         group = { target: m.target, missiles: [] };
@@ -74,6 +76,9 @@ class RadarTacticalRenderer {
 
     if (activeGroups.length === 0) return;
     const detectedSet = (window.Game && team === 'friendly') ? window.Game.detectedByBlue : (window.Game ? window.Game.detectedByRed : null);
+
+    ctx.save();
+    ctx.lineWidth = 1.0;
 
     for (let g = 0; g < activeGroups.length; g++) {
       const group = activeGroups[g];
@@ -91,26 +96,24 @@ class RadarTacticalRenderer {
         const pMx = Math.round(cam.toScreenX ? cam.toScreenX(m.x) : cam.toScreen(m.x, m.y).x);
         const pMy = Math.round(cam.toScreenY ? cam.toScreenY(m.y) : cam.toScreen(m.x, m.y).y);
 
-        ctx.save();
         ctx.beginPath();
         ctx.moveTo(pMx, pMy);
         ctx.lineTo(tx, ty);
         ctx.strokeStyle = isOwn ? '#00f0ff' : '#ef4444';
-        ctx.lineWidth = 1.0;
         ctx.setLineDash(isOwn ? [3, 3] : [2, 4]);
         ctx.stroke();
-        ctx.restore();
 
         if (isOwn) friendlyCount++; else enemyCount++;
       }
 
-      ctx.save();
-      ctx.font = '700 10px monospace';
-      if (friendlyCount > 1) { ctx.fillStyle = '#00f0ff'; ctx.fillText('SALVO x' + friendlyCount, tx - 22, ty - 14); }
-      if (enemyCount > 1) { ctx.fillStyle = '#ef4444'; ctx.fillText('INBOUND x' + enemyCount, tx - 22, ty + (friendlyCount > 1 ? 22 : -14)); }
-      ctx.restore();
+      if (friendlyCount > 1 || enemyCount > 1) {
+        ctx.font = '700 10px monospace';
+        if (friendlyCount > 1) { ctx.fillStyle = '#00f0ff'; ctx.fillText('SALVO x' + friendlyCount, tx - 22, ty - 14); }
+        if (enemyCount > 1) { ctx.fillStyle = '#ef4444'; ctx.fillText('INBOUND x' + enemyCount, tx - 22, ty + (friendlyCount > 1 ? 22 : -14)); }
+      }
       group.missiles.length = 0;
     }
+    ctx.restore();
   }
 
   static drawMissiles(ctx, cam, missiles, team, detectedSet, declutterMode, cleanFn) {
@@ -139,19 +142,19 @@ class RadarTacticalRenderer {
       visibleCount++;
 
       if (m.trail && m.trail.length > 1) {
-        for (let t = 0; t < m.trail.length - 1; t++) {
-          const t0 = m.trail[t], t1 = m.trail[t + 1];
-          if (t0 && t1) {
-            ctx.save();
-            ctx.strokeStyle = m.team === 'friendly' ? `rgba(0, 240, 255, ${t0.alpha})` : `rgba(239, 68, 68, ${t0.alpha})`;
-            ctx.lineWidth = 1.4;
-            ctx.beginPath();
-            ctx.moveTo(Math.round(cam.toScreenX ? cam.toScreenX(t0.x) : cam.toScreen(t0.x, t0.y).x), Math.round(cam.toScreenY ? cam.toScreenY(t0.y) : cam.toScreen(t0.x, t0.y).y));
-            ctx.lineTo(Math.round(cam.toScreenX ? cam.toScreenX(t1.x) : cam.toScreen(t1.x, t1.y).x), Math.round(cam.toScreenY ? cam.toScreenY(t1.y) : cam.toScreen(t1.x, t1.y).y));
-            ctx.stroke();
-            ctx.restore();
-          }
+        ctx.save();
+        ctx.lineWidth = 1.3;
+        ctx.strokeStyle = m.team === 'friendly' ? 'rgba(0, 240, 255, 0.45)' : 'rgba(239, 68, 68, 0.45)';
+        ctx.beginPath();
+        for (let t = 0; t < m.trail.length; t++) {
+          const pt = m.trail[t];
+          const tpx = Math.round(cam.toScreenX ? cam.toScreenX(pt.x) : cam.toScreen(pt.x, pt.y).x);
+          const tpy = Math.round(cam.toScreenY ? cam.toScreenY(pt.y) : cam.toScreen(pt.x, pt.y).y);
+          if (t === 0) ctx.moveTo(tpx, tpy);
+          else ctx.lineTo(tpx, tpy);
         }
+        ctx.stroke();
+        ctx.restore();
       }
 
       ctx.save();

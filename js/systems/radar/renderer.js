@@ -21,8 +21,8 @@ class TacticalRadarRenderer {
     this.boundCleanCanvasText = this.cleanCanvasText.bind(this);
 
     this.resize();
-    window.addEventListener('resize', () => this.resize());
-    window.addEventListener('orientationchange', () => setTimeout(() => this.resize(), 60));
+    window.addEventListener('resize', () => this.resize(), { passive: true });
+    window.addEventListener('orientationchange', () => setTimeout(() => this.resize(), 60), { passive: true });
     this.initCameraControls();
   }
 
@@ -50,21 +50,27 @@ class TacticalRadarRenderer {
 
   cleanCanvasText(str) {
     if (str === undefined || str === null) return '';
-    let s = String(str);
-    if (!s.includes('<') && !s.includes('\\') && !s.includes('{')) return s.trim();
+    const s = String(str);
+    if (!s.includes('<') && !s.includes('\\') && !s.includes('{')) return s;
     return s.replace(/<[^>]*>/g, '').replace(/[\{\}\\]/g, '').replace(/\s+/g, ' ').trim();
   }
 
   resize() {
     if (!this.canvas) return;
     const parent = this.canvas.parentElement;
-    this.cssWidth = (parent && parent.clientWidth > 0) ? parent.clientWidth : 800;
-    this.cssHeight = (parent && parent.clientHeight > 0) ? parent.clientHeight : 500;
-    this.cam.resize(this.cssWidth, this.cssHeight);
-    this.isMobile = (this.cssWidth <= 1024);
+    const nextW = (parent && parent.clientWidth > 0) ? parent.clientWidth : 800;
+    const nextH = (parent && parent.clientHeight > 0) ? parent.clientHeight : 500;
 
     const rawDpr = window.devicePixelRatio || 1;
-    this.dpr = this.isMobile ? Math.min(rawDpr, 1.25) : Math.min(rawDpr, 1.5);
+    const nextDpr = (nextW <= 1024) ? Math.min(rawDpr, 1.25) : Math.min(rawDpr, 1.5);
+
+    if (this.cssWidth === nextW && this.cssHeight === nextH && this.dpr === nextDpr) return;
+
+    this.cssWidth = nextW;
+    this.cssHeight = nextH;
+    this.isMobile = (this.cssWidth <= 1024);
+    this.dpr = nextDpr;
+    this.cam.resize(this.cssWidth, this.cssHeight);
 
     this.canvas.width = Math.round(this.cssWidth * this.dpr);
     this.canvas.height = Math.round(this.cssHeight * this.dpr);
@@ -157,16 +163,17 @@ class TacticalRadarRenderer {
     const hostiles = (state && state.hostileAircraft) || [];
     const surface = (state && state.surfaceUnits) || [];
     const missiles = (state && state.missiles) || [];
-    const civilians = (window.Game && window.Game.simulation && window.Game.simulation.civilianTraffic) || [];
-    const ghosts = (window.Game && window.Game.simulation && window.Game.simulation.ghostContacts) || [];
-    const decoys = (window.Game && window.Game.simulation && window.Game.simulation.decoyDrones) || [];
-    const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
+    const sim = window.Game && window.Game.simulation;
+    const civilians = (sim && sim.civilianTraffic) || [];
+    const ghosts = (sim && sim.ghostContacts) || [];
+    const decoys = (sim && sim.decoyDrones) || [];
+    const clouds = (sim && sim.weatherClouds) || [];
 
     const activeUnit = state ? state.activeUnit : null;
     this.selectedTarget = state ? (state.inspectionEntity || state.selectedTarget) : null;
 
     if (this.cam.trackingUnit) {
-      if (this.cam.trackingUnit.hp > 0) this.cam.centerOnKm(this.cam.trackingUnit.x, this.cam.trackingUnit.y);
+      if (this.cam.trackingUnit.hp > 0.05) this.cam.centerOnKm(this.cam.trackingUnit.x, this.cam.trackingUnit.y);
       else this.cam.trackingUnit = null;
     }
 
@@ -222,7 +229,7 @@ class TacticalRadarRenderer {
 
     let liveHostileCount = 0;
     for (let i = 0; i < hostiles.length; i++) {
-      if (hostiles[i] && hostiles[i].hp > 0) liveHostileCount++;
+      if (hostiles[i] && hostiles[i].hp > 0.05) liveHostileCount++;
     }
     const shouldShowUplink = (!is2P && commanderTeam === 'friendly' && liveHostileCount > 0 && liveHostileCount <= 3);
 
@@ -238,10 +245,10 @@ class TacticalRadarRenderer {
       RadarEnvironmentRenderer.drawUplinkBanner(ctx, liveHostileCount, w, h);
     }
 
-    if (this.hoveredContact && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0) && typeof this.hoveredContact.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {
+    if (this.hoveredContact && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0.05) && typeof this.hoveredContact.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {
       RadarTacticalRenderer.drawHoverReticle(ctx, this.cam, this.hoveredContact);
     }
-    if (this.selectedTarget && (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0) && typeof this.selectedTarget.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {
+    if (this.selectedTarget && (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0.05) && typeof this.selectedTarget.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {
       RadarTacticalRenderer.drawTargetReticle(ctx, this.cam, this.selectedTarget);
     }
 

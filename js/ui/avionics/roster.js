@@ -8,18 +8,26 @@ class AvionicsRosterDisplay {
     this.ui = avionicsUI;
     this.game = avionicsUI.game;
     this.cachedRosterIds = '';
+    this.cardElementsMap = new Map();
   }
 
   renderFlightRoster() {
     const listEl = document.getElementById('flight-units-list');
     if (!listEl) return;
-    const roster = (this.game.currentPvpCommander === 'friendly') ? this.game.alliedAircraft : this.game.hostileAircraft;
 
+    const fleetPane = document.getElementById('pane-fleet');
+    const isMobile = (window.innerWidth <= 1024);
+    if (isMobile && fleetPane && !fleetPane.classList.contains('drawer-open')) {
+      return;
+    }
+
+    const roster = (this.game.currentPvpCommander === 'friendly') ? this.game.alliedAircraft : this.game.hostileAircraft;
     const currentIds = roster.map(a => `${a.id}:${Math.round(a.hp)}`).join(',');
 
     if (this.cachedRosterIds !== currentIds || listEl.children.length !== roster.length) {
       this.cachedRosterIds = currentIds;
       listEl.innerHTML = '';
+      this.cardElementsMap.clear();
 
       roster.forEach((a) => {
         const card = document.createElement('div');
@@ -63,56 +71,106 @@ class AvionicsRosterDisplay {
             this.renderFlightRoster();
             this.ui.updateActiveUnitMFD();
             if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-            const fleetPane = document.getElementById('pane-fleet');
             if (fleetPane) fleetPane.classList.remove('drawer-open');
           }
         };
 
         listEl.appendChild(card);
+
+        this.cardElementsMap.set(a.id, {
+          card,
+          hpEl: card.querySelector('.tcard-hp'),
+          hpFill: card.querySelector('.tcard-hp-fill'),
+          spdEl: card.querySelector('.tcard-spd'),
+          altEl: card.querySelector('.tcard-alt'),
+          loadEl: card.querySelector('.tcard-load'),
+          statusEl: card.querySelector('.tcard-status'),
+          csEl: card.querySelector('.tcard-callsign'),
+          lastMach: null,
+          lastAlt: null,
+          lastWr: null,
+          lastStatus: null,
+          lastHp: null
+        });
       });
     }
 
     roster.forEach((a) => {
-      const card = document.getElementById('flight-card-' + a.id);
-      if (!card) return;
+      let cached = this.cardElementsMap.get(a.id);
+      if (!cached) {
+        const card = document.getElementById('flight-card-' + a.id);
+        if (!card) return;
+        cached = {
+          card,
+          hpEl: card.querySelector('.tcard-hp'),
+          hpFill: card.querySelector('.tcard-hp-fill'),
+          spdEl: card.querySelector('.tcard-spd'),
+          altEl: card.querySelector('.tcard-alt'),
+          loadEl: card.querySelector('.tcard-load'),
+          statusEl: card.querySelector('.tcard-status'),
+          csEl: card.querySelector('.tcard-callsign'),
+          lastMach: null,
+          lastAlt: null,
+          lastWr: null,
+          lastStatus: null,
+          lastHp: null
+        };
+        this.cardElementsMap.set(a.id, cached);
+      }
 
       const isSelected = this.game.activeUnit && this.game.activeUnit.id === a.id;
-      card.classList.toggle('selected', isSelected);
-      card.classList.toggle('destroyed', a.hp <= 0.05);
+      cached.card.classList.toggle('selected', isSelected);
+      cached.card.classList.toggle('destroyed', a.hp <= 0.05);
 
       const machNum = a.speed || 0.85;
       const sOpt = (a.effectiveMaxSpeed || 0.95) * 0.65;
-      const spdColor = this.ui.getSpeedColor(machNum, sOpt, a.effectiveMaxSpeed || 1.0);
-      const altColor = this.ui.getAltColor(a.altFt || 30000);
-      const loadColor = this.ui.getLoadColor(a.Wr || 0);
-      const payloadPercent = Math.round((a.Wr || 0) * 100);
       const displayHp = a.hp > 0.05 ? Math.max(1, Math.round(a.hp)) : 0;
+      const payloadPercent = Math.round((a.Wr || 0) * 100);
+      const curStatus = a.isRTB ? 'RTB' : (a.activeManeuverTimer > 0 ? 'EVADE' : 'COMBAT');
+      const curAltFL = Math.round((a.altFt || 30000) / 100);
 
-      const hpEl = card.querySelector('.tcard-hp');
-      const hpFill = card.querySelector('.tcard-hp-fill');
-      const spdEl = card.querySelector('.tcard-spd');
-      const altEl = card.querySelector('.tcard-alt');
-      const loadEl = card.querySelector('.tcard-load');
-      const statusEl = card.querySelector('.tcard-status');
-      const csEl = card.querySelector('.tcard-callsign');
+      if (cached.lastHp !== displayHp) {
+        cached.lastHp = displayHp;
+        if (cached.hpEl) {
+          cached.hpEl.textContent = `${displayHp} / ${a.maxHp} HP`;
+          cached.hpEl.style.color = displayHp <= 1 ? '#ff3366' : (displayHp <= 2 ? '#f97316' : '#00f5a0');
+        }
+        if (cached.hpFill) {
+          cached.hpFill.style.width = `${((a.hp / a.maxHp) * 100)}%`;
+          cached.hpFill.style.background = displayHp <= 1 ? '#ff3366' : (displayHp <= 2 ? '#f97316' : '#00f5a0');
+        }
+      }
 
-      if (csEl) {
-        csEl.style.color = a.isAce ? '#ffd700' : ((a.team === 'friendly') ? '#00f0ff' : '#ff3366');
+      if (cached.lastMach !== machNum.toFixed(2)) {
+        cached.lastMach = machNum.toFixed(2);
+        if (cached.spdEl) {
+          cached.spdEl.textContent = `M ${cached.lastMach}`;
+          cached.spdEl.style.color = this.ui.getSpeedColor(machNum, sOpt, a.effectiveMaxSpeed || 1.0);
+        }
       }
-      if (hpEl) {
-        hpEl.textContent = `${displayHp} / ${a.maxHp} HP`;
-        hpEl.style.color = displayHp <= 1 ? '#ff3366' : (displayHp <= 2 ? '#f97316' : '#00f5a0');
+
+      if (cached.lastAlt !== curAltFL) {
+        cached.lastAlt = curAltFL;
+        if (cached.altEl) {
+          cached.altEl.textContent = `FL${curAltFL}`;
+          cached.altEl.style.color = this.ui.getAltColor(a.altFt || 30000);
+        }
       }
-      if (hpFill) {
-        hpFill.style.width = `${((a.hp / a.maxHp) * 100)}%`;
-        hpFill.style.background = displayHp <= 1 ? '#ff3366' : (displayHp <= 2 ? '#f97316' : '#00f5a0');
+
+      if (cached.lastWr !== payloadPercent) {
+        cached.lastWr = payloadPercent;
+        if (cached.loadEl) {
+          cached.loadEl.textContent = `${payloadPercent}%`;
+          cached.loadEl.style.color = this.ui.getLoadColor(a.Wr || 0);
+        }
       }
-      if (spdEl) { spdEl.textContent = `M ${machNum.toFixed(2)}`; spdEl.style.color = spdColor; }
-      if (altEl) { altEl.textContent = `FL${Math.round((a.altFt || 30000) / 100)}`; altEl.style.color = altColor; }
-      if (loadEl) { loadEl.textContent = `${payloadPercent}%`; loadEl.style.color = loadColor; }
-      if (statusEl) {
-        statusEl.textContent = a.isRTB ? 'RTB' : (a.activeManeuverTimer > 0 ? 'EVADE' : 'COMBAT');
-        statusEl.style.color = a.isRTB ? '#00f5a0' : (a.activeManeuverTimer > 0 ? '#ff3366' : '#38bdf8');
+
+      if (cached.lastStatus !== curStatus) {
+        cached.lastStatus = curStatus;
+        if (cached.statusEl) {
+          cached.statusEl.textContent = curStatus;
+          cached.statusEl.style.color = a.isRTB ? '#00f5a0' : (a.activeManeuverTimer > 0 ? '#ff3366' : '#38bdf8');
+        }
       }
     });
   }

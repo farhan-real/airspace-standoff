@@ -30,6 +30,10 @@ class RadarContactsRenderer {
       isLastFew = (liveCount > 0 && liveCount <= 3);
     }
 
+    const margin = 20;
+    const cssHeight = cam.cssHeight || 500;
+    const maxScreenDist = cssWidth - margin;
+
     ctx.save();
     for (let i = 0; i < list.length; i++) {
       const a = list[i];
@@ -44,16 +48,12 @@ class RadarContactsRenderer {
 
       const relDistKm = (activeUnit && activeUnit.hp > 0.05 && activeUnit.id !== a.id)
         ? Math.round(Math.hypot(a.x - activeUnit.x, a.y - activeUnit.y)) : null;
-      const rangeTag = (relDistKm !== null) ? (' R:' + relDistKm + 'km') : '';
-      const safeModel = cleanFn ? cleanFn(a.spec ? a.spec.id : 'JET') : (a.spec ? a.spec.id : 'JET');
-      const safeCallsign = cleanFn ? cleanFn(a.callsign || 'PILOT') : (a.callsign || 'PILOT');
 
-      const margin = 20;
-      const cssHeight = cam.cssHeight || 500;
-      const clampedX = Math.max(margin, Math.min(cssWidth - margin, px));
+      const clampedX = Math.max(margin, Math.min(maxScreenDist, px));
       const clampedY = Math.max(margin, Math.min(cssHeight - margin, py));
       if (px !== clampedX || py !== clampedY) {
         if (typeof RadarContactsAuxRenderer !== 'undefined') {
+          const safeModel = cleanFn ? cleanFn(a.spec ? a.spec.id : 'JET') : (a.spec ? a.spec.id : 'JET');
           RadarContactsAuxRenderer.drawOffscreenIndicator(ctx, { x: px, y: py }, clampedX, clampedY, cssWidth, cssHeight, isIdentified, isAce, isBlue, safeModel, relDistKm);
         }
         continue;
@@ -70,7 +70,6 @@ class RadarContactsRenderer {
         const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0 };
         const screenRadius = (gunRangeKm / cfg.THEATER_WIDTH_KM) * cssWidth * cam.zoom;
         if (screenRadius > 6) {
-          ctx.save();
           const halfConeRad = (((a.gun.coneAngleDeg || 55) / 2.0) * Math.PI) / 180.0;
           const hdg = a.heading || 0;
           ctx.beginPath();
@@ -82,7 +81,6 @@ class RadarContactsRenderer {
           ctx.strokeStyle = 'rgba(56, 189, 248, 0.40)';
           ctx.lineWidth = 1.2;
           ctx.stroke();
-          ctx.restore();
         }
       }
 
@@ -143,6 +141,9 @@ class RadarContactsRenderer {
       const rtbTag = a.isRTB ? ' [RTB]' : '';
       const leadTag = (isAce && isIdentified) ? ' [ACE]' : ((a.isFlightLead && isIdentified) ? ' LEAD' : '');
       const pinpointTag = (isLastFew && isIdentified) ? ' PINPOINTED' : '';
+      const rangeTag = (relDistKm !== null) ? (' R:' + relDistKm + 'km') : '';
+      const safeModel = cleanFn ? cleanFn(a.spec ? a.spec.id : 'JET') : (a.spec ? a.spec.id : 'JET');
+      const safeCallsign = cleanFn ? cleanFn(a.callsign || 'PILOT') : (a.callsign || 'PILOT');
 
       if (declutterMode && !isSelected && !isTgt) {
         ctx.font = '800 10px monospace';
@@ -170,7 +171,9 @@ class RadarContactsRenderer {
       }
 
       if (isSelected) {
-        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.4; ctx.strokeRect(px - 10, py - 10, 20, 20);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.4;
+        ctx.strokeRect(px - 10, py - 10, 20, 20);
       }
     }
     ctx.restore();

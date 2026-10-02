@@ -202,29 +202,43 @@ class AirspaceStandoffGame {
     this.isGameOver = false;
     if (this.simulation) this.simulation.captureReplayFrame(true);
     let lastTime = performance.now();
-    let uiThrottle = 0;
+    let mfdThrottle = 0;
+    let rosterThrottle = 0;
 
     const loop = (currTime) => {
-      const dt = Math.min(0.1, (currTime - lastTime) / 1000.0);
+      const dt = Math.min(0.08, (currTime - lastTime) / 1000.0);
       lastTime = currTime;
 
-      if (!this.isGameOver && this.simulation && this.simulation.step) this.simulation.step(dt);
+      if (!this.isGameOver && this.simulation && this.simulation.step) {
+        this.simulation.step(dt);
+      }
+
       if (this.radar && this.radar.render) {
         this.radar.render({
-          alliedAircraft: this.alliedAircraft, hostileAircraft: this.hostileAircraft,
-          surfaceUnits: this.surfaceUnits, missiles: this.missiles,
-          activeUnit: this.activeUnit, selectedTarget: this.selectedTarget,
+          alliedAircraft: this.alliedAircraft,
+          hostileAircraft: this.hostileAircraft,
+          surfaceUnits: this.surfaceUnits,
+          missiles: this.missiles,
+          activeUnit: this.activeUnit,
+          selectedTarget: this.selectedTarget,
           inspectionEntity: this.inspection && this.inspection.isOpen ? this.inspection.selectedEntity : null,
           inspectionMode: Boolean(this.inspection && this.inspection.isOpen)
         });
       }
 
-      uiThrottle += dt;
-      if (uiThrottle >= 0.12) {
-        uiThrottle = 0;
-        if (this.avionics) { this.avionics.updateActiveUnitMFD(); this.avionics.renderFlightRoster(); }
-        if (this.inspection) this.inspection.update();
+      mfdThrottle += dt;
+      if (mfdThrottle >= 0.10) {
+        mfdThrottle = 0;
+        if (this.avionics) this.avionics.updateActiveUnitMFD();
+        if (this.inspection && this.inspection.isOpen) this.inspection.update();
       }
+
+      rosterThrottle += dt;
+      if (rosterThrottle >= 0.25) {
+        rosterThrottle = 0;
+        if (this.avionics) this.avionics.renderFlightRoster();
+      }
+
       if (!this.isGameOver) this.animFrameId = requestAnimationFrame(loop);
     };
     this.animFrameId = requestAnimationFrame(loop);

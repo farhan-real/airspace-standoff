@@ -39,7 +39,7 @@ class AvionicsUI {
     const rtbBtn = document.getElementById('btn-rtb-rearm');
     if (rtbBtn) {
       rtbBtn.onclick = () => {
-        if (this.game.activeUnit && this.game.activeUnit.hp > 0) {
+        if (this.game.activeUnit && this.game.activeUnit.hp > 0.05) {
           const isReturning = this.game.activeUnit.toggleRTB();
           if (this.game.radar) {
             const msg = isReturning ? 'RETURN TO BASE ORDERED' : 'ENGAGING TARGETS';
@@ -103,7 +103,7 @@ class AvionicsUI {
     const hudEturn = document.getElementById('hud-eturn-tag');
     const hudWr = document.getElementById('hud-wr-tag');
 
-    if (!u || u.hp <= 0) {
+    if (!u || u.hp <= 0.05) {
       if (nameEl) nameEl.textContent = 'NO CRAFT SELECTED';
       if (callsignValEl) { callsignValEl.textContent = '--'; callsignValEl.style.color = '#8494ab'; }
       if (coffinTag) coffinTag.classList.add('hidden');
@@ -229,7 +229,7 @@ class AvionicsUI {
     const activeUnit = this.game.activeUnit;
     const lockingThreats = [];
 
-    if (this.game.missiles && activeUnit && activeUnit.hp > 0) {
+    if (this.game.missiles && activeUnit && activeUnit.hp > 0.05) {
       for (let i = 0; i < this.game.missiles.length; i++) {
         const m = this.game.missiles[i];
         if (m.active && m.team !== commanderTeam && m.target && m.target.id === activeUnit.id) {
@@ -245,11 +245,11 @@ class AvionicsUI {
       if (detailEl) detailEl.textContent = `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km`;
     } else {
       let hasLocks = false;
-      if (activeUnit && activeUnit.hp > 0) {
+      if (activeUnit && activeUnit.hp > 0.05) {
         const hostileFleet = (commanderTeam === 'friendly') ? this.game.hostileAircraft : this.game.alliedAircraft;
         for (let i = 0; i < hostileFleet.length; i++) {
           const h = hostileFleet[i];
-          if (h.hp > 0 && h.radarLockedTarget && h.radarLockedTarget.id === activeUnit.id) {
+          if (h.hp > 0.05 && h.radarLockedTarget && h.radarLockedTarget.id === activeUnit.id) {
             hasLocks = true;
             break;
           }
