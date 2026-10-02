@@ -1,74 +1,110 @@
 /**
- * AIRSPACE STANDOFF: Squadron Roster Stations Submodule
- * Internal bay, external pylons, and centerline stations builder with weapon item reordering.
+ * AIRSPACE STANDOFF: Hardpoint Station Badges & Munition Mount Cards
  */
 
 class RosterStationsRenderer {
-  static renderStations(pm, card, item, sIdx, metrics) {
+  static normalizeWeapons(item, spec) {
+    if (!item || !item.weapons) return;
     const weaponsMap = window.WEAPONS_CATALOG || {};
-    const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
-    const internalCapacity = metrics ? (metrics.internalCapacity || 0) : (spec.internalSlots || 0);
-    const externalCapacity = metrics ? (metrics.externalCapacity || 6) : (spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
-    const internalUsed = metrics ? (metrics.internalUsed || 0) : 0;
-    const externalUsed = metrics ? (metrics.externalUsed || 0) : 0;
-    const centerlineUsed = metrics ? (metrics.centerlineUsed || 0) : 0;
-    const centerlineCapacity = metrics ? (metrics.centerlineCapacity || 6) : (spec.centerlineSlots || 6);
-    const remInternal = Math.max(0, internalCapacity - internalUsed);
-    const remExternal = Math.max(0, externalCapacity - externalUsed);
+    const intCap = Number(spec.internalSlots || 0);
+    const extCap = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+    const ctrCap = Number(spec.centerlineSlots !== undefined ? spec.centerlineSlots : (spec.hasCenterline ? 6 : 0));
 
-    let internalItems = [];
-    let externalItems = [];
-    let centerlineItems = [];
+    let intUsed = 0;
+    let extUsed = 0;
+    let ctrUsed = 0;
 
-    let currentInternalUsed = 0;
-    (item.weapons || []).forEach((wEntry, wIdx) => {
+    item.weapons = item.weapons.map(wEntry => {
       const wId = (typeof wEntry === 'object' && wEntry !== null) ? (wEntry.id || wEntry.specId) : wEntry;
       const w = weaponsMap[wId];
-      if (!w) return;
+      if (!w) return null;
 
       const wSlots = Number(w.slots || 1);
       let assignedStation = (typeof wEntry === 'object' && wEntry !== null && wEntry.station) ? wEntry.station : null;
 
       if (!assignedStation) {
-        if (w.slotType === 'CENTERLINE') assignedStation = 'CENTERLINE';
-        else if (w.slotType === 'INTERNAL' && (currentInternalUsed + wSlots <= internalCapacity)) {
+        if (w.slotType === 'CENTERLINE' && spec.hasCenterline && ctrUsed + wSlots <= ctrCap) {
+          assignedStation = 'CENTERLINE';
+        } else if (w.slotType === 'INTERNAL' && intUsed + wSlots <= intCap) {
           assignedStation = 'INTERNAL';
-          currentInternalUsed += wSlots;
+        } else if (extUsed + wSlots <= extCap) {
+          assignedStation = 'EXTERNAL';
+        } else if (spec.hasCenterline && ctrUsed + wSlots <= ctrCap) {
+          assignedStation = 'CENTERLINE';
         } else {
           assignedStation = 'EXTERNAL';
         }
       }
 
-      const itemData = { wId, w, wIdx, station: assignedStation, slots: wSlots };
-      if (assignedStation === 'INTERNAL') internalItems.push(itemData);
-      else if (assignedStation === 'CENTERLINE') centerlineItems.push(itemData);
-      else externalItems.push(itemData);
+      if (assignedStation === 'INTERNAL') intUsed += wSlots;
+      else if (assignedStation === 'CENTERLINE') ctrUsed += wSlots;
+      else extUsed += wSlots;
+
+      return { id: wId, station: assignedStation };
+    }).filter(Boolean);
+  }
+
+  static renderStations(pm, card, item, sIdx, metrics) {
+    const weaponsMap = window.WEAPONS_CATALOG || {};
+    const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
+    this.normalizeWeapons(item, spec);
+
+    const intCap = metrics ? (metrics.internalCapacity || 0) : (spec.internalSlots || 0);
+    const extCap = metrics ? (metrics.externalCapacity || 6) : (spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+    const ctrCap = metrics ? (metrics.centerlineCapacity || 6) : (spec.centerlineSlots || 6);
+
+    const internalItems = [];
+    const externalItems = [];
+    const centerlineItems = [];
+
+    let intUsed = 0;
+    let extUsed = 0;
+    let ctrUsed = 0;
+
+    item.weapons.forEach((entry, wIdx) => {
+      const w = weaponsMap[entry.id];
+      if (!w) return;
+      const wSlots = Number(w.slots || 1);
+      const data = { wId: entry.id, w, wIdx, station: entry.station, slots: wSlots };
+
+      if (entry.station === 'INTERNAL') {
+        intUsed += wSlots;
+        internalItems.push(data);
+      } else if (entry.station === 'CENTERLINE') {
+        ctrUsed += wSlots;
+        centerlineItems.push(data);
+      } else {
+        extUsed += wSlots;
+        externalItems.push(data);
+      }
     });
 
-    const renderWeaponCard = (data) => {
+    const remInternal = Math.max(0, intCap - intUsed);
+    const remExternal = Math.max(0, extCap - extUsed);
+    const remCenterline = Math.max(0, ctrCap - ctrUsed);
+
+    const renderCard = (data, canUp, canDown) => {
       const w = data.w;
       const wIdx = data.wIdx;
-      const damageHP = w.damage !== undefined ? w.damage : 2;
-      const slots = data.slots;
-      const itemSlotWord = slots === 1 ? 'SLOT' : 'SLOTS';
-      const seeker = w.seeker || 'GUIDED';
-      let seekerTag = seeker;
+      const dmg = w.damage !== undefined ? w.damage : 2;
+      const itemSlotWord = data.slots === 1 ? 'SLOT' : 'SLOTS';
+      let seekerTag = w.seeker || 'GUIDED';
       if (w.isJammerPod) seekerTag = 'ECM';
       else if (w.isDecoyDrone) seekerTag = 'MALD';
       else if (w.isDecoy) seekerTag = 'DECOY';
       else if (w.isLaser) seekerTag = 'LASER';
-      else if (seeker === 'PASSIVE_RADAR') seekerTag = 'ARM';
-      else if (seeker === 'GPS_INS') seekerTag = 'GPS/INS';
-      else if (seeker === 'INS' || seeker === 'INS_RADAR') seekerTag = 'INS';
-      else if (seeker === 'DIRECT_FIRE') seekerTag = 'DIRECT';
+      else if (seekerTag === 'PASSIVE_RADAR') seekerTag = 'ARM';
+      else if (seekerTag === 'GPS_INS') seekerTag = 'GPS/INS';
+      else if (seekerTag === 'INS' || seekerTag === 'INS_RADAR') seekerTag = 'INS';
+      else if (seekerTag === 'DIRECT_FIRE') seekerTag = 'DIRECT';
 
       return `
         <div class="installed-item-card station-${data.station.toLowerCase()}" data-sidx="${sIdx}" data-widx="${wIdx}">
           <div class="iic-reorder-group">
-            <button type="button" class="btn-reorder-item btn-move-up" data-sidx="${sIdx}" data-widx="${wIdx}" title="Move weapon up">
+            <button type="button" class="btn-reorder-item btn-move-up" data-sidx="${sIdx}" data-widx="${wIdx}" ${canUp ? '' : 'disabled'} title="${canUp ? 'Move up / shift to internal' : 'Cannot move up'}">
               <img src="icons/arrowup.svg" width="9" height="9" alt="Up">
             </button>
-            <button type="button" class="btn-reorder-item btn-move-down" data-sidx="${sIdx}" data-widx="${wIdx}" title="Move weapon down">
+            <button type="button" class="btn-reorder-item btn-move-down" data-sidx="${sIdx}" data-widx="${wIdx}" ${canDown ? '' : 'disabled'} title="${canDown ? 'Move down / shift to external' : 'Cannot move down'}">
               <img src="icons/arrowdown.svg" width="9" height="9" alt="Down">
             </button>
           </div>
@@ -76,9 +112,9 @@ class RosterStationsRenderer {
             <span class="iic-title" title="${w.name}">${w.name}</span>
           </div>
           <div class="iic-right-group">
-            <span class="iic-details"><span class="iic-slots">${slots}<span class="iic-slots-word"> ${itemSlotWord}</span><span class="iic-slots-short">S</span></span> &bull; <b class="iic-hp">${damageHP} HP</b> &bull; <span class="iic-seeker">${seekerTag}</span></span>
+            <span class="iic-details"><span class="iic-slots">${data.slots}<span class="iic-slots-word"> ${itemSlotWord}</span><span class="iic-slots-short">S</span></span> &bull; <b class="iic-hp">${dmg} HP</b> &bull; <span class="iic-seeker">${seekerTag}</span></span>
             <button type="button" class="spec-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button>
-            <button class="btn-dismount-item" data-sidx="${sIdx}" data-widx="${wIdx}" title="Dismount weapon">
+            <button type="button" class="btn-dismount-item" data-sidx="${sIdx}" data-widx="${wIdx}" title="Dismount weapon">
               <img src="icons/close.svg" width="8" height="8" alt="Remove">
             </button>
           </div>
@@ -86,58 +122,94 @@ class RosterStationsRenderer {
     };
 
     let internalBayHtml = '';
-    if (internalCapacity > 0) {
-      const internalCards = internalItems.map(renderWeaponCard).join('');
-      const emptyInternalCards = (remInternal > 0)
+    if (intCap > 0) {
+      const cardsHtml = internalItems.map((itemData, i) => {
+        const canUp = (i > 0);
+        let canDown = (i < internalItems.length - 1);
+        if (!canDown) {
+          if (remExternal >= itemData.slots) canDown = true;
+          else if (externalItems.length > 0) {
+            const firstExt = externalItems[0];
+            const firstExtW = weaponsMap[firstExt.wId];
+            if (firstExtW && firstExtW.slotType === 'INTERNAL') {
+              const neededInt = intUsed - itemData.slots + (firstExtW.slots || 1);
+              const neededExt = extUsed - (firstExtW.slots || 1) + itemData.slots;
+              if (neededInt <= intCap && neededExt <= extCap) canDown = true;
+            }
+          }
+        }
+        return renderCard(itemData, canUp, canDown);
+      }).join('');
+
+      const emptyPrompt = (remInternal > 0)
         ? `<div class="empty-internal-slot" data-sidx="${sIdx}" data-station="INTERNAL" title="Equip internal missile">+ [EMPTY INTERNAL BAY: ${remInternal} SLOTS OPEN &bull; ZERO DRAG &amp; ZERO EXTRA RCS]</div>`
         : '';
 
       internalBayHtml = `
         <div class="station-section internal-bay-group">
           <div class="station-header-row">
-            <span class="station-title"><img src="icons/diamond.svg" width="10" height="10" alt="Internal" class="manual-inline-ico"> INTERNAL WEAPONS BAY: <b>${internalUsed} / ${internalCapacity} SLOTS</b></span>
+            <span class="station-title"><img src="icons/diamond.svg" width="10" height="10" alt="Internal" class="manual-inline-ico"> INTERNAL WEAPONS BAY: <b>${intUsed} / ${intCap} SLOTS</b></span>
             <span class="station-tag stealth-tag">VLO ZERO DRAG</span>
           </div>
           <div class="station-items-container">
-            ${internalCards}
-            ${emptyInternalCards}
+            ${cardsHtml}
+            ${emptyPrompt}
           </div>
-        </div>
-      `;
+        </div>`;
     }
 
-    const externalCards = externalItems.map(renderWeaponCard).join('');
-    const addExternalBtn = (remExternal > 0)
+    const extCardsHtml = externalItems.map((itemData, j) => {
+      let canUp = (j > 0);
+      if (!canUp && itemData.w.slotType === 'INTERNAL') {
+        if (remInternal >= itemData.slots) canUp = true;
+        else if (internalItems.length > 0) {
+          const lastInt = internalItems[internalItems.length - 1];
+          const lastIntW = weaponsMap[lastInt.wId];
+          if (lastIntW) {
+            const neededInt = intUsed - (lastIntW.slots || 1) + itemData.slots;
+            const neededExt = extUsed - itemData.slots + (lastIntW.slots || 1);
+            if (neededInt <= intCap && neededExt <= extCap) canUp = true;
+          }
+        }
+      }
+      const canDown = (j < externalItems.length - 1) || (spec.hasCenterline && itemData.w.slotType === 'CENTERLINE' && remCenterline >= itemData.slots);
+      return renderCard(itemData, canUp, canDown);
+    }).join('');
+
+    const addExtBtn = (remExternal > 0)
       ? `<button type="button" class="slot-action-btn btn-add-external-slot" data-sidx="${sIdx}" data-station="EXTERNAL">+ ADD EXTERNAL WEAPONS (${remExternal} SLOTS REMAINING)</button>`
       : '';
 
     const externalPylonsHtml = `
       <div class="station-section external-pylons-group">
         <div class="station-header-row">
-          <span class="station-title">EXTERNAL WING PYLONS: <b>${externalUsed} / ${externalCapacity} SLOTS</b></span>
+          <span class="station-title">EXTERNAL WING PYLONS: <b>${extUsed} / ${extCap} SLOTS</b></span>
           <span class="station-tag external-tag">STANDARD PYLONS</span>
         </div>
         <div class="station-items-container">
-          ${externalCards || (remExternal === externalCapacity ? `<div class="empty-bay-indicator" data-sidx="${sIdx}" data-station="EXTERNAL">NO EXTERNAL PYLONS EQUIPPED (${externalCapacity} SLOTS OPEN)</div>` : '')}
-          ${addExternalBtn}
+          ${extCardsHtml || (remExternal === extCap ? `<div class="empty-bay-indicator" data-sidx="${sIdx}" data-station="EXTERNAL">NO EXTERNAL PYLONS EQUIPPED (${extCap} SLOTS OPEN)</div>` : '')}
+          ${addExtBtn}
         </div>
-      </div>
-    `;
+      </div>`;
 
     let centerlineHtml = '';
     if (centerlineItems.length > 0 || (metrics && metrics.hasCenterline)) {
-      const centerlineCards = centerlineItems.map(renderWeaponCard).join('');
+      const ctrCardsHtml = centerlineItems.map((itemData, k) => {
+        const canUp = (k > 0) || (itemData.w.slotType !== 'CENTERLINE' && remExternal >= itemData.slots);
+        const canDown = (k < centerlineItems.length - 1);
+        return renderCard(itemData, canUp, canDown);
+      }).join('');
+
       centerlineHtml = `
         <div class="station-section centerline-station-group">
           <div class="station-header-row">
-            <span class="station-title" style="color:#f59e0b;">CENTERLINE FUSELAGE STATION: <b>${centerlineUsed} / ${centerlineCapacity} SLOTS</b></span>
+            <span class="station-title" style="color:#f59e0b;">CENTERLINE FUSELAGE STATION: <b>${ctrUsed} / ${ctrCap} SLOTS</b></span>
             <span class="station-tag centerline-tag">HEAVY HYPERSONIC</span>
           </div>
           <div class="station-items-container">
-            ${centerlineCards || `<div class="empty-bay-indicator" data-sidx="${sIdx}" data-station="CENTERLINE">EMPTY CENTERLINE STATION (${centerlineCapacity} SLOTS)</div>`}
+            ${ctrCardsHtml || `<div class="empty-bay-indicator" data-sidx="${sIdx}" data-station="CENTERLINE">EMPTY CENTERLINE STATION (${ctrCap} SLOTS)</div>`}
           </div>
-        </div>
-      `;
+        </div>`;
     }
 
     return `
@@ -145,8 +217,175 @@ class RosterStationsRenderer {
         ${internalBayHtml}
         ${externalPylonsHtml}
         ${centerlineHtml}
-      </div>
-    `;
+      </div>`;
+  }
+
+  static moveWeaponUp(pm, sIdx, wIdx) {
+    const item = pm.game.procurementSquadron[sIdx];
+    if (!item || !item.weapons) return;
+    const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
+    this.normalizeWeapons(item, spec);
+
+    if (wIdx < 0 || wIdx >= item.weapons.length) return;
+    const weaponsMap = window.WEAPONS_CATALOG || {};
+    const targetEntry = item.weapons[wIdx];
+    const w = weaponsMap[targetEntry.id];
+    if (!w) return;
+
+    const intCap = Number(spec.internalSlots || 0);
+    const extCap = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+    const internalItems = item.weapons.filter(e => e.station === 'INTERNAL');
+    const externalItems = item.weapons.filter(e => e.station === 'EXTERNAL');
+    const centerlineItems = item.weapons.filter(e => e.station === 'CENTERLINE');
+
+    const intUsed = internalItems.reduce((sum, e) => sum + Number((weaponsMap[e.id] || {}).slots || 1), 0);
+    const extUsed = externalItems.reduce((sum, e) => sum + Number((weaponsMap[e.id] || {}).slots || 1), 0);
+    const remInternal = Math.max(0, intCap - intUsed);
+    const remExternal = Math.max(0, extCap - extUsed);
+
+    if (targetEntry.station === 'INTERNAL') {
+      const i = internalItems.indexOf(targetEntry);
+      if (i > 0) {
+        const prev = internalItems[i - 1];
+        const gCur = item.weapons.indexOf(targetEntry);
+        const gPrev = item.weapons.indexOf(prev);
+        item.weapons[gCur] = prev;
+        item.weapons[gPrev] = targetEntry;
+      }
+    } else if (targetEntry.station === 'EXTERNAL') {
+      const j = externalItems.indexOf(targetEntry);
+      if (j > 0) {
+        const prev = externalItems[j - 1];
+        const gCur = item.weapons.indexOf(targetEntry);
+        const gPrev = item.weapons.indexOf(prev);
+        item.weapons[gCur] = prev;
+        item.weapons[gPrev] = targetEntry;
+      } else if (j === 0 && w.slotType === 'INTERNAL') {
+        if (remInternal >= (w.slots || 1)) {
+          targetEntry.station = 'INTERNAL';
+          const [removed] = item.weapons.splice(wIdx, 1);
+          const lastIntIdx = item.weapons.map(e => e.station).lastIndexOf('INTERNAL');
+          item.weapons.splice(lastIntIdx + 1, 0, removed);
+        } else if (internalItems.length > 0) {
+          const lastInt = internalItems[internalItems.length - 1];
+          const lastIntW = weaponsMap[lastInt.id];
+          const neededInt = intUsed - (lastIntW ? lastIntW.slots || 1 : 1) + (w.slots || 1);
+          const neededExt = extUsed - (w.slots || 1) + (lastIntW ? lastIntW.slots || 1 : 1);
+          if (neededInt <= intCap && neededExt <= extCap) {
+            targetEntry.station = 'INTERNAL';
+            lastInt.station = 'EXTERNAL';
+            const gCur = item.weapons.indexOf(targetEntry);
+            const gLastInt = item.weapons.indexOf(lastInt);
+            item.weapons[gCur] = lastInt;
+            item.weapons[gLastInt] = targetEntry;
+          }
+        }
+      }
+    } else if (targetEntry.station === 'CENTERLINE') {
+      const k = centerlineItems.indexOf(targetEntry);
+      if (k > 0) {
+        const prev = centerlineItems[k - 1];
+        const gCur = item.weapons.indexOf(targetEntry);
+        const gPrev = item.weapons.indexOf(prev);
+        item.weapons[gCur] = prev;
+        item.weapons[gPrev] = targetEntry;
+      } else if (k === 0 && w.slotType !== 'CENTERLINE' && remExternal >= (w.slots || 1)) {
+        targetEntry.station = 'EXTERNAL';
+        const [removed] = item.weapons.splice(wIdx, 1);
+        const lastExtIdx = item.weapons.map(e => e.station).lastIndexOf('EXTERNAL');
+        item.weapons.splice(lastExtIdx + 1, 0, removed);
+      }
+    }
+
+    pm.updateSquadronCard(sIdx);
+    if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+  }
+
+  static moveWeaponDown(pm, sIdx, wIdx) {
+    const item = pm.game.procurementSquadron[sIdx];
+    if (!item || !item.weapons) return;
+    const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
+    this.normalizeWeapons(item, spec);
+
+    if (wIdx < 0 || wIdx >= item.weapons.length) return;
+    const weaponsMap = window.WEAPONS_CATALOG || {};
+    const targetEntry = item.weapons[wIdx];
+    const w = weaponsMap[targetEntry.id];
+    if (!w) return;
+
+    const intCap = Number(spec.internalSlots || 0);
+    const extCap = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+    const ctrCap = Number(spec.centerlineSlots !== undefined ? spec.centerlineSlots : (spec.hasCenterline ? 6 : 0));
+    const internalItems = item.weapons.filter(e => e.station === 'INTERNAL');
+    const externalItems = item.weapons.filter(e => e.station === 'EXTERNAL');
+    const centerlineItems = item.weapons.filter(e => e.station === 'CENTERLINE');
+
+    const intUsed = internalItems.reduce((sum, e) => sum + Number((weaponsMap[e.id] || {}).slots || 1), 0);
+    const extUsed = externalItems.reduce((sum, e) => sum + Number((weaponsMap[e.id] || {}).slots || 1), 0);
+    const ctrUsed = centerlineItems.reduce((sum, e) => sum + Number((weaponsMap[e.id] || {}).slots || 1), 0);
+    const remExternal = Math.max(0, extCap - extUsed);
+    const remCenterline = Math.max(0, ctrCap - ctrUsed);
+
+    if (targetEntry.station === 'INTERNAL') {
+      const i = internalItems.indexOf(targetEntry);
+      if (i < internalItems.length - 1) {
+        const next = internalItems[i + 1];
+        const gCur = item.weapons.indexOf(targetEntry);
+        const gNext = item.weapons.indexOf(next);
+        item.weapons[gCur] = next;
+        item.weapons[gNext] = targetEntry;
+      } else if (i === internalItems.length - 1) {
+        if (remExternal >= (w.slots || 1)) {
+          targetEntry.station = 'EXTERNAL';
+          const [removed] = item.weapons.splice(wIdx, 1);
+          const firstExtIdx = item.weapons.findIndex(e => e.station === 'EXTERNAL');
+          if (firstExtIdx === -1) item.weapons.push(removed);
+          else item.weapons.splice(firstExtIdx, 0, removed);
+        } else if (externalItems.length > 0) {
+          const firstExt = externalItems[0];
+          const firstExtW = weaponsMap[firstExt.id];
+          if (firstExtW && firstExtW.slotType === 'INTERNAL') {
+            const neededInt = intUsed - (w.slots || 1) + (firstExtW.slots || 1);
+            const neededExt = extUsed - (firstExtW.slots || 1) + (w.slots || 1);
+            if (neededInt <= intCap && neededExt <= extCap) {
+              targetEntry.station = 'EXTERNAL';
+              firstExt.station = 'INTERNAL';
+              const gCur = item.weapons.indexOf(targetEntry);
+              const gFirstExt = item.weapons.indexOf(firstExt);
+              item.weapons[gCur] = firstExt;
+              item.weapons[gFirstExt] = targetEntry;
+            }
+          }
+        }
+      }
+    } else if (targetEntry.station === 'EXTERNAL') {
+      const j = externalItems.indexOf(targetEntry);
+      if (j < externalItems.length - 1) {
+        const next = externalItems[j + 1];
+        const gCur = item.weapons.indexOf(targetEntry);
+        const gNext = item.weapons.indexOf(next);
+        item.weapons[gCur] = next;
+        item.weapons[gNext] = targetEntry;
+      } else if (j === externalItems.length - 1 && spec.hasCenterline) {
+        if (remCenterline >= (w.slots || 1) && (w.slotType === 'CENTERLINE' || w.slots <= ctrCap)) {
+          targetEntry.station = 'CENTERLINE';
+          const [removed] = item.weapons.splice(wIdx, 1);
+          item.weapons.push(removed);
+        }
+      }
+    } else if (targetEntry.station === 'CENTERLINE') {
+      const k = centerlineItems.indexOf(targetEntry);
+      if (k < centerlineItems.length - 1) {
+        const next = centerlineItems[k + 1];
+        const gCur = item.weapons.indexOf(targetEntry);
+        const gNext = item.weapons.indexOf(next);
+        item.weapons[gCur] = next;
+        item.weapons[gNext] = targetEntry;
+      }
+    }
+
+    pm.updateSquadronCard(sIdx);
+    if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 }
 

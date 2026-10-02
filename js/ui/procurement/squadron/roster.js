@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Squadron Roster Display Coordinator
- * Efficient DOM batching with DocumentFragment to eliminate mobile layout recalculation latency.
+ * In-place card replacement and preserved scroll offsets to eliminate roster jumps.
  */
 
 class ProcurementRoster {
@@ -9,16 +9,54 @@ class ProcurementRoster {
     this.lastRenderKey = '';
   }
 
-  render(container, squadron, budgetCounterEl, fleetCountEl, scrambleBtnEl) {
-    if (!container) return;
-    squadron = squadron || [];
+  updateCard(pm, sIdx) {
+    const item = pm.game.procurementSquadron[sIdx];
+    if (!item) {
+      pm.updateUI();
+      return;
+    }
+    const container = document.getElementById('squadron-list');
+    if (!container) {
+      pm.updateUI();
+      return;
+    }
+
+    const prevScroll = container.scrollTop;
+
+    const oldCard = container.querySelector(`.squad-unit-card[data-sidx="${sIdx}"]`);
+    if (oldCard && typeof RosterCardBuilder !== 'undefined') {
+      const newCard = RosterCardBuilder.build(pm, item, sIdx);
+      if (newCard) {
+        oldCard.replaceWith(newCard);
+      }
+    } else {
+      pm.updateUI();
+      return;
+    }
+
+    container.scrollTop = prevScroll;
+    requestAnimationFrame(() => {
+      if (container) container.scrollTop = prevScroll;
+    });
+
+    this.updateSummaryHeader(pm);
+    if (pm.shelf) pm.shelf.syncActiveAircraft();
+    if (window.Persistence && pm.game.procurementSquadron.length > 0) {
+      window.Persistence.saveLastSquadron(pm.game.procurementSquadron);
+    }
+  }
+
+  updateSummaryHeader(pm) {
+    const budgetCounterEl = document.getElementById('budget-counter');
+    const fleetCountEl = document.getElementById('fleet-count');
+    const scrambleBtnEl = document.getElementById('btn-scramble');
 
     const aircraftMap = window.AIRCRAFT_CATALOG || {};
     const weaponsMap = window.WEAPONS_CATALOG || {};
     const upgradesMap = window.UPGRADES_CATALOG || {};
 
     let spent = 0;
-    squadron.forEach(item => {
+    pm.game.procurementSquadron.forEach(item => {
       if (!item) return;
       if (aircraftMap[item.specId]) spent += Number(aircraftMap[item.specId].cost || 0);
       (item.weapons || []).forEach(wItem => {
@@ -31,8 +69,8 @@ class ProcurementRoster {
       });
     });
 
-    const budgetMax = (this.pm && this.pm.game && this.pm.game.budgetMax) || (window.CONFIG && window.CONFIG.BUDGET_MAX_MILLIONS) || 400.0;
-    if (this.pm && this.pm.game) this.pm.game.budgetRemaining = budgetMax - spent;
+    const budgetMax = pm.game.budgetMax || (window.CONFIG && window.CONFIG.BUDGET_MAX_MILLIONS) || 400.0;
+    pm.game.budgetRemaining = budgetMax - spent;
 
     if (budgetCounterEl) {
       const isOver = spent > budgetMax;
@@ -46,20 +84,27 @@ class ProcurementRoster {
     }
 
     const maxUnits = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
-    if (fleetCountEl) fleetCountEl.textContent = `${squadron.length} / ${maxUnits} AIRCRAFT`;
+    if (fleetCountEl) fleetCountEl.textContent = `${pm.game.procurementSquadron.length} / ${maxUnits} AIRCRAFT`;
     const mobRosterCount = document.getElementById('mob-roster-count');
-    if (mobRosterCount) mobRosterCount.textContent = squadron.length;
+    if (mobRosterCount) mobRosterCount.textContent = pm.game.procurementSquadron.length;
     const quickStatEl = document.getElementById('roster-quick-stat');
-    if (quickStatEl) quickStatEl.textContent = `${squadron.length} AIRCRAFT ASSIGNED`;
+    if (quickStatEl) quickStatEl.textContent = `${pm.game.procurementSquadron.length} AIRCRAFT ASSIGNED`;
 
     if (scrambleBtnEl) {
       const editorRandomRoster = window.MissionEditor
-        && window.MissionEditor.canProvideRandomSquadron(this.pm.game);
-      const canScramble = editorRandomRoster || (squadron.length > 0 && spent <= budgetMax);
+        && window.MissionEditor.canProvideRandomSquadron(pm.game);
+      const canScramble = editorRandomRoster || (pm.game.procurementSquadron.length > 0 && spent <= budgetMax);
       scrambleBtnEl.disabled = !canScramble;
       scrambleBtnEl.textContent = editorRandomRoster ? 'LAUNCH EDITOR MISSION'
-        : (canScramble ? 'LAUNCH MISSION' : (squadron.length === 0 ? 'ASSIGN AIRCRAFT' : 'BUDGET EXCEEDED'));
+        : (canScramble ? 'LAUNCH MISSION' : (pm.game.procurementSquadron.length === 0 ? 'ASSIGN AIRCRAFT' : 'BUDGET EXCEEDED'));
     }
+  }
+
+  render(container, squadron, budgetCounterEl, fleetCountEl, scrambleBtnEl) {
+    if (!container) return;
+    squadron = squadron || [];
+
+    this.updateSummaryHeader(this.pm);
 
     if (squadron.length === 0) {
       this.lastRenderKey = 'EMPTY';
@@ -85,6 +130,8 @@ class ProcurementRoster {
     }).join('|');
     const renderableAircraftCount = squadron.filter(Boolean).length;
     if (this.lastRenderKey === renderKey && container.children.length === renderableAircraftCount) return;
+
+    const prevScroll = container.scrollTop;
     this.lastRenderKey = renderKey;
     container.innerHTML = '';
 
@@ -97,6 +144,11 @@ class ProcurementRoster {
       });
       container.appendChild(fragment);
     }
+
+    container.scrollTop = prevScroll;
+    requestAnimationFrame(() => {
+      if (container) container.scrollTop = prevScroll;
+    });
   }
 }
 

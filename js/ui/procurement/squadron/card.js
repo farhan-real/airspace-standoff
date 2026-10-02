@@ -61,7 +61,7 @@ class RosterCardBuilder {
           <div class="upgrade-socket filled">
             <span>[${upg.category || 'SYSTEM'}] ${upg.name || upgId}</span>
             <button type="button" class="spec-inspect-btn small" data-inspect-type="upgrade" data-inspect-id="${upg.id}">SPECS</button>
-            <button class="btn-socket-dismount" data-sidx="${sIdx}" data-uidx="${u}" title="Remove component">
+            <button type="button" class="btn-socket-dismount" data-sidx="${sIdx}" data-uidx="${u}" title="Remove component">
               <img src="icons/close.svg" width="8" height="8" alt="Remove">
             </button>
           </div>`;
@@ -156,9 +156,11 @@ class RosterCardBuilder {
     `;
 
     card.onclick = (e) => {
-      if (!e.target.closest('button, input, select, .squad-callsign-tag, .custom-dropdown, .empty-internal-slot, .empty-bay-indicator')) {
-        pm.activeBayIndex = sIdx;
-        pm.updateUI();
+      if (!e.target.closest('button, input, select, .squad-callsign-tag, .custom-dropdown, .empty-internal-slot, .empty-bay-indicator, .installed-item-card')) {
+        if (pm.activeBayIndex !== sIdx) {
+          pm.activeBayIndex = sIdx;
+          pm.updateUI();
+        }
       }
     };
 
@@ -197,7 +199,7 @@ class RosterCardBuilder {
           if (gunId && isComp) {
             item.chosenGunId = gunId;
             gunCdd.classList.remove('open');
-            pm.updateUI();
+            pm.updateSquadronCard(sIdx);
             if (typeof AudioSys !== 'undefined') AudioSys.playClick();
           }
         };
@@ -241,43 +243,41 @@ class RosterCardBuilder {
 
     card.querySelectorAll('.btn-dismount-item').forEach(b => {
       b.onclick = (e) => {
+        e.preventDefault();
         e.stopPropagation();
         item.weapons.splice(parseInt(b.dataset.widx, 10), 1);
-        pm.updateUI();
+        pm.updateSquadronCard(sIdx);
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       };
     });
 
     card.querySelectorAll('.btn-socket-dismount').forEach(b => {
       b.onclick = (e) => {
+        e.preventDefault();
         e.stopPropagation();
         item.upgrades.splice(parseInt(b.dataset.uidx, 10), 1);
-        pm.updateUI();
+        pm.updateSquadronCard(sIdx);
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       };
     });
 
     card.querySelectorAll('.btn-move-up').forEach(b => {
       b.onclick = (e) => {
+        e.preventDefault();
         e.stopPropagation();
+        if (b.disabled) return;
         const wIdx = parseInt(b.dataset.widx, 10);
-        if (wIdx > 0 && wIdx < item.weapons.length) {
-          const [moved] = item.weapons.splice(wIdx, 1);
-          item.weapons.splice(wIdx - 1, 0, moved);
-          pm.updateUI();
-          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-        }
+        RosterStationsRenderer.moveWeaponUp(pm, sIdx, wIdx);
       };
     });
 
     card.querySelectorAll('.btn-move-down').forEach(b => {
       b.onclick = (e) => {
+        e.preventDefault();
         e.stopPropagation();
+        if (b.disabled) return;
         const wIdx = parseInt(b.dataset.widx, 10);
-        if (wIdx >= 0 && wIdx < item.weapons.length - 1) {
-          const [moved] = item.weapons.splice(wIdx, 1);
-          item.weapons.splice(wIdx + 1, 0, moved);
-          pm.updateUI();
-          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-        }
+        RosterStationsRenderer.moveWeaponDown(pm, sIdx, wIdx);
       };
     });
 

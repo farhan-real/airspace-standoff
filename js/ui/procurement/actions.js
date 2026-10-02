@@ -65,11 +65,14 @@ class ProcurementActionDispatcher {
     const rosterEl = document.getElementById('squadron-list');
     if (!win) return;
 
+    win.classList.remove('header-hidden');
+
     let lastCatalogScroll = 0;
     let lastRosterScroll = 0;
     let accumulatedDown = 0;
 
     const setHeaderState = (hide) => {
+      if (pm && pm._isUpdatingUI) return;
       const isHidden = win.classList.contains('header-hidden');
       if (hide === isHidden) return;
       if (hide) {
@@ -81,12 +84,12 @@ class ProcurementActionDispatcher {
     };
 
     const handleScroll = (el, getLast, setLast) => {
-      if (!el) return;
+      if (!el || (pm && pm._isUpdatingUI)) return;
       const currentScroll = el.scrollTop;
       const diff = currentScroll - getLast();
       setLast(currentScroll);
 
-      if (currentScroll <= 10) {
+      if (currentScroll <= 15) {
         accumulatedDown = 0;
         setHeaderState(false);
       } else if (diff > 0) {
@@ -94,6 +97,9 @@ class ProcurementActionDispatcher {
         if (accumulatedDown >= 25 && currentScroll > 35) {
           setHeaderState(true);
         }
+      } else if (diff < -10) {
+        accumulatedDown = 0;
+        setHeaderState(false);
       }
     };
 

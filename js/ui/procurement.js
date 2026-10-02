@@ -9,6 +9,7 @@ class ProcurementManager {
     this.currentAirframeCategory = 'ALL';
     this.searchQuery = '';
     this.activeBayIndex = 0;
+    this._isUpdatingUI = false;
 
     this.dialogModal = new TacticalDialogModal(this);
     this.specs = new ProcurementSpecs(this);
@@ -242,7 +243,16 @@ class ProcurementManager {
     }
   }
 
+  updateSquadronCard(sIdx) {
+    if (this.roster && typeof this.roster.updateCard === 'function') {
+      this.roster.updateCard(this, sIdx);
+    } else {
+      this.updateUI();
+    }
+  }
+
   updateUI() {
+    this._isUpdatingUI = true;
     const rosterEl = document.getElementById('squadron-list');
     const budgetEl = document.getElementById('budget-counter');
     const fleetEl = document.getElementById('fleet-count');
@@ -267,6 +277,7 @@ class ProcurementManager {
       window.Persistence.saveLastSquadron(this.game.procurementSquadron);
       window.Persistence.saveSquadronName(cleanName);
     }
+    this._isUpdatingUI = false;
   }
 }
 

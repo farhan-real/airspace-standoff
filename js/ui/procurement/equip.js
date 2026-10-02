@@ -85,7 +85,11 @@ class ProcurementEquipHandler {
           if (itemData.type === 'airframe') {
             this.addAirframe(itemData.id);
           } else {
-            this.equipItemDataToSquadron(sIdx, itemData);
+            let dropStation = null;
+            if (e.target.closest('.internal-bay-group')) dropStation = 'INTERNAL';
+            else if (e.target.closest('.external-pylons-group')) dropStation = 'EXTERNAL';
+            else if (e.target.closest('.centerline-station-group')) dropStation = 'CENTERLINE';
+            this.equipItemDataToSquadron(sIdx, itemData, dropStation);
           }
         }
       } else if (itemData.type === 'airframe') {
@@ -191,8 +195,9 @@ class ProcurementEquipHandler {
       this.pm.showAlertModal('LIMIT REACHED', `Maximum squadron capacity of ${maxUnits} aircraft reached.`);
       return;
     }
+    const clonedWeapons = (item.weapons || []).map(w => (typeof w === 'object' && w !== null) ? { ...w } : w);
     this.pm.game.procurementSquadron.push({
-      specId: item.specId, chosenGunId: item.chosenGunId, weapons: [...item.weapons], upgrades: [...item.upgrades], isLead: false
+      specId: item.specId, chosenGunId: item.chosenGunId, weapons: clonedWeapons, upgrades: [...item.upgrades], isLead: false
     });
     this.pm.activeBayIndex = this.pm.game.procurementSquadron.length - 1;
     this.pm.updateUI();
@@ -232,7 +237,7 @@ class ProcurementEquipHandler {
 
       const metrics = LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead);
       const wSlotType = wpn.slotType || 'EXTERNAL';
-      let assignedStation = targetStation;
+      let assignedStation = targetStation || this.pm.targetEquipStation;
 
       if (wSlotType === 'CENTERLINE') {
         if (!metrics.hasCenterline || (metrics.centerlineUsed + wpn.slots > metrics.centerlineCapacity)) {
@@ -279,7 +284,13 @@ class ProcurementEquipHandler {
       }
 
       item.weapons.push({ id: itemData.id, station: assignedStation });
-      this.pm.targetEquipStation = null;
+
+      const updatedMetrics = LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead);
+      if (this.pm.targetEquipStation === 'EXTERNAL' && updatedMetrics.remainingExternal <= 0) {
+        this.pm.targetEquipStation = null;
+      } else if (this.pm.targetEquipStation === 'INTERNAL' && updatedMetrics.remainingInternal <= 0) {
+        this.pm.targetEquipStation = null;
+      }
     } else if (itemData.type === 'upgrade') {
       const specU = (window.AIRCRAFT_CATALOG || {})[item.specId];
       if (item.upgrades.length >= (specU.upgradeSockets || 3)) {

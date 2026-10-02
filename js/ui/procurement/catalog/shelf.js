@@ -72,9 +72,15 @@ class ProcurementShelf {
       const sockText = remSockets === 1 ? 'SOCKET' : 'SOCKETS';
       el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSockets} ${sockText} AVAILABLE &bull; DRAG OR CLICK TO EQUIP</span>`;
     } else {
-      const intMsg = active.internalCapacity > 0 ? `INT BAY: ${active.remainingInternal}/${active.internalCapacity} &bull; ` : '';
-      const extMsg = `EXT PYLONS: ${active.remainingExternal}/${active.externalCapacity}`;
-      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${intMsg}${extMsg} AVAILABLE</span>`;
+      if (this.pm.targetEquipStation === 'EXTERNAL') {
+        el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">EQUIPPING TO EXTERNAL PYLONS (${active.remainingExternal}/${active.externalCapacity} SLOTS)</span>`;
+      } else if (this.pm.targetEquipStation === 'INTERNAL') {
+        el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">EQUIPPING TO INTERNAL BAY (${active.remainingInternal}/${active.internalCapacity} SLOTS)</span>`;
+      } else {
+        const intMsg = active.internalCapacity > 0 ? `INT BAY: ${active.remainingInternal}/${active.internalCapacity} &bull; ` : '';
+        const extMsg = `EXT PYLONS: ${active.remainingExternal}/${active.externalCapacity}`;
+        el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${intMsg}${extMsg} AVAILABLE</span>`;
+      }
     }
   }
 
