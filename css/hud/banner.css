@@ -20,9 +20,10 @@
   position: relative;
 }
 
+html.safe-zone-on .tactical-banner,
 body.safe-zone-on .tactical-banner {
-  padding-left: max(12px, var(--safe-zone-inset, 0px));
-  padding-right: max(12px, var(--safe-zone-inset, 0px));
+  padding-left: max(12px, var(--safe-left, 0px)) !important;
+  padding-right: max(12px, var(--safe-right, 0px)) !important;
 }
 
 .pvp-switcher {
@@ -321,8 +322,8 @@ body.has-touch .banner-cam-controls {
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
-    padding-left: max(8px, env(safe-area-inset-left, 8px)) !important;
-    padding-right: max(8px, env(safe-area-inset-right, 8px)) !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
   }
   .tactical-banner::-webkit-scrollbar { display: none; }
   .top-quick-actions { margin-left: 6px; }
@@ -330,4 +331,10 @@ body.has-touch .banner-cam-controls {
 
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
   .tactical-banner { height: 40px !important; padding: 0 8px !important; gap: 6px !important; }
+}
+
+html.safe-zone-on .tactical-banner,
+body.safe-zone-on .tactical-banner {
+  padding-left: max(12px, var(--safe-left, 0px)) !important;
+  padding-right: max(12px, var(--safe-right, 0px)) !important;
 }

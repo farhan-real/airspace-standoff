@@ -182,7 +182,7 @@ body.has-touch .tt-touch-close-bar { display: flex; }
 @media (max-width: 1024px) {
   body.has-touch .hud-tooltip-box.touch-pinned {
     position: fixed !important;
-    bottom: max(8px, env(safe-area-inset-bottom, 8px)) !important;
+    bottom: max(8px, var(--safe-bottom, 0px)) !important;
     left: 50% !important;
     top: auto !important;
     transform: translateX(-50%) !important;

@@ -16,8 +16,9 @@
   max-width: calc(100% - 110px);
 }
 
+html.safe-zone-on .radar-flight-hud,
 body.safe-zone-on .radar-flight-hud {
-  left: max(16px, var(--safe-zone-inset, 0px)) !important;
+  left: max(16px, var(--safe-left, 0px)) !important;
 }
 
 .rfh-panel {

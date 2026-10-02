@@ -21,7 +21,7 @@ class SettingsManager {
         if (parsed.volumes && typeof AudioSys !== 'undefined') {
           AudioSys.setVolumes(parsed.volumes.master, parsed.volumes.rwr, parsed.volumes.fx);
         }
-        this.safeZone = Boolean(parsed.safeZone);
+        this.safeZone = (parsed.safeZone === true);
       }
     } catch (e) {
       console.warn('Could not load settings:', e);

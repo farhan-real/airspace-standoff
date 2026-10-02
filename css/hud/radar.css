@@ -63,8 +63,9 @@
   }
 }
 
+html.safe-zone-on .radar-uplink-banner,
 body.safe-zone-on .radar-uplink-banner {
-  left: max(16px, var(--safe-zone-inset, 0px)) !important;
+  left: max(16px, var(--safe-left, 0px)) !important;
 }
 
 .rwr-warning-box {
@@ -85,8 +86,9 @@ body.safe-zone-on .radar-uplink-banner {
   transition: all 0.16s ease;
 }
 
+html.safe-zone-on .rwr-warning-box,
 body.safe-zone-on .rwr-warning-box {
-  right: max(10px, var(--safe-zone-inset, 0px)) !important;
+  right: max(10px, var(--safe-right, 0px)) !important;
 }
 
 .rwr-warning-box:hover {
@@ -136,8 +138,9 @@ body.safe-zone-on .rwr-warning-box {
   pointer-events: none;
 }
 
+html.safe-zone-on .radar-bottom-controls-dock,
 body.safe-zone-on .radar-bottom-controls-dock {
-  left: max(16px, var(--safe-zone-inset, 0px)) !important;
+  left: max(16px, var(--safe-left, 0px)) !important;
 }
 
 .radar-bottom-controls-dock > * { pointer-events: auto; }
@@ -248,8 +251,9 @@ body.safe-zone-on .radar-bottom-controls-dock {
   pointer-events: none;
 }
 
+html.safe-zone-on .mobile-steering-overlay,
 body.safe-zone-on .mobile-steering-overlay {
-  right: max(12px, var(--safe-zone-inset, 0px)) !important;
+  right: max(12px, var(--safe-right, 0px)) !important;
 }
 
 .mobile-steer-btn {

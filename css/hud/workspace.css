@@ -8,17 +8,9 @@
   max-height: 100dvh;
   width: 100vw;
   overflow: hidden;
-  padding-top: env(safe-area-inset-top, 0);
-  padding-bottom: env(safe-area-inset-bottom, 0);
-  padding-left: env(safe-area-inset-left, 0);
-  padding-right: env(safe-area-inset-right, 0);
+  padding: 0;
   box-sizing: border-box;
   background-color: var(--color-pitch-black);
-}
-
-body.safe-zone-on .hud-container {
-  padding-left: max(var(--safe-zone-inset, 0px), env(safe-area-inset-left, 0px));
-  padding-right: max(var(--safe-zone-inset, 0px), env(safe-area-inset-right, 0px));
 }
 
 .cockpit-workspace {
@@ -149,8 +141,13 @@ body.has-touch .mobile-steering-overlay,
     z-index: 1200;
     background: rgba(0, 0, 0, 0.96);
     flex-direction: column;
-    padding: max(8px, env(safe-area-inset-top, 8px)) max(8px, env(safe-area-inset-right, 8px)) max(8px, env(safe-area-inset-bottom, 8px)) max(8px, env(safe-area-inset-left, 8px));
+    padding: 8px;
     overflow-y: auto;
+  }
+
+  html.safe-zone-on #pane-fleet.squadron-flight-data,
+  body.safe-zone-on #pane-fleet.squadron-flight-data {
+    padding: max(8px, var(--safe-top, 0px)) max(8px, var(--safe-right, 0px)) max(8px, var(--safe-bottom, 0px)) max(8px, var(--safe-left, 0px));
   }
 
   #pane-fleet.squadron-flight-data.drawer-open {
@@ -222,12 +219,17 @@ body.has-touch .mobile-steering-overlay,
     inset: 0;
     z-index: 1200;
     background: rgba(0, 0, 0, 0.96);
-    padding: max(8px, env(safe-area-inset-top, 8px)) max(12px, env(safe-area-inset-right, 12px)) max(8px, env(safe-area-inset-bottom, 8px)) max(12px, env(safe-area-inset-left, 12px));
+    padding: 8px 12px;
     overflow-y: auto;
     box-sizing: border-box;
     width: 100vw;
     height: 100vh;
     height: 100dvh;
+  }
+
+  html.safe-zone-on #pane-fleet.squadron-flight-data,
+  body.safe-zone-on #pane-fleet.squadron-flight-data {
+    padding: max(8px, var(--safe-top, 0px)) max(12px, var(--safe-right, 0px)) max(8px, var(--safe-bottom, 0px)) max(12px, var(--safe-left, 0px));
   }
 
   #pane-fleet.squadron-flight-data.drawer-open {

@@ -23,9 +23,10 @@
   box-sizing: border-box;
 }
 
+html.safe-zone-on .procurement-window,
 body.safe-zone-on .procurement-window {
-  padding-left: max(14px, var(--safe-zone-inset, 0px)) !important;
-  padding-right: max(14px, var(--safe-zone-inset, 0px)) !important;
+  padding-left: max(14px, var(--safe-left, 0px)) !important;
+  padding-right: max(14px, var(--safe-right, 0px)) !important;
 }
 
 .procurement-mobile-tabs {

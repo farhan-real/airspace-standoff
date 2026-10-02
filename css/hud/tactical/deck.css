@@ -17,6 +17,12 @@
   box-sizing: border-box;
 }
 
+html.safe-zone-on .tactical-deck-bay,
+body.safe-zone-on .tactical-deck-bay {
+  padding-left: max(10px, var(--safe-left, 0px)) !important;
+  padding-right: max(10px, var(--safe-right, 0px)) !important;
+}
+
 .deck-header {
   display: flex;
   justify-content: space-between;
@@ -213,6 +219,11 @@
     max-height: 56px !important;
     padding: 3px 8px !important;
   }
+  html.safe-zone-on .tactical-deck-bay,
+  body.safe-zone-on .tactical-deck-bay {
+    padding-left: max(8px, var(--safe-left, 0px)) !important;
+    padding-right: max(8px, var(--safe-right, 0px)) !important;
+  }
   .deck-header { display: none !important; }
   .deck-grid { gap: 6px !important; align-items: center !important; padding-bottom: 0 !important; }
   .maneuver-card {
@@ -235,6 +246,11 @@
     min-height: 54px !important;
     max-height: 54px !important;
     padding: 3px 8px !important;
+  }
+  html.safe-zone-on .tactical-deck-bay,
+  body.safe-zone-on .tactical-deck-bay {
+    padding-left: max(8px, var(--safe-left, 0px)) !important;
+    padding-right: max(8px, var(--safe-right, 0px)) !important;
   }
   .deck-header { display: none !important; }
   .deck-grid { gap: 6px !important; align-items: center !important; padding-bottom: 0 !important; }
