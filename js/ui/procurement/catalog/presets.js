@@ -136,7 +136,7 @@ class ProcurementPresets {
 
     const templateBtn = document.createElement('button');
     templateBtn.className = 'preset-btn highlight';
-    templateBtn.textContent = '+ AIRCRAFT PRESETS';
+    templateBtn.textContent = 'AIRCRAFT PRESETS';
     templateBtn.onclick = () => {
       procurementManager.openPreconfiguredAircraftModal();
     };
@@ -144,7 +144,7 @@ class ProcurementPresets {
 
     const saveBtn = document.createElement('button');
     saveBtn.className = 'preset-btn highlight';
-    saveBtn.textContent = '+ SAVE SQUADRON';
+    saveBtn.textContent = 'SAVE SQUADRON';
     saveBtn.onclick = () => {
       if (procurementManager.game.procurementSquadron.length === 0) {
         procurementManager.showAlertModal('EMPTY SQUADRON', 'Cannot save an empty squadron. Add aircraft first.');

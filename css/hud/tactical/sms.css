@@ -1,33 +1,34 @@
-/* AIRSPACE STANDOFF: Stores Management System (SMS) Stylesheet */
+/* AIRSPACE STANDOFF: Stores Management System (SMS) with Obsidian Glass */
 
 .pylon-bay,
 .pylon-rack-grid {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .target-solution-box {
   border-radius: var(--radius-card);
-  padding: 6px 8px;
+  padding: 7px 9px;
   font-family: var(--font-untitled-sans);
   flex-shrink: 0;
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
 .target-solution-box.no-target {
-  background: var(--liquid-glass-bg);
-  border: 1px dashed var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  box-shadow: var(--glass-3d-well-shadow);
   color: var(--color-fog-veil);
   font-size: 0.58rem;
   text-align: center;
 }
 
 .target-solution-box.active-target {
-  background: var(--liquid-glass-bg);
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.22) 0%, rgba(4, 10, 28, 0.75) 100%);
   border: 1px solid var(--theme-primary);
   border-top: 1px solid var(--theme-accent);
-  box-shadow: var(--glass-shadow), 0 0 12px var(--theme-primary-dim);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 14px var(--theme-primary-dim);
 }
 
 .tsb-header {
@@ -35,8 +36,8 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.68rem;
-  font-weight: 600;
-  color: var(--color-ice-highlight);
+  font-weight: 700;
+  color: var(--color-pure-white);
   border-bottom: 1px solid var(--glass-border);
   padding-bottom: 3px;
   margin-bottom: 3px;
@@ -45,6 +46,8 @@
 .tsb-dist {
   color: var(--theme-accent);
   font-family: var(--font-dotdigital);
+  font-weight: 700;
+  text-shadow: 0 0 8px var(--theme-accent-glow);
 }
 
 .tsb-grid {
@@ -63,19 +66,20 @@
 .tsb-grid b {
   color: var(--color-pure-white);
   font-family: var(--font-dotdigital);
+  font-weight: 700;
 }
 
 .autocannon-status-card {
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
-  padding: 5px 8px;
+  padding: 6px 9px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   flex-shrink: 0;
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
 .autocannon-status-card .pylon-top-row span#gun-ui-name {
@@ -97,33 +101,34 @@
 
 .armed-indicator {
   color: var(--stat-tier-2);
-  font-weight: 600;
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(0, 245, 160, 0.5);
 }
 
 .pylon-item-card {
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
-  padding: 5px 8px;
+  padding: 6px 9px;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  transition: all 0.12s ease;
-  box-shadow: var(--glass-shadow);
+  transition: all 0.14s ease;
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
 .pylon-item-card.empty,
 .pylon-item-card.depleted-rack,
 .mob-compact-pylon.depleted-rack {
-  opacity: 0.38;
+  opacity: 0.35;
 }
 
 .pylon-station-tag {
   font-size: 0.52rem;
   font-family: var(--font-dotdigital);
   font-weight: 700;
-  padding: 1px 4px;
+  padding: 2px 5px;
   border-radius: var(--radius-badge);
   letter-spacing: 0.4px;
   display: inline-flex;
@@ -134,20 +139,20 @@
 }
 
 .station-internal-tag {
-  background: rgba(20, 184, 166, 0.18);
-  border: 1px solid rgba(20, 184, 166, 0.40);
-  color: #2dd4bf;
+  background: rgba(0, 245, 160, 0.22);
+  border: 1px solid rgba(0, 245, 160, 0.5);
+  color: var(--stat-tier-2);
 }
 
 .station-external-tag {
-  background: var(--theme-primary-dim);
-  border: 1px solid var(--glass-border);
+  background: rgba(2, 132, 199, 0.28);
+  border: 1px solid rgba(56, 189, 248, 0.5);
   color: var(--theme-accent);
 }
 
 .station-centerline-tag {
-  background: rgba(245, 158, 11, 0.18);
-  border: 1px solid rgba(245, 158, 11, 0.40);
+  background: rgba(251, 191, 36, 0.22);
+  border: 1px solid rgba(251, 191, 36, 0.5);
   color: #fbbf24;
 }
 
@@ -160,7 +165,7 @@
 .pylon-name {
   color: #ffffff;
   font-size: 0.70rem;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -202,58 +207,65 @@
 }
 
 .pk-progress-bar-bg {
-  height: 4px;
-  background: rgba(255, 255, 255, 0.1);
+  height: 5px;
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-pill);
+  box-shadow: var(--glass-3d-well-shadow);
   overflow: hidden;
 }
 
 .pk-progress-fill {
   height: 100%;
   background: var(--theme-accent);
-  transition: width 0.12s ease;
+  box-shadow: 0 0 8px var(--theme-accent);
+  transition: width 0.14s ease;
 }
 
 .btn-fire-pylon {
-  background: var(--theme-primary-dim);
-  border: 1px solid var(--theme-primary);
-  border-top: 1px solid var(--theme-accent);
+  background: var(--glass-3d-btn-bg);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   color: #ffffff;
   font-size: 0.64rem;
-  font-weight: 500;
+  font-weight: 600;
   font-family: var(--font-untitled-sans);
   padding: 4px 10px;
   text-align: center;
   margin-top: 2px;
   cursor: pointer;
   border-radius: var(--radius-btn);
-  transition: all 0.12s ease;
+  box-shadow: var(--glass-3d-btn-shadow);
+  transition: all 0.14s ease;
 }
 
 .btn-fire-pylon:hover:not(:disabled) {
-  background: var(--theme-primary);
+  background: var(--glass-3d-btn-bg-hover);
   border-color: var(--theme-accent);
-  box-shadow: 0 0 10px var(--theme-primary-glow);
+  border-top-color: #ffffff;
+  transform: translateY(-1px);
 }
 
 .btn-fire-pylon:disabled {
-  opacity: 0.32;
+  opacity: 0.35;
   border-color: rgba(255, 255, 255, 0.05);
   color: var(--color-fog-veil);
   cursor: not-allowed;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: none;
 }
 
 .mob-compact-cannon {
   grid-column: 1 / -1;
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
   padding: 5px 8px;
   margin-bottom: 3px;
   font-family: var(--font-untitled-sans);
   box-sizing: border-box;
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
 .mob-cannon-row {
@@ -264,11 +276,11 @@
 }
 
 .mob-compact-pylon {
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
-  padding: 5px 6px;
+  padding: 5px 7px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -276,6 +288,7 @@
   font-family: var(--font-untitled-sans);
   box-sizing: border-box;
   min-height: 72px;
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
 .mob-compact-pylon.empty {
@@ -293,7 +306,7 @@
 .mob-pylon-name {
   color: #ffffff;
   font-size: 0.65rem;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -344,12 +357,13 @@
 }
 
 .micro-spec-btn {
-  background: var(--glass-bg);
+  background: var(--glass-3d-btn-bg);
   border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   color: var(--theme-accent);
   font-family: var(--font-untitled-sans);
   font-size: 0.54rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 1px 5px;
   border-radius: var(--radius-badge);
   cursor: pointer;

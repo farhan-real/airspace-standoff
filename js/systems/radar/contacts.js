@@ -20,34 +20,20 @@ class RadarContactsRenderer {
     const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
     const isInspection = Boolean(window.Game && window.Game.inspection && (window.Game.inspection.isOpen || window.Game.inspection.enabled));
     const mainCol = isBlue ? '#00f0ff' : '#ef4444';
-    const isMobile = (cssWidth < 800);
 
     let isLastFew = false;
     if (!is2P && isEnemy) {
       let liveCount = 0;
       for (let i = 0; i < list.length; i++) {
-        const item = list[i];
-        if (item && item.hp > 0.05) liveCount++;
+        if (list[i] && list[i].hp > 0.05) liveCount++;
       }
-      const uplinkThreshold = (window.CONFIG && window.CONFIG.UPLINK_THRESHOLD_FIGHTERS !== undefined) ? window.CONFIG.UPLINK_THRESHOLD_FIGHTERS : 3;
-      isLastFew = (liveCount > 0 && liveCount <= uplinkThreshold);
+      isLastFew = (liveCount > 0 && liveCount <= 3);
     }
 
     ctx.save();
-    if (!isMobile) {
-      ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 2;
-    }
-
-    for (const a of list) {
+    for (let i = 0; i < list.length; i++) {
+      const a = list[i];
       if (!a || a.hp <= 0.05) continue;
-
-      if (isNaN(a.x) || isNaN(a.y)) {
-        a.x = isBlue ? 20.0 : ((window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) ? window.CONFIG.THEATER_WIDTH_KM - 20.0 : 130.0);
-        a.y = 50.0;
-        a.speed = a.effectiveMaxSpeed || 0.95;
-        a.heading = isBlue ? 0.0 : Math.PI;
-      }
 
       const px = Math.round(cam.toScreenX ? cam.toScreenX(a.x) : cam.toScreen(a.x, a.y).x);
       const py = Math.round(cam.toScreenY ? cam.toScreenY(a.y) : cam.toScreen(a.x, a.y).y);
@@ -59,7 +45,6 @@ class RadarContactsRenderer {
       const relDistKm = (activeUnit && activeUnit.hp > 0.05 && activeUnit.id !== a.id)
         ? Math.round(Math.hypot(a.x - activeUnit.x, a.y - activeUnit.y)) : null;
       const rangeTag = (relDistKm !== null) ? (' R:' + relDistKm + 'km') : '';
-
       const safeModel = cleanFn ? cleanFn(a.spec ? a.spec.id : 'JET') : (a.spec ? a.spec.id : 'JET');
       const safeCallsign = cleanFn ? cleanFn(a.callsign || 'PILOT') : (a.callsign || 'PILOT');
 
@@ -67,12 +52,9 @@ class RadarContactsRenderer {
       const cssHeight = cam.cssHeight || 500;
       const clampedX = Math.max(margin, Math.min(cssWidth - margin, px));
       const clampedY = Math.max(margin, Math.min(cssHeight - margin, py));
-      const isOffScreen = (px !== clampedX || py !== clampedY);
-
-      if (isOffScreen) {
+      if (px !== clampedX || py !== clampedY) {
         if (typeof RadarContactsAuxRenderer !== 'undefined') {
-          const rawPos = { x: px, y: py };
-          RadarContactsAuxRenderer.drawOffscreenIndicator(ctx, rawPos, clampedX, clampedY, cssWidth, cssHeight, isIdentified, isAce, isBlue, safeModel, relDistKm);
+          RadarContactsAuxRenderer.drawOffscreenIndicator(ctx, { x: px, y: py }, clampedX, clampedY, cssWidth, cssHeight, isIdentified, isAce, isBlue, safeModel, relDistKm);
         }
         continue;
       }
@@ -87,52 +69,21 @@ class RadarContactsRenderer {
         const gunRangeKm = a.gun.rangeKm || 4.6;
         const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0 };
         const screenRadius = (gunRangeKm / cfg.THEATER_WIDTH_KM) * cssWidth * cam.zoom;
-
         if (screenRadius > 6) {
           ctx.save();
-          const coneDeg = a.gun.coneAngleDeg || 55;
-          const halfConeRad = ((coneDeg / 2.0) * Math.PI) / 180.0;
+          const halfConeRad = (((a.gun.coneAngleDeg || 55) / 2.0) * Math.PI) / 180.0;
           const hdg = a.heading || 0;
-          const isDEW = Boolean(a.gun.damagePerPulse || a.gun.id.startsWith('PLSL') || a.gun.id === 'DE-PULSE' || a.gun.id === 'EML_GUN');
-          const rangeCol = isDEW ? 'rgba(0, 240, 255, 0.45)' : 'rgba(56, 189, 248, 0.40)';
-          const fillCol = isDEW ? 'rgba(0, 240, 255, 0.06)' : 'rgba(56, 189, 248, 0.05)';
-
           ctx.beginPath();
           ctx.moveTo(px, py);
           ctx.arc(px, py, screenRadius, hdg - halfConeRad, hdg + halfConeRad);
           ctx.closePath();
-          ctx.fillStyle = fillCol;
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.06)';
           ctx.fill();
-          ctx.strokeStyle = rangeCol;
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.40)';
           ctx.lineWidth = 1.2;
           ctx.stroke();
-
-          ctx.beginPath();
-          ctx.arc(px, py, screenRadius, 0, Math.PI * 2);
-          ctx.strokeStyle = isDEW ? 'rgba(0, 240, 255, 0.20)' : 'rgba(56, 189, 248, 0.18)';
-          ctx.lineWidth = 1.0;
-          ctx.setLineDash([3, 4]);
-          ctx.stroke();
-
           ctx.restore();
         }
-      }
-
-      if (isLastFew && isIdentified) {
-        const pulse = (performance.now() % 1400) / 1400;
-        const ringRadius = 14 + pulse * 14;
-        ctx.save();
-        ctx.strokeStyle = isAce ? '#ffd700' : '#00f0ff';
-        ctx.lineWidth = 1.4;
-        ctx.globalAlpha = Math.max(0.15, 1.0 - pulse);
-        ctx.beginPath();
-        ctx.arc(px, py, ringRadius, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.arc(px, py, 9, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
       }
 
       const vLen = (a.speed || 0.8) * 18 * cam.zoom;
@@ -174,10 +125,7 @@ class RadarContactsRenderer {
           ctx.strokeStyle = '#ffd700';
           ctx.lineWidth = 1.8;
           ctx.beginPath();
-          ctx.moveTo(0, -11);
-          ctx.lineTo(11, 0);
-          ctx.lineTo(0, 11);
-          ctx.lineTo(-11, 0);
+          ctx.moveTo(0, -11); ctx.lineTo(11, 0); ctx.lineTo(0, 11); ctx.lineTo(-11, 0);
           ctx.closePath();
           ctx.stroke();
         } else if (a.isFlightLead) {
@@ -190,46 +138,34 @@ class RadarContactsRenderer {
 
       const labelX = px + 12;
       const labelY = py - 8;
-
       const fl = 'FL' + Math.round((a.altFt || 30000) / 100);
       const mch = 'M ' + (a.speed || 0.8).toFixed(2);
-
-      const rtbTag = a.isRTB ? ' [RETURN TO BASE]' : '';
+      const rtbTag = a.isRTB ? ' [RTB]' : '';
       const leadTag = (isAce && isIdentified) ? ' [ACE]' : ((a.isFlightLead && isIdentified) ? ' LEAD' : '');
       const pinpointTag = (isLastFew && isIdentified) ? ' PINPOINTED' : '';
 
       if (declutterMode && !isSelected && !isTgt) {
-        ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+        ctx.font = '800 10px monospace';
         ctx.fillStyle = !isIdentified ? '#f97316' : ((isAce && isIdentified) ? '#ffd700' : (isBlue ? '#38bdf8' : '#ef4444'));
-        if (!isIdentified) {
-          ctx.fillText(cleanFn('BOGEY' + rangeTag), labelX, labelY);
-        } else {
-          ctx.fillText(cleanFn(safeModel + leadTag + pinpointTag), labelX, labelY);
-        }
+        ctx.fillText(cleanFn(!isIdentified ? 'BOGEY' + rangeTag : safeModel + leadTag + pinpointTag), labelX, labelY);
       } else {
         if (!isIdentified) {
-          ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+          ctx.font = '800 10.5px monospace';
           ctx.fillStyle = isSelected ? '#ffffff' : '#f97316';
           ctx.fillText(cleanFn('BOGEY' + rangeTag), labelX, labelY);
-
-          ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+          ctx.font = '700 9px monospace';
           ctx.fillStyle = '#8494ab';
           ctx.fillText(cleanFn(mch + ' ' + fl), labelX, labelY + 10);
         } else {
           const displayHp = a.hp > 0.05 ? Math.max(1, Math.round(a.hp)) : 0;
-          const hpText = displayHp + '/' + a.maxHp + ' HP';
-
-          ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+          ctx.font = '800 10.5px monospace';
           ctx.fillStyle = isAce ? '#ffd700' : (isSelected ? '#ffffff' : (isBlue ? '#00f0ff' : '#ef4444'));
           ctx.fillText(cleanFn(safeModel + leadTag + rtbTag + rangeTag + pinpointTag), labelX, labelY);
-
-          ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+          ctx.font = '700 9px monospace';
           ctx.fillStyle = isAce ? '#fef08a' : '#94a3b8';
           ctx.fillText(cleanFn(safeCallsign + ' ' + cat), labelX, labelY + 10);
-
-          ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
           ctx.fillStyle = displayHp <= 1 ? '#ef4444' : (isBlue ? '#00f5a0' : '#f87171');
-          ctx.fillText(cleanFn(mch + ' ' + fl + ' ' + hpText), labelX, labelY + 20);
+          ctx.fillText(cleanFn(mch + ' ' + fl + ' ' + displayHp + '/' + a.maxHp + ' HP'), labelX, labelY + 20);
         }
       }
 

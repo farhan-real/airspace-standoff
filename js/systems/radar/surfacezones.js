@@ -1,16 +1,15 @@
 /**
- * AIRSPACE STANDOFF // Tactical Radar Viewport: Surface Facilities & Civilian Traffic
+ * AIRSPACE STANDOFF: Tactical Radar Viewport: Surface Facilities & Civilian Traffic
  */
 
 class RadarTacticalSurfaceRenderer {
   static drawSurface(ctx, cam, units, team, detectedSet, activeUnit, selectedTarget, cssWidth, declutterMode, cleanFn) {
     if (!units || units.length === 0) return;
     const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0 };
-    const isMobile = (cssWidth < 800);
     ctx.save();
-    if (!isMobile) { ctx.shadowColor = '#000000'; ctx.shadowBlur = 2; }
 
-    for (const s of units) {
+    for (let i = 0; i < units.length; i++) {
+      const s = units[i];
       if (!s || s.hp <= 0 || typeof s.x !== 'number') continue;
       const isSelectedSurface = Boolean(selectedTarget && selectedTarget.id === s.id);
       if (!cam.showGroundTargets && !isSelectedSurface) continue;
@@ -55,7 +54,7 @@ class RadarTacticalSurfaceRenderer {
       }
 
       if (!declutterMode || isSelectedSurface) {
-        ctx.font = '700 9.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+        ctx.font = '700 9.5px monospace';
         ctx.fillStyle = col;
         const shortCode = s.type === 'BUNKER' ? 'HQ' : (s.type === 'EW_JAMMER' ? 'EW JAMMER' : (s.type === 'RADAR_ARRAY' ? 'RADAR' : (s.isIndestructible ? 'AMMO DEPOT [SAFE]' : (s.name || s.type))));
         const distKm = (activeUnit && activeUnit.hp > 0) ? Math.round(Math.hypot(s.x - activeUnit.x, s.y - activeUnit.y)) : null;
@@ -69,11 +68,10 @@ class RadarTacticalSurfaceRenderer {
 
   static drawCivilianTraffic(ctx, cam, civilians, detectedSet, activeUnit, declutterMode, cssWidth, cleanFn) {
     if (!civilians || civilians.length === 0) return;
-    const isMobile = (cssWidth < 800);
     ctx.save();
-    if (!isMobile) { ctx.shadowColor = '#000000'; ctx.shadowBlur = 2; }
 
-    for (const civ of civilians) {
+    for (let i = 0; i < civilians.length; i++) {
+      const civ = civilians[i];
       if (!civ || civ.hp <= 0 || typeof civ.x !== 'number') continue;
       const pos = cam.toScreen(civ.x, civ.y);
       const px = Math.round(pos.x);
@@ -105,7 +103,6 @@ class RadarTacticalSurfaceRenderer {
 
         ctx.fillStyle = 'rgba(56, 189, 248, 0.28)'; ctx.fill();
         ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.4; ctx.stroke();
-
         ctx.fillStyle = '#38bdf8';
         ctx.fillRect(-1.5, 4.2, 3.2, 1.5);
         ctx.fillRect(-1.5, -5.7, 3.2, 1.5);
@@ -131,33 +128,26 @@ class RadarTacticalSurfaceRenderer {
       const labelY = py - 7;
 
       if (declutterMode) {
-        ctx.font = '800 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+        ctx.font = '800 10px monospace';
         ctx.fillStyle = isIdentified ? '#38bdf8' : '#f97316';
-        const tag = isIdentified ? 'CIVILIAN' : ('BOGEY' + (rangeTag ? ` [${relDistKm}km]` : ''));
-        ctx.fillText(cleanFn(tag), labelX, labelY + 6);
+        ctx.fillText(cleanFn(isIdentified ? 'CIVILIAN' : ('BOGEY' + (rangeTag ? ` [${relDistKm}km]` : ''))), labelX, labelY + 6);
       } else {
         if (!isIdentified) {
-          ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+          ctx.font = '800 10.5px monospace';
           ctx.fillStyle = '#f97316';
           ctx.fillText(cleanFn('BOGEY [?]' + rangeTag), labelX, labelY);
-
-          ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+          ctx.font = '700 9px monospace';
           ctx.fillStyle = '#8494ab';
           ctx.fillText(cleanFn(mch + ' ' + fl), labelX, labelY + 11);
         } else {
-          ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+          ctx.font = '800 10.5px monospace';
           ctx.fillStyle = '#38bdf8';
           ctx.fillText(cleanFn('CIVILIAN ' + rawCode), labelX, labelY);
-
-          ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+          ctx.font = '700 9px monospace';
           ctx.fillStyle = '#94a3b8';
-          const modelName = civ.model || civ.name || 'Commercial Airliner';
-          ctx.fillText(cleanFn(modelName + rangeTag), labelX, labelY + 11);
-
-          ctx.font = '700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+          ctx.fillText(cleanFn((civ.model || civ.name || 'Commercial Airliner') + rangeTag), labelX, labelY + 11);
           ctx.fillStyle = '#00f5a0';
-          const hpText = Math.round(civ.hp) + '/' + (civ.maxHp || 6) + ' HP';
-          ctx.fillText(cleanFn(mch + ' ' + fl + ' ' + hpText), labelX, labelY + 22);
+          ctx.fillText(cleanFn(mch + ' ' + fl + ' ' + Math.round(civ.hp) + '/' + (civ.maxHp || 6) + ' HP'), labelX, labelY + 22);
         }
       }
     }

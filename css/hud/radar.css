@@ -2,7 +2,7 @@
 
 .radar-viewport {
   position: relative;
-  background: var(--color-pitch-black);
+  background: #000000 !important;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -24,7 +24,6 @@
   transform: translateZ(0);
 }
 
-/* SATELLITE UPLINK BANNER: Situated directly beneath the Speed, Altitude and Flight Details Tape */
 .radar-uplink-banner {
   position: absolute;
   top: 66px;
@@ -32,10 +31,10 @@
   z-index: 8;
   pointer-events: none;
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
   border: 1px solid var(--theme-accent);
-  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: var(--radius-badge);
   padding: 3px 10px;
   font-family: var(--font-dotdigital);
@@ -43,7 +42,7 @@
   font-weight: 700;
   color: var(--color-ice-highlight);
   letter-spacing: 0.5px;
-  box-shadow: 0 0 14px var(--theme-primary-glow), var(--glass-highlight);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 16px var(--theme-primary-glow);
   white-space: nowrap;
   animation: radarUplinkGlow 2.2s infinite ease-in-out;
   display: inline-flex;
@@ -51,18 +50,16 @@
   gap: 6px;
 }
 
-.radar-uplink-banner.hidden {
-  display: none !important;
-}
+.radar-uplink-banner.hidden { display: none !important; }
 
 @keyframes radarUplinkGlow {
   0%, 100% {
     border-color: var(--theme-accent);
-    box-shadow: 0 0 10px var(--theme-primary-glow);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 12px var(--theme-primary-glow);
   }
   50% {
     border-color: #ffffff;
-    box-shadow: 0 0 18px var(--theme-primary-glow);
+    box-shadow: inset 0 1px 0 #ffffff, 0 0 20px var(--theme-primary-glow);
   }
 }
 
@@ -78,25 +75,28 @@ body.safe-zone-on .radar-uplink-banner {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-badge);
-  padding: 4px 8px;
+  padding: 4px 9px;
   cursor: pointer;
-  box-shadow: var(--glass-shadow);
-  transition: all 0.14s ease;
+  box-shadow: var(--glass-3d-card-shadow);
+  transition: all 0.16s ease;
 }
 
 body.safe-zone-on .rwr-warning-box {
   right: max(10px, var(--safe-zone-inset, 0px)) !important;
 }
 
-.rwr-warning-box:hover { border-color: var(--glass-border-hover); }
+.rwr-warning-box:hover {
+  border-color: var(--glass-border-hover);
+  transform: translateY(-1px);
+}
 
 .rwr-label {
   font-size: 0.52rem;
-  font-weight: 600;
+  font-weight: 700;
   font-family: var(--font-dotdigital);
   color: var(--text-muted);
 }
@@ -105,14 +105,19 @@ body.safe-zone-on .rwr-warning-box {
   font-size: 0.62rem;
   font-weight: 700;
   font-family: var(--font-dotdigital);
-  padding: 2px 4px;
+  padding: 2px 5px;
   border-radius: var(--radius-badge);
   letter-spacing: 0.5px;
 }
 
-.rwr-status.clean { color: var(--stat-tier-2); }
-.rwr-status.sweep { color: var(--stat-tier-3); }
-.rwr-status.lock { background: var(--color-red); color: #fff; }
+.rwr-status.clean { color: var(--stat-tier-2); text-shadow: 0 0 6px rgba(0, 245, 160, 0.5); }
+.rwr-status.sweep { color: var(--stat-tier-3); text-shadow: 0 0 6px rgba(251, 191, 36, 0.5); }
+.rwr-status.lock {
+  background: #f43f5e;
+  border: 1px solid #ffffff;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.7);
+}
 
 .rwr-subtext {
   font-size: 0.50rem;
@@ -120,7 +125,6 @@ body.safe-zone-on .rwr-warning-box {
   color: var(--color-moon-mist);
 }
 
-/* Bottom-left radar controls dock */
 .radar-bottom-controls-dock {
   display: flex;
   position: absolute;
@@ -136,23 +140,20 @@ body.safe-zone-on .radar-bottom-controls-dock {
   left: max(16px, var(--safe-zone-inset, 0px)) !important;
 }
 
-.radar-bottom-controls-dock > * {
-  pointer-events: auto;
-}
+.radar-bottom-controls-dock > * { pointer-events: auto; }
 
-/* Radar layer toggles: 2-button bar (Declutter & Ground) */
 .radar-floating-cam-bar {
   display: flex;
   height: 32px;
   box-sizing: border-box;
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-btn);
   padding: 2px 4px;
   gap: 4px;
   align-items: center;
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--glass-3d-card-shadow);
   flex-shrink: 0;
 }
 
@@ -162,29 +163,30 @@ body.safe-zone-on .radar-bottom-controls-dock {
   color: var(--color-moon-mist);
   font-family: var(--font-untitled-sans);
   font-size: 0.62rem;
-  font-weight: 500;
+  font-weight: 600;
   height: 26px;
   min-width: 26px;
-  padding: 0 6px;
+  padding: 0 7px;
   border-radius: var(--radius-badge);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.12s ease;
+  transition: all 0.14s ease;
   box-sizing: border-box;
 }
 
 .radar-floating-cam-bar .cam-btn:hover {
-  background: var(--glass-bg-hover);
+  background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
 
 .radar-floating-cam-bar .cam-btn:active,
 .radar-floating-cam-bar .cam-btn.active {
-  background: var(--theme-primary);
+  background: rgba(2, 132, 199, 0.4);
   color: #ffffff;
   border-color: var(--theme-accent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .radar-floating-cam-bar .prominent-cam-btn {
@@ -194,12 +196,11 @@ body.safe-zone-on .radar-bottom-controls-dock {
   min-width: 80px;
 }
 
-/* Separated Fleet button: Hidden on desktop; active on mobile/Android */
 #btn-mobile-open-fleet.fleet-btn {
   display: none;
   height: 32px;
   box-sizing: border-box;
-  background: var(--liquid-glass-bg);
+  background: var(--glass-3d-btn-bg);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   color: #ffffff;
@@ -210,7 +211,7 @@ body.safe-zone-on .radar-bottom-controls-dock {
   min-width: 64px;
   padding: 0 10px;
   border-radius: var(--radius-btn);
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--glass-3d-btn-shadow);
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -220,46 +221,20 @@ body.safe-zone-on .radar-bottom-controls-dock {
 }
 
 #btn-mobile-open-fleet.fleet-btn:hover {
-  background: var(--glass-bg-hover);
-  border-color: var(--glass-border-hover);
-  color: #ffffff;
-}
-
-#btn-mobile-open-fleet.fleet-btn:active {
-  background: var(--theme-primary);
+  background: var(--glass-3d-btn-bg-hover);
   border-color: var(--theme-accent);
-  color: #ffffff;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 1024px) {
-  #btn-mobile-open-fleet.fleet-btn {
-    display: inline-flex !important;
-  }
+  #btn-mobile-open-fleet.fleet-btn { display: inline-flex !important; }
 }
 
 @media (max-width: 480px) {
-  .radar-bottom-controls-dock {
-    left: 8px;
-    bottom: 8px;
-    gap: 5px;
-  }
-  .radar-floating-cam-bar {
-    height: 30px;
-    padding: 2px 3px;
-    gap: 3px;
-  }
-  .radar-floating-cam-bar .prominent-cam-btn {
-    height: 24px;
-    min-width: 64px;
-    font-size: 0.54rem;
-    padding: 0 5px;
-  }
-  #btn-mobile-open-fleet.fleet-btn {
-    height: 30px;
-    min-width: 52px;
-    padding: 0 6px;
-    font-size: 0.56rem;
-  }
+  .radar-bottom-controls-dock { left: 8px; bottom: 8px; gap: 5px; }
+  .radar-floating-cam-bar { height: 30px; padding: 2px 3px; gap: 3px; }
+  .radar-floating-cam-bar .prominent-cam-btn { height: 24px; min-width: 64px; font-size: 0.54rem; padding: 0 5px; }
+  #btn-mobile-open-fleet.fleet-btn { height: 30px; min-width: 52px; padding: 0 6px; font-size: 0.56rem; }
 }
 
 .mobile-steering-overlay {
@@ -279,36 +254,28 @@ body.safe-zone-on .mobile-steering-overlay {
 
 .mobile-steer-btn {
   pointer-events: auto;
-  background: var(--liquid-glass-bg);
+  background: var(--glass-3d-btn-bg);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   color: var(--theme-accent);
   padding: 6px 14px;
   font-family: var(--font-untitled-sans);
   font-size: 0.66rem;
-  font-weight: 600;
+  font-weight: 700;
   height: 34px;
   border-radius: var(--radius-btn);
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--glass-3d-btn-shadow);
   touch-action: manipulation;
   transition: all 0.14s ease;
 }
 
 .mobile-steer-btn:active {
-  background: var(--theme-primary);
+  background: rgba(2, 132, 199, 0.5);
   color: #ffffff;
+  transform: translateY(1px);
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
-  .rwr-warning-box {
-    top: 6px;
-    right: 6px;
-    padding: 2px 5px;
-  }
-  .radar-uplink-banner {
-    top: 52px !important;
-    left: 8px !important;
-    font-size: 0.54rem !important;
-    padding: 2px 7px !important;
-  }
+  .rwr-warning-box { top: 6px; right: 6px; padding: 2px 5px; }
+  .radar-uplink-banner { top: 52px !important; left: 8px !important; font-size: 0.54rem !important; padding: 2px 7px !important; }
 }

@@ -1,8 +1,10 @@
-/* AIRSPACE STANDOFF: Header Banner C4ISR Console */
+/* AIRSPACE STANDOFF: Header Banner Console with Aerospace Obsidian Glass */
 
 .tactical-banner {
   height: 44px;
   background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
   border-bottom: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   display: flex;
@@ -11,7 +13,7 @@
   padding: 0 12px;
   gap: 8px;
   flex-shrink: 0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 8px 24px rgba(0, 0, 0, 0.85);
   white-space: nowrap;
   overflow: hidden;
   z-index: 20;
@@ -25,11 +27,12 @@ body.safe-zone-on .tactical-banner {
 
 .pvp-switcher {
   display: flex;
-  gap: 2px;
-  background: rgba(4, 9, 22, 0.85);
+  gap: 3px;
+  background: var(--glass-3d-well-bg);
   padding: 2px;
   border-radius: var(--radius-btn);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-3d-well-border);
+  box-shadow: var(--glass-3d-well-shadow);
   flex-shrink: 0;
 }
 
@@ -38,28 +41,32 @@ body.safe-zone-on .tactical-banner {
 }
 
 .pvp-team-btn {
-  border: none;
+  border: 1px solid transparent;
   font-family: var(--font-untitled-sans);
   font-size: 0.64rem;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: var(--radius-btn);
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: var(--radius-badge);
   cursor: pointer;
   color: var(--text-muted);
   background: transparent;
-  transition: all 0.12s ease;
+  transition: all 0.14s ease;
 }
 
 .pvp-team-btn.blue.active {
-  background: var(--theme-primary);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.40) 0%, rgba(2, 132, 199, 0.65) 100%);
+  border-color: var(--theme-accent);
+  border-top-color: #ffffff;
   color: #ffffff;
-  box-shadow: 0 0 8px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 12px var(--theme-primary-glow);
 }
 
 .pvp-team-btn.red.active {
-  background: var(--color-red);
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.40) 0%, rgba(136, 19, 55, 0.65) 100%);
+  border-color: #f43f5e;
+  border-top-color: #ffffff;
   color: #ffffff;
-  box-shadow: 0 0 8px rgba(244, 63, 94, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 12px rgba(244, 63, 94, 0.55);
 }
 
 .banner-time-coords-cluster {
@@ -73,18 +80,19 @@ body.safe-zone-on .tactical-banner {
   display: flex;
   align-items: baseline;
   gap: 5px;
-  background: rgba(4, 9, 22, 0.85);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-btn);
-  padding: 3px 8px;
+  padding: 3px 9px;
   font-family: var(--font-dotdigital);
   flex-shrink: 0;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .timer-label {
   font-size: 0.54rem;
   color: var(--color-moon-mist);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .timer-digits {
@@ -92,16 +100,18 @@ body.safe-zone-on .tactical-banner {
   font-weight: 700;
   color: var(--theme-accent);
   letter-spacing: 0.8px;
+  text-shadow: 0 0 8px var(--theme-accent-glow);
 }
 
 .time-warp-controls {
   display: flex;
   align-items: center;
   gap: 2px;
-  background: rgba(4, 9, 22, 0.85);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-btn);
   padding: 2px;
+  box-shadow: var(--glass-3d-well-shadow);
   flex-shrink: 0;
 }
 
@@ -111,26 +121,28 @@ body.safe-zone-on .tactical-banner {
   color: var(--color-moon-mist);
   font-family: var(--font-dotdigital);
   font-size: 0.64rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 3px 7px;
   height: 24px;
   border-radius: var(--radius-badge);
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: all 0.14s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .time-btn:hover {
-  background: var(--glass-bg-hover);
+  background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
 
 .time-btn.active {
-  background: var(--theme-primary);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(2, 132, 199, 0.60) 100%);
   color: #ffffff;
   border-color: var(--theme-accent);
+  border-top-color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 10px var(--theme-primary-glow);
 }
 
 .command-token-cluster {
@@ -138,14 +150,15 @@ body.safe-zone-on .tactical-banner {
   flex-direction: column;
   justify-content: center;
   gap: 2px;
-  background: rgba(4, 9, 22, 0.85);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-btn);
-  padding: 2px 7px;
+  padding: 2px 8px;
   min-width: 96px;
   height: 26px;
   box-sizing: border-box;
   font-family: var(--font-dotdigital);
+  box-shadow: var(--glass-3d-well-shadow);
   flex-shrink: 0;
 }
 
@@ -160,13 +173,14 @@ body.safe-zone-on .tactical-banner {
 .token-label {
   font-size: 0.50rem;
   color: var(--color-moon-mist);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .token-digits {
   font-size: 0.66rem;
   font-weight: 700;
   color: var(--stat-tier-2);
+  text-shadow: 0 0 8px rgba(0, 245, 160, 0.5);
 }
 
 .token-rate {
@@ -177,16 +191,19 @@ body.safe-zone-on .tactical-banner {
 
 .token-bar-track {
   width: 100%;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.1);
+  height: 4px;
+  background: rgba(0, 0, 0, 0.85);
   border-radius: var(--radius-pill);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
 }
 
 .token-bar-fill {
   height: 100%;
   background: var(--stat-tier-2);
-  transition: width 0.12s ease;
+  box-shadow: 0 0 8px rgba(0, 245, 160, 0.6);
+  transition: width 0.14s ease;
 }
 
 .banner-score-controls-cluster {
@@ -196,17 +213,17 @@ body.safe-zone-on .tactical-banner {
   flex-shrink: 0;
 }
 
-/* VICTORY TRACKER: Flat solid dark glass background with no diagonal gradients */
 .victory-tracker {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(4, 9, 22, 0.90);
+  background: var(--glass-3d-card-bg);
   padding: 3px 12px;
   border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-btn);
   font-family: var(--font-dotdigital);
-  box-shadow: var(--glass-highlight);
+  box-shadow: var(--glass-3d-card-shadow);
   flex-shrink: 0;
 }
 
@@ -222,14 +239,15 @@ body.safe-zone-on .tactical-banner {
   letter-spacing: 0.6px;
 }
 
-.vp-group.ally .vp-tag { color: var(--theme-accent); }
-.vp-group.hostile .vp-tag { color: var(--color-red); }
+.vp-group.ally .vp-tag { color: var(--theme-accent); text-shadow: 0 0 6px var(--theme-accent-glow); }
+.vp-group.hostile .vp-tag { color: var(--color-red); text-shadow: 0 0 6px rgba(244, 63, 94, 0.5); }
 
 .vp-value {
   font-size: 1.10rem;
   font-weight: 700;
   letter-spacing: 0.6px;
   color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
 .vp-divider {
@@ -238,7 +256,6 @@ body.safe-zone-on .tactical-banner {
   font-weight: 600;
 }
 
-/* Camera controls: visible on desktop, hidden on mobile/touch */
 .banner-cam-controls {
   display: flex;
   align-items: center;
@@ -247,7 +264,7 @@ body.safe-zone-on .tactical-banner {
 }
 
 .banner-cam-controls .cam-btn {
-  background: rgba(4, 9, 22, 0.85);
+  background: var(--glass-3d-btn-bg);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   color: var(--color-frost-glow);
@@ -262,19 +279,20 @@ body.safe-zone-on .tactical-banner {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.12s ease;
+  box-shadow: var(--glass-3d-btn-shadow);
+  transition: all 0.14s ease;
 }
 
 .banner-cam-controls .cam-btn:hover {
-  background: var(--glass-bg-hover);
+  background: var(--glass-3d-btn-bg-hover);
   color: #ffffff;
-  border-color: var(--glass-border-hover);
+  border-color: var(--theme-accent);
+  border-top-color: #ffffff;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 1024px), (hover: none) and (pointer: coarse) {
-  .banner-cam-controls {
-    display: none !important;
-  }
+  .banner-cam-controls { display: none !important; }
 }
 
 .is-android .banner-cam-controls,
@@ -306,18 +324,10 @@ body.has-touch .banner-cam-controls {
     padding-left: max(8px, env(safe-area-inset-left, 8px)) !important;
     padding-right: max(8px, env(safe-area-inset-right, 8px)) !important;
   }
-  .tactical-banner::-webkit-scrollbar {
-    display: none;
-  }
-  .top-quick-actions {
-    margin-left: 6px;
-  }
+  .tactical-banner::-webkit-scrollbar { display: none; }
+  .top-quick-actions { margin-left: 6px; }
 }
 
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
-  .tactical-banner {
-    height: 40px !important;
-    padding: 0 8px !important;
-    gap: 6px !important;
-  }
+  .tactical-banner { height: 40px !important; padding: 0 8px !important; gap: 6px !important; }
 }

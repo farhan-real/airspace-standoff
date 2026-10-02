@@ -1,5 +1,6 @@
 /* AIRSPACE STANDOFF: Procurement Hangar Window & Layout */
 
+.procurement-modal,
 .procurement-window {
   width: 98vw;
   max-width: 1760px;
@@ -7,8 +8,8 @@
   max-height: 98vh;
   min-height: 500px;
   background-color: var(--glass-bg-modal);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-modal);
@@ -17,7 +18,7 @@
   padding: 10px 14px;
   gap: 8px;
   overflow: hidden;
-  box-shadow: var(--glass-shadow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 24px 64px rgba(0, 0, 0, 0.9);
   transform: translateZ(0);
   box-sizing: border-box;
 }
@@ -48,13 +49,15 @@ body.safe-zone-on .procurement-window {
   flex-direction: column;
   min-height: 0;
   height: 100%;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid var(--liquid-glass-border-top);
-  background: var(--liquid-glass-bg);
+  background: var(--glass-3d-card-bg);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
   border-radius: var(--radius-card);
   padding: 8px;
   overflow: hidden;
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--glass-3d-card-shadow);
   contain: paint;
 }
 
@@ -68,32 +71,35 @@ body.safe-zone-on .procurement-window {
 }
 
 .scramble-btn {
-  background: var(--theme-primary);
+  background: rgba(2, 132, 199, 0.45);
   border: 1px solid var(--theme-accent);
-  border-top: 1px solid rgba(255, 255, 255, 0.45);
+  border-top: 1px solid #ffffff;
   color: #ffffff;
   font-family: var(--font-untitled-sans);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 8px 24px;
   border-radius: var(--radius-btn);
   cursor: pointer;
   letter-spacing: 0.6px;
-  box-shadow: 0 0 16px var(--theme-primary-glow), var(--glass-highlight);
-  transition: all 0.14s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 20px var(--theme-primary-glow);
+  transition: all 0.16s ease;
 }
 
 .scramble-btn:hover:not(:disabled) {
-  background: var(--theme-primary-hover);
-  color: #ffffff;
+  background: rgba(2, 132, 199, 0.7);
   border-color: #ffffff;
-  box-shadow: 0 0 24px var(--theme-primary-glow);
-  transform: scale(1.02);
+  box-shadow: inset 0 1px 0 #ffffff, 0 0 28px var(--theme-primary-glow);
+  transform: translateY(-1px) scale(1.02);
+}
+
+.scramble-btn:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .scramble-btn:disabled {
-  background: var(--glass-bg);
-  border-color: var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border-color: var(--glass-3d-well-border);
   color: var(--color-fog-veil);
   cursor: not-allowed;
   box-shadow: none;
@@ -112,7 +118,7 @@ body.safe-zone-on .procurement-window {
   overflow-x: hidden;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-  background: #02050f !important;
+  background: #000000 !important;
   box-shadow: none !important;
 }
 
@@ -120,7 +126,7 @@ body.safe-zone-on .procurement-window {
 .is-android .flight-roster {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-  background: #030816 !important;
+  background: #000000 !important;
   box-shadow: none !important;
 }
 
@@ -138,7 +144,7 @@ body.safe-zone-on .procurement-window {
     overflow-x: hidden;
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-    background: #02050f !important;
+    background: #000000 !important;
     box-shadow: none !important;
   }
 
@@ -146,7 +152,7 @@ body.safe-zone-on .procurement-window {
   .flight-roster {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-    background: #030816 !important;
+    background: #000000 !important;
     box-shadow: none !important;
   }
 
@@ -158,10 +164,7 @@ body.safe-zone-on .procurement-window {
 }
 
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
-  .procurement-mobile-tabs {
-    display: none !important;
-  }
-
+  .procurement-mobile-tabs { display: none !important; }
   .procurement-body {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;

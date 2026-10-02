@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Squadron Roster Bay Card DOM Builder
- * Renders tag-like boxes for stations and aligns STATIONS and PAYLOAD on the exact same row.
+ * Structured boxes for stats, gun, and systems matching the modular stores design.
  */
 
 class RosterCardBuilder {
@@ -66,7 +66,7 @@ class RosterCardBuilder {
             </button>
           </div>`;
       } else {
-        upgradesHtml += `<div class="upgrade-socket empty" data-sidx="${sIdx}" title="Click to install system"><span>+ [EMPTY SOCKET]</span></div>`;
+        upgradesHtml += `<div class="upgrade-socket empty" data-sidx="${sIdx}" title="Click to install system"><span>EMPTY SOCKET (CLICK TO INSTALL)</span></div>`;
       }
     }
 
@@ -98,60 +98,54 @@ class RosterCardBuilder {
           <button type="button" class="hud-btn small alert btn-remove-airframe" data-sidx="${sIdx}">REMOVE</button>
         </div>
       </div>
-      <div class="su-gun-selector-row">
-        <label class="gun-sel-label">GUN:</label>
-        <div class="custom-dropdown su-gun-dropdown" id="cdd-gun-${sIdx}">
-          <button type="button" class="custom-dropdown-trigger gun-sel-trigger">
-            <span class="cdd-val">${activeGun ? activeGun.name : 'Gun'}</span>
-            <span class="cdd-arrow"><img src="icons/chevron.svg" width="8" height="8" alt="v"></span>
-          </button>
-          <div class="custom-dropdown-menu gun-menu">${gunOptsList}</div>
+
+      <div class="roster-section-box stats-section-box">
+        <div class="station-header-row">
+          <span class="station-title">FLIGHT PERFORMANCE &amp; STATS</span>
+          <span class="station-tag external-tag">KINEMATICS</span>
         </div>
-        <div class="su-gun-right-group">
-          <span class="gun-dmg-badge" style="color:#ffb830;font-size:0.64rem;font-weight:800;font-family:var(--font-mono);">${activeGunDmg} HP/s</span>
-          <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${activeGun ? activeGun.id : 'M61A2'}">SPECS</button>
-        </div>
-      </div>
-      <div class="unit-metric-strip">
-        <div class="metric-block">
-          <div class="metric-meta"><span>SPEED:</span>${metrics ? metrics.speedDualHtml : `<b>M ${(spec.S_0 || 0.9).toFixed(2)}</b>`}</div>
-        </div>
-        <div class="metric-block">
-          <div class="metric-meta"><span>AGILITY:</span>${metrics ? metrics.agilityDualHtml : `<b>${(spec.AGI_0 || 0.85).toFixed(2)}</b>`}</div>
-        </div>
-        <div class="metric-block">
-          <div class="metric-meta"><span>RADAR:</span>${metrics ? metrics.radarDualHtml : `<b>${spec.R_0 || 75}km</b>`}</div>
-        </div>
-        <div class="metric-block">
-          <div class="metric-meta"><span>RCS:</span>${metrics ? metrics.rcsDualHtml : `<b>${spec.sigma_0 || 1.0}m2</b>`}</div>
-        </div>
-        <div class="metric-block">
-          <div class="metric-meta"><span>ARMOR:</span>${metrics ? metrics.armorDualHtml : `<b>${spec.hp || 4} HP</b>`}</div>
-        </div>
-        <div class="metric-block">
-          <div class="metric-meta"><span>G-LIMIT:</span><span class="dual-val" data-tag-title="STRUCTURAL G-LIMIT" data-tag-tooltip="Structural maneuvering tolerance: ${(spec.G_limit || 9.0).toFixed(1)}G."><b class="${rG.colorClass}">${(spec.G_limit || 9.0).toFixed(1)} G</b></span></div>
-        </div>
-        <div class="metric-block">
-          <div class="metric-meta">
-            <span>STATIONS:</span>
-            ${metrics ? metrics.stationsBadgeHtml : '<span>--</span>'}
+        <div class="unit-metric-strip">
+          <div class="metric-block"><div class="metric-meta"><span>SPEED:</span>${metrics ? metrics.speedDualHtml : `<b>M ${(spec.S_0 || 0.9).toFixed(2)}</b>`}</div></div>
+          <div class="metric-block"><div class="metric-meta"><span>AGILITY:</span>${metrics ? metrics.agilityDualHtml : `<b>${(spec.AGI_0 || 0.85).toFixed(2)}</b>`}</div></div>
+          <div class="metric-block"><div class="metric-meta"><span>RADAR:</span>${metrics ? metrics.radarDualHtml : `<b>${spec.R_0 || 75}km</b>`}</div></div>
+          <div class="metric-block"><div class="metric-meta"><span>RCS:</span>${metrics ? metrics.rcsDualHtml : `<b>${spec.sigma_0 || 1.0}m2</b>`}</div></div>
+          <div class="metric-block"><div class="metric-meta"><span>ARMOR:</span>${metrics ? metrics.armorDualHtml : `<b>${spec.hp || 4} HP</b>`}</div></div>
+          <div class="metric-block"><div class="metric-meta"><span>G-LIMIT:</span><span class="dual-val" data-tag-title="STRUCTURAL G-LIMIT" data-tag-tooltip="Structural maneuvering tolerance: ${(spec.G_limit || 9.0).toFixed(1)}G."><b class="${rG.colorClass}">${(spec.G_limit || 9.0).toFixed(1)} G</b></span></div></div>
+          <div class="metric-block"><div class="metric-meta"><span>STATIONS:</span>${metrics ? metrics.stationsBadgeHtml : '<span>--</span>'}</div></div>
+          <div class="metric-block">
+            <div class="metric-meta"><span>PAYLOAD:</span><span><b style="color:${weightColor};">${weightCategory}</b> ${wrPercent}% (${totalMass}kg)</span></div>
+            <div class="weight-bar-bg"><div class="weight-bar-fill ${wrPercent > 80 ? 'overload' : (wrPercent > 60 ? 'heavy' : '')}" style="width:${Math.min(100, wrPercent)}%;"></div></div>
           </div>
         </div>
-        <div class="metric-block">
-          <div class="metric-meta">
-            <span>PAYLOAD:</span>
-            <span><b style="color:${weightColor};">${weightCategory}</b> ${wrPercent}% (${totalMass}kg)</span>
+      </div>
+
+      <div class="roster-section-box gun-section-box">
+        <div class="station-header-row">
+          <span class="station-title">AUTOCANNON / GUN: <b>${activeGun ? activeGun.name : 'M61A2'}</b></span>
+          <span class="station-tag centerline-tag">${activeGunDmg} HP/s</span>
+        </div>
+        <div class="su-gun-selector-row">
+          <div class="custom-dropdown su-gun-dropdown" id="cdd-gun-${sIdx}">
+            <button type="button" class="custom-dropdown-trigger gun-sel-trigger">
+              <span class="cdd-val">${activeGun ? activeGun.name : 'Gun'}</span>
+              <span class="cdd-arrow"><img src="icons/chevron.svg" width="8" height="8" alt="v"></span>
+            </button>
+            <div class="custom-dropdown-menu gun-menu">${gunOptsList}</div>
           </div>
-          <div class="weight-bar-bg"><div class="weight-bar-fill ${wrPercent > 80 ? 'overload' : (wrPercent > 60 ? 'heavy' : '')}" style="width:${Math.min(100, wrPercent)}%;"></div></div>
+          <div class="su-gun-right-group">
+            <button type="button" class="spec-inspect-btn small" data-inspect-type="gun" data-inspect-id="${activeGun ? activeGun.id : 'M61A2'}">SPECS</button>
+          </div>
         </div>
       </div>
-      <div class="upgrades-socket-row">
-        <div class="upgrades-label-row">
-          <span>SYSTEMS (${item.upgrades.length}/${socketCount}):</span>
-          <span style="font-size:0.56rem;color:#7dd3fc;cursor:pointer;" class="btn-quick-to-upgrades" data-sidx="${sIdx}">+ INSTALL</span>
+
+      <div class="roster-section-box systems-section-box">
+        <div class="station-header-row">
+          <span class="station-title">AVIONICS &amp; MODULAR SYSTEMS: <b>${item.upgrades.length} / ${socketCount} SOCKETS</b></span>
+          <button type="button" class="spec-inspect-btn small btn-quick-to-upgrades" data-sidx="${sIdx}">INSTALL</button>
         </div>
         <div class="upgrade-slots-container">${upgradesHtml}</div>
       </div>
+
       ${stationsHtml}
     `;
 
@@ -206,39 +200,30 @@ class RosterCardBuilder {
       });
     }
 
-    const goToWeapons = (targetStation = null) => {
+    const openShelfTab = (tabName, targetStation = null) => {
       pm.activeBayIndex = sIdx;
       pm.targetEquipStation = targetStation;
-      pm.currentTab = 'a2a';
-      document.querySelectorAll('.shelf-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'a2a'));
-      pm.renderCatalog();
-      const btnShelf = document.getElementById('btn-tab-hanger-shelf');
-      if (btnShelf && window.innerWidth <= 1024) btnShelf.click();
-    };
-
-    const goToUpgrades = () => {
-      pm.activeBayIndex = sIdx;
-      pm.currentTab = 'upgrades';
-      document.querySelectorAll('.shelf-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'upgrades'));
+      pm.currentTab = tabName;
+      document.querySelectorAll('.shelf-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
       pm.renderCatalog();
       const btnShelf = document.getElementById('btn-tab-hanger-shelf');
       if (btnShelf && window.innerWidth <= 1024) btnShelf.click();
     };
 
     const emptyInternalSlot = card.querySelector('.empty-internal-slot');
-    if (emptyInternalSlot) emptyInternalSlot.onclick = (e) => { e.stopPropagation(); goToWeapons('INTERNAL'); };
+    if (emptyInternalSlot) emptyInternalSlot.onclick = (e) => { e.stopPropagation(); openShelfTab('a2a', 'INTERNAL'); };
 
     const emptyExternalBay = card.querySelector('.empty-bay-indicator');
-    if (emptyExternalBay) emptyExternalBay.onclick = (e) => { e.stopPropagation(); goToWeapons('EXTERNAL'); };
+    if (emptyExternalBay) emptyExternalBay.onclick = (e) => { e.stopPropagation(); openShelfTab('a2a', 'EXTERNAL'); };
 
     const addExternalBtnEl = card.querySelector('.btn-add-external-slot');
-    if (addExternalBtnEl) addExternalBtnEl.onclick = (e) => { e.stopPropagation(); goToWeapons('EXTERNAL'); };
+    if (addExternalBtnEl) addExternalBtnEl.onclick = (e) => { e.stopPropagation(); openShelfTab('a2a', 'EXTERNAL'); };
 
     const quickUpg = card.querySelector('.btn-quick-to-upgrades');
-    if (quickUpg) quickUpg.onclick = (e) => { e.stopPropagation(); goToUpgrades(); };
+    if (quickUpg) quickUpg.onclick = (e) => { e.stopPropagation(); openShelfTab('upgrades'); };
 
     card.querySelectorAll('.upgrade-socket.empty').forEach(el => {
-      el.onclick = (e) => { e.stopPropagation(); goToUpgrades(); };
+      el.onclick = (e) => { e.stopPropagation(); openShelfTab('upgrades'); };
     });
 
     card.querySelectorAll('.btn-dismount-item').forEach(b => {
@@ -265,9 +250,7 @@ class RosterCardBuilder {
       b.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (b.disabled) return;
-        const wIdx = parseInt(b.dataset.widx, 10);
-        RosterStationsRenderer.moveWeaponUp(pm, sIdx, wIdx);
+        if (!b.disabled) RosterStationsRenderer.moveWeaponUp(pm, sIdx, parseInt(b.dataset.widx, 10));
       };
     });
 
@@ -275,9 +258,7 @@ class RosterCardBuilder {
       b.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (b.disabled) return;
-        const wIdx = parseInt(b.dataset.widx, 10);
-        RosterStationsRenderer.moveWeaponDown(pm, sIdx, wIdx);
+        if (!b.disabled) RosterStationsRenderer.moveWeaponDown(pm, sIdx, parseInt(b.dataset.widx, 10));
       };
     });
 

@@ -1,12 +1,13 @@
 /**
  * AIRSPACE STANDOFF: Avionics UI
- * Displays telemetry, dynamic corner velocity turn efficiency, and Stores Management.
+ * Telemetry display, corner velocity turn efficiency, and stores management.
  */
 
 class AvionicsUI {
   constructor(gameEngine) {
     this.game = gameEngine;
     this.rosterDisplay = new AvionicsRosterDisplay(this);
+    this.lastMfdUnitId = null;
     this.initRWRInteractions();
     this.initRTBButton();
   }
@@ -41,7 +42,7 @@ class AvionicsUI {
         if (this.game.activeUnit && this.game.activeUnit.hp > 0) {
           const isReturning = this.game.activeUnit.toggleRTB();
           if (this.game.radar) {
-            const msg = isReturning ? 'HIGH-SPEED RETURN TO BASE ORDERED' : 'RETURN TO BASE CANCELLED - ENGAGING';
+            const msg = isReturning ? 'RETURN TO BASE ORDERED' : 'ENGAGING TARGETS';
             const col = isReturning ? '#00f5a0' : '#38bdf8';
             this.game.radar.spawnCombatText(this.game.activeUnit.x, this.game.activeUnit.y, msg, col);
           }
@@ -113,25 +114,6 @@ class AvionicsUI {
       if (glocEl) glocEl.classList.add('hidden');
       if (stressWarnEl) stressWarnEl.classList.add('hidden');
       if (inspectUnitBtn) inspectUnitBtn.classList.add('hidden');
-
-      if (hudSpdMain) { hudSpdMain.textContent = 'M 0.00'; hudSpdMain.style.color = '#8494ab'; }
-      if (hudSpdArrow) { hudSpdArrow.textContent = '--'; hudSpdArrow.className = 'rfh-arrow val-trend-flat'; }
-      if (hudSpdSub) hudSpdSub.textContent = '0 km/h';
-      if (hudAltMain) { hudAltMain.textContent = 'FL000'; hudAltMain.style.color = '#8494ab'; }
-      if (hudAltArrow) { hudAltArrow.textContent = '--'; hudAltArrow.className = 'rfh-arrow val-trend-flat'; }
-      if (hudVsi) hudVsi.textContent = '0 fpm LVL';
-      if (hudCallsign) hudCallsign.textContent = 'NO AIRCRAFT SELECTED';
-      if (hudModel) hudModel.textContent = '--';
-      if (hudCardinal) hudCardinal.textContent = 'N';
-      if (hudDeg) hudDeg.textContent = '000\u00B0';
-      if (hudEturn) {
-        hudEturn.textContent = 'TURN: --%';
-        hudEturn.className = 'rfh-pill';
-        hudEturn.title = '';
-        hudEturn.style.color = '#7dd3fc';
-      }
-      if (hudWr) hudWr.textContent = 'LOAD: --%';
-
       if (this.game.deckManager) {
         this.game.deckManager.renderManeuverHand(null);
         this.game.deckManager.renderPylonBay(null, null);
@@ -149,16 +131,8 @@ class AvionicsUI {
       callsignValEl.textContent = displayName;
       callsignValEl.style.color = isFriendly ? '#00f0ff' : '#ff3366';
     }
-
     if (coffinTag) coffinTag.classList.toggle('hidden', !u.isCoffin);
-    if (leadTag) {
-      const showLead = u.isFlightLead && !u.isAce;
-      leadTag.classList.toggle('hidden', !showLead);
-      if (showLead) {
-        leadTag.setAttribute('data-inspect-type', 'lead');
-        leadTag.setAttribute('data-inspect-id', u.spec ? u.spec.id : '');
-      }
-    }
+    if (leadTag) leadTag.classList.toggle('hidden', !(u.isFlightLead && !u.isAce));
     if (aceTag) aceTag.classList.toggle('hidden', !u.isAce);
     if (inspectUnitBtn) {
       inspectUnitBtn.classList.remove('hidden');
@@ -166,53 +140,42 @@ class AvionicsUI {
       inspectUnitBtn.setAttribute('data-inspect-id', u.spec ? u.spec.id : '');
     }
 
-    const machNum = (u.speed || 0.85);
+    const machNum = u.speed || 0.85;
     const sOpt = (typeof u.getOptimalCornerSpeed === 'function') ? u.getOptimalCornerSpeed() : ((u.effectiveMaxSpeed || 0.95) * 0.65);
-    const sTr = u.speedTrend || '--';
-    const aTr = u.altTrend || '--';
     const fpm = Math.round(u.vsiFpm || 0);
 
-    let eturn = (typeof Physics !== 'undefined') ? Physics.calcTurnEfficiency(u.speed || 0.8, sOpt) : 0.85;
+    let eturn = Physics.calcTurnEfficiency(u.speed || 0.8, sOpt);
     if (u.turnBonus) eturn = Math.min(1.0, eturn + u.turnBonus);
     if (u.stress >= 0.65 && !u.isCoffin && !u.spec.isDrone) eturn *= 0.70;
 
-    let deg = Math.round((u.heading * 180 / Math.PI) % 360);
+    let deg = Math.round(((u.heading || 0) * 180 / Math.PI) % 360);
     if (deg < 0) deg += 360;
-    if (deg >= 360) deg = 0;
     const cardStr = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(deg / 45) % 8];
 
     if (hudSpdMain) { hudSpdMain.textContent = 'M ' + machNum.toFixed(2); hudSpdMain.style.color = this.getSpeedColor(machNum, sOpt, u.effectiveMaxSpeed || 1.0); }
-    if (hudSpdArrow) { hudSpdArrow.textContent = sTr; hudSpdArrow.className = 'rfh-arrow ' + (sTr === '^' ? 'val-trend-up' : (sTr === 'v' ? 'val-trend-down' : 'val-trend-flat')); }
+    if (hudSpdArrow) hudSpdArrow.textContent = u.speedTrend || '--';
     if (hudSpdSub) hudSpdSub.textContent = Math.round(machNum * 1225).toLocaleString() + ' km/h';
 
     if (hudAltMain) { hudAltMain.textContent = 'FL' + Math.round(u.altFt / 100); hudAltMain.style.color = this.getAltColor(u.altFt); }
-    if (hudAltArrow) { hudAltArrow.textContent = aTr; hudAltArrow.className = 'rfh-arrow ' + (aTr === '^' ? 'val-trend-up' : (aTr === 'v' ? 'val-trend-down' : 'val-trend-flat')); }
+    if (hudAltArrow) hudAltArrow.textContent = u.altTrend || '--';
     if (hudVsi) {
       hudVsi.textContent = (fpm > 0 ? '+' : '') + fpm + ' fpm ' + (fpm > 300 ? 'CLIMB' : (fpm < -300 ? 'DIVE' : 'LVL'));
       hudVsi.style.color = fpm > 300 ? '#00f5a0' : (fpm < -300 ? '#ff3366' : '#8494ab');
     }
 
     if (hudCallsign) {
-      const badge = u.isAce ? ' [ACE]' : (u.isFlightLead ? ' [LEAD]' : '');
-      hudCallsign.textContent = `${callsignText.toUpperCase()}${badge}`;
+      hudCallsign.textContent = `${callsignText.toUpperCase()}${u.isAce ? ' [ACE]' : (u.isFlightLead ? ' [LEAD]' : '')}`;
       hudCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00f0ff' : '#ff3366'));
     }
-    if (hudModel) {
-      hudModel.textContent = `${modelName.toUpperCase()} - ${u.spec ? u.spec.role.toUpperCase() : 'AIRCRAFT'}`;
-    }
-    if (hudCardinal) { hudCardinal.textContent = cardStr; hudCardinal.style.color = (cardStr === 'E') ? '#00f0ff' : (cardStr === 'W' ? '#00f5a0' : '#f8fafc'); }
+    if (hudModel) hudModel.textContent = `${modelName.toUpperCase()} - ${u.spec ? u.spec.role.toUpperCase() : 'AIRCRAFT'}`;
+    if (hudCardinal) hudCardinal.textContent = cardStr;
     if (hudDeg) hudDeg.textContent = String(deg).padStart(3, '0') + '\u00B0';
 
     if (hudEturn) {
       if (u.isCoffin) {
         hudEturn.textContent = 'TURN: 100% LOCKED';
-        hudEturn.className = 'rfh-pill coffin-turn';
-        hudEturn.title = 'COFFIN Interface: Turn rate locked at 100% efficiency across all speed regimes (immune to G-fatigue).';
         hudEturn.style.color = '#c7d2fe';
       } else {
-        hudEturn.className = 'rfh-pill';
-        const optKmH = Math.round(sOpt * 1225);
-        hudEturn.title = `Instantaneous Turn Efficiency based on Corner Speed (OPT: M ${sOpt.toFixed(2)} / ${optKmH} km/h). Directly scales maneuver evasion probability.`;
         hudEturn.textContent = 'TURN: ' + Math.round(eturn * 100) + '%' + (eturn >= 0.88 ? ' OPT' : '');
         hudEturn.style.color = this.getTurnColor(eturn, false);
       }
@@ -225,18 +188,23 @@ class AvionicsUI {
     }
 
     const pct = Math.round((u.engineAlpha !== undefined ? u.engineAlpha : 0.50) * 100);
-    if (slider) slider.value = pct;
+    const targetMach = (typeof u.getTargetMach === 'function') ? u.getTargetMach() : (u.speed || 0.85);
+
+    if (slider) {
+      if (document.activeElement !== slider) slider.value = pct;
+      slider.className = 'military-throttle-slider';
+    }
+
     if (alphaLabel) {
-      const targetMachVal = (typeof u.getTargetMach === 'function') ? u.getTargetMach() : (u.speed || 0.85);
       const modeText = pct > 85 ? 'AFTERBURNER' : (pct > 75 ? 'MIL POWER' : (pct > 35 ? 'CRUISE' : 'IDLE'));
-      alphaLabel.textContent = `${pct}% ${modeText} [M ${targetMachVal.toFixed(2)}]`;
+      alphaLabel.textContent = `${pct}% ${modeText} [M ${targetMach.toFixed(2)}]`;
+      alphaLabel.style.color = pct > 85 ? '#f97316' : '#38bdf8';
       alphaLabel.classList.toggle('burner', pct > 85);
     }
 
     if (rtbBtn) {
       rtbBtn.textContent = u.isRTB ? 'CANCEL RETURN TO BASE' : 'RETURN TO BASE';
       rtbBtn.style.background = u.isRTB ? '#450a0a' : '#064e3b';
-      rtbBtn.style.borderColor = u.isRTB ? '#ef4444' : '#10b981';
       rtbBtn.style.color = u.isRTB ? '#fecdd3' : '#a7f3d0';
     }
 
@@ -265,9 +233,6 @@ class AvionicsUI {
       for (let i = 0; i < this.game.missiles.length; i++) {
         const m = this.game.missiles[i];
         if (m.active && m.team !== commanderTeam && m.target && m.target.id === activeUnit.id) {
-          if (m.isPassiveRadar && m.distanceToTarget > (m.pathRevealDistance || 20.0)) {
-            continue;
-          }
           lockingThreats.push(m);
         }
       }
@@ -277,49 +242,21 @@ class AvionicsUI {
     if (lockingThreats.length > 0) {
       const nearest = lockingThreats.reduce((min, m) => m.distanceToTarget < min.distanceToTarget ? m : min, lockingThreats[0]);
       rwrState = nearest.distanceToTarget < 30 ? 'lock' : 'sweep';
-      if (detailEl) {
-        if (nearest.isPassiveRadar) {
-          detailEl.textContent = `PASSIVE RADAR HOMING: ${Math.round(nearest.distanceToTarget)}km`;
-        } else if (nearest.isStealthMissile) {
-          detailEl.textContent = `STEALTH MSL: ${Math.round(nearest.distanceToTarget)}km`;
-        } else {
-          detailEl.textContent = `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km`;
-        }
-      }
+      if (detailEl) detailEl.textContent = `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km`;
     } else {
       let hasLocks = false;
-      let hasSweeps = false;
       if (activeUnit && activeUnit.hp > 0) {
         const hostileFleet = (commanderTeam === 'friendly') ? this.game.hostileAircraft : this.game.alliedAircraft;
-        for (const h of hostileFleet) {
+        for (let i = 0; i < hostileFleet.length; i++) {
+          const h = hostileFleet[i];
           if (h.hp > 0 && h.radarLockedTarget && h.radarLockedTarget.id === activeUnit.id) {
             hasLocks = true;
             break;
           }
         }
-        if (!hasLocks) {
-          for (const h of hostileFleet) {
-            if (h.hp > 0) {
-              const dist = Math.hypot(h.x - activeUnit.x, h.y - activeUnit.y);
-              const r0 = (h.spec && h.spec.R_0) || 75.0;
-              if (dist <= r0) {
-                hasSweeps = true;
-                break;
-              }
-            }
-          }
-        }
       }
-      if (hasLocks) {
-        rwrState = 'lock';
-        if (detailEl) detailEl.textContent = 'HOSTILE RADAR LOCK ON CRAFT';
-      } else if (hasSweeps) {
-        rwrState = 'sweep';
-        if (detailEl) detailEl.textContent = 'HOSTILE RADAR SWEEP DETECTED';
-      } else {
-        rwrState = 'clean';
-        if (detailEl) detailEl.textContent = 'NO EMISSIONS DETECTED';
-      }
+      rwrState = hasLocks ? 'lock' : 'clean';
+      if (detailEl) detailEl.textContent = hasLocks ? 'HOSTILE RADAR LOCK ON CRAFT' : 'NO EMISSIONS DETECTED';
     }
 
     const indicator = document.getElementById('rwr-state');

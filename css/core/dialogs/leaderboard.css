@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Squadron Leaderboard Dossier */
+/* AIRSPACE STANDOFF: Squadron Leaderboard Dossier with 3D Depth */
 
 #leaderboard-modal {
   z-index: 3000 !important;
@@ -14,11 +14,13 @@
   display: flex;
   flex-direction: column;
   background: var(--glass-bg-modal);
-  -webkit-backdrop-filter: var(--glass-filter);
-  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  backdrop-filter: blur(24px) saturate(200%);
   border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-bottom: 1px solid var(--liquid-glass-border-bottom);
   border-radius: var(--radius-modal);
-  box-shadow: var(--glass-shadow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), inset 0 0 20px rgba(56, 189, 248, 0.05), 0 20px 60px rgba(0, 0, 0, 0.85);
   font-family: var(--font-untitled-sans);
   overflow: hidden;
   box-sizing: border-box;
@@ -46,14 +48,17 @@
 
 .leaderboard-table-pane,
 .leaderboard-detail-pane {
-  background: rgba(4, 9, 22, 0.85);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-bottom: 1px solid var(--liquid-glass-border-bottom);
   border-radius: var(--radius-card);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   min-height: 0;
   box-sizing: border-box;
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
 .leaderboard-table-pane {
@@ -69,10 +74,10 @@
 .leaderboard-table th {
   text-align: left;
   padding: 6px 8px;
-  background: rgba(6, 14, 30, 0.96);
+  background: rgba(6, 14, 30, 0.95);
   color: var(--color-frost-glow);
   border-bottom: 1px solid var(--glass-border);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.4px;
 }
 
@@ -80,34 +85,46 @@
   padding: 6px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--color-moon-mist);
-  transition: background-color 0.12s ease;
+  transition: background-color 0.14s ease, color 0.14s ease;
 }
 
 .leaderboard-row {
   cursor: pointer;
+  transition: background-color 0.14s ease;
 }
 
 .leaderboard-row:hover td {
-  background: rgba(56, 189, 248, 0.08);
+  background: rgba(56, 189, 248, 0.10);
 }
 
 .leaderboard-row.selected td {
-  background: var(--theme-primary-dim);
+  background: rgba(2, 132, 199, 0.24);
+  color: #ffffff;
+  border-bottom-color: rgba(56, 189, 248, 0.28);
+}
+
+.leaderboard-row.selected:hover td {
+  background: rgba(2, 132, 199, 0.32);
+}
+
+.leaderboard-row.selected td:first-child {
+  border-left: 3px solid var(--theme-accent);
 }
 
 .leaderboard-rank-tag {
   font-weight: 700;
-  padding: 2px 5px;
+  padding: 2px 6px;
   border-radius: var(--radius-badge);
   display: inline-block;
   font-size: 0.60rem;
   font-family: var(--font-dotdigital);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-.rank-gold { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); }
-.rank-silver { background: rgba(56, 189, 248, 0.15); color: #bae6fd; border: 1px solid rgba(56, 189, 248, 0.4); }
-.rank-bronze { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35); }
-.rank-standard { background: rgba(2, 6, 18, 0.6); color: var(--color-moon-mist); border: 1px solid var(--glass-border); }
+.rank-gold { background: linear-gradient(180deg, rgba(251, 191, 36, 0.3) 0%, rgba(69, 26, 3, 0.8) 100%); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.5); border-top: 1px solid #fef08a; }
+.rank-silver { background: linear-gradient(180deg, rgba(56, 189, 248, 0.3) 0%, rgba(3, 30, 60, 0.8) 100%); color: #bae6fd; border: 1px solid rgba(56, 189, 248, 0.5); border-top: 1px solid #ffffff; }
+.rank-bronze { background: linear-gradient(180deg, rgba(148, 163, 184, 0.25) 0%, rgba(15, 23, 42, 0.8) 100%); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.4); border-top: 1px solid #ffffff; }
+.rank-standard { background: var(--glass-3d-well-bg); color: var(--color-moon-mist); border: 1px solid var(--glass-3d-well-border); }
 
 .leaderboard-detail-pane {
   padding: 10px 12px;
@@ -115,14 +132,17 @@
 }
 
 .dossier-header-box {
-  background: rgba(4, 9, 22, 0.85);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-bottom: 1px solid var(--liquid-glass-border-bottom);
   border-radius: var(--radius-card);
   padding: 8px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
 .dossier-header-right {
@@ -134,9 +154,10 @@
 
 .dossier-title {
   font-size: 0.90rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
   font-family: var(--font-aeonikpro);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .dossier-score-block {
@@ -153,6 +174,7 @@
   color: var(--color-ice-highlight);
   font-family: var(--font-dotdigital);
   letter-spacing: 0.5px;
+  text-shadow: 0 0 10px var(--theme-accent-glow);
 }
 
 .dossier-score-unit {
@@ -164,8 +186,9 @@
 }
 
 .btn-delete-sortie {
-  background: rgba(244, 63, 94, 0.15) !important;
-  border-color: rgba(244, 63, 94, 0.35) !important;
+  background: linear-gradient(180deg, rgba(244, 63, 94, 0.28) 0%, rgba(136, 19, 55, 0.45) 100%) !important;
+  border: 1px solid rgba(244, 63, 94, 0.45) !important;
+  border-top: 1px solid rgba(255, 140, 165, 0.55) !important;
   color: #fecdd3 !important;
   width: 28px !important;
   height: 28px !important;
@@ -175,14 +198,15 @@
   align-items: center !important;
   justify-content: center !important;
   border-radius: var(--radius-btn) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
   flex-shrink: 0;
 }
 
 .btn-delete-sortie:hover {
-  background: rgba(244, 63, 94, 0.32) !important;
+  background: linear-gradient(180deg, rgba(244, 63, 94, 0.45) 0%, rgba(136, 19, 55, 0.65) 100%) !important;
   border-color: #f43f5e !important;
   color: #ffffff !important;
-  box-shadow: 0 0 12px rgba(244, 63, 94, 0.4) !important;
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.5) !important;
 }
 
 .dossier-meta-grid {
@@ -192,13 +216,14 @@
 }
 
 .dossier-card {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-card);
   padding: 7px 9px;
   display: flex;
   flex-direction: column;
   gap: 3px;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .dossier-row {
@@ -214,6 +239,7 @@
 .dossier-row b {
   color: var(--color-pure-white);
   font-family: var(--font-dotdigital);
+  font-weight: 700;
 }
 
 .time-bonus-tag {
@@ -228,30 +254,32 @@
 }
 
 .dossier-podium-card {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
   padding: 5px 6px;
   display: flex;
   flex-direction: column;
   gap: 2px;
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
-.dossier-podium-card.rank-1 { border-color: rgba(251, 191, 36, 0.4); background: rgba(251, 191, 36, 0.06); }
-.dossier-podium-card.rank-2 { border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.05); }
-.dossier-podium-card.rank-3 { border-color: rgba(148, 163, 184, 0.35); background: rgba(148, 163, 184, 0.04); }
+.dossier-podium-card.rank-1 { border-color: rgba(251, 191, 36, 0.5); border-top-color: #fef08a; background: linear-gradient(180deg, rgba(251, 191, 36, 0.12) 0%, rgba(4, 9, 24, 0.8) 100%); }
+.dossier-podium-card.rank-2 { border-color: rgba(56, 189, 248, 0.5); border-top-color: #ffffff; background: linear-gradient(180deg, rgba(56, 189, 248, 0.10) 0%, rgba(4, 9, 24, 0.8) 100%); }
+.dossier-podium-card.rank-3 { border-color: rgba(148, 163, 184, 0.4); border-top-color: #ffffff; background: linear-gradient(180deg, rgba(148, 163, 184, 0.08) 0%, rgba(4, 9, 24, 0.8) 100%); }
 
 .dossier-podium-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 0.56rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .dossier-podium-cs {
   font-size: 0.76rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -282,10 +310,11 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-card);
   padding: 7px 9px;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .dossier-timeline-list {
@@ -297,16 +326,16 @@
   padding-right: 3px;
 }
 
-/* EXPANDED PARTICIPATING SQUADRON ROSTER */
 .dossier-roster-card {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-card);
   padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 5px;
   box-sizing: border-box;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .dossier-roster-list {
@@ -327,14 +356,16 @@
   font-size: 0.65rem;
   padding: 4px 7px;
   border-radius: var(--radius-badge);
-  background: rgba(2, 6, 18, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  transition: all 0.12s ease;
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  transition: all 0.14s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .dossier-roster-item:hover {
-  background: rgba(56, 189, 248, 0.08);
-  border-color: var(--glass-border-hover);
+  background: var(--glass-3d-btn-bg-hover);
+  border-color: var(--theme-accent);
 }
 
 @media (max-width: 900px) {
@@ -345,23 +376,11 @@
     max-height: 94dvh;
     border-radius: var(--radius-card);
   }
-  .leaderboard-window .inspect-header {
-    padding: 7px 9px;
-  }
-  .leaderboard-window .inspect-header .subtext {
-    display: none !important;
-  }
-  .leaderboard-body {
-    grid-template-columns: 1fr;
-    gap: 6px;
-    padding: 6px;
-  }
-  .dossier-podium-grid {
-    grid-template-columns: 1fr;
-  }
-  .dossier-roster-list {
-    max-height: 160px;
-  }
+  .leaderboard-window .inspect-header { padding: 7px 9px; }
+  .leaderboard-window .inspect-header .subtext { display: none !important; }
+  .leaderboard-body { grid-template-columns: 1fr; gap: 6px; padding: 6px; }
+  .dossier-podium-grid { grid-template-columns: 1fr; }
+  .dossier-roster-list { max-height: 160px; }
 }
 
 @media (max-height: 550px) {

@@ -60,7 +60,7 @@ class ProcurementShelf {
     const active = this.getActiveBaySummary();
 
     if (tab === 'airframes') {
-      el.innerHTML = `CLICK "+ ADD" OR DRAG AIRFRAME TO SQUADRON (${(this.pm.game.procurementSquadron || []).length}/16) &bull; TAP TAGS FOR SPEC DETAILS`;
+      el.innerHTML = `CLICK "ADD TO SQUADRON" OR DRAG AIRFRAME TO SQUADRON (${(this.pm.game.procurementSquadron || []).length}/16) &bull; TAP TAGS FOR SPEC DETAILS`;
       return;
     }
     if (!active) {
@@ -96,14 +96,14 @@ class ProcurementShelf {
       const gunId = btn.getAttribute('data-gun-id');
       const gun = (window.AUTOCANNONS_CATALOG || {})[gunId];
       if (!gun) {
-        btn.textContent = active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP';
+        btn.textContent = active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP';
         return;
       }
       const isComp = activeSpec && window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
         ? window.AircraftRegistry.isGunCompatible(activeSpec, gun)
         : (!gun.lockedTo || (active && gun.lockedTo.includes(active.specId)));
       btn.disabled = !isComp;
-      btn.textContent = !isComp ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP');
+      btn.textContent = !isComp ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP');
     });
 
     catalogEl.querySelectorAll('.btn-equip-upgrade').forEach(btn => {
@@ -111,7 +111,7 @@ class ProcurementShelf {
       const upg = (window.UPGRADES_CATALOG || {})[upgId];
       const isDisallowed = Boolean(upg && upg.isAllowed && activeSpec && !upg.isAllowed(activeSpec));
       btn.disabled = isDisallowed;
-      btn.textContent = isDisallowed ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP');
+      btn.textContent = isDisallowed ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP');
     });
 
     catalogEl.querySelectorAll('.btn-equip-wpn').forEach(btn => {
@@ -122,7 +122,7 @@ class ProcurementShelf {
       const pylonRatingMismatch = activeSpec && (ratings.indexOf(wpn.minRating || 'Type S') > ratings.indexOf(activeSpec.maxPylonRating || 'Type M'));
       const isRestricted = Boolean((wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId)) || pylonRatingMismatch);
       btn.disabled = isRestricted;
-      btn.textContent = isRestricted ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP');
+      btn.textContent = isRestricted ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP');
     });
   }
 
@@ -159,10 +159,10 @@ class ProcurementShelf {
           <span class="badge-category" style="color:#00f5a0;" data-tag-title="BURST DAMAGE" data-tag-tooltip="Inflicts ${burstDmg} HP across a ${roundsCount}-round burst with ${reloadTime}s reload.">${burstDmg} HP (${roundsCount} rds, ${reloadTime}s)</span>
         </div>
         <div class="cic-desc">${g.desc}</div>
-        <div style="display:flex;gap:6px;margin-top:4px;">
-          <button type="button" class="spec-inspect-btn" data-inspect-type="gun" data-inspect-id="${g.id}">[SPECS]</button>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+          <button type="button" class="spec-inspect-btn" data-inspect-type="gun" data-inspect-id="${g.id}">SPECS</button>
           <button type="button" class="btn-quick-equip btn-equip-gun" data-gun-id="${g.id}" style="flex:1;" ${isLocked ? 'disabled' : ''}>
-            ${isLocked ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP')}
+            ${isLocked ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP')}
           </button>
         </div>`;
 
@@ -201,10 +201,10 @@ class ProcurementShelf {
           <span class="badge-slots" data-tag-title="SOCKET REQ" data-tag-tooltip="Requires 1 open modular component socket.">1 SOCKET</span>
         </div>
         <div class="cic-desc">${upg.desc}</div>
-        <div style="display:flex;gap:6px;margin-top:4px;">
-          <button type="button" class="spec-inspect-btn" data-inspect-type="upgrade" data-inspect-id="${upg.id}">[SPECS]</button>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+          <button type="button" class="spec-inspect-btn" data-inspect-type="upgrade" data-inspect-id="${upg.id}">SPECS</button>
           <button type="button" class="btn-quick-equip btn-equip-upgrade" data-upg-id="${upg.id}" style="flex:1;" ${isDisallowed ? 'disabled' : ''}>
-            ${isDisallowed ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP')}
+            ${isDisallowed ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP')}
           </button>
         </div>`;
 
@@ -271,10 +271,10 @@ class ProcurementShelf {
           <div data-tag-title="SPEED & WARHEAD" data-tag-tooltip="Speed: Mach ${wpn.speedMach || '1.0'}, Warhead Damage: ${wpn.damagePerBurst || wpn.damage || 0} HP.">SPD: <b>M ${wpn.speedMach || '1.0'}</b> &bull; DMG: <b>${wpn.damagePerBurst || wpn.damage || 0} HP</b></div>
         </div>
         <div class="cic-desc">${wpn.behaviorDesc || wpn.desc || ''}</div>
-        <div style="display:flex;gap:6px;margin-top:4px;">
-          <button type="button" class="spec-inspect-btn" data-inspect-type="weapon" data-inspect-id="${wpn.id}">[SPECS]</button>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+          <button type="button" class="spec-inspect-btn" data-inspect-type="weapon" data-inspect-id="${wpn.id}">SPECS</button>
           <button type="button" class="btn-quick-equip btn-equip-wpn" data-wpn-id="${wpn.id}" style="flex:1;" ${isRestricted ? 'disabled' : ''}>
-            ${isRestricted ? 'INCOMPATIBLE' : (active ? `+ EQUIP TO AIRCRAFT #${active.index}` : '+ EQUIP')}
+            ${isRestricted ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP')}
           </button>
         </div>`;
 

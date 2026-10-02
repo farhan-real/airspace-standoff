@@ -34,8 +34,15 @@ const Physics = {
 
   countIntersectingClouds(x1, y1, x2, y2, weatherClouds) {
     if (!weatherClouds || weatherClouds.length === 0) return 0;
+    const minX = Math.min(x1, x2);
+    const maxX = Math.max(x1, x2);
+    const minY = Math.min(y1, y2);
+    const maxY = Math.max(y1, y2);
     let count = 0;
-    for (const c of weatherClouds) {
+
+    for (let i = 0; i < weatherClouds.length; i++) {
+      const c = weatherClouds[i];
+      if (maxX < c.x - c.rx || minX > c.x + c.rx || maxY < c.y - c.ry || minY > c.y + c.ry) continue;
       const hits = typeof c.intersectsSegment === 'function'
         ? c.intersectsSegment(x1, y1, x2, y2)
         : (c.containsPoint(x1, y1) || c.containsPoint(x2, y2));
@@ -66,8 +73,6 @@ const Physics = {
         aspectMultiplier = spike;
       } else if (aspectOffNose > 2.1) {
         aspectMultiplier = 1.8;
-      } else {
-        aspectMultiplier = 1.0;
       }
     }
 
@@ -80,14 +85,6 @@ const Physics = {
       if (sensorUnit.hasECCM) jamImpact *= (1.0 - (sensorUnit.eccmBonus || 0.60));
       if (sensorUnit.hasGaNAESA) jamImpact *= 0.50;
       maxDetectDist *= (1.0 - jamImpact);
-    }
-
-    if (window.Game && window.Game.surfaceUnits) {
-      const hostileJammers = window.Game.surfaceUnits.filter(s => s.hp > 0 && s.team !== sensorUnit.team && s.isJammerStation && Math.hypot(s.x - targetUnit.x, s.y - targetUnit.y) <= s.rangeKm);
-      if (hostileJammers.length > 0) {
-        let sJam = 0.30 * (sensorUnit.hasECCM ? (1.0 - (sensorUnit.eccmBonus || 0.60)) : 1.0);
-        maxDetectDist *= (1.0 - sJam);
-      }
     }
 
     const tAlt = targetUnit.alt !== undefined ? targetUnit.alt : 0.0;
@@ -113,7 +110,6 @@ const Physics = {
     if (!weapon || !attacker || !target || target.hp <= 0 || isNaN(target.x) || isNaN(attacker.x)) {
       return { pk: 0, label: 'NO TARGET', color: '#64748b', arrow: '--', desc: 'Select target', salvoCount: 0, hasMixedSeekers: false };
     }
-
     if (weapon.isJammerPod) {
       return { pk: 0, label: 'ACTIVE ECM', color: '#38bdf8', arrow: '--', desc: `Jamming active (${Math.round((weapon.jamEfficiency || 0.45)*100)}%)`, salvoCount: 0, hasMixedSeekers: false };
     }
@@ -126,8 +122,8 @@ const Physics = {
 
     if (weapon.isLaser || weapon.seeker === 'DIRECT_ENERGY') {
       if (dist > (weapon.rangeKm || 9.0)) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist)}km > ${weapon.rangeKm || 9.0}km`, salvoCount: 0, hasMixedSeekers: false };
-      if (cloudHits > 0) return { pk: Math.max(25, 95 - cloudHits * 25), label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: `${cloudHits} cloud cell${cloudHits > 1 ? 's' : ''} scattering beam`, salvoCount: 0, hasMixedSeekers: false };
-      return { pk: 95, label: 'HITSCAN', color: '#00f0ff', arrow: '--', desc: 'Speed-of-light directed energy beam', salvoCount: 0, hasMixedSeekers: false };
+      if (cloudHits > 0) return { pk: Math.max(25, 95 - cloudHits * 25), label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: `${cloudHits} cloud cells scattering beam`, salvoCount: 0, hasMixedSeekers: false };
+      return { pk: 95, label: 'DIRECT BEAM', color: '#00f0ff', arrow: '--', desc: 'Speed-of-light directed energy beam', salvoCount: 0, hasMixedSeekers: false };
     }
 
     const isSurface = (typeof SurfaceUnit !== 'undefined' && target instanceof SurfaceUnit) || Boolean(target.type && !target.spec && !target.isCivilian);
@@ -146,15 +142,11 @@ const Physics = {
     const normDist = Math.max(0.0, Math.min(1.0, dist / (weapon.rangeKm || 100.0)));
     let rangeScore = Math.max(0.20, 1.0 - lambda * Math.pow(normDist, pExp));
 
-    let pulseSurgeBonus = 0.0;
     if (weapon.trait === 'DUAL_PULSE_SURGE' && (dist <= 25.0 || normDist >= 0.60)) {
-      pulseSurgeBonus = 0.16;
-      rangeScore = Math.min(1.0, rangeScore + pulseSurgeBonus);
+      rangeScore = Math.min(1.0, rangeScore + 0.16);
     }
 
-    const isRadarSeeker = (weapon.seeker === 'ARH' || weapon.seeker === 'PASSIVE_RADAR');
     const isOpticalSeeker = (weapon.seeker === 'IIR' || weapon.seeker === 'EO' || weapon.seeker === 'OPT');
-
     const angleToTarget = Math.atan2(target.y - attacker.y, target.x - attacker.x);
     let aspectScore = 0.90;
     let aspectDiff = Math.PI;
@@ -181,40 +173,18 @@ const Physics = {
         if (offBoresight > maxAngle) {
           return { pk: 0, label: 'OFF BORESIGHT', color: '#ef4444', arrow: 'v', desc: 'Target outside forward acquisition cone', salvoCount: 0, hasMixedSeekers: false };
         }
-        if (offBoresight > 0.6) {
-          offBoresightPenalty = (offBoresight - 0.6) * 0.18;
-        }
+        if (offBoresight > 0.6) offBoresightPenalty = (offBoresight - 0.6) * 0.18;
       }
     }
 
-    const weatherPenalty = (cloudHits > 0 && isOpticalSeeker)
-      ? Math.min(0.40, cloudHits * 0.15)
-      : 0.0;
-
+    const weatherPenalty = (cloudHits > 0 && isOpticalSeeker) ? Math.min(0.40, cloudHits * 0.15) : 0.0;
     let targetThermalMultiplier = Number(target.thermalBloom !== undefined ? target.thermalBloom : 1.0);
     if (target.irPenalty) targetThermalMultiplier *= (1.0 + target.irPenalty);
-
-    let thermalModifier = 0.0;
-    if (isOpticalSeeker) {
-      const baseThermalBoost = aspectDiff < 0.8 ? 0.10 : 0.0;
-      thermalModifier = (targetThermalMultiplier - 1.0) * 0.22 + baseThermalBoost;
-    }
-
-    const heavyBonus = weapon.heavyTargetBonus ? ((target.Wr || 0) * 0.25) : 0.0;
-
-    let jammerPenalty = 0.0;
-    if (weapon.seeker === 'ARH') {
-      if (target.jamEfficiency) jammerPenalty += target.jamEfficiency * 0.30 * (attacker.hasECCM ? 0.40 : 1.0);
-      if (window.Game && window.Game.surfaceUnits && window.Game.surfaceUnits.some(s => s.hp > 0 && s.team === target.team && s.isJammerStation && Math.hypot(s.x - target.x, s.y - target.y) <= s.rangeKm)) {
-        jammerPenalty += 0.25 * (attacker.hasECCM ? 0.40 : 1.0);
-      }
-    }
+    const thermalModifier = isOpticalSeeker ? (targetThermalMultiplier - 1.0) * 0.22 + (aspectDiff < 0.8 ? 0.10 : 0.0) : 0.0;
 
     let salvoBonus = 0.0;
     let salvoCount = 0;
     let hasMixedSeekers = false;
-    const mixedBonusVal = (window.CONFIG && window.CONFIG.MIXED_SEEKER_SYNERGY_BONUS) || 0.25;
-
     if (window.Game && window.Game.missiles) {
       const inbounds = window.Game.missiles.filter(m => m.active && m.target && m.target.id === target.id);
       salvoCount = inbounds.length;
@@ -224,52 +194,30 @@ const Physics = {
         const isOpt = (s) => (s === 'IIR' || s === 'EO' || s === 'OPT');
         if ((isRf(weapon.seeker) && inbounds.some(m => m.weapon && isOpt(m.weapon.seeker))) || (isOpt(weapon.seeker) && inbounds.some(m => m.weapon && isRf(m.weapon.seeker)))) {
           hasMixedSeekers = true;
-          salvoBonus += mixedBonusVal;
+          salvoBonus += 0.25;
         }
       }
     }
 
     const targetAgility = (typeof target.getEffectiveAgility === 'function')
-      ? target.getEffectiveAgility()
-      : ((target.spec && target.spec.AGI_0) ? target.spec.AGI_0 : 0.85);
-    const agilityScale = Math.max(0.35, Math.min(1.65, targetAgility / 0.85));
-
+      ? target.getEffectiveAgility() : ((target.spec && target.spec.AGI_0) ? target.spec.AGI_0 : 0.85);
     const sOpt = (typeof target.getOptimalCornerSpeed === 'function')
-      ? target.getOptimalCornerSpeed()
-      : ((target.effectiveMaxSpeed || 0.95) * 0.65);
-    const turnOptEff = target.isCoffin
-      ? 1.0
-      : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(target.speed || 0.8, sOpt) : 0.85);
-    const turnOptFactor = Math.max(0.40, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
+      ? target.getOptimalCornerSpeed() : ((target.effectiveMaxSpeed || 0.95) * 0.65);
+    const turnOptEff = target.isCoffin ? 1.0 : Physics.calcTurnEfficiency(target.speed || 0.8, sOpt);
 
+    const isRadarSeeker = (weapon.seeker === 'ARH' || weapon.seeker === 'PASSIVE_RADAR');
     const notchBonus = (target.isNotching && isRadarSeeker)
-      ? (attacker.hasIRST ? 0.16 : 0.38 * (1.0 - (weapon.antiNotchBonus || 0)) * (0.6 + 0.4 * agilityScale))
-      : 0.0;
+      ? (attacker.hasIRST ? 0.16 : 0.38 * (1.0 - (weapon.antiNotchBonus || 0))) : 0.0;
     const chaffBonus = (target.cmTimer > 0)
-      ? (isRadarSeeker ? 0.34 * (1.0 - (weapon.decoyResistance || weapon.flareResistance || 0)) : (isOpticalSeeker ? 0.18 * (1.0 - (weapon.decoyResistance || 0)) : 0.20))
-      : 0.0;
+      ? (isRadarSeeker ? 0.34 : 0.18) : 0.0;
 
-    const activeEvasion = Math.max(
-      (target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? (target.activeManeuverBonus * turnOptFactor) : 0.0,
-      notchBonus,
-      chaffBonus
-    );
-    const passiveBaseline = Math.max(
-      target.isCoffin ? (target.coffinDodgeBonus || 0.25) : 0.0,
-      target.isAce ? (target.aceEvasionBonus || 0.08) : 0.0,
-      target.isFlightLead ? (target.leadEvasionBonus || 0.08) : 0.0
-    );
-
+    const activeEvasion = Math.max((target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? target.activeManeuverBonus : 0.0, notchBonus, chaffBonus);
+    const passiveBaseline = Math.max(target.isCoffin ? 0.25 : 0.0, target.isAce ? 0.08 : 0.0, target.isFlightLead ? 0.08 : 0.0);
     const targetEnergy = Math.max(0.20, Math.min(1.0, target.energy !== undefined ? target.energy : 1.0));
-    let effectiveDefenseEstimate = Math.min(0.50, Math.max(activeEvasion, passiveBaseline) + 0.15 * Math.min(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
-    if (hasMixedSeekers) effectiveDefenseEstimate *= 0.55;
+    let effectiveDefense = Math.min(0.50, Math.max(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
+    if (hasMixedSeekers) effectiveDefense *= 0.55;
 
-    const energyBleedBonus = (1.0 - targetEnergy) * 0.25;
-    const shooterStressPenalty = (attacker.stress >= 0.65 && !attacker.isCoffin && !attacker.spec.isDrone) ? 0.15 : 0.0;
-    const agilityDefenseBonus = (targetAgility - 0.85) * 0.12;
-    const turnOptBonus = (turnOptEff - 0.70) * 0.10;
-
-    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefenseEstimate - agilityDefenseBonus - turnOptBonus + energyBleedBonus + heavyBonus - weatherPenalty + salvoBonus + (attacker.pkBonus || 0) + thermalModifier - jammerPenalty - shooterStressPenalty - offBoresightPenalty;
+    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefense + salvoBonus + thermalModifier - offBoresightPenalty;
     const pkPercent = Math.round(Math.max(15, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = isClosing ? '^' : 'v';
@@ -277,24 +225,14 @@ const Physics = {
     let label = 'MARGINAL';
     let color = '#f59e0b';
     if (isRearShot) { label = 'REAR SHOT'; color = '#00f5a0'; }
-    else if (pkPercent >= 70) { label = 'KILL SHOT'; color = '#10b981'; }
+    else if (pkPercent >= 70) { label = 'OPTIMAL'; color = '#10b981'; }
     else if (pkPercent >= 45) { label = 'GOOD'; color = '#38bdf8'; }
     else { label = 'POOR'; color = '#f43f5e'; }
 
     return {
       pk: pkPercent, label, color, arrow,
-      desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Over-the-shoulder lock' : 'Target solution locked'),
-      salvoCount, hasMixedSeekers,
-      breakdown: {
-        weaponBasePk: weapon.T_0 || 0.80, rangeKm: dist, rangeScore,
-        lambda, pExp, pulseSurgeBonus,
-        aspectDifferenceRad: aspectDiff, aspectScore, offBoresightPenalty, rearShot: isRearShot,
-        activeEvasion, passiveBaseline, effectiveDefenseEstimate, mixedSeekers: hasMixedSeekers,
-        targetEnergy, energyBleedBonus, targetAgility, agilityDefenseBonus, turnEfficiency: turnOptEff,
-        turnEfficiencyPenalty: turnOptBonus, weatherPenalty, thermalModifier, targetThermalBloom: targetThermalMultiplier, heavyBonus,
-        jammerPenalty, shooterStressPenalty, salvoBonus, salvoCount, preClampProbability: basePk,
-        finalProbabilityPercent: pkPercent
-      }
+      desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Rear trajectory lock' : 'Target solution locked'),
+      salvoCount, hasMixedSeekers
     };
   }
 };

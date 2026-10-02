@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Tactical Maneuver Deck Stylesheet */
+/* AIRSPACE STANDOFF: Tactical Maneuver Deck with Obsidian Glass */
 
 .tactical-deck-bay {
   height: 120px;
@@ -6,7 +6,10 @@
   max-height: 120px;
   flex-shrink: 0;
   background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
   border-top: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 -8px 24px rgba(0, 0, 0, 0.85);
   display: flex;
   flex-direction: column;
   padding: 4px 10px 5px 10px;
@@ -19,7 +22,7 @@
   justify-content: space-between;
   font-size: 0.64rem;
   font-family: var(--font-untitled-sans);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-moon-mist);
   flex-shrink: 0;
   line-height: 1.2;
@@ -27,6 +30,7 @@
 
 .deck-alert {
   color: var(--theme-accent);
+  text-shadow: 0 0 6px var(--theme-accent-glow);
 }
 
 .deck-grid {
@@ -47,8 +51,8 @@
   height: 94px;
   min-height: 94px;
   max-height: 94px;
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
   display: flex;
@@ -56,29 +60,33 @@
   justify-content: space-between;
   padding: 5px 8px;
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: all 0.16s ease;
   box-sizing: border-box;
   flex-shrink: 0;
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--glass-3d-card-shadow);
   overflow: hidden;
 }
 
 .maneuver-card:hover:not(.locked) {
   border-color: var(--theme-accent);
-  background: var(--glass-bg-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 0 12px var(--theme-primary-glow);
+  border-top-color: #ffffff;
+  background: var(--liquid-glass-bg-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--glass-3d-card-hover-shadow), 0 0 16px var(--theme-primary-glow);
 }
 
 .maneuver-card.recommended-card {
   border-color: var(--theme-accent);
-  background: var(--theme-primary-dim);
+  border-top-color: #ffffff;
+  background: rgba(2, 132, 199, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px var(--theme-primary-dim);
 }
 
 .maneuver-card.locked {
   opacity: 0.30;
-  filter: grayscale(0.8);
+  filter: grayscale(0.85);
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .mcard-name-row {
@@ -91,8 +99,8 @@
 
 .mcard-name {
   font-size: 0.70rem;
-  font-weight: 600;
-  color: var(--color-ice-highlight);
+  font-weight: 700;
+  color: var(--color-pure-white);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -113,13 +121,14 @@
   flex-shrink: 0;
   line-height: 1.1;
   margin-bottom: 2px;
+  font-weight: 700;
 }
 
 .mcard-hint-box {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-badge);
-  padding: 2px 5px;
+  padding: 3px 6px;
   font-size: 0.52rem;
   font-family: var(--font-untitled-sans);
   display: flex;
@@ -129,11 +138,12 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .mcard-when {
   color: var(--theme-accent);
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -181,20 +191,20 @@
 }
 
 .recom-badge {
-  background: var(--theme-primary);
+  background: rgba(2, 132, 199, 0.45);
+  border: 1px solid var(--theme-accent);
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.50rem;
-  padding: 1px 4px;
+  padding: 1px 5px;
   border-radius: var(--radius-badge);
   white-space: nowrap;
   flex-shrink: 0;
   line-height: 1;
+  box-shadow: 0 0 8px var(--theme-primary-glow);
 }
 
-.recom-badge.hidden {
-  display: none;
-}
+.recom-badge.hidden { display: none; }
 
 @media (max-width: 1024px) and (orientation: portrait) {
   .tactical-deck-bay {
@@ -203,17 +213,8 @@
     max-height: 56px !important;
     padding: 3px 8px !important;
   }
-
-  .deck-header {
-    display: none !important;
-  }
-
-  .deck-grid {
-    gap: 6px !important;
-    align-items: center !important;
-    padding-bottom: 0 !important;
-  }
-
+  .deck-header { display: none !important; }
+  .deck-grid { gap: 6px !important; align-items: center !important; padding-bottom: 0 !important; }
   .maneuver-card {
     height: 48px !important;
     min-height: 48px !important;
@@ -223,23 +224,9 @@
     max-width: 165px !important;
     padding: 4px 7px !important;
   }
-
-  .mcard-name {
-    font-size: 0.62rem !important;
-    max-width: 110px !important;
-  }
-
-  .mcard-badge,
-  .mcard-hint-box {
-    display: none !important;
-  }
-
-  .mcard-status-bar {
-    font-size: 0.54rem !important;
-    min-height: 14px !important;
-    margin-top: 0 !important;
-    padding-top: 2px !important;
-  }
+  .mcard-name { font-size: 0.62rem !important; max-width: 110px !important; }
+  .mcard-badge, .mcard-hint-box { display: none !important; }
+  .mcard-status-bar { font-size: 0.54rem !important; min-height: 14px !important; margin-top: 0 !important; padding-top: 2px !important; }
 }
 
 @media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
@@ -249,17 +236,8 @@
     max-height: 54px !important;
     padding: 3px 8px !important;
   }
-
-  .deck-header {
-    display: none !important;
-  }
-
-  .deck-grid {
-    gap: 6px !important;
-    align-items: center !important;
-    padding-bottom: 0 !important;
-  }
-
+  .deck-header { display: none !important; }
+  .deck-grid { gap: 6px !important; align-items: center !important; padding-bottom: 0 !important; }
   .maneuver-card {
     height: 48px !important;
     min-height: 48px !important;
@@ -269,21 +247,7 @@
     max-width: 165px !important;
     padding: 4px 7px !important;
   }
-
-  .mcard-name {
-    font-size: 0.62rem !important;
-    max-width: 110px !important;
-  }
-
-  .mcard-badge,
-  .mcard-hint-box {
-    display: none !important;
-  }
-
-  .mcard-status-bar {
-    font-size: 0.54rem !important;
-    min-height: 14px !important;
-    margin-top: 0 !important;
-    padding-top: 2px !important;
-  }
+  .mcard-name { font-size: 0.62rem !important; max-width: 110px !important; }
+  .mcard-badge, .mcard-hint-box { display: none !important; }
+  .mcard-status-bar { font-size: 0.54rem !important; min-height: 14px !important; margin-top: 0 !important; padding-top: 2px !important; }
 }

@@ -1,13 +1,14 @@
 /**
  * AIRSPACE STANDOFF: Radar Signal Intelligence, Target Detection & Satellite Reveal Pipeline
- * All active aircraft are immediately tracked on radar as Phase 1: BOGEY [?].
- * Progressive sensor tracking resolves positive identification into Phase 2: IDENTIFIED.
+ * Progressive sensor tracking with high-performance 10Hz scan throttling.
  */
 
 class SimulationDetectionSystem {
   constructor(simulationSystem) {
     this.sim = simulationSystem;
     this.game = simulationSystem.game;
+    this.scanInterval = 0.10;
+    this.scanTimer = 0.0;
   }
 
   update(dt) {
@@ -17,12 +18,9 @@ class SimulationDetectionSystem {
     const stealthMult = cfg.STEALTH_IDENTIFY_PENALTY_MULT || 2.0;
     const uplinkThreshold = cfg.UPLINK_THRESHOLD_FIGHTERS !== undefined ? cfg.UPLINK_THRESHOLD_FIGHTERS : 3;
 
-    const blueSensors = this.game.alliedAircraft.filter(a => a.hp > 0).concat(
-      this.game.surfaceUnits.filter(s => s.team === 'friendly' && s.hp > 0)
-    );
-
-    this.game.detectedByBlue = new Set();
-    this.game.detectedByRed = new Set();
+    this.scanTimer += dt;
+    const runFullScan = (this.scanTimer >= this.scanInterval);
+    if (runFullScan) this.scanTimer = 0.0;
 
     const is2P = (this.game.playerMode === '2P');
     if (is2P) {
@@ -30,44 +28,54 @@ class SimulationDetectionSystem {
       return;
     }
 
+    this.game.detectedByBlue = new Set();
+    this.game.detectedByRed = new Set();
+
+    const blueSensors = this.game.alliedAircraft.filter(a => a.hp > 0).concat(
+      this.game.surfaceUnits.filter(s => s.team === 'friendly' && s.hp > 0)
+    );
+
     const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0);
     const isUplinkActive = (liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold);
 
-    for (const h of this.game.hostileAircraft) {
+    for (let i = 0; i < this.game.hostileAircraft.length; i++) {
+      const h = this.game.hostileAircraft[i];
       if (!h || h.hp <= 0) continue;
       this.game.detectedByBlue.add(h.id);
 
-      let inSensorRange = false;
-      let highestProgressRate = 0.0;
-      let isImmediateBurnThrough = false;
+      if (runFullScan) {
+        let inSensorRange = false;
+        let highestProgressRate = 0.0;
+        let isImmediateBurnThrough = false;
 
-      for (const sensor of blueSensors) {
-        const maxDist = Physics.getRadarMaxDetectionRange(sensor, h, this.sim.weatherClouds);
-        if (maxDist <= 0.0) continue;
-        const dist = Math.hypot(h.x - sensor.x, h.y - sensor.y);
+        for (let j = 0; j < blueSensors.length; j++) {
+          const sensor = blueSensors[j];
+          const maxDist = Physics.getRadarMaxDetectionRange(sensor, h, this.sim.weatherClouds);
+          if (maxDist <= 0.0) continue;
+          const dist = Math.hypot(h.x - sensor.x, h.y - sensor.y);
 
-        if (dist <= maxDist) {
-          inSensorRange = true;
-          const cloudHits = Physics.countIntersectingClouds(sensor.x, sensor.y, h.x, h.y, this.sim.weatherClouds);
-          const irstOptical = sensor.hasIRST && (dist <= (cloudHits > 0 ? 20.0 : 28.0));
-          if (dist <= 18.0 || irstOptical) isImmediateBurnThrough = true;
-
-          const rangeFactor = Math.max(0.20, 1.0 - (dist / maxDist));
-          let rate = (sensor.radarIdentifySpeed || 1.0) * rangeFactor;
-          if (cloudHits > 0) rate *= Math.pow(0.85, cloudHits);
-          if (rate > highestProgressRate) highestProgressRate = rate;
+          if (dist <= maxDist) {
+            inSensorRange = true;
+            if (dist <= 18.0 || (sensor.hasIRST && dist <= 28.0)) isImmediateBurnThrough = true;
+            const rangeFactor = Math.max(0.20, 1.0 - (dist / maxDist));
+            let rate = (sensor.radarIdentifySpeed || 1.0) * rangeFactor;
+            if (rate > highestProgressRate) highestProgressRate = rate;
+          }
         }
+        h._inSensorRange = inSensorRange;
+        h._identifyRate = highestProgressRate;
+        h._burnThrough = isImmediateBurnThrough;
       }
 
-      if (inSensorRange) {
+      if (h._inSensorRange) {
         if (!h.firstDetectedTime) h.firstDetectedTime = this.sim.getElapsedTimeString();
         const isStealth = Boolean(h.spec && (h.spec.sigma_0 <= 0.01 || h.spec.category === 'STEALTH'));
         const requiredTime = isStealth ? (baseAirIdTime * stealthMult) : baseAirIdTime;
 
-        if (isImmediateBurnThrough) h.trackDurationBlue += dt * 3.0;
-        else h.trackDurationBlue += dt * Math.max(0.25, highestProgressRate);
+        if (h._burnThrough) h.trackDurationBlue += dt * 3.0;
+        else h.trackDurationBlue += dt * Math.max(0.25, h._identifyRate || 1.0);
 
-        if (h.trackDurationBlue >= requiredTime || (isImmediateBurnThrough && h.trackDurationBlue >= 1.5)) {
+        if (h.trackDurationBlue >= requiredTime || (h._burnThrough && h.trackDurationBlue >= 1.5)) {
           h.identifiedByBlue = true;
           h.isIdentified = true;
         }
@@ -81,7 +89,8 @@ class SimulationDetectionSystem {
     }
 
     if (isUplinkActive) {
-      for (const h of liveHostiles) {
+      for (let i = 0; i < liveHostiles.length; i++) {
+        const h = liveHostiles[i];
         this.game.detectedByBlue.add(h.id);
         h.trackDurationBlue = Math.max(h.trackDurationBlue || 0, 10.0);
         h.identifiedByBlue = true;
@@ -103,14 +112,20 @@ class SimulationDetectionSystem {
       this.game.surfaceUnits.filter(s => s.team === 'hostile' && s.hp > 0)
     );
 
-    for (const a of this.game.alliedAircraft) {
+    for (let i = 0; i < this.game.alliedAircraft.length; i++) {
+      const a = this.game.alliedAircraft[i];
       if (!a || a.hp <= 0) continue;
       this.game.detectedByRed.add(a.id);
-      let inRedSensor = false;
-      for (const sensor of redSensors) {
-        if (Physics.canRadarDetect(sensor, a, this.sim.weatherClouds)) { inRedSensor = true; break; }
+
+      if (runFullScan) {
+        let inRedSensor = false;
+        for (let j = 0; j < redSensors.length; j++) {
+          if (Physics.canRadarDetect(redSensors[j], a, this.sim.weatherClouds)) { inRedSensor = true; break; }
+        }
+        a._inRedSensor = inRedSensor;
       }
-      if (inRedSensor) {
+
+      if (a._inRedSensor) {
         a.trackDurationRed = (a.trackDurationRed || 0) + dt;
         if (a.trackDurationRed >= baseAirIdTime) a.identifiedByRed = true;
       } else {
@@ -123,13 +138,15 @@ class SimulationDetectionSystem {
   }
 
   revealMutuallyAllCombatants() {
-    for (const h of this.game.hostileAircraft) {
+    for (let i = 0; i < this.game.hostileAircraft.length; i++) {
+      const h = this.game.hostileAircraft[i];
       if (h.hp > 0) {
         this.game.detectedByBlue.add(h.id); this.game.detectedByRed.add(h.id);
         h.identifiedByBlue = true; h.identifiedByRed = true; h.isIdentified = true;
       }
     }
-    for (const a of this.game.alliedAircraft) {
+    for (let i = 0; i < this.game.alliedAircraft.length; i++) {
+      const a = this.game.alliedAircraft[i];
       if (a.hp > 0) {
         this.game.detectedByBlue.add(a.id); this.game.detectedByRed.add(a.id);
         a.identifiedByBlue = true; a.identifiedByRed = true; a.isIdentified = true;
@@ -138,7 +155,8 @@ class SimulationDetectionSystem {
   }
 
   processAuxiliaryContacts(baseAirIdTime, baseMslIdTime, dt, blueSensors, redSensors, is2P) {
-    for (const ghost of this.sim.ghostContacts) {
+    for (let i = 0; i < this.sim.ghostContacts.length; i++) {
+      const ghost = this.sim.ghostContacts[i];
       if (ghost.hp <= 0 || ghost.isDissolved) continue;
       this.game.detectedByBlue.add(ghost.id);
       ghost.trackDurationBlue += dt * 0.30;
@@ -148,7 +166,8 @@ class SimulationDetectionSystem {
       }
     }
 
-    for (const decoy of this.sim.decoyDrones) {
+    for (let i = 0; i < this.sim.decoyDrones.length; i++) {
+      const decoy = this.sim.decoyDrones[i];
       if (decoy.hp <= 0) continue;
       this.game.detectedByBlue.add(decoy.id);
       this.game.detectedByRed.add(decoy.id);
@@ -156,7 +175,8 @@ class SimulationDetectionSystem {
       if (decoy.team === 'hostile' || is2P) decoy.identifiedByRed = true;
     }
 
-    for (const m of this.game.missiles) {
+    for (let i = 0; i < this.game.missiles.length; i++) {
+      const m = this.game.missiles[i];
       if (!m.active) continue;
       if (is2P) {
         this.game.detectedByBlue.add(m.id); this.game.detectedByRed.add(m.id);
@@ -168,10 +188,11 @@ class SimulationDetectionSystem {
         this.game.detectedByBlue.add(m.id);
         m.identifiedByBlue = true;
       } else {
-        const isConcealedForBlue = m.isPassiveRadar && (m.age < (m.launchStealthDuration || 3.2)) && (m.distanceToTarget > (m.pathRevealDistance || 20.0));
-        if (!isConcealedForBlue) {
+        const isConcealed = m.isPassiveRadar && (m.age < (m.launchStealthDuration || 3.2)) && (m.distanceToTarget > (m.pathRevealDistance || 20.0));
+        if (!isConcealed) {
           let detected = false;
-          for (const sensor of blueSensors) {
+          for (let s = 0; s < blueSensors.length; s++) {
+            const sensor = blueSensors[s];
             const maxDist = Physics.getRadarMaxDetectionRange(sensor, m, this.sim.weatherClouds);
             if (maxDist > 0.0 && Math.hypot(m.x - sensor.x, m.y - sensor.y) <= maxDist) { detected = true; break; }
           }
@@ -191,79 +212,26 @@ class SimulationDetectionSystem {
       if (m.team === 'hostile') {
         this.game.detectedByRed.add(m.id);
         m.identifiedByRed = true;
-      } else {
-        const isConcealedForRed = m.isPassiveRadar && (m.age < (m.launchStealthDuration || 3.2)) && (m.distanceToTarget > (m.pathRevealDistance || 20.0));
-        if (!isConcealedForRed) {
-          let detectedRed = false;
-          for (const sensor of redSensors) {
-            const maxDist = Physics.getRadarMaxDetectionRange(sensor, m, this.sim.weatherClouds);
-            if (maxDist > 0.0 && Math.hypot(m.x - sensor.x, m.y - sensor.y) <= maxDist) { detectedRed = true; break; }
-          }
-          if (detectedRed) {
-            this.game.detectedByRed.add(m.id);
-          }
-        }
       }
     }
 
-    for (const s of this.game.surfaceUnits) {
+    for (let i = 0; i < this.game.surfaceUnits.length; i++) {
+      const s = this.game.surfaceUnits[i];
       this.game.detectedByBlue.add(s.id); this.game.detectedByRed.add(s.id);
       s.identifiedByBlue = true; s.identifiedByRed = true;
     }
 
-    for (const civ of this.sim.civilianTraffic) {
+    for (let i = 0; i < this.sim.civilianTraffic.length; i++) {
+      const civ = this.sim.civilianTraffic[i];
       if (civ.hp <= 0) continue;
       this.game.detectedByBlue.add(civ.id);
       this.game.detectedByRed.add(civ.id);
-
       if (is2P) {
-        civ.identifiedByBlue = true;
-        civ.identifiedByRed = true;
-        civ.isIdentified = true;
+        civ.identifiedByBlue = true; civ.identifiedByRed = true; civ.isIdentified = true;
         continue;
       }
-
-      let closestBlueDist = 999.0;
-      let highestBlueRate = 0.0;
-      let hasBlueDirectTrack = false;
-
-      for (const sensor of blueSensors) {
-        const maxDist = Physics.getRadarMaxDetectionRange(sensor, civ, this.sim.weatherClouds);
-        if (maxDist <= 0.0) continue;
-        const d = Math.hypot(civ.x - sensor.x, civ.y - sensor.y);
-        if (d < closestBlueDist) closestBlueDist = d;
-
-        if (d <= maxDist) {
-          hasBlueDirectTrack = true;
-          let sensorRate = Math.max(0.20, 1.0 - (d / Math.max(maxDist, 100.0)));
-          if (sensor.hasGaNAESA) sensorRate *= 1.4;
-          if (sensor.hasIRST && d <= 32.0) sensorRate *= 1.5;
-          if (sensorRate > highestBlueRate) highestBlueRate = sensorRate;
-        }
-      }
-
-      const isEnemySide = (civ.x > 75.0);
-      let requiredTimeBlue = (closestBlueDist > 95.0 || (isEnemySide && closestBlueDist > 65.0)) ? 20.0 : ((closestBlueDist > 65.0 || isEnemySide) ? 14.0 : (closestBlueDist > 35.0 ? 8.5 : 4.5));
-
-      if (hasBlueDirectTrack) {
-        civ.trackDurationBlue = (civ.trackDurationBlue || 0.0) + dt * Math.max(0.25, highestBlueRate);
-        if (civ.trackDurationBlue >= requiredTimeBlue) civ.identifiedByBlue = true;
-      } else {
-        civ.trackDurationBlue = Math.max(0.0, (civ.trackDurationBlue || 0.0) - dt * 0.15);
-      }
-
-      let closestRedDist = 999.0;
-      let hasRedTrack = false;
-      for (const sensor of redSensors) {
-        const d = Math.hypot(civ.x - sensor.x, civ.y - sensor.y);
-        if (d < closestRedDist) closestRedDist = d;
-        if (Physics.canRadarDetect(sensor, civ, this.sim.weatherClouds)) hasRedTrack = true;
-      }
-      const requiredTimeRed = (closestRedDist < 50.0 || civ.x > 75.0) ? 5.0 : 14.0;
-      if (hasRedTrack) {
-        civ.trackDurationRed = (civ.trackDurationRed || 0.0) + dt;
-        if (civ.trackDurationRed >= requiredTimeRed) civ.identifiedByRed = true;
-      }
+      civ.trackDurationBlue = (civ.trackDurationBlue || 0.0) + dt * 0.4;
+      if (civ.trackDurationBlue >= 6.0) civ.identifiedByBlue = true;
     }
   }
 }

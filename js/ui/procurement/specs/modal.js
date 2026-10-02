@@ -95,7 +95,7 @@ class SpecsModalRenderer {
       : 'None';
 
     const addBtnHtml = inHangar
-      ? '<button type="button" class="inspect-action-btn req-btn" id="inspect-btn-req">+ ADD TO SQUADRON</button>'
+      ? '<button type="button" class="inspect-action-btn req-btn" id="inspect-btn-req">ADD TO SQUADRON</button>'
       : '';
 
     return `

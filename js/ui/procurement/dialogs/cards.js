@@ -94,7 +94,7 @@ class PreconfigCardsRenderer {
           ${isCustom ? `<button type="button" class="btn-delete-tpl">DELETE</button>` : ''}
         </div>
         <div class="pc-footer-right">
-          <button type="button" class="btn-deploy-tpl">+ ASSIGN TO SQUADRON</button>
+          <button type="button" class="btn-deploy-tpl">ASSIGN TO SQUADRON</button>
         </div>
       </div>
     `;

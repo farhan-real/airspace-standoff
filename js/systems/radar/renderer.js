@@ -11,7 +11,7 @@ class TacticalRadarRenderer {
     this.isMobile = (typeof window !== 'undefined') && (window.innerWidth <= 1024);
 
     const rawDpr = window.devicePixelRatio || 1;
-    this.dpr = Math.min(Math.max(rawDpr, 1.75), 2.0);
+    this.dpr = this.isMobile ? Math.min(rawDpr, 1.25) : Math.min(rawDpr, 1.5);
 
     this.cam = new RadarCameraController(this.canvas, this.cssWidth, this.cssHeight);
     this.fx = new RadarEffectsSystem(this.cam);
@@ -22,9 +22,7 @@ class TacticalRadarRenderer {
 
     this.resize();
     window.addEventListener('resize', () => this.resize());
-    window.addEventListener('orientationchange', () => {
-      setTimeout(() => this.resize(), 60);
-    });
+    window.addEventListener('orientationchange', () => setTimeout(() => this.resize(), 60));
     this.initCameraControls();
   }
 
@@ -53,32 +51,20 @@ class TacticalRadarRenderer {
   cleanCanvasText(str) {
     if (str === undefined || str === null) return '';
     let s = String(str);
-    s = s.replace(/\u00e2\u20ac\u00a2|ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢|&bull;|\|/g, ' ');
-    s = s.replace(/\s+/g, ' ');
-    if (!s.includes('<') && !s.includes('\\') && !s.includes('{') && !s.includes('katex')) {
-      return s.trim();
-    }
-    return s
-      .replace(/<annotation[^>]*>[\s\S]*?<\/annotation>/gi, '')
-      .replace(/<[^>]*>/g, '')
-      .replace(/katex[a-z-]*/gi, '')
-      .replace(/[\{\}\\]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+    if (!s.includes('<') && !s.includes('\\') && !s.includes('{')) return s.trim();
+    return s.replace(/<[^>]*>/g, '').replace(/[\{\}\\]/g, '').replace(/\s+/g, ' ').trim();
   }
 
   resize() {
     if (!this.canvas) return;
     const parent = this.canvas.parentElement;
-    const w = (parent && parent.clientWidth > 0) ? parent.clientWidth : 800;
-    const h = (parent && parent.clientHeight > 0) ? parent.clientHeight : 500;
-    this.cssWidth = w;
-    this.cssHeight = h;
-    this.cam.resize(w, h);
-    this.isMobile = (w <= 1024);
+    this.cssWidth = (parent && parent.clientWidth > 0) ? parent.clientWidth : 800;
+    this.cssHeight = (parent && parent.clientHeight > 0) ? parent.clientHeight : 500;
+    this.cam.resize(this.cssWidth, this.cssHeight);
+    this.isMobile = (this.cssWidth <= 1024);
 
     const rawDpr = window.devicePixelRatio || 1;
-    this.dpr = Math.min(Math.max(rawDpr, 1.75), 2.0);
+    this.dpr = this.isMobile ? Math.min(rawDpr, 1.25) : Math.min(rawDpr, 1.5);
 
     this.canvas.width = Math.round(this.cssWidth * this.dpr);
     this.canvas.height = Math.round(this.cssHeight * this.dpr);
@@ -88,8 +74,7 @@ class TacticalRadarRenderer {
     if (this.ctx) {
       this.ctx.setTransform(1, 0, 0, 1, 0, 0);
       this.ctx.scale(this.dpr, this.dpr);
-      this.ctx.imageSmoothingEnabled = true;
-      this.ctx.imageSmoothingQuality = 'medium';
+      this.ctx.imageSmoothingEnabled = false;
     }
   }
 
@@ -115,7 +100,6 @@ class TacticalRadarRenderer {
 
   initCameraControls() {
     if (!this.canvas) return;
-
     this.canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
       const rect = this.canvas.getBoundingClientRect();
@@ -132,7 +116,6 @@ class TacticalRadarRenderer {
       const el = document.getElementById(id);
       if (el) el.onclick = (e) => { e.stopPropagation(); fn(); };
     };
-
     bind('cam-btn-zoom-in', () => this.cam.zoomAtCenter(1.25));
     bind('cam-btn-zoom-out', () => this.cam.zoomAtCenter(0.80));
     bind('cam-btn-reset', () => this.cam.resetCamera());
@@ -158,8 +141,7 @@ class TacticalRadarRenderer {
   addEntityIds(set, list) {
     if (!list) return;
     for (let i = 0; i < list.length; i++) {
-      const item = list[i];
-      if (item && item.id) set.add(item.id);
+      if (list[i] && list[i].id) set.add(list[i].id);
     }
   }
 
@@ -240,11 +222,9 @@ class TacticalRadarRenderer {
 
     let liveHostileCount = 0;
     for (let i = 0; i < hostiles.length; i++) {
-      const hst = hostiles[i];
-      if (hst && hst.hp > 0) liveHostileCount++;
+      if (hostiles[i] && hostiles[i].hp > 0) liveHostileCount++;
     }
-    const uplinkThreshold = (window.CONFIG && window.CONFIG.UPLINK_THRESHOLD_FIGHTERS !== undefined) ? window.CONFIG.UPLINK_THRESHOLD_FIGHTERS : 3;
-    const shouldShowUplink = (!is2P && commanderTeam === 'friendly' && liveHostileCount > 0 && liveHostileCount <= uplinkThreshold);
+    const shouldShowUplink = (!is2P && commanderTeam === 'friendly' && liveHostileCount > 0 && liveHostileCount <= 3);
 
     const uplinkBannerEl = document.getElementById('radar-uplink-banner');
     if (uplinkBannerEl) {

@@ -1,71 +1,89 @@
-/* AIRSPACE STANDOFF: Global Master Theme Tokens */
+/* AIRSPACE STANDOFF: Master Theme Tokens - Aerospace Obsidian Glass on Pitch Black */
 
 :root {
-  /* Pitch Black Canvas */
+  /* Pitch Black Deep Base */
   --color-pitch-black: #000000;
   --color-canvas: #000000;
-  --color-canvas-subtle: #010204;
+  --color-canvas-subtle: #01040a;
 
-  /* Electric Blue Theme Colors */
+  /* Electric Neon Accents */
   --theme-primary: #0284c7;
-  --theme-primary-hover: #0369a1;
-  --theme-primary-active: #0ea5e9;
-  --theme-primary-glow: rgba(2, 132, 199, 0.45);
-  --theme-primary-dim: rgba(2, 132, 199, 0.16);
+  --theme-primary-hover: #0ea5e9;
+  --theme-primary-active: #38bdf8;
+  --theme-primary-glow: rgba(56, 189, 248, 0.50);
+  --theme-primary-dim: rgba(2, 132, 199, 0.22);
 
   --theme-accent: #38bdf8;
   --theme-accent-hover: #7dd3fc;
-  --theme-accent-glow: rgba(56, 189, 248, 0.35);
+  --theme-accent-glow: rgba(56, 189, 248, 0.60);
 
-  --color-ice-highlight: #e0f2fe;
-  --color-frost-glow: #bae6fd;
+  --color-ice-highlight: #ffffff;
+  --color-frost-glow: #e0f2fe;
   --color-moon-mist: #94a3b8;
   --color-fog-veil: #64748b;
   --color-pure-white: #ffffff;
 
-  --color-cyan: #38bdf8;
-  --color-blue: #0284c7;
+  --color-cyan: #00f0ff;
+  --color-blue: #38bdf8;
   --color-red: #f43f5e;
-  --color-green: #10b981;
-  --color-amber: #f59e0b;
-  --color-purple: #818cf8;
-  --color-gold: #fbbf24;
+  --color-green: #00f5a0;
+  --color-amber: #fbbf24;
+  --color-purple: #a855f7;
+  --color-gold: #fde047;
 
   /* Spec Tier Evaluation Colors */
   --stat-tier-1: #00f0ff;
-  --stat-tier-2: #10b981;
+  --stat-tier-2: #00f5a0;
   --stat-tier-3: #fbbf24;
   --stat-tier-4: #f97316;
   --stat-tier-5: #f43f5e;
 
-  /* Liquid Glass System */
-  --liquid-glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.015) 100%), rgba(4, 9, 22, 0.72);
-  --liquid-glass-bg-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.03) 100%), rgba(6, 14, 32, 0.82);
-  --liquid-glass-border: rgba(186, 215, 247, 0.16);
-  --liquid-glass-border-top: rgba(255, 255, 255, 0.28);
-  --liquid-glass-border-hover: rgba(56, 189, 248, 0.45);
-  --liquid-glass-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.22), 0 8px 24px 0 rgba(0, 0, 0, 0.65);
-  --liquid-glass-filter: blur(16px) saturate(190%);
+  /* Aerospace Obsidian Liquid Glass System - Ambient 135deg Glass Sheen */
+  --liquid-glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 45%, rgba(56, 189, 248, 0.05) 100%), rgba(4, 9, 22, 0.84);
+  --liquid-glass-bg-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 45%, rgba(56, 189, 248, 0.09) 100%), rgba(6, 14, 32, 0.88);
+  --liquid-glass-border: rgba(255, 255, 255, 0.16);
+  --liquid-glass-border-top: rgba(255, 255, 255, 0.42);
+  --liquid-glass-border-bottom: rgba(0, 0, 0, 0.65);
+  --liquid-glass-border-hover: rgba(56, 189, 248, 0.55);
+  --liquid-glass-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.28), inset 0 0 16px 0 rgba(56, 189, 248, 0.04), 0 8px 26px 0 rgba(0, 0, 0, 0.85);
+  --liquid-glass-filter: blur(14px);
+
+  /* Obsidian Glass Card Tokens - Uniform Ambient Glass Sheen */
+  --glass-3d-card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.018) 45%, rgba(56, 189, 248, 0.035) 100%), rgba(5, 11, 26, 0.86);
+  --glass-3d-card-border: rgba(255, 255, 255, 0.15);
+  --glass-3d-card-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.24), inset 0 0 14px rgba(56, 189, 248, 0.04), 0 8px 24px rgba(0, 0, 0, 0.85);
+  --glass-3d-card-hover-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.42), 0 12px 32px rgba(0, 0, 0, 0.90), 0 0 18px rgba(56, 189, 248, 0.25);
+
+  /* Recessed Obsidian Wells */
+  --glass-3d-well-bg: rgba(2, 5, 14, 0.88);
+  --glass-3d-well-border: rgba(56, 189, 248, 0.14);
+  --glass-3d-well-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+
+  /* Tactile Obsidian Glass Buttons - Multi-Angle Glass Sheen */
+  --glass-3d-btn-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(56, 189, 248, 0.05) 100%), rgba(4, 10, 24, 0.86);
+  --glass-3d-btn-bg-hover: linear-gradient(135deg, rgba(56, 189, 248, 0.26) 0%, rgba(2, 132, 199, 0.14) 50%, rgba(255, 255, 255, 0.08) 100%), rgba(6, 16, 36, 0.92);
+  --glass-3d-btn-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.70);
+  --glass-3d-btn-active-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.85);
 
   /* General Glass Aliases */
   --glass-bg: var(--liquid-glass-bg);
   --glass-bg-hover: var(--liquid-glass-bg-hover);
-  --glass-bg-elevated: rgba(255, 255, 255, 0.05);
-  --glass-bg-active: rgba(2, 132, 199, 0.18);
-  --glass-bg-modal: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(2, 5, 14, 0.94);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.08);
+  --glass-bg-active: rgba(56, 189, 248, 0.22);
+  --glass-bg-modal: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.015) 40%, rgba(56, 189, 248, 0.04) 100%), rgba(3, 7, 18, 0.95);
   --glass-border: var(--liquid-glass-border);
   --glass-border-hover: var(--liquid-glass-border-hover);
-  --glass-border-active: rgba(56, 189, 248, 0.6);
-  --glass-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.20);
+  --glass-border-active: rgba(56, 189, 248, 0.65);
+  --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.30);
   --glass-shadow: var(--liquid-glass-shadow);
   --glass-filter: var(--liquid-glass-filter);
 
-  /* Crisp Tactical Radii */
-  --radius-btn: 6px;
-  --radius-badge: 4px;
-  --radius-input: 5px;
-  --radius-card: 8px;
-  --radius-modal: 10px;
+  /* Modern Radii */
+  --radius-btn: 7px;
+  --radius-badge: 5px;
+  --radius-input: 6px;
+  --radius-card: 12px;
+  --radius-modal: 16px;
   --radius-pill: 999px;
 
   /* Legacy Compatibility Aliases */
@@ -76,7 +94,7 @@
   --radius-modals: var(--radius-modal);
   --color-midnight-canvas: var(--color-pitch-black);
   --color-void-violet: var(--theme-primary);
-  --gradient-ice-highlight: linear-gradient(180deg, #e0f2fe 0%, #38bdf8 100%);
+  --gradient-ice-highlight: linear-gradient(135deg, #ffffff 0%, #e0f2fe 50%, #38bdf8 100%);
 
   /* Typography */
   --font-untitled-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

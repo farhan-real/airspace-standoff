@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Flight HUD Tape Stylesheet */
+/* AIRSPACE STANDOFF: Flight HUD Holographic Tape with Obsidian Depth */
 
 .radar-flight-hud {
   position: absolute;
@@ -22,8 +22,8 @@ body.safe-zone-on .radar-flight-hud {
 
 .rfh-panel {
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
@@ -33,7 +33,7 @@ body.safe-zone-on .radar-flight-hud {
   justify-content: center;
   align-items: center;
   text-align: center;
-  box-shadow: var(--glass-shadow);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.32), inset 0 0 16px rgba(56, 189, 248, 0.05), 0 8px 24px rgba(0, 0, 0, 0.85);
   white-space: nowrap;
   overflow: hidden;
 }
@@ -41,8 +41,8 @@ body.safe-zone-on .radar-flight-hud {
 .rfh-label {
   font-size: 0.52rem;
   color: var(--color-moon-mist);
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
 }
 
 .rfh-val-box {
@@ -56,31 +56,34 @@ body.safe-zone-on .radar-flight-hud {
   font-size: 0.96rem;
   font-weight: 700;
   color: var(--color-pure-white);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
 }
 
 .rfh-arrow {
   font-size: 0.74rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .rfh-sub {
   font-size: 0.56rem;
   color: var(--theme-accent);
-  font-weight: 600;
+  font-weight: 700;
+  text-shadow: 0 0 6px var(--theme-accent-glow);
 }
 
 .rfh-alt,
 .rfh-speed {
-  min-width: 76px;
+  min-width: 78px;
   padding: 4px 10px;
 }
 
 .rfh-center,
 .rfh-details {
-  min-width: 210px;
-  max-width: 260px;
+  min-width: 215px;
+  max-width: 265px;
   padding: 4px 12px;
-  border-color: rgba(56, 189, 248, 0.3);
+  border-color: rgba(56, 189, 248, 0.35);
+  border-top-color: #ffffff;
 }
 
 .rfh-center-top {
@@ -95,14 +98,15 @@ body.safe-zone-on .radar-flight-hud {
 .rfh-cs {
   font-size: 0.76rem;
   font-weight: 700;
-  color: var(--color-ice-highlight);
+  color: var(--color-pure-white);
   letter-spacing: 0.4px;
+  text-shadow: 0 0 8px var(--theme-accent-glow);
 }
 
 .rfh-model {
   font-size: 0.54rem;
   color: var(--color-moon-mist);
-  font-weight: 500;
+  font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -122,6 +126,7 @@ body.safe-zone-on .radar-flight-hud {
   font-size: 0.78rem;
   font-weight: 700;
   color: var(--stat-tier-2);
+  text-shadow: 0 0 8px rgba(0, 245, 160, 0.5);
 }
 
 .rfh-deg {
@@ -139,19 +144,21 @@ body.safe-zone-on .radar-flight-hud {
 
 .rfh-pill {
   font-size: 0.52rem;
-  padding: 1px 5px;
+  padding: 1px 6px;
   border-radius: var(--radius-badge);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   color: var(--theme-accent);
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .rfh-pill.coffin-turn {
-  background: var(--theme-primary-dim) !important;
+  background: rgba(2, 132, 199, 0.3) !important;
   border: 1px solid var(--theme-accent) !important;
+  border-top-color: #ffffff !important;
   color: #bae6fd !important;
-  box-shadow: 0 0 8px var(--theme-primary-glow);
+  box-shadow: 0 0 10px var(--theme-primary-glow);
 }
 
 @media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
@@ -161,7 +168,6 @@ body.safe-zone-on .radar-flight-hud {
     transform: none !important;
     gap: 5px !important;
   }
-
   .rfh-panel {
     padding: 3px 8px !important;
     min-height: 48px !important;
@@ -176,29 +182,9 @@ body.safe-zone-on .radar-flight-hud {
     gap: 3px !important;
     max-width: calc(100% - 80px) !important;
   }
-
-  .rfh-panel {
-    padding: 2px 5px !important;
-  }
-
-  .rfh-alt,
-  .rfh-speed {
-    min-width: 60px !important;
-    padding: 2px 4px !important;
-  }
-
-  .rfh-center,
-  .rfh-details {
-    min-width: 120px !important;
-    max-width: 148px !important;
-    padding: 2px 4px !important;
-  }
-
-  .rfh-num {
-    font-size: 0.80rem !important;
-  }
-
-  .rfh-cs {
-    font-size: 0.64rem !important;
-  }
+  .rfh-panel { padding: 2px 5px !important; }
+  .rfh-alt, .rfh-speed { min-width: 60px !important; padding: 2px 4px !important; }
+  .rfh-center, .rfh-details { min-width: 120px !important; max-width: 148px !important; padding: 2px 4px !important; }
+  .rfh-num { font-size: 0.80rem !important; }
+  .rfh-cs { font-size: 0.64rem !important; }
 }

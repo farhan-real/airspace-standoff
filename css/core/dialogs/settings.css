@@ -1,10 +1,12 @@
-/* AIRSPACE STANDOFF: Settings & Controls Window Stylesheet */
+/* AIRSPACE STANDOFF: Settings & Controls Window with 3D Depth */
 
 .settings-window {
   background: var(--glass-bg-modal);
-  -webkit-backdrop-filter: var(--glass-filter);
-  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  backdrop-filter: blur(24px) saturate(200%);
   border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-bottom: 1px solid var(--liquid-glass-border-bottom);
   border-radius: var(--radius-modal);
   width: 90%;
   max-width: 580px;
@@ -14,7 +16,7 @@
   max-height: 600px;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--glass-shadow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), inset 0 0 20px rgba(56, 189, 248, 0.05), 0 20px 60px rgba(0, 0, 0, 0.85);
   overflow: hidden;
   font-family: var(--font-untitled-sans);
   box-sizing: border-box;
@@ -24,9 +26,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--glass-bg);
+  background: var(--glass-3d-card-bg);
   padding: 9px 12px;
   border-bottom: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
   flex-shrink: 0;
   min-width: 0;
   gap: 8px;
@@ -39,7 +42,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.5px;
   font-family: var(--font-aeonikpro);
 }
@@ -51,7 +54,7 @@
 
 .settings-nav-tabs {
   display: flex;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--glass-3d-well-bg);
   border-bottom: 1px solid var(--glass-border);
   padding: 5px 10px 0 10px;
   gap: 4px;
@@ -65,30 +68,33 @@
 }
 
 .settings-tab-btn {
-  background: var(--glass-bg);
+  background: var(--glass-3d-btn-bg);
   border: 1px solid var(--glass-border);
   border-bottom: none;
+  border-top: 1px solid var(--liquid-glass-border-top);
   color: var(--color-moon-mist);
   font-family: var(--font-untitled-sans);
   font-size: 0.66rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 5px 12px;
-  border-radius: 5px 5px 0 0;
+  border-radius: 6px 6px 0 0;
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: all 0.14s ease;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .settings-tab-btn:hover {
   color: #ffffff;
-  background: var(--glass-bg-hover);
+  background: var(--glass-3d-btn-bg-hover);
 }
 
 .settings-tab-btn.active {
-  background: var(--theme-primary-dim);
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.45) 0%, rgba(2, 132, 199, 0.85) 100%);
   color: #ffffff;
-  border-color: var(--theme-primary);
+  border-color: var(--theme-accent);
+  border-top-color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 10px var(--theme-primary-glow);
 }
 
 .settings-body {
@@ -106,9 +112,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--glass-bg);
+  background: var(--glass-3d-card-bg);
   padding: 8px 12px;
   border-top: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
   flex-shrink: 0;
   gap: 8px;
 }
@@ -117,19 +124,20 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.66rem;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-badge);
+  box-shadow: var(--glass-3d-well-shadow);
   overflow: hidden;
 }
 
 .keybinds-table th {
   text-align: left;
   padding: 7px 10px;
-  background: var(--glass-bg);
+  background: rgba(6, 14, 30, 0.95);
   color: var(--color-frost-glow);
   border-bottom: 1px solid var(--glass-border);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .keybinds-table td {
@@ -138,44 +146,53 @@
 }
 
 .btn-rebind {
-  background: var(--glass-bg);
+  background: var(--glass-3d-btn-bg);
   border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-bottom: 1px solid var(--liquid-glass-border-bottom);
   color: var(--color-pure-white);
   font-family: var(--font-dotdigital);
   font-size: 0.64rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 3px 8px;
   border-radius: var(--radius-btn);
   cursor: pointer;
   min-width: 74px;
   text-align: center;
-  transition: all 0.14s ease;
+  box-shadow: var(--glass-3d-btn-shadow);
+  transition: all 0.16s ease;
   flex-shrink: 0;
 }
 
 .btn-rebind:hover {
-  background: var(--glass-bg-hover);
+  background: var(--glass-3d-btn-bg-hover);
   color: #ffffff;
-  border-color: var(--glass-border-hover);
+  border-color: var(--theme-accent);
+  transform: translateY(-1px);
 }
 
 .btn-rebind.recording {
-  background: rgba(244, 63, 94, 0.3);
+  background: linear-gradient(180deg, rgba(244, 63, 94, 0.45) 0%, rgba(136, 19, 55, 0.8) 100%);
   color: #ffffff;
   border-color: #f43f5e;
+  border-top-color: #ffffff;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
 }
 
 .settings-form-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-bottom: 1px solid var(--liquid-glass-border-bottom);
   border-radius: var(--radius-card);
   padding: 8px 12px;
   gap: 10px;
   flex-shrink: 0;
   box-sizing: border-box;
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
 .settings-label-group {
@@ -189,7 +206,7 @@
 .settings-label-group label {
   display: block;
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-pure-white);
   letter-spacing: 0.4px;
 }
@@ -209,19 +226,22 @@
 
 .slider-num {
   font-size: 0.68rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--stat-tier-2);
   min-width: 34px;
   text-align: right;
   font-family: var(--font-dotdigital);
+  text-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
 }
 
 .settings-slider {
   -webkit-appearance: none;
   appearance: none;
   width: 120px;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.15);
+  height: 6px;
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
+  box-shadow: var(--glass-3d-well-shadow);
   outline: none;
   cursor: pointer;
   border-radius: var(--radius-pill);
@@ -232,21 +252,21 @@
   appearance: none;
   width: 14px;
   height: 14px;
-  background: #ffffff;
-  border: 1px solid var(--theme-accent);
+  background: linear-gradient(180deg, #ffffff 0%, #bae6fd 60%, #0284c7 100%);
+  border: 1px solid #ffffff;
   border-radius: var(--radius-pill);
   cursor: pointer;
-  box-shadow: 0 0 8px var(--theme-primary-glow);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8), 0 0 8px var(--theme-primary-glow);
 }
 
 .settings-slider::-moz-range-thumb {
   width: 14px;
   height: 14px;
-  background: #ffffff;
-  border: 1px solid var(--theme-accent);
+  background: linear-gradient(180deg, #ffffff 0%, #bae6fd 60%, #0284c7 100%);
+  border: 1px solid #ffffff;
   border-radius: var(--radius-pill);
   cursor: pointer;
-  box-shadow: 0 0 8px var(--theme-primary-glow);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8), 0 0 8px var(--theme-primary-glow);
 }
 
 @media (max-width: 768px) {
@@ -258,18 +278,10 @@
     min-height: 0;
     border-radius: var(--radius-card);
   }
-  .settings-header {
-    padding: 7px 9px;
-  }
-  .settings-body {
-    padding: 8px;
-  }
-  .settings-form-row {
-    padding: 7px 9px;
-  }
-  .settings-slider {
-    width: 90px;
-  }
+  .settings-header { padding: 7px 9px; }
+  .settings-body { padding: 8px; }
+  .settings-form-row { padding: 7px 9px; }
+  .settings-slider { width: 90px; }
 }
 
 @media (max-height: 550px) {
@@ -279,13 +291,7 @@
     max-height: 94dvh;
     min-height: 0;
   }
-  .settings-header {
-    padding: 5px 8px;
-  }
-  .settings-body {
-    padding: 5px 8px;
-  }
-  .settings-footer {
-    padding: 5px 8px;
-  }
+  .settings-header { padding: 5px 8px; }
+  .settings-body { padding: 5px 8px; }
+  .settings-footer { padding: 5px 8px; }
 }

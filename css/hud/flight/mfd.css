@@ -1,36 +1,39 @@
-/* AIRSPACE STANDOFF: Flight Controls & MFD Panel Stylesheet */
+/* AIRSPACE STANDOFF: Flight Controls & MFD Panel Stylesheet - Aerospace Obsidian Glass */
 
 .active-unit-mfd {
   height: 100%;
   min-height: 0;
   max-height: 100%;
   background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
   border-left: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
-  padding: 5px;
-  gap: 5px;
+  padding: 6px;
+  gap: 6px;
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
 }
 
 .unit-flight-box {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
-  padding: 6px 8px;
+  padding: 7px 9px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   flex-shrink: 0;
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
 .unit-title {
-  font-size: 0.80rem;
-  font-weight: 600;
-  color: var(--color-ice-highlight);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-pure-white);
   font-family: var(--font-aeonikpro);
   white-space: nowrap;
   overflow: hidden;
@@ -50,60 +53,60 @@
 .mfd-callsign-row b {
   color: var(--theme-accent);
   font-family: var(--font-dotdigital);
+  font-weight: 700;
+  text-shadow: 0 0 6px var(--theme-accent-glow);
 }
 
 .coffin-indicator {
-  background: var(--theme-primary-dim);
+  background: rgba(2, 132, 199, 0.35);
   color: var(--theme-accent);
   font-size: 0.52rem;
-  font-weight: 600;
-  padding: 1px 4px;
+  font-weight: 700;
+  padding: 2px 6px;
   border-radius: var(--radius-badge);
   border: 1px solid var(--theme-primary);
+  border-top: 1px solid #ffffff;
 }
 
-.coffin-indicator.hidden {
-  display: none !important;
-}
+.coffin-indicator.hidden { display: none !important; }
 
 .lead-indicator {
-  background: rgba(251, 191, 36, 0.14);
+  background: rgba(251, 191, 36, 0.30);
   color: #fbbf24;
   font-size: 0.54rem;
-  font-weight: 600;
-  padding: 1px 5px;
+  font-weight: 700;
+  padding: 2px 6px;
   border-radius: var(--radius-badge);
-  border: 1px solid rgba(251, 191, 36, 0.35);
+  border: 1px solid rgba(251, 191, 36, 0.5);
+  border-top: 1px solid #fef08a;
 }
 
-.lead-indicator.hidden {
-  display: none !important;
-}
+.lead-indicator.hidden { display: none !important; }
 
 .ace-indicator {
-  background: rgba(251, 191, 36, 0.16);
+  background: rgba(251, 191, 36, 0.32);
   color: #fbbf24;
   font-size: 0.54rem;
-  font-weight: 600;
-  padding: 1px 4px;
+  font-weight: 700;
+  padding: 2px 6px;
   border-radius: var(--radius-badge);
-  border: 1px solid rgba(251, 191, 36, 0.4);
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  border-top: 1px solid #ffffff;
   display: inline-flex;
   align-items: center;
 }
 
-.ace-indicator.hidden {
-  display: none !important;
-}
+.ace-indicator.hidden { display: none !important; }
 
 .throttle-quadrant {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-btn);
-  padding: 5px 8px;
+  padding: 7px 10px;
   display: flex;
   flex-direction: column;
   gap: 3px;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .throttle-meta-row {
@@ -114,17 +117,18 @@
 }
 
 .tq-label {
-  font-size: 0.56rem;
-  color: var(--color-moon-mist);
-  font-weight: 600;
+  font-size: 0.58rem;
+  color: #94a3b8;
+  font-weight: 700;
   letter-spacing: 0.5px;
 }
 
 .tq-val {
-  font-size: 0.62rem;
+  font-size: 0.64rem;
   font-weight: 700;
   font-family: var(--font-dotdigital);
-  color: var(--theme-accent);
+  color: #38bdf8;
+  letter-spacing: 0.3px;
 }
 
 .tq-val.burner {
@@ -134,8 +138,8 @@
 .throttle-track-wrap {
   position: relative;
   width: 100%;
-  padding-bottom: 12px;
-  margin-top: 2px;
+  padding-bottom: 14px;
+  margin-top: 3px;
 }
 
 .military-throttle-slider {
@@ -144,29 +148,19 @@
   appearance: none;
   width: 100%;
   height: 6px;
-  background: linear-gradient(90deg, #0b1526 0%, #0b1526 15%, var(--theme-primary) 65%, #f97316 85%, #f43f5e 100%) no-repeat;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: #0b1526;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--glass-border);
+  background: linear-gradient(90deg, 
+    #0c2138 0%, 
+    #0284c7 35%, 
+    #38bdf8 55%, 
+    #f59e0b 75%, 
+    #f97316 88%, 
+    #f43f5e 100%
+  );
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
   outline: none;
   cursor: pointer;
-}
-
-.military-throttle-slider::-webkit-slider-runnable-track {
-  background: transparent;
-  border: none;
-}
-
-.military-throttle-slider::-moz-range-track {
-  background: transparent;
-  border: none;
-}
-
-.military-throttle-slider::-moz-range-progress {
-  background: transparent;
 }
 
 .military-throttle-slider::-webkit-slider-thumb {
@@ -175,20 +169,32 @@
   width: 16px;
   height: 16px;
   background: #ffffff;
-  border: 1px solid var(--theme-accent);
-  border-radius: var(--radius-pill);
-  box-shadow: 0 0 8px var(--theme-primary-glow);
-  cursor: ew-resize;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 10px 2px rgba(56, 189, 248, 0.75), 0 0 4px #ffffff, 0 2px 4px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.military-throttle-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 14px 3px rgba(56, 189, 248, 0.9), 0 0 6px #ffffff;
 }
 
 .military-throttle-slider::-moz-range-thumb {
   width: 16px;
   height: 16px;
   background: #ffffff;
-  border: 1px solid var(--theme-accent);
-  border-radius: var(--radius-pill);
-  box-shadow: 0 0 8px var(--theme-primary-glow);
-  cursor: ew-resize;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 10px 2px rgba(56, 189, 248, 0.75), 0 0 4px #ffffff, 0 2px 4px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.military-throttle-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 14px 3px rgba(56, 189, 248, 0.9), 0 0 6px #ffffff;
 }
 
 .throttle-detents {
@@ -199,13 +205,20 @@
   display: flex;
   justify-content: space-between;
   font-family: var(--font-dotdigital);
-  font-size: 0.48rem;
-  color: var(--color-fog-veil);
+  font-size: 0.50rem;
   pointer-events: none;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.4px;
 }
 
-.throttle-detents .highlight {
+.detent-idle,
+.detent-cruise,
+.detent-mil {
+  color: #64748b;
+}
+
+.detent-burner,
+.detent.highlight {
   color: #f97316;
 }
 
@@ -216,25 +229,29 @@
   font-family: var(--font-untitled-sans);
   color: var(--color-moon-mist);
   margin-bottom: 2px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .stress-bar-frame {
-  height: 5px;
-  background: rgba(255, 255, 255, 0.1);
+  height: 6px;
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-pill);
+  box-shadow: var(--glass-3d-well-shadow);
   overflow: hidden;
 }
 
 .stress-bar-fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--stat-tier-2), var(--stat-tier-3), var(--stat-tier-5));
+  background: var(--stat-tier-2);
+  box-shadow: 0 0 8px rgba(0, 245, 160, 0.6);
   transition: width 0.15s ease;
 }
 
 .gloc-badge {
-  background: var(--color-red);
+  background: #f43f5e;
+  border: 1px solid #ffffff;
   color: #ffffff;
   font-weight: 700;
   text-align: center;
@@ -245,15 +262,13 @@
   border-radius: var(--radius-badge);
 }
 
-.gloc-badge.hidden {
-  display: none !important;
-}
+.gloc-badge.hidden { display: none !important; }
 
 .stress-warn-badge {
-  background: rgba(249, 115, 22, 0.15);
-  border: 1px solid rgba(249, 115, 22, 0.35);
+  background: rgba(249, 115, 22, 0.25);
+  border: 1px solid rgba(249, 115, 22, 0.5);
   color: #fed7aa;
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
   font-size: 0.52rem;
   font-family: var(--font-dotdigital);
@@ -262,26 +277,24 @@
   border-radius: var(--radius-badge);
 }
 
-.stress-warn-badge.hidden {
-  display: none !important;
-}
+.stress-warn-badge.hidden { display: none !important; }
 
 .flight-actions-cluster {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   margin-top: 2px;
 }
 
 .energy-trade-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3px;
+  gap: 4px;
 }
 
 .energy-trade-buttons .hud-btn {
   padding: 4px;
-  font-size: 0.60rem;
+  font-size: 0.62rem;
   text-align: center;
   border-radius: var(--radius-btn);
 }
@@ -290,8 +303,10 @@
   width: 100%;
   padding: 4px;
   font-size: 0.62rem;
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.35);
+  background: linear-gradient(135deg, rgba(0, 245, 160, 0.25) 0%, rgba(5, 74, 56, 0.60) 100%);
+  border-color: rgba(0, 245, 160, 0.5);
+  border-top-color: rgba(255, 255, 255, 0.45);
   color: #a7f3d0;
   border-radius: var(--radius-btn);
+  box-shadow: var(--glass-3d-btn-shadow);
 }

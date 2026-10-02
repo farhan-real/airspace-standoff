@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Hangar Operations Header Stylesheet */
+/* AIRSPACE STANDOFF: Hangar Operations Header with Obsidian Glass */
 
 .procurement-top-scroll {
   display: flex;
@@ -45,27 +45,26 @@
 
 .game-name {
   font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-ice-highlight);
-  background: var(--gradient-ice-highlight);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  color: #ffffff;
   letter-spacing: 0.8px;
   font-family: var(--font-aeonikpro);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
 }
 
 .hangar-badge {
-  background: var(--theme-primary-dim);
-  border: 1px solid var(--theme-primary);
+  background: var(--glass-3d-btn-bg);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   color: var(--theme-accent);
   font-family: var(--font-dotdigital);
   font-size: 0.66rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 3px 8px;
   border-radius: var(--radius-badge);
   letter-spacing: 0.8px;
   text-transform: uppercase;
+  box-shadow: 0 0 8px var(--theme-primary-dim);
 }
 
 .title-right-group {
@@ -82,7 +81,7 @@
 .proc-exit-btn {
   font-size: 0.74rem;
   font-family: var(--font-untitled-sans);
-  font-weight: 500;
+  font-weight: 600;
   padding: 5px 12px;
   border-radius: var(--radius-btn);
   cursor: pointer;
@@ -92,22 +91,22 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  transition: all 0.14s ease;
+  transition: all 0.16s ease;
   gap: 6px;
-  background: var(--liquid-glass-bg);
+  background: var(--glass-3d-btn-bg);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
-  box-shadow: var(--glass-highlight);
+  box-shadow: var(--glass-3d-btn-shadow);
   flex-shrink: 0;
 }
 
-.squad-callsign-tag { color: var(--stat-tier-3); }
+.squad-callsign-tag { color: var(--stat-tier-3); text-shadow: 0 0 6px rgba(251, 191, 36, 0.4); }
 .proc-manual-btn, .proc-settings-btn, .proc-leaderboard-btn { color: var(--color-frost-glow); }
 
 .proc-exit-btn {
-  background: rgba(244, 63, 94, 0.15);
-  border-color: rgba(244, 63, 94, 0.35);
-  border-top-color: rgba(255, 120, 150, 0.5);
+  background: rgba(244, 63, 94, 0.2);
+  border-color: rgba(244, 63, 94, 0.45);
+  border-top-color: rgba(255, 255, 255, 0.4);
   color: #fecdd3;
 }
 
@@ -115,15 +114,18 @@
 .proc-leaderboard-btn:hover,
 .proc-settings-btn:hover,
 .proc-manual-btn:hover {
-  background: var(--glass-bg-hover);
+  background: var(--glass-3d-btn-bg-hover);
   color: #ffffff;
-  border-color: var(--glass-border-hover);
+  border-color: var(--theme-accent);
+  border-top-color: #ffffff;
+  transform: translateY(-1px);
 }
 
 .proc-exit-btn:hover {
-  background: rgba(244, 63, 94, 0.3);
+  background: rgba(244, 63, 94, 0.38);
   color: #ffffff;
   border-color: #f43f5e;
+  transform: translateY(-1px);
 }
 
 .mode-and-ai-controls {
@@ -139,33 +141,35 @@
 
 .segmented-control {
   display: flex;
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-btn);
   padding: 2px;
   flex-shrink: 0;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .seg-btn {
-  border: none;
+  border: 1px solid transparent;
   font-family: var(--font-untitled-sans);
   font-size: 0.72rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--radius-badge);
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: all 0.14s ease;
   white-space: nowrap;
 }
 
 .seg-btn:hover { color: #ffffff; }
 .seg-btn.active {
-  background: var(--theme-primary);
+  background: rgba(2, 132, 199, 0.45);
   color: #ffffff;
-  box-shadow: 0 0 10px var(--theme-primary-glow);
+  border-color: var(--theme-accent);
+  border-top-color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 10px var(--theme-primary-glow);
 }
 
 .ai-config-group {
@@ -187,7 +191,7 @@
 .proc-right-actions .hud-btn {
   font-size: 0.74rem;
   padding: 5px 12px;
-  font-weight: 500;
+  font-weight: 600;
   height: 30px;
   border-radius: var(--radius-btn);
 }
@@ -209,12 +213,12 @@
   align-items: center;
   gap: 10px;
   font-family: var(--font-dotdigital);
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-btn);
   padding: 4px 12px;
-  box-shadow: var(--glass-highlight);
+  box-shadow: var(--glass-3d-card-shadow);
   flex-wrap: wrap;
 }
 
@@ -227,32 +231,34 @@
 .budget-display .label {
   font-size: 0.60rem;
   color: var(--color-moon-mist);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .budget-display .amount {
   font-size: 0.88rem;
   font-weight: 700;
-  color: var(--color-ice-highlight);
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
-.budget-display .amount .spent-val { color: var(--stat-tier-2); }
-.budget-display .amount .spent-val.overbudget { color: var(--stat-tier-5) !important; }
+.budget-display .amount .spent-val { color: var(--stat-tier-2); text-shadow: 0 0 6px rgba(0, 245, 160, 0.5); }
+.budget-display .amount .spent-val.overbudget { color: var(--stat-tier-5) !important; text-shadow: 0 0 8px rgba(244, 63, 94, 0.6); }
 .budget-display .amount .rem-val {
   font-size: 0.62rem;
   color: var(--color-moon-mist);
-  font-weight: 500;
+  font-weight: 600;
   margin-left: 2px;
 }
 
 .budget-display .count-tag {
   font-size: 0.62rem;
   color: var(--color-pure-white);
-  background: var(--glass-bg-hover);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   padding: 2px 7px;
   border-radius: var(--radius-badge);
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .is-android .procurement-header,
@@ -265,7 +271,7 @@
 .is-android .budget-display {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-  background: #040916 !important;
+  background: #000000 !important;
 }
 
 @media (max-width: 1024px) {
@@ -287,13 +293,13 @@
     gap: 4px;
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-    background: #040916 !important;
+    background: #000000 !important;
   }
   .segmented-control,
   .budget-display {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-    background: #040916 !important;
+    background: #000000 !important;
   }
   .mode-and-ai-controls { gap: 4px; flex-wrap: wrap; overflow: visible; }
   .seg-btn { padding: 3px 6px; font-size: 0.66rem; }

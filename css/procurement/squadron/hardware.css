@@ -1,21 +1,52 @@
-/* AIRSPACE STANDOFF: Squadron Roster Hardware, Metrics & Upgrade Sockets */
+/* AIRSPACE STANDOFF: Squadron Roster Hardware, Metrics & Boxed Section System */
+
+.roster-section-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
+  border-radius: var(--radius-badge);
+  padding: 6px 8px;
+  box-sizing: border-box;
+  box-shadow: var(--glass-3d-well-shadow);
+}
+
+.stats-section-box {
+  border-left: 3px solid var(--theme-accent);
+}
+
+.gun-section-box {
+  border-left: 3px solid #fbbf24;
+  position: relative;
+  z-index: 20;
+}
+
+.gun-section-box:has(.custom-dropdown.open) {
+  z-index: 5500;
+}
+
+.systems-section-box {
+  border-left: 3px solid #a855f7;
+}
 
 .su-gun-selector-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-badge);
-  padding: 5px 8px;
   box-sizing: border-box;
   min-width: 0;
-  position: relative;
-  z-index: 20;
+  width: 100%;
 }
 
-.su-gun-selector-row:has(.custom-dropdown.open) { z-index: 5500; }
-.gun-sel-label { font-size: 0.62rem; font-family: var(--font-untitled-sans); color: var(--color-moon-mist); font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+.gun-sel-label {
+  font-size: 0.62rem;
+  font-family: var(--font-untitled-sans);
+  color: var(--color-moon-mist);
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 
 .su-gun-dropdown {
   flex: 1 1 auto;
@@ -57,25 +88,48 @@
 .unit-metric-strip {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px 8px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-badge);
-  padding: 6px 8px;
+  gap: 4px 8px;
   box-sizing: border-box;
 }
 
-.metric-block { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.metric-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.62rem; font-family: var(--font-untitled-sans); color: var(--color-moon-mist); gap: 4px; }
-.metric-meta .dual-val { font-size: 0.60rem; }
-.metric-meta b:not([class*="stat-tier"]) { color: var(--color-pure-white); }
+.metric-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
 
-.station-tag-box { display: inline-flex; align-items: center; gap: 3px; vertical-align: middle; flex-shrink: 0; }
+.metric-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.62rem;
+  font-family: var(--font-untitled-sans);
+  color: var(--color-moon-mist);
+  gap: 4px;
+}
+
+.metric-meta .dual-val {
+  font-size: 0.60rem;
+}
+
+.metric-meta b:not([class*="stat-tier"]) {
+  color: var(--color-pure-white);
+}
+
+.station-tag-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
 .station-slot-pill {
   font-size: 0.54rem;
   font-family: var(--font-dotdigital);
   font-weight: 700;
-  padding: 1px 4px;
+  padding: 1px 5px;
   border-radius: var(--radius-badge);
   letter-spacing: 0.3px;
   white-space: nowrap;
@@ -83,52 +137,57 @@
   display: inline-flex;
   align-items: center;
 }
-.station-slot-pill.int-pill { background: rgba(20, 184, 166, 0.20); border: 1px solid rgba(20, 184, 166, 0.50); color: #2dd4bf; }
-.station-slot-pill.ext-pill { background: rgba(2, 132, 199, 0.20); border: 1px solid rgba(56, 189, 248, 0.45); color: #38bdf8; }
-.station-slot-pill.ctr-pill { background: rgba(245, 158, 11, 0.16); border: 1px solid rgba(245, 158, 11, 0.45); color: #fbbf24; }
-.station-slot-pill.ctr-pill.occupied { background: rgba(245, 158, 11, 0.32); border-color: #f59e0b; color: #ffffff; }
 
-.capacity-pips-bar {
-  display: flex;
-  height: 5px;
-  gap: 2px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-pill);
-  padding: 1px;
+.station-slot-pill.int-pill {
+  background: rgba(0, 245, 160, 0.16);
+  border: 1px solid rgba(0, 245, 160, 0.40);
+  color: var(--stat-tier-2);
 }
-.slot-pip { flex: 1; background: rgba(255, 255, 255, 0.08); border-radius: var(--radius-pill); }
-.slot-pip.filled { background: var(--theme-accent); }
 
-.weight-bar-bg { height: 5px; background: rgba(255, 255, 255, 0.1); border-radius: var(--radius-pill); overflow: hidden; }
-.weight-bar-fill { height: 100%; background: var(--stat-tier-2); transition: width 0.1s ease; }
+.station-slot-pill.ext-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  color: #ffffff;
+}
+
+.station-slot-pill.ctr-pill {
+  background: rgba(251, 191, 36, 0.16);
+  border: 1px solid rgba(251, 191, 36, 0.40);
+  color: #fbbf24;
+}
+
+.station-slot-pill.ctr-pill.occupied {
+  background: rgba(251, 191, 36, 0.30);
+  border-color: #f59e0b;
+  color: #ffffff;
+}
+
+.weight-bar-bg {
+  height: 5px;
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.weight-bar-fill {
+  height: 100%;
+  background: var(--stat-tier-2);
+  transition: width 0.14s ease;
+}
+
 .weight-bar-fill.heavy { background: var(--stat-tier-3); }
 .weight-bar-fill.overload { background: var(--stat-tier-5); }
 
-.upgrades-socket-row {
+.upgrade-slots-container {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  padding: 6px 10px;
-  border-radius: var(--radius-badge);
-  box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 5px;
 }
 
-.upgrades-label-row {
-  font-size: 0.62rem;
-  font-family: var(--font-untitled-sans);
-  color: var(--color-moon-mist);
-  font-weight: 600;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.upgrade-slots-container { display: flex; flex-wrap: wrap; gap: 5px; }
 .upgrade-socket {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px dashed var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-border);
   padding: 4px 8px;
   border-radius: var(--radius-badge);
   display: flex;
@@ -136,10 +195,52 @@
   gap: 6px;
   font-size: 0.62rem;
   font-family: var(--font-dotdigital);
-  color: var(--theme-accent);
+  color: #ffffff;
+  box-shadow: var(--glass-3d-btn-shadow);
 }
-.upgrade-socket span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.upgrade-socket.filled { border-style: solid; border-color: var(--theme-primary); background: var(--theme-primary-dim); color: #ffffff; }
-.upgrade-socket.empty { cursor: pointer; color: var(--color-fog-veil); }
-.upgrade-socket.empty:hover { border-color: var(--glass-border-hover); color: #ffffff; }
-.btn-socket-dismount { background: transparent; border: none; color: #fca5a5; font-weight: 600; cursor: pointer; padding: 0 3px; display: inline-flex; align-items: center; }
+
+.upgrade-socket span {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upgrade-socket.filled {
+  border-color: rgba(168, 85, 247, 0.45);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.upgrade-socket.empty {
+  cursor: pointer;
+  color: var(--color-moon-mist);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.15);
+  transition: all 0.14s ease;
+}
+
+.upgrade-socket.empty:hover {
+  border-color: var(--theme-accent);
+  color: #ffffff;
+  background: var(--glass-3d-btn-bg-hover);
+}
+
+.btn-socket-dismount {
+  background: rgba(244, 63, 94, 0.2);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  color: #fecdd3;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: var(--radius-badge);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-socket-dismount:hover {
+  background: rgba(244, 63, 94, 0.45);
+  border-color: #f43f5e;
+  color: #ffffff;
+}

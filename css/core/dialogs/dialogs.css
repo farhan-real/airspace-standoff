@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Core Dialogs & System Inspection Window */
+/* AIRSPACE STANDOFF: Core Dialogs & System Inspection Window with Obsidian Depth */
 
 #tactical-dialog-modal { z-index: 4500 !important; }
 #mission-editor-modal { z-index: 3600 !important; }
@@ -28,6 +28,8 @@
   text-overflow: ellipsis;
   min-width: 0;
   font-size: 0.95rem;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 .tactical-dialog-actions {
@@ -46,7 +48,7 @@
   padding: 0 16px;
   font-size: 0.76rem;
   font-family: var(--font-untitled-sans);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.4px;
   display: inline-flex;
   align-items: center;
@@ -54,36 +56,37 @@
   border-radius: var(--radius-btn);
   cursor: pointer;
   box-sizing: border-box;
-  transition: all 0.14s ease;
+  transition: all 0.16s ease;
   flex-shrink: 0;
 }
 
 .tactical-dialog-btn.highlight {
-  background: var(--theme-primary);
-  border: 1px solid var(--theme-accent);
+  background: rgba(2, 132, 199, 0.35);
+  border: 1px solid rgba(56, 189, 248, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
   color: #ffffff;
-  box-shadow: 0 0 12px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 14px var(--theme-primary-glow);
 }
 
 .tactical-dialog-btn.highlight:hover {
-  background: var(--theme-primary-hover);
+  background: rgba(2, 132, 199, 0.55);
   border-color: #ffffff;
-  color: #ffffff;
-  box-shadow: 0 0 18px var(--theme-primary-glow);
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 #ffffff, 0 0 20px var(--theme-primary-glow);
 }
 
 .tactical-dialog-btn.alert {
-  background: rgba(244, 63, 94, 0.2);
-  border: 1px solid rgba(244, 63, 94, 0.4);
+  background: rgba(244, 63, 94, 0.22);
+  border: 1px solid rgba(244, 63, 94, 0.5);
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
   color: #ffffff;
-  box-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 12px rgba(244, 63, 94, 0.3);
 }
 
 .tactical-dialog-btn.alert:hover {
   background: rgba(244, 63, 94, 0.4);
   border-color: #f43f5e;
-  color: #ffffff;
-  box-shadow: 0 0 16px rgba(244, 63, 94, 0.5);
+  transform: translateY(-1px);
 }
 
 .inspect-window {
@@ -91,6 +94,7 @@
   -webkit-backdrop-filter: var(--glass-filter);
   backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-modal);
   width: 95%;
   max-width: 860px;
@@ -108,9 +112,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--glass-bg);
+  background: var(--glass-3d-card-bg);
   padding: 12px 18px;
   border-bottom: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
   flex-shrink: 0;
   gap: 8px;
   min-width: 0;
@@ -118,12 +123,8 @@
 
 .inspect-header h2 {
   font-size: 0.95rem;
-  color: var(--color-ice-highlight);
-  background: var(--gradient-ice-highlight);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 600;
+  color: var(--color-pure-white);
+  font-weight: 700;
   letter-spacing: 0.5px;
   font-family: var(--font-aeonikpro);
 }
@@ -145,7 +146,7 @@
 
 .inspect-sec-head {
   font-size: 0.68rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--theme-accent);
   font-family: var(--font-untitled-sans);
   letter-spacing: 0.5px;
@@ -166,13 +167,14 @@
 .inspect-badge {
   font-size: 0.60rem;
   font-family: var(--font-dotdigital);
-  font-weight: 600;
+  font-weight: 700;
   padding: 3px 6px;
   border-radius: var(--radius-badge);
   text-transform: uppercase;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   color: var(--color-frost-glow);
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .inspect-cost-tag {
@@ -187,11 +189,12 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 4px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-radius: var(--radius-card);
   padding: 8px 12px;
   font-size: 0.68rem;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .inspect-stat-item {
@@ -205,7 +208,7 @@
 
 .inspect-stat-item span {
   color: var(--color-fog-veil);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.65rem;
 }
 
@@ -217,8 +220,8 @@
 }
 
 .inspect-desc-box {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
   border-left: 3px solid var(--theme-accent);
   padding: 10px 14px;
   border-radius: var(--radius-badge);
@@ -228,6 +231,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .inspect-action-bar {
@@ -242,57 +246,66 @@
 .inspect-action-btn {
   font-family: var(--font-untitled-sans);
   font-size: 0.72rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 6px 14px;
   border-radius: var(--radius-btn);
   cursor: pointer;
   border: 1px solid var(--glass-border);
-  transition: all 0.14s ease;
+  border-top: 1px solid var(--liquid-glass-border-top);
+  box-shadow: var(--glass-3d-btn-shadow);
+  transition: all 0.16s ease;
   flex-shrink: 0;
 }
 
 .inspect-action-btn.req-btn {
-  background: var(--theme-primary);
+  background: rgba(2, 132, 199, 0.35);
   color: #ffffff;
   border-color: var(--theme-accent);
 }
 
 .inspect-action-btn.select-btn {
-  background: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.25);
   color: #ffffff;
-  border-color: rgba(16, 185, 129, 0.4);
+  border-color: rgba(16, 185, 129, 0.5);
 }
 
 .inspect-action-btn.close-btn {
-  background: var(--glass-bg);
+  background: var(--glass-3d-btn-bg);
   color: var(--color-moon-mist);
+}
+
+.inspect-action-btn:hover {
+  transform: translateY(-1px);
 }
 
 .spec-inspect-btn,
 .gun-inspect-btn,
 .pylon-inspect-btn {
-  background: var(--glass-bg);
+  background: var(--glass-3d-btn-bg);
   border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   color: var(--theme-accent);
   font-family: var(--font-untitled-sans);
   font-size: 0.60rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 2px 7px;
   border-radius: var(--radius-badge);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
-  transition: all 0.12s ease;
+  box-shadow: var(--glass-3d-btn-shadow);
+  transition: all 0.14s ease;
   flex-shrink: 0;
 }
 
 .spec-inspect-btn:hover,
 .gun-inspect-btn:hover,
 .pylon-inspect-btn:hover {
-  background: var(--glass-bg-hover);
+  background: var(--glass-3d-btn-bg-hover);
   color: #ffffff;
-  border-color: var(--glass-border-hover);
+  border-color: var(--theme-accent);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 1024px) {
@@ -301,24 +314,12 @@
     max-height: 92dvh;
     border-radius: var(--radius-card);
   }
-  .inspect-header {
-    padding: 8px 10px;
-  }
-  .inspect-body {
-    padding: 10px;
-    gap: 8px;
-  }
+  .inspect-header { padding: 8px 10px; }
+  .inspect-body { padding: 10px; gap: 8px; }
 }
 
 @media (max-height: 550px) {
-  .inspect-window {
-    max-height: 94vh;
-    max-height: 94dvh;
-  }
-  .inspect-header {
-    padding: 6px 10px;
-  }
-  .inspect-body {
-    padding: 8px 10px;
-  }
+  .inspect-window { max-height: 94vh; max-height: 94dvh; }
+  .inspect-header { padding: 6px 10px; }
+  .inspect-body { padding: 8px 10px; }
 }

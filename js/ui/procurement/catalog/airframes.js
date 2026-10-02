@@ -134,7 +134,7 @@ class ShelfAirframesRenderer {
         <div class="adc-desc">${spec.desc || ''}</div>
         <div class="adc-footer">
           <button type="button" class="spec-inspect-btn" data-inspect-type="airframe" data-inspect-id="${spec.id}">SPECS</button>
-          <button type="button" class="adc-btn-add">+ ADD</button>
+          <button type="button" class="adc-btn-add">ADD TO SQUADRON</button>
         </div>`;
 
       const addBtn = card.querySelector('.adc-btn-add');

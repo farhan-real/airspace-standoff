@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Squadron Roster Bays Stylesheet */
+/* AIRSPACE STANDOFF: Squadron Roster Bays - Clean Obsidian Glass Cards */
 
 .roster-header-bar {
   flex-shrink: 0;
@@ -12,9 +12,9 @@
 
 .roster-header-bar h3 {
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: 700;
   font-family: var(--font-aeonikpro);
-  color: var(--color-ice-highlight);
+  color: #ffffff;
   letter-spacing: 0.5px;
 }
 
@@ -22,7 +22,8 @@
   font-size: 0.66rem;
   color: var(--stat-tier-2);
   font-family: var(--font-dotdigital);
-  font-weight: 600;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(0, 245, 160, 0.45);
 }
 
 .squadron-container {
@@ -32,46 +33,52 @@
   overflow-anchor: none;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 8px;
+  gap: 10px;
   padding-right: 4px;
   -webkit-overflow-scrolling: touch;
 }
 
 .squad-unit-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-3d-card-bg);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--glass-3d-card-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
-  padding: 10px 12px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  transition: border-color 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+  gap: 8px;
+  transition: all 0.16s ease;
   box-sizing: border-box;
   position: relative;
   overflow: visible;
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--glass-3d-card-shadow);
 }
 
 .squad-unit-card:hover {
-  border-color: var(--glass-border-hover);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+  box-shadow: var(--glass-3d-card-hover-shadow);
 }
 
 .squad-unit-card.active-bay {
   border-color: var(--theme-accent) !important;
-  box-shadow: var(--glass-shadow), 0 0 16px var(--theme-primary-dim);
-  background: var(--theme-primary-dim);
+  border-top-color: #ffffff !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45), 0 0 24px rgba(56, 189, 248, 0.35) !important;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.22) 0%, rgba(4, 9, 24, 0.85) 100%) !important;
 }
 
 .squad-unit-card.drag-target-valid {
   border-color: var(--theme-accent) !important;
-  box-shadow: 0 0 20px var(--theme-primary-glow) !important;
-  background: var(--theme-primary-dim) !important;
+  box-shadow: 0 0 24px var(--theme-primary-glow) !important;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.32) 0%, rgba(4, 9, 24, 0.85) 100%) !important;
 }
 
 .squad-unit-card.drag-target-invalid {
   border-color: #f43f5e !important;
-  box-shadow: 0 0 16px rgba(244, 63, 94, 0.35) !important;
-  background: rgba(244, 63, 94, 0.12) !important;
+  box-shadow: 0 0 18px rgba(244, 63, 94, 0.45) !important;
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.22) 0%, rgba(20, 4, 10, 0.85) 100%) !important;
 }
 
 .squad-unit-card:has(.custom-dropdown.open) {
@@ -80,12 +87,14 @@
 
 .active-bay-badge {
   font-size: 0.56rem;
-  background: var(--theme-primary);
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.45) 0%, rgba(3, 10, 24, 0.85) 100%);
+  border: 1px solid var(--theme-accent);
   color: #ffffff;
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: var(--radius-badge);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.5px;
+  box-shadow: 0 0 8px var(--theme-primary-glow);
 }
 
 .squad-unit-header {
@@ -93,19 +102,19 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
 }
 
 .suh-title-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .squad-unit-name {
-  font-size: 0.90rem;
-  font-weight: 600;
+  font-size: 0.94rem;
+  font-weight: 700;
   color: #ffffff;
   font-family: var(--font-aeonikpro);
 }
@@ -113,50 +122,48 @@
 .squad-unit-badge {
   font-size: 0.60rem;
   font-family: var(--font-dotdigital);
-  font-weight: 600;
+  font-weight: 700;
   padding: 2px 6px;
   border-radius: var(--radius-badge);
 }
 
 .squad-unit-cost {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-family: var(--font-dotdigital);
   font-weight: 700;
   color: var(--stat-tier-2);
+  text-shadow: 0 0 8px rgba(0, 245, 160, 0.45);
 }
 
 .squad-callsign-tag {
-  background: var(--glass-bg);
+  background: var(--glass-3d-btn-bg);
   border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
   color: var(--stat-tier-3);
-  font-size: 0.64rem;
+  font-size: 0.66rem;
   font-family: var(--font-untitled-sans);
-  font-weight: 600;
-  padding: 3px 8px;
+  font-weight: 700;
+  padding: 3px 9px;
   border-radius: var(--radius-btn);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  transition: all 0.12s ease;
+  gap: 4px;
+  box-shadow: var(--glass-3d-btn-shadow);
+  transition: all 0.14s ease;
 }
 
 .squad-callsign-tag:hover {
-  background: var(--glass-bg-hover);
+  background: var(--glass-3d-btn-bg-hover);
   color: #ffffff;
-  border-color: var(--glass-border-hover);
+  border-color: var(--theme-accent);
 }
 
 .squad-unit-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   flex-wrap: wrap;
-}
-
-.is-android .squad-unit-card {
-  box-shadow: none !important;
-  background: #030816 !important;
 }
 
 @media (max-width: 1024px) {
@@ -166,33 +173,11 @@
     width: 100%;
     box-sizing: border-box;
   }
-
   .squad-unit-card {
-    padding: 8px 10px;
-    gap: 4px;
-    box-shadow: none !important;
-    background: #030816 !important;
+    padding: 10px 12px;
+    gap: 6px;
   }
-
-  .squad-unit-header {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: stretch;
-  }
-
-  .suh-title-group {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .squad-unit-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 4px;
-    width: 100%;
-  }
+  .squad-unit-header { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+  .suh-title-group { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+  .squad-unit-actions { display: flex; align-items: center; justify-content: flex-end; gap: 5px; width: 100%; }
 }
