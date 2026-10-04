@@ -36,8 +36,9 @@ class PointerControlsHandler {
           e.touches[0].clientY - e.touches[1].clientY
         );
         const ratio = curDist / this.pinchStartDist;
-        if (Math.abs(ratio - 1.0) > 0.02) {
-          this.game.radar.cam.zoomAtCenter(ratio > 1 ? 1.04 : 0.96);
+        if (Math.abs(ratio - 1.0) > 0.015) {
+          this.game.radar.cam.zoomAtCenter(ratio > 1 ? 1.03 : 0.97);
+          this.game.radar.cam.zoom = this.game.radar.cam.targetZoom;
           this.pinchStartDist = curDist;
         }
       }
@@ -77,18 +78,22 @@ class PointerControlsHandler {
 
         if (this.totalDragDist > 4) {
           this.game.radar.trackingUnit = null;
+          this.game.radar.cam.trackingUnit = null;
 
           const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
-          const effScaleX = (this.game.radar.cssWidth / cfg.THEATER_WIDTH_KM) * this.game.radar.zoom;
-          const effScaleY = (this.game.radar.cssHeight / cfg.THEATER_HEIGHT_KM) * this.game.radar.zoom;
+          const effScaleX = (this.game.radar.cssWidth / cfg.THEATER_WIDTH_KM) * this.game.radar.cam.targetZoom;
+          const effScaleY = (this.game.radar.cssHeight / cfg.THEATER_HEIGHT_KM) * this.game.radar.cam.targetZoom;
 
-          this.game.radar.panX -= (dx / effScaleX);
-          this.game.radar.panY -= (dy / effScaleY);
+          this.game.radar.cam.panX -= (dx / effScaleX);
+          this.game.radar.cam.panY -= (dy / effScaleY);
 
           const maxPanX = cfg.THEATER_WIDTH_KM;
           const maxPanY = cfg.THEATER_HEIGHT_KM;
-          this.game.radar.panX = Math.max(-50, Math.min(maxPanX + 50, this.game.radar.panX));
-          this.game.radar.panY = Math.max(-30, Math.min(maxPanY + 30, this.game.radar.panY));
+          this.game.radar.cam.panX = Math.max(-50, Math.min(maxPanX + 50, this.game.radar.cam.panX));
+          this.game.radar.cam.panY = Math.max(-30, Math.min(maxPanY + 30, this.game.radar.cam.panY));
+
+          this.game.radar.cam.targetPanX = this.game.radar.cam.panX;
+          this.game.radar.cam.targetPanY = this.game.radar.cam.panY;
         }
       } else {
         const candidate = this.findClosestContactInScreenSpace(curX, curY, 32);
@@ -121,7 +126,7 @@ class PointerControlsHandler {
 
           if (entity.team === commanderTeam && entity instanceof Aircraft) {
             this.game.activeUnit = entity;
-            if (this.game.radar && this.game.radar.cam && this.game.radar.trackingUnit) {
+            if (this.game.radar && this.game.radar.cam) {
               this.game.radar.cam.trackActiveCraft(entity);
             }
             this.game.avionics.renderFlightRoster();

@@ -1,7 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Radar Camera Controller (Pan, Zoom & Viewport Transforms)
- * Viewport starts centered in the middle of the theater (75km, 50km).
- * Declutter starts ON by default on mobile and OFF by default on desktop.
+ * AIRSPACE STANDOFF: Radar Camera Controller (Smooth Pan, Zoom & Viewport Transforms)
+ * Features smooth exponential-decay interpolation for zooming, panning, and target tracking.
  */
 
 class RadarCameraController {
@@ -10,24 +9,24 @@ class RadarCameraController {
     this.cssWidth = cssWidth;
     this.cssHeight = cssHeight;
     this.zoom = 1.0;
+    this.targetZoom = 1.0;
     this.minZoom = 0.65;
     this.maxZoom = 4.0;
     this.panX = 0;
     this.panY = 0;
+    this.targetPanX = 0;
+    this.targetPanY = 0;
     this.trackingUnit = null;
 
     this.effScaleX = 1.0;
     this.effScaleY = 1.0;
 
-    // Declutter is ON by default on mobile devices, and OFF by default on desktop
     const isMobile = (typeof window !== 'undefined') && (window.innerWidth <= 1024);
     this.declutterMode = isMobile;
-
-    // Ground targets start OFF by default
     this.showGroundTargets = false;
 
     this.updateScales();
-    this.centerTheater();
+    this.centerTheater(true);
   }
 
   resize(w, h) {
@@ -73,39 +72,92 @@ class RadarCameraController {
     };
   }
 
-  zoomAtCenter(factor) {
-    const centerKm = this.toKm(this.cssWidth / 2, this.cssHeight / 2);
-    this.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom * factor));
-    this.updateScales();
-    this.panX = centerKm.x - ((this.cssWidth / 2) / this.effScaleX);
-    this.panY = centerKm.y - ((this.cssHeight / 2) / this.effScaleY);
+  zoomAt(screenX, screenY, factor) {
+    const anchorKm = this.toKm(screenX, screenY);
+    const nextZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.targetZoom * factor));
+    if (Math.abs(nextZoom - this.targetZoom) < 0.0001) return;
+
+    const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
+    const nextScaleX = (this.cssWidth / cfg.THEATER_WIDTH_KM) * nextZoom;
+    const nextScaleY = (this.cssHeight / cfg.THEATER_HEIGHT_KM) * nextZoom;
+
+    this.targetZoom = nextZoom;
+    this.targetPanX = anchorKm.x - (screenX / nextScaleX);
+    this.targetPanY = anchorKm.y - (screenY / nextScaleY);
   }
 
-  centerTheater() {
+  zoomAtCenter(factor) {
+    this.zoomAt(this.cssWidth / 2, this.cssHeight / 2, factor);
+  }
+
+  centerTheater(immediate = false) {
     const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
-    this.centerOnKm(cfg.THEATER_WIDTH_KM / 2, cfg.THEATER_HEIGHT_KM / 2);
+    this.centerOnKm(cfg.THEATER_WIDTH_KM / 2, cfg.THEATER_HEIGHT_KM / 2, immediate);
     this.trackingUnit = null;
   }
 
   resetCamera() {
-    this.zoom = 1.0;
-    this.panX = 0;
-    this.panY = 0;
+    this.targetZoom = 1.0;
     this.trackingUnit = null;
-    this.updateScales();
-    this.centerTheater();
+    const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
+    this.centerOnKm(cfg.THEATER_WIDTH_KM / 2, cfg.THEATER_HEIGHT_KM / 2, false);
   }
 
-  centerOnKm(kmX, kmY) {
-    this.updateScales();
-    this.panX = kmX - ((this.cssWidth / 2) / this.effScaleX);
-    this.panY = kmY - ((this.cssHeight / 2) / this.effScaleY);
+  centerOnKm(kmX, kmY, immediate = false) {
+    const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
+    const scaleX = (this.cssWidth / cfg.THEATER_WIDTH_KM) * this.targetZoom;
+    const scaleY = (this.cssHeight / cfg.THEATER_HEIGHT_KM) * this.targetZoom;
+
+    const targetX = kmX - ((this.cssWidth / 2) / scaleX);
+    const targetY = kmY - ((this.cssHeight / 2) / scaleY);
+
+    this.targetPanX = targetX;
+    this.targetPanY = targetY;
+
+    if (immediate) {
+      this.panX = targetX;
+      this.panY = targetY;
+      this.updateScales();
+    }
   }
 
   trackActiveCraft(activeUnit) {
     if (activeUnit) {
       this.trackingUnit = activeUnit;
-      this.centerOnKm(activeUnit.x, activeUnit.y);
+      this.centerOnKm(activeUnit.x, activeUnit.y, false);
+    }
+  }
+
+  update(dt = 0.016) {
+    const zoomDiff = this.targetZoom - this.zoom;
+    if (Math.abs(zoomDiff) > 0.0005) {
+      this.zoom += zoomDiff * Math.min(1.0, 14.0 * dt);
+      this.updateScales();
+    } else if (this.zoom !== this.targetZoom) {
+      this.zoom = this.targetZoom;
+      this.updateScales();
+    }
+
+    if (this.trackingUnit) {
+      if (this.trackingUnit.hp > 0.05) {
+        const targetX = this.trackingUnit.x - ((this.cssWidth / 2) / this.effScaleX);
+        const targetY = this.trackingUnit.y - ((this.cssHeight / 2) / this.effScaleY);
+        this.targetPanX = targetX;
+        this.targetPanY = targetY;
+      } else {
+        this.trackingUnit = null;
+      }
+    }
+
+    const panXDiff = this.targetPanX - this.panX;
+    const panYDiff = this.targetPanY - this.panY;
+    if (Math.abs(panXDiff) > 0.005 || Math.abs(panYDiff) > 0.005) {
+      const rate = Math.min(1.0, 14.0 * dt);
+      this.panX += panXDiff * rate;
+      this.panY += panYDiff * rate;
+    } else {
+      this.panX = this.targetPanX;
+      this.panY = this.targetPanY;
     }
   }
 }

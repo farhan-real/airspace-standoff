@@ -22,6 +22,7 @@ class ProcurementRoster {
     }
 
     const prevScroll = container.scrollTop;
+    container.style.scrollBehavior = 'auto';
 
     const oldCard = container.querySelector(`.squad-unit-card[data-sidx="${sIdx}"]`);
     if (oldCard && typeof RosterCardBuilder !== 'undefined') {
@@ -30,13 +31,17 @@ class ProcurementRoster {
         oldCard.replaceWith(newCard);
       }
     } else {
+      container.style.scrollBehavior = '';
       pm.updateUI();
       return;
     }
 
     container.scrollTop = prevScroll;
     requestAnimationFrame(() => {
-      if (container) container.scrollTop = prevScroll;
+      if (container) {
+        container.scrollTop = prevScroll;
+        container.style.scrollBehavior = '';
+      }
     });
 
     this.updateSummaryHeader(pm);
@@ -132,6 +137,7 @@ class ProcurementRoster {
     if (this.lastRenderKey === renderKey && container.children.length === renderableAircraftCount) return;
 
     const prevScroll = container.scrollTop;
+    container.style.scrollBehavior = 'auto';
     this.lastRenderKey = renderKey;
     container.innerHTML = '';
 
@@ -147,7 +153,10 @@ class ProcurementRoster {
 
     container.scrollTop = prevScroll;
     requestAnimationFrame(() => {
-      if (container) container.scrollTop = prevScroll;
+      if (container) {
+        container.scrollTop = prevScroll;
+        container.style.scrollBehavior = '';
+      }
     });
   }
 }

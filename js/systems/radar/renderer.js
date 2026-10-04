@@ -27,11 +27,11 @@ class TacticalRadarRenderer {
   }
 
   get zoom() { return this.cam.zoom; }
-  set zoom(v) { this.cam.zoom = v; }
+  set zoom(v) { this.cam.zoom = v; this.cam.targetZoom = v; }
   get panX() { return this.cam.panX; }
-  set panX(v) { this.cam.panX = v; }
+  set panX(v) { this.cam.panX = v; this.cam.targetPanX = v; }
   get panY() { return this.cam.panY; }
-  set panY(v) { this.cam.panY = v; }
+  set panY(v) { this.cam.panY = v; this.cam.targetPanY = v; }
   get trackingUnit() { return this.cam.trackingUnit; }
   set trackingUnit(v) { this.cam.trackingUnit = v; }
   get declutterMode() { return this.cam.declutterMode; }
@@ -109,11 +109,16 @@ class TacticalRadarRenderer {
     this.canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
       const rect = this.canvas.getBoundingClientRect();
-      const kmBefore = this.toKm(e.clientX - rect.left, e.clientY - rect.top);
-      this.cam.zoom = Math.max(this.cam.minZoom, Math.min(this.cam.maxZoom, this.cam.zoom * (e.deltaY < 0 ? 1.15 : 0.87)));
-      this.cam.updateScales();
-      this.cam.panX = kmBefore.x - ((e.clientX - rect.left) / this.cam.effScaleX);
-      this.cam.panY = kmBefore.y - ((e.clientY - rect.top) / this.cam.effScaleY);
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      let factor = 1.0;
+      if (Math.abs(e.deltaY) < 40) {
+        factor = Math.exp(-e.deltaY * 0.0035);
+      } else {
+        factor = e.deltaY < 0 ? 1.15 : 0.86;
+      }
+      this.cam.zoomAt(mouseX, mouseY, factor);
     }, { passive: false });
 
     this.syncControlButtons();
@@ -157,7 +162,7 @@ class TacticalRadarRenderer {
     const w = this.cssWidth;
     const h = this.cssHeight;
 
-    this.cam.updateScales();
+    this.cam.update(0.016);
 
     const allied = (state && state.alliedAircraft) || [];
     const hostiles = (state && state.hostileAircraft) || [];
@@ -171,11 +176,6 @@ class TacticalRadarRenderer {
 
     const activeUnit = state ? state.activeUnit : null;
     this.selectedTarget = state ? (state.inspectionEntity || state.selectedTarget) : null;
-
-    if (this.cam.trackingUnit) {
-      if (this.cam.trackingUnit.hp > 0.05) this.cam.centerOnKm(this.cam.trackingUnit.x, this.cam.trackingUnit.y);
-      else this.cam.trackingUnit = null;
-    }
 
     const commanderTeam = (window.Game && window.Game.currentPvpCommander) || 'friendly';
     const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
