@@ -168,6 +168,29 @@ class AutocannonBayRenderer {
       if (game && game.radar) game.radar.spawnCombatText(unit.x, unit.y, 'THERMAL BLOOM (STEALTH COMPROMISED)', '#f97316');
     }
 
+    const cfg = window.CONFIG || {};
+    const validTarget = (target && target.hp > 0.05 && typeof target.x === 'number' && typeof target.y === 'number' && !isNaN(target.x) && !isNaN(target.y) && !target.isDissolved) ? target : null;
+
+    if (validTarget && validTarget.isCivilian && unit.team === 'friendly' && game && game.simulation) {
+      const penalty = cfg.VP_CIVILIAN_FIRE_PENALTY || 500;
+      game.simulation.logScoreEvent('friendly', -penalty, `ROE VIOLATION: Fired autocannon at civilian aircraft (${validTarget.flightCode || validTarget.name || 'Civilian'})`);
+      if (game.simulation.scoring) {
+        game.simulation.scoring.recordCivilianFirePenalty('friendly', unit, validTarget, gun, penalty);
+      }
+      if (game.radar) {
+        game.radar.spawnCombatText(unit.x, unit.y, `ROE VIOLATION: CIVILIAN TARGET (-${penalty} VP)`, '#f43f5e');
+      }
+    } else if (validTarget && !validTarget.isIdentified && unit.team === 'friendly' && game && game.simulation) {
+      const penalty = cfg.VP_UNIDENTIFIED_FIRE_PENALTY || 600;
+      game.simulation.logScoreEvent('friendly', -penalty, 'RECKLESS ENGAGEMENT: Fired autocannon on unverified track [BOGEY ?]');
+      if (game.simulation.scoring) {
+        game.simulation.scoring.recordBogeyFirePenalty('friendly', unit, validTarget, gun, penalty);
+      }
+      if (game.radar) {
+        game.radar.spawnCombatText(unit.x, unit.y, `ROE PENALTY: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
+      }
+    }
+
     if (typeof AudioSys !== 'undefined') {
       if (isDEW) AudioSys.playLaser();
       else AudioSys.playGunBurst();
@@ -179,18 +202,18 @@ class AutocannonBayRenderer {
     for (let r = 0; r < numRounds; r++) {
       setTimeout(() => {
         if (!unit || unit.hp <= 0.05) return;
-        const validTarget = (target && target.hp > 0.05 && typeof target.x === 'number' && typeof target.y === 'number' && !isNaN(target.x) && !isNaN(target.y) && !target.isDissolved) ? target : null;
+        const targetCheck = (target && target.hp > 0.05 && typeof target.x === 'number' && typeof target.y === 'number' && !isNaN(target.x) && !isNaN(target.y) && !target.isDissolved) ? target : null;
         const heading = (typeof unit.heading === 'number' && !isNaN(unit.heading)) ? unit.heading : 0;
         const spreadOffset = (r - (numRounds - 1) / 2) * 0.012;
         const tracerAngle = heading + spreadOffset;
 
-        if (validTarget && Math.hypot(validTarget.x - unit.x, validTarget.y - unit.y) <= (gun.rangeKm || 4.6)) {
-          let angleDiff = Math.abs(heading - Math.atan2(validTarget.y - unit.y, validTarget.x - unit.x));
+        if (targetCheck && Math.hypot(targetCheck.x - unit.x, targetCheck.y - unit.y) <= (gun.rangeKm || 4.6)) {
+          let angleDiff = Math.abs(heading - Math.atan2(targetCheck.y - unit.y, targetCheck.x - unit.x));
           while (angleDiff > Math.PI) angleDiff = Math.abs(angleDiff - Math.PI * 2);
           const maxConeRad = ((gun.coneAngleDeg || 45) / 2.0) * (Math.PI / 180.0);
 
           if (angleDiff <= maxConeRad) {
-            const wasAlive = validTarget.hp > 0.05;
+            const wasAlive = targetCheck.hp > 0.05;
             let roundDmg = gun.damagePerRound || ((gun.damagePerBurst || 1.40) / numRounds);
             mountedPods.forEach(p => {
               const podDmg = p.weapon.damagePerRound || ((p.weapon.damagePerBurst || 1.28) / numRounds);
@@ -198,29 +221,29 @@ class AutocannonBayRenderer {
             });
 
             const clouds = (game && game.simulation && game.simulation.weatherClouds) || [];
-            const cloudHits = typeof Physics !== 'undefined' ? Physics.countIntersectingClouds(unit.x, unit.y, validTarget.x, validTarget.y, clouds) : 0;
+            const cloudHits = typeof Physics !== 'undefined' ? Physics.countIntersectingClouds(unit.x, unit.y, targetCheck.x, targetCheck.y, clouds) : 0;
             if (cloudHits > 0 && gun.cloudScattering && gun.cloudScattering > 0) {
               roundDmg *= Math.max(0.10, Math.pow(1.0 - gun.cloudScattering, cloudHits));
             }
 
-            if (validTarget.spec && validTarget.spec.category === 'STRIKE') roundDmg *= 0.60;
-            if (validTarget.isFlightLead && validTarget.autocannonResistance) roundDmg *= (1.0 - validTarget.autocannonResistance);
+            if (targetCheck.spec && targetCheck.spec.category === 'STRIKE') roundDmg *= 0.60;
+            if (targetCheck.isFlightLead && targetCheck.autocannonResistance) roundDmg *= (1.0 - targetCheck.autocannonResistance);
 
-            if (validTarget.isGhost) {
-              validTarget.takeDamage(roundDmg);
-            } else if (validTarget.isDecoyDrone) {
-              validTarget.takeDamage(roundDmg);
-            } else if (typeof SurfaceUnit !== 'undefined' && validTarget instanceof SurfaceUnit) {
-              validTarget.takeDamage(roundDmg, true);
-            } else if (validTarget.isCivilian && typeof validTarget.takeDamage === 'function') {
-              validTarget.takeDamage(roundDmg, unit, gun, r === numRounds - 1);
+            if (targetCheck.isGhost) {
+              targetCheck.takeDamage(roundDmg);
+            } else if (targetCheck.isDecoyDrone) {
+              targetCheck.takeDamage(roundDmg);
+            } else if (typeof SurfaceUnit !== 'undefined' && targetCheck instanceof SurfaceUnit) {
+              targetCheck.takeDamage(roundDmg, true);
+            } else if (targetCheck.isCivilian && typeof targetCheck.takeDamage === 'function') {
+              targetCheck.takeDamage(roundDmg, unit, gun, r === numRounds - 1);
             } else {
-              validTarget.hp = Math.max(0, validTarget.hp - roundDmg);
-              if (validTarget.hp < 0.05) validTarget.hp = 0;
+              targetCheck.hp = Math.max(0, targetCheck.hp - roundDmg);
+              if (targetCheck.hp < 0.05) targetCheck.hp = 0;
 
               if (gun.kineticConcussion && gun.kineticConcussion > 0) {
-                if (typeof validTarget.applyActionStress === 'function') validTarget.applyActionStress(gun.kineticConcussion * 0.25);
-                if (validTarget.energy !== undefined) validTarget.energy = Math.max(0.20, validTarget.energy - 0.04);
+                if (typeof targetCheck.applyActionStress === 'function') targetCheck.applyActionStress(gun.kineticConcussion * 0.25);
+                if (targetCheck.energy !== undefined) targetCheck.energy = Math.max(0.20, targetCheck.energy - 0.04);
               }
             }
 
@@ -230,14 +253,14 @@ class AutocannonBayRenderer {
             const jitterX = (Math.random() - 0.5) * 0.35;
             const jitterY = (Math.random() - 0.5) * 0.35;
             if (game && game.radar) {
-              game.radar.spawnGunTracer(unit.x, unit.y, validTarget.x + jitterX, validTarget.y + jitterY, gun.tracerColor || '#00f0ff');
+              game.radar.spawnGunTracer(unit.x, unit.y, targetCheck.x + jitterX, targetCheck.y + jitterY, gun.tracerColor || '#00f0ff');
               mountedPods.forEach(p => {
-                game.radar.spawnGunTracer(unit.x, unit.y, validTarget.x + jitterX, validTarget.y + jitterY, p.weapon.tracerColor || '#fbbf24');
+                game.radar.spawnGunTracer(unit.x, unit.y, targetCheck.x + jitterX, targetCheck.y + jitterY, p.weapon.tracerColor || '#fbbf24');
               });
             }
 
-            if (wasAlive && validTarget.hp <= 0 && game && game.simulation && !validTarget.isCivilian) {
-              game.simulation.recordKillEvent(unit.team, validTarget, unit, {
+            if (wasAlive && targetCheck.hp <= 0 && game && game.simulation && !targetCheck.isCivilian) {
+              game.simulation.recordKillEvent(unit.team, targetCheck, unit, {
                 weapon: gun,
                 isSalvo: mountedPods.length > 0,
                 salvoCount: mountedPods.length + 1
@@ -259,12 +282,12 @@ class AutocannonBayRenderer {
 
         if (r === numRounds - 1 && game) {
           const podNote = mountedPods.length > 0 ? `+${mountedPods.length} PODS ` : '';
-          if (roundsLanded > 0 && validTarget) {
+          if (roundsLanded > 0 && targetCheck) {
             if (game.radar) {
-              game.radar.spawnCombatText(validTarget.x, validTarget.y, `${isDEW ? 'LASER' : 'BURST'} ${podNote}-${totalBurstDamage.toFixed(1)}HP (${roundsLanded}/${numRounds} RDS)`, '#00f0ff');
+              game.radar.spawnCombatText(targetCheck.x, targetCheck.y, `${isDEW ? 'LASER' : 'BURST'} ${podNote}-${totalBurstDamage.toFixed(1)}HP (${roundsLanded}/${numRounds} RDS)`, '#00f0ff');
             }
-            if (validTarget.hp > 0.05 && game.simulation && game.simulation.scoring && !validTarget.isCivilian) {
-              game.simulation.scoring.recordHitEvent(unit.team, validTarget, unit, {
+            if (targetCheck.hp > 0.05 && game.simulation && game.simulation.scoring && !targetCheck.isCivilian) {
+              game.simulation.scoring.recordHitEvent(unit.team, targetCheck, unit, {
                 weapon: gun,
                 damage: totalBurstDamage,
                 isSalvo: mountedPods.length > 0,

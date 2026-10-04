@@ -53,9 +53,9 @@ class SimulationScoring {
 
   logScoreEvent(team, points, reason) {
     if (team === 'friendly') {
-      this.game.vpAlly = Math.max(0, this.game.vpAlly + points);
+      this.game.vpAlly = (this.game.vpAlly || 0) + points;
     } else {
-      this.game.vpHostile = Math.max(0, this.game.vpHostile + points);
+      this.game.vpHostile = (this.game.vpHostile || 0) + points;
     }
 
     this.scoreLog.unshift({
@@ -93,7 +93,7 @@ class SimulationScoring {
     const tgtName = String(rawTgt).replace(/<[^>]*>/g, '');
 
     if (sourceUnit && sourceUnit.scorePoints !== undefined) {
-      sourceUnit.scorePoints = Math.max(0, (sourceUnit.scorePoints || 0) - penalty);
+      sourceUnit.scorePoints = (sourceUnit.scorePoints || 0) - penalty;
     }
 
     this.timelineEvents.push({
@@ -107,6 +107,31 @@ class SimulationScoring {
       weapon: wpnName,
       points: -penalty,
       reason: `RECKLESS ENGAGEMENT: Fired on unverified track [BOGEY ?] (${tgtName})`
+    });
+  }
+
+  recordCivilianFirePenalty(team, sourceUnit, civilianFlight, weapon, penalty) {
+    const srcName = sourceUnit ? (sourceUnit.callsign || sourceUnit.id || 'PILOT') : 'PILOT';
+    const srcType = (sourceUnit && sourceUnit.spec) ? (sourceUnit.spec.id || sourceUnit.spec.name) : 'AIRCRAFT';
+    const rawWpn = weapon ? (weapon.name || weapon.id || 'Weapon') : 'Weapon';
+    const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
+    const tgtName = civilianFlight ? (civilianFlight.flightCode || civilianFlight.name || 'Civilian Flight') : 'Civilian Flight';
+
+    if (sourceUnit && sourceUnit.scorePoints !== undefined) {
+      sourceUnit.scorePoints = (sourceUnit.scorePoints || 0) - penalty;
+    }
+
+    this.timelineEvents.push({
+      time: this.getElapsedTimeString(),
+      type: 'roe_penalty',
+      team: team,
+      source: srcName,
+      sourceType: srcType,
+      target: tgtName,
+      targetType: 'CIVILIAN',
+      weapon: wpnName,
+      points: -penalty,
+      reason: `ROE VIOLATION: Fired weapon at civilian airliner (${tgtName})`
     });
   }
 
@@ -193,9 +218,7 @@ class SimulationScoring {
       pts = cfg.VP_BUNKER_DESTROYED || 800;
     } else if (targetEntity.type === 'S-400') {
       pts = cfg.VP_SAM_DESTROYED || 300;
-    } else if (targetEntity.type === 'RADAR_ARRAY') {
-      pts = cfg.VP_RADAR_DESTROYED || 250;
-    } else if (targetEntity.type === 'EW_JAMMER') {
+    } else if (targetEntity.type === 'RADAR_ARRAY' || targetEntity.type === 'EW_JAMMER') {
       pts = cfg.VP_RADAR_DESTROYED || 250;
     } else if (targetEntity.type === 'PANTSIR') {
       pts = 200;
@@ -250,7 +273,7 @@ class SimulationScoring {
     const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
 
     if (firingSource && firingSource.scorePoints !== undefined) {
-      firingSource.scorePoints = Math.max(0, (firingSource.scorePoints || 0) - penalty);
+      firingSource.scorePoints = (firingSource.scorePoints || 0) - penalty;
     }
 
     const logMsg = `ROE VIOLATION: Civilian flight struck (${civilianFlight.flightCode}) by ${srcName} [${wpnName}]`;
@@ -282,7 +305,7 @@ class SimulationScoring {
     const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
 
     if (firingSource && firingSource.scorePoints !== undefined) {
-      firingSource.scorePoints = Math.max(0, (firingSource.scorePoints || 0) - penalty);
+      firingSource.scorePoints = (firingSource.scorePoints || 0) - penalty;
     }
 
     const logMsg = `ROE VIOLATION: Civilian airliner destroyed (${civilianFlight.flightCode}) by ${srcName}`;

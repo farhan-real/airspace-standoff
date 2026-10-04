@@ -74,8 +74,20 @@ class CombatSystem {
       )
     );
 
-    if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !w.isGunpod && targetEntity) {
-      const penalty = (window.CONFIG && window.CONFIG.VP_UNIDENTIFIED_FIRE_PENALTY) || 600;
+    if (targetEntity && targetEntity.isCivilian && !w.isDecoy && !w.isDecoyDrone) {
+      const penalty = cfg.VP_CIVILIAN_FIRE_PENALTY || 500;
+      if (sourceUnit.team === 'friendly' && this.game.simulation) {
+        this.game.simulation.logScoreEvent('friendly', -penalty, `ROE VIOLATION: Fired weapon at civilian aircraft (${targetEntity.flightCode || targetEntity.name || 'Civilian'})`);
+        if (this.game.simulation.scoring) {
+          this.game.simulation.scoring.recordCivilianFirePenalty('friendly', sourceUnit, targetEntity, w, penalty);
+        }
+      }
+      if (this.game.radar) {
+        this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE VIOLATION: CIVILIAN TARGET (-${penalty} VP)`, '#f43f5e');
+      }
+      if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
+    } else if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !w.isGunpod && targetEntity) {
+      const penalty = cfg.VP_UNIDENTIFIED_FIRE_PENALTY || 600;
       if (sourceUnit.team === 'friendly' && this.game.simulation) {
         this.game.simulation.logScoreEvent('friendly', -penalty, 'RECKLESS ENGAGEMENT: Fired on unverified track [BOGEY ?]');
         if (this.game.simulation.scoring) {

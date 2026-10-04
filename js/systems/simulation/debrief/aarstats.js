@@ -21,7 +21,7 @@ class AARStatsCalculator {
     const blueMissilesEvaded = (game.alliedAircraft || []).reduce((sum, pilot) => sum + (pilot.missilesEvadedCount || 0), 0);
     const defensiveIntercepts = (game.stats && game.stats.defensiveIntercepts) || 0;
 
-    const rawBlueScore = game.vpAlly || 0;
+    const rawBlueScore = Number.isFinite(game.vpAlly) ? game.vpAlly : 0;
     const adjustedRawScore = rawBlueScore + timeBonus;
     const finalSortieScore = Math.round(adjustedRawScore * scoreData.totalMult);
 
@@ -39,6 +39,11 @@ class AARStatsCalculator {
     const ordnanceExpended = (game.stats && game.stats.missilesLaunched !== undefined) ? game.stats.missilesLaunched : 0;
     const blueLosses = (game.stats && game.stats.blueLosses !== undefined) ? game.stats.blueLosses : 0;
     const redLosses = (game.stats && game.stats.redLosses !== undefined) ? game.stats.redLosses : 0;
+
+    let bannerStatus = blueWon ? 'MISSION SUCCESSFUL' : 'MISSION ABORTED';
+    if (blueWon && finalSortieScore < 0) {
+      bannerStatus = 'MISSION COMPLETED - ROE VIOLATIONS';
+    }
 
     return `
       <div class="aar-report-section">
@@ -63,8 +68,8 @@ class AARStatsCalculator {
               <span class="aar-card-badge highlight">ASSESSMENT</span>
             </div>
             <div class="aar-metrics-table">
-              <div class="aar-metric-row"><span>BASE COMBAT VP:</span><b><span style="color:#38bdf8;">BLUE ${rawBlueScore.toLocaleString()}</span> : <span style="color:#f43f5e;">RED ${(game.vpHostile || 0).toLocaleString()}</span></b></div>
-              <div class="aar-metric-row"><span>ADJUSTED BASE VP:</span><b style="color:#00f5a0;">${adjustedRawScore.toLocaleString()} VP</b></div>
+              <div class="aar-metric-row"><span>BASE COMBAT VP:</span><b><span style="color:${rawBlueScore < 0 ? '#f43f5e' : '#38bdf8'};">BLUE ${rawBlueScore.toLocaleString()}</span> : <span style="color:#f43f5e;">RED ${(game.vpHostile || 0).toLocaleString()}</span></b></div>
+              <div class="aar-metric-row"><span>ADJUSTED BASE VP:</span><b style="color:${adjustedRawScore < 0 ? '#f43f5e' : '#00f5a0'};">${adjustedRawScore.toLocaleString()} VP</b></div>
               <div class="aar-metric-row"><span>DIFFICULTY (${diffLabel}):</span><b style="color:#38bdf8;">x${scoreData.diffMult.toFixed(2)} MULTIPLIER</b></div>
               <div class="aar-metric-row"><span>BUDGET TIER (${budgetCap}M):</span><b style="color:#fbbf24;">x${scoreData.budgetMult.toFixed(2)} MULTIPLIER</b></div>
               <div class="aar-metric-row"><span>FINAL MULTIPLIER:</span><b style="color:#00f5a0;">x${scoreData.totalMult.toFixed(2)} MULTIPLIER</b></div>
@@ -72,13 +77,13 @@ class AARStatsCalculator {
           </div>
         </div>
 
-        <div class="aar-score-banner ${blueWon ? 'victory' : 'defeat'}">
+        <div class="aar-score-banner ${blueWon && finalSortieScore >= 0 ? 'victory' : 'defeat'}">
           <div class="aar-banner-lead">
-            <span class="aar-banner-status">${blueWon ? 'MISSION SUCCESSFUL' : 'MISSION ABORTED'}</span>
+            <span class="aar-banner-status">${bannerStatus}</span>
             <span class="aar-banner-sub">Final Performance Score (${adjustedRawScore.toLocaleString()} x ${scoreData.totalMult.toFixed(2)})</span>
           </div>
           <div class="aar-banner-score">
-            <span class="aar-score-num">${finalSortieScore.toLocaleString()}</span>
+            <span class="aar-score-num" style="color:${finalSortieScore < 0 ? '#f43f5e' : '#ffffff'};">${finalSortieScore.toLocaleString()}</span>
             <span class="aar-score-unit">PTS</span>
           </div>
         </div>

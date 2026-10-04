@@ -180,7 +180,7 @@ class SimulationSystem {
     const regenBlue = baseRegen + perAcRegen * liveAllies.length + allyDatalinkTotal;
     this.game.tokenBucketBlue = Math.min(maxToken, this.game.tokenBucketBlue + regenBlue * dt);
 
-    const liveHostiles = this.game.hostileAircraft.filter(a => a.hp > 0);
+    const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0);
     const hostileDatalinkTotal = liveHostiles.reduce((sum, h) => sum + (h.datalinkBonus || 0), 0);
     const regenRed = baseRegen + perAcRegen * liveHostiles.length + hostileDatalinkTotal;
     this.game.tokenBucketRed = Math.min(maxToken, this.game.tokenBucketRed + regenRed * dt);
@@ -217,8 +217,14 @@ class SimulationSystem {
   checkWinConditions() {
     const vpAllyEl = document.getElementById('vp-ally');
     const vpHostileEl = document.getElementById('vp-hostile');
-    if (vpAllyEl) vpAllyEl.textContent = this.game.vpAlly;
-    if (vpHostileEl) vpHostileEl.textContent = this.game.vpHostile;
+    if (vpAllyEl) {
+      vpAllyEl.textContent = this.game.vpAlly;
+      vpAllyEl.style.color = (this.game.vpAlly < 0) ? '#f43f5e' : '';
+    }
+    if (vpHostileEl) {
+      vpHostileEl.textContent = this.game.vpHostile;
+      vpHostileEl.style.color = (this.game.vpHostile < 0) ? '#f43f5e' : '';
+    }
 
     for (const h of this.game.hostileAircraft) {
       if (h && h.hp > 0 && h.hp <= 0.05) h.hp = 0;
