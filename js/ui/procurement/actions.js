@@ -70,28 +70,30 @@ class ProcurementActionDispatcher {
     if (!win) return;
     win.classList.remove('header-hidden');
 
-    let lastShelfY = 0;
-    let lastRosterY = 0;
     let ticking = false;
 
-    const handleScroll = (el, getLastY, setLastY) => {
-      if (!el || ticking) return;
+    const checkScrollState = () => {
+      if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
         ticking = false;
-        const currentY = el.scrollTop;
-        const delta = currentY - getLastY();
-        setLastY(currentY);
-
         if (document.querySelector('.custom-dropdown.open')) return;
 
-        if (delta > 18 && currentY > 36) {
-          if (!win.classList.contains('header-hidden')) {
-            win.classList.add('header-hidden');
-          }
-        } else if (delta < -12 || currentY <= 15) {
+        const shelf = document.getElementById('armory-catalog') || document.getElementById('proc-hanger-shelf');
+        const roster = document.getElementById('squadron-list') || document.getElementById('proc-flight-roster');
+
+        const shelfY = shelf ? shelf.scrollTop : 0;
+        const rosterY = roster ? roster.scrollTop : 0;
+
+        const bothAtTop = (shelfY <= 5) && (rosterY <= 5);
+
+        if (bothAtTop) {
           if (win.classList.contains('header-hidden')) {
             win.classList.remove('header-hidden');
+          }
+        } else if (shelfY > 36 || rosterY > 36) {
+          if (!win.classList.contains('header-hidden')) {
+            win.classList.add('header-hidden');
           }
         }
       });
@@ -103,11 +105,11 @@ class ProcurementActionDispatcher {
 
       if (shelf && !shelf._scrollBound) {
         shelf._scrollBound = true;
-        shelf.addEventListener('scroll', () => handleScroll(shelf, () => lastShelfY, y => { lastShelfY = y; }), { passive: true });
+        shelf.addEventListener('scroll', checkScrollState, { passive: true });
       }
       if (roster && !roster._scrollBound) {
         roster._scrollBound = true;
-        roster.addEventListener('scroll', () => handleScroll(roster, () => lastRosterY, y => { lastRosterY = y; }), { passive: true });
+        roster.addEventListener('scroll', checkScrollState, { passive: true });
       }
     };
 
@@ -117,7 +119,13 @@ class ProcurementActionDispatcher {
     const mobileTabs = document.getElementById('procurement-mobile-tabs');
     if (mobileTabs) {
       mobileTabs.addEventListener('click', () => {
-        win.classList.remove('header-hidden');
+        const shelf = document.getElementById('armory-catalog') || document.getElementById('proc-hanger-shelf');
+        const roster = document.getElementById('squadron-list') || document.getElementById('proc-flight-roster');
+        const shelfY = shelf ? shelf.scrollTop : 0;
+        const rosterY = roster ? roster.scrollTop : 0;
+        if (shelfY <= 5 && rosterY <= 5) {
+          win.classList.remove('header-hidden');
+        }
       });
     }
   }
