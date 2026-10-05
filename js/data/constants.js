@@ -49,7 +49,11 @@ window.BUDGET_TIERS = {
   BUDGET_300: { id: 'BUDGET_300', name: 'Restricted (300M CR)', budget: 300.0, multiplier: 1.30, desc: 'Constrained operational defense allocation.' },
   BUDGET_400: { id: 'BUDGET_400', name: 'Standard (400M CR)', budget: 400.0, multiplier: 1.00, desc: 'Standard theater squadron allocation.' },
   BUDGET_500: { id: 'BUDGET_500', name: 'Expanded (500M CR)', budget: 500.0, multiplier: 0.80, desc: 'Expanded coalition defense funding.' },
-  BUDGET_650: { id: 'BUDGET_650', name: 'Full Readiness (650M CR)', budget: 650.0, multiplier: 0.60, desc: 'Maximum coalition expenditure allowance.' }
+  BUDGET_650: { id: 'BUDGET_650', name: 'Full Readiness (650M CR)', budget: 650.0, multiplier: 0.60, desc: 'Maximum coalition expenditure allowance.' },
+  BUDGET_750: { id: 'BUDGET_750', name: 'Strategic Reserve (750M CR)', budget: 750.0, multiplier: 0.55, desc: 'Advanced theater defense reserve allocation.' },
+  BUDGET_800: { id: 'BUDGET_800', name: 'Heavy Coalition (800M CR)', budget: 800.0, multiplier: 0.50, desc: 'Heavy coalition expenditure allowance for reinforced wings.' },
+  BUDGET_900: { id: 'BUDGET_900', name: 'Surge Fleet (900M CR)', budget: 900.0, multiplier: 0.45, desc: 'High-intensity coalition defense surge allocation.' },
+  BUDGET_1000: { id: 'BUDGET_1000', name: 'Maximum Surge (1000M CR)', budget: 1000.0, multiplier: 0.40, desc: 'Maximum strategic defense surge allocation.' }
 };
 
 window.DEFAULT_KEYBINDS = {

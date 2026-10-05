@@ -170,7 +170,11 @@ class AirspaceStandoffGame {
       BUDGET_300: '300M (1.30x)',
       BUDGET_400: '400M (1.00x)',
       BUDGET_500: '500M (0.80x)',
-      BUDGET_650: '650M (0.60x)'
+      BUDGET_650: '650M (0.60x)',
+      BUDGET_750: '750M (0.55x)',
+      BUDGET_800: '800M (0.50x)',
+      BUDGET_900: '900M (0.45x)',
+      BUDGET_1000: '1000M (0.40x)'
     };
     const diffTag = diffMap[this.aiDifficulty] || this.aiDifficulty;
     const bTag = bMap[this.playerBudgetId] || '400M (1.00x)';
