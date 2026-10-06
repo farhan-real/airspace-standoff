@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Avionics Flight Roster Submodule
- * Differential DOM rendering of `#flight-units-list` with zero mobile flickering
+ * Differential DOM rendering of flight-units-list with zero mobile flickering and no radar camera jumping on selection
  */
 
 class AvionicsRosterDisplay {
@@ -65,8 +65,9 @@ class AvionicsRosterDisplay {
         card.onclick = () => {
           if (a.hp > 0.05) {
             this.game.activeUnit = a;
-            if (this.game.radar && this.game.radar.cam && this.game.radar.trackingUnit) {
-              this.game.radar.cam.trackActiveCraft(a);
+            if (this.game.radar) {
+              this.game.radar.trackingUnit = null;
+              if (this.game.radar.cam) this.game.radar.cam.trackingUnit = null;
             }
             this.renderFlightRoster();
             this.ui.updateActiveUnitMFD();

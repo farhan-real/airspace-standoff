@@ -298,7 +298,10 @@ class ControlsSystem {
     const curIdx = live.findIndex(a => this.game.activeUnit && this.game.activeUnit.id === a.id);
     const nextIdx = (curIdx + direction + live.length) % live.length;
     this.game.activeUnit = live[nextIdx];
-    if (this.game.radar && this.game.radar.trackingUnit) this.game.radar.trackingUnit = this.game.activeUnit;
+    if (this.game.radar) {
+      this.game.radar.trackingUnit = null;
+      if (this.game.radar.cam) this.game.radar.cam.trackingUnit = null;
+    }
     this.game.avionics.renderFlightRoster();
     this.game.avionics.updateActiveUnitMFD();
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();

@@ -255,6 +255,25 @@ class AirspaceStandoffGame {
     if (this.simulation) this.simulation.captureReplayFrame(true);
     if (typeof AfterActionReportSystem !== 'undefined') AfterActionReportSystem.renderSortieSummary(this, blueWon, msg);
   }
+
+  resolveUnitFocus() {
+    if (this.activeUnit && this.activeUnit.hp <= 0) {
+      const roster = (this.currentPvpCommander === 'friendly') ? this.alliedAircraft : this.hostileAircraft;
+      const nextLive = roster.find(a => a.hp > 0);
+      if (nextLive) {
+        this.activeUnit = nextLive;
+        if (this.radar) {
+          this.radar.trackingUnit = null;
+          if (this.radar.cam) this.radar.cam.trackingUnit = null;
+        }
+      }
+    }
+    if (this.selectedTarget && (this.selectedTarget.hp <= 0 || this.selectedTarget.isDissolved)) {
+      this.selectedTarget = null;
+      const targetInfo = document.getElementById('selected-target-info');
+      if (targetInfo) targetInfo.textContent = 'TARGET: NONE';
+    }
+  }
 }
 
 window.AirspaceStandoffGame = AirspaceStandoffGame;

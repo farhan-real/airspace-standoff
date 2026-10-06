@@ -21,10 +21,6 @@
   --safe-zone-inset: 0px;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 html.safe-zone-on,
 body.safe-zone-on {
   --safe-top: env(safe-area-inset-top, 0px);
@@ -48,59 +44,6 @@ body.safe-zone-on {
   scrollbar-width: thin;
   scrollbar-color: rgba(56, 189, 248, 0.28) var(--color-pitch-black);
   -webkit-tap-highlight-color: transparent;
-}
-
-/* Smooth momentum scrolling across all scroll containers */
-.scroll-smooth,
-.catalog-grid,
-.squadron-container,
-.glossary-content,
-.inspect-body,
-.settings-body,
-.after-action-body,
-.mission-editor-body,
-.preconfig-modal-body,
-.leaderboard-table-pane,
-.leaderboard-detail-pane,
-.dossier-timeline-list,
-.dossier-roster-list,
-.aar-timeline-content,
-.aar-replay-events,
-.units-list,
-.score-log-container,
-.deck-grid,
-.active-unit-mfd,
-.inspection-content,
-.inspection-event-list,
-.inspection-tabs,
-.manual-nav-bar,
-.shelf-tabs,
-.airframe-filter-bar,
-.preconfig-pills-row,
-.settings-nav-tabs,
-.procurement-presets,
-.custom-dropdown-menu {
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html,
-  *,
-  .catalog-grid,
-  .squadron-container,
-  .glossary-content,
-  .inspect-body,
-  .settings-body,
-  .after-action-body,
-  .mission-editor-body,
-  .preconfig-modal-body,
-  .leaderboard-table-pane,
-  .leaderboard-detail-pane,
-  .inspection-content {
-    scroll-behavior: auto !important;
-  }
 }
 
 html, body {
