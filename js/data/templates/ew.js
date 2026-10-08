@@ -82,7 +82,7 @@ window.TEMPLATES_EW = {
     chosenGunId: 'DE-PULSE',
     weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-120D', 'ADM-160B'],
     upgrades: ['GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'ESM_PASSIVE_SUITE', 'SUPERCRUISE_VCE'],
-    desc: 'Top-tier electronic warfare flagship ($52.0M). Mounts directional GaN AESA jamming pods, anti-radiation HARMs, and low-drag AMRAAMs while retaining Mach 1.42 combat speed.'
+    desc: 'Electronic warfare package combining GaN AESA jamming pods, anti-radiation HARMs, and internal AMRAAMs.'
   },
   'EA-36 Standoff Radar Jamming Escort': {
     name: 'EA-36 Standoff Radar Jamming Escort',
@@ -91,6 +91,6 @@ window.TEMPLATES_EW = {
     chosenGunId: 'BK-27',
     weapons: ['AN-ALQ-249', 'AGM-88G', 'METEOR', 'ALE-55'],
     upgrades: ['GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'MADL_BATTLE_LINK', 'SUPERCRUISE_VCE'],
-    desc: 'Standoff fleet escort pairing GaN AESA jamming beams with ramjet Meteor missiles and towed fiber-optic decoys to shield allied air wings.'
+    desc: 'Fleet escort pairing GaN AESA jamming with ramjet Meteor missiles and towed decoys.'
   }
 };

@@ -69,7 +69,7 @@ class SpecsFacilitiesViews {
       </div>
       <div class="inspect-desc-box" style="border-left-color:#f97316;">
         <div class="inspect-sec-head" style="color:#f97316;margin-top:0;">RULES OF ENGAGEMENT (ROE) DIRECTIVE:</div>
-        <div style="color:#f8fafc;margin-top:2px;">${c.desc || 'Scheduled commercial airliner transiting civilian flight corridor. Strictly protected under international aerospace law. Firing upon an unverified bogey incurs -600 VP; striking this aircraft incurs -500 VP; destroying it incurs a catastrophic -2000 Victory Point penalty.'}</div>
+        <div style="color:#f8fafc;margin-top:2px;">${c.desc || 'Scheduled commercial airliner transiting civilian flight corridor. Strictly protected under international aerospace law. Firing upon an unverified bogey incurs -600 VP; striking this aircraft incurs -500 VP; destroying it incurs a severe -2000 Victory Point penalty.'}</div>
       </div>
       <div class="inspect-action-bar">
         <button type="button" class="inspect-action-btn close-btn" onclick="const m=document.getElementById('system-inspect-modal');if(m)m.classList.remove('active');if(window.Game&&window.Game.controls)window.Game.controls.autoUnpauseOnDialogClose();">CLOSE</button>

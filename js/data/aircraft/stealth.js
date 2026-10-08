@@ -103,7 +103,7 @@ window.AIRCRAFT_STEALTH = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Supreme battlespace sensor fusion ($38.0M). Serrated nozzle edges and channeled bypass air provide 0.70x IR suppression. 4 internal weapon bay slots plus 4 external pylons.'
+    desc: 'Advanced multispectral sensor fusion ($38.0M). Serrated nozzle edges and channeled bypass air provide 0.70x IR suppression. 4 internal weapon bay slots plus 4 external pylons.'
   },
   'Su-57': {
     id: 'Su-57',

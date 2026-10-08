@@ -40,12 +40,12 @@ class InspectionRadarView {
         <h3>GUIDANCE COUNTERMEASURE SENSITIVITY</h3>
         <div class="inspection-factors-table" style="margin-top:6px;">
           <div class="inspection-factor-row ${w.seeker === 'ARH' ? 'negative' : 'positive'}">
-            <span class="factor-name">Doppler Notch Seduction<span class="factor-desc">Radial closure zeroing breaks radar doppler gate.</span></span>
+            <span class="factor-name">Doppler Notch Break<span class="factor-desc">Radial closure zeroing breaks radar doppler gate.</span></span>
             <span class="factor-delta ${w.seeker === 'ARH' ? 'negative' : 'positive'}">${w.seeker === 'ARH' ? 'Vulnerable (-38% Gate Break)' : 'Immune'}</span>
           </div>
           <div class="inspection-factor-row ${w.seeker === 'ARH' ? 'negative' : (isOptical ? 'warning' : 'neutral')}">
             <span class="factor-name">Countermeasures (Chaff / Flares)<span class="factor-desc">Pyrotechnic decoy bloom tracking interference.</span></span>
-            <span class="factor-delta ${w.seeker === 'ARH' ? 'negative' : 'warning'}">${w.seeker === 'ARH' ? 'Chaff Seduction (-34%)' : 'Partial Evasion (-18%)'}</span>
+            <span class="factor-delta ${w.seeker === 'ARH' ? 'negative' : 'warning'}">${w.seeker === 'ARH' ? 'Chaff Diversion (-34%)' : 'Partial Evasion (-18%)'}</span>
           </div>
           <div class="inspection-factor-row ${isOptical && cloudHits > 0 ? 'negative' : 'positive'}">
             <span class="factor-name">Weather Cloud Moisture<span class="factor-desc">Liquid droplets scatter imaging infrared contrast.</span></span>

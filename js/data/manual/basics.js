@@ -166,7 +166,7 @@ window.MANUAL_BASICS = [
 
       <div class="ge-subhead">3. COFFIN (CONNECTION FOR FLIGHT INTERFACE) SYNTHETIC VISION</div>
       <div class="ge-desc">
-        The <b>COFFIN Interface</b> replaces the conventional canopy with a sealed, armored titanium-alloy cockpit tub and high-density sensory liquid immersion tank. Multi-spectral optical camera arrays project a zero-latency, spherical 360&deg; synthetic vision panorama directly to the pilot:
+        The <b>COFFIN Interface</b> replaces the conventional canopy with a sealed, armored titanium-alloy cockpit tub and pressurized G-protective flight capsule. Multi-spectral optical camera arrays project a zero-latency, spherical 360&deg; synthetic vision panorama directly to the pilot:
       </div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
@@ -178,11 +178,11 @@ window.MANUAL_BASICS = [
         <div class="ge-card" style="border-left:3px solid #00f5a0;">
           <b style="color:#00f5a0;">ZERO G-STRESS &amp; G-LOC IMMUNITY</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Full-body pressurized fluid immersion and neural damping eliminate physical blood pooling. Pilots accumulate <b>zero G-fatigue stress</b> and possess absolute immunity to Tunnel Vision and G-LOC blackouts up to 20G structural limits.
+            Pressurized anti-G flight capsule and advanced damping eliminate physical blood pooling. Pilots accumulate <b>zero G-fatigue stress</b> and possess absolute immunity to Tunnel Vision and G-LOC blackouts up to 20G structural limits.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #ffd700;">
-          <b style="color:#ffd700;">NEURAL EVASIVE DODGE (+24% TO +30%)</b>
+          <b style="color:#ffd700;">AUTOMATED EVASIVE RESPONSE (+24% TO +30%)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
             Direct optic-nerve bus transmission eliminates neuromuscular latency. COFFIN airframes receive a constant passive <b>+24% to +30% evasive dodge bonus</b> against all incoming guided missiles.
           </div>

@@ -128,7 +128,7 @@ class SpecsModalRenderer {
         <div class="inspect-stat-item"><span>BASE RCS (NOSE-ON):</span><b class="${rRcs.colorClass}">${a.sigma_0 || 1.0} m2 (${stealthClass})</b></div>
         <div class="inspect-stat-item"><span>BEAM EXPOSURE SPIKE:</span><b class="${rBeamSpike.colorClass}">${baseSpike.toFixed(1)}x (+${spikePct}% signature increase when turning broadside)</b></div>
         <div class="inspect-stat-item"><span>IR THERMAL SIGNATURE:</span><b class="${rThermal.colorClass}">${thermalDescription}</b></div>
-        <div class="inspect-stat-item"><span>COFFIN NEURAL FLIGHT:</span><b class="${a.isCoffin ? 'stat-tier-1' : 'stat-tier-3'}">${a.isCoffin ? 'MANUAL COFFIN (Zero stress, immune to G-LOC, +25% dodge bonus)' : 'HUMAN CREWED (Standard stress limits)'}</b></div>
+        <div class="inspect-stat-item"><span>COFFIN SYNTHETIC VISION:</span><b class="${a.isCoffin ? 'stat-tier-1' : 'stat-tier-3'}">${a.isCoffin ? 'MANUAL COFFIN (Zero stress, immune to G-LOC, +25% automated evasion)' : 'HUMAN CREWED (Standard stress limits)'}</b></div>
       </div>
 
       <div class="inspect-sec-head">3. ORDNANCE ARCHITECTURE &amp; HARDPOINTS</div>

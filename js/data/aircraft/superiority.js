@@ -35,13 +35,13 @@ window.AIRCRAFT_SUPERIORITY = {
     totalSlots: 8,
     maxPylonRating: 'Type X',
     upgradeSockets: 3,
-    desc: 'Stratospheric interceptor (Mach 1.88 sprint). Colossal twin D-30F6 afterburning turbofans create a massive 1.50x thermal exhaust plume vulnerable to IR tracking. 8 external pylons with centerline Kinzhal station.'
+    desc: 'Stratospheric interceptor (Mach 1.88 sprint). High-thrust twin D-30F6 afterburning turbofans create a massive 1.50x thermal exhaust plume vulnerable to IR tracking. 8 external pylons with centerline Kinzhal station.'
   },
   'F-15EX': {
     id: 'F-15EX',
     name: 'F-15EX Eagle II',
     category: 'SUPERIORITY',
-    badge: '14 HARDPOINT MISSILE TRUCK',
+    badge: '14-STATION MISSILE CARRIER',
     role: 'Heavy BVR Missile Truck',
     cost: 30.0,
     hp: 6,
@@ -69,7 +69,7 @@ window.AIRCRAFT_SUPERIORITY = {
     totalSlots: 14,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Heavy missile truck. Twin F110 engines with unshielded round convergent-divergent nozzles yield a 1.20x thermal signature. 14 external weapon stations with reinforced centerline carriage.'
+    desc: 'Heavy missile carrier. Twin F110 engines with unshielded round convergent-divergent nozzles yield a 1.20x thermal signature. 14 external weapon stations with reinforced centerline carriage.'
   },
   'Su-35S': {
     id: 'Su-35S',

@@ -112,7 +112,7 @@ window.AIRCRAFT_COFFIN = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Apex stealth COFFIN air dominance (0.00005m2 RCS). Advanced heat-absorption skin and cooled 2D vectoring tiles suppress thermal bloom to 0.50x. 6 internal bay slots plus 2 external pylons.'
+    desc: 'Advanced stealth COFFIN air dominance (0.00005m2 RCS). Advanced heat-absorption skin and cooled 2D vectoring tiles suppress thermal bloom to 0.50x. 6 internal bay slots plus 2 external pylons.'
   },
   'ADF-11F': {
     id: 'ADF-11F',

@@ -106,7 +106,7 @@ class SimulationScoring {
       targetType: 'UNVERIFIED',
       weapon: wpnName,
       points: -penalty,
-      reason: `RECKLESS ENGAGEMENT: Fired on unverified track [BOGEY ?] (${tgtName})`
+      reason: `ROE INFRACTION: Fired on unverified track [BOGEY ?] (${tgtName})`
     });
   }
 

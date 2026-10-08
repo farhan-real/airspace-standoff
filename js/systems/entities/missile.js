@@ -193,10 +193,10 @@ class MissileEntity {
             else if (tgt.activeManeuverId === 'PUSH_COBRA') reason = 'COBRA BRAKE (OVERSHOOT)';
             else if (tgt.activeManeuverId === 'BARREL_ROLL') reason = 'BARREL ROLL (LEAD LOSS)';
             else if (tgt.activeManeuverId === 'SPLIT_S') reason = 'SPLIT-S (KINETIC ESCAPE)';
-            else if (tgt.activeManeuverId === 'EMERGENCY_CM' || tgt.cmTimer > 0) reason = 'CHAFF DECOY SEDUCTION';
-            else if (tgt.activeManeuverId === 'ZOOM_CLIMB') reason = 'ENERGY PERCH (GRAVITY DEFICIT)';
+            else if (tgt.activeManeuverId === 'EMERGENCY_CM' || tgt.cmTimer > 0) reason = 'CHAFF DECOY DIVERSION';
+            else if (tgt.activeManeuverId === 'ZOOM_CLIMB') reason = 'HIGH-ALTITUDE CLIMB (ENERGY DEFICIT)';
             else if (tgt.activeManeuverId === 'BREAK_TURN') reason = 'DEFENSIVE BREAK TURN';
-            else if (tgt.isCoffin) reason = 'COFFIN NEURAL DODGE';
+            else if (tgt.isCoffin) reason = 'COFFIN EVASIVE RESPONSE';
             else if (tgt.isAce) reason = 'ACE DEFENSIVE BREAK';
             else if (tgt.activeManeuverBonus > 0) reason = 'DEFENSIVE BREAK TURN';
           }

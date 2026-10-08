@@ -28,7 +28,7 @@ class InspectionCognitionRenderer {
 
   static getRoleAssessment(rawRole, isAce, isActivelyControlled, focusCount, maxSlots, diffKey) {
     if (isAce) {
-      if (diffKey === 'LEGEND') return 'Apex Ace Command: Coordinates multi-axis volleys, utilizes directed-energy lasers, and executes sub-second defensive breaks.';
+      if (diffKey === 'LEGEND') return 'Flagship Ace Command: Coordinates multi-axis volleys, utilizes directed-energy lasers, and executes sub-second defensive breaks.';
       if (diffKey === 'MASTER') return 'Master Ace Lead: Operating stratospheric energy perch with railgun/pulse-laser snipes and high-G Kulbit capability.';
       return 'Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.';
     }
@@ -50,7 +50,7 @@ class InspectionCognitionRenderer {
     }
 
     if (rawRole === 'SNIPER') {
-      if (diffKey === 'LEGEND') return 'Apex F-Pole Skate: Stratospheric FL500 cruise, maintaining 46 to 90 km standoff and cranking 65 deg off boresight to deny return fire.';
+      if (diffKey === 'LEGEND') return 'Standoff F-Pole Skate: Stratospheric FL500 cruise, maintaining 46 to 90 km standoff and cranking 65 deg off boresight to deny return fire.';
       if (diffKey === 'MASTER') return 'Stratospheric Energy Skate: Cruising FL460, holding 50 to 85 km range and performing tactical retrograde drags to drain incoming missiles.';
       if (diffKey === 'ACE') return 'Distance Drag & Standoff: Cruising FL420 at 50 to 80 km range, executing 135 deg retrograde turns when targets close inside 45 km.';
       return 'Standoff Perimeter: Holding 45 to 75 km range at FL380, turning beam perpendicular if targets approach inside 38 km.';

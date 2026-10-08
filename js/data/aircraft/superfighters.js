@@ -115,7 +115,7 @@ window.AIRCRAFT_SUPERFIGHTERS = {
     id: 'DARKSTAR',
     name: 'Darkstar Hypersonic Penetrator',
     category: 'EXPERIMENTAL',
-    badge: 'MACH 2.40 STRATOSPHERE',
+    badge: 'HIGH-ALTITUDE HYPERSONIC',
     role: 'Hypersonic High-Altitude Recon & Strike',
     cost: 56.0,
     hp: 5,
@@ -181,7 +181,7 @@ window.AIRCRAFT_SUPERFIGHTERS = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Sixth-generation stealth superfighter ($58.0M) featuring a unique double-wing layout. Integrates an internal hyper-velocity EML railgun, VLO radar cross-section (0.0003m2), and advanced 3D thrust vectoring. Carries up to 10 stores across internal stealth bays and external pylon racks with UAV combat support.'
+    desc: 'Double-wing stealth superfighter. Recessed exhaust troughs and internal heat sinks hold thermal bloom at 0.52x. 4 internal bay slots, 6 external pylons, and centerline rail.'
   },
   'XFA-36B': {
     id: 'XFA-36B',
@@ -217,6 +217,6 @@ window.AIRCRAFT_SUPERFIGHTERS = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Advanced carrier-capable superfighter ($50.0M) employing an innovative tailless canard-delta configuration. Pivoting wingtips and 3D thrust-vectoring nozzles deliver extreme turn authority across all regimes. Houses 4 internal stealth bay stations and 6 external pylons with centerline heavy carriage.'
+    desc: 'Tailless carrier superfighter. Pivoting wingtips and 3D TVC nozzles limit thermal bloom to 0.65x. 4 internal bay slots, 6 external pylons, plus centerline rail.'
   }
 };

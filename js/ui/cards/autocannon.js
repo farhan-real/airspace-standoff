@@ -182,12 +182,12 @@ class AutocannonBayRenderer {
       }
     } else if (validTarget && !validTarget.isIdentified && unit.team === 'friendly' && game && game.simulation) {
       const penalty = cfg.VP_UNIDENTIFIED_FIRE_PENALTY || 600;
-      game.simulation.logScoreEvent('friendly', -penalty, 'RECKLESS ENGAGEMENT: Fired autocannon on unverified track [BOGEY ?]');
+      game.simulation.logScoreEvent('friendly', -penalty, 'ROE INFRACTION: Fired autocannon on unverified track [BOGEY ?]');
       if (game.simulation.scoring) {
         game.simulation.scoring.recordBogeyFirePenalty('friendly', unit, validTarget, gun, penalty);
       }
       if (game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, `ROE PENALTY: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
+        game.radar.spawnCombatText(unit.x, unit.y, `ROE INFRACTION: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
       }
     }
 

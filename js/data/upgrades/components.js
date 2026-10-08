@@ -165,7 +165,7 @@ window.UPGRADES_CATALOG = {
   },
   'ZOE_NEURAL_PROCESSOR': {
     id: 'ZOE_NEURAL_PROCESSOR',
-    name: 'Neural Autonomous Flight Computer',
+    name: 'Digital Autonomous Flight Computer',
     cost: 2.0,
     mass: 30,
     category: 'DATALINK',
@@ -183,7 +183,7 @@ window.UPGRADES_CATALOG = {
     cost: 2.4,
     mass: 45,
     category: 'DATALINK',
-    desc: 'Armored enclosed cockpit with multi-camera synthetic vision for 100% manual player flight. Eliminates pilot G-fatigue blackout, grants +15% turn rate authority, and provides +25% high-rate neural evasive dodge bonus.',
+    desc: 'Armored enclosed cockpit with multi-camera synthetic vision for 100% manual player flight. Eliminates pilot G-fatigue blackout, grants +15% turn rate authority, and provides +25% automated evasive response bonus.',
     apply: function(unit) {
       if (unit.spec && unit.spec.AGI_0) unit.spec.AGI_0 *= 1.15;
       unit.glocThreshold = 999.0;

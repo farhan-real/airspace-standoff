@@ -103,7 +103,7 @@ const FleetGenerator = {
       : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B', 'F-22C-COFFIN', 'Su-57', 'YF-23', 'F-22A', 'F-15EX'];
 
     const aceCallsigns = isBlue
-      ? ['Apex Lead', 'Saber Lead', 'Ghost Lead', 'Viper Ace', 'Archangel'].sort(() => rng() - 0.5)
+      ? ['Alpha Lead', 'Saber Lead', 'Ghost Lead', 'Viper Ace', 'Archangel'].sort(() => rng() - 0.5)
       : ['Yellow 13', 'Pixy', 'Mihaly', 'Gault', 'Strigon', 'Wizard', 'Schwarze', 'Espada'].sort(() => rng() - 0.5);
     const shuffledAces = [...aceCandidates].sort(() => rng() - 0.5);
 
@@ -160,7 +160,7 @@ const FleetGenerator = {
       }
     }
 
-    const apexPool = ['ADF-11F', 'CFA-44', 'X-02S', 'ADFX-01', 'DARKSTAR', 'X-40', 'XFA-36B'];
+    const flagshipPool = ['ADF-11F', 'CFA-44', 'X-02S', 'ADFX-01', 'DARKSTAR', 'X-40', 'XFA-36B'];
     const highTierPool = [
       'Su-57', 'F-22A', 'YF-23', 'J-20', 'F-15EX', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN',
       'Su-47', 'F-15-SMTD', 'F-35A', 'Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'MiG-31BM', 'Su-30SM',
@@ -182,15 +182,15 @@ const FleetGenerator = {
       if (diff === 'CADET') {
         candidatePool = (roll < 0.20) ? highTierPool : ((roll < 0.65) ? midTierPool : lowTierPool);
       } else if (diff === 'VETERAN') {
-        candidatePool = (roll < 0.45) ? highTierPool : ((roll < 0.80) ? midTierPool : ((roll < 0.90) ? apexPool : lowTierPool));
+        candidatePool = (roll < 0.45) ? highTierPool : ((roll < 0.80) ? midTierPool : ((roll < 0.90) ? flagshipPool : lowTierPool));
       } else if (diff === 'ELITE') {
-        candidatePool = (roll < 0.50) ? highTierPool : ((roll < 0.75) ? apexPool : ((roll < 0.90) ? midTierPool : dronePool));
+        candidatePool = (roll < 0.50) ? highTierPool : ((roll < 0.75) ? flagshipPool : ((roll < 0.90) ? midTierPool : dronePool));
       } else if (diff === 'ACE') {
-        candidatePool = (roll < 0.45) ? highTierPool : ((roll < 0.80) ? apexPool : ((roll < 0.92) ? midTierPool : dronePool));
+        candidatePool = (roll < 0.45) ? highTierPool : ((roll < 0.80) ? flagshipPool : ((roll < 0.92) ? midTierPool : dronePool));
       } else if (diff === 'MASTER') {
-        candidatePool = (roll < 0.45) ? apexPool : ((roll < 0.85) ? highTierPool : ((roll < 0.93) ? midTierPool : dronePool));
+        candidatePool = (roll < 0.45) ? flagshipPool : ((roll < 0.85) ? highTierPool : ((roll < 0.93) ? midTierPool : dronePool));
       } else {
-        candidatePool = (roll < 0.55) ? apexPool : ((roll < 0.90) ? highTierPool : ((roll < 0.95) ? midTierPool : dronePool));
+        candidatePool = (roll < 0.55) ? flagshipPool : ((roll < 0.90) ? highTierPool : ((roll < 0.95) ? midTierPool : dronePool));
       }
 
       const chosenId = candidatePool[Math.floor(rng() * candidatePool.length)];

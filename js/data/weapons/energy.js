@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Pulse Lasers, Continuous Directed Energy & Hyper-Velocity Railguns
+ * AIRSPACE STANDOFF: Pulse Lasers, Continuous Directed Energy & Railguns
  */
 
 window.AUTOCANNONS_ENERGY = {
@@ -110,8 +110,8 @@ window.AUTOCANNONS_ENERGY = {
   },
   'EML_GUN': {
     id: 'EML_GUN',
-    name: 'EML Hyper-Velocity Railgun',
-    caliber: 'Hyper-Velocity Kinetic',
+    name: 'EML Railgun',
+    caliber: 'Electromagnetic Railgun',
     rpm: 120,
     rangeKm: 9.5,
     damagePerSec: 2.6,
@@ -129,7 +129,7 @@ window.AUTOCANNONS_ENERGY = {
     kineticConcussion: 0.40,
     thermalBloom: 1.3,
     cloudScattering: 0.0,
-    desc: 'Electromagnetic accelerator firing 2 hyper-velocity kinetic slugs (1.90 HP total, 2.8s reload). 8 slugs permit 4 sniper shots. Out-ranges conventional cannons; tight 22-degree boresight.'
+    desc: 'Electromagnetic railgun firing 2 kinetic slugs (1.90 HP total, 2.8s reload). 8 slugs permit 4 sniper shots. Out-ranges conventional cannons; tight 22-degree boresight.'
   }
 };
 

@@ -77,7 +77,7 @@ window.AIRCRAFT_EW = {
     id: 'EA-18G',
     name: 'EA-18G Growler',
     category: 'EW',
-    badge: 'EW RADAR BLIND',
+    badge: 'AIRBORNE ELECTRONIC ATTACK',
     role: 'Airborne Electronic Attack Escort',
     cost: 24.0,
     hp: 4,
@@ -147,7 +147,7 @@ window.AIRCRAFT_EW = {
     id: 'EA-36',
     name: 'EA-36 Barricader',
     category: 'EW',
-    badge: 'APEX EW FLAGSHIP',
+    badge: 'FLAGSHIP EW SUITE',
     role: 'Heavy Electronic Attack Flagship',
     cost: 54.0,
     hp: 6,
@@ -178,6 +178,6 @@ window.AIRCRAFT_EW = {
     totalSlots: 12,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Top-tier electronic warfare flagship ($54.0M). Features built-in broadband microwave jamming (60% suppression), wideband ESM threat classification, 3D TVC agility, VLO stealth cross-section (0.005m2), and 12 hardpoint stations across internal bays and external pylons.'
+    desc: 'Electronic warfare flagship. Built-in microwave jamming and cooled 3D TVC nozzles suppress emissions to 0.65x. 4 internal bay slots, 8 external pylons, and centerline rail.'
   }
 };

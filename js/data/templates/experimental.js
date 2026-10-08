@@ -10,7 +10,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'DE-PULSE',
     weapons: ['AIM-260', 'AIM-120D', 'METEOR', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'ZOE_NEURAL_PROCESSOR', 'GAN_AESA_CORE', 'RAM_NANO_COATING'],
-    desc: 'Apex air superiority testbed ($60.0M). 20.0G structural envelope, hitscan DE-Pulse laser, diverse BVR and dogfight missiles with zero pilot stress and +25% evasive dodge bonus.'
+    desc: 'Flagship air superiority testbed ($60.0M). 20.0G structural envelope, hitscan DE-Pulse laser, diverse BVR and dogfight missiles with zero pilot stress and +25% evasive dodge bonus.'
   },
   'ADF-11F Swarm Suppression': {
     name: 'ADF-11F Swarm Suppression',
@@ -55,7 +55,7 @@ window.TEMPLATES_EXPERIMENTAL = {
     chosenGunId: 'DE-PULSE',
     weapons: ['AIM-260', 'METEOR', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'],
-    desc: 'Apex 6th-Gen manual COFFIN conversion ($62.0M). Optical shell yields 0.00005m2 ghost RCS, 18.0G envelope, hitscan DE-Pulse laser, and +28% evasive dodge bonus.'
+    desc: 'Advanced 6th-Gen manual COFFIN conversion ($62.0M). Optical shell yields 0.00005m2 ghost RCS, 18.0G envelope, hitscan DE-Pulse laser, and +28% evasive dodge bonus.'
   },
   'Su-37 [COFFIN] Air Dominance Interceptor': {
     name: 'Su-37 [COFFIN] Air Dominance Interceptor',

@@ -7,7 +7,7 @@ window.AIRCRAFT_STRIKE = {
     id: 'A-10C',
     name: 'A-10C Warthog',
     category: 'STRIKE',
-    badge: 'GAU-8 TANK BUSTER',
+    badge: '30MM CLOSE AIR SUPPORT',
     role: 'Dedicated Close Air Support',
     cost: 10.5,
     hp: 7,

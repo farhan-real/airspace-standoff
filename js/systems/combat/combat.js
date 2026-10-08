@@ -89,13 +89,13 @@ class CombatSystem {
     } else if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !w.isGunpod && targetEntity) {
       const penalty = cfg.VP_UNIDENTIFIED_FIRE_PENALTY || 600;
       if (sourceUnit.team === 'friendly' && this.game.simulation) {
-        this.game.simulation.logScoreEvent('friendly', -penalty, 'RECKLESS ENGAGEMENT: Fired on unverified track [BOGEY ?]');
+        this.game.simulation.logScoreEvent('friendly', -penalty, 'ROE INFRACTION: Fired on unverified track [BOGEY ?]');
         if (this.game.simulation.scoring) {
           this.game.simulation.scoring.recordBogeyFirePenalty('friendly', sourceUnit, targetEntity, w, penalty);
         }
       }
       if (this.game.radar) {
-        this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE PENALTY: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
+        this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE INFRACTION: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
       }
       if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
     }
