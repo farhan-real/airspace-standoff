@@ -51,10 +51,10 @@ class StatEvaluator {
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'clutter':
-        if (val >= 0.35) return { tier: 1, colorClass: 'stat-tier-1' };
-        if (val >= 0.28) return { tier: 2, colorClass: 'stat-tier-2' };
-        if (val >= 0.22) return { tier: 3, colorClass: 'stat-tier-3' };
-        if (val >= 0.18) return { tier: 4, colorClass: 'stat-tier-4' };
+        if (val >= 0.75) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 0.60) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 0.45) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 0.30) return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'rcs':

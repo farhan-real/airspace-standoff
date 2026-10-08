@@ -94,7 +94,10 @@ const Physics = {
     const tAlt = targetUnit.alt !== undefined ? targetUnit.alt : 0.0;
     const sAlt = sensorUnit.alt !== undefined ? sensorUnit.alt : 0.5;
     if (tAlt < 0.20 && sAlt > 0.40) {
-      maxDetectDist *= (0.70 + (sensorUnit.spec && sensorUnit.spec.lookDownBonus ? sensorUnit.spec.lookDownBonus : 0.20));
+      const clutterFactor = (sensorUnit.spec && sensorUnit.spec.lookDownBonus !== undefined)
+        ? sensorUnit.spec.lookDownBonus
+        : 0.45;
+      maxDetectDist *= Math.max(0.50, Math.min(1.10, 0.55 + clutterFactor * 0.55));
     }
 
     const cloudHits = Physics.countIntersectingClouds(sensorUnit.x, sensorUnit.y, targetUnit.x, targetUnit.y, weatherClouds);
