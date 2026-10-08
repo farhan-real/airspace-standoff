@@ -105,7 +105,7 @@ class RadarEffectsSystem {
       if (ft.life <= 0) { this.floatingTexts.splice(m, 1); continue; }
       ft.y -= 2.0 * dt;
       var fPos = this.cam.toScreen(ft.x, ft.y);
-      ctx.font = 'bold 11px ui-monospace, monospace';
+      ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
       ctx.fillStyle = ft.color;
       ctx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
       ctx.fillText(ft.text, fPos.x, fPos.y);

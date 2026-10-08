@@ -13,16 +13,16 @@ class RadarEnvironmentRenderer {
       const pT = cam.toScreen(kmX, 0);
       const pB = cam.toScreen(kmX, cfg.THEATER_HEIGHT_KM);
       ctx.beginPath();
-      ctx.moveTo(Math.round(pT.x), Math.round(pT.y));
-      ctx.lineTo(Math.round(pB.x), Math.round(pB.y));
+      ctx.moveTo(pT.x, pT.y);
+      ctx.lineTo(pB.x, pB.y);
       ctx.stroke();
     }
     for (let kmY = 0; kmY <= cfg.THEATER_HEIGHT_KM; kmY += 25) {
       const pL = cam.toScreen(0, kmY);
       const pR = cam.toScreen(cfg.THEATER_WIDTH_KM, kmY);
       ctx.beginPath();
-      ctx.moveTo(Math.round(pL.x), Math.round(pL.y));
-      ctx.lineTo(Math.round(pR.x), Math.round(pR.y));
+      ctx.moveTo(pL.x, pL.y);
+      ctx.lineTo(pR.x, pR.y);
       ctx.stroke();
     }
     ctx.restore();
@@ -35,12 +35,12 @@ class RadarEnvironmentRenderer {
     const pBottom = cam.toScreen(corridorX, cfg.THEATER_HEIGHT_KM);
 
     ctx.save();
-    ctx.strokeStyle = 'rgba(0, 245, 160, 0.40)';
+    ctx.strokeStyle = 'rgba(0, 245, 160, 0.45)';
     ctx.lineWidth = 1.4;
     ctx.setLineDash([5, 6]);
     ctx.beginPath();
-    ctx.moveTo(Math.round(pTop.x), Math.round(pTop.y));
-    ctx.lineTo(Math.round(pBottom.x), Math.round(pBottom.y));
+    ctx.moveTo(pTop.x, pTop.y);
+    ctx.lineTo(pBottom.x, pBottom.y);
     ctx.stroke();
     ctx.restore();
   }
@@ -55,11 +55,11 @@ class RadarEnvironmentRenderer {
       const ry = (c.ry / cfg.THEATER_HEIGHT_KM) * cssHeight * cam.zoom;
       ctx.save();
       ctx.beginPath();
-      ctx.ellipse(Math.round(pos.x), Math.round(pos.y), Math.max(4, rx), Math.max(4, ry), 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(40, 56, 80, 0.16)';
+      ctx.ellipse(pos.x, pos.y, Math.max(4, rx), Math.max(4, ry), 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(40, 56, 80, 0.18)';
       ctx.fill();
-      ctx.strokeStyle = 'rgba(80, 110, 150, 0.30)';
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(80, 110, 150, 0.35)';
+      ctx.lineWidth = 1.2;
       ctx.setLineDash([4, 6]);
       ctx.stroke();
       ctx.restore();
@@ -68,21 +68,21 @@ class RadarEnvironmentRenderer {
 
   static drawUplinkBanner(ctx, count, cssWidth, cssHeight) {
     ctx.save();
-    ctx.font = '800 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Consolas", monospace';
+    ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
     const text = `SATELLITE RADAR UPLINK: ${count} HOSTILE${count > 1 ? 'S' : ''} REMAINING (PINPOINTED)`;
     const isMobile = (cssWidth <= 1024);
     const textWidth = ctx.measureText(text).width;
     const x = isMobile ? 8 : 16;
     const y = isMobile ? 54 : 68;
 
-    ctx.fillStyle = 'rgba(3, 9, 20, 0.92)';
+    ctx.fillStyle = 'rgba(3, 9, 20, 0.94)';
     ctx.strokeStyle = '#00f0ff';
-    ctx.lineWidth = 1.2;
-    ctx.fillRect(x, y - 11, textWidth + 14, 16);
-    ctx.strokeRect(x, y - 11, textWidth + 14, 16);
+    ctx.lineWidth = 1.4;
+    ctx.fillRect(x, y - 11, textWidth + 14, 18);
+    ctx.strokeRect(x, y - 11, textWidth + 14, 18);
 
     ctx.fillStyle = '#00f0ff';
-    ctx.fillText(text, x + 7, y + 1);
+    ctx.fillText(text, x + 7, y + 2);
     ctx.restore();
   }
 }

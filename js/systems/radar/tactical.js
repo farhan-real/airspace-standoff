@@ -22,7 +22,7 @@ class RadarTacticalRenderer {
     else { active = craftB; commanderTeam = activeUnit; detSet = team; }
 
     ctx.save();
-    ctx.lineWidth = 1.2;
+    ctx.lineWidth = 1.3;
     ctx.setLineDash([3, 4]);
 
     this.renderLocksForList(ctx, cam, listA, active, commanderTeam, detSet);
@@ -40,17 +40,17 @@ class RadarTacticalRenderer {
       if (!tgt || tgt.hp <= 0.05 || typeof tgt.x !== 'number') continue;
       if (source.team !== team && detectedSet && !detectedSet.has(source.id)) continue;
 
-      const p1x = Math.round(cam.toScreenX ? cam.toScreenX(source.x) : cam.toScreen(source.x, source.y).x);
-      const p1y = Math.round(cam.toScreenY ? cam.toScreenY(source.y) : cam.toScreen(source.x, source.y).y);
-      const p2x = Math.round(cam.toScreenX ? cam.toScreenX(tgt.x) : cam.toScreen(tgt.x, tgt.y).x);
-      const p2y = Math.round(cam.toScreenY ? cam.toScreenY(tgt.y) : cam.toScreen(tgt.x, tgt.y).y);
+      const p1x = cam.toScreenX ? cam.toScreenX(source.x) : cam.toScreen(source.x, source.y).x;
+      const p1y = cam.toScreenY ? cam.toScreenY(source.y) : cam.toScreen(source.x, source.y).y;
+      const p2x = cam.toScreenX ? cam.toScreenX(tgt.x) : cam.toScreen(tgt.x, tgt.y).x;
+      const p2y = cam.toScreenY ? cam.toScreenY(tgt.y) : cam.toScreen(tgt.x, tgt.y).y;
 
       ctx.beginPath();
       ctx.moveTo(p1x, p1y);
       ctx.lineTo(p2x, p2y);
       ctx.strokeStyle = (activeUnit && activeUnit.id === source.id)
         ? '#00f0ff'
-        : (source.team !== team && tgt.team === team ? '#ef4444' : 'rgba(0, 240, 255, 0.35)');
+        : (source.team !== team && tgt.team === team ? '#ef4444' : 'rgba(0, 240, 255, 0.40)');
       ctx.stroke();
     }
   }
@@ -78,13 +78,13 @@ class RadarTacticalRenderer {
     const detectedSet = (window.Game && team === 'friendly') ? window.Game.detectedByBlue : (window.Game ? window.Game.detectedByRed : null);
 
     ctx.save();
-    ctx.lineWidth = 1.0;
+    ctx.lineWidth = 1.2;
 
     for (let g = 0; g < activeGroups.length; g++) {
       const group = activeGroups[g];
       const tgt = group.target;
-      const tx = Math.round(cam.toScreenX ? cam.toScreenX(tgt.x) : cam.toScreen(tgt.x, tgt.y).x);
-      const ty = Math.round(cam.toScreenY ? cam.toScreenY(tgt.y) : cam.toScreen(tgt.x, tgt.y).y);
+      const tx = cam.toScreenX ? cam.toScreenX(tgt.x) : cam.toScreen(tgt.x, tgt.y).x;
+      const ty = cam.toScreenY ? cam.toScreenY(tgt.y) : cam.toScreen(tgt.x, tgt.y).y;
       let friendlyCount = 0, enemyCount = 0;
 
       for (let mIdx = 0; mIdx < group.missiles.length; mIdx++) {
@@ -93,8 +93,8 @@ class RadarTacticalRenderer {
         if (!isOwn && m.isPassiveRadar && m.distanceToTarget > (m.pathRevealDistance || 20.0)) continue;
         if (!isOwn && detectedSet && !detectedSet.has(m.id)) continue;
 
-        const pMx = Math.round(cam.toScreenX ? cam.toScreenX(m.x) : cam.toScreen(m.x, m.y).x);
-        const pMy = Math.round(cam.toScreenY ? cam.toScreenY(m.y) : cam.toScreen(m.x, m.y).y);
+        const pMx = cam.toScreenX ? cam.toScreenX(m.x) : cam.toScreen(m.x, m.y).x;
+        const pMy = cam.toScreenY ? cam.toScreenY(m.y) : cam.toScreen(m.x, m.y).y;
 
         ctx.beginPath();
         ctx.moveTo(pMx, pMy);
@@ -107,9 +107,9 @@ class RadarTacticalRenderer {
       }
 
       if (friendlyCount > 1 || enemyCount > 1) {
-        ctx.font = '700 10px monospace';
-        if (friendlyCount > 1) { ctx.fillStyle = '#00f0ff'; ctx.fillText('SALVO x' + friendlyCount, tx - 22, ty - 14); }
-        if (enemyCount > 1) { ctx.fillStyle = '#ef4444'; ctx.fillText('INBOUND x' + enemyCount, tx - 22, ty + (friendlyCount > 1 ? 22 : -14)); }
+        ctx.font = '700 10.5px "JetBrains Mono", ui-monospace, monospace';
+        if (friendlyCount > 1) { ctx.fillStyle = '#00f0ff'; ctx.fillText('SALVO x' + friendlyCount, tx - 24, ty - 15); }
+        if (enemyCount > 1) { ctx.fillStyle = '#ef4444'; ctx.fillText('INBOUND x' + enemyCount, tx - 24, ty + (friendlyCount > 1 ? 24 : -15)); }
       }
       group.missiles.length = 0;
     }
@@ -217,11 +217,11 @@ class RadarTacticalRenderer {
         const distTag = declutterMode ? '' : ` [${cl.minDist}km]`;
         const speedTag = `M ${cl.speed.toFixed(1)} [${cl.stage}]`;
 
-        ctx.font = '800 10px monospace';
+        ctx.font = '700 10.5px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = cl.isBlue ? '#00f0ff' : (cl.isIdentified ? '#ef4444' : '#f97316');
         ctx.fillText(cleanFn(`${mslLabel}${countTag}`), cl.px + 8, cl.py - 5);
 
-        ctx.font = '700 9px monospace';
+        ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = cl.isBlue ? '#00f5a0' : (cl.isIdentified ? '#fca5a5' : '#fed7aa');
         ctx.fillText(cleanFn(`${speedTag}${distTag}`), cl.px + 8, cl.py + 6);
       }
@@ -233,11 +233,11 @@ class RadarTacticalRenderer {
 
   static drawHoverReticle(ctx, cam, contact) {
     if (!contact || typeof contact.x !== 'number') return;
-    const px = Math.round(cam.toScreenX ? cam.toScreenX(contact.x) : cam.toScreen(contact.x, contact.y).x);
-    const py = Math.round(cam.toScreenY ? cam.toScreenY(contact.y) : cam.toScreen(contact.x, contact.y).y);
+    const px = cam.toScreenX ? cam.toScreenX(contact.x) : cam.toScreen(contact.x, contact.y).x;
+    const py = cam.toScreenY ? cam.toScreenY(contact.y) : cam.toScreen(contact.x, contact.y).y;
     ctx.save();
     ctx.strokeStyle = '#00f0ff';
-    ctx.lineWidth = 1.4;
+    ctx.lineWidth = 1.5;
     ctx.setLineDash([3, 3]);
     ctx.beginPath();
     ctx.arc(px, py, 16, 0, Math.PI * 2);
@@ -247,8 +247,8 @@ class RadarTacticalRenderer {
 
   static drawTargetReticle(ctx, cam, target) {
     if (!target || typeof target.x !== 'number') return;
-    const px = Math.round(cam.toScreenX ? cam.toScreenX(target.x) : cam.toScreen(target.x, target.y).x);
-    const py = Math.round(cam.toScreenY ? cam.toScreenY(target.y) : cam.toScreen(target.x, target.y).y);
+    const px = cam.toScreenX ? cam.toScreenX(target.x) : cam.toScreen(target.x, target.y).x;
+    const py = cam.toScreenY ? cam.toScreenY(target.y) : cam.toScreen(target.x, target.y).y;
     const commanderTeam = (window.Game && window.Game.currentPvpCommander) || 'friendly';
     const isKnown = (target.team === commanderTeam) ||
       (typeof target.isIdentifiedBy === 'function' ? target.isIdentifiedBy(commanderTeam) : target.isIdentified);
@@ -264,8 +264,8 @@ class RadarTacticalRenderer {
       else reticleColor = '#00f0ff';
     }
     ctx.strokeStyle = reticleColor;
-    ctx.lineWidth = 1.8;
-    const s = 12;
+    ctx.lineWidth = 2.0;
+    const s = 13;
     ctx.beginPath();
     ctx.moveTo(px - s, py - s + 4); ctx.lineTo(px - s, py - s); ctx.lineTo(px - s + 4, py - s);
     ctx.moveTo(px + s - 4, py - s); ctx.lineTo(px + s, py - s); ctx.lineTo(px + s, py - s + 4);

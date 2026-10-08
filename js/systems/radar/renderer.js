@@ -11,7 +11,7 @@ class TacticalRadarRenderer {
     this.isMobile = (typeof window !== 'undefined') && (window.innerWidth <= 1024);
 
     const rawDpr = window.devicePixelRatio || 1;
-    this.dpr = this.isMobile ? Math.min(rawDpr, 1.25) : Math.min(rawDpr, 1.5);
+    this.dpr = Math.max(1, Math.min(rawDpr, 3));
 
     this.cam = new RadarCameraController(this.canvas, this.cssWidth, this.cssHeight);
     this.fx = new RadarEffectsSystem(this.cam);
@@ -55,16 +55,29 @@ class TacticalRadarRenderer {
     return s.replace(/<[^>]*>/g, '').replace(/[\{\}\\]/g, '').replace(/\s+/g, ' ').trim();
   }
 
+  checkResize() {
+    if (!this.canvas) return;
+    const parent = this.canvas.parentElement;
+    if (!parent) return;
+
+    const nextW = Math.round(parent.clientWidth || 800);
+    const nextH = Math.round(parent.clientHeight || 500);
+    const rawDpr = window.devicePixelRatio || 1;
+    const nextDpr = Math.max(1, Math.min(rawDpr, 3));
+
+    if (this.cssWidth !== nextW || this.cssHeight !== nextH || this.dpr !== nextDpr) {
+      this.resize();
+    }
+  }
+
   resize() {
     if (!this.canvas) return;
     const parent = this.canvas.parentElement;
-    const nextW = (parent && parent.clientWidth > 0) ? parent.clientWidth : 800;
-    const nextH = (parent && parent.clientHeight > 0) ? parent.clientHeight : 500;
+    const nextW = Math.round((parent && parent.clientWidth > 0) ? parent.clientWidth : 800);
+    const nextH = Math.round((parent && parent.clientHeight > 0) ? parent.clientHeight : 500);
 
     const rawDpr = window.devicePixelRatio || 1;
-    const nextDpr = (nextW <= 1024) ? Math.min(rawDpr, 1.25) : Math.min(rawDpr, 1.5);
-
-    if (this.cssWidth === nextW && this.cssHeight === nextH && this.dpr === nextDpr) return;
+    const nextDpr = Math.max(1, Math.min(rawDpr, 3));
 
     this.cssWidth = nextW;
     this.cssHeight = nextH;
@@ -78,9 +91,9 @@ class TacticalRadarRenderer {
     this.canvas.style.height = this.cssHeight + 'px';
 
     if (this.ctx) {
-      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-      this.ctx.scale(this.dpr, this.dpr);
-      this.ctx.imageSmoothingEnabled = false;
+      this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = 'high';
     }
   }
 
@@ -154,7 +167,12 @@ class TacticalRadarRenderer {
 
   render(state) {
     if (!this.ctx || !this.canvas) return;
+    this.checkResize();
+
     const ctx = this.ctx;
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+
     const w = this.cssWidth;
     const h = this.cssHeight;
 

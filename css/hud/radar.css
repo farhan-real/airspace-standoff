@@ -20,8 +20,6 @@
   display: block;
   cursor: crosshair;
   touch-action: none !important;
-  will-change: transform;
-  transform: translateZ(0);
 }
 
 .radar-uplink-banner {

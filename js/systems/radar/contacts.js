@@ -39,8 +39,8 @@ class RadarContactsRenderer {
       const a = list[i];
       if (!a || a.hp <= 0.05) continue;
 
-      const px = Math.round(cam.toScreenX ? cam.toScreenX(a.x) : cam.toScreen(a.x, a.y).x);
-      const py = Math.round(cam.toScreenY ? cam.toScreenY(a.y) : cam.toScreen(a.x, a.y).y);
+      const px = cam.toScreenX ? cam.toScreenX(a.x) : cam.toScreen(a.x, a.y).x;
+      const py = cam.toScreenY ? cam.toScreenY(a.y) : cam.toScreen(a.x, a.y).y;
       const isSelected = activeUnit && activeUnit.id === a.id;
       const isTgt = selectedTarget && selectedTarget.id === a.id;
       const isIdentified = is2P || isBlue || (typeof a.isIdentifiedBy === 'function' ? a.isIdentifiedBy(commanderTeam) : a.isIdentified);
@@ -76,9 +76,9 @@ class RadarContactsRenderer {
           ctx.moveTo(px, py);
           ctx.arc(px, py, screenRadius, hdg - halfConeRad, hdg + halfConeRad);
           ctx.closePath();
-          ctx.fillStyle = 'rgba(56, 189, 248, 0.06)';
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.07)';
           ctx.fill();
-          ctx.strokeStyle = 'rgba(56, 189, 248, 0.40)';
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
           ctx.lineWidth = 1.2;
           ctx.stroke();
         }
@@ -86,10 +86,10 @@ class RadarContactsRenderer {
 
       const vLen = (a.speed || 0.8) * 18 * cam.zoom;
       ctx.strokeStyle = !isIdentified ? '#f97316' : ((isAce && isIdentified) ? '#ffd700' : mainCol);
-      ctx.lineWidth = (isAce && isIdentified) ? 2.0 : 1.4;
+      ctx.lineWidth = (isAce && isIdentified) ? 2.0 : 1.5;
       ctx.beginPath();
       ctx.moveTo(px, py);
-      ctx.lineTo(Math.round(px + Math.cos(a.heading || 0) * vLen), Math.round(py + Math.sin(a.heading || 0) * vLen));
+      ctx.lineTo(px + Math.cos(a.heading || 0) * vLen, py + Math.sin(a.heading || 0) * vLen);
       ctx.stroke();
 
       ctx.save();
@@ -100,41 +100,43 @@ class RadarContactsRenderer {
 
       if (!isIdentified) {
         ctx.strokeStyle = '#f97316';
-        ctx.fillStyle = 'rgba(20, 25, 35, 0.85)';
-        ctx.lineWidth = 1.5;
+        ctx.fillStyle = 'rgba(20, 25, 35, 0.90)';
+        ctx.lineWidth = 1.6;
         ctx.beginPath();
-        ctx.moveTo(0, -7); ctx.lineTo(7, 0); ctx.lineTo(0, 7); ctx.lineTo(-7, 0);
+        ctx.moveTo(0, -8); ctx.lineTo(8, 0); ctx.lineTo(0, 8); ctx.lineTo(-8, 0);
         ctx.closePath(); ctx.fill(); ctx.stroke();
       } else {
-        ctx.fillStyle = isAce ? '#ffd700' : (isSelected ? '#ffffff' : mainCol);
+        const planeColor = isAce ? '#ffd700' : (isSelected ? '#ffffff' : mainCol);
+        ctx.fillStyle = planeColor;
+
         if (cat === 'STEALTH') {
-          ctx.beginPath(); ctx.moveTo(9, 0); ctx.lineTo(-5, -6); ctx.lineTo(-2, 0); ctx.lineTo(-5, 6); ctx.closePath(); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(10, 0); ctx.lineTo(-6, -7); ctx.lineTo(-3, 0); ctx.lineTo(-6, 7); ctx.closePath(); ctx.fill();
         } else if (a.isCoffin || cat === 'EXPERIMENTAL') {
-          ctx.beginPath(); ctx.moveTo(9, 0); ctx.lineTo(-4, -7); ctx.lineTo(-7, 0); ctx.lineTo(-4, 7); ctx.closePath(); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(10, 0); ctx.lineTo(-4, -8); ctx.lineTo(-8, 0); ctx.lineTo(-4, 8); ctx.closePath(); ctx.fill();
         } else if (cat === 'DRONES') {
-          ctx.beginPath(); ctx.moveTo(7, 0); ctx.lineTo(2, -4); ctx.lineTo(-4, -4); ctx.lineTo(-6, 0); ctx.lineTo(-4, 4); ctx.lineTo(2, 4); ctx.closePath(); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(2, -5); ctx.lineTo(-5, -5); ctx.lineTo(-7, 0); ctx.lineTo(-5, 5); ctx.lineTo(2, 5); ctx.closePath(); ctx.fill();
         } else if (cat === 'STRIKE') {
-          ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(-3, -9); ctx.lineTo(-6, -9); ctx.lineTo(-3, 0); ctx.lineTo(-6, 9); ctx.lineTo(-3, 9); ctx.closePath(); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(9, 0); ctx.lineTo(-4, -10); ctx.lineTo(-7, -10); ctx.lineTo(-4, 0); ctx.lineTo(-7, 10); ctx.lineTo(-4, 10); ctx.closePath(); ctx.fill();
         } else {
-          ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(-6, -5); ctx.lineTo(-3, 0); ctx.lineTo(-6, 5); ctx.closePath(); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(9, 0); ctx.lineTo(-7, -6); ctx.lineTo(-4, 0); ctx.lineTo(-7, 6); ctx.closePath(); ctx.fill();
         }
 
         if (isAce) {
           ctx.strokeStyle = '#ffd700';
-          ctx.lineWidth = 1.8;
+          ctx.lineWidth = 1.6;
           ctx.beginPath();
-          ctx.moveTo(0, -11); ctx.lineTo(11, 0); ctx.lineTo(0, 11); ctx.lineTo(-11, 0);
+          ctx.moveTo(0, -12); ctx.lineTo(12, 0); ctx.lineTo(0, 12); ctx.lineTo(-12, 0);
           ctx.closePath();
           ctx.stroke();
         } else if (a.isFlightLead) {
           ctx.strokeStyle = isBlue ? '#00f0ff' : '#ef4444';
-          ctx.lineWidth = 1.5;
-          ctx.strokeRect(-8, -8, 16, 16);
+          ctx.lineWidth = 1.4;
+          ctx.strokeRect(-9, -9, 18, 18);
         }
       }
       ctx.restore();
 
-      const labelX = px + 12;
+      const labelX = px + 13;
       const labelY = py - 8;
       const fl = 'FL' + Math.round((a.altFt || 30000) / 100);
       const mch = 'M ' + (a.speed || 0.8).toFixed(2);
@@ -146,34 +148,34 @@ class RadarContactsRenderer {
       const safeCallsign = cleanFn ? cleanFn(a.callsign || 'PILOT') : (a.callsign || 'PILOT');
 
       if (declutterMode && !isSelected && !isTgt) {
-        ctx.font = '800 10px monospace';
+        ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = !isIdentified ? '#f97316' : ((isAce && isIdentified) ? '#ffd700' : (isBlue ? '#38bdf8' : '#ef4444'));
         ctx.fillText(cleanFn(!isIdentified ? 'BOGEY' + rangeTag : safeModel + leadTag + pinpointTag), labelX, labelY);
       } else {
         if (!isIdentified) {
-          ctx.font = '800 10.5px monospace';
+          ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
           ctx.fillStyle = isSelected ? '#ffffff' : '#f97316';
           ctx.fillText(cleanFn('BOGEY' + rangeTag), labelX, labelY);
-          ctx.font = '700 9px monospace';
-          ctx.fillStyle = '#8494ab';
-          ctx.fillText(cleanFn(mch + ' ' + fl), labelX, labelY + 10);
+          ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
+          ctx.fillStyle = '#94a3b8';
+          ctx.fillText(cleanFn(mch + ' ' + fl), labelX, labelY + 11);
         } else {
           const displayHp = a.hp > 0.05 ? Math.max(1, Math.round(a.hp)) : 0;
-          ctx.font = '800 10.5px monospace';
+          ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
           ctx.fillStyle = isAce ? '#ffd700' : (isSelected ? '#ffffff' : (isBlue ? '#00f0ff' : '#ef4444'));
           ctx.fillText(cleanFn(safeModel + leadTag + rtbTag + rangeTag + pinpointTag), labelX, labelY);
-          ctx.font = '700 9px monospace';
+          ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
           ctx.fillStyle = isAce ? '#fef08a' : '#94a3b8';
-          ctx.fillText(cleanFn(safeCallsign + ' ' + cat), labelX, labelY + 10);
+          ctx.fillText(cleanFn(safeCallsign + ' ' + cat), labelX, labelY + 11);
           ctx.fillStyle = displayHp <= 1 ? '#ef4444' : (isBlue ? '#00f5a0' : '#f87171');
-          ctx.fillText(cleanFn(mch + ' ' + fl + ' ' + displayHp + '/' + a.maxHp + ' HP'), labelX, labelY + 20);
+          ctx.fillText(cleanFn(mch + ' ' + fl + ' ' + displayHp + '/' + a.maxHp + ' HP'), labelX, labelY + 22);
         }
       }
 
       if (isSelected) {
-        ctx.strokeStyle = '#ffffff';
+        ctx.strokeStyle = isBlue ? '#00f0ff' : '#ef4444';
         ctx.lineWidth = 1.4;
-        ctx.strokeRect(px - 10, py - 10, 20, 20);
+        ctx.strokeRect(px - 11, py - 11, 22, 22);
       }
     }
     ctx.restore();

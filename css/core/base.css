@@ -103,9 +103,6 @@ body.pseudo-fullscreen #procurement-modal {
 
 #radar-canvas {
   background-color: #000000 !important;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform;
 }
 
 ::-webkit-scrollbar {
