@@ -18,8 +18,12 @@ const Physics = {
 
   calcTurnEfficiency(speed, sOpt) {
     if (!sOpt || sOpt <= 0.001) return 0.0;
-    const ratio = (speed - sOpt) / sOpt;
-    return Math.max(0.0, Math.min(1.0, 1.0 - 1.25 * Math.pow(ratio, 2)));
+    if (speed <= 0) return 0.40;
+    if (speed >= sOpt) {
+      return Math.max(0.40, Math.min(1.0, sOpt / speed));
+    } else {
+      return Math.max(0.40, Math.min(1.0, speed / sOpt));
+    }
   },
 
   calcLeadInterceptAngle(mslX, mslY, mslSpeedMach, tgtX, tgtY, tgtHeading, tgtSpeedMach) {
@@ -201,9 +205,6 @@ const Physics = {
 
     const targetAgility = (typeof target.getEffectiveAgility === 'function')
       ? target.getEffectiveAgility() : ((target.spec && target.spec.AGI_0) ? target.spec.AGI_0 : 0.85);
-    const sOpt = (typeof target.getOptimalCornerSpeed === 'function')
-      ? target.getOptimalCornerSpeed() : ((target.effectiveMaxSpeed || 0.95) * 0.65);
-    const turnOptEff = target.isCoffin ? 1.0 : Physics.calcTurnEfficiency(target.speed || 0.8, sOpt);
 
     const isRadarSeeker = (weapon.seeker === 'ARH' || weapon.seeker === 'PASSIVE_RADAR');
     const notchBonus = (target.isNotching && isRadarSeeker)

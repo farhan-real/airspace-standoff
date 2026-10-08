@@ -187,9 +187,8 @@ class Aircraft {
   }
 
   getOptimalCornerSpeed() {
-    const baseOpt = (this.spec && this.spec.sOpt) ? this.spec.sOpt : ((this.spec ? this.spec.S_0 : 0.95) * 0.65);
-    const baseS0 = (this.spec && this.spec.S_0) ? this.spec.S_0 : 1.0;
-    return Math.max(0.25, baseOpt * ((this.effectiveMaxSpeed || baseS0) / baseS0));
+    if (this.spec && this.spec.sOpt) return this.spec.sOpt;
+    return (this.spec ? (this.spec.S_0 || 0.95) : 0.95) * 0.65;
   }
 
   getEffectiveAgility() {
@@ -197,7 +196,7 @@ class Aircraft {
     if (this.turnBonus) agi += this.turnBonus;
     if (this.thrustVector) agi *= 1.20;
     if (this.isCoffin) agi *= 1.20;
-    if (this.Wr) agi *= Math.max(0.50, 1.0 - 0.25 * this.Wr);
+    if (this.Wr) agi *= Math.max(0.45, 1.0 - 0.30 * this.Wr);
 
     let eturn = 1.0;
     if (!this.isCoffin) {
