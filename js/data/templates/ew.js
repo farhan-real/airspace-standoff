@@ -74,5 +74,23 @@ window.TEMPLATES_EW = {
     weapons: ['AN-ALQ-249', 'PL-15E', 'PL-15E', 'R-73'],
     upgrades: ['ADAPTIVE_ECCM_SUITE', 'MADL_BATTLE_LINK'],
     desc: 'High-power standoff electronic attack fighter shielding friendly strike wings while engaging hostile escorts.'
+  },
+  'EA-36 Airborne Electronic Attack & SEAD': {
+    name: 'EA-36 Airborne Electronic Attack & SEAD',
+    specId: 'EA-36',
+    roleCategory: 'SEAD & EW',
+    chosenGunId: 'DE-PULSE',
+    weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-120D', 'ADM-160B'],
+    upgrades: ['GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'ESM_PASSIVE_SUITE', 'SUPERCRUISE_VCE'],
+    desc: 'Top-tier electronic warfare flagship ($52.0M). Mounts directional GaN AESA jamming pods, anti-radiation HARMs, and low-drag AMRAAMs while retaining Mach 1.42 combat speed.'
+  },
+  'EA-36 Standoff Radar Jamming Escort': {
+    name: 'EA-36 Standoff Radar Jamming Escort',
+    specId: 'EA-36',
+    roleCategory: 'SEAD & EW',
+    chosenGunId: 'BK-27',
+    weapons: ['AN-ALQ-249', 'AGM-88G', 'METEOR', 'ALE-55'],
+    upgrades: ['GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'MADL_BATTLE_LINK', 'SUPERCRUISE_VCE'],
+    desc: 'Standoff fleet escort pairing GaN AESA jamming beams with ramjet Meteor missiles and towed fiber-optic decoys to shield allied air wings.'
   }
 };

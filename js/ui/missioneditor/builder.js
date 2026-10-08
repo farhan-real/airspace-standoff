@@ -70,7 +70,7 @@ class MissionBuilder {
   static replaceAircraftWeapons(aircraft, weapons) {
     if (!aircraft) return;
     aircraft.equippedWeapons = [];
-    aircraft.jamEfficiency = 0;
+    aircraft.jamEfficiency = (aircraft.spec && typeof aircraft.spec.jamEfficiency === 'number') ? aircraft.spec.jamEfficiency : 0;
     aircraft.hasMaldDecoy = false;
     aircraft.maldDecoyCharges = 0;
     (weapons || []).forEach(item => {

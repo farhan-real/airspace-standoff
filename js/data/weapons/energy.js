@@ -22,7 +22,7 @@ window.AUTOCANNONS_ENERGY = {
     lockedTo: [
       'MQ-99', 'MQ-101',
       'F-22A', 'YF-23', 'F-35A', 'Su-57', 'J-20', 'Su-75', 'FC-31', 'J-35', 'B-21', 'F-15EX', 'F-22C-COFFIN',
-      'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR'
+      'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B', 'EA-36'
     ],
     defaultAmmo: 18,
     kineticConcussion: 0.0,
@@ -48,7 +48,7 @@ window.AUTOCANNONS_ENERGY = {
     badge: '30 DEG MEDIUM LASER',
     lockedTo: [
       'MQ-99', 'MQ-101',
-      'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR'
+      'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B'
     ],
     defaultAmmo: 15,
     kineticConcussion: 0.0,
@@ -73,7 +73,7 @@ window.AUTOCANNONS_ENERGY = {
     tracerColor: '#c084fc',
     badge: '26 DEG HEAVY LASER',
     lockedTo: [
-      'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR'
+      'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR', 'X-40'
     ],
     defaultAmmo: 12,
     kineticConcussion: 0.0,
@@ -97,7 +97,11 @@ window.AUTOCANNONS_ENERGY = {
     mass: 220,
     tracerColor: '#00f0ff',
     badge: '28 DEG PENCIL BEAM',
-    lockedTo: ['F-22A', 'Su-57', 'X-02S', 'B-21', 'J-20', 'F-15EX', 'FC-31', 'YF-23', 'ADF-11F', 'ADFX-01', 'DARKSTAR', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'CFA-44'],
+    lockedTo: [
+      'F-22A', 'Su-57', 'X-02S', 'B-21', 'J-20', 'F-15EX', 'FC-31', 'YF-23', 'ADF-11F',
+      'ADFX-01', 'DARKSTAR', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'CFA-44',
+      'X-40', 'XFA-36B', 'EA-36'
+    ],
     defaultAmmo: 15,
     kineticConcussion: 0.0,
     thermalBloom: 1.6,
@@ -120,7 +124,7 @@ window.AUTOCANNONS_ENERGY = {
     mass: 320,
     tracerColor: '#38bdf8',
     badge: '22 DEG PINPOINT RAILGUN',
-    lockedTo: ['CFA-44', 'X-02S', 'ADF-11F', 'ADFX-01'],
+    lockedTo: ['CFA-44', 'X-02S', 'ADF-11F', 'ADFX-01', 'X-40', 'XFA-36B'],
     defaultAmmo: 8,
     kineticConcussion: 0.40,
     thermalBloom: 1.3,

@@ -11,6 +11,7 @@ window.AIRCRAFT_CATALOG = Object.assign(
   window.AIRCRAFT_EW || {},
   window.AIRCRAFT_DRONES || {},
   window.AIRCRAFT_EXPERIMENTAL || {},
+  window.AIRCRAFT_SUPERFIGHTERS || {},
   window.AIRCRAFT_COFFIN || {}
 );
 

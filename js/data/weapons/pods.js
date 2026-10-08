@@ -32,7 +32,8 @@ window.WEAPONS_PODS = {
     allowedAirframes: [
       'F-16V', 'F-18E', 'F-2A', 'Mirage-2000', 'F-15EX', 'F-14D',
       'Eurofighter', 'Rafale-C', 'A-10C', 'B-1B', 'F-15-SMTD',
-      'F-15-SMT-COFFIN', 'X-29A', 'ADFX-01', 'X-02S', 'KF-21'
+      'F-15-SMT-COFFIN', 'X-29A', 'ADFX-01', 'X-02S', 'KF-21',
+      'XFA-36B', 'EA-36'
     ],
     desc: 'Self-contained 20mm Vulcan Gatling pod (20 rounds, 5 bursts). Mounts on external wing or fuselage stations.'
   },
@@ -132,7 +133,7 @@ window.WEAPONS_PODS = {
       'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR',
       'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN',
       'F-22A', 'Su-57', 'J-20', 'F-35A', 'F-15EX',
-      'Kizilelma', 'S-70'
+      'Kizilelma', 'S-70', 'X-40', 'XFA-36B', 'EA-36'
     ],
     desc: 'Pulse laser pod (15 pulses, 5 bursts) restricted to external pylons on advanced 5th-Gen platforms and superfighters.'
   },
@@ -166,7 +167,8 @@ window.WEAPONS_PODS = {
     allowedAirframes: [
       'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR',
       'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN',
-      'F-15EX', 'Su-57', 'F-22A', 'J-20', 'B-21', 'Su-35S'
+      'F-15EX', 'Su-57', 'F-22A', 'J-20', 'B-21', 'Su-35S',
+      'X-40', 'XFA-36B'
     ],
     desc: 'High-power solid-state laser pod (12 pulses, 4 bursts) certified exclusively for external heavy pylons on experimental flagships.'
   },
@@ -295,7 +297,8 @@ window.WEAPONS_PODS = {
     allowedAirframes: [
       'X-02S', 'Su-35S', 'Su-57', 'F-22A', 'B-21', 'F-15EX',
       'J-20', 'FC-31', 'ADF-11F', 'CFA-44', 'DARKSTAR',
-      'F-22C-COFFIN', 'Su-37-COFFIN', 'ADFX-01'
+      'F-22C-COFFIN', 'Su-37-COFFIN', 'ADFX-01',
+      'X-40', 'XFA-36B', 'EA-36'
     ],
     desc: 'High-energy chemical laser pod (12 pulses, 4 bursts) providing instantaneous thermal hitscan damage. Mounts externally on heavy pylons.'
   }

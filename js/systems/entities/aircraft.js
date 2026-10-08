@@ -148,8 +148,9 @@ class Aircraft {
     this.thrustVector = this.spec.thrustVector;
     this.hasIRST = false;
     this.hasDAS = false;
+    this.hasESM = Boolean(this.spec && this.spec.hasESM);
     this.immuneJamming = false;
-    this.jamEfficiency = 0.0;
+    this.jamEfficiency = (this.spec && typeof this.spec.jamEfficiency === 'number') ? this.spec.jamEfficiency : 0.0;
     this.glocThreshold = (this.spec.isDrone || this.isCoffin) ? 999.0 : 0.95;
 
     this.recalculateWeight();

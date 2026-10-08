@@ -193,7 +193,7 @@ window.WEAPONS_A2A = {
     T_0: 0.78,
     sigmaPylon: 0.16,
     category: 'A2A',
-    allowedAirframes: ['ADFX-01', 'CFA-44', 'X-02S', 'F-15EX', 'F-22C-COFFIN'],
+    allowedAirframes: ['ADFX-01', 'CFA-44', 'X-02S', 'F-15EX', 'F-22C-COFFIN', 'X-40', 'XFA-36B'],
     desc: 'Multi-Purpose Burst Missile (2x, Mach 3.2) providing standoff area shockwave destruction (8.5 km radius). Carried externally on heavy pylons.'
   }
 };

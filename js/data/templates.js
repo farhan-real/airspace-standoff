@@ -10,7 +10,8 @@ window.AIRCRAFT_TEMPLATES = Object.assign(
   window.TEMPLATES_STRIKE || {},
   window.TEMPLATES_EW || {},
   window.TEMPLATES_DRONES || {},
-  window.TEMPLATES_EXPERIMENTAL || {}
+  window.TEMPLATES_EXPERIMENTAL || {},
+  window.TEMPLATES_SUPERFIGHTERS || {}
 );
 
 window.AircraftTemplatesRegistry = {

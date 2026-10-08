@@ -9,7 +9,7 @@ const FleetGenerator = {
     if (spec.isDrone || spec.category === 'DRONES') return 4;
     const cheaperOlder = ['Mirage-2000', 'Tejas-MK2', 'F-16V', 'MiG-29K', 'Tornado-ECR', 'X-29A', 'EF-111A'];
     if (cheaperOlder.includes(spec.id) || (spec.cost <= 15.0 && spec.category !== 'STRIKE')) return 3;
-    const heavySpecs = ['B-1B', 'Tu-160M', 'B-21', 'B-2A', 'Su-34', 'A-10C', 'Su-25SM3', 'MiG-31BM', 'F-15EX', 'CFA-44', 'DARKSTAR', 'F-15-SMT-COFFIN'];
+    const heavySpecs = ['B-1B', 'Tu-160M', 'B-21', 'B-2A', 'Su-34', 'A-10C', 'Su-25SM3', 'MiG-31BM', 'F-15EX', 'CFA-44', 'DARKSTAR', 'F-15-SMT-COFFIN', 'X-40', 'XFA-36B', 'EA-36'];
     if (heavySpecs.includes(spec.id) || spec.category === 'STRIKE' || (spec.M_max >= 8000) || (spec.hp >= 6)) return 1;
     return 2;
   },
@@ -100,7 +100,7 @@ const FleetGenerator = {
     const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : (diff === 'CADET' ? 0 : 1);
     const aceCandidates = (diff === 'CADET' || diff === 'VETERAN')
       ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM', 'F-14D', 'Su-57', 'YF-23', 'J-20']
-      : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'DARKSTAR', 'F-22C-COFFIN', 'Su-57', 'YF-23', 'F-22A', 'F-15EX'];
+      : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B', 'F-22C-COFFIN', 'Su-57', 'YF-23', 'F-22A', 'F-15EX'];
 
     const aceCallsigns = isBlue
       ? ['Apex Lead', 'Saber Lead', 'Ghost Lead', 'Viper Ace', 'Archangel'].sort(() => rng() - 0.5)
@@ -133,7 +133,11 @@ const FleetGenerator = {
 
     const ewChances = { CADET: 0.10, VETERAN: 0.35, ELITE: 0.60, ACE: 0.85, MASTER: 1.0, LEGEND: 1.0 };
     const ewChance = ewChances[diff] !== undefined ? ewChances[diff] : 0.40;
-    const ewPool = (diff === 'CADET' || diff === 'VETERAN') ? ['Tornado-ECR', 'EF-111A'] : ['EA-18G', 'J-16D', 'EF-111A'];
+    const ewPool = (diff === 'CADET' || diff === 'VETERAN')
+      ? ['Tornado-ECR', 'EF-111A']
+      : (['MASTER', 'LEGEND'].includes(diff)
+        ? ['EA-18G', 'J-16D', 'EF-111A', 'EA-36']
+        : ['EA-18G', 'J-16D', 'EF-111A']);
 
     if (rng() < ewChance && fleetItems.length < maxSquadronSize) {
       const specId = ewPool[Math.floor(rng() * ewPool.length)];
@@ -156,7 +160,7 @@ const FleetGenerator = {
       }
     }
 
-    const apexPool = ['ADF-11F', 'CFA-44', 'X-02S', 'ADFX-01', 'DARKSTAR'];
+    const apexPool = ['ADF-11F', 'CFA-44', 'X-02S', 'ADFX-01', 'DARKSTAR', 'X-40', 'XFA-36B'];
     const highTierPool = [
       'Su-57', 'F-22A', 'YF-23', 'J-20', 'F-15EX', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN',
       'Su-47', 'F-15-SMTD', 'F-35A', 'Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'MiG-31BM', 'Su-30SM',
@@ -274,16 +278,17 @@ const FleetGenerator = {
     const isBlue = (team === 'friendly');
     const count = (diff === 'MASTER' || diff === 'LEGEND') ? 3 : 2;
     const pool = isBlue
-      ? ['F-15-SMTD', 'Eurofighter', 'Rafale-C', 'F-22A', 'MQ-101', 'KF-21']
+      ? ['F-15-SMTD', 'Eurofighter', 'Rafale-C', 'F-22A', 'MQ-101', 'KF-21', 'XFA-36B']
       : (['ACE', 'MASTER', 'LEGEND'].includes(diff)
-        ? ['Su-57', 'ADF-11F', 'CFA-44', 'X-02S', 'F-15EX', 'EA-18G']
+        ? ['Su-57', 'ADF-11F', 'CFA-44', 'X-02S', 'F-15EX', 'EA-18G', 'X-40', 'XFA-36B', ...(['MASTER', 'LEGEND'].includes(diff) ? ['EA-36'] : [])]
         : ['Su-35S', 'MiG-31BM', 'Su-30SM', 'Eurofighter', 'EA-18G']);
     const sqName = isBlue ? `Reinforcement Wing ${waveIndex}` : `Hostile Wave ${waveIndex}`;
 
     const items = [];
     for (let i = 0; i < count; i++) {
       const specId = (i === 1 && !isBlue && ['ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diff))
-        ? 'EA-18G' : pool[i % pool.length];
+        ? (['MASTER', 'LEGEND'].includes(diff) && Math.random() < 0.5 ? 'EA-36' : 'EA-18G')
+        : pool[i % pool.length];
       const isLead = (i === 0);
       const isAce = (!isBlue && isLead && ['ACE', 'MASTER', 'LEGEND'].includes(diff));
       items.push({
@@ -303,8 +308,8 @@ const FleetGenerator = {
       const isStrike = Boolean(ac.spec && ac.spec.category === 'STRIKE');
       const isDrone = Boolean(ac.spec && (ac.spec.category === 'DRONES' || ac.spec.isDrone));
       const isStealth = Boolean(ac.spec && ac.spec.category === 'STEALTH');
-      const isAgile = Boolean(ac.spec && ['Su-35S', 'Rafale-C', 'Eurofighter', 'Su-37', 'Su-47'].includes(ac.spec.id));
-      const isHighSpeed = Boolean(ac.spec && (ac.spec.S_0 >= 1.25 || ['MiG-31BM', 'F-15EX', 'DARKSTAR'].includes(ac.spec.id)));
+      const isAgile = Boolean(ac.spec && ['Su-35S', 'Rafale-C', 'Eurofighter', 'Su-37', 'Su-47', 'XFA-36B'].includes(ac.spec.id));
+      const isHighSpeed = Boolean(ac.spec && (ac.spec.S_0 >= 1.25 || ['MiG-31BM', 'F-15EX', 'DARKSTAR', 'X-40'].includes(ac.spec.id)));
 
       if (isEW) ac.tacticalRole = 'SEAD';
       else if (isDrone) ac.tacticalRole = 'SWARM';

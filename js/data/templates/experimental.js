@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Preconfigured Loadouts: Experimental Superfighters & Manual COFFIN Units
+ * AIRSPACE STANDOFF: Preconfigured Loadouts: Demonstrator & COFFIN Aircraft
  */
 
 window.TEMPLATES_EXPERIMENTAL = {
@@ -48,96 +48,6 @@ window.TEMPLATES_EXPERIMENTAL = {
     upgrades: ['COFFIN_OPTICAL_BUS', 'RAM_NANO_COATING', 'GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE'],
     desc: 'Low-observable deep penetration package carrying stealth AGM-158B JASSM-ER cruise missiles and GBU-39 SDB glide bombs (8x).'
   },
-  'ADF-11F Defense Suppression (SEAD)': {
-    name: 'ADF-11F Defense Suppression (SEAD)',
-    specId: 'ADF-11F',
-    roleCategory: 'SEAD & EW',
-    chosenGunId: 'DE-PULSE',
-    weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-260', 'ADM-160B'],
-    upgrades: ['COFFIN_OPTICAL_BUS', 'ADAPTIVE_ECCM_SUITE', 'ESM_PASSIVE_SUITE', 'GAN_AESA_CORE'],
-    desc: 'Suppression of Enemy Air Defenses escort. High-power GaN AESA jamming pod and AGM-88G anti-radiation missiles to blind and eliminate SAM radars.'
-  },
-  'CFA-44 Advanced Fleet Air Defense': {
-    name: 'CFA-44 Advanced Fleet Air Defense',
-    specId: 'CFA-44',
-    roleCategory: 'COFFIN & FLAGSHIPS',
-    chosenGunId: 'EML_GUN',
-    weapons: ['ADMM', 'AIM-260', 'AIM-120D', 'PYTHON-5', 'AIM-9X-2'],
-    upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'Carrier defense package combining EML railgun, ADMM pod (12x), BVR missiles, and rearward Python-5.'
-  },
-  'CFA-44 Thermobaric Area Denial': {
-    name: 'CFA-44 Thermobaric Area Denial',
-    specId: 'CFA-44',
-    roleCategory: 'COFFIN & FLAGSHIPS',
-    chosenGunId: 'EML_GUN',
-    weapons: ['MPBM', 'ADMM', 'AIM-260', 'PYTHON-5'],
-    upgrades: ['COFFIN_OPTICAL_BUS', 'THRUST_VECTOR', 'TITANIUM_COCKPIT'],
-    desc: 'Thermobaric area denial pairing MPBM shockwave missiles with ADMM 360-degree volleys.'
-  },
-  'CFA-44 Thermobaric Standoff Attack': {
-    name: 'CFA-44 Thermobaric Standoff Attack',
-    specId: 'CFA-44',
-    roleCategory: 'COFFIN & FLAGSHIPS',
-    chosenGunId: 'EML_GUN',
-    weapons: ['MPBM', 'AIM-260', 'METEOR'],
-    upgrades: ['COFFIN_OPTICAL_BUS', 'THRUST_VECTOR', 'TITANIUM_COCKPIT'],
-    desc: 'Heavy standoff area-denial loadout armed with high-yield thermobaric MPBM burst missiles (2x) and EML kinetic railgun.'
-  },
-  'CFA-44 Precision Fleet Interceptor': {
-    name: 'CFA-44 Precision Fleet Interceptor',
-    specId: 'CFA-44',
-    roleCategory: 'AIR DOMINANCE',
-    chosenGunId: 'DE-PULSE',
-    weapons: ['AIM-260', 'METEOR', 'PL-15E', 'AIM-120D', 'AIM-9X-2'],
-    upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'],
-    desc: 'Long-range carrier interceptor pairing AIM-260 stealth BVR volleys with ramjet Meteor and dual-pulse rockets.'
-  },
-  'ADFX-01 Standoff Multi-Mission Prototype': {
-    name: 'ADFX-01 Standoff Multi-Mission Prototype',
-    specId: 'ADFX-01',
-    roleCategory: 'COFFIN & FLAGSHIPS',
-    chosenGunId: 'M61A2',
-    weapons: ['MPBM', 'AIM-120D', 'AIM-9X-2'],
-    upgrades: ['COFFIN_OPTICAL_BUS', 'SUPERCRUISE_VCE', 'EXPANDED_CM_DISPENSER'],
-    desc: 'Forward-canted canard prototype superfighter ($48.0M) deploying high-yield MPBM thermobaric shockwave missiles (2x).'
-  },
-  'ADFX-01 Directed Energy Testbed': {
-    name: 'ADFX-01 Directed Energy Testbed',
-    specId: 'ADFX-01',
-    roleCategory: 'COFFIN & FLAGSHIPS',
-    chosenGunId: 'DE-PULSE',
-    weapons: ['TLS_POD', 'AIM-120D', 'PYTHON-5'],
-    upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'],
-    desc: 'Equipped with the high-energy chemical TLS tactical laser pod delivering instantaneous hitscan thermal damage.'
-  },
-  'X-02S Variable-Geometry Strike Fighter': {
-    name: 'X-02S Variable-Geometry Strike Fighter',
-    specId: 'X-02S',
-    roleCategory: 'COFFIN & FLAGSHIPS',
-    chosenGunId: 'M61A2',
-    weapons: ['AIM-260', 'AIM-120D', 'AIM-120D', 'AIM-9X-2'],
-    upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'THRUST_VECTOR'],
-    desc: 'Variable-geometry stealth superfighter deploying 12 BVR missiles and Sidewinders.'
-  },
-  'X-02S Stealth Strike Wyvern': {
-    name: 'X-02S Stealth Strike Wyvern',
-    specId: 'X-02S',
-    roleCategory: 'STRIKE',
-    chosenGunId: 'M61A2',
-    weapons: ['AGM-158B', 'AIM-260', 'AIM-9X-2'],
-    upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'Low-observable deep penetrator pairing stealth JASSM-ER cruise missiles with BVR defense.'
-  },
-  'X-02S Kinetic Standoff Intercept': {
-    name: 'X-02S Kinetic Standoff Intercept',
-    specId: 'X-02S',
-    roleCategory: 'AIR DOMINANCE',
-    chosenGunId: 'EML_GUN',
-    weapons: ['AIM-260', 'METEOR', 'AIM-120D', 'AIM-9X-2'],
-    upgrades: ['SUPERCRUISE_VCE', 'GAN_AESA_CORE'],
-    desc: 'Railgun interceptor pairing EML kinetic slugs with ramjet Meteor and AMRAAM missiles.'
-  },
   'F-22C [COFFIN] Advanced Air Superiority': {
     name: 'F-22C [COFFIN] Advanced Air Superiority',
     specId: 'F-22C-COFFIN',
@@ -164,15 +74,6 @@ window.TEMPLATES_EXPERIMENTAL = {
     weapons: ['GPU-5A', 'AGM-158B', 'AGM-88G', 'AIM-260'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'MADL_BATTLE_LINK'],
     desc: 'Heavy strike superiority with armored COFFIN shell ($45.0M) pairing 30mm gunpod with cruise missiles.'
-  },
-  'DARKSTAR Hypersonic High-Altitude Penetrator': {
-    name: 'DARKSTAR Hypersonic High-Altitude Penetrator',
-    specId: 'DARKSTAR',
-    roleCategory: 'COFFIN & FLAGSHIPS',
-    chosenGunId: 'DE-PULSE',
-    weapons: ['AGM-158B', 'AIM-260'],
-    upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'Scramjet penetrator ($56.0M) cruising at Mach 3.20 above FL580, out-pacing standard surface SAM engagement envelopes.'
   },
   'F-15 S/MTD Maneuver Technology Demonstrator': {
     name: 'F-15 S/MTD Maneuver Technology Demonstrator',
