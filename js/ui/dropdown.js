@@ -79,9 +79,25 @@ class CustomDropdown {
         return this.wrapper.classList.contains('open');
       },
 
+      updateParentOpenClasses(isOpen) {
+        let el = this.wrapper.parentElement;
+        while (el && el !== document.body && el !== document.documentElement) {
+          if (el.classList.contains('procurement-top-scroll') ||
+              el.classList.contains('procurement-header') ||
+              el.classList.contains('mode-and-ai-controls') ||
+              el.classList.contains('ai-config-group') ||
+              el.classList.contains('mission-editor-section') ||
+              el.classList.contains('mission-editor-field')) {
+            el.classList.toggle('has-open-dropdown', isOpen);
+          }
+          el = el.parentElement;
+        }
+      },
+
       close() {
         if (!this.isOpen()) return;
         this.wrapper.classList.remove('open');
+        this.updateParentOpenClasses(false);
         if (this._pendingOptions) {
           const { newOptions, selectedVal } = this._pendingOptions;
           this._pendingOptions = null;
@@ -93,6 +109,7 @@ class CustomDropdown {
         if (this.disabled || this.trigger.disabled) return;
         CustomDropdown.closeAll(this.wrapper);
         this.wrapper.classList.add('open');
+        this.updateParentOpenClasses(true);
         this.positionMenu();
       },
 
@@ -105,12 +122,18 @@ class CustomDropdown {
       },
 
       positionMenu() {
+        this.menu.style.top = '';
+        this.menu.style.bottom = '';
+        this.menu.style.left = '';
+        this.menu.style.right = '';
+        this.menu.style.maxHeight = '';
+
         const rect = this.trigger.getBoundingClientRect();
         const screenW = window.innerWidth || document.documentElement.clientWidth || 360;
         const screenH = window.innerHeight || document.documentElement.clientHeight || 600;
-        const estimatedWidth = Math.min(this.menu.offsetWidth || 160, 260);
+        const menuW = this.menu.offsetWidth || 180;
 
-        if (rect.left + estimatedWidth > screenW - 10) {
+        if (rect.left + menuW > screenW - 12) {
           this.menu.style.left = 'auto';
           this.menu.style.right = '0';
         } else {
@@ -118,14 +141,35 @@ class CustomDropdown {
           this.menu.style.right = 'auto';
         }
 
-        const spaceBelow = screenH - rect.bottom;
-        const estimatedHeight = Math.min(this.menu.scrollHeight || 160, 240);
-        if (spaceBelow < estimatedHeight && rect.top > estimatedHeight) {
+        let scrollParent = this.wrapper.parentElement;
+        let boundaryBottom = screenH - 10;
+        let boundaryTop = 10;
+
+        while (scrollParent && scrollParent !== document.body && scrollParent !== document.documentElement) {
+          const style = window.getComputedStyle(scrollParent);
+          if (style.overflowY === 'auto' || style.overflowY === 'scroll') {
+            const pRect = scrollParent.getBoundingClientRect();
+            boundaryBottom = Math.min(boundaryBottom, pRect.bottom - 8);
+            boundaryTop = Math.max(boundaryTop, pRect.top + 8);
+            break;
+          }
+          scrollParent = scrollParent.parentElement;
+        }
+
+        const spaceBelow = boundaryBottom - rect.bottom;
+        const spaceAbove = rect.top - boundaryTop;
+        const menuContentHeight = this.menu.scrollHeight || 200;
+
+        if (spaceBelow < menuContentHeight && spaceAbove > spaceBelow) {
           this.menu.style.top = 'auto';
           this.menu.style.bottom = 'calc(100% + 5px)';
+          const maxAllowed = Math.max(120, spaceAbove - 10);
+          this.menu.style.maxHeight = `${Math.min(menuContentHeight, maxAllowed)}px`;
         } else {
           this.menu.style.top = 'calc(100% + 5px)';
           this.menu.style.bottom = 'auto';
+          const maxAllowed = Math.max(120, spaceBelow - 10);
+          this.menu.style.maxHeight = `${Math.min(menuContentHeight, maxAllowed)}px`;
         }
       },
 

@@ -8,10 +8,18 @@
   width: 100%;
   box-sizing: border-box;
   transition: max-height 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.18s ease, transform 0.22s ease;
-  overflow: hidden;
-  max-height: 220px;
+  overflow: visible;
+  position: relative;
+  z-index: 100;
+  max-height: 380px;
   opacity: 1;
   transform: translateY(0);
+}
+
+.procurement-top-scroll.has-open-dropdown,
+.procurement-top-scroll:has(.custom-dropdown.open) {
+  z-index: 6500;
+  overflow: visible !important;
 }
 
 .procurement-window.header-hidden .procurement-top-scroll {
@@ -21,6 +29,7 @@
   padding: 0 !important;
   pointer-events: none !important;
   transform: translateY(-10px);
+  overflow: hidden !important;
 }
 
 .procurement-header {
@@ -188,6 +197,11 @@
   gap: 6px;
   flex-wrap: wrap;
   overflow: visible;
+}
+
+.ai-config-group > div {
+  display: inline-flex;
+  flex-shrink: 0;
 }
 
 .proc-right-actions {

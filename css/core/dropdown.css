@@ -11,6 +11,11 @@
   z-index: 6000;
 }
 
+.has-open-dropdown {
+  overflow: visible !important;
+  z-index: 6000 !important;
+}
+
 .custom-dropdown-trigger {
   background: var(--glass-3d-btn-bg);
   -webkit-backdrop-filter: var(--glass-filter);
@@ -91,17 +96,17 @@
   left: 0;
   min-width: 100%;
   width: max-content;
-  max-width: min(280px, calc(100vw - 20px));
-  max-height: min(220px, 42vh);
+  max-width: min(320px, calc(100vw - 20px));
+  max-height: min(280px, 52vh);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  background: rgba(14, 14, 14, 0.95);
+  background: rgba(14, 14, 14, 0.96);
   -webkit-backdrop-filter: var(--glass-filter);
   backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
-  box-shadow: var(--glass-shadow);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.95), var(--glass-shadow);
   z-index: 6500;
   flex-direction: column;
   padding: 4px;
@@ -151,6 +156,14 @@
   cursor: not-allowed;
 }
 
+#cdd-budget {
+  flex-shrink: 0;
+}
+
+#cdd-budget .custom-dropdown-trigger {
+  min-width: 140px;
+}
+
 .me-dropdown-container {
   width: 100%;
   min-width: 0;
@@ -197,7 +210,7 @@
 
 .inspection-entity-dropdown .custom-dropdown-menu {
   max-width: 280px;
-  max-height: 250px;
+  max-height: 260px;
   z-index: 9999;
 }
 
@@ -214,10 +227,13 @@
     backdrop-filter: none !important;
     background: #0e0e0e !important;
   }
+  #cdd-budget .custom-dropdown-trigger {
+    min-width: 125px;
+  }
 }
 
 @media (max-height: 550px) {
   .custom-dropdown-menu {
-    max-height: min(150px, 38vh);
+    max-height: min(180px, 46vh);
   }
 }
