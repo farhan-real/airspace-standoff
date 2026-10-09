@@ -2,13 +2,28 @@
  * AIRSPACE STANDOFF: Master Flight Manual Orchestrator
  */
 
+const requiredManualModules = [
+  ['MANUAL_BASICS', window.MANUAL_BASICS],
+  ['MANUAL_SENSORS', window.MANUAL_SENSORS],
+  ['MANUAL_COMBAT', window.MANUAL_COMBAT],
+  ['MANUAL_THEATER', window.MANUAL_THEATER],
+  ['MANUAL_OPERATIONS', window.MANUAL_OPERATIONS],
+  ['MANUAL_CONTROLS', window.MANUAL_CONTROLS]
+];
+
+for (const [name, moduleData] of requiredManualModules) {
+  if (!moduleData || !Array.isArray(moduleData)) {
+    throw new Error(`Flight manual module "${name}" is missing or failed to load.`);
+  }
+}
+
 window.TACTICAL_FLIGHT_MANUAL = [
-  ...(window.MANUAL_BASICS || []),
-  ...(window.MANUAL_SENSORS || []),
-  ...(window.MANUAL_COMBAT || []),
-  ...(window.MANUAL_THEATER || []),
-  ...(window.MANUAL_OPERATIONS || []),
-  ...(window.MANUAL_CONTROLS || [])
+  ...window.MANUAL_BASICS,
+  ...window.MANUAL_SENSORS,
+  ...window.MANUAL_COMBAT,
+  ...window.MANUAL_THEATER,
+  ...window.MANUAL_OPERATIONS,
+  ...window.MANUAL_CONTROLS
 ];
 
 window.FLIGHT_MANUAL = window.TACTICAL_FLIGHT_MANUAL;
@@ -152,7 +167,7 @@ window.initTacticalManual = function() {
     if (lastQuery === q && c.children.length > 0) return;
     lastQuery = q;
 
-    const sourceData = window.TACTICAL_FLIGHT_MANUAL || [];
+    const sourceData = window.TACTICAL_FLIGHT_MANUAL;
     const matchingIds = new Set();
     const filtered = sourceData.filter(ch => {
       const descContent = typeof ch.getDesc === 'function' ? ch.getDesc() : ch.desc;

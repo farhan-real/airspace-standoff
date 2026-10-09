@@ -5,14 +5,25 @@
 
 class MissileEntity {
   constructor(weapon, sourceUnit, targetUnit) {
+    if (!weapon) throw new Error('MissileEntity requires a weapon configuration.');
+    if (!sourceUnit) throw new Error('MissileEntity requires a sourceUnit.');
+    if (!targetUnit) throw new Error('MissileEntity requires a targetUnit.');
+    if (typeof weapon.rangeKm !== 'number' || isNaN(weapon.rangeKm)) {
+      throw new Error(`Weapon "${weapon.id || 'UNKNOWN'}" has invalid rangeKm.`);
+    }
+
     this.id = 'MSL_' + Math.random().toString(36).substr(2, 6);
     this.weapon = weapon;
     this.source = sourceUnit;
     this.target = targetUnit;
     this.team = sourceUnit.team;
+
+    if (typeof sourceUnit.x !== 'number' || isNaN(sourceUnit.x) || typeof sourceUnit.y !== 'number' || isNaN(sourceUnit.y)) {
+      throw new Error(`SourceUnit "${sourceUnit.id}" has invalid coordinates.`);
+    }
     this.x = sourceUnit.x;
     this.y = sourceUnit.y;
-    this.alt = sourceUnit.alt || 0.5;
+    this.alt = sourceUnit.alt;
     this.distanceTraveled = 0.0;
     this.distanceToTarget = Math.hypot(targetUnit.x - sourceUnit.x, targetUnit.y - sourceUnit.y);
     this.prevDistanceToTarget = this.distanceToTarget;
@@ -39,12 +50,12 @@ class MissileEntity {
     this.lostReason = '';
     this.cloudObscureTimer = 0.0;
 
-    if (sourceUnit && sourceUnit.missilesLaunchedCount !== undefined) {
+    if (sourceUnit.missilesLaunchedCount !== undefined) {
       sourceUnit.missilesLaunchedCount++;
     }
 
     const angleToTarget = Math.atan2(targetUnit.y - sourceUnit.y, targetUnit.x - sourceUnit.x);
-    const srcHeading = (sourceUnit && typeof sourceUnit.heading === 'number' && !isNaN(sourceUnit.heading))
+    const srcHeading = typeof sourceUnit.heading === 'number' && !isNaN(sourceUnit.heading)
       ? sourceUnit.heading
       : angleToTarget;
 
@@ -68,26 +79,21 @@ class MissileEntity {
     while (this.heading < 0) this.heading += Math.PI * 2;
     while (this.heading >= Math.PI * 2) this.heading -= Math.PI * 2;
 
-    if (typeof MissileKinetics !== 'undefined') {
-      MissileKinetics.initMissile(this);
-    } else {
-      this.speed = 2.4;
-      this.isPassiveRadar = Boolean(weapon.seeker === 'PASSIVE_RADAR');
-      this.pathRevealDistance = this.isPassiveRadar ? 20.0 : 999.0;
-    }
+    if (typeof MissileKinetics === 'undefined') throw new Error('MissileKinetics subsystem is not loaded.');
+    MissileKinetics.initMissile(this);
 
     const inspection = window.Game && window.Game.inspection;
     if (inspection && inspection.enabled) {
       const clouds = window.Game.simulation ? window.Game.simulation.weatherClouds : [];
-      const launchSolution = (typeof Physics !== 'undefined') ? Physics.calcPk(weapon, sourceUnit, targetUnit, clouds) : null;
+      const launchSolution = Physics.calcPk(weapon, sourceUnit, targetUnit, clouds);
       inspection.recordEvent('WEAPON LAUNCH', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(sourceUnit) : (sourceUnit.callsign || sourceUnit.name || sourceUnit.id)} fired ${weapon.name || weapon.id}`, sourceUnit, targetUnit, {
         weapon: weapon.name || weapon.id,
         seeker: weapon.seeker || 'UNGUIDED',
         launchRangeKm: this.distanceToTarget,
         weaponMaxRangeKm: weapon.rangeKm,
-        estimatedLaunchPk: launchSolution ? launchSolution.pk : null,
-        launchAssessment: launchSolution ? launchSolution.label : 'Unavailable',
-        assessmentReason: launchSolution ? launchSolution.desc : 'Launch model unavailable'
+        estimatedLaunchPk: launchSolution.pk,
+        launchAssessment: launchSolution.label,
+        assessmentReason: launchSolution.desc
       }, this);
     }
   }
@@ -139,17 +145,15 @@ class MissileEntity {
 
     const dist = Math.hypot(this.target.x - this.x, this.target.y - this.y);
 
-    if (typeof MissileKinetics !== 'undefined') {
-      MissileKinetics.updateSpeedAndFlight(this, dt, dist);
-      MissileKinetics.computeGuidance(this, dt);
-    }
+    MissileKinetics.updateSpeedAndFlight(this, dt, dist);
+    MissileKinetics.computeGuidance(this, dt);
 
     if (this.state === 'LOST_TRACK') return;
 
     const cloudHits = Physics.countIntersectingClouds(this.x, this.y, this.target.x, this.target.y, weatherClouds);
     if (cloudHits > 0) {
       this.cloudObscureTimer += dt * cloudHits;
-      const loseThreshold = ((window.CONFIG && window.CONFIG.CLOUD_IR_TIME_TO_LOSE_SEC) || 8.0);
+      const loseThreshold = window.CONFIG.CLOUD_IR_TIME_TO_LOSE_SEC;
       if ((this.weapon.seeker === 'IIR' || this.weapon.seeker === 'EO' || this.weapon.seeker === 'OPT') && this.cloudObscureTimer >= loseThreshold) {
         this.triggerLostTrack('OBSCURED IN CLOUDS');
         return;
@@ -165,8 +169,8 @@ class MissileEntity {
     this.y += Math.sin(this.heading) * step;
     this.distanceTraveled += step;
 
-    const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
-    const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
+    const mapW = window.CONFIG.THEATER_WIDTH_KM;
+    const mapH = window.CONFIG.THEATER_HEIGHT_KM;
     const boundaryBuffer = 8.0;
     if (this.x < -boundaryBuffer || this.x > mapW + boundaryBuffer || this.y < -boundaryBuffer || this.y > mapH + boundaryBuffer) {
       this.isDead = true;
@@ -175,51 +179,45 @@ class MissileEntity {
     }
 
     this.distanceToTarget = Math.hypot(this.target.x - this.x, this.target.y - this.y);
-    this.minDistanceReached = Math.min(this.minDistanceReached || this.distanceToTarget, this.distanceToTarget);
+    this.minDistanceReached = Math.min(this.minDistanceReached, this.distanceToTarget);
 
     if (this.distanceTraveled >= this.weapon.rangeKm) {
       this.triggerLostTrack('KINETIC EXHAUSTION');
       return;
     }
 
-    if (typeof MissileKinetics !== 'undefined') {
-      const trig = MissileKinetics.checkTerminalTrigger(this);
-      if (trig.shouldTrigger) {
-        if (trig.isOvershoot) {
-          let reason = 'KINETIC OVERSHOOT';
-          const tgt = this.target;
-          if (tgt) {
-            if (tgt.activeManeuverId === 'DOPPLER_NOTCH' || tgt.isNotching) reason = 'DOPPLER NOTCH (GATE LOSS)';
-            else if (tgt.activeManeuverId === 'PUSH_COBRA') reason = 'COBRA BRAKE (OVERSHOOT)';
-            else if (tgt.activeManeuverId === 'BARREL_ROLL') reason = 'BARREL ROLL (LEAD LOSS)';
-            else if (tgt.activeManeuverId === 'SPLIT_S') reason = 'SPLIT-S (KINETIC ESCAPE)';
-            else if (tgt.activeManeuverId === 'EMERGENCY_CM' || tgt.cmTimer > 0) reason = 'CHAFF DECOY DIVERSION';
-            else if (tgt.activeManeuverId === 'ZOOM_CLIMB') reason = 'HIGH-ALTITUDE CLIMB (ENERGY DEFICIT)';
-            else if (tgt.activeManeuverId === 'BREAK_TURN') reason = 'DEFENSIVE BREAK TURN';
-            else if (tgt.isCoffin) reason = 'COFFIN EVASIVE RESPONSE';
-            else if (tgt.isAce) reason = 'ACE DEFENSIVE BREAK';
-            else if (tgt.activeManeuverBonus > 0) reason = 'DEFENSIVE BREAK TURN';
-          }
-          this.triggerLostTrack(reason);
-        } else {
-          this.resolveTerminalEngagement(weatherClouds);
+    const trig = MissileKinetics.checkTerminalTrigger(this);
+    if (trig.shouldTrigger) {
+      if (trig.isOvershoot) {
+        let reason = 'KINETIC OVERSHOOT';
+        const tgt = this.target;
+        if (tgt) {
+          if (tgt.activeManeuverId === 'DOPPLER_NOTCH' || tgt.isNotching) reason = 'DOPPLER NOTCH (GATE LOSS)';
+          else if (tgt.activeManeuverId === 'PUSH_COBRA') reason = 'COBRA BRAKE (OVERSHOOT)';
+          else if (tgt.activeManeuverId === 'BARREL_ROLL') reason = 'BARREL ROLL (LEAD LOSS)';
+          else if (tgt.activeManeuverId === 'SPLIT_S') reason = 'SPLIT-S (KINETIC ESCAPE)';
+          else if (tgt.activeManeuverId === 'EMERGENCY_CM' || tgt.cmTimer > 0) reason = 'CHAFF DECOY DIVERSION';
+          else if (tgt.activeManeuverId === 'ZOOM_CLIMB') reason = 'HIGH-ALTITUDE CLIMB (ENERGY DEFICIT)';
+          else if (tgt.activeManeuverId === 'BREAK_TURN') reason = 'DEFENSIVE BREAK TURN';
+          else if (tgt.isCoffin) reason = 'COFFIN EVASIVE RESPONSE';
+          else if (tgt.isAce) reason = 'ACE DEFENSIVE BREAK';
+          else if (tgt.activeManeuverBonus > 0) reason = 'DEFENSIVE BREAK TURN';
         }
+        this.triggerLostTrack(reason);
+      } else {
+        this.resolveTerminalEngagement(weatherClouds);
       }
-    } else if (dist <= 0.85) {
-      this.resolveTerminalEngagement(weatherClouds);
     }
   }
 
   triggerLostTrack(reason) {
-    if (typeof MissileTerminalSystem !== 'undefined') {
-      MissileTerminalSystem.triggerLostTrack(this, reason);
-    }
+    if (typeof MissileTerminalSystem === 'undefined') throw new Error('MissileTerminalSystem is not loaded.');
+    MissileTerminalSystem.triggerLostTrack(this, reason);
   }
 
   resolveTerminalEngagement(weatherClouds) {
-    if (typeof MissileTerminalSystem !== 'undefined') {
-      MissileTerminalSystem.resolveTerminalEngagement(this, weatherClouds);
-    }
+    if (typeof MissileTerminalSystem === 'undefined') throw new Error('MissileTerminalSystem is not loaded.');
+    MissileTerminalSystem.resolveTerminalEngagement(this, weatherClouds);
   }
 }
 

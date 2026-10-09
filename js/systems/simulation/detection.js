@@ -5,6 +5,9 @@
 
 class SimulationDetectionSystem {
   constructor(simulationSystem) {
+    if (!simulationSystem || !simulationSystem.game) {
+      throw new Error('SimulationDetectionSystem requires a valid SimulationSystem instance.');
+    }
     this.sim = simulationSystem;
     this.game = simulationSystem.game;
     this.scanInterval = 0.10;
@@ -12,11 +15,10 @@ class SimulationDetectionSystem {
   }
 
   update(dt) {
-    const cfg = window.CONFIG || {};
-    const baseAirIdTime = cfg.RADAR_IDENTIFY_BASE_SEC || 5.5;
-    const baseMslIdTime = cfg.MISSILE_IDENTIFY_BASE_SEC || 3.2;
-    const stealthMult = cfg.STEALTH_IDENTIFY_PENALTY_MULT || 2.0;
-    const uplinkThreshold = cfg.UPLINK_THRESHOLD_FIGHTERS !== undefined ? cfg.UPLINK_THRESHOLD_FIGHTERS : 3;
+    const baseAirIdTime = window.CONFIG.RADAR_IDENTIFY_BASE_SEC;
+    const baseMslIdTime = window.CONFIG.MISSILE_IDENTIFY_BASE_SEC;
+    const stealthMult = window.CONFIG.STEALTH_IDENTIFY_PENALTY_MULT;
+    const uplinkThreshold = window.CONFIG.UPLINK_THRESHOLD_FIGHTERS;
 
     this.scanTimer += dt;
     const runFullScan = (this.scanTimer >= this.scanInterval);
@@ -58,7 +60,7 @@ class SimulationDetectionSystem {
             inSensorRange = true;
             if (dist <= 18.0 || (sensor.hasIRST && dist <= 28.0)) isImmediateBurnThrough = true;
             const rangeFactor = Math.max(0.20, 1.0 - (dist / maxDist));
-            let rate = (sensor.radarIdentifySpeed || 1.0) * rangeFactor;
+            const rate = (sensor.radarIdentifySpeed || 1.0) * rangeFactor;
             if (rate > highestProgressRate) highestProgressRate = rate;
           }
         }
@@ -73,14 +75,14 @@ class SimulationDetectionSystem {
         const requiredTime = isStealth ? (baseAirIdTime * stealthMult) : baseAirIdTime;
 
         if (h._burnThrough) h.trackDurationBlue += dt * 3.0;
-        else h.trackDurationBlue += dt * Math.max(0.25, h._identifyRate || 1.0);
+        else h.trackDurationBlue += dt * Math.max(0.25, h._identifyRate);
 
         if (h.trackDurationBlue >= requiredTime || (h._burnThrough && h.trackDurationBlue >= 1.5)) {
           h.identifiedByBlue = true;
           h.isIdentified = true;
         }
       } else {
-        h.trackDurationBlue = Math.max(0.0, (h.trackDurationBlue || 0.0) - dt * 0.25);
+        h.trackDurationBlue = Math.max(0.0, h.trackDurationBlue - dt * 0.25);
         if (h.trackDurationBlue <= 0.0 && !isUplinkActive) {
           h.identifiedByBlue = false;
           h.isIdentified = false;
@@ -92,7 +94,7 @@ class SimulationDetectionSystem {
       for (let i = 0; i < liveHostiles.length; i++) {
         const h = liveHostiles[i];
         this.game.detectedByBlue.add(h.id);
-        h.trackDurationBlue = Math.max(h.trackDurationBlue || 0, 10.0);
+        h.trackDurationBlue = Math.max(h.trackDurationBlue, 10.0);
         h.identifiedByBlue = true;
         h.isIdentified = true;
       }
@@ -126,15 +128,15 @@ class SimulationDetectionSystem {
       }
 
       if (a._inRedSensor) {
-        a.trackDurationRed = (a.trackDurationRed || 0) + dt;
+        a.trackDurationRed += dt;
         if (a.trackDurationRed >= baseAirIdTime) a.identifiedByRed = true;
       } else {
-        a.trackDurationRed = Math.max(0.0, (a.trackDurationRed || 0.0) - dt * 0.25);
+        a.trackDurationRed = Math.max(0.0, a.trackDurationRed - dt * 0.25);
         if (a.trackDurationRed <= 0.0) a.identifiedByRed = false;
       }
     }
 
-    this.processAuxiliaryContacts(baseAirIdTime, baseMslIdTime, dt, blueSensors, redSensors, is2P);
+    this.processAuxiliaryContacts(baseAirIdTime, baseMslIdTime, dt, blueSensors, is2P);
   }
 
   revealMutuallyAllCombatants() {
@@ -154,7 +156,7 @@ class SimulationDetectionSystem {
     }
   }
 
-  processAuxiliaryContacts(baseAirIdTime, baseMslIdTime, dt, blueSensors, redSensors, is2P) {
+  processAuxiliaryContacts(baseAirIdTime, baseMslIdTime, dt, blueSensors, is2P) {
     for (let i = 0; i < this.sim.ghostContacts.length; i++) {
       const ghost = this.sim.ghostContacts[i];
       if (ghost.hp <= 0 || ghost.isDissolved) continue;
@@ -188,7 +190,7 @@ class SimulationDetectionSystem {
         this.game.detectedByBlue.add(m.id);
         m.identifiedByBlue = true;
       } else {
-        const isConcealed = m.isPassiveRadar && (m.age < (m.launchStealthDuration || 3.2)) && (m.distanceToTarget > (m.pathRevealDistance || 20.0));
+        const isConcealed = m.isPassiveRadar && (m.age < m.launchStealthDuration) && (m.distanceToTarget > m.pathRevealDistance);
         if (!isConcealed) {
           let detected = false;
           for (let s = 0; s < blueSensors.length; s++) {
@@ -198,12 +200,12 @@ class SimulationDetectionSystem {
           }
           if (detected) {
             m.trackHoldBlue = 3.5;
-            m.trackDurationBlue = (m.trackDurationBlue || 0.0) + dt;
+            m.trackDurationBlue += dt;
             if (m.trackDurationBlue >= baseMslIdTime) m.identifiedByBlue = true;
-          } else if (m.trackHoldBlue && m.trackHoldBlue > 0) {
+          } else if (m.trackHoldBlue > 0) {
             m.trackHoldBlue -= dt;
           }
-          if (detected || (m.trackHoldBlue && m.trackHoldBlue > 0)) {
+          if (detected || m.trackHoldBlue > 0) {
             this.game.detectedByBlue.add(m.id);
           }
         }
@@ -230,7 +232,7 @@ class SimulationDetectionSystem {
         civ.identifiedByBlue = true; civ.identifiedByRed = true; civ.isIdentified = true;
         continue;
       }
-      civ.trackDurationBlue = (civ.trackDurationBlue || 0.0) + dt * 0.4;
+      civ.trackDurationBlue += dt * 0.4;
       if (civ.trackDurationBlue >= 6.0) civ.identifiedByBlue = true;
     }
   }

@@ -5,6 +5,7 @@
 
 class CombatSystem {
   constructor(gameEngine) {
+    if (!gameEngine) throw new Error('CombatSystem requires gameEngine.');
     this.game = gameEngine;
   }
 
@@ -14,17 +15,18 @@ class CombatSystem {
     const w = item.weapon;
     if (!w || w.isJammerPod) return false;
 
-    const cfg = window.CONFIG || {};
-    const tokenCost = cfg.TOKEN_ACTION_COST || 0.70;
+    const tokenCost = window.CONFIG.TOKEN_ACTION_COST;
     if (this.game.getCurrentCommanderTokenBucket() < tokenCost) return false;
 
     if (w.isDecoy || w.isDecoyDrone || w.isGunpod || w.category === 'GUN') return true;
 
     if (!targetEntity || targetEntity.hp <= 0) return false;
-    if (typeof targetEntity.x !== 'number' || typeof targetEntity.y !== 'number' || isNaN(targetEntity.x) || isNaN(targetEntity.y)) return false;
+    if (typeof targetEntity.x !== 'number' || typeof targetEntity.y !== 'number' || isNaN(targetEntity.x) || isNaN(targetEntity.y)) {
+      throw new Error(`Target entity "${targetEntity.id}" has invalid coordinates.`);
+    }
 
     const dist = Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y);
-    if (isNaN(dist) || dist > (w.rangeKm || 100)) return false;
+    if (isNaN(dist) || dist > w.rangeKm) return false;
 
     const isSurface = (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) || Boolean(targetEntity.type && !targetEntity.spec && !targetEntity.isCivilian);
     if (isSurface) {
@@ -49,11 +51,14 @@ class CombatSystem {
 
   fire(sourceUnit, pylonIdx, targetEntity) {
     if (!sourceUnit || sourceUnit.hp <= 0) return;
-    const item = sourceUnit.equippedWeapons && sourceUnit.equippedWeapons[pylonIdx];
+    if (!sourceUnit.equippedWeapons || pylonIdx < 0 || pylonIdx >= sourceUnit.equippedWeapons.length) {
+      throw new Error(`Invalid pylon index ${pylonIdx} for unit "${sourceUnit.id}".`);
+    }
+
+    const item = sourceUnit.equippedWeapons[pylonIdx];
     if (!item || !this.canFire(sourceUnit, item, targetEntity)) return;
 
-    const cfg = window.CONFIG || {};
-    const tokenCost = cfg.TOKEN_ACTION_COST || 0.70;
+    const tokenCost = window.CONFIG.TOKEN_ACTION_COST;
     if (!this.game.consumeCurrentCommanderTokens(tokenCost)) return;
 
     const w = item.weapon;
@@ -75,7 +80,7 @@ class CombatSystem {
     );
 
     if (targetEntity && targetEntity.isCivilian && !w.isDecoy && !w.isDecoyDrone) {
-      const penalty = cfg.VP_CIVILIAN_FIRE_PENALTY || 500;
+      const penalty = window.CONFIG.VP_CIVILIAN_FIRE_PENALTY;
       if (sourceUnit.team === 'friendly' && this.game.simulation) {
         this.game.simulation.logScoreEvent('friendly', -penalty, `ROE VIOLATION: Fired weapon at civilian aircraft (${targetEntity.flightCode || targetEntity.name || 'Civilian'})`);
         if (this.game.simulation.scoring) {
@@ -87,7 +92,7 @@ class CombatSystem {
       }
       if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
     } else if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !w.isGunpod && targetEntity) {
-      const penalty = cfg.VP_UNIDENTIFIED_FIRE_PENALTY || 600;
+      const penalty = window.CONFIG.VP_UNIDENTIFIED_FIRE_PENALTY;
       if (sourceUnit.team === 'friendly' && this.game.simulation) {
         this.game.simulation.logScoreEvent('friendly', -penalty, 'ROE INFRACTION: Fired on unverified track [BOGEY ?]');
         if (this.game.simulation.scoring) {
@@ -124,7 +129,7 @@ class CombatSystem {
       for (let r = 0; r < numRounds; r++) {
         this.scheduleWeaponPulse(r * 50, () => {
           if (!sourceUnit || sourceUnit.hp <= 0.05) return;
-          const heading = sourceUnit.heading || 0;
+          const heading = sourceUnit.heading;
           const spread = (r - (numRounds - 1) / 2) * 0.012;
           const tracerHdg = heading + spread;
 
@@ -207,9 +212,8 @@ class CombatSystem {
         });
       }
     } else {
-      if (typeof MissileEntity !== 'undefined') {
-        this.game.missiles.push(new MissileEntity(w, sourceUnit, targetEntity));
-      }
+      if (typeof MissileEntity === 'undefined') throw new Error('MissileEntity class is not loaded.');
+      this.game.missiles.push(new MissileEntity(w, sourceUnit, targetEntity));
       if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
     }
 
@@ -218,8 +222,10 @@ class CombatSystem {
   }
 
   executeCard(card, unit) {
-    const cfg = window.CONFIG || {};
-    const cost = card.cost || cfg.TOKEN_ACTION_COST || 0.70;
+    if (!card) throw new Error('executeCard requires a valid maneuver card.');
+    if (!unit) throw new Error('executeCard requires a valid aircraft unit.');
+
+    const cost = card.cost || window.CONFIG.TOKEN_ACTION_COST;
     if (!this.game.consumeCurrentCommanderTokens(cost)) return;
     const before = { speed: unit.speed, altitudeFt: unit.altFt, energy: unit.energy, stress: unit.stress, heading: unit.heading };
     unit.applyActionStress(0.18);

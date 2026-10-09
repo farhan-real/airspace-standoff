@@ -14,18 +14,31 @@ class AirspaceStandoffGame {
   constructor() {
     this.installModalDOMTemplates();
 
+    if (!window.CONFIG) {
+      throw new Error('CONFIG is not loaded. Ensure constants.js is loaded prior to game.js.');
+    }
+    if (!window.BUDGET_TIERS) {
+      throw new Error('BUDGET_TIERS table is not loaded. Ensure constants.js is loaded prior to game.js.');
+    }
+    if (!window.AI_DIFFICULTIES) {
+      throw new Error('AI_DIFFICULTIES table is not loaded. Ensure constants.js is loaded prior to game.js.');
+    }
+
     const savedSettings = (window.Persistence && typeof window.Persistence.getGameplaySettings === 'function')
       ? window.Persistence.getGameplaySettings()
       : null;
 
-    this.playerMode = (savedSettings && savedSettings.playerMode) || '1P';
-    this.scenarioMode = (savedSettings && savedSettings.scenarioMode) || 'SKIRMISH';
-    this.aiDifficulty = (savedSettings && savedSettings.aiDifficulty) || 'VETERAN';
-    this.aiDoctrine = (savedSettings && savedSettings.aiDoctrine) || 'BALANCED';
-    this.playerBudgetId = (savedSettings && savedSettings.playerBudgetId) || 'BUDGET_400';
+    this.playerMode = (savedSettings && savedSettings.playerMode) ? savedSettings.playerMode : '1P';
+    this.scenarioMode = (savedSettings && savedSettings.scenarioMode) ? savedSettings.scenarioMode : 'SKIRMISH';
+    this.aiDifficulty = (savedSettings && savedSettings.aiDifficulty) ? savedSettings.aiDifficulty : 'VETERAN';
+    this.aiDoctrine = (savedSettings && savedSettings.aiDoctrine) ? savedSettings.aiDoctrine : 'BALANCED';
+    this.playerBudgetId = (savedSettings && savedSettings.playerBudgetId) ? savedSettings.playerBudgetId : 'BUDGET_400';
 
-    const bTierData = (window.BUDGET_TIERS && window.BUDGET_TIERS[this.playerBudgetId]) || { budget: 400.0 };
-    this.budgetMax = bTierData.budget || 400.0;
+    const bTierData = window.BUDGET_TIERS[this.playerBudgetId];
+    if (!bTierData || typeof bTierData.budget !== 'number') {
+      throw new Error(`Invalid budget tier "${this.playerBudgetId}" in BUDGET_TIERS.`);
+    }
+    this.budgetMax = bTierData.budget;
     this.budgetRemaining = this.budgetMax;
 
     this.pendingMissionEditorSettings = null;
@@ -36,13 +49,16 @@ class AirspaceStandoffGame {
     this.currentPvpCommander = 'friendly';
 
     let initialSquadronName = (window.Persistence && window.Persistence.getSquadronName()) || '7th Tactical Squadron';
-    if (!initialSquadronName || initialSquadronName.toLowerCase().includes('wardog')) {
+    if (!initialSquadronName.trim()) {
       initialSquadronName = '7th Tactical Squadron';
-      if (window.Persistence) window.Persistence.saveSquadronName(initialSquadronName);
     }
-    this.squadronName = initialSquadronName;
+    this.squadronName = initialSquadronName.trim();
+    if (window.Persistence) window.Persistence.saveSquadronName(this.squadronName);
 
-    const maxTok = (window.CONFIG && window.CONFIG.TOKEN_MAX) || 8.0;
+    const maxTok = window.CONFIG.TOKEN_MAX;
+    if (typeof maxTok !== 'number') {
+      throw new Error('CONFIG.TOKEN_MAX must be a valid number.');
+    }
     this.tokenBucketBlue = maxTok;
     this.tokenBucketRed = maxTok;
     this.alliedAircraft = [];
@@ -62,37 +78,42 @@ class AirspaceStandoffGame {
     this.detectedByBlue = new Set();
     this.detectedByRed = new Set();
 
-    this.radar = (typeof TacticalRadarRenderer !== 'undefined') ? new TacticalRadarRenderer('radar-canvas') : null;
-    this.deckManager = (typeof DeckManager !== 'undefined') ? new DeckManager(this) : null;
-    this.ai = (typeof TacticalAICommander !== 'undefined') ? new TacticalAICommander(this) : null;
-    this.combat = (typeof CombatSystem !== 'undefined') ? new CombatSystem(this) : null;
-    this.simulation = (typeof SimulationSystem !== 'undefined') ? new SimulationSystem(this) : null;
-    this.avionics = (typeof AvionicsUI !== 'undefined') ? new AvionicsUI(this) : null;
-    this.settings = (typeof SettingsManager !== 'undefined') ? new SettingsManager(this) : null;
+    if (typeof TacticalRadarRenderer === 'undefined') throw new Error('TacticalRadarRenderer class is not loaded.');
+    if (typeof DeckManager === 'undefined') throw new Error('DeckManager class is not loaded.');
+    if (typeof TacticalAICommander === 'undefined') throw new Error('TacticalAICommander class is not loaded.');
+    if (typeof CombatSystem === 'undefined') throw new Error('CombatSystem class is not loaded.');
+    if (typeof SimulationSystem === 'undefined') throw new Error('SimulationSystem class is not loaded.');
+    if (typeof AvionicsUI === 'undefined') throw new Error('AvionicsUI class is not loaded.');
+    if (typeof SettingsManager === 'undefined') throw new Error('SettingsManager class is not loaded.');
+    if (typeof ControlsSystem === 'undefined') throw new Error('ControlsSystem class is not loaded.');
+    if (typeof InspectionModeController === 'undefined') throw new Error('InspectionModeController class is not loaded.');
+    if (typeof ProcurementManager === 'undefined') throw new Error('ProcurementManager class is not loaded.');
+
+    this.radar = new TacticalRadarRenderer('radar-canvas');
+    this.deckManager = new DeckManager(this);
+    this.ai = new TacticalAICommander(this);
+    this.combat = new CombatSystem(this);
+    this.simulation = new SimulationSystem(this);
+    this.avionics = new AvionicsUI(this);
+    this.settings = new SettingsManager(this);
     window.Settings = this.settings;
 
-    this.controls = (typeof ControlsSystem !== 'undefined') ? new ControlsSystem(this) : null;
-    this.inspection = (typeof InspectionModeController !== 'undefined') ? new InspectionModeController(this) : null;
-    this.procurement = (typeof ProcurementManager !== 'undefined') ? new ProcurementManager(this) : null;
+    this.controls = new ControlsSystem(this);
+    this.inspection = new InspectionModeController(this);
+    this.procurement = new ProcurementManager(this);
     this.procurementSquadron = [];
 
-    if (this.controls && this.controls.init) this.controls.init();
-    if (this.procurement && this.procurement.init) {
-      this.procurement.init();
-      const saved = window.Persistence ? window.Persistence.getLastSquadron() : null;
-      if (saved && saved.length > 0) {
-        saved.forEach(item => {
-          if (item && item.callsign && item.callsign.toLowerCase().includes('wardog')) {
-            item.callsign = item.callsign.replace(/wardog/gi, 'Viper');
-          }
-        });
-        this.procurementSquadron = saved;
-        this.procurement.updateUI();
-      } else {
-        this.procurement.applyBuiltinPreset('stealth');
-      }
-      this.setSquadronName(this.squadronName);
+    this.controls.init();
+    this.procurement.init();
+
+    const saved = window.Persistence ? window.Persistence.getLastSquadron() : null;
+    if (saved && saved.length > 0) {
+      this.procurementSquadron = saved;
+      this.procurement.updateUI();
+    } else {
+      this.procurement.applyBuiltinPreset('stealth');
     }
+    this.setSquadronName(this.squadronName);
 
     this.setPlayerBudgetTier(this.playerBudgetId);
     this.updateModeIndicator();
@@ -118,26 +139,33 @@ class AirspaceStandoffGame {
   }
 
   setPlayerBudgetTier(tierKey) {
-    const tierData = (window.BUDGET_TIERS && window.BUDGET_TIERS[tierKey]) || { budget: 400.0, multiplier: 1.0 };
+    const tierData = window.BUDGET_TIERS[tierKey];
+    if (!tierData || typeof tierData.budget !== 'number') {
+      throw new Error(`Budget tier "${tierKey}" is not defined in BUDGET_TIERS.`);
+    }
     this.playerBudgetId = tierKey;
     this.budgetMax = tierData.budget;
     const subtextEl = document.getElementById('proc-budget-subtext');
-    if (subtextEl) subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) UP TO 16 UNITS`;
+    if (subtextEl) {
+      subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) UP TO 16 UNITS`;
+    }
     this.updateModeIndicator();
     this.saveGameplaySettings();
     if (this.procurement) this.procurement.updateUI();
   }
 
   setSquadronName(name) {
-    if (!name || !name.trim()) return;
-    let cleanName = name.trim();
-    if (cleanName.toLowerCase().includes('wardog')) cleanName = '7th Tactical Squadron';
-    this.squadronName = cleanName;
+    if (!name || !name.trim()) {
+      throw new Error('Squadron name cannot be empty.');
+    }
+    this.squadronName = name.trim();
     const dispEl = document.getElementById('display-squadron-name');
     if (dispEl) dispEl.textContent = this.squadronName;
     const headerEl = document.getElementById('header-squadron-name');
     if (headerEl) headerEl.textContent = this.squadronName.toUpperCase();
-    if (this.alliedAircraft) this.alliedAircraft.forEach(ac => { ac.squadronName = this.squadronName; });
+    if (this.alliedAircraft) {
+      this.alliedAircraft.forEach(ac => { ac.squadronName = this.squadronName; });
+    }
     if (window.Persistence) window.Persistence.saveSquadronName(this.squadronName);
   }
 
@@ -146,6 +174,9 @@ class AirspaceStandoffGame {
   }
 
   consumeCurrentCommanderTokens(amount) {
+    if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
+      throw new Error(`Invalid token deduction amount: ${amount}`);
+    }
     if (this.currentPvpCommander === 'friendly') {
       if (this.tokenBucketBlue >= amount) { this.tokenBucketBlue -= amount; return true; }
     } else {
@@ -157,35 +188,24 @@ class AirspaceStandoffGame {
   updateModeIndicator() {
     const ind = document.getElementById('theater-mode-indicator');
     if (!ind) return;
-    const diffMap = {
-      CADET: 'Permissive Sector (0.50x)',
-      VETERAN: 'Contested Airspace (1.00x)',
-      ELITE: 'Hostile Airspace (1.50x)',
-      ACE: 'High-Threat Sector (2.00x)',
-      MASTER: 'Air Denial Zone (2.60x)',
-      LEGEND: 'Extreme Threat Sector (3.20x)'
-    };
-    const bMap = {
-      BUDGET_200: '200M (1.75x)',
-      BUDGET_300: '300M (1.30x)',
-      BUDGET_400: '400M (1.00x)',
-      BUDGET_500: '500M (0.80x)',
-      BUDGET_650: '650M (0.60x)',
-      BUDGET_750: '750M (0.55x)',
-      BUDGET_800: '800M (0.50x)',
-      BUDGET_900: '900M (0.45x)',
-      BUDGET_1000: '1000M (0.40x)'
-    };
-    const diffTag = diffMap[this.aiDifficulty] || this.aiDifficulty;
-    const bTag = bMap[this.playerBudgetId] || '400M (1.00x)';
-    const modeTag = this.playerMode === '1P' ? (`1P VS AI [${diffTag}] [${bTag}]`) : '2P VERSUS';
+    const diffData = window.AI_DIFFICULTIES[this.aiDifficulty];
+    if (!diffData) {
+      throw new Error(`Invalid aiDifficulty "${this.aiDifficulty}" - not in AI_DIFFICULTIES.`);
+    }
+    const bTierData = window.BUDGET_TIERS[this.playerBudgetId];
+    if (!bTierData) {
+      throw new Error(`Invalid playerBudgetId "${this.playerBudgetId}" - not in BUDGET_TIERS.`);
+    }
+    const diffTag = `${diffData.name} (${diffData.scoreMultiplier.toFixed(2)}x)`;
+    const bTag = `${bTierData.budget.toFixed(0)}M (${bTierData.multiplier.toFixed(2)}x)`;
+    const modeTag = this.playerMode === '1P' ? `1P VS AI [${diffTag}] [${bTag}]` : '2P VERSUS';
     const scenarioTag = this.scenarioMode === 'DYNAMIC_THEATER' ? 'DYNAMIC THEATER' : 'SKIRMISH';
     ind.textContent = `${modeTag} ${scenarioTag}`;
   }
 
-  canFirePylon(u, item, tgt) { return (this.combat && this.combat.canFire) ? this.combat.canFire(u, item, tgt) : false; }
-  firePylon(u, idx, tgt) { if (this.combat && this.combat.fire) { this.combat.fire(u, idx, tgt); this.stats.missilesLaunched++; } }
-  executeCard(card, u) { if (this.combat && this.combat.executeCard) this.combat.executeCard(card, u); }
+  canFirePylon(u, item, tgt) { return this.combat.canFire(u, item, tgt); }
+  firePylon(u, idx, tgt) { this.combat.fire(u, idx, tgt); this.stats.missilesLaunched++; }
+  executeCard(card, u) { this.combat.executeCard(card, u); }
 
   abortSortie() {
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
@@ -195,16 +215,15 @@ class AirspaceStandoffGame {
 
   scrambleFlight() {
     if (typeof AudioSys !== 'undefined') AudioSys.ensureContext();
-    if (typeof SortieSpawner !== 'undefined') {
-      SortieSpawner.setupMission(this);
-    }
+    if (typeof SortieSpawner === 'undefined') throw new Error('SortieSpawner is not loaded.');
+    SortieSpawner.setupMission(this);
     this.startLoop();
   }
 
   startLoop() {
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
     this.isGameOver = false;
-    if (this.simulation) this.simulation.captureReplayFrame(true);
+    this.simulation.captureReplayFrame(true);
     let lastTime = performance.now();
     let mfdThrottle = 0;
     let rosterThrottle = 0;
@@ -213,34 +232,32 @@ class AirspaceStandoffGame {
       const dt = Math.min(0.08, (currTime - lastTime) / 1000.0);
       lastTime = currTime;
 
-      if (!this.isGameOver && this.simulation && this.simulation.step) {
+      if (!this.isGameOver) {
         this.simulation.step(dt);
       }
 
-      if (this.radar && this.radar.render) {
-        this.radar.render({
-          alliedAircraft: this.alliedAircraft,
-          hostileAircraft: this.hostileAircraft,
-          surfaceUnits: this.surfaceUnits,
-          missiles: this.missiles,
-          activeUnit: this.activeUnit,
-          selectedTarget: this.selectedTarget,
-          inspectionEntity: this.inspection && this.inspection.isOpen ? this.inspection.selectedEntity : null,
-          inspectionMode: Boolean(this.inspection && this.inspection.isOpen)
-        });
-      }
+      this.radar.render({
+        alliedAircraft: this.alliedAircraft,
+        hostileAircraft: this.hostileAircraft,
+        surfaceUnits: this.surfaceUnits,
+        missiles: this.missiles,
+        activeUnit: this.activeUnit,
+        selectedTarget: this.selectedTarget,
+        inspectionEntity: this.inspection && this.inspection.isOpen ? this.inspection.selectedEntity : null,
+        inspectionMode: Boolean(this.inspection && this.inspection.isOpen)
+      });
 
       mfdThrottle += dt;
       if (mfdThrottle >= 0.10) {
         mfdThrottle = 0;
-        if (this.avionics) this.avionics.updateActiveUnitMFD();
+        this.avionics.updateActiveUnitMFD();
         if (this.inspection && this.inspection.isOpen) this.inspection.update();
       }
 
       rosterThrottle += dt;
       if (rosterThrottle >= 0.25) {
         rosterThrottle = 0;
-        if (this.avionics) this.avionics.renderFlightRoster();
+        this.avionics.renderFlightRoster();
       }
 
       if (!this.isGameOver) this.animFrameId = requestAnimationFrame(loop);
@@ -250,29 +267,13 @@ class AirspaceStandoffGame {
 
   triggerGameOver(blueWon, msg) {
     this.isGameOver = true;
-    if (this.inspection) this.inspection.recordEvent('MISSION END', msg || (blueWon ? 'Victory' : 'Defeat'), null, null, { result: blueWon ? 'VICTORY' : 'DEFEAT' });
+    if (this.inspection) {
+      this.inspection.recordEvent('MISSION END', msg || (blueWon ? 'Victory' : 'Defeat'), null, null, { result: blueWon ? 'VICTORY' : 'DEFEAT' });
+    }
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
-    if (this.simulation) this.simulation.captureReplayFrame(true);
-    if (typeof AfterActionReportSystem !== 'undefined') AfterActionReportSystem.renderSortieSummary(this, blueWon, msg);
-  }
-
-  resolveUnitFocus() {
-    if (this.activeUnit && this.activeUnit.hp <= 0) {
-      const roster = (this.currentPvpCommander === 'friendly') ? this.alliedAircraft : this.hostileAircraft;
-      const nextLive = roster.find(a => a.hp > 0);
-      if (nextLive) {
-        this.activeUnit = nextLive;
-        if (this.radar) {
-          this.radar.trackingUnit = null;
-          if (this.radar.cam) this.radar.cam.trackingUnit = null;
-        }
-      }
-    }
-    if (this.selectedTarget && (this.selectedTarget.hp <= 0 || this.selectedTarget.isDissolved)) {
-      this.selectedTarget = null;
-      const targetInfo = document.getElementById('selected-target-info');
-      if (targetInfo) targetInfo.textContent = 'TARGET: NONE';
-    }
+    this.simulation.captureReplayFrame(true);
+    if (typeof AfterActionReportSystem === 'undefined') throw new Error('AfterActionReportSystem is not loaded.');
+    AfterActionReportSystem.renderSortieSummary(this, blueWon, msg);
   }
 }
 

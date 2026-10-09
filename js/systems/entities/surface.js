@@ -5,6 +5,14 @@
 
 class SurfaceUnit {
   constructor(type, team, x, y) {
+    if (!type) throw new Error('SurfaceUnit requires an installation type identifier.');
+    if (team !== 'friendly' && team !== 'hostile') {
+      throw new Error(`Invalid team "${team}" for SurfaceUnit.`);
+    }
+    if (typeof x !== 'number' || isNaN(x) || typeof y !== 'number' || isNaN(y)) {
+      throw new Error(`Invalid coordinates (${x}, ${y}) for SurfaceUnit "${type}".`);
+    }
+
     this.id = 'SURF_' + Math.random().toString(36).substr(2, 6);
     this.type = type;
     this.team = team;
@@ -83,10 +91,12 @@ class SurfaceUnit {
       this.rangeKm = 0.0;
       this.cooldownMax = 999.0;
       this.desc = 'Mobile forward sensor van providing localized radar telemetry.';
+    } else {
+      throw new Error(`Unknown SurfaceUnit installation type: "${type}".`);
     }
   }
 
-  isIdentifiedBy(team) { return true; }
+  isIdentifiedBy() { return true; }
   get isIdentified() { return true; }
   set isIdentified(val) {
     this.identifiedByBlue = Boolean(val);
@@ -94,6 +104,9 @@ class SurfaceUnit {
   }
 
   takeDamage(amount, isBunkerCracker = false) {
+    if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
+      throw new Error(`Invalid damage amount (${amount}) applied to SurfaceUnit "${this.id}".`);
+    }
     if (this.isIndestructible) {
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnCombatText(this.x, this.y, 'DEPOT INDESTRUCTIBLE', '#00f5a0');
@@ -161,7 +174,7 @@ class SurfaceUnit {
         targetMissile.isDead = true;
         this.fireCooldown = this.cooldownMax;
 
-        const interceptPoints = (window.CONFIG && window.CONFIG.VP_MISSILE_INTERCEPT) || 40;
+        const interceptPoints = window.CONFIG.VP_MISSILE_INTERCEPT;
 
         const inspection = window.Game && window.Game.inspection;
         if (inspection && inspection.enabled) {

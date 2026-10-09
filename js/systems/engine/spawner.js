@@ -14,7 +14,7 @@ class SortieSpawner {
         aiDoctrine: game.aiDoctrine
       };
     }
-    const editorMission = window.MissionEditor && typeof window.MissionEditor.consumeNextMission === 'function'
+    const editorMission = window.MissionEditor
       ? window.MissionEditor.consumeNextMission(game)
       : null;
     game.activeMissionEditorConfig = editorMission;
@@ -36,7 +36,7 @@ class SortieSpawner {
       const m = document.getElementById(id); if (m) m.classList.remove('active');
     });
 
-    const maxTok = (window.CONFIG && window.CONFIG.TOKEN_MAX) || 8.0;
+    const maxTok = window.CONFIG.TOKEN_MAX;
     game.tokenBucketBlue = maxTok;
     game.tokenBucketRed = maxTok;
     game.missiles = [];
@@ -67,10 +67,10 @@ class SortieSpawner {
     const aarTimelineEl = document.getElementById('aar-timeline-list');
     if (aarTimelineEl) aarTimelineEl.innerHTML = '';
 
-    const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
-    const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
+    const mapW = window.CONFIG.THEATER_WIDTH_KM;
+    const mapH = window.CONFIG.THEATER_HEIGHT_KM;
     const midY = mapH / 2.0;
-    const callsignPool = [...(window.CALLSIGN_POOL || ['Trigger', 'Mobius', 'Cipher', 'Viper', 'Ghost', 'Talon'])].sort(() => Math.random() - 0.5);
+    const callsignPool = [...window.CALLSIGN_POOL].sort(() => Math.random() - 0.5);
     const takeCallsign = () => callsignPool.length ? callsignPool.pop() : 'Viper';
 
     game.alliedAircraft = [];
@@ -84,15 +84,15 @@ class SortieSpawner {
 
     const isBlueProcedural = !is2P && editorMission && editorMission.blueFleet && editorMission.blueFleet !== 'HANGAR';
 
-    if (isBlueProcedural && typeof FleetGenerator !== 'undefined') {
+    if (isBlueProcedural) {
       game.alliedAircraft = FleetGenerator.generateFleet('friendly', editorMission.blueFleet, editorMission.doctrine, mapW, mapH, {
         budget: editorMission.blueBudget,
-        squadronName: game.squadronName || '7th Tactical Squadron'
+        squadronName: game.squadronName
       });
     } else {
       let launchSquadron = game.procurementSquadron || [];
       if (launchSquadron.length === 0) {
-        launchSquadron = (typeof ProcurementPresets !== 'undefined') ? ProcurementPresets.getBuiltinPreset('stealth') : [];
+        launchSquadron = ProcurementPresets.getBuiltinPreset('stealth');
         game.procurementSquadron = launchSquadron;
       }
 
@@ -100,7 +100,7 @@ class SortieSpawner {
       if (chosenLeadIdx === -1) chosenLeadIdx = 0;
       launchSquadron.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
 
-      const spawnPlans = FleetGenerator.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH);
+      const spawnPlans = FormationPlanner.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH);
       spawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
@@ -110,7 +110,7 @@ class SortieSpawner {
 
         const ac = new Aircraft(
           item.specId, 'friendly', plan.x, spawnY, heading, item.chosenGunId,
-          item.callsign || takeCallsign(), game.squadronName || '7th Tactical Squadron',
+          item.callsign || takeCallsign(), game.squadronName,
           plan.isLead, false, initialAltFt
         );
         (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
@@ -130,7 +130,7 @@ class SortieSpawner {
     if (is2P) {
       let redRosterSource = game.procurementSquadron || [];
       if (redRosterSource.length === 0) {
-        redRosterSource = (typeof ProcurementPresets !== 'undefined') ? ProcurementPresets.getBuiltinPreset('stealth') : [];
+        redRosterSource = ProcurementPresets.getBuiltinPreset('stealth');
       }
 
       let chosenLeadIdx = redRosterSource.findIndex(it => it && it.isLead);
@@ -149,17 +149,13 @@ class SortieSpawner {
         isAce: false
       }));
 
-      // Randomize the roster order for Player 2 prior to formation mapping.
-      // calculateFormationSpawns places the Lead (rank 0) in the middle slot
-      // and Drones (rank 4) in the outermost corner slots.
       const randomizedRedRoster = [...clonedRedRoster];
       for (let i = randomizedRedRoster.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [randomizedRedRoster[i], randomizedRedRoster[j]] = [randomizedRedRoster[j], randomizedRedRoster[i]];
       }
 
-      // Use the exact same formation spawn logic as Player 1 on the hostile flank
-      const redSpawnPlans = FleetGenerator.calculateFormationSpawns(randomizedRedRoster, 'hostile', mapW, mapH);
+      const redSpawnPlans = FormationPlanner.calculateFormationSpawns(randomizedRedRoster, 'hostile', mapW, mapH);
       redSpawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
@@ -188,10 +184,10 @@ class SortieSpawner {
     } else if (editorMission && editorMission.redFleet === 'HANGAR') {
       let mirrorSquadron = game.procurementSquadron || [];
       if (mirrorSquadron.length === 0) {
-        mirrorSquadron = (typeof ProcurementPresets !== 'undefined') ? ProcurementPresets.getBuiltinPreset('stealth') : [];
+        mirrorSquadron = ProcurementPresets.getBuiltinPreset('stealth');
       }
 
-      const spawnPlans = FleetGenerator.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH);
+      const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH);
       spawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
@@ -219,9 +215,7 @@ class SortieSpawner {
     } else {
       const redDiff = (editorMission && editorMission.redFleet) ? editorMission.redFleet : game.aiDifficulty;
       const redBudget = (editorMission && editorMission.redBudget) ? Number(editorMission.redBudget) : null;
-      game.hostileAircraft = (typeof FleetGenerator !== 'undefined')
-        ? FleetGenerator.generateHostileFleet(redDiff, game.aiDoctrine, mapW, mapH, { budget: redBudget })
-        : [];
+      game.hostileAircraft = FleetGenerator.generateHostileFleet(redDiff, game.aiDoctrine, mapW, mapH, { budget: redBudget });
     }
 
     game.hostileAircraft.forEach(h => {
@@ -240,9 +234,7 @@ class SortieSpawner {
     }
 
     SortieSpawner.initSurfaceFacilities(game, mapW, mapH);
-    if (editorMission && editorMission.defenses === 'LIGHT') {
-      game.surfaceUnits = game.surfaceUnits.filter(unit => unit.type !== 'PANTSIR');
-    } else if (editorMission && editorMission.defenses === 'OFF') {
+    if (editorMission && (editorMission.defenses === 'LIGHT' || editorMission.defenses === 'OFF')) {
       game.surfaceUnits = game.surfaceUnits.filter(unit => unit.type !== 'PANTSIR');
     }
     if (game.simulation) {
@@ -253,17 +245,15 @@ class SortieSpawner {
       game.simulation.spawnCivilianFlight();
     }
 
-    game.activeUnit = game.alliedAircraft.find(a => a.isFlightLead) || game.alliedAircraft[0] || null;
+    game.activeUnit = game.alliedAircraft.find(a => a.isFlightLead) || game.alliedAircraft[0];
     game.currentPvpCommander = 'friendly';
 
     const pvpSwitcher = document.getElementById('pvp-switcher-bar');
-    if (pvpSwitcher) {
-      pvpSwitcher.classList.toggle('hidden', !is2P);
-    }
+    if (pvpSwitcher) pvpSwitcher.classList.toggle('hidden', !is2P);
+
     const aiPanel = document.getElementById('ai-config-panel');
-    if (aiPanel && is2P) {
-      aiPanel.style.display = 'none';
-    }
+    if (aiPanel && is2P) aiPanel.style.display = 'none';
+
     const btnBlue = document.getElementById('btn-switch-blue');
     const btnRed = document.getElementById('btn-switch-red');
     if (btnBlue && btnRed) {
@@ -271,17 +261,19 @@ class SortieSpawner {
       btnRed.classList.remove('active');
     }
 
-    if (game.radar) { game.radar.resize(); game.radar.resetCamera(); }
-    if (game.avionics) { game.avionics.renderFlightRoster(); game.avionics.updateActiveUnitMFD(); }
+    game.radar.resize();
+    game.radar.resetCamera();
+    game.avionics.renderFlightRoster();
+    game.avionics.updateActiveUnitMFD();
     if (game.inspection) game.inspection.beginMission(game.inspectionModeEnabled);
   }
 
   static ensureUniqueAircraftCallsigns(game) {
     const used = new Set();
-    const aircraft = [...(game.alliedAircraft || []), ...(game.hostileAircraft || [])];
+    const aircraft = [...game.alliedAircraft, ...game.hostileAircraft];
     aircraft.forEach((unit, index) => {
       if (!unit) return;
-      const base = String(unit.callsign || `Pilot ${index + 1}`).trim() || `Pilot ${index + 1}`;
+      const base = String(unit.callsign || `Pilot ${index + 1}`).trim();
       let callsign = base;
       let suffix = 2;
       while (used.has(callsign.toLowerCase())) callsign = `${base} ${suffix++}`;

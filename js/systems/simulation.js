@@ -5,6 +5,7 @@
 
 class SimulationSystem {
   constructor(gameEngine) {
+    if (!gameEngine) throw new Error('SimulationSystem requires gameEngine instance.');
     this.game = gameEngine;
     this.scoring = new SimulationScoring(gameEngine);
     this.detection = new SimulationDetectionSystem(this);
@@ -45,9 +46,10 @@ class SimulationSystem {
   }
 
   captureReplayFrame(force = false) {
-    if (typeof AfterActionReplayCodec !== 'undefined') {
-      AfterActionReplayCodec.captureFrame(this, force);
+    if (typeof AfterActionReplayCodec === 'undefined') {
+      throw new Error('AfterActionReplayCodec is not loaded.');
     }
+    AfterActionReplayCodec.captureFrame(this, force);
   }
 
   setTimeWarp(multiplier) {
@@ -59,30 +61,33 @@ class SimulationSystem {
   }
 
   togglePause() {
-    this.setTimeWarp(this.isPaused ? (this.timeWarp || 1) : 0);
+    this.setTimeWarp(this.isPaused ? this.timeWarp : 0);
     const pModal = document.getElementById('pause-modal');
     if (pModal) pModal.classList.toggle('active', this.isPaused);
   }
 
   initWeatherClouds() {
-    if (typeof SimulationTrafficSystem !== 'undefined') {
-      this.weatherClouds = SimulationTrafficSystem.createClouds(this.cloudCoverage);
+    if (typeof SimulationTrafficSystem === 'undefined') {
+      throw new Error('SimulationTrafficSystem is not loaded.');
     }
+    this.weatherClouds = SimulationTrafficSystem.createClouds(this.cloudCoverage);
   }
 
   initGhostContacts() {
     this.ghostContacts = [];
-    if (typeof SimulationTrafficSystem !== 'undefined') {
-      const g = SimulationTrafficSystem.createGhostContact(this.weatherClouds);
-      if (g) this.ghostContacts.push(g);
+    if (typeof SimulationTrafficSystem === 'undefined') {
+      throw new Error('SimulationTrafficSystem is not loaded.');
     }
+    const g = SimulationTrafficSystem.createGhostContact(this.weatherClouds);
+    if (g) this.ghostContacts.push(g);
   }
 
   spawnCivilianFlight() {
     if (!this.civilianTrafficEnabled) return;
-    if (typeof SimulationTrafficSystem !== 'undefined') {
-      this.civilianTraffic.push(SimulationTrafficSystem.createCivilianFlight());
+    if (typeof SimulationTrafficSystem === 'undefined') {
+      throw new Error('SimulationTrafficSystem is not loaded.');
     }
+    this.civilianTraffic.push(SimulationTrafficSystem.createCivilianFlight());
   }
 
   step(realDt) {
@@ -119,8 +124,8 @@ class SimulationSystem {
       if (this.waveSpawnTimer >= 80.0 && this.currentWave <= 3) {
         this.waveSpawnTimer = 0.0;
         this.currentWave++;
-        const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
-        const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
+        const mapW = window.CONFIG.THEATER_WIDTH_KM;
+        const mapH = window.CONFIG.THEATER_HEIGHT_KM;
         const redReinforcements = FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'hostile', mapW, mapH, this.game.aiDifficulty);
         const blueReinforcements = FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'friendly', mapW, mapH, this.game.aiDifficulty);
         const mission = this.game.activeMissionEditorConfig;
@@ -131,7 +136,7 @@ class SimulationSystem {
         }
         this.game.hostileAircraft.push(...redReinforcements);
         this.game.alliedAircraft.push(...blueReinforcements);
-        if (typeof SortieSpawner !== 'undefined') SortieSpawner.ensureUniqueAircraftCallsigns(this.game);
+        SortieSpawner.ensureUniqueAircraftCallsigns(this.game);
         this.logScoreEvent('friendly', 0, `REINFORCEMENTS: Wave ${this.currentWave} entered theater`);
       }
     }
@@ -159,8 +164,8 @@ class SimulationSystem {
     this.game.missiles = this.game.missiles.filter(m => !m.isDead);
 
     this.resolveUnitFocus();
-    if (this.game.ai && typeof this.game.ai.update === 'function') this.game.ai.update(dt);
-    if (this.game.avionics && typeof this.game.avionics.updateRWRState === 'function') this.game.avionics.updateRWRState();
+    this.game.ai.update(dt);
+    this.game.avionics.updateRWRState();
     this.replayCaptureAccumulator += dt;
     if (this.replayCaptureAccumulator >= 1.0) {
       this.replayCaptureAccumulator %= 1.0;
@@ -170,10 +175,9 @@ class SimulationSystem {
   }
 
   updateCommandTokens(dt) {
-    const cfg = window.CONFIG || {};
-    const baseRegen = cfg.TOKEN_BASE_REGEN || 2.50;
-    const perAcRegen = cfg.TOKEN_PER_AIRCRAFT_REGEN || 0.25;
-    const maxToken = cfg.TOKEN_MAX || 8.0;
+    const baseRegen = window.CONFIG.TOKEN_BASE_REGEN;
+    const perAcRegen = window.CONFIG.TOKEN_PER_AIRCRAFT_REGEN;
+    const maxToken = window.CONFIG.TOKEN_MAX;
 
     const liveAllies = this.game.alliedAircraft.filter(a => a.hp > 0);
     const allyDatalinkTotal = liveAllies.reduce((sum, a) => sum + (a.datalinkBonus || 0), 0);

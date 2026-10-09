@@ -4,20 +4,30 @@
 
 const Physics = {
   calcWr(mLoad, mMax) {
-    if (!mMax || mMax <= 0) return 0.0;
+    if (typeof mLoad !== 'number' || isNaN(mLoad)) {
+      throw new Error(`calcWr requires a valid numeric mLoad, received: ${mLoad}`);
+    }
+    if (typeof mMax !== 'number' || isNaN(mMax) || mMax <= 0) {
+      throw new Error(`calcWr requires a valid positive numeric mMax, received: ${mMax}`);
+    }
     return Math.min(1.0, Math.max(0.0, mLoad / mMax));
   },
 
   calcEffectiveMaxSpeed(s0, wr) {
+    if (typeof s0 !== 'number' || isNaN(s0)) throw new Error('calcEffectiveMaxSpeed requires numeric s0');
+    if (typeof wr !== 'number' || isNaN(wr)) throw new Error('calcEffectiveMaxSpeed requires numeric wr');
     return s0 * (1.0 - 0.25 * wr);
   },
 
   calcEffectiveAcceleration(a0, wr) {
+    if (typeof a0 !== 'number' || isNaN(a0)) throw new Error('calcEffectiveAcceleration requires numeric a0');
+    if (typeof wr !== 'number' || isNaN(wr)) throw new Error('calcEffectiveAcceleration requires numeric wr');
     return a0 / (1.0 + 0.80 * wr);
   },
 
   calcTurnEfficiency(speed, sOpt) {
-    if (!sOpt || sOpt <= 0.001) return 0.0;
+    if (typeof speed !== 'number' || isNaN(speed)) throw new Error('calcTurnEfficiency requires numeric speed');
+    if (typeof sOpt !== 'number' || isNaN(sOpt) || sOpt <= 0) throw new Error('calcTurnEfficiency requires positive numeric sOpt');
     if (speed <= 0) return 0.40;
     if (speed >= sOpt) {
       return Math.max(0.40, Math.min(1.0, sOpt / speed));
@@ -56,8 +66,14 @@ const Physics = {
   },
 
   getRadarMaxDetectionRange(sensorUnit, targetUnit, weatherClouds) {
-    if (!sensorUnit || !targetUnit || sensorUnit.hp <= 0 || targetUnit.hp <= 0) return 0.0;
-    const baseR0 = sensorUnit.spec ? (sensorUnit.spec.R_0 || 75.0) : (sensorUnit.rangeKm || 48.0);
+    if (!sensorUnit) throw new Error('getRadarMaxDetectionRange requires sensorUnit.');
+    if (!targetUnit) throw new Error('getRadarMaxDetectionRange requires targetUnit.');
+    if (sensorUnit.hp <= 0 || targetUnit.hp <= 0) return 0.0;
+
+    const baseR0 = sensorUnit.spec ? sensorUnit.spec.R_0 : sensorUnit.rangeKm;
+    if (typeof baseR0 !== 'number' || isNaN(baseR0)) {
+      throw new Error(`Sensor unit "${sensorUnit.id}" has no valid radar range (R_0 / rangeKm).`);
+    }
 
     if (sensorUnit.heading !== undefined && sensorUnit.spec && sensorUnit.spec.radarConeDeg < 360) {
       let angleDiff = Math.abs(sensorUnit.heading - Math.atan2(targetUnit.y - sensorUnit.y, targetUnit.x - sensorUnit.x));
@@ -71,7 +87,7 @@ const Physics = {
       while (aspectOffNose > Math.PI) aspectOffNose = Math.abs(aspectOffNose - Math.PI * 2);
 
       if (aspectOffNose >= 1.0 && aspectOffNose <= 2.1) {
-        let baseSpike = (targetUnit.spec && targetUnit.spec.beamSpike !== undefined) ? targetUnit.spec.beamSpike : 3.2;
+        let baseSpike = targetUnit.spec ? targetUnit.spec.beamSpike : 3.2;
         let spike = baseSpike;
         if (targetUnit.beamSpikeReduction) spike = 1.0 + (spike - 1.0) * (1.0 - targetUnit.beamSpikeReduction);
         aspectMultiplier = spike;
@@ -80,7 +96,7 @@ const Physics = {
       }
     }
 
-    let effectiveRcs = targetUnit.effectiveRcs !== undefined ? targetUnit.effectiveRcs : (targetUnit.rcs !== undefined ? targetUnit.rcs : 1.0);
+    let effectiveRcs = targetUnit.effectiveRcs !== undefined ? targetUnit.effectiveRcs : (targetUnit.rcs !== undefined ? targetUnit.rcs : targetUnit.spec.sigma_0);
     effectiveRcs = Math.max(0.0001, effectiveRcs * aspectMultiplier);
     let maxDetectDist = baseR0 * Math.pow(effectiveRcs, 0.25);
 
@@ -102,7 +118,7 @@ const Physics = {
 
     const cloudHits = Physics.countIntersectingClouds(sensorUnit.x, sensorUnit.y, targetUnit.x, targetUnit.y, weatherClouds);
     if (cloudHits > 0) {
-      const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.08;
+      const atten = window.CONFIG.CLOUD_RADAR_ATTENUATION;
       maxDetectDist *= Math.pow(1.0 - atten, cloudHits);
     }
     return maxDetectDist;
@@ -114,7 +130,10 @@ const Physics = {
   },
 
   calcPk(weapon, attacker, target, weatherClouds) {
-    if (!weapon || !attacker || !target || target.hp <= 0 || isNaN(target.x) || isNaN(attacker.x)) {
+    if (!weapon) throw new Error('Physics.calcPk requires weapon parameter.');
+    if (!attacker) throw new Error('Physics.calcPk requires attacker parameter.');
+
+    if (!target || target.hp <= 0 || isNaN(target.x) || isNaN(attacker.x)) {
       return { pk: 0, label: 'NO TARGET', color: '#64748b', arrow: '--', desc: 'Select target', salvoCount: 0, hasMixedSeekers: false };
     }
     if (weapon.isJammerPod) {
@@ -128,7 +147,7 @@ const Physics = {
     const cloudHits = Physics.countIntersectingClouds(attacker.x, attacker.y, target.x, target.y, weatherClouds);
 
     if (weapon.isLaser || weapon.seeker === 'DIRECT_ENERGY') {
-      if (dist > (weapon.rangeKm || 9.0)) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist)}km > ${weapon.rangeKm || 9.0}km`, salvoCount: 0, hasMixedSeekers: false };
+      if (dist > weapon.rangeKm) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist)}km > ${weapon.rangeKm}km`, salvoCount: 0, hasMixedSeekers: false };
       if (cloudHits > 0) return { pk: Math.max(25, 95 - cloudHits * 25), label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: `${cloudHits} cloud cells scattering beam`, salvoCount: 0, hasMixedSeekers: false };
       return { pk: 95, label: 'DIRECT BEAM', color: '#00f0ff', arrow: '--', desc: 'Speed-of-light directed energy beam', salvoCount: 0, hasMixedSeekers: false };
     }
@@ -140,13 +159,18 @@ const Physics = {
       if (weapon.category === 'A2G' || weapon.isBunkerCracker) return { pk: 0, label: 'GROUND ONLY', color: '#64748b', arrow: '--', desc: 'A2G munition requires ground target', salvoCount: 0, hasMixedSeekers: false };
     }
 
-    if (isNaN(dist) || dist > (weapon.rangeKm || 100)) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist || 0)}km > ${weapon.rangeKm || 100}km Max`, salvoCount: 0, hasMixedSeekers: false };
-    const minR = weapon.minRangeKm || 1.2;
+    if (isNaN(dist) || dist > weapon.rangeKm) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist || 0)}km > ${weapon.rangeKm}km Max`, salvoCount: 0, hasMixedSeekers: false };
+    const minR = weapon.minRangeKm;
+    if (typeof minR !== 'number') throw new Error(`Weapon "${weapon.id}" is missing minRangeKm.`);
     if (dist < minR) return { pk: 15, label: 'TOO CLOSE', color: '#ef4444', arrow: 'v', desc: `Inside arming basket (<${minR}km)`, salvoCount: 0, hasMixedSeekers: false };
 
-    const lambda = (weapon.lambda !== undefined) ? weapon.lambda : 0.40;
-    const pExp = (weapon.p !== undefined) ? weapon.p : 1.0;
-    const normDist = Math.max(0.0, Math.min(1.0, dist / (weapon.rangeKm || 100.0)));
+    const lambda = weapon.lambda;
+    const pExp = weapon.p;
+    if (typeof lambda !== 'number' || typeof pExp !== 'number') {
+      throw new Error(`Weapon "${weapon.id}" is missing kinetic ballistic factors lambda or p.`);
+    }
+
+    const normDist = Math.max(0.0, Math.min(1.0, dist / weapon.rangeKm));
     let rangeScore = Math.max(0.20, 1.0 - lambda * Math.pow(normDist, pExp));
 
     if (weapon.trait === 'DUAL_PULSE_SURGE' && (dist <= 25.0 || normDist >= 0.60)) {
@@ -184,7 +208,6 @@ const Physics = {
       }
     }
 
-    const weatherPenalty = (cloudHits > 0 && isOpticalSeeker) ? Math.min(0.40, cloudHits * 0.15) : 0.0;
     let targetThermalMultiplier = Number(target.thermalBloom !== undefined ? target.thermalBloom : 1.0);
     if (target.irPenalty) targetThermalMultiplier *= (1.0 + target.irPenalty);
     const thermalModifier = isOpticalSeeker ? (targetThermalMultiplier - 1.0) * 0.22 + (aspectDiff < 0.8 ? 0.10 : 0.0) : 0.0;
@@ -201,13 +224,10 @@ const Physics = {
         const isOpt = (s) => (s === 'IIR' || s === 'EO' || s === 'OPT');
         if ((isRf(weapon.seeker) && inbounds.some(m => m.weapon && isOpt(m.weapon.seeker))) || (isOpt(weapon.seeker) && inbounds.some(m => m.weapon && isRf(m.weapon.seeker)))) {
           hasMixedSeekers = true;
-          salvoBonus += 0.25;
+          salvoBonus += window.CONFIG.MIXED_SEEKER_SYNERGY_BONUS;
         }
       }
     }
-
-    const targetAgility = (typeof target.getEffectiveAgility === 'function')
-      ? target.getEffectiveAgility() : ((target.spec && target.spec.AGI_0) ? target.spec.AGI_0 : 0.85);
 
     const isRadarSeeker = (weapon.seeker === 'ARH' || weapon.seeker === 'PASSIVE_RADAR');
     const notchBonus = (target.isNotching && isRadarSeeker)
@@ -221,8 +241,11 @@ const Physics = {
     let effectiveDefense = Math.min(0.50, Math.max(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
-    const basePk = (weapon.T_0 || 0.80) * rangeScore * aspectScore - effectiveDefense + salvoBonus + thermalModifier - offBoresightPenalty;
-    const pkPercent = Math.round(Math.max(15, Math.min(95, (isNaN(basePk) ? 0.50 : basePk) * 100)));
+    const t0 = weapon.T_0;
+    if (typeof t0 !== 'number') throw new Error(`Weapon "${weapon.id}" is missing T_0 base accuracy.`);
+
+    const basePk = t0 * rangeScore * aspectScore - effectiveDefense + salvoBonus + thermalModifier - offBoresightPenalty;
+    const pkPercent = Math.round(Math.max(15, Math.min(95, basePk * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = isClosing ? '^' : 'v';
 
