@@ -163,9 +163,9 @@ Toggle **Inspection Mode** during any mission to access real-time C4ISR telemetr
 
 | Layer | Implementation | Highlights |
 | :--- | :--- | :--- |
-| **Simulation & Physics** | Pure Vanilla JavaScript (ES6+) | Discrete numerical integration, true ProNav guidance, fourth-root radar equation |
-| **Rendering Engine** | HTML5 Canvas 2D | Uncapped 60 FPS rendering and device pixel ratio scaling |
-| **Audio Architecture** | Web Audio API | 100% procedural sound synthesis (turbines, cannon bursts, rocket motors, RWR tones) |
+| **Simulation & Physics** | Pure Vanilla JavaScript (ES6+) | Discrete numerical integration, true ProNav guidance, radar physics |
+| **Rendering Engine** | HTML5 Canvas 2D | Smooth 200+ FPS rendering |
+| **Audio Architecture** | Web Audio API | 100% procedural sound synthesis |
 | **User Interface** | Modular Vanilla CSS | Pitch-black liquid-glass theme, responsive flex/grid layouts, SVG icons|
 | **Data Persistence** | Client-Side Web Storage | Full sortie replays, custom aircraft presets |
 | **Dependencies** | None (Zero Dependencies) | Zero third-party runtime frameworks or build steps |
