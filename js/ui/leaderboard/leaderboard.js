@@ -5,9 +5,6 @@
 class LeaderboardUI {
   static init() {
     const btnProc = document.getElementById('btn-proc-leaderboard');
-    const btnClose = document.getElementById('btn-close-leaderboard');
-    const modal = document.getElementById('leaderboard-modal');
-
     if (btnProc) {
       btnProc.onclick = (e) => {
         e.preventDefault();
@@ -15,6 +12,16 @@ class LeaderboardUI {
         LeaderboardUI.open();
       };
     }
+  }
+
+  static ensureModal() {
+    if (document.getElementById('leaderboard-modal')) return;
+    if (window.ModalPanelsTemplates && typeof window.ModalPanelsTemplates.ensure === 'function') {
+      window.ModalPanelsTemplates.ensure('leaderboard-modal');
+    }
+
+    const btnClose = document.getElementById('btn-close-leaderboard');
+    const modal = document.getElementById('leaderboard-modal');
 
     if (btnClose) {
       btnClose.onclick = (e) => {
@@ -32,6 +39,7 @@ class LeaderboardUI {
   }
 
   static open() {
+    this.ensureModal();
     const modal = document.getElementById('leaderboard-modal');
     if (!modal) return;
     if (window.Game && window.Game.controls) window.Game.controls.autoPauseOnDialogOpen();
@@ -51,6 +59,7 @@ class LeaderboardUI {
   }
 
   static render() {
+    this.ensureModal();
     const tableContainer = document.getElementById('leaderboard-list-table');
     const detailContainer = document.getElementById('leaderboard-detail-view');
     if (!tableContainer || !detailContainer) return;
@@ -88,15 +97,7 @@ class LeaderboardUI {
 
     tableContainer.innerHTML = `
       <table class="leaderboard-table">
-        <thead>
-          <tr>
-            <th>RANK</th>
-            <th>UNIT &amp; DATE</th>
-            <th>TIER</th>
-            <th>TIME</th>
-            <th style="text-align:right;">FINAL SCORE</th>
-          </tr>
-        </thead>
+        <thead><tr><th>RANK</th><th>UNIT &amp; DATE</th><th>TIER</th><th>TIME</th><th style="text-align:right;">FINAL SCORE</th></tr></thead>
         <tbody>${rowsHtml}</tbody>
       </table>`;
 

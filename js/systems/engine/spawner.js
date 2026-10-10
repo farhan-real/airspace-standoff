@@ -1,8 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Sortie Spawner Submodule
- * Prepares squadrons, surface defenses, and arena dimensions for combat sorties.
- * In Two Player mode, mirrors the player roster identically using the Player 1 formation
- * generator with re-randomized slot placements, anchoring the Lead in the center and drones at the corners.
+ * Prepares squadrons, surface defenses, and transitions cleanly between Hangar and Battle modes.
  */
 
 class SortieSpawner {
@@ -32,7 +30,19 @@ class SortieSpawner {
       game.updateModeIndicator();
     }
     if (game.procurement) game.procurement.updateUI();
-    ['system-inspect-modal', 'glossary-modal', 'settings-modal', 'rwr-briefing-modal', 'abort-confirm-modal', 'game-over-modal', 'procurement-modal', 'pause-modal'].forEach(id => {
+
+    // Hide procurement hangar and reveal battle UI
+    const procModal = document.getElementById('procurement-modal');
+    const hudContainer = document.getElementById('hud-container');
+    if (procModal) {
+      procModal.classList.remove('active');
+      procModal.classList.add('hidden');
+    }
+    if (hudContainer) {
+      hudContainer.classList.remove('hidden');
+    }
+
+    ['system-inspect-modal', 'glossary-modal', 'settings-modal', 'rwr-briefing-modal', 'abort-confirm-modal', 'game-over-modal', 'pause-modal'].forEach(id => {
       const m = document.getElementById(id); if (m) m.classList.remove('active');
     });
 

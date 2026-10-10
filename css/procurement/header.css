@@ -110,7 +110,7 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  transition: all 0.16s ease;
+  transition: transform 0.14s ease, border-color 0.14s ease;
   gap: 6px;
   background: var(--glass-3d-btn-bg);
   border: 1px solid var(--glass-border);
@@ -188,7 +188,7 @@
   color: #ffffff;
   border-color: var(--theme-accent);
   border-top-color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 10px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 8px var(--theme-primary-glow);
 }
 
 .ai-config-group {
@@ -285,19 +285,6 @@
   box-shadow: var(--glass-3d-well-shadow);
 }
 
-.is-android .procurement-header,
-.is-android .squad-callsign-tag,
-.is-android .proc-manual-btn,
-.is-android .proc-leaderboard-btn,
-.is-android .proc-settings-btn,
-.is-android .proc-exit-btn,
-.is-android .segmented-control,
-.is-android .budget-display {
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-  background: #000000 !important;
-}
-
 @media (max-width: 1024px) {
   .procurement-header { padding-bottom: 4px; gap: 4px; }
   .game-name { font-size: 1.02rem; }
@@ -315,15 +302,6 @@
     font-size: 0.68rem;
     height: 28px;
     gap: 4px;
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background: #000000 !important;
-  }
-  .segmented-control,
-  .budget-display {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background: #000000 !important;
   }
   .mode-and-ai-controls { gap: 4px; flex-wrap: wrap; overflow: visible; }
   .seg-btn { padding: 3px 6px; font-size: 0.66rem; }

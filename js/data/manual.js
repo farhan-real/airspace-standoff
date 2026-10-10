@@ -29,23 +29,6 @@ window.TACTICAL_FLIGHT_MANUAL = [
 window.FLIGHT_MANUAL = window.TACTICAL_FLIGHT_MANUAL;
 
 window.initTacticalManual = function() {
-  if (!document.getElementById('glossary-modal') && window.ModalPanelsTemplates && typeof window.ModalPanelsTemplates.install === 'function') {
-    window.ModalPanelsTemplates.install();
-  }
-
-  const container = document.getElementById('glossary-modal-content');
-  const searchInput = document.getElementById('manual-search-filter');
-  const searchActions = document.getElementById('manual-search-actions');
-  const countEl = document.getElementById('manual-search-count');
-  const prevBtn = document.getElementById('btn-manual-search-prev');
-  const nextBtn = document.getElementById('btn-manual-search-next');
-  const clearBtn = document.getElementById('btn-manual-search-clear');
-  const navPrevBtn = document.getElementById('btn-manual-nav-prev');
-  const navNextBtn = document.getElementById('btn-manual-nav-next');
-  const openHangarBtn = document.getElementById('btn-open-glossary');
-  const openHudBtn = document.getElementById('btn-hud-glossary');
-  const closeBtn = document.getElementById('btn-close-glossary');
-
   const chapters = [
     { id: 'ch1_quickstart', label: '01: DOCTRINE & ROE' },
     { id: 'ch2_kinematics', label: '02: KINEMATICS & POWER' },
@@ -65,6 +48,14 @@ window.initTacticalManual = function() {
   let currentMatches = [];
   let currentMatchIndex = 0;
   let lastQuery = null;
+
+  const ensureModal = () => {
+    if (document.getElementById('glossary-modal')) return;
+    if (window.ModalPanelsTemplates && typeof window.ModalPanelsTemplates.ensure === 'function') {
+      window.ModalPanelsTemplates.ensure('glossary-modal');
+    }
+    bindModalElements();
+  };
 
   const scrollToTarget = (targetEl) => {
     const c = document.getElementById('glossary-modal-content');
@@ -159,6 +150,7 @@ window.initTacticalManual = function() {
   };
 
   const renderChapters = (filterQuery = '', shouldScrollToMatch = false) => {
+    ensureModal();
     const c = document.getElementById('glossary-modal-content');
     const act = document.getElementById('manual-search-actions');
     const cnt = document.getElementById('manual-search-count');
@@ -217,8 +209,66 @@ window.initTacticalManual = function() {
     }
   };
 
+  const bindModalElements = () => {
+    const closeBtn = document.getElementById('btn-close-glossary');
+    const mEl = document.getElementById('glossary-modal');
+    const searchInput = document.getElementById('manual-search-filter');
+    const prevBtn = document.getElementById('btn-manual-search-prev');
+    const nextBtn = document.getElementById('btn-manual-search-next');
+    const clearBtn = document.getElementById('btn-manual-search-clear');
+    const navPrevBtn = document.getElementById('btn-manual-nav-prev');
+    const navNextBtn = document.getElementById('btn-manual-nav-next');
+
+    if (closeBtn) closeBtn.onclick = closeModal;
+    if (mEl) mEl.onclick = (e) => { if (e.target === mEl) closeModal(e); };
+
+    if (searchInput) {
+      let debounceTimer = null;
+      searchInput.oninput = (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          renderChapters(e.target.value || '', false);
+        }, 150);
+      };
+
+      searchInput.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (e.shiftKey) jumpToMatch(currentMatchIndex - 1);
+          else jumpToMatch(currentMatchIndex + 1);
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          searchInput.value = '';
+          renderChapters('', false);
+        }
+      };
+    }
+
+    if (prevBtn) prevBtn.onclick = () => jumpToMatch(currentMatchIndex - 1);
+    if (nextBtn) nextBtn.onclick = () => jumpToMatch(currentMatchIndex + 1);
+    if (clearBtn) {
+      clearBtn.onclick = () => {
+        if (searchInput) {
+          searchInput.value = '';
+          renderChapters('', false);
+          searchInput.focus();
+        }
+      };
+    }
+
+    if (navPrevBtn) {
+      const nav = document.getElementById('manual-quick-nav-bar');
+      if (nav) navPrevBtn.onclick = () => nav.scrollBy({ left: -180, behavior: 'smooth' });
+    }
+    if (navNextBtn) {
+      const nav = document.getElementById('manual-quick-nav-bar');
+      if (nav) navNextBtn.onclick = () => nav.scrollBy({ left: 180, behavior: 'smooth' });
+    }
+  };
+
   const openModal = (e) => {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    ensureModal();
     const m = document.getElementById('glossary-modal');
     const c = document.getElementById('glossary-modal-content');
     const sInput = document.getElementById('manual-search-filter');
@@ -237,59 +287,10 @@ window.initTacticalManual = function() {
   window.openTacticalManual = openModal;
   window.closeTacticalManual = closeModal;
 
+  const openHangarBtn = document.getElementById('btn-open-glossary');
+  const openHudBtn = document.getElementById('btn-hud-glossary');
   if (openHangarBtn) openHangarBtn.onclick = openModal;
   if (openHudBtn) openHudBtn.onclick = openModal;
-  if (closeBtn) closeBtn.onclick = closeModal;
-
-  const mEl = document.getElementById('glossary-modal');
-  if (mEl) mEl.onclick = (e) => { if (e.target === mEl) closeModal(e); };
-
-  if (searchInput) {
-    let debounceTimer = null;
-    searchInput.oninput = (e) => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        renderChapters(e.target.value || '', false);
-      }, 150);
-    };
-
-    searchInput.onkeydown = (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        if (e.shiftKey) jumpToMatch(currentMatchIndex - 1);
-        else jumpToMatch(currentMatchIndex + 1);
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        searchInput.value = '';
-        renderChapters('', false);
-      }
-    };
-  }
-
-  if (prevBtn) prevBtn.onclick = () => jumpToMatch(currentMatchIndex - 1);
-  if (nextBtn) nextBtn.onclick = () => jumpToMatch(currentMatchIndex + 1);
-  if (clearBtn) {
-    clearBtn.onclick = () => {
-      if (searchInput) {
-        searchInput.value = '';
-        renderChapters('', false);
-        searchInput.focus();
-      }
-    };
-  }
-
-  if (navPrevBtn) {
-    const nav = document.getElementById('manual-quick-nav-bar');
-    if (nav) navPrevBtn.onclick = () => nav.scrollBy({ left: -180, behavior: 'smooth' });
-  }
-  if (navNextBtn) {
-    const nav = document.getElementById('manual-quick-nav-bar');
-    if (nav) navNextBtn.onclick = () => nav.scrollBy({ left: 180, behavior: 'smooth' });
-  }
-
-  if (container && container.children.length === 0) {
-    renderChapters('', false);
-  }
 };
 
 if (document.readyState === 'loading') {

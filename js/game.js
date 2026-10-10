@@ -12,8 +12,6 @@ if (typeof navigator !== 'undefined') {
 
 class AirspaceStandoffGame {
   constructor() {
-    this.installModalDOMTemplates();
-
     if (!window.CONFIG) {
       throw new Error('CONFIG is not loaded. Ensure constants.js is loaded prior to game.js.');
     }
@@ -119,14 +117,6 @@ class AirspaceStandoffGame {
     this.updateModeIndicator();
   }
 
-  installModalDOMTemplates() {
-    if (window.ModalDialogTemplates && typeof window.ModalDialogTemplates.install === 'function') window.ModalDialogTemplates.install();
-    if (window.ModalEditorTemplate && typeof window.ModalEditorTemplate.install === 'function') window.ModalEditorTemplate.install();
-    if (window.ModalDebriefTemplate && typeof window.ModalDebriefTemplate.install === 'function') window.ModalDebriefTemplate.install();
-    if (window.ModalPanelsTemplates && typeof window.ModalPanelsTemplates.install === 'function') window.ModalPanelsTemplates.install();
-    if (typeof window.initTacticalManual === 'function') window.initTacticalManual();
-  }
-
   saveGameplaySettings() {
     if (!window.Persistence || typeof window.Persistence.saveGameplaySettings !== 'function') return;
     window.Persistence.saveGameplaySettings({
@@ -213,6 +203,18 @@ class AirspaceStandoffGame {
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
+  returnToHangar() {
+    if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
+    const hudContainer = document.getElementById('hud-container');
+    const procModal = document.getElementById('procurement-modal');
+    if (hudContainer) hudContainer.classList.add('hidden');
+    if (procModal) {
+      procModal.classList.remove('hidden');
+      procModal.classList.add('active');
+    }
+    if (this.procurement) this.procurement.updateUI();
+  }
+
   scrambleFlight() {
     if (typeof AudioSys !== 'undefined') AudioSys.ensureContext();
     if (typeof SortieSpawner === 'undefined') throw new Error('SortieSpawner is not loaded.');
@@ -228,6 +230,17 @@ class AirspaceStandoffGame {
     let mfdThrottle = 0;
     let rosterThrottle = 0;
 
+    const renderPayload = {
+      alliedAircraft: this.alliedAircraft,
+      hostileAircraft: this.hostileAircraft,
+      surfaceUnits: this.surfaceUnits,
+      missiles: this.missiles,
+      activeUnit: null,
+      selectedTarget: null,
+      inspectionEntity: null,
+      inspectionMode: false
+    };
+
     const loop = (currTime) => {
       const dt = Math.min(0.08, (currTime - lastTime) / 1000.0);
       lastTime = currTime;
@@ -236,16 +249,12 @@ class AirspaceStandoffGame {
         this.simulation.step(dt);
       }
 
-      this.radar.render({
-        alliedAircraft: this.alliedAircraft,
-        hostileAircraft: this.hostileAircraft,
-        surfaceUnits: this.surfaceUnits,
-        missiles: this.missiles,
-        activeUnit: this.activeUnit,
-        selectedTarget: this.selectedTarget,
-        inspectionEntity: this.inspection && this.inspection.isOpen ? this.inspection.selectedEntity : null,
-        inspectionMode: Boolean(this.inspection && this.inspection.isOpen)
-      });
+      renderPayload.activeUnit = this.activeUnit;
+      renderPayload.selectedTarget = this.selectedTarget;
+      renderPayload.inspectionEntity = this.inspection && this.inspection.isOpen ? this.inspection.selectedEntity : null;
+      renderPayload.inspectionMode = Boolean(this.inspection && this.inspection.isOpen);
+
+      this.radar.render(renderPayload);
 
       mfdThrottle += dt;
       if (mfdThrottle >= 0.10) {

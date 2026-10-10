@@ -2,8 +2,8 @@
 
 :root {
   --bg-dark: var(--color-pitch-black);
-  --bg-panel: rgba(4, 9, 22, 0.88);
-  --bg-panel-alt: rgba(3, 7, 18, 0.84);
+  --bg-panel: rgba(4, 9, 22, 0.94);
+  --bg-panel-alt: rgba(3, 7, 18, 0.92);
   --bg-card: var(--glass-3d-card-bg);
   --border-color: var(--glass-border);
   --border-highlight: var(--glass-border-hover);
@@ -17,7 +17,6 @@
   --safe-bottom: 0px;
   --safe-left: 0px;
   --safe-right: 0px;
-
   --safe-zone-inset: 0px;
 }
 
@@ -128,16 +127,14 @@ body.pseudo-fullscreen #procurement-modal {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.88) !important;
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: rgba(0, 0, 0, 0.90) !important;
   z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.15s ease-out;
   transform: translateZ(0);
   padding: 8px;
   box-sizing: border-box;
@@ -150,8 +147,6 @@ body.pseudo-fullscreen #procurement-modal {
 
 .hud-btn {
   background: var(--glass-3d-btn-bg);
-  -webkit-backdrop-filter: var(--glass-filter);
-  backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   color: #ffffff;
@@ -167,7 +162,7 @@ body.pseudo-fullscreen #procurement-modal {
   gap: 6px;
   letter-spacing: 0.3px;
   box-shadow: var(--glass-3d-btn-shadow);
-  transition: all 0.16s ease;
+  transition: all 0.14s ease;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -182,7 +177,7 @@ body.pseudo-fullscreen #procurement-modal {
 }
 
 .hud-btn:hover:not(:disabled) .btn-vector-ico {
-  transform: scale(1.12);
+  transform: scale(1.10);
   filter: drop-shadow(0 0 6px var(--theme-accent));
 }
 
@@ -201,7 +196,7 @@ body.pseudo-fullscreen #procurement-modal {
   border-top-color: #ffffff;
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 6px 18px rgba(0, 0, 0, 0.7), 0 0 14px var(--theme-primary-dim);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 4px 14px rgba(0, 0, 0, 0.7);
 }
 
 .hud-btn:active:not(:disabled) {
@@ -227,40 +222,32 @@ body.pseudo-fullscreen #procurement-modal {
 }
 
 .hud-btn.alert {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.28) 0%, rgba(136, 19, 55, 0.45) 100%), rgba(20, 4, 10, 0.85);
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.28) 0%, rgba(136, 19, 55, 0.45) 100%), #14040a;
   border-color: rgba(244, 63, 94, 0.45);
   border-top-color: rgba(255, 140, 165, 0.55);
   color: #fecdd3;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 12px rgba(244, 63, 94, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 10px rgba(244, 63, 94, 0.30);
 }
 
 .hud-btn.alert:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.42) 0%, rgba(136, 19, 55, 0.60) 100%), rgba(30, 6, 14, 0.90);
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.42) 0%, rgba(136, 19, 55, 0.60) 100%), #1e060e;
   border-color: #f43f5e;
   border-top-color: #ffffff;
   color: #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff, 0 0 18px rgba(244, 63, 94, 0.6);
+  box-shadow: inset 0 1px 0 #ffffff, 0 0 16px rgba(244, 63, 94, 0.55);
 }
 
 .hud-btn.highlight {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(2, 132, 199, 0.25) 50%, rgba(3, 105, 161, 0.45) 100%), rgba(2, 12, 30, 0.88);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(2, 132, 199, 0.25) 50%, rgba(3, 105, 161, 0.45) 100%), #020c1e;
   border-color: var(--theme-primary);
   border-top-color: var(--color-ice-highlight);
   color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 16px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 0 14px var(--theme-primary-glow);
 }
 
 .hud-btn.highlight:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.55) 0%, rgba(2, 132, 199, 0.38) 50%, rgba(3, 105, 161, 0.60) 100%), rgba(3, 18, 44, 0.92);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.55) 0%, rgba(2, 132, 199, 0.38) 50%, rgba(3, 105, 161, 0.60) 100%), #03122c;
   border-color: #ffffff;
   color: #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff, 0 0 24px var(--theme-primary-glow);
-}
-
-@media (max-width: 1024px) {
-  .modal-backdrop {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background: #000000 !important;
-  }
+  box-shadow: inset 0 1px 0 #ffffff, 0 0 20px var(--theme-primary-glow);
 }

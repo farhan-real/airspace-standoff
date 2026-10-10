@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Master Theme Tokens - Aerospace Obsidian Glass on Pitch Black */
+/* AIRSPACE STANDOFF: Master Theme Tokens - High-Performance Aerospace Obsidian Glass */
 
 :root {
   /* Pitch Black Deep Base */
@@ -10,12 +10,12 @@
   --theme-primary: #0284c7;
   --theme-primary-hover: #0ea5e9;
   --theme-primary-active: #38bdf8;
-  --theme-primary-glow: rgba(56, 189, 248, 0.50);
+  --theme-primary-glow: rgba(56, 189, 248, 0.45);
   --theme-primary-dim: rgba(2, 132, 199, 0.22);
 
   --theme-accent: #38bdf8;
   --theme-accent-hover: #7dd3fc;
-  --theme-accent-glow: rgba(56, 189, 248, 0.60);
+  --theme-accent-glow: rgba(56, 189, 248, 0.55);
 
   --color-ice-highlight: #ffffff;
   --color-frost-glow: #e0f2fe;
@@ -38,45 +38,45 @@
   --stat-tier-4: #f97316;
   --stat-tier-5: #f43f5e;
 
-  /* Aerospace Obsidian Liquid Glass System - Ambient 135deg Glass Sheen */
-  --liquid-glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 45%, rgba(56, 189, 248, 0.05) 100%), rgba(4, 9, 22, 0.84);
-  --liquid-glass-bg-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 45%, rgba(56, 189, 248, 0.09) 100%), rgba(6, 14, 32, 0.88);
-  --liquid-glass-border: rgba(255, 255, 255, 0.16);
-  --liquid-glass-border-top: rgba(255, 255, 255, 0.42);
-  --liquid-glass-border-bottom: rgba(0, 0, 0, 0.65);
+  /* High-Performance Obsidian Glass System: Zero-Blur Specular Shading */
+  --liquid-glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 45%, rgba(56, 189, 248, 0.05) 100%), #040916;
+  --liquid-glass-bg-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 45%, rgba(56, 189, 248, 0.09) 100%), #081226;
+  --liquid-glass-border: rgba(255, 255, 255, 0.14);
+  --liquid-glass-border-top: rgba(255, 255, 255, 0.38);
+  --liquid-glass-border-bottom: rgba(0, 0, 0, 0.75);
   --liquid-glass-border-hover: rgba(56, 189, 248, 0.55);
-  --liquid-glass-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.28), inset 0 0 16px 0 rgba(56, 189, 248, 0.04), 0 8px 26px 0 rgba(0, 0, 0, 0.85);
-  --liquid-glass-filter: blur(14px);
+  --liquid-glass-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.22), 0 4px 16px 0 rgba(0, 0, 0, 0.75);
+  --liquid-glass-filter: none;
 
-  /* Obsidian Glass Card Tokens - Uniform Ambient Glass Sheen */
-  --glass-3d-card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.018) 45%, rgba(56, 189, 248, 0.035) 100%), rgba(5, 11, 26, 0.86);
-  --glass-3d-card-border: rgba(255, 255, 255, 0.15);
-  --glass-3d-card-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.24), inset 0 0 14px rgba(56, 189, 248, 0.04), 0 8px 24px rgba(0, 0, 0, 0.85);
-  --glass-3d-card-hover-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.42), 0 12px 32px rgba(0, 0, 0, 0.90), 0 0 18px rgba(56, 189, 248, 0.25);
+  /* Obsidian Glass Card Tokens */
+  --glass-3d-card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 45%, rgba(56, 189, 248, 0.04) 100%), #050b1a;
+  --glass-3d-card-border: rgba(255, 255, 255, 0.14);
+  --glass-3d-card-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.20), 0 4px 14px rgba(0, 0, 0, 0.70);
+  --glass-3d-card-hover-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 6px 18px rgba(0, 0, 0, 0.85), 0 0 14px rgba(56, 189, 248, 0.20);
 
   /* Recessed Obsidian Wells */
-  --glass-3d-well-bg: rgba(2, 5, 14, 0.88);
-  --glass-3d-well-border: rgba(56, 189, 248, 0.14);
-  --glass-3d-well-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --glass-3d-well-bg: #020612;
+  --glass-3d-well-border: rgba(56, 189, 248, 0.15);
+  --glass-3d-well-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.85);
 
-  /* Tactile Obsidian Glass Buttons - Multi-Angle Glass Sheen */
-  --glass-3d-btn-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(56, 189, 248, 0.05) 100%), rgba(4, 10, 24, 0.86);
-  --glass-3d-btn-bg-hover: linear-gradient(135deg, rgba(56, 189, 248, 0.26) 0%, rgba(2, 132, 199, 0.14) 50%, rgba(255, 255, 255, 0.08) 100%), rgba(6, 16, 36, 0.92);
-  --glass-3d-btn-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.70);
-  --glass-3d-btn-active-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.85);
+  /* Tactile Obsidian Glass Buttons */
+  --glass-3d-btn-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(56, 189, 248, 0.05) 100%), #061024;
+  --glass-3d-btn-bg-hover: linear-gradient(135deg, rgba(56, 189, 248, 0.24) 0%, rgba(2, 132, 199, 0.15) 50%, rgba(255, 255, 255, 0.08) 100%), #0a1836;
+  --glass-3d-btn-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 2px 8px rgba(0, 0, 0, 0.60);
+  --glass-3d-btn-active-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.85);
 
   /* General Glass Aliases */
   --glass-bg: var(--liquid-glass-bg);
   --glass-bg-hover: var(--liquid-glass-bg-hover);
   --glass-bg-elevated: rgba(255, 255, 255, 0.08);
   --glass-bg-active: rgba(56, 189, 248, 0.22);
-  --glass-bg-modal: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.015) 40%, rgba(56, 189, 248, 0.04) 100%), rgba(3, 7, 18, 0.95);
+  --glass-bg-modal: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(56, 189, 248, 0.04) 100%), #030713;
   --glass-border: var(--liquid-glass-border);
   --glass-border-hover: var(--liquid-glass-border-hover);
   --glass-border-active: rgba(56, 189, 248, 0.65);
-  --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.30);
+  --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
   --glass-shadow: var(--liquid-glass-shadow);
-  --glass-filter: var(--liquid-glass-filter);
+  --glass-filter: none;
 
   /* Modern Radii */
   --radius-btn: 7px;

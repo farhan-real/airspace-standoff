@@ -9,10 +9,20 @@ class PreconfigModalController {
     this.airframe = 'ALL';
     this.search = '';
     this.sort = 'DEFAULT';
+    this._listenersBound = false;
+  }
+
+  ensureModal() {
+    if (document.getElementById('preconfig-aircraft-modal')) return;
+    if (window.ModalPanelsTemplates && typeof window.ModalPanelsTemplates.ensure === 'function') {
+      window.ModalPanelsTemplates.ensure('preconfig-aircraft-modal');
+    }
     this.initListeners();
   }
 
   initListeners() {
+    if (this._listenersBound) return;
+    this._listenersBound = true;
     const modal = document.getElementById('preconfig-aircraft-modal');
     const closeBtn = document.getElementById('btn-close-preconfig');
     if (closeBtn && modal) {
@@ -85,6 +95,7 @@ class PreconfigModalController {
   }
 
   open() {
+    this.ensureModal();
     const modal = document.getElementById('preconfig-aircraft-modal');
     if (!modal) return;
     if (this.pm.game.controls) this.pm.game.controls.autoPauseOnDialogOpen();
@@ -110,6 +121,7 @@ class PreconfigModalController {
   }
 
   renderGrid() {
+    this.ensureModal();
     const grid = document.getElementById('preconfig-cards-grid');
     if (!grid) return;
     grid.innerHTML = '';

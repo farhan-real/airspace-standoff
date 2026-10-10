@@ -61,6 +61,12 @@ class SimulationSystem {
   }
 
   togglePause() {
+    if (window.ModalDialogTemplates && typeof window.ModalDialogTemplates.ensure === 'function') {
+      window.ModalDialogTemplates.ensure('pause-modal');
+      if (this.game && this.game.controls && typeof this.game.controls.bindPauseModalEvents === 'function') {
+        this.game.controls.bindPauseModalEvents();
+      }
+    }
     this.setTimeWarp(this.isPaused ? this.timeWarp : 0);
     const pModal = document.getElementById('pause-modal');
     if (pModal) pModal.classList.toggle('active', this.isPaused);

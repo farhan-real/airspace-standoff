@@ -1,15 +1,18 @@
 /* AIRSPACE STANDOFF: Procurement Hangar Window & Layout */
 
+#procurement-modal {
+  background: #000000 !important;
+}
+
 .procurement-modal,
 .procurement-window {
   width: 98vw;
   max-width: 1760px;
   height: 98vh;
-  max-height: 98vh;
+  height: 98dvh;
+  max-height: 98dvh;
   min-height: 500px;
-  background-color: var(--glass-bg-modal);
-  -webkit-backdrop-filter: var(--glass-filter);
-  backdrop-filter: var(--glass-filter);
+  background-color: #030713;
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-modal);
@@ -18,7 +21,7 @@
   padding: 10px 14px;
   gap: 8px;
   overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 24px 64px rgba(0, 0, 0, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 16px 48px rgba(0, 0, 0, 0.9);
   transform: translateZ(0);
   box-sizing: border-box;
 }
@@ -53,8 +56,6 @@ body.safe-zone-on .procurement-window {
   border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   background: var(--glass-3d-card-bg);
-  -webkit-backdrop-filter: var(--glass-filter);
-  backdrop-filter: var(--glass-filter);
   border-radius: var(--radius-card);
   padding: 8px;
   overflow: hidden;
@@ -83,14 +84,14 @@ body.safe-zone-on .procurement-window {
   border-radius: var(--radius-btn);
   cursor: pointer;
   letter-spacing: 0.6px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 20px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 0 16px var(--theme-primary-glow);
   transition: all 0.16s ease;
 }
 
 .scramble-btn:hover:not(:disabled) {
   background: rgba(2, 132, 199, 0.7);
   border-color: #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff, 0 0 28px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 #ffffff, 0 0 24px var(--theme-primary-glow);
   transform: translateY(-1px) scale(1.02);
 }
 
@@ -106,31 +107,6 @@ body.safe-zone-on .procurement-window {
   box-shadow: none;
 }
 
-.is-android .procurement-window {
-  width: 100vw;
-  max-width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  max-height: 100dvh;
-  min-height: 100dvh;
-  border-radius: 0;
-  padding: 6px 8px;
-  gap: 4px;
-  overflow-x: hidden;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-  background: #000000 !important;
-  box-shadow: none !important;
-}
-
-.is-android .hanger-shelf,
-.is-android .flight-roster {
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-  background: #000000 !important;
-  box-shadow: none !important;
-}
-
 @media (max-width: 1024px) {
   .procurement-window {
     width: 100vw;
@@ -143,16 +119,12 @@ body.safe-zone-on .procurement-window {
     padding: 6px 8px;
     gap: 4px;
     overflow-x: hidden;
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
     background: #000000 !important;
     box-shadow: none !important;
   }
 
   .hanger-shelf,
   .flight-roster {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
     background: #000000 !important;
     box-shadow: none !important;
   }

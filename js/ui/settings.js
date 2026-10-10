@@ -8,8 +8,9 @@ class SettingsManager {
     this.safeZone = false;
     this.recordingAction = null;
     this.isRecordingKey = false;
+    this._modalBound = false;
     this.loadFromStorage();
-    this.initUI();
+    this.initTriggers();
   }
 
   loadFromStorage() {
@@ -49,32 +50,48 @@ class SettingsManager {
     }
   }
 
-  initUI() {
-    const modal = document.getElementById('settings-modal');
-    const handleOpen = () => {
-      this.renderTabContent();
-      if (modal) modal.classList.add('active');
-      if (this.game.controls) this.game.controls.autoPauseOnDialogOpen();
-    };
-
+  initTriggers() {
     ['btn-open-settings', 'btn-proc-settings'].forEach(id => {
       const btn = document.getElementById(id);
-      if (btn) btn.onclick = handleOpen;
+      if (btn) btn.onclick = () => this.open();
     });
+  }
+
+  ensureModal() {
+    if (document.getElementById('settings-modal')) return;
+    if (window.ModalPanelsTemplates && typeof window.ModalPanelsTemplates.ensure === 'function') {
+      window.ModalPanelsTemplates.ensure('settings-modal');
+    }
+    this.bindModalEvents();
+  }
+
+  open() {
+    this.ensureModal();
+    const modal = document.getElementById('settings-modal');
+    this.renderTabContent();
+    if (modal) modal.classList.add('active');
+    if (this.game.controls) this.game.controls.autoPauseOnDialogOpen();
+  }
+
+  close() {
+    const modal = document.getElementById('settings-modal');
+    if (modal) modal.classList.remove('active');
+    this.cancelRecording();
+    if (this.game.controls) this.game.controls.autoUnpauseOnDialogClose();
+  }
+
+  bindModalEvents() {
+    if (this._modalBound) return;
+    this._modalBound = true;
+    const modal = document.getElementById('settings-modal');
 
     const closeBtn = document.getElementById('btn-close-settings');
-    if (closeBtn) closeBtn.onclick = () => {
-      if (modal) modal.classList.remove('active');
-      this.cancelRecording();
-      if (this.game.controls) this.game.controls.autoUnpauseOnDialogClose();
-    };
+    if (closeBtn) closeBtn.onclick = () => this.close();
 
     const saveBtn = document.getElementById('btn-save-settings');
     if (saveBtn) saveBtn.onclick = () => {
       this.saveToStorage();
-      if (modal) modal.classList.remove('active');
-      this.cancelRecording();
-      if (this.game.controls) this.game.controls.autoUnpauseOnDialogClose();
+      this.close();
     };
 
     const resetBtn = document.getElementById('btn-reset-keybinds');
@@ -86,14 +103,16 @@ class SettingsManager {
       this.renderTabContent();
     };
 
-    document.querySelectorAll('.settings-tab-btn').forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll('.settings-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        this.currentTab = btn.dataset.stab;
-        this.renderTabContent();
-      };
-    });
+    if (modal) {
+      modal.querySelectorAll('.settings-tab-btn').forEach(btn => {
+        btn.onclick = () => {
+          modal.querySelectorAll('.settings-tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          this.currentTab = btn.dataset.stab;
+          this.renderTabContent();
+        };
+      });
+    }
 
     window.addEventListener('keydown', (e) => {
       if (!this.isRecordingKey || !this.recordingAction) return;
@@ -110,6 +129,7 @@ class SettingsManager {
   }
 
   renderTabContent() {
+    this.ensureModal();
     const container = document.getElementById('settings-tab-content');
     if (!container) return;
     container.innerHTML = '';
@@ -178,34 +198,16 @@ class SettingsManager {
     const f = Math.round(AudioSys.fxVolume * 100);
     container.innerHTML = `
       <div class="settings-form-row">
-        <div class="settings-label-group">
-          <label>MASTER AUDIO BUS</label>
-          <span class="settings-hint">Primary audio output volume level</span>
-        </div>
-        <div class="slider-val-box">
-          <input type="range" id="vol-master" min="0" max="100" value="${m}" class="settings-slider">
-          <b id="val-master" class="slider-num">${m}%</b>
-        </div>
+        <div class="settings-label-group"><label>MASTER AUDIO BUS</label><span class="settings-hint">Primary audio output volume level</span></div>
+        <div class="slider-val-box"><input type="range" id="vol-master" min="0" max="100" value="${m}" class="settings-slider"><b id="val-master" class="slider-num">${m}%</b></div>
       </div>
       <div class="settings-form-row">
-        <div class="settings-label-group">
-          <label>RWR THREAT TONES</label>
-          <span class="settings-hint">Radar sweep and lock warning audio buzzers</span>
-        </div>
-        <div class="slider-val-box">
-          <input type="range" id="vol-rwr" min="0" max="100" value="${r}" class="settings-slider">
-          <b id="val-rwr" class="slider-num">${r}%</b>
-        </div>
+        <div class="settings-label-group"><label>RWR THREAT TONES</label><span class="settings-hint">Radar sweep and lock warning audio buzzers</span></div>
+        <div class="slider-val-box"><input type="range" id="vol-rwr" min="0" max="100" value="${r}" class="settings-slider"><b id="val-rwr" class="slider-num">${r}%</b></div>
       </div>
       <div class="settings-form-row">
-        <div class="settings-label-group">
-          <label>COMBAT SFX</label>
-          <span class="settings-hint">Missile launches, autocannon fire, and detonations</span>
-        </div>
-        <div class="slider-val-box">
-          <input type="range" id="vol-fx" min="0" max="100" value="${f}" class="settings-slider">
-          <b id="val-fx" class="slider-num">${f}%</b>
-        </div>
+        <div class="settings-label-group"><label>COMBAT SFX</label><span class="settings-hint">Missile launches, autocannon fire, and detonations</span></div>
+        <div class="slider-val-box"><input type="range" id="vol-fx" min="0" max="100" value="${f}" class="settings-slider"><b id="val-fx" class="slider-num">${f}%</b></div>
       </div>`;
 
     const bindSlider = (id, valId, setter) => {
@@ -224,50 +226,29 @@ class SettingsManager {
 
     container.innerHTML = `
       <div class="settings-form-row">
-        <div class="settings-label-group">
-          <label>FULLSCREEN DISPLAY</label>
-          <span class="settings-hint">Toggle full screen immersion across mobile, tablet or desktop</span>
-        </div>
-        <button type="button" id="btn-cfg-fullscreen" class="hud-btn ${isFullscreenActive ? 'highlight' : ''}">
-          ${isFullscreenActive ? 'EXIT FULL' : 'FULLSCREEN'}
-        </button>
+        <div class="settings-label-group"><label>FULLSCREEN DISPLAY</label><span class="settings-hint">Toggle full screen immersion across mobile, tablet or desktop</span></div>
+        <button type="button" id="btn-cfg-fullscreen" class="hud-btn ${isFullscreenActive ? 'highlight' : ''}">${isFullscreenActive ? 'EXIT FULL' : 'FULLSCREEN'}</button>
       </div>
       <div class="settings-form-row">
-        <div class="settings-label-group">
-          <label>CAMERA CUTOUT &amp; SAFE ZONE</label>
-          <span class="settings-hint">Pad viewport inwards to prevent phone camera notch overlap</span>
-        </div>
-        <button type="button" id="btn-toggle-safe-zone" class="hud-btn ${this.safeZone ? 'highlight' : ''}">
-          ${this.safeZone ? 'SAFE ZONE: ON' : 'SAFE ZONE: OFF'}
-        </button>
+        <div class="settings-label-group"><label>CAMERA CUTOUT &amp; SAFE ZONE</label><span class="settings-hint">Pad viewport inwards to prevent phone camera notch overlap</span></div>
+        <button type="button" id="btn-toggle-safe-zone" class="hud-btn ${this.safeZone ? 'highlight' : ''}">${this.safeZone ? 'SAFE ZONE: ON' : 'SAFE ZONE: OFF'}</button>
       </div>
       <div class="settings-form-row">
-        <div class="settings-label-group">
-          <label>VIEWPORT ZOOM</label>
-          <span class="settings-hint">Current tactical radar magnification scale</span>
-        </div>
+        <div class="settings-label-group"><label>VIEWPORT ZOOM</label><span class="settings-hint">Current tactical radar magnification scale</span></div>
         <span class="slider-num" style="color:#38bdf8;">${curZoom}x</span>
       </div>
       <div class="settings-form-row">
-        <div class="settings-label-group">
-          <label>CENTER ACTIVE AIRCRAFT</label>
-          <span class="settings-hint">Lock camera tracking directly onto selected fighter</span>
-        </div>
+        <div class="settings-label-group"><label>CENTER ACTIVE AIRCRAFT</label><span class="settings-hint">Lock camera tracking directly onto selected fighter</span></div>
         <button type="button" id="btn-cfg-center" class="hud-btn small">TRACK [C]</button>
       </div>
       <div class="settings-form-row">
-        <div class="settings-label-group">
-          <label>RESET VIEWPORT</label>
-          <span class="settings-hint">Restore default panoramic 150km &times; 100km theater view</span>
-        </div>
+        <div class="settings-label-group"><label>RESET VIEWPORT</label><span class="settings-hint">Restore default panoramic 150km &times; 100km theater view</span></div>
         <button type="button" id="btn-cfg-reset-cam" class="hud-btn small">RESET [0]</button>
       </div>`;
 
     const fsBtn = container.querySelector('#btn-cfg-fullscreen');
     if (fsBtn && this.game.controls && this.game.controls.fullscreen) {
-      fsBtn.onclick = () => {
-        this.game.controls.fullscreen.toggle();
-      };
+      fsBtn.onclick = () => this.game.controls.fullscreen.toggle();
     }
 
     const szBtn = container.querySelector('#btn-toggle-safe-zone');

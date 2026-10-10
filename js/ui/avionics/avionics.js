@@ -8,8 +8,17 @@ class AvionicsUI {
     this.game = gameEngine;
     this.rosterDisplay = new AvionicsRosterDisplay(this);
     this.lastMfdUnitId = null;
+    this._cachedTexts = {};
     this.initRWRInteractions();
     this.initRTBButton();
+  }
+
+  setFastText(el, key, val) {
+    if (!el) return;
+    if (this._cachedTexts[key] !== val) {
+      this._cachedTexts[key] = val;
+      el.textContent = val;
+    }
   }
 
   renderFlightRoster() {
@@ -104,12 +113,14 @@ class AvionicsUI {
     const hudWr = document.getElementById('hud-wr-tag');
 
     if (!u || u.hp <= 0.05) {
-      if (nameEl) nameEl.textContent = 'NO CRAFT SELECTED';
-      if (callsignValEl) { callsignValEl.textContent = '--'; callsignValEl.style.color = '#8494ab'; }
+      this.setFastText(nameEl, 'name', 'NO CRAFT SELECTED');
+      this.setFastText(callsignValEl, 'cs', '--');
+      if (callsignValEl) callsignValEl.style.color = '#8494ab';
       if (coffinTag) coffinTag.classList.add('hidden');
       if (leadTag) leadTag.classList.add('hidden');
       if (aceTag) aceTag.classList.add('hidden');
-      if (stressValEl) { stressValEl.textContent = '0.00'; stressValEl.style.color = '#8494ab'; }
+      this.setFastText(stressValEl, 'stress', '0.00');
+      if (stressValEl) stressValEl.style.color = '#8494ab';
       if (stressFillEl) stressFillEl.style.width = '0%';
       if (glocEl) glocEl.classList.add('hidden');
       if (stressWarnEl) stressWarnEl.classList.add('hidden');
@@ -126,11 +137,10 @@ class AvionicsUI {
     const callsignText = String(u.callsign || 'PILOT').replace(/<[^>]*>/g, '');
     const displayName = window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : `${callsignText} - ${modelName}`;
 
-    if (nameEl) nameEl.textContent = modelName;
-    if (callsignValEl) {
-      callsignValEl.textContent = displayName;
-      callsignValEl.style.color = isFriendly ? '#00f0ff' : '#ff3366';
-    }
+    this.setFastText(nameEl, 'name', modelName);
+    this.setFastText(callsignValEl, 'cs', displayName);
+    if (callsignValEl) callsignValEl.style.color = isFriendly ? '#00f0ff' : '#ff3366';
+
     if (coffinTag) coffinTag.classList.toggle('hidden', !u.isCoffin);
     if (leadTag) leadTag.classList.toggle('hidden', !(u.isFlightLead && !u.isAce));
     if (aceTag) aceTag.classList.toggle('hidden', !u.isAce);
@@ -152,65 +162,64 @@ class AvionicsUI {
     if (deg < 0) deg += 360;
     const cardStr = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(deg / 45) % 8];
 
-    if (hudSpdMain) { hudSpdMain.textContent = 'M ' + machNum.toFixed(2); hudSpdMain.style.color = this.getSpeedColor(machNum, sOpt, u.effectiveMaxSpeed || 1.0); }
-    if (hudSpdArrow) hudSpdArrow.textContent = u.speedTrend || '--';
-    if (hudSpdSub) hudSpdSub.textContent = Math.round(machNum * 1225).toLocaleString() + ' km/h';
+    this.setFastText(hudSpdMain, 'spdM', 'M ' + machNum.toFixed(2));
+    if (hudSpdMain) hudSpdMain.style.color = this.getSpeedColor(machNum, sOpt, u.effectiveMaxSpeed || 1.0);
+    this.setFastText(hudSpdArrow, 'spdA', u.speedTrend || '--');
+    this.setFastText(hudSpdSub, 'spdSub', Math.round(machNum * 1225).toLocaleString() + ' km/h');
 
-    if (hudAltMain) { hudAltMain.textContent = 'FL' + Math.round(u.altFt / 100); hudAltMain.style.color = this.getAltColor(u.altFt); }
-    if (hudAltArrow) hudAltArrow.textContent = u.altTrend || '--';
-    if (hudVsi) {
-      hudVsi.textContent = (fpm > 0 ? '+' : '') + fpm + ' fpm ' + (fpm > 300 ? 'CLIMB' : (fpm < -300 ? 'DIVE' : 'LVL'));
-      hudVsi.style.color = fpm > 300 ? '#00f5a0' : (fpm < -300 ? '#ff3366' : '#8494ab');
-    }
+    this.setFastText(hudAltMain, 'altM', 'FL' + Math.round(u.altFt / 100));
+    if (hudAltMain) hudAltMain.style.color = this.getAltColor(u.altFt);
+    this.setFastText(hudAltArrow, 'altA', u.altTrend || '--');
+    const vsiStr = (fpm > 0 ? '+' : '') + fpm + ' fpm ' + (fpm > 300 ? 'CLIMB' : (fpm < -300 ? 'DIVE' : 'LVL'));
+    this.setFastText(hudVsi, 'vsi', vsiStr);
+    if (hudVsi) hudVsi.style.color = fpm > 300 ? '#00f5a0' : (fpm < -300 ? '#ff3366' : '#8494ab');
 
-    if (hudCallsign) {
-      hudCallsign.textContent = `${callsignText.toUpperCase()}${u.isAce ? ' [ACE]' : (u.isFlightLead ? ' [LEAD]' : '')}`;
-      hudCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00f0ff' : '#ff3366'));
-    }
-    if (hudModel) hudModel.textContent = `${modelName.toUpperCase()} - ${u.spec ? u.spec.role.toUpperCase() : 'AIRCRAFT'}`;
-    if (hudCardinal) hudCardinal.textContent = cardStr;
-    if (hudDeg) hudDeg.textContent = String(deg).padStart(3, '0') + '\u00B0';
+    this.setFastText(hudCallsign, 'hCs', `${callsignText.toUpperCase()}${u.isAce ? ' [ACE]' : (u.isFlightLead ? ' [LEAD]' : '')}`);
+    if (hudCallsign) hudCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00f0ff' : '#ff3366'));
+    this.setFastText(hudModel, 'hMod', `${modelName.toUpperCase()} - ${u.spec ? u.spec.role.toUpperCase() : 'AIRCRAFT'}`);
+    this.setFastText(hudCardinal, 'hCard', cardStr);
+    this.setFastText(hudDeg, 'hDeg', String(deg).padStart(3, '0') + '\u00B0');
 
     if (hudEturn) {
       if (u.isCoffin) {
-        hudEturn.textContent = 'TURN: 100% LOCKED';
+        this.setFastText(hudEturn, 'hTurn', 'TURN: 100% LOCKED');
         hudEturn.style.color = '#c7d2fe';
       } else {
-        hudEturn.textContent = 'TURN: ' + Math.round(eturn * 100) + '%' + (eturn >= 0.88 ? ' OPT' : '');
+        this.setFastText(hudEturn, 'hTurn', 'TURN: ' + Math.round(eturn * 100) + '%' + (eturn >= 0.88 ? ' OPT' : ''));
         hudEturn.style.color = this.getTurnColor(eturn, false);
       }
     }
 
     if (hudWr) {
       const pPct = Math.round((u.Wr || 0) * 100);
-      hudWr.textContent = 'LOAD: ' + pPct + '% ' + (pPct <= 35 ? 'LIGHT' : (pPct <= 60 ? 'NORM' : (pPct <= 80 ? 'HEAVY' : 'OVERLOAD')));
+      this.setFastText(hudWr, 'hWr', 'LOAD: ' + pPct + '% ' + (pPct <= 35 ? 'LIGHT' : (pPct <= 60 ? 'NORM' : (pPct <= 80 ? 'HEAVY' : 'OVERLOAD'))));
       hudWr.style.color = this.getLoadColor(u.Wr || 0);
     }
 
     const pct = Math.round((u.engineAlpha !== undefined ? u.engineAlpha : 0.50) * 100);
     const targetMach = (typeof u.getTargetMach === 'function') ? u.getTargetMach() : (u.speed || 0.85);
 
-    if (slider) {
-      if (document.activeElement !== slider) slider.value = pct;
-      slider.className = 'military-throttle-slider';
+    if (slider && document.activeElement !== slider) {
+      slider.value = pct;
     }
 
     if (alphaLabel) {
       const modeText = pct > 85 ? 'AFTERBURNER' : (pct > 75 ? 'MIL POWER' : (pct > 35 ? 'CRUISE' : 'IDLE'));
-      alphaLabel.textContent = `${pct}% ${modeText} [M ${targetMach.toFixed(2)}]`;
+      this.setFastText(alphaLabel, 'alphaLbl', `${pct}% ${modeText} [M ${targetMach.toFixed(2)}]`);
       alphaLabel.style.color = pct > 85 ? '#f97316' : '#38bdf8';
       alphaLabel.classList.toggle('burner', pct > 85);
     }
 
     if (rtbBtn) {
-      rtbBtn.textContent = u.isRTB ? 'CANCEL RETURN TO BASE' : 'RETURN TO BASE';
+      const rtbText = u.isRTB ? 'CANCEL RETURN TO BASE' : 'RETURN TO BASE';
+      this.setFastText(rtbBtn, 'rtb', rtbText);
       rtbBtn.style.background = u.isRTB ? '#450a0a' : '#064e3b';
       rtbBtn.style.color = u.isRTB ? '#fecdd3' : '#a7f3d0';
     }
 
     const stressVal = u.isCoffin ? 0.0 : (u.stress || 0);
     if (stressValEl) {
-      stressValEl.textContent = u.isCoffin ? 'IMMUNE' : stressVal.toFixed(2);
+      this.setFastText(stressValEl, 'stressNum', u.isCoffin ? 'IMMUNE' : stressVal.toFixed(2));
       stressValEl.style.color = u.isCoffin ? '#6366f1' : this.getStressColor(stressVal);
     }
     if (stressFillEl) stressFillEl.style.width = u.isCoffin ? '0%' : Math.round(stressVal * 100) + '%';
@@ -242,7 +251,7 @@ class AvionicsUI {
     if (lockingThreats.length > 0) {
       const nearest = lockingThreats.reduce((min, m) => m.distanceToTarget < min.distanceToTarget ? m : min, lockingThreats[0]);
       rwrState = nearest.distanceToTarget < 30 ? 'lock' : 'sweep';
-      if (detailEl) detailEl.textContent = `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km`;
+      this.setFastText(detailEl, 'rwrDetail', `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km`);
     } else {
       let hasLocks = false;
       if (activeUnit && activeUnit.hp > 0.05) {
@@ -256,14 +265,17 @@ class AvionicsUI {
         }
       }
       rwrState = hasLocks ? 'lock' : 'clean';
-      if (detailEl) detailEl.textContent = hasLocks ? 'HOSTILE RADAR LOCK ON CRAFT' : 'NO EMISSIONS DETECTED';
+      this.setFastText(detailEl, 'rwrDetail', hasLocks ? 'HOSTILE RADAR LOCK ON CRAFT' : 'NO EMISSIONS DETECTED');
     }
 
     const indicator = document.getElementById('rwr-state');
     if (indicator) {
-      indicator.className = 'rwr-status ' + rwrState;
-      indicator.textContent = (rwrState === 'lock') ? 'RADAR LOCK (WARNING)' :
-                              (rwrState === 'sweep') ? 'RADAR SWEEP' : 'SEARCH CLEAR';
+      if (indicator.className !== 'rwr-status ' + rwrState) {
+        indicator.className = 'rwr-status ' + rwrState;
+      }
+      const rwrLabel = (rwrState === 'lock') ? 'RADAR LOCK (WARNING)' :
+                       (rwrState === 'sweep') ? 'RADAR SWEEP' : 'SEARCH CLEAR';
+      this.setFastText(indicator, 'rwrStateText', rwrLabel);
     }
     if (typeof AudioSys !== 'undefined') AudioSys.updateRWR(rwrState);
   }

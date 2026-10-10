@@ -5,6 +5,9 @@
 
 class DebriefReportSystem {
   static renderSortieSummary(game, blueWon, msg) {
+    if (window.ModalDebriefTemplate && typeof window.ModalDebriefTemplate.ensure === 'function') {
+      window.ModalDebriefTemplate.ensure();
+    }
     const modal = document.getElementById('game-over-modal');
     if (!modal) return;
 
@@ -54,8 +57,7 @@ class DebriefReportSystem {
               <span>EVADED: <b>${p.missilesEvadedCount || 0}</b></span>
               <span>POINTS: <b>${p.scorePoints || 0}</b></span>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
     }
 
@@ -201,6 +203,18 @@ class DebriefReportSystem {
           toggleRosterBtn.textContent = 'EXPAND';
         }
         if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+      };
+    }
+
+    const restartBtn = document.getElementById('btn-restart');
+    if (restartBtn) {
+      restartBtn.onclick = () => {
+        if (window.AfterActionReplay && typeof window.AfterActionReplay.stop === 'function') window.AfterActionReplay.stop();
+        if (window.MissionEditor && typeof window.MissionEditor.restoreBaseSettings === 'function') {
+          window.MissionEditor.restoreBaseSettings(game);
+        }
+        modal.classList.remove('active');
+        game.returnToHangar();
       };
     }
 

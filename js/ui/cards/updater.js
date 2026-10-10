@@ -18,7 +18,11 @@ class PylonCardUpdater {
       const w = item.weapon;
 
       const ammoTag = cardEl.querySelector('.pylon-ammo-counter');
-      if (ammoTag) ammoTag.textContent = isMobile ? `${item.ammo}/${item.maxAmmo}` : `${item.ammo} / ${item.maxAmmo}`;
+      if (ammoTag) {
+        const expectedAmmo = isMobile ? `${item.ammo}/${item.maxAmmo}` : `${item.ammo} / ${item.maxAmmo}`;
+        if (ammoTag.textContent !== expectedAmmo) ammoTag.textContent = expectedAmmo;
+      }
+
       const pkTag = cardEl.querySelector('.pk-value-tag');
       const pkFill = cardEl.querySelector('.pk-progress-fill');
       const fireBtn = cardEl.querySelector('.btn-fire-pylon');
@@ -27,33 +31,39 @@ class PylonCardUpdater {
       const currentPk = (typeof pkResult.pk === 'number' && !isNaN(pkResult.pk)) ? pkResult.pk : 0;
 
       if (pkTag) {
+        let expectedTag = '';
+        let expectedColor = '#7dd3fc';
+
         if (w.isJammerPod) {
-          pkTag.textContent = isMobile ? '[ECM]' : 'ACTIVE: [ECM]';
-          pkTag.style.color = '#00f0ff';
+          expectedTag = isMobile ? '[ECM]' : 'ACTIVE: [ECM]';
+          expectedColor = '#00f0ff';
         } else if (w.isDecoy || w.isDecoyDrone) {
-          pkTag.textContent = isMobile ? '[DECOY]' : 'DEFENSE: [DECOY]';
-          pkTag.style.color = '#c084fc';
+          expectedTag = isMobile ? '[DECOY]' : 'DEFENSE: [DECOY]';
+          expectedColor = '#c084fc';
         } else if (w.isGunpod || w.category === 'GUN') {
-          pkTag.textContent = isMobile ? '[GUNPOD]' : 'BATTERY: [GUNPOD]';
-          pkTag.style.color = '#fde047';
+          expectedTag = isMobile ? '[GUNPOD]' : 'BATTERY: [GUNPOD]';
+          expectedColor = '#fde047';
         } else if (w.isLaser) {
-          pkTag.textContent = isMobile ? '[DEW]' : 'DIRECT: [DEW]';
-          pkTag.style.color = '#00f0ff';
+          expectedTag = isMobile ? '[DEW]' : 'DIRECT: [DEW]';
+          expectedColor = '#00f0ff';
         } else {
           const seeker = w.seeker || 'GUIDED';
           const mixedTag = pkResult.hasMixedSeekers ? ' [MIXED +25%]' : '';
-          pkTag.textContent = isMobile ? `[${seeker}]${mixedTag}` : `HOMING: [${seeker}]${mixedTag}`;
+          expectedTag = isMobile ? `[${seeker}]${mixedTag}` : `HOMING: [${seeker}]${mixedTag}`;
           const seekerColors = {
             'ARH': '#00f0ff', 'IIR': '#00f5a0', 'EO': '#38bdf8', 'OPT': '#38bdf8',
             'PASSIVE_RADAR': '#ffb830', 'GPS_INS': '#94a3b8', 'INS': '#ffd700', 'INS_RADAR': '#ffd700', 'DIRECT_FIRE': '#fbbf24'
           };
-          pkTag.style.color = pkResult.hasMixedSeekers ? '#00f5a0' : (seekerColors[seeker] || '#7dd3fc');
+          expectedColor = pkResult.hasMixedSeekers ? '#00f5a0' : (seekerColors[seeker] || '#7dd3fc');
         }
+
+        if (pkTag.textContent !== expectedTag) pkTag.textContent = expectedTag;
+        if (pkTag.style.color !== expectedColor) pkTag.style.color = expectedColor;
       }
 
       if (w.isJammerPod) {
         if (pkFill) pkFill.style.width = `${Math.round((w.jamEfficiency || 0.45)*100)}%`;
-        if (fireBtn) { fireBtn.disabled = true; fireBtn.textContent = 'ECM ACTIVE'; }
+        if (fireBtn && !fireBtn.disabled) { fireBtn.disabled = true; fireBtn.textContent = 'ECM ACTIVE'; }
         return;
       }
 
@@ -61,7 +71,8 @@ class PylonCardUpdater {
         if (pkFill) pkFill.style.width = '0%';
         if (fireBtn) {
           fireBtn.disabled = true;
-          fireBtn.textContent = `RECHARGE (${item.cooldown.toFixed(1)}s)`;
+          const coolText = `RECHARGE (${item.cooldown.toFixed(1)}s)`;
+          if (fireBtn.textContent !== coolText) fireBtn.textContent = coolText;
           fireBtn.style.color = '#94a3b8';
           fireBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
         }
@@ -71,7 +82,12 @@ class PylonCardUpdater {
       if (w.isDecoy || w.isDecoyDrone) {
         const hasTokens = (curTokens >= tokenCost);
         if (pkFill) pkFill.style.width = item.ammo > 0 ? '100%' : '0%';
-        if (fireBtn) { fireBtn.disabled = (!hasTokens || item.ammo <= 0); fireBtn.textContent = item.ammo <= 0 ? 'DEPLETED' : (hasTokens ? 'DEPLOY' : 'NEED TOK'); }
+        if (fireBtn) {
+          const isDis = (!hasTokens || item.ammo <= 0);
+          if (fireBtn.disabled !== isDis) fireBtn.disabled = isDis;
+          const dText = item.ammo <= 0 ? 'DEPLETED' : (hasTokens ? 'DEPLOY' : 'NEED TOK');
+          if (fireBtn.textContent !== dText) fireBtn.textContent = dText;
+        }
         return;
       }
 
@@ -79,7 +95,8 @@ class PylonCardUpdater {
         if (pkFill) pkFill.style.width = '0%';
         if (fireBtn) {
           fireBtn.disabled = true;
-          fireBtn.textContent = (item.station === 'INTERNAL') ? 'EMPTY BAY' : 'DEPLETED (JETTISONED)';
+          const depText = (item.station === 'INTERNAL') ? 'EMPTY BAY' : 'DEPLETED (JETTISONED)';
+          if (fireBtn.textContent !== depText) fireBtn.textContent = depText;
           fireBtn.style.color = '#94a3b8';
           fireBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
         }
@@ -94,7 +111,8 @@ class PylonCardUpdater {
         if (pkFill) pkFill.style.width = '100%';
         if (fireBtn) {
           fireBtn.disabled = !hasTokens;
-          fireBtn.textContent = hasTokens ? `POD BURST (${w.damagePerBurst || 1.4} HP)` : 'NEED TOK';
+          const podText = hasTokens ? `POD BURST (${w.damagePerBurst || 1.4} HP)` : 'NEED TOK';
+          if (fireBtn.textContent !== podText) fireBtn.textContent = podText;
           fireBtn.style.color = '#ffffff';
           fireBtn.style.borderColor = 'var(--theme-primary)';
         }
@@ -105,42 +123,49 @@ class PylonCardUpdater {
         if (pkFill) pkFill.style.width = '0%';
         if (fireBtn) {
           fireBtn.disabled = true;
-          fireBtn.textContent = 'SELECT TARGET';
+          if (fireBtn.textContent !== 'SELECT TARGET') fireBtn.textContent = 'SELECT TARGET';
           fireBtn.style.color = '#94a3b8';
           fireBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
         }
         return;
       }
 
-      if (pkFill) { pkFill.style.width = `${currentPk}%`; pkFill.style.background = pkResult.color || '#00f0ff'; }
+      if (pkFill) {
+        pkFill.style.width = `${currentPk}%`;
+        pkFill.style.background = pkResult.color || '#00f0ff';
+      }
 
       let canFire = false;
       try { canFire = (curGame && typeof curGame.canFirePylon === 'function') ? curGame.canFirePylon(activeUnit, item, validTarget) : false; } catch (err) { canFire = false; }
 
       if (fireBtn) {
         fireBtn.disabled = !canFire;
+        let expectedBtnText = '';
+        let expectedBtnColor = '#ffffff';
+        let expectedBtnBorder = 'var(--theme-primary)';
+
         if (pkResult.label === 'AIR ONLY' || pkResult.label === 'GROUND ONLY' || pkResult.label === 'IMMUNE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OUT OF RANGE' || pkResult.label === 'OFF BORESIGHT') {
-          fireBtn.textContent = pkResult.label;
+          expectedBtnText = pkResult.label;
           if (pkResult.label === 'OUT OF RANGE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OFF BORESIGHT') {
-            fireBtn.style.color = '#f87171';
-            fireBtn.style.borderColor = 'rgba(244, 63, 94, 0.4)';
+            expectedBtnColor = '#f87171';
+            expectedBtnBorder = 'rgba(244, 63, 94, 0.4)';
           } else {
-            fireBtn.style.color = '#94a3b8';
-            fireBtn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            expectedBtnColor = '#94a3b8';
+            expectedBtnBorder = 'rgba(255, 255, 255, 0.1)';
           }
         } else if (curTokens < tokenCost) {
-          fireBtn.textContent = 'NEED TOK';
-          fireBtn.style.color = '#fbbf24';
-          fireBtn.style.borderColor = 'rgba(251, 191, 36, 0.35)';
+          expectedBtnText = 'NEED TOK';
+          expectedBtnColor = '#fbbf24';
+          expectedBtnBorder = 'rgba(251, 191, 36, 0.35)';
         } else if (pkResult.hasMixedSeekers) {
-          fireBtn.textContent = `ENGAGE (EST. ${currentPk}% MIXED +25%)`;
-          fireBtn.style.color = '#ffffff';
-          fireBtn.style.borderColor = 'var(--theme-primary)';
+          expectedBtnText = `ENGAGE (EST. ${currentPk}% MIXED +25%)`;
         } else {
-          fireBtn.textContent = `ENGAGE (EST. ${currentPk}%)`;
-          fireBtn.style.color = '#ffffff';
-          fireBtn.style.borderColor = 'var(--theme-primary)';
+          expectedBtnText = `ENGAGE (EST. ${currentPk}%)`;
         }
+
+        if (fireBtn.textContent !== expectedBtnText) fireBtn.textContent = expectedBtnText;
+        if (fireBtn.style.color !== expectedBtnColor) fireBtn.style.color = expectedBtnColor;
+        if (fireBtn.style.borderColor !== expectedBtnBorder) fireBtn.style.borderColor = expectedBtnBorder;
       }
     });
   }

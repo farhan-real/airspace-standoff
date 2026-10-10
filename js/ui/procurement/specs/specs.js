@@ -1,13 +1,36 @@
 /**
  * AIRSPACE STANDOFF: Procurement Specifications Coordinator & Tag-Only Tooltip Engine
- * Manages spec modal views for airframes, weapons, autocannons, modular components, civilians, surface units, and flight leads.
  */
 
 class ProcurementSpecs {
   constructor(procurementManager) {
     this.pm = procurementManager;
     this.tooltipEl = null;
+    this._inspectModalBound = false;
     this.initHoverTooltips();
+  }
+
+  ensureModal() {
+    if (document.getElementById('system-inspect-modal')) return;
+    if (window.ModalDialogTemplates && typeof window.ModalDialogTemplates.ensure === 'function') {
+      window.ModalDialogTemplates.ensure('system-inspect-modal');
+    }
+    this.bindInspectModalEvents();
+  }
+
+  bindInspectModalEvents() {
+    if (this._inspectModalBound) return;
+    this._inspectModalBound = true;
+    const cBtn = document.getElementById('btn-close-inspect');
+    if (cBtn) {
+      cBtn.onclick = () => {
+        const m = document.getElementById('system-inspect-modal');
+        if (m) {
+          m.classList.remove('active');
+          if (this.pm.game.controls) this.pm.game.controls.autoUnpauseOnDialogClose();
+        }
+      };
+    }
   }
 
   initHoverTooltips() {
@@ -37,8 +60,7 @@ class ProcurementSpecs {
               <button type="button" class="tt-touch-close-btn"><img src="icons/close.svg" width="9" height="9" alt="Close" style="vertical-align:middle;margin-right:2px;"> CLOSE</button>
             </div>
             <div class="tt-header-row"><span class="tt-title">${title}</span></div>
-            <div class="tt-footer-desc">${desc}</div>
-          `;
+            <div class="tt-footer-desc">${desc}</div>`;
           this.showTooltip(html, e, true);
         }
         return;
@@ -111,6 +133,7 @@ class ProcurementSpecs {
   openInspectModal(type, id) {
     if (!type || !id) return;
     this.hideTooltip();
+    this.ensureModal();
     const modal = document.getElementById('system-inspect-modal');
     const titleEl = document.getElementById('inspect-modal-title');
     const bodyEl = document.getElementById('inspect-modal-body');
@@ -198,4 +221,3 @@ class ProcurementSpecs {
 }
 
 window.ProcurementSpecs = ProcurementSpecs;
-window.ProcurementInspector = ProcurementSpecs;

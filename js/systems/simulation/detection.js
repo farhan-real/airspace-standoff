@@ -33,16 +33,16 @@ class SimulationDetectionSystem {
     this.game.detectedByBlue = new Set();
     this.game.detectedByRed = new Set();
 
-    const blueSensors = this.game.alliedAircraft.filter(a => a.hp > 0).concat(
+    const blueSensors = this.game.alliedAircraft.filter(a => a.hp > 0.05).concat(
       this.game.surfaceUnits.filter(s => s.team === 'friendly' && s.hp > 0)
     );
 
-    const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0);
+    const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0.05);
     const isUplinkActive = (liveHostiles.length > 0 && liveHostiles.length <= uplinkThreshold);
 
     for (let i = 0; i < this.game.hostileAircraft.length; i++) {
       const h = this.game.hostileAircraft[i];
-      if (!h || h.hp <= 0) continue;
+      if (!h || h.hp <= 0.05) continue;
       this.game.detectedByBlue.add(h.id);
 
       if (runFullScan) {
@@ -52,9 +52,17 @@ class SimulationDetectionSystem {
 
         for (let j = 0; j < blueSensors.length; j++) {
           const sensor = blueSensors[j];
+          const dx = h.x - sensor.x;
+          const dy = h.y - sensor.y;
+          const baseR0 = sensor.spec ? sensor.spec.R_0 : sensor.rangeKm;
+
+          // Quick distance squared rejection
+          const maxPossible = baseR0 * 2.5;
+          if (dx * dx + dy * dy > maxPossible * maxPossible) continue;
+
           const maxDist = Physics.getRadarMaxDetectionRange(sensor, h, this.sim.weatherClouds);
           if (maxDist <= 0.0) continue;
-          const dist = Math.hypot(h.x - sensor.x, h.y - sensor.y);
+          const dist = Math.hypot(dx, dy);
 
           if (dist <= maxDist) {
             inSensorRange = true;
@@ -110,13 +118,13 @@ class SimulationDetectionSystem {
       this.sim._satelliteUplinkAnnouncedBlue = false;
     }
 
-    const redSensors = this.game.hostileAircraft.filter(a => a.hp > 0).concat(
+    const redSensors = this.game.hostileAircraft.filter(a => a.hp > 0.05).concat(
       this.game.surfaceUnits.filter(s => s.team === 'hostile' && s.hp > 0)
     );
 
     for (let i = 0; i < this.game.alliedAircraft.length; i++) {
       const a = this.game.alliedAircraft[i];
-      if (!a || a.hp <= 0) continue;
+      if (!a || a.hp <= 0.05) continue;
       this.game.detectedByRed.add(a.id);
 
       if (runFullScan) {
@@ -142,14 +150,14 @@ class SimulationDetectionSystem {
   revealMutuallyAllCombatants() {
     for (let i = 0; i < this.game.hostileAircraft.length; i++) {
       const h = this.game.hostileAircraft[i];
-      if (h.hp > 0) {
+      if (h.hp > 0.05) {
         this.game.detectedByBlue.add(h.id); this.game.detectedByRed.add(h.id);
         h.identifiedByBlue = true; h.identifiedByRed = true; h.isIdentified = true;
       }
     }
     for (let i = 0; i < this.game.alliedAircraft.length; i++) {
       const a = this.game.alliedAircraft[i];
-      if (a.hp > 0) {
+      if (a.hp > 0.05) {
         this.game.detectedByBlue.add(a.id); this.game.detectedByRed.add(a.id);
         a.identifiedByBlue = true; a.identifiedByRed = true; a.isIdentified = true;
       }

@@ -100,21 +100,23 @@ class ProcurementActionDispatcher {
     };
 
     const attachScrollListeners = () => {
-      const shelf = document.getElementById('armory-catalog') || document.getElementById('proc-hanger-shelf');
-      const roster = document.getElementById('squadron-list') || document.getElementById('proc-flight-roster');
+      const targets = [
+        document.getElementById('armory-catalog'),
+        document.getElementById('proc-hanger-shelf'),
+        document.getElementById('squadron-list'),
+        document.getElementById('proc-flight-roster')
+      ];
 
-      if (shelf && !shelf._scrollBound) {
-        shelf._scrollBound = true;
-        shelf.addEventListener('scroll', checkScrollState, { passive: true });
-      }
-      if (roster && !roster._scrollBound) {
-        roster._scrollBound = true;
-        roster.addEventListener('scroll', checkScrollState, { passive: true });
-      }
+      targets.forEach(el => {
+        if (el && !el._scrollBound) {
+          el._scrollBound = true;
+          el.addEventListener('scroll', checkScrollState, { passive: true });
+        }
+      });
     };
 
     attachScrollListeners();
-    setTimeout(attachScrollListeners, 200);
+    setTimeout(attachScrollListeners, 250);
 
     const mobileTabs = document.getElementById('procurement-mobile-tabs');
     if (mobileTabs) {

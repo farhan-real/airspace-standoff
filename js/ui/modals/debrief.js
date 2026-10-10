@@ -1,9 +1,14 @@
 /* AIRSPACE STANDOFF: Modal Templates - Debriefing & Replay */
 
 class ModalDebriefTemplate {
-  static install() {
-    const container = document.createElement('div');
-    container.id = 'modal-debrief-container';
+  static ensure() {
+    if (document.getElementById('game-over-modal')) return;
+    let container = document.getElementById('modal-debrief-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'modal-debrief-container';
+      document.body.appendChild(container);
+    }
     container.innerHTML = `
       <div id="game-over-modal" class="modal-backdrop">
         <div class="game-over-dialog">
@@ -57,9 +62,7 @@ class ModalDebriefTemplate {
             <button id="btn-restart" class="scramble-btn" style="width:100%;">RETURN TO HANGAR</button>
           </div>
         </div>
-      </div>
-    `;
-    document.body.appendChild(container);
+      </div>`;
   }
 }
 

@@ -1,9 +1,14 @@
 /* AIRSPACE STANDOFF: Modal Templates - Mission Editor */
 
 class ModalEditorTemplate {
-  static install() {
-    const container = document.createElement('div');
-    container.id = 'modal-editor-container';
+  static ensure() {
+    if (document.getElementById('mission-editor-modal')) return;
+    let container = document.getElementById('modal-editor-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'modal-editor-container';
+      document.body.appendChild(container);
+    }
     container.innerHTML = `
       <div id="mission-editor-modal" class="modal-backdrop">
         <div class="mission-editor-window">
@@ -123,9 +128,7 @@ class ModalEditorTemplate {
             </button>
           </div>
         </div>
-      </div>
-    `;
-    document.body.appendChild(container);
+      </div>`;
   }
 }
 

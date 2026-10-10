@@ -3,8 +3,6 @@
 .tactical-banner {
   height: 44px;
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: var(--glass-filter);
-  backdrop-filter: var(--glass-filter);
   border-bottom: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   display: flex;
@@ -13,7 +11,7 @@
   padding: 0 12px;
   gap: 8px;
   flex-shrink: 0;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 8px 24px rgba(0, 0, 0, 0.85);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 16px rgba(0, 0, 0, 0.85);
   white-space: nowrap;
   overflow: hidden;
   z-index: 20;
@@ -59,7 +57,7 @@ body.safe-zone-on .tactical-banner {
   border-color: var(--theme-accent);
   border-top-color: #ffffff;
   color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 12px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 10px var(--theme-primary-glow);
 }
 
 .pvp-team-btn.red.active {
@@ -67,7 +65,7 @@ body.safe-zone-on .tactical-banner {
   border-color: #f43f5e;
   border-top-color: #ffffff;
   color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 12px rgba(244, 63, 94, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 10px rgba(244, 63, 94, 0.50);
 }
 
 .banner-time-coords-cluster {
@@ -143,7 +141,7 @@ body.safe-zone-on .tactical-banner {
   color: #ffffff;
   border-color: var(--theme-accent);
   border-top-color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 10px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 8px var(--theme-primary-glow);
 }
 
 .command-token-cluster {
@@ -331,10 +329,4 @@ body.has-touch .banner-cam-controls {
 
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
   .tactical-banner { height: 40px !important; padding: 0 8px !important; gap: 6px !important; }
-}
-
-html.safe-zone-on .tactical-banner,
-body.safe-zone-on .tactical-banner {
-  padding-left: max(12px, var(--safe-left, 0px)) !important;
-  padding-right: max(12px, var(--safe-right, 0px)) !important;
 }

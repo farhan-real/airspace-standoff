@@ -23,8 +23,6 @@ body.safe-zone-on .radar-flight-hud {
 
 .rfh-panel {
   background: var(--liquid-glass-bg);
-  -webkit-backdrop-filter: var(--glass-filter);
-  backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   border-top: 1px solid var(--liquid-glass-border-top);
   border-radius: var(--radius-card);
@@ -34,7 +32,7 @@ body.safe-zone-on .radar-flight-hud {
   justify-content: center;
   align-items: center;
   text-align: center;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.32), inset 0 0 16px rgba(56, 189, 248, 0.05), 0 8px 24px rgba(0, 0, 0, 0.85);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 4px 16px rgba(0, 0, 0, 0.75);
   white-space: nowrap;
   overflow: hidden;
 }
@@ -159,14 +157,13 @@ body.safe-zone-on .radar-flight-hud {
   border: 1px solid var(--theme-accent) !important;
   border-top-color: #ffffff !important;
   color: #bae6fd !important;
-  box-shadow: 0 0 10px var(--theme-primary-glow);
+  box-shadow: 0 0 8px var(--theme-primary-glow);
 }
 
 @media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
   .radar-flight-hud {
     top: 6px !important;
     left: 12px !important;
-    transform: none !important;
     gap: 5px !important;
   }
   .rfh-panel {
@@ -179,7 +176,6 @@ body.safe-zone-on .radar-flight-hud {
   .radar-flight-hud {
     top: 6px !important;
     left: 8px !important;
-    transform: none !important;
     gap: 3px !important;
     max-width: calc(100% - 80px) !important;
   }

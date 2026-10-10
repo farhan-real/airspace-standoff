@@ -7,8 +7,8 @@
 class RadarCameraController {
   constructor(canvas, cssWidth, cssHeight) {
     this.canvas = canvas;
-    this.cssWidth = cssWidth;
-    this.cssHeight = cssHeight;
+    this.cssWidth = cssWidth || 800;
+    this.cssHeight = cssHeight || 500;
     this.zoom = 1.0;
     this.minZoom = 0.65;
     this.maxZoom = 4.0;
@@ -62,25 +62,23 @@ class RadarCameraController {
   }
 
   toKm(screenX, screenY) {
-    const scaleX = this.effScaleX > 0 ? this.effScaleX : 1.0;
-    const scaleY = this.effScaleY > 0 ? this.effScaleY : 1.0;
     return {
-      x: (screenX / scaleX) + this.panX,
-      y: (screenY / scaleY) + this.panY
+      x: (screenX / this.effScaleX) + this.panX,
+      y: (screenY / this.effScaleY) + this.panY
     };
   }
 
   zoomAtCenter(factor) {
-    const centerKm = this.toKm(this.cssWidth / 2, this.cssHeight / 2);
+    const centerKm = this.toKm(this.cssWidth * 0.5, this.cssHeight * 0.5);
     this.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom * factor));
     this.updateScales();
-    this.panX = centerKm.x - ((this.cssWidth / 2) / this.effScaleX);
-    this.panY = centerKm.y - ((this.cssHeight / 2) / this.effScaleY);
+    this.panX = centerKm.x - ((this.cssWidth * 0.5) / this.effScaleX);
+    this.panY = centerKm.y - ((this.cssHeight * 0.5) / this.effScaleY);
   }
 
   centerTheater() {
     const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
-    this.centerOnKm(cfg.THEATER_WIDTH_KM / 2, cfg.THEATER_HEIGHT_KM / 2);
+    this.centerOnKm(cfg.THEATER_WIDTH_KM * 0.5, cfg.THEATER_HEIGHT_KM * 0.5);
     this.trackingUnit = null;
   }
 
@@ -95,8 +93,8 @@ class RadarCameraController {
 
   centerOnKm(kmX, kmY) {
     this.updateScales();
-    this.panX = kmX - ((this.cssWidth / 2) / this.effScaleX);
-    this.panY = kmY - ((this.cssHeight / 2) / this.effScaleY);
+    this.panX = kmX - ((this.cssWidth * 0.5) / this.effScaleX);
+    this.panY = kmY - ((this.cssHeight * 0.5) / this.effScaleY);
   }
 
   trackActiveCraft(activeUnit) {

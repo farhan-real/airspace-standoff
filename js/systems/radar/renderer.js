@@ -10,8 +10,9 @@ class TacticalRadarRenderer {
     this.cssHeight = 500;
     this.isMobile = (typeof window !== 'undefined') && (window.innerWidth <= 1024);
 
+    // Capped DPR to prevent GPU memory bus saturation on High-DPI screens
     const rawDpr = window.devicePixelRatio || 1;
-    this.dpr = Math.max(1, Math.min(rawDpr, 3));
+    this.dpr = Math.max(1, Math.min(rawDpr, 1.5));
 
     this.cam = new RadarCameraController(this.canvas, this.cssWidth, this.cssHeight);
     this.fx = new RadarEffectsSystem(this.cam);
@@ -49,25 +50,10 @@ class TacticalRadarRenderer {
   spawnCombatText(x, y, t, c) { this.fx.spawnCombatText(x, y, t, c); }
 
   cleanCanvasText(str) {
-    if (str === undefined || str === null) return '';
+    if (!str) return '';
     const s = String(str);
     if (!s.includes('<') && !s.includes('\\') && !s.includes('{')) return s;
     return s.replace(/<[^>]*>/g, '').replace(/[\{\}\\]/g, '').replace(/\s+/g, ' ').trim();
-  }
-
-  checkResize() {
-    if (!this.canvas) return;
-    const parent = this.canvas.parentElement;
-    if (!parent) return;
-
-    const nextW = Math.round(parent.clientWidth || 800);
-    const nextH = Math.round(parent.clientHeight || 500);
-    const rawDpr = window.devicePixelRatio || 1;
-    const nextDpr = Math.max(1, Math.min(rawDpr, 3));
-
-    if (this.cssWidth !== nextW || this.cssHeight !== nextH || this.dpr !== nextDpr) {
-      this.resize();
-    }
   }
 
   resize() {
@@ -77,12 +63,11 @@ class TacticalRadarRenderer {
     const nextH = Math.round((parent && parent.clientHeight > 0) ? parent.clientHeight : 500);
 
     const rawDpr = window.devicePixelRatio || 1;
-    const nextDpr = Math.max(1, Math.min(rawDpr, 3));
+    this.dpr = Math.max(1, Math.min(rawDpr, 1.5));
 
     this.cssWidth = nextW;
     this.cssHeight = nextH;
     this.isMobile = (this.cssWidth <= 1024);
-    this.dpr = nextDpr;
     this.cam.resize(this.cssWidth, this.cssHeight);
 
     this.canvas.width = Math.round(this.cssWidth * this.dpr);
@@ -93,7 +78,6 @@ class TacticalRadarRenderer {
     if (this.ctx) {
       this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
       this.ctx.imageSmoothingEnabled = true;
-      this.ctx.imageSmoothingQuality = 'high';
     }
   }
 
@@ -167,12 +151,8 @@ class TacticalRadarRenderer {
 
   render(state) {
     if (!this.ctx || !this.canvas) return;
-    this.checkResize();
 
     const ctx = this.ctx;
-    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-    ctx.imageSmoothingEnabled = true;
-
     const w = this.cssWidth;
     const h = this.cssHeight;
 
@@ -260,8 +240,6 @@ class TacticalRadarRenderer {
       } else {
         uplinkBannerEl.classList.add('hidden');
       }
-    } else if (shouldShowUplink && typeof RadarEnvironmentRenderer !== 'undefined') {
-      RadarEnvironmentRenderer.drawUplinkBanner(ctx, liveHostileCount, w, h);
     }
 
     if (this.hoveredContact && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0.05) && typeof this.hoveredContact.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {

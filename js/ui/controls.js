@@ -15,7 +15,6 @@ class ControlsSystem {
     this.initModeSelectors();
     this.initMobileControls();
     this.initTimeWarpControls();
-    this.initPauseScreenModal();
     this.initExitButtons();
     this.initLeaderboardModal();
     if (window.MissionEditor && typeof window.MissionEditor.init === 'function') {
@@ -52,8 +51,7 @@ class ControlsSystem {
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#03070d;color:#00f0ff;font-family:ui-monospace,monospace;text-align:center;padding:20px;">
           <h1 style="letter-spacing:1px;margin-bottom:12px;">SIMULATION ENDED</h1>
           <p style="color:#8494ab;font-size:0.9rem;">You may now close this application window or browser tab.</p>
-        </div>
-      `;
+        </div>`;
     };
 
     if (this.game.procurement && typeof this.game.procurement.showConfirmModal === 'function') {
@@ -76,13 +74,74 @@ class ControlsSystem {
   }
 
   setTimeWarp(speed) {
-    if (this.game.simulation) this.game.simulation.setTimeWarp(speed);
+    if (this.game.simulation) {
+      this.game.simulation.setTimeWarp(speed);
+      const pModal = document.getElementById('pause-modal');
+      if (pModal && speed > 0) pModal.classList.remove('active');
+    }
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
   togglePause() {
-    if (this.game.simulation) this.game.simulation.togglePause();
+    const pModal = this.ensurePauseModal();
+    if (this.game.simulation) {
+      this.game.simulation.togglePause();
+      if (pModal) pModal.classList.toggle('active', this.game.simulation.isPaused);
+    }
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+  }
+
+  ensurePauseModal() {
+    if (window.ModalDialogTemplates && typeof window.ModalDialogTemplates.ensure === 'function') {
+      window.ModalDialogTemplates.ensure('pause-modal');
+      this.bindPauseModalEvents();
+    }
+    return document.getElementById('pause-modal');
+  }
+
+  bindPauseModalEvents() {
+    const pauseModal = document.getElementById('pause-modal');
+    if (!pauseModal || pauseModal._boundEvents) return;
+    pauseModal._boundEvents = true;
+
+    const btnResume = document.getElementById('btn-resume-sortie');
+    const btnSettings = document.getElementById('btn-pause-settings');
+    const btnManual = document.getElementById('btn-pause-manual');
+    const btnAbort = document.getElementById('btn-pause-abort');
+
+    if (btnResume) {
+      btnResume.onclick = () => {
+        pauseModal.classList.remove('active');
+        this.setTimeWarp(1);
+      };
+    }
+    if (btnSettings) {
+      btnSettings.onclick = () => {
+        if (this.game.settings && typeof this.game.settings.open === 'function') {
+          this.game.settings.open();
+        }
+      };
+    }
+    if (btnManual) {
+      btnManual.onclick = () => {
+        if (typeof window.openTacticalManual === 'function') {
+          window.openTacticalManual();
+        }
+      };
+    }
+    if (btnAbort) {
+      btnAbort.onclick = () => {
+        pauseModal.classList.remove('active');
+        this.game.abortSortie();
+      };
+    }
+
+    pauseModal.onclick = (e) => {
+      if (e.target === pauseModal) {
+        pauseModal.classList.remove('active');
+        this.setTimeWarp(1);
+      }
+    };
   }
 
   autoPauseOnDialogOpen() {
@@ -98,46 +157,6 @@ class ControlsSystem {
     if (this._wasAutoPaused && this.game.simulation) {
       this.game.simulation.setTimeWarp(1);
       this._wasAutoPaused = false;
-    }
-  }
-
-  initPauseScreenModal() {
-    const pauseModal = document.getElementById('pause-modal');
-    const btnResume = document.getElementById('btn-resume-sortie');
-    const btnSettings = document.getElementById('btn-pause-settings');
-    const btnManual = document.getElementById('btn-pause-manual');
-    const btnAbort = document.getElementById('btn-pause-abort');
-
-    if (btnResume) {
-      btnResume.onclick = () => {
-        if (pauseModal) pauseModal.classList.remove('active');
-        this.setTimeWarp(1);
-      };
-    }
-    if (btnSettings) {
-      btnSettings.onclick = () => {
-        const sm = document.getElementById('settings-modal');
-        if (sm) {
-          if (this.game.settings) this.game.settings.renderTabContent();
-          sm.classList.add('active');
-        }
-      };
-    }
-    if (btnManual) {
-      btnManual.onclick = () => {
-        if (typeof window.openTacticalManual === 'function') {
-          window.openTacticalManual();
-        } else {
-          const gm = document.getElementById('glossary-modal');
-          if (gm) gm.classList.add('active');
-        }
-      };
-    }
-    if (btnAbort) {
-      btnAbort.onclick = () => {
-        if (pauseModal) pauseModal.classList.remove('active');
-        this.game.abortSortie();
-      };
     }
   }
 
@@ -218,40 +237,30 @@ class ControlsSystem {
     if (climbBtn) climbBtn.onclick = () => this.executeZoomClimb();
 
     const abortBtn = document.getElementById('btn-abort-match');
-    const abortModal = document.getElementById('abort-confirm-modal');
-    const confirmAbort = document.getElementById('btn-confirm-abort');
-    const cancelAbort = document.getElementById('btn-cancel-abort');
-
-    if (abortBtn && abortModal) {
+    if (abortBtn) {
       abortBtn.onclick = () => {
-        this.autoPauseOnDialogOpen();
-        abortModal.classList.add('active');
-      };
-    }
-    if (cancelAbort && abortModal) {
-      cancelAbort.onclick = () => {
-        abortModal.classList.remove('active');
-        this.autoUnpauseOnDialogClose();
-      };
-    }
-    if (confirmAbort && abortModal) {
-      confirmAbort.onclick = () => {
-        abortModal.classList.remove('active');
-        this.game.abortSortie();
-      };
-    }
-
-    const restartBtn = document.getElementById('btn-restart');
-    if (restartBtn) {
-      restartBtn.onclick = () => {
-        const gameOverModal = document.getElementById('game-over-modal');
-        const procModal = document.getElementById('procurement-modal');
-        if (window.AfterActionReplay && typeof window.AfterActionReplay.stop === 'function') window.AfterActionReplay.stop();
-        if (window.MissionEditor && typeof window.MissionEditor.restoreBaseSettings === 'function') {
-          window.MissionEditor.restoreBaseSettings(this.game);
+        if (window.ModalDialogTemplates && typeof window.ModalDialogTemplates.ensure === 'function') {
+          window.ModalDialogTemplates.ensure('abort-confirm-modal');
         }
-        if (gameOverModal) gameOverModal.classList.remove('active');
-        if (procModal) procModal.classList.add('active');
+        const abortModal = document.getElementById('abort-confirm-modal');
+        const confirmAbort = document.getElementById('btn-confirm-abort');
+        const cancelAbort = document.getElementById('btn-cancel-abort');
+
+        if (cancelAbort) {
+          cancelAbort.onclick = () => {
+            if (abortModal) abortModal.classList.remove('active');
+            this.autoUnpauseOnDialogClose();
+          };
+        }
+        if (confirmAbort) {
+          confirmAbort.onclick = () => {
+            if (abortModal) abortModal.classList.remove('active');
+            this.game.abortSortie();
+          };
+        }
+
+        this.autoPauseOnDialogOpen();
+        if (abortModal) abortModal.classList.add('active');
       };
     }
   }
