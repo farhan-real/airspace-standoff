@@ -25,6 +25,8 @@ class SimulationSystem {
     this.replaySnapshots = [];
     this.replayCaptureAccumulator = 0;
     this._satelliteUplinkAnnouncedBlue = false;
+    this.victoryDelayTimer = 0.0;
+    this.pendingGameOver = null;
     this.initWeatherClouds();
   }
 
@@ -43,6 +45,8 @@ class SimulationSystem {
     this.elapsedTimeSec = 0;
     this.replaySnapshots = [];
     this.replayCaptureAccumulator = 0;
+    this.victoryDelayTimer = 0.0;
+    this.pendingGameOver = null;
   }
 
   captureReplayFrame(force = false) {
@@ -69,7 +73,7 @@ class SimulationSystem {
     }
     this.setTimeWarp(this.isPaused ? this.timeWarp : 0);
     const pModal = document.getElementById('pause-modal');
-    if (pModal) pModal.classList.toggle('active', this.isPaused);
+    if (pModal) pModal.classList.toggle('active', this.game.simulation.isPaused);
   }
 
   initWeatherClouds() {
@@ -167,21 +171,18 @@ class SimulationSystem {
     }
 
     for (const m of this.game.missiles) m.update(dt, this.weatherClouds);
-    for (let i = this.game.missiles.length - 1; i >= 0; i--) {
-      if (this.game.missiles[i].isDead) {
-        this.game.missiles.splice(i, 1);
-      }
-    }
+    this.game.missiles = this.game.missiles.filter(m => !m.isDead);
 
     this.resolveUnitFocus();
     this.game.ai.update(dt);
     this.game.avionics.updateRWRState();
+
     this.replayCaptureAccumulator += dt;
-    if (this.replayCaptureAccumulator >= 1.0) {
-      this.replayCaptureAccumulator %= 1.0;
+    if (this.replayCaptureAccumulator >= 0.40) {
+      this.replayCaptureAccumulator %= 0.40;
       this.captureReplayFrame();
     }
-    this.checkWinConditions();
+    this.checkWinConditions(dt);
   }
 
   updateCommandTokens(dt) {
@@ -228,7 +229,7 @@ class SimulationSystem {
     }
   }
 
-  checkWinConditions() {
+  checkWinConditions(dt = 0.016) {
     const vpAllyEl = document.getElementById('vp-ally');
     const vpHostileEl = document.getElementById('vp-hostile');
     if (vpAllyEl) {
@@ -247,6 +248,15 @@ class SimulationSystem {
       if (a && a.hp > 0 && a.hp <= 0.05) a.hp = 0;
     }
 
+    if (this.victoryDelayTimer > 0) {
+      this.victoryDelayTimer -= dt;
+      if (this.victoryDelayTimer <= 0 && this.pendingGameOver) {
+        this.game.triggerGameOver(this.pendingGameOver.blueWon, this.pendingGameOver.reason);
+        this.pendingGameOver = null;
+      }
+      return;
+    }
+
     const allAlliesDead = this.game.alliedAircraft.length > 0 && this.game.alliedAircraft.every(a => a.hp <= 0);
     const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0);
     const hasUpcomingWaves = this.game.scenarioMode === 'DYNAMIC_THEATER' && this.game.playerMode !== '2P' && this.currentWave <= 3;
@@ -256,9 +266,25 @@ class SimulationSystem {
       const winReason = hostileBunkerDestroyed
         ? 'ALL HOSTILE AIR ASSETS NEUTRALIZED & COMMAND BUNKER DESTROYED'
         : 'ALL HOSTILE AIR ASSETS NEUTRALIZED: AIR SUPERIORITY SECURED';
-      this.game.triggerGameOver(true, winReason);
+
+      this.victoryDelayTimer = 2.8;
+      this.pendingGameOver = { blueWon: true, reason: winReason };
+      this.captureReplayFrame(true);
+
+      const mapW = window.CONFIG.THEATER_WIDTH_KM || 150.0;
+      const mapH = window.CONFIG.THEATER_HEIGHT_KM || 100.0;
+      const lastEnemy = this.game.hostileAircraft[this.game.hostileAircraft.length - 1];
+      const cx = (lastEnemy && Number.isFinite(lastEnemy.x)) ? lastEnemy.x : (mapW / 2);
+      const cy = (lastEnemy && Number.isFinite(lastEnemy.y)) ? lastEnemy.y : (mapH / 2);
+
+      if (this.game.radar) {
+        this.game.radar.spawnCombatText(cx, cy, 'AIR SUPERIORITY SECURED', '#00f0ff');
+        this.game.radar.spawnShockwave(cx, cy, '#00f0ff', 48);
+      }
     } else if (allAlliesDead) {
-      this.game.triggerGameOver(false, 'ALL ALLIED AIR ASSETS NEUTRALIZED');
+      this.victoryDelayTimer = 2.8;
+      this.pendingGameOver = { blueWon: false, reason: 'ALL ALLIED AIR ASSETS NEUTRALIZED' };
+      this.captureReplayFrame(true);
     }
   }
 }

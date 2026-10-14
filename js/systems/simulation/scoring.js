@@ -96,6 +96,12 @@ class SimulationScoring {
     }).join('');
   }
 
+  getCurrentExactTimeSec() {
+    return this.game.simulation && Number.isFinite(this.game.simulation.elapsedTimeSec)
+      ? Number(this.game.simulation.elapsedTimeSec.toFixed(2))
+      : Number(((performance.now() - (this.game.matchStartTime || performance.now())) / 1000).toFixed(2));
+  }
+
   recordBogeyFirePenalty(team, sourceUnit, targetEntity, weapon, penalty) {
     const srcName = sourceUnit ? (sourceUnit.callsign || sourceUnit.id) : 'PILOT';
     const srcType = (sourceUnit && sourceUnit.spec) ? (sourceUnit.spec.id || sourceUnit.spec.name) : 'AIRCRAFT';
@@ -110,6 +116,7 @@ class SimulationScoring {
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(),
+      timeSec: this.getCurrentExactTimeSec(),
       type: 'roe_penalty',
       team: team,
       source: srcName,
@@ -135,6 +142,7 @@ class SimulationScoring {
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(),
+      timeSec: this.getCurrentExactTimeSec(),
       type: 'roe_penalty',
       team: team,
       source: srcName,
@@ -171,6 +179,7 @@ class SimulationScoring {
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(),
+      timeSec: this.getCurrentExactTimeSec(),
       type: 'hit',
       team: firingTeam,
       source: srcName,
@@ -260,6 +269,7 @@ class SimulationScoring {
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(),
+      timeSec: this.getCurrentExactTimeSec(),
       type: isAce ? 'ace-kill' : 'kill',
       team: firingTeam,
       source: srcName,
@@ -272,6 +282,10 @@ class SimulationScoring {
       salvoBreakdown: salvoBreakdown,
       points: pts
     });
+
+    if (this.game.simulation && typeof this.game.simulation.captureReplayFrame === 'function') {
+      this.game.simulation.captureReplayFrame(true);
+    }
   }
 
   recordCivilianHit(firingTeam, civilianFlight, firingSource, weapon) {
@@ -291,6 +305,7 @@ class SimulationScoring {
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(),
+      timeSec: this.getCurrentExactTimeSec(),
       type: 'roe_penalty',
       team: firingTeam,
       source: srcName,
@@ -323,6 +338,7 @@ class SimulationScoring {
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(),
+      timeSec: this.getCurrentExactTimeSec(),
       type: 'roe_penalty',
       team: firingTeam,
       source: srcName,
@@ -335,6 +351,10 @@ class SimulationScoring {
 
     if (window.Game && window.Game.radar) {
       window.Game.radar.spawnCombatText(civilianFlight.x, civilianFlight.y, `ROE VIOLATION: AIRLINER DESTROYED (-${penalty} VP)`, '#ff3366');
+    }
+
+    if (this.game.simulation && typeof this.game.simulation.captureReplayFrame === 'function') {
+      this.game.simulation.captureReplayFrame(true);
     }
   }
 }

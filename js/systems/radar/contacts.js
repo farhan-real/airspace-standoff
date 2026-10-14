@@ -109,16 +109,22 @@ class RadarContactsRenderer {
         const planeColor = isAce ? '#ffd700' : (isSelected ? '#ffffff' : mainCol);
         ctx.fillStyle = planeColor;
 
-        if (cat === 'STEALTH') {
-          ctx.beginPath(); ctx.moveTo(10, 0); ctx.lineTo(-6, -7); ctx.lineTo(-3, 0); ctx.lineTo(-6, 7); ctx.closePath(); ctx.fill();
-        } else if (a.isCoffin || cat === 'EXPERIMENTAL') {
-          ctx.beginPath(); ctx.moveTo(10, 0); ctx.lineTo(-4, -8); ctx.lineTo(-8, 0); ctx.lineTo(-4, 8); ctx.closePath(); ctx.fill();
-        } else if (cat === 'DRONES') {
-          ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(2, -5); ctx.lineTo(-5, -5); ctx.lineTo(-7, 0); ctx.lineTo(-5, 5); ctx.lineTo(2, 5); ctx.closePath(); ctx.fill();
-        } else if (cat === 'STRIKE') {
-          ctx.beginPath(); ctx.moveTo(9, 0); ctx.lineTo(-4, -10); ctx.lineTo(-7, -10); ctx.lineTo(-4, 0); ctx.lineTo(-7, 10); ctx.lineTo(-4, 10); ctx.closePath(); ctx.fill();
+        if (isBlue) {
+          ctx.beginPath();
+          ctx.moveTo(9.5, 0);
+          ctx.lineTo(-6.0, -6.5);
+          ctx.lineTo(-2.5, 0);
+          ctx.lineTo(-6.0, 6.5);
+          ctx.closePath();
+          ctx.fill();
         } else {
-          ctx.beginPath(); ctx.moveTo(9, 0); ctx.lineTo(-7, -6); ctx.lineTo(-4, 0); ctx.lineTo(-7, 6); ctx.closePath(); ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(9.5, 0);
+          ctx.lineTo(-3.5, -7.0);
+          ctx.lineTo(-7.0, 0);
+          ctx.lineTo(-3.5, 7.0);
+          ctx.closePath();
+          ctx.fill();
         }
 
         if (isAce) {

@@ -1,5 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Sortie Replay Playback and Tactical Map Renderer
+ * AIRSPACE STANDOFF: Sortie Replay Playback & Playback Controller
+ * Synchronized missile impacts and target kill moments with clean simple arrows and zero delay.
  */
 
 class AfterActionReplay {
@@ -55,22 +56,37 @@ class AfterActionReplay {
     this.speed = 1;
     this.speedOptions = [0.5, 1, 2];
     this.isPlaying = false;
+    this.isUserDragging = false;
     this.animationFrameId = null;
     this.lastAnimationTime = 0;
-    this.pixelWidth = 0;
-    this.pixelHeight = 0;
+    this.viewWidth = 800;
+    this.viewHeight = 220;
     this.pixelRatio = 1;
 
     if (this.playButton) this.playButton.onclick = () => this.togglePlayback();
     if (this.speedButton) this.speedButton.onclick = () => this.cycleSpeed();
+
     if (this.slider) {
+      this.slider.addEventListener('pointerdown', () => {
+        this.isUserDragging = true;
+        this.pause();
+      });
+      const endDrag = () => {
+        this.isUserDragging = false;
+      };
+      this.slider.addEventListener('pointerup', endDrag);
+      this.slider.addEventListener('pointercancel', endDrag);
+
       this.slider.oninput = () => {
         this.pause();
-        this.seek(Number(this.slider.value));
+        this.seek(Number(this.slider.value), false);
       };
     }
+
     const restartButton = root.querySelector('.aar-replay-restart');
-    if (restartButton) restartButton.onclick = () => { this.pause(); this.seek(this.startTime); };
+    if (restartButton) restartButton.onclick = () => { this.pause(); this.seek(this.startTime, true); };
+
+    window.addEventListener('resize', () => this.resizeCanvas());
   }
 
   open(game) {
@@ -91,7 +107,7 @@ class AfterActionReplay {
     if (this.slider) {
       this.slider.min = String(this.startTime);
       this.slider.max = String(Math.max(this.endTime, this.startTime + 0.1));
-      this.slider.step = '0.1';
+      this.slider.step = '0.05';
       this.slider.value = String(this.currentTime);
       this.slider.disabled = this.frames.length < 2;
     }
@@ -102,7 +118,8 @@ class AfterActionReplay {
     }
     this.updateButtons();
     this.renderEventJumps(events);
-    this.drawAt(this.currentTime);
+    this.resizeCanvas();
+    this.drawAt(this.currentTime, true);
   }
 
   renderEventJumps(events) {
@@ -110,7 +127,12 @@ class AfterActionReplay {
     this.eventList.replaceChildren();
     const keyEvents = events
       .filter(event => event && ['kill', 'ace-kill', 'hit', 'roe_penalty'].includes(event.type))
-      .map(event => ({ event, time: this.parseEventTime(event.time) }))
+      .map(event => ({
+        event,
+        time: (typeof event.timeSec === 'number' && Number.isFinite(event.timeSec))
+          ? event.timeSec
+          : this.parseEventTime(event.time)
+      }))
       .filter(item => Number.isFinite(item.time))
       .sort((a, b) => a.time - b.time)
       .slice(0, 12);
@@ -130,7 +152,11 @@ class AfterActionReplay {
       const tag = event.type === 'roe_penalty' ? 'ROE' : (event.type === 'hit' ? 'HIT' : 'KILL');
       button.textContent = `[${event.time || '00:00'}] ${tag} - ${event.target || event.reason || 'CONTACT'}`;
       button.title = event.reason || `${event.source || 'Unit'} engaged ${event.target || 'target'}`;
-      button.onclick = () => { this.pause(); this.seek(time); };
+      button.onclick = () => {
+        this.pause();
+        const approachSeek = Math.max(this.startTime, time - 1.0);
+        this.seek(approachSeek, true);
+      };
       this.eventList.appendChild(button);
     });
   }
@@ -148,7 +174,7 @@ class AfterActionReplay {
       return;
     }
     if (this.frames.length < 2 || this.endTime <= this.startTime) return;
-    if (this.currentTime >= this.endTime) this.seek(this.startTime);
+    if (this.currentTime >= this.endTime) this.seek(this.startTime, true);
     this.isPlaying = true;
     this.lastAnimationTime = 0;
     this.updateButtons();
@@ -169,19 +195,19 @@ class AfterActionReplay {
       this.currentTime += ((now - this.lastAnimationTime) / 1000) * this.speed;
       if (this.currentTime >= this.endTime) {
         this.currentTime = this.endTime;
-        this.drawAt(this.currentTime);
+        this.drawAt(this.currentTime, true);
         this.pause();
         return;
       }
     }
     this.lastAnimationTime = now;
-    this.drawAt(this.currentTime);
+    this.drawAt(this.currentTime, true);
     this.animationFrameId = requestAnimationFrame(time => this.advance(time));
   }
 
-  seek(time) {
+  seek(time, syncSlider = true) {
     this.currentTime = Math.max(this.startTime, Math.min(this.endTime, Number(time) || 0));
-    this.drawAt(this.currentTime);
+    this.drawAt(this.currentTime, syncSlider);
   }
 
   cycleSpeed() {
@@ -201,18 +227,29 @@ class AfterActionReplay {
     if (this.speedButton) this.speedButton.disabled = !replayAvailable;
   }
 
-  drawAt(time) {
+  drawAt(time, syncSlider = false) {
     if (!this.ctx || !this.canvas || this.frames.length === 0) return;
     const state = this.interpolateFrame(time);
-    this.resizeCanvas();
-    this.drawMap(state);
-    if (this.slider) this.slider.value = String(time);
-    if (this.clock) this.clock.textContent = `${this.formatTime(time - this.startTime)} / ${this.formatTime(this.endTime - this.startTime)}`;
+    if (typeof ReplayMapRenderer !== 'undefined') {
+      ReplayMapRenderer.drawMap(this.ctx, state, this.viewWidth, this.viewHeight, this.startTime);
+    }
+
+    if (syncSlider && this.slider && !this.isUserDragging) {
+      this.slider.value = String(time);
+    }
+    if (this.clock) {
+      const formatTime = (typeof ReplayMapRenderer !== 'undefined') ? ReplayMapRenderer.formatTime : s => String(Math.floor(s));
+      this.clock.textContent = `${formatTime(time - this.startTime)} / ${formatTime(this.endTime - this.startTime)}`;
+    }
   }
 
   interpolateFrame(time) {
+    if (this.frames.length === 1) return this.frames[0];
+
     let leftIndex = 0;
-    while (leftIndex < this.frames.length - 2 && this.frames[leftIndex + 1].time < time) leftIndex++;
+    while (leftIndex < this.frames.length - 2 && this.frames[leftIndex + 1].time < time) {
+      leftIndex++;
+    }
     const left = this.frames[leftIndex];
     const right = this.frames[Math.min(leftIndex + 1, this.frames.length - 1)];
     const span = right.time - left.time;
@@ -220,34 +257,78 @@ class AfterActionReplay {
     const state = { time, clouds: this.interpolateClouds(left.clouds || [], right.clouds || [], amount) };
 
     ['alliedAircraft', 'hostileAircraft', 'surfaceUnits', 'missiles', 'civilianTraffic', 'decoys'].forEach(key => {
-      state[key] = this.interpolateEntities(left[key] || [], right[key] || [], amount);
+      state[key] = this.interpolateEntities(left[key] || [], right[key] || [], amount, span);
     });
     return state;
   }
 
-  interpolateEntities(left, right, amount) {
-    const rightById = new Map(right.map(entity => [entity.id, entity]));
-    const leftIds = new Set(left.map(entity => entity.id));
-    const entities = left.map(previous => {
-      const next = rightById.get(previous.id);
-      if (!next) return amount < 0.5 ? previous : null;
-      const result = { ...next };
-      ['x', 'y', 'hp', 'speed'].forEach(key => {
-        if (Number.isFinite(previous[key]) && Number.isFinite(next[key])) {
-          result[key] = previous[key] + (next[key] - previous[key]) * amount;
-        }
-      });
-      if (Number.isFinite(previous.heading) && Number.isFinite(next.heading)) {
-        let delta = ((next.heading - previous.heading + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
-        result.heading = previous.heading + delta * amount;
-      }
-      return result;
-    }).filter(Boolean);
+  interpolateEntities(left, right, amount, span = 0.4) {
+    if (!left || left.length === 0) return right || [];
+    if (!right || right.length === 0) return left || [];
+    if (amount <= 0.001) return left;
+    if (amount >= 0.999) return right;
 
-    right.forEach(entity => {
-      if (!leftIds.has(entity.id) && amount >= 0.5) entities.push(entity);
+    const rightById = new Map();
+    right.forEach(e => { if (e && e.id) rightById.set(e.id, e); });
+
+    const result = [];
+    const processedRightIds = new Set();
+
+    left.forEach(prev => {
+      if (!prev) return;
+      const next = rightById.get(prev.id);
+      if (next) {
+        processedRightIds.add(next.id);
+        const item = { ...next };
+        if (Number.isFinite(prev.x) && Number.isFinite(next.x)) {
+          item.x = prev.x + (next.x - prev.x) * amount;
+        }
+        if (Number.isFinite(prev.y) && Number.isFinite(next.y)) {
+          item.y = prev.y + (next.y - prev.y) * amount;
+        }
+        if (Number.isFinite(prev.speed) && Number.isFinite(next.speed)) {
+          item.speed = prev.speed + (next.speed - prev.speed) * amount;
+        }
+
+        if (Number.isFinite(prev.hp) && Number.isFinite(next.hp)) {
+          if (next.hp <= 0.05 && prev.hp > 0.05) {
+            item.hp = (amount >= 0.70) ? 0 : prev.hp;
+          } else {
+            item.hp = prev.hp + (next.hp - prev.hp) * amount;
+          }
+        }
+
+        if (Number.isFinite(prev.heading) && Number.isFinite(next.heading)) {
+          let diff = next.heading - prev.heading;
+          while (diff < -Math.PI) diff += Math.PI * 2;
+          while (diff > Math.PI) diff -= Math.PI * 2;
+          item.heading = prev.heading + diff * amount;
+        }
+        result.push(item);
+      } else {
+        if (prev.weapon !== undefined || prev.stage !== undefined) {
+          if (amount < 0.70) {
+            const flightTime = Math.max(0.1, span) * amount;
+            const dist = (prev.speed || 2.4) * 0.35 * flightTime;
+            result.push({
+              ...prev,
+              x: prev.x + Math.cos(prev.heading || 0) * dist,
+              y: prev.y + Math.sin(prev.heading || 0) * dist
+            });
+          }
+        } else if (amount < 0.50 && prev.hp > 0.05) {
+          result.push(prev);
+        }
+      }
     });
-    return entities;
+
+    right.forEach(next => {
+      if (!processedRightIds.has(next.id) && amount >= 0.50) {
+        result.push(next);
+      }
+    });
+
+    return result;
   }
 
   interpolateClouds(left, right, amount) {
@@ -264,153 +345,24 @@ class AfterActionReplay {
   }
 
   resizeCanvas() {
+    if (!this.canvas) return;
     const width = Math.max(1, this.canvas.clientWidth);
     const height = Math.max(1, this.canvas.clientHeight);
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
     const pixelWidth = Math.round(width * ratio);
     const pixelHeight = Math.round(height * ratio);
-    if (pixelWidth !== this.pixelWidth || pixelHeight !== this.pixelHeight || ratio !== this.pixelRatio) {
+
+    this.viewWidth = width;
+    this.viewHeight = height;
+    this.pixelRatio = ratio;
+
+    if (this.canvas.width !== pixelWidth || this.canvas.height !== pixelHeight) {
       this.canvas.width = pixelWidth;
       this.canvas.height = pixelHeight;
-      this.pixelWidth = pixelWidth;
-      this.pixelHeight = pixelHeight;
-      this.pixelRatio = ratio;
     }
-    this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-  }
-
-  drawMap(state) {
-    const ctx = this.ctx;
-    const width = this.canvas.clientWidth;
-    const height = this.canvas.clientHeight;
-    const config = window.CONFIG || {};
-    const mapWidth = config.THEATER_WIDTH_KM || 150;
-    const mapHeight = config.THEATER_HEIGHT_KM || 100;
-    const padding = 22;
-    const scaleX = (width - padding * 2) / mapWidth;
-    const scaleY = (height - padding * 2) / mapHeight;
-    const fieldWidth = mapWidth * scaleX;
-    const fieldHeight = mapHeight * scaleY;
-    const left = padding;
-    const top = padding;
-    const point = (x, y) => ({ x: left + x * scaleX, y: top + y * scaleY });
-
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = '#020711';
-    ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = '#050d19';
-    ctx.fillRect(left, top, fieldWidth, fieldHeight);
-
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.12)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x <= mapWidth; x += 25) {
-      const pTop = point(x, 0), pBottom = point(x, mapHeight);
-      ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pBottom.x, pBottom.y); ctx.stroke();
+    if (this.ctx) {
+      this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     }
-    for (let y = 0; y <= mapHeight; y += 25) {
-      const pLeft = point(0, y), pRight = point(mapWidth, y);
-      ctx.beginPath(); ctx.moveTo(pLeft.x, pLeft.y); ctx.lineTo(pRight.x, pRight.y); ctx.stroke();
-    }
-    ctx.strokeStyle = 'rgba(125, 211, 252, 0.45)';
-    ctx.strokeRect(left, top, fieldWidth, fieldHeight);
-
-    (state.clouds || []).forEach(cloud => {
-      const p = point(cloud.x, cloud.y);
-      ctx.beginPath();
-      ctx.ellipse(p.x, p.y, Math.max(3, cloud.rx * scaleX), Math.max(3, cloud.ry * scaleY), 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(71, 85, 105, 0.19)'; ctx.fill();
-      ctx.strokeStyle = 'rgba(148, 163, 184, 0.23)'; ctx.setLineDash([4, 5]); ctx.stroke(); ctx.setLineDash([]);
-    });
-
-    (state.surfaceUnits || []).forEach(unit => {
-      const p = point(unit.x, unit.y);
-      ctx.strokeStyle = unit.hp <= 0 ? '#475569' : (unit.team === 'hostile' ? '#ef4444' : '#38bdf8');
-      ctx.lineWidth = 1.4;
-      ctx.strokeRect(p.x - 4, p.y - 4, 8, 8);
-      if (unit.hp > 0) {
-        ctx.fillStyle = ctx.strokeStyle;
-        ctx.fillRect(p.x - 1.5, p.y - 1.5, 3, 3);
-      }
-    });
-
-    (state.missiles || []).forEach(missile => {
-      const color = missile.team === 'friendly' ? '#67e8f9' : '#fb7185';
-      if (missile.trail && missile.trail.length > 1) {
-        ctx.beginPath();
-        missile.trail.slice().reverse().forEach((trailPoint, index) => {
-          const p = point(trailPoint.x, trailPoint.y);
-          if (index === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
-        });
-        const head = point(missile.x, missile.y);
-        ctx.lineTo(head.x, head.y);
-        ctx.strokeStyle = color; ctx.globalAlpha = 0.6; ctx.lineWidth = 1.3; ctx.stroke(); ctx.globalAlpha = 1;
-      }
-      this.drawAircraftMarker(point(missile.x, missile.y), missile.heading, color, 3.6);
-    });
-
-    (state.civilianTraffic || []).forEach(civilian => {
-      if (civilian.hp <= 0) return;
-      const p = point(civilian.x, civilian.y);
-      ctx.beginPath(); ctx.arc(p.x, p.y, 3.2, 0, Math.PI * 2);
-      ctx.fillStyle = '#7dd3fc'; ctx.fill();
-    });
-
-    (state.decoys || []).forEach(decoy => {
-      if (decoy.hp <= 0) return;
-      const p = point(decoy.x, decoy.y);
-      ctx.beginPath(); ctx.arc(p.x, p.y, 3.4, 0, Math.PI * 2);
-      ctx.strokeStyle = '#c084fc'; ctx.setLineDash([2, 2]); ctx.stroke(); ctx.setLineDash([]);
-    });
-
-    [...(state.alliedAircraft || []), ...(state.hostileAircraft || [])].forEach(aircraft => {
-      const p = point(aircraft.x, aircraft.y);
-      if (aircraft.hp <= 0.05) {
-        ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.3;
-        ctx.beginPath(); ctx.moveTo(p.x - 3, p.y - 3); ctx.lineTo(p.x + 3, p.y + 3);
-        ctx.moveTo(p.x + 3, p.y - 3); ctx.lineTo(p.x - 3, p.y + 3); ctx.stroke();
-        return;
-      }
-      const color = aircraft.isAce ? '#fbbf24' : (aircraft.team === 'friendly' ? '#38bdf8' : '#f87171');
-      this.drawAircraftMarker(p, aircraft.heading, color, aircraft.isAce ? 6 : 5);
-      if (width >= 500) {
-        ctx.font = '600 8px ui-monospace, monospace';
-        ctx.fillStyle = color;
-        ctx.fillText(aircraft.identified
-          ? (window.formatAircraftDisplayName ? window.formatAircraftDisplayName(aircraft) : `${aircraft.callsign || 'PILOT'} - ${aircraft.model || 'AIRCRAFT'}`)
-          : 'BOGEY', p.x + 7, p.y - 5);
-      }
-    });
-
-    ctx.font = '700 9px ui-monospace, monospace';
-    ctx.fillStyle = '#bae6fd';
-    ctx.fillText(`SORTIE REPLAY - ${this.formatTime(state.time - this.startTime)}`, 9, 15);
-    ctx.fillStyle = '#64748b';
-    ctx.fillText('BLUE', width - 70, 15);
-    ctx.fillStyle = '#38bdf8'; ctx.fillRect(width - 91, 9, 12, 2);
-    ctx.fillStyle = '#ef4444'; ctx.fillRect(width - 44, 9, 12, 2);
-    ctx.fillStyle = '#64748b';
-    ctx.fillText('RED', width - 28, 15);
-  }
-
-  drawAircraftMarker(position, heading, color, size) {
-    const ctx = this.ctx;
-    ctx.save();
-    ctx.translate(position.x, position.y);
-    ctx.rotate(heading || 0);
-    ctx.beginPath();
-    ctx.moveTo(size, 0);
-    ctx.lineTo(-size * 0.7, -size * 0.55);
-    ctx.lineTo(-size * 0.35, 0);
-    ctx.lineTo(-size * 0.7, size * 0.55);
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.restore();
-  }
-
-  formatTime(seconds) {
-    const safeSeconds = Math.max(0, Math.floor(seconds || 0));
-    return `${String(Math.floor(safeSeconds / 60)).padStart(2, '0')}:${String(safeSeconds % 60).padStart(2, '0')}`;
   }
 }
 

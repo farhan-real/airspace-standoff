@@ -54,7 +54,8 @@ class MissileImpactSystem {
     const tgt = missile.target;
     const w = missile.weapon;
     if (!tgt || tgt.hp <= 0.05) {
-      missile.active = false; missile.isDead = true;
+      missile.active = false;
+      missile.isDead = true;
       return;
     }
 

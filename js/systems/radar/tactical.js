@@ -99,7 +99,7 @@ class RadarTacticalRenderer {
         ctx.beginPath();
         ctx.moveTo(pMx, pMy);
         ctx.lineTo(tx, ty);
-        ctx.strokeStyle = isOwn ? '#00f0ff' : '#ef4444';
+        ctx.strokeStyle = isOwn ? '#38bdf8' : '#fb7185';
         ctx.setLineDash(isOwn ? [3, 3] : [2, 4]);
         ctx.stroke();
 
@@ -108,8 +108,8 @@ class RadarTacticalRenderer {
 
       if (friendlyCount > 1 || enemyCount > 1) {
         ctx.font = '700 10.5px "JetBrains Mono", ui-monospace, monospace';
-        if (friendlyCount > 1) { ctx.fillStyle = '#00f0ff'; ctx.fillText('SALVO x' + friendlyCount, tx - 24, ty - 15); }
-        if (enemyCount > 1) { ctx.fillStyle = '#ef4444'; ctx.fillText('INBOUND x' + enemyCount, tx - 24, ty + (friendlyCount > 1 ? 24 : -15)); }
+        if (friendlyCount > 1) { ctx.fillStyle = '#38bdf8'; ctx.fillText('SALVO x' + friendlyCount, tx - 24, ty - 15); }
+        if (enemyCount > 1) { ctx.fillStyle = '#fb7185'; ctx.fillText('INBOUND x' + enemyCount, tx - 24, ty + (friendlyCount > 1 ? 24 : -15)); }
       }
       group.missiles.length = 0;
     }
@@ -143,8 +143,8 @@ class RadarTacticalRenderer {
 
       if (m.trail && m.trail.length > 1) {
         ctx.save();
-        ctx.lineWidth = 1.6;
-        ctx.strokeStyle = m.team === 'friendly' ? 'rgba(56, 189, 248, 0.75)' : 'rgba(244, 63, 94, 0.75)';
+        ctx.lineWidth = 1.3;
+        ctx.strokeStyle = m.team === 'friendly' ? 'rgba(56, 189, 248, 0.65)' : 'rgba(251, 113, 133, 0.65)';
         ctx.beginPath();
         for (let t = 0; t < m.trail.length; t++) {
           const pt = m.trail[t];
@@ -166,24 +166,25 @@ class RadarTacticalRenderer {
       if (isPowered) {
         ctx.fillStyle = '#f97316';
         ctx.beginPath();
-        ctx.arc(-7, 0, 2.8, 0, Math.PI * 2);
+        ctx.arc(-5.6, 0, 2.2, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = '#fef08a';
         ctx.beginPath();
-        ctx.arc(-6.5, 0, 1.4, 0, Math.PI * 2);
+        ctx.arc(-5.2, 0, 1.1, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      ctx.fillStyle = m.team === 'friendly' ? '#00f0ff' : '#f43f5e';
+      const mColor = m.team === 'friendly' ? '#38bdf8' : '#fb7185';
+      ctx.fillStyle = mColor;
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 1.0;
+      ctx.lineWidth = 0.8;
       ctx.beginPath();
-      ctx.moveTo(9, 0);
-      ctx.lineTo(2, -3);
-      ctx.lineTo(-6, -3);
-      ctx.lineTo(-7, 0);
-      ctx.lineTo(-6, 3);
-      ctx.lineTo(2, 3);
+      ctx.moveTo(7.2, 0);
+      ctx.lineTo(1.6, -2.4);
+      ctx.lineTo(-4.8, -2.4);
+      ctx.lineTo(-5.6, 0);
+      ctx.lineTo(-4.8, 2.4);
+      ctx.lineTo(1.6, 2.4);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
@@ -239,11 +240,11 @@ class RadarTacticalRenderer {
         const speedTag = `M ${cl.speed.toFixed(1)} [${cl.stage}]`;
 
         ctx.font = '700 10.5px "JetBrains Mono", ui-monospace, monospace';
-        ctx.fillStyle = cl.isBlue ? '#00f0ff' : (cl.isIdentified ? '#f43f5e' : '#f97316');
+        ctx.fillStyle = cl.isBlue ? '#38bdf8' : (cl.isIdentified ? '#fb7185' : '#f97316');
         ctx.fillText(cleanFn(`${mslLabel}${countTag}`), cl.px + 9, cl.py - 5);
 
         ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
-        ctx.fillStyle = cl.isBlue ? '#00f5a0' : (cl.isIdentified ? '#fca5a5' : '#fed7aa');
+        ctx.fillStyle = cl.isBlue ? '#7dd3fc' : (cl.isIdentified ? '#fca5a5' : '#fed7aa');
         ctx.fillText(cleanFn(`${speedTag}${distTag}`), cl.px + 9, cl.py + 7);
       }
       ctx.restore();
