@@ -109,10 +109,10 @@ class StatEvaluator {
         return { tier: 4, colorClass: 'stat-tier-4' };
 
       case 'cost_airframe':
-        if (val <= 15.0) return { tier: 1, colorClass: 'stat-tier-1' };
-        if (val <= 25.0) return { tier: 2, colorClass: 'stat-tier-2' };
-        if (val <= 35.0) return { tier: 3, colorClass: 'stat-tier-3' };
-        if (val <= 48.0) return { tier: 4, colorClass: 'stat-tier-4' };
+        if (val <= 18.0) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val <= 30.0) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val <= 45.0) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val <= 60.0) return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'cost_weapon':

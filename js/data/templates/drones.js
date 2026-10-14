@@ -10,7 +10,7 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'PLSL_LIGHT',
     weapons: ['MAM'],
     upgrades: ['SWARM_AI_COPROCESSOR'],
-    desc: 'Low-cost 18G swarm drone ($3.5M). Armed with PLSL-10 pulse laser and MAM micro-missiles to draw hostile fire.'
+    desc: 'Low-cost 18G swarm drone ($4.0M). Armed with PLSL-10 pulse laser and MAM micro-missiles to draw hostile fire.'
   },
   'MQ-99 Micro-Missile Swarm': {
     name: 'MQ-99 Micro-Missile Swarm',
@@ -46,7 +46,7 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'MICRO_GUN',
     weapons: ['AIM-120D', 'ADM-160B'],
     upgrades: ['SWARM_AI_COPROCESSOR', 'MALD_DECOY_SYSTEM'],
-    desc: 'Cost-effective stealth wingman ($7.5M). Carries internal BVR missiles and launches MALD decoy drones.'
+    desc: 'Cost-effective stealth wingman ($9.0M). Carries internal BVR missiles and launches MALD decoy drones.'
   },
   'XQ-58A Forward Missile Magazine': {
     name: 'XQ-58A Forward Missile Magazine',
@@ -64,7 +64,7 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'BK-27',
     weapons: ['AIM-120D', 'AIM-9X-2'],
     upgrades: ['SWARM_AI_COPROCESSOR', 'GAN_AESA_CORE'],
-    desc: 'Carrier-capable supersonic UCAV ($9.5M). Internal weapon bay, AESA radar, and 16G combat breaks.'
+    desc: 'Carrier-capable supersonic UCAV ($14.0M). Internal weapon bay, AESA radar, and 16G combat breaks.'
   },
   'Kizilelma Standoff Intercept UCAV': {
     name: 'Kizilelma Standoff Intercept UCAV',
@@ -82,7 +82,7 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'GSH-30-1',
     weapons: ['AGM-88G', 'PL-15E'],
     upgrades: ['SWARM_AI_COPROCESSOR', 'RAM_NANO_COATING'],
-    desc: '20-ton heavy stealth flying-wing UCAV. Capable of internal heavy standoff anti-radiation missile volleys.'
+    desc: '20-ton heavy stealth flying-wing UCAV ($18.0M). Capable of internal heavy standoff anti-radiation missile volleys.'
   },
   'S-70 Penetration Interdiction': {
     name: 'S-70 Penetration Interdiction',
@@ -100,7 +100,7 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'MICRO_GUN',
     weapons: ['AIM-120D', 'AIM-9X-2'],
     upgrades: ['SWARM_AI_COPROCESSOR', 'MADL_BATTLE_LINK'],
-    desc: 'Collaborative combat aircraft providing low-cost sensor extension and BVR missile screening.'
+    desc: 'Collaborative combat aircraft ($11.0M) providing low-cost sensor extension and BVR missile screening.'
   },
   'RQ-180 High-Altitude Reconnaissance (HALE)': {
     name: 'RQ-180 High-Altitude Reconnaissance (HALE)',
@@ -109,6 +109,6 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'MICRO_GUN',
     weapons: ['ADM-160B', 'MAM'],
     upgrades: ['GAN_AESA_CORE', 'MADL_BATTLE_LINK'],
-    desc: 'Stratospheric flying-wing drone (0.0001m2 RCS, $16.0M). Operates as a dedicated high-altitude squadron sensor gateway.'
+    desc: 'Stratospheric flying-wing drone (0.0001m2 RCS, $22.0M). Operates as a dedicated high-altitude squadron sensor gateway.'
   }
 };

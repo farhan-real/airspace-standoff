@@ -10,7 +10,7 @@ window.TEMPLATES_SUPERFIGHTERS = {
     chosenGunId: 'M61A2',
     weapons: ['AIM-260', 'AIM-120D', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'THRUST_VECTOR'],
-    desc: 'Variable-geometry stealth superfighter deploying 12 BVR missiles and Sidewinders.'
+    desc: 'Variable-geometry stealth superfighter ($62.0M) deploying 12 BVR missiles and Sidewinders.'
   },
   'X-02S Stealth Strike Wyvern': {
     name: 'X-02S Stealth Strike Wyvern',
@@ -37,7 +37,7 @@ window.TEMPLATES_SUPERFIGHTERS = {
     chosenGunId: 'M61A2',
     weapons: ['MPBM', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'SUPERCRUISE_VCE', 'EXPANDED_CM_DISPENSER'],
-    desc: 'Forward-canted canard prototype superfighter ($48.0M) deploying high-yield MPBM thermobaric shockwave missiles (2x).'
+    desc: 'Forward-canted canard prototype superfighter ($65.0M) deploying high-yield MPBM thermobaric shockwave missiles (2x).'
   },
   'ADFX-01 Directed Energy Testbed': {
     name: 'ADFX-01 Directed Energy Testbed',
@@ -55,7 +55,7 @@ window.TEMPLATES_SUPERFIGHTERS = {
     chosenGunId: 'EML_GUN',
     weapons: ['ADMM', 'AIM-260', 'AIM-120D', 'PYTHON-5', 'AIM-9X-2'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'Carrier defense package combining EML railgun, ADMM pod (12x), BVR missiles, and rearward Python-5.'
+    desc: 'Carrier defense package ($68.0M) combining EML railgun, ADMM pod (12x), BVR missiles, and rearward Python-5.'
   },
   'CFA-44 Thermobaric Area Denial': {
     name: 'CFA-44 Thermobaric Area Denial',
@@ -82,7 +82,7 @@ window.TEMPLATES_SUPERFIGHTERS = {
     chosenGunId: 'DE-PULSE',
     weapons: ['AGM-158B', 'AIM-260'],
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'Scramjet penetrator ($56.0M) cruising at Mach 3.20 above FL580, out-pacing standard surface SAM engagement envelopes.'
+    desc: 'Scramjet penetrator ($70.0M) cruising at Mach 3.20+ above FL580, out-pacing standard surface SAM engagement envelopes.'
   },
   'X-40 Stealth Air Dominance': {
     name: 'X-40 Stealth Air Dominance',
@@ -91,7 +91,7 @@ window.TEMPLATES_SUPERFIGHTERS = {
     chosenGunId: 'EML_GUN',
     weapons: ['AIM-260', 'METEOR', 'AIM-9X-2', 'PYTHON-5'],
     upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'ADAPTIVE_ECCM_SUITE'],
-    desc: 'Stealth dominance package pairing internal EML railgun with stealth BVR missiles and ramjet Meteors.'
+    desc: 'Stealth dominance package ($72.0M) pairing internal EML railgun with stealth BVR missiles and ramjet Meteors.'
   },
   'X-40 Laser UAV & Railgun Intercept': {
     name: 'X-40 Laser UAV & Railgun Intercept',
@@ -118,7 +118,7 @@ window.TEMPLATES_SUPERFIGHTERS = {
     chosenGunId: 'M61A2',
     weapons: ['AIM-260', 'METEOR', 'AIM-120D', 'AIM-9X-2'],
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'THRUST_VECTOR', 'EOTS_DUAL_OPTICS'],
-    desc: 'Carrier air superiority package pairing pivoting wingtips and 3D TVC with 12 BVR missiles.'
+    desc: 'Carrier air superiority package ($58.0M) pairing pivoting wingtips and 3D TVC with 12 BVR missiles.'
   },
   'XFA-36B Kinetic Railgun Intercept': {
     name: 'XFA-36B Kinetic Railgun Intercept',

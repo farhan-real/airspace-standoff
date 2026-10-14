@@ -9,7 +9,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     category: 'EXPERIMENTAL',
     badge: 'CANARD 2D TVC DEMO',
     role: 'High-Agility Technology Demonstrator',
-    cost: 29.0,
+    cost: 24.0,
     hp: 5,
     AGI_0: 1.04,
     S_0: 1.44,
@@ -45,7 +45,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     category: 'EXPERIMENTAL',
     badge: 'FORWARD-SWEPT WING',
     role: 'High-AoA Maneuver Demonstrator',
-    cost: 32.0,
+    cost: 28.0,
     hp: 5,
     AGI_0: 1.28,
     S_0: 1.24,
@@ -81,7 +81,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     category: 'EXPERIMENTAL',
     badge: '3D TVC KULBIT DEMO',
     role: 'Super-Maneuverable Superiority Demonstrator',
-    cost: 28.0,
+    cost: 25.0,
     hp: 5,
     AGI_0: 1.20,
     S_0: 1.34,
@@ -117,7 +117,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     category: 'EXPERIMENTAL',
     badge: 'LIGHTWEIGHT FSW DEMO',
     role: 'High-AOA Technology Demonstrator',
-    cost: 19.0,
+    cost: 18.0,
     hp: 3,
     AGI_0: 1.24,
     S_0: 1.10,
@@ -145,6 +145,6 @@ window.AIRCRAFT_EXPERIMENTAL = {
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Forward-swept wing technology demonstrator ($19.0M). Single compact F404 turbofan produces 0.95x thermal signature. 6 external hardpoints.'
+    desc: 'Forward-swept wing technology demonstrator ($18.0M). Single compact F404 turbofan produces 0.95x thermal signature. 6 external hardpoints.'
   }
 };

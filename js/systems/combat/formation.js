@@ -7,8 +7,8 @@ class FormationPlanner {
   static getFormationRank(spec, isLead, isAce) {
     if (isLead || isAce) return 0;
     if (spec.isDrone || spec.category === 'DRONES') return 4;
-    const cheaperOlder = ['Mirage-2000', 'Tejas-MK2', 'F-16V', 'MiG-29K', 'Tornado-ECR', 'X-29A', 'EF-111A'];
-    if (cheaperOlder.includes(spec.id) || (spec.cost <= 15.0 && spec.category !== 'STRIKE')) return 3;
+    const cheaperOlder = ['Mirage-2000', 'Tejas-MK2', 'F-16V', 'MiG-29K', 'Tornado-ECR', 'X-29A', 'EF-111A', 'F-14D'];
+    if (cheaperOlder.includes(spec.id) || (spec.cost <= 18.0 && spec.category !== 'STRIKE')) return 3;
     const heavySpecs = ['B-1B', 'Tu-160M', 'B-21', 'B-2A', 'Su-34', 'A-10C', 'Su-25SM3', 'MiG-31BM', 'F-15EX', 'CFA-44', 'DARKSTAR', 'F-15-SMT-COFFIN', 'X-40', 'XFA-36B', 'EA-36'];
     if (heavySpecs.includes(spec.id) || spec.category === 'STRIKE' || (spec.M_max >= 8000) || (spec.hp >= 6)) return 1;
     return 2;
