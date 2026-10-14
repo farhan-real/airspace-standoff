@@ -10,7 +10,6 @@ class TacticalRadarRenderer {
     this.cssHeight = 500;
     this.isMobile = (typeof window !== 'undefined') && (window.innerWidth <= 1024);
 
-    // Capped DPR to prevent GPU memory bus saturation on High-DPI screens
     const rawDpr = window.devicePixelRatio || 1;
     this.dpr = Math.max(1, Math.min(rawDpr, 1.5));
 
@@ -158,10 +157,12 @@ class TacticalRadarRenderer {
 
     this.cam.updateScales();
 
-    const allied = (state && state.alliedAircraft) || [];
-    const hostiles = (state && state.hostileAircraft) || [];
-    const surface = (state && state.surfaceUnits) || [];
-    const missiles = (state && state.missiles) || [];
+    const allied = (state && state.alliedAircraft) || (window.Game && window.Game.alliedAircraft) || [];
+    const hostiles = (state && state.hostileAircraft) || (window.Game && window.Game.hostileAircraft) || [];
+    const surface = (state && state.surfaceUnits) || (window.Game && window.Game.surfaceUnits) || [];
+    const missiles = (state && state.missiles && state.missiles.length > 0)
+      ? state.missiles
+      : ((window.Game && window.Game.missiles) ? window.Game.missiles : ((state && state.missiles) || []));
     const sim = window.Game && window.Game.simulation;
     const civilians = (sim && sim.civilianTraffic) || [];
     const ghosts = (sim && sim.ghostContacts) || [];

@@ -331,9 +331,36 @@ class ControlsSystem {
   firePylonByIndex(pIdx) {
     const u = this.game.activeUnit;
     if (!u || u.hp <= 0.05) return;
-    if (u.equippedWeapons && u.equippedWeapons[pIdx]) {
-      this.game.firePylon(u, pIdx, this.game.selectedTarget);
+    if (!u.equippedWeapons || !u.equippedWeapons[pIdx]) return;
+    const item = u.equippedWeapons[pIdx];
+    const w = item.weapon;
+    if (!w) return;
+
+    if (!w.isDecoy && !w.isDecoyDrone && !w.isGunpod && w.category !== 'GUN') {
+      let tgt = this.game.selectedTarget;
+      if (!tgt || tgt.hp <= 0.05) {
+        if (this.targeting) {
+          this.targeting.autoLock();
+          tgt = this.game.selectedTarget;
+        }
+      }
+      if (!tgt || tgt.hp <= 0.05) {
+        if (this.game.radar) {
+          this.game.radar.spawnCombatText(u.x, u.y, 'NO TARGET SELECTED [PRESS T OR TAP RADAR]', '#f97316');
+        }
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        return;
+      }
+      const dist = Math.hypot(tgt.x - u.x, tgt.y - u.y);
+      if (dist > (w.rangeKm || 50)) {
+        if (this.game.radar) {
+          this.game.radar.spawnCombatText(u.x, u.y, `OUT OF RANGE (${dist.toFixed(0)}km > ${w.rangeKm}km)`, '#f43f5e');
+        }
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        return;
+      }
     }
+    this.game.firePylon(u, pIdx, this.game.selectedTarget);
   }
 
   initModeSelectors() {

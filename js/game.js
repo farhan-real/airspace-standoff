@@ -249,6 +249,10 @@ class AirspaceStandoffGame {
         this.simulation.step(dt);
       }
 
+      renderPayload.alliedAircraft = this.alliedAircraft;
+      renderPayload.hostileAircraft = this.hostileAircraft;
+      renderPayload.surfaceUnits = this.surfaceUnits;
+      renderPayload.missiles = this.missiles;
       renderPayload.activeUnit = this.activeUnit;
       renderPayload.selectedTarget = this.selectedTarget;
       renderPayload.inspectionEntity = this.inspection && this.inspection.isOpen ? this.inspection.selectedEntity : null;

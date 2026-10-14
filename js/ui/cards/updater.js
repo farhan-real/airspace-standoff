@@ -144,6 +144,11 @@ class PylonCardUpdater {
         let expectedBtnColor = '#ffffff';
         let expectedBtnBorder = 'var(--theme-primary)';
 
+        const isKnown = Boolean(
+          validTarget.type ||
+          (typeof validTarget.isIdentifiedBy === 'function' ? validTarget.isIdentifiedBy(curGame.currentPvpCommander || 'friendly') : validTarget.isIdentified)
+        );
+
         if (pkResult.label === 'AIR ONLY' || pkResult.label === 'GROUND ONLY' || pkResult.label === 'IMMUNE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OUT OF RANGE' || pkResult.label === 'OFF BORESIGHT') {
           expectedBtnText = pkResult.label;
           if (pkResult.label === 'OUT OF RANGE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OFF BORESIGHT') {
@@ -157,6 +162,14 @@ class PylonCardUpdater {
           expectedBtnText = 'NEED TOK';
           expectedBtnColor = '#fbbf24';
           expectedBtnBorder = 'rgba(251, 191, 36, 0.35)';
+        } else if (validTarget.isCivilian) {
+          expectedBtnText = `CIVILIAN ROE (-2000 VP)`;
+          expectedBtnColor = '#f43f5e';
+          expectedBtnBorder = 'rgba(244, 63, 94, 0.5)';
+        } else if (!isKnown) {
+          expectedBtnText = `ENGAGE BOGEY [? (${currentPk}%)]`;
+          expectedBtnColor = '#f97316';
+          expectedBtnBorder = 'rgba(249, 115, 22, 0.5)';
         } else if (pkResult.hasMixedSeekers) {
           expectedBtnText = `ENGAGE (EST. ${currentPk}% MIXED +25%)`;
         } else {

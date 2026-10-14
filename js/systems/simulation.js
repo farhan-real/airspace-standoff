@@ -167,7 +167,11 @@ class SimulationSystem {
     }
 
     for (const m of this.game.missiles) m.update(dt, this.weatherClouds);
-    this.game.missiles = this.game.missiles.filter(m => !m.isDead);
+    for (let i = this.game.missiles.length - 1; i >= 0; i--) {
+      if (this.game.missiles[i].isDead) {
+        this.game.missiles.splice(i, 1);
+      }
+    }
 
     this.resolveUnitFocus();
     this.game.ai.update(dt);

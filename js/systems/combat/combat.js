@@ -90,7 +90,6 @@ class CombatSystem {
       if (this.game.radar) {
         this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE VIOLATION: CIVILIAN TARGET (-${penalty} VP)`, '#f43f5e');
       }
-      if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
     } else if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !w.isGunpod && targetEntity) {
       const penalty = window.CONFIG.VP_UNIDENTIFIED_FIRE_PENALTY;
       if (sourceUnit.team === 'friendly' && this.game.simulation) {
@@ -102,7 +101,6 @@ class CombatSystem {
       if (this.game.radar) {
         this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE INFRACTION: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
       }
-      if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
     }
 
     if (w.isDecoyDrone) {
@@ -213,7 +211,13 @@ class CombatSystem {
       }
     } else {
       if (typeof MissileEntity === 'undefined') throw new Error('MissileEntity class is not loaded.');
-      this.game.missiles.push(new MissileEntity(w, sourceUnit, targetEntity));
+      const newMissile = new MissileEntity(w, sourceUnit, targetEntity);
+      this.game.missiles.push(newMissile);
+      if (sourceUnit.team === 'friendly' && this.game.detectedByBlue) {
+        this.game.detectedByBlue.add(newMissile.id);
+      } else if (sourceUnit.team === 'hostile' && this.game.detectedByRed) {
+        this.game.detectedByRed.add(newMissile.id);
+      }
       if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
     }
 

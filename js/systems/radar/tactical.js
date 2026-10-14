@@ -126,7 +126,7 @@ class RadarTacticalRenderer {
       if (!m || m.isDead || typeof m.x !== 'number') continue;
       const isOwn = (m.team === team);
       if (!isOwn && m.isPassiveRadar && m.age < (m.launchStealthDuration || 3.2) && m.distanceToTarget > (m.pathRevealDistance || 20.0)) continue;
-      if (!isOwn && !detectedSet.has(m.id)) continue;
+      if (!isOwn && detectedSet && !detectedSet.has(m.id)) continue;
 
       const px = Math.round(cam.toScreenX ? cam.toScreenX(m.x) : cam.toScreen(m.x, m.y).x);
       const py = Math.round(cam.toScreenY ? cam.toScreenY(m.y) : cam.toScreen(m.x, m.y).y);
@@ -143,8 +143,8 @@ class RadarTacticalRenderer {
 
       if (m.trail && m.trail.length > 1) {
         ctx.save();
-        ctx.lineWidth = 1.3;
-        ctx.strokeStyle = m.team === 'friendly' ? 'rgba(0, 240, 255, 0.45)' : 'rgba(239, 68, 68, 0.45)';
+        ctx.lineWidth = 1.6;
+        ctx.strokeStyle = m.team === 'friendly' ? 'rgba(56, 189, 248, 0.75)' : 'rgba(244, 63, 94, 0.75)';
         ctx.beginPath();
         for (let t = 0; t < m.trail.length; t++) {
           const pt = m.trail[t];
@@ -157,15 +157,36 @@ class RadarTacticalRenderer {
         ctx.restore();
       }
 
+      const isPowered = (m.stage === 'BOOST' || m.stage === 'PULSE 2' || m.stage === 'RAMJET' || m.stage === 'SUSTAIN' || m.stage === 'DIVE');
+
       ctx.save();
       ctx.translate(px, py);
       ctx.rotate(m.heading || 0);
-      ctx.fillStyle = m.team === 'friendly' ? '#00f0ff' : '#ef4444';
+
+      if (isPowered) {
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath();
+        ctx.arc(-7, 0, 2.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(-6.5, 0, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = m.team === 'friendly' ? '#00f0ff' : '#f43f5e';
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 0.8;
+      ctx.lineWidth = 1.0;
       ctx.beginPath();
-      ctx.moveTo(8, 0); ctx.lineTo(2, -2.5); ctx.lineTo(-5, -2.5); ctx.lineTo(-6, 0); ctx.lineTo(-5, 2.5); ctx.lineTo(2, 2.5);
-      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.moveTo(9, 0);
+      ctx.lineTo(2, -3);
+      ctx.lineTo(-6, -3);
+      ctx.lineTo(-7, 0);
+      ctx.lineTo(-6, 3);
+      ctx.lineTo(2, 3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
       ctx.restore();
     }
 
@@ -218,12 +239,12 @@ class RadarTacticalRenderer {
         const speedTag = `M ${cl.speed.toFixed(1)} [${cl.stage}]`;
 
         ctx.font = '700 10.5px "JetBrains Mono", ui-monospace, monospace';
-        ctx.fillStyle = cl.isBlue ? '#00f0ff' : (cl.isIdentified ? '#ef4444' : '#f97316');
-        ctx.fillText(cleanFn(`${mslLabel}${countTag}`), cl.px + 8, cl.py - 5);
+        ctx.fillStyle = cl.isBlue ? '#00f0ff' : (cl.isIdentified ? '#f43f5e' : '#f97316');
+        ctx.fillText(cleanFn(`${mslLabel}${countTag}`), cl.px + 9, cl.py - 5);
 
         ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = cl.isBlue ? '#00f5a0' : (cl.isIdentified ? '#fca5a5' : '#fed7aa');
-        ctx.fillText(cleanFn(`${speedTag}${distTag}`), cl.px + 8, cl.py + 6);
+        ctx.fillText(cleanFn(`${speedTag}${distTag}`), cl.px + 9, cl.py + 7);
       }
       ctx.restore();
 

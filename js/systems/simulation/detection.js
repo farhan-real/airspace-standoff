@@ -56,7 +56,6 @@ class SimulationDetectionSystem {
           const dy = h.y - sensor.y;
           const baseR0 = sensor.spec ? sensor.spec.R_0 : sensor.rangeKm;
 
-          // Quick distance squared rejection
           const maxPossible = baseR0 * 2.5;
           if (dx * dx + dy * dy > maxPossible * maxPossible) continue;
 
@@ -187,7 +186,7 @@ class SimulationDetectionSystem {
 
     for (let i = 0; i < this.game.missiles.length; i++) {
       const m = this.game.missiles[i];
-      if (!m.active) continue;
+      if (!m.active && !m.isDead) continue;
       if (is2P) {
         this.game.detectedByBlue.add(m.id); this.game.detectedByRed.add(m.id);
         m.identifiedByBlue = true; m.identifiedByRed = true;
@@ -201,15 +200,21 @@ class SimulationDetectionSystem {
         const isConcealed = m.isPassiveRadar && (m.age < m.launchStealthDuration) && (m.distanceToTarget > m.pathRevealDistance);
         if (!isConcealed) {
           let detected = false;
-          for (let s = 0; s < blueSensors.length; s++) {
-            const sensor = blueSensors[s];
-            const maxDist = Physics.getRadarMaxDetectionRange(sensor, m, this.sim.weatherClouds);
-            if (maxDist > 0.0 && Math.hypot(m.x - sensor.x, m.y - sensor.y) <= maxDist) { detected = true; break; }
+          // Radar Warning Receiver / Missile Approach Warning System: Inbound missile actively targeting friendly is detected
+          if (m.target && m.target.team === 'friendly') {
+            detected = true;
+          }
+          if (!detected) {
+            for (let s = 0; s < blueSensors.length; s++) {
+              const sensor = blueSensors[s];
+              const maxDist = Physics.getRadarMaxDetectionRange(sensor, m, this.sim.weatherClouds);
+              if (maxDist > 0.0 && Math.hypot(m.x - sensor.x, m.y - sensor.y) <= maxDist) { detected = true; break; }
+            }
           }
           if (detected) {
             m.trackHoldBlue = 3.5;
             m.trackDurationBlue += dt;
-            if (m.trackDurationBlue >= baseMslIdTime) m.identifiedByBlue = true;
+            if (m.trackDurationBlue >= baseMslIdTime || (m.target && m.target.team === 'friendly')) m.identifiedByBlue = true;
           } else if (m.trackHoldBlue > 0) {
             m.trackHoldBlue -= dt;
           }
