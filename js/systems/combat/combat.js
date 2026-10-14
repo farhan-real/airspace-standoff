@@ -90,6 +90,7 @@ class CombatSystem {
       if (this.game.radar) {
         this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE VIOLATION: CIVILIAN TARGET (-${penalty} VP)`, '#f43f5e');
       }
+      if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
     } else if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !w.isGunpod && targetEntity) {
       const penalty = window.CONFIG.VP_UNIDENTIFIED_FIRE_PENALTY;
       if (sourceUnit.team === 'friendly' && this.game.simulation) {
@@ -101,6 +102,7 @@ class CombatSystem {
       if (this.game.radar) {
         this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE INFRACTION: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
       }
+      if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
     }
 
     if (w.isDecoyDrone) {
@@ -177,6 +179,7 @@ class CombatSystem {
 
       const clouds = (this.game && this.game.simulation && this.game.simulation.weatherClouds) || [];
       const cloudHits = (typeof Physics !== 'undefined' && targetEntity) ? Physics.countIntersectingClouds(sourceUnit.x, sourceUnit.y, targetEntity.x, targetEntity.y, clouds) : 0;
+      // Laser beams scatter significantly in clouds: drops down to 15% damage in dense cloud banks
       const cloudScatterFactor = cloudHits > 0 ? Math.max(0.15, Math.pow(0.55, cloudHits)) : 1.0;
 
       for (let p = 0; p < numPulses; p++) {
@@ -211,13 +214,7 @@ class CombatSystem {
       }
     } else {
       if (typeof MissileEntity === 'undefined') throw new Error('MissileEntity class is not loaded.');
-      const newMissile = new MissileEntity(w, sourceUnit, targetEntity);
-      this.game.missiles.push(newMissile);
-      if (sourceUnit.team === 'friendly' && this.game.detectedByBlue) {
-        this.game.detectedByBlue.add(newMissile.id);
-      } else if (sourceUnit.team === 'hostile' && this.game.detectedByRed) {
-        this.game.detectedByRed.add(newMissile.id);
-      }
+      this.game.missiles.push(new MissileEntity(w, sourceUnit, targetEntity));
       if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
     }
 

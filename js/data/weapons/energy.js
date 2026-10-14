@@ -28,7 +28,7 @@ window.AUTOCANNONS_ENERGY = {
     kineticConcussion: 0.0,
     thermalBloom: 1.4,
     cloudScattering: 0.70,
-    desc: 'Lightweight tactical pulse laser firing 3-pulse bursts (1.14 HP total, 1.8s reload). 18 pulses allow 6 bursts. Focused 34-degree cone; electrical discharge increases thermal bloom and beam scatters in clouds.'
+    desc: 'Lightweight tactical pulse laser firing 3-pulse bursts (1.14 HP total, 1.8s reload). 18 pulses allow 6 bursts. Focused 34-degree cone; electrical discharge increases thermal bloom and beam scatters heavily in clouds.'
   },
   'PLSL_MED': {
     id: 'PLSL_MED',
@@ -106,7 +106,7 @@ window.AUTOCANNONS_ENERGY = {
     kineticConcussion: 0.0,
     thermalBloom: 1.6,
     cloudScattering: 0.75,
-    desc: '80 kW solid-state pulsed fiber laser firing 3-pulse bursts (1.65 HP total, 2.4s reload). 15 pulses allow 5 instant hitscan bursts; narrow 28-degree beam; thermal bloom compromises stealth.'
+    desc: '80 kW solid-state pulsed fiber laser firing 3-pulse bursts (1.65 HP total, 2.4s reload). 15 pulses allow 5 instant hitscan bursts; narrow 28-degree beam; scattered heavily by cloud moisture.'
   },
   'EML_GUN': {
     id: 'EML_GUN',

@@ -48,7 +48,6 @@ class MissileEntity {
     this.trail = [];
     this.lostTimer = 0.0;
     this.lostReason = '';
-    this.cloudObscureTimer = 0.0;
 
     if (sourceUnit.missilesLaunchedCount !== undefined) {
       sourceUnit.missilesLaunchedCount++;
@@ -79,8 +78,9 @@ class MissileEntity {
     while (this.heading < 0) this.heading += Math.PI * 2;
     while (this.heading >= Math.PI * 2) this.heading -= Math.PI * 2;
 
-    if (typeof MissileKinetics === 'undefined') throw new Error('MissileKinetics subsystem is not loaded.');
-    MissileKinetics.initMissile(this);
+    if (typeof MissileKinetics !== 'undefined') {
+      MissileKinetics.initMissile(this);
+    }
 
     const inspection = window.Game && window.Game.inspection;
     if (inspection && inspection.enabled) {
@@ -150,18 +150,6 @@ class MissileEntity {
 
     if (this.state === 'LOST_TRACK') return;
 
-    const cloudHits = Physics.countIntersectingClouds(this.x, this.y, this.target.x, this.target.y, weatherClouds);
-    if (cloudHits > 0) {
-      this.cloudObscureTimer += dt * cloudHits;
-      const loseThreshold = window.CONFIG.CLOUD_IR_TIME_TO_LOSE_SEC;
-      if ((this.weapon.seeker === 'IIR' || this.weapon.seeker === 'EO' || this.weapon.seeker === 'OPT') && this.cloudObscureTimer >= loseThreshold) {
-        this.triggerLostTrack('OBSCURED IN CLOUDS');
-        return;
-      }
-    } else {
-      this.cloudObscureTimer = Math.max(0, this.cloudObscureTimer - dt * 2.0);
-    }
-
     this.prevDistanceToTarget = this.distanceToTarget;
 
     const step = (this.speed * 0.35) * dt;
@@ -198,7 +186,6 @@ class MissileEntity {
           else if (tgt.activeManeuverId === 'SPLIT_S') reason = 'SPLIT-S (KINETIC ESCAPE)';
           else if (tgt.activeManeuverId === 'EMERGENCY_CM' || tgt.cmTimer > 0) reason = 'CHAFF DECOY DIVERSION';
           else if (tgt.activeManeuverId === 'ZOOM_CLIMB') reason = 'HIGH-ALTITUDE CLIMB (ENERGY DEFICIT)';
-          else if (tgt.activeManeuverId === 'BREAK_TURN') reason = 'DEFENSIVE BREAK TURN';
           else if (tgt.isCoffin) reason = 'COFFIN EVASIVE RESPONSE';
           else if (tgt.isAce) reason = 'ACE DEFENSIVE BREAK';
           else if (tgt.activeManeuverBonus > 0) reason = 'DEFENSIVE BREAK TURN';
@@ -211,13 +198,15 @@ class MissileEntity {
   }
 
   triggerLostTrack(reason) {
-    if (typeof MissileTerminalSystem === 'undefined') throw new Error('MissileTerminalSystem is not loaded.');
-    MissileTerminalSystem.triggerLostTrack(this, reason);
+    if (typeof MissileTerminalSystem !== 'undefined') {
+      MissileTerminalSystem.triggerLostTrack(this, reason);
+    }
   }
 
   resolveTerminalEngagement(weatherClouds) {
-    if (typeof MissileTerminalSystem === 'undefined') throw new Error('MissileTerminalSystem is not loaded.');
-    MissileTerminalSystem.resolveTerminalEngagement(this, weatherClouds);
+    if (typeof MissileTerminalSystem !== 'undefined') {
+      MissileTerminalSystem.resolveTerminalEngagement(this, weatherClouds);
+    }
   }
 }
 

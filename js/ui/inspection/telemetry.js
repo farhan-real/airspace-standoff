@@ -163,7 +163,7 @@ class InspectionTelemetry {
 
       const cloudRow = acc.querySelector('.sensor-cloud-row');
       if (cloudRow) {
-        const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.08;
+        const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.03;
         const totalAttenPct = Math.round((1 - Math.pow(1.0 - atten, rec.cloudHits)) * 100);
         let cloudClass = 'neutral';
         let cloudText = 'Clear Line of Sight';
@@ -171,11 +171,11 @@ class InspectionTelemetry {
         if (rec.cloudHits === 1) {
           cloudClass = 'warning';
           cloudText = `-${totalAttenPct}% Attenuation (1 Cloud Cell)`;
-          cloudDesc = 'Single cloud cell in sensor path: moderate microwave RF attenuation.';
+          cloudDesc = 'Single cloud cell in sensor path: gentle microwave RF attenuation.';
         } else if (rec.cloudHits >= 2) {
-          cloudClass = 'negative';
+          cloudClass = 'warning';
           cloudText = `-${totalAttenPct}% Attenuation (${rec.cloudHits} Clouds)`;
-          cloudDesc = `${rec.cloudHits} overlapping cloud cells: severe microwave radar scattering.`;
+          cloudDesc = `${rec.cloudHits} cloud cells in path: minor microwave radar attenuation.`;
         } else if (!rec.inCone) {
           cloudClass = 'negative';
           cloudText = `NO RADAR SIGHT (${rec.offBoresightDeg}${sDeg})`;

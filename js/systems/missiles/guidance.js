@@ -164,7 +164,8 @@ class MissileGuidanceSystem {
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
     const salvoBonus = Math.min(0.30, Math.max(0, (salvoCount || 1) - 1) * 0.12);
-    const weatherPenalty = (weatherClouds && isOptical && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.25 : 0.0;
+    // Moderate 12% cloud penalty only when target is submerged in a cloud
+    const weatherPenalty = (weatherClouds && isOptical && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.12 : 0.0;
 
     let targetThermalMultiplier = Number(target.thermalBloom !== undefined ? target.thermalBloom : 1.0);
     if (target.irPenalty) targetThermalMultiplier *= (1.0 + target.irPenalty);

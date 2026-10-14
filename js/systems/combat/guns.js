@@ -33,6 +33,7 @@ class CombatGunsSystem {
           const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
           const cloudHits = typeof Physics !== 'undefined' ? Physics.countIntersectingClouds(aircraft.x, aircraft.y, enemy.x, enemy.y, clouds) : 0;
 
+          // Energy beams scatter heavily in cloud moisture
           if (cloudHits > 0 && isEnergy && aircraft.gun.cloudScattering) {
             const factor = Math.max(0.10, Math.pow(1.0 - aircraft.gun.cloudScattering, cloudHits));
             sustainedDmg *= factor;

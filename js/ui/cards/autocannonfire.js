@@ -81,6 +81,7 @@ class AutocannonFireExecutor {
 
             const clouds = (game && game.simulation && game.simulation.weatherClouds) || [];
             const cloudHits = Physics.countIntersectingClouds(unit.x, unit.y, targetCheck.x, targetCheck.y, clouds);
+            // Energy weapons scatter heavily in cloud moisture
             if (cloudHits > 0 && gun.cloudScattering && gun.cloudScattering > 0) {
               roundDmg *= Math.max(0.10, Math.pow(1.0 - gun.cloudScattering, cloudHits));
             }

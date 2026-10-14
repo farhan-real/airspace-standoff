@@ -62,7 +62,6 @@ const Physics = {
     const baseR0 = sensorUnit.spec ? sensorUnit.spec.R_0 : sensorUnit.rangeKm;
     if (typeof baseR0 !== 'number' || isNaN(baseR0)) return 0.0;
 
-    // Fast distance squared pre-check: if distance is beyond 2.5x radar range, return 0 without raycasting
     const dx = targetUnit.x - sensorUnit.x;
     const dy = targetUnit.y - sensorUnit.y;
     const distSq = dx * dx + dy * dy;
@@ -110,12 +109,11 @@ const Physics = {
       maxDetectDist *= Math.max(0.50, Math.min(1.10, 0.55 + clutterFactor * 0.55));
     }
 
-    // Early exit before cloud raycast: if distance already exceeds maxDetectDist, clouds can only lower it further
     if (distSq > maxDetectDist * maxDetectDist) return 0.0;
 
     const cloudHits = Physics.countIntersectingClouds(sensorUnit.x, sensorUnit.y, targetUnit.x, targetUnit.y, weatherClouds);
     if (cloudHits > 0) {
-      const atten = window.CONFIG.CLOUD_RADAR_ATTENUATION;
+      const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.04;
       maxDetectDist *= Math.pow(1.0 - atten, cloudHits);
     }
     return maxDetectDist;
@@ -144,9 +142,10 @@ const Physics = {
     const dist = Math.hypot(target.x - attacker.x, target.y - attacker.y);
     const cloudHits = Physics.countIntersectingClouds(attacker.x, attacker.y, target.x, target.y, weatherClouds);
 
+    // Directed energy weapons scatter heavily in cloud moisture
     if (weapon.isLaser || weapon.seeker === 'DIRECT_ENERGY') {
       if (dist > weapon.rangeKm) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist)}km > ${weapon.rangeKm}km`, salvoCount: 0, hasMixedSeekers: false };
-      if (cloudHits > 0) return { pk: Math.max(25, 95 - cloudHits * 25), label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: `${cloudHits} cloud cells scattering beam`, salvoCount: 0, hasMixedSeekers: false };
+      if (cloudHits > 0) return { pk: Math.max(25, Math.round(95 - cloudHits * 25)), label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: `${cloudHits} cloud cells scattering beam`, salvoCount: 0, hasMixedSeekers: false };
       return { pk: 95, label: 'DIRECT BEAM', color: '#00f0ff', arrow: '--', desc: 'Speed-of-light directed energy beam', salvoCount: 0, hasMixedSeekers: false };
     }
 
@@ -235,8 +234,11 @@ const Physics = {
     let effectiveDefense = Math.min(0.50, Math.max(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
+    // Moderate 12% cloud weather penalty only when target is directly inside a cloud
+    const weatherPenalty = (weatherClouds && isOpticalSeeker && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.12 : 0.0;
+
     const t0 = weapon.T_0 !== undefined ? weapon.T_0 : 0.80;
-    const basePk = t0 * rangeScore * aspectScore - effectiveDefense + salvoBonus + thermalModifier - offBoresightPenalty;
+    const basePk = t0 * rangeScore * aspectScore - effectiveDefense + salvoBonus + thermalModifier - offBoresightPenalty - weatherPenalty;
     const pkPercent = Math.round(Math.max(15, Math.min(95, basePk * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = isClosing ? '^' : 'v';

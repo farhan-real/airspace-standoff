@@ -17,7 +17,7 @@ class MissileImpactSystem {
     if (inspection && inspection.enabled) {
       inspection.recordEvent('TRACK TERMINATED', `${missile.weapon.name || missile.weapon.id} terminal track defeated (${reason})`, missile.source, missile.target, {
         missileId: missile.id, reason, stageBeforeLoss, distanceToTargetKm: missile.distanceToTarget,
-        distanceTraveledKm: missile.distanceTraveled, ageSec: missile.age, cloudObscureSec: missile.cloudObscureTimer
+        distanceTraveledKm: missile.distanceTraveled, ageSec: missile.age
       }, missile);
     }
 
@@ -158,7 +158,11 @@ class MissileImpactSystem {
       }
     } else {
       let reason = 'DEFENSIVE BREAK TURN';
-      if (tgt.activeManeuverId === 'DOPPLER_NOTCH' || tgt.isNotching) reason = 'DOPPLER NOTCH (GATE LOSS)';
+      const isOptical = Boolean(w && (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT'));
+      const targetInCloud = weatherClouds && weatherClouds.some(c => c.containsPoint(tgt.x, tgt.y));
+
+      if (isOptical && targetInCloud) reason = 'OBSCURED IN CLOUDS';
+      else if (tgt.activeManeuverId === 'DOPPLER_NOTCH' || tgt.isNotching) reason = 'DOPPLER NOTCH (GATE LOSS)';
       else if (tgt.activeManeuverId === 'PUSH_COBRA') reason = 'COBRA BRAKE (OVERSHOOT)';
       else if (tgt.activeManeuverId === 'BARREL_ROLL') reason = 'BARREL ROLL (LEAD LOSS)';
       else if (tgt.activeManeuverId === 'SPLIT_S') reason = 'SPLIT-S (KINETIC ESCAPE)';

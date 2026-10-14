@@ -29,7 +29,7 @@ window.MANUAL_COMBAT = [
               <td style="color:#00f5a0;font-weight:800;">IIR / EO</td>
               <td>Imaging Infrared / Optical</td>
               <td>AIM-9X-2, R-73, Python-5, IRIS-T, MAM</td>
-              <td><b>Throttle to Idle / Dive into Clouds.</b> Moisture scatters imaging contrast; Idle reduces engine exhaust thermal bloom.</td>
+              <td><b>Throttle to Idle / Dive into Clouds.</b> Moisture slightly scatters imaging contrast (-12% P_k); Idle cuts engine exhaust thermal bloom.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">INS / RADAR</td>
@@ -150,9 +150,9 @@ window.MANUAL_COMBAT = [
           </div>
         </div>
         <div class="ge-card">
-          <b style="color:#00f5a0;">WEATHER CLOUD MASKING</b>
+          <b style="color:#00f5a0;">WEATHER CLOUD CONCEALMENT</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Diving inside meteorological cloud cells scatters optical, laser, and imaging infrared (IIR) seeker optics, reducing tracking probability by up to 25% per cell and attenuating laser damage.
+            Diving inside meteorological cloud cells scatters directed-energy laser beams (up to 85% damage reduction) and applies a moderate 12% tracking penalty to optical and infrared missiles.
           </div>
         </div>
         <div class="ge-card">

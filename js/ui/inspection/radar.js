@@ -18,7 +18,7 @@ class InspectionRadarView {
 
     const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
     const isOptical = (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT');
-    const cloudAtten = cloudHits > 0 ? (isOptical ? `${cloudHits * 15}% Optical Scatter` : `${cloudHits * 8}% RF Attenuation`) : 'Clear Track';
+    const cloudAtten = cloudHits > 0 ? (isOptical ? `${cloudHits * 12}% Optical Contrast Loss` : `${cloudHits * 4}% RF Attenuation`) : 'Clear Track';
 
     return `
       <section class="inspection-card">
@@ -28,7 +28,7 @@ class InspectionRadarView {
           <div>SEEKER HEAD: <b style="color:var(--stat-tier-2);">${w.seeker || 'GUIDED'}</b></div>
           <div>FLIGHT STAGE: <b style="color:var(--stat-tier-3);">${missile.stage || 'BOOST'}</b></div>
           <div>BORESIGHT OFFSET: <b style="color:${offBoresightDeg <= 30 ? 'var(--stat-tier-2)' : 'var(--stat-tier-4)'};">${offBoresightDeg}${sDeg} off seeker line</b></div>
-          <div>CLOUD IMPACT: <b style="color:${cloudHits > 0 ? 'var(--stat-tier-5)' : 'var(--stat-tier-2)'};">${cloudAtten}</b></div>
+          <div>CLOUD IMPACT: <b style="color:${cloudHits > 0 ? 'var(--stat-tier-3)' : 'var(--stat-tier-2)'};">${cloudAtten}</b></div>
         </div>
         <div style="margin-top:8px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); font:600 0.62rem var(--font-dotdigital); display:flex; justify-content:space-between;">
           <span>TARGET TRACK:</span>
@@ -47,9 +47,9 @@ class InspectionRadarView {
             <span class="factor-name">Countermeasures (Chaff / Flares)<span class="factor-desc">Pyrotechnic decoy bloom tracking interference.</span></span>
             <span class="factor-delta ${w.seeker === 'ARH' ? 'negative' : 'warning'}">${w.seeker === 'ARH' ? 'Chaff Diversion (-34%)' : 'Partial Evasion (-18%)'}</span>
           </div>
-          <div class="inspection-factor-row ${isOptical && cloudHits > 0 ? 'negative' : 'positive'}">
-            <span class="factor-name">Weather Cloud Moisture<span class="factor-desc">Liquid droplets scatter imaging infrared contrast.</span></span>
-            <span class="factor-delta ${isOptical && cloudHits > 0 ? 'negative' : 'positive'}">${isOptical && cloudHits > 0 ? `Scattering Active (${cloudHits} clouds)` : 'Clear Penetration'}</span>
+          <div class="inspection-factor-row ${isOptical && cloudHits > 0 ? 'warning' : 'positive'}">
+            <span class="factor-name">Weather Cloud Moisture<span class="factor-desc">Liquid droplets soften imaging infrared contrast.</span></span>
+            <span class="factor-delta ${isOptical && cloudHits > 0 ? 'warning' : 'positive'}">${isOptical && cloudHits > 0 ? `Minor Scatter (-12% P_k)` : 'Clear Penetration'}</span>
           </div>
         </div>
       </section>
@@ -133,7 +133,7 @@ class InspectionRadarView {
       if (rec.rcsRatio >= 1.15) rcsClass = 'positive';
       else if (rec.rcsRatio < 0.70) rcsClass = 'negative';
 
-      const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.08;
+      const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.04;
       const totalAttenPct = Math.round((1 - Math.pow(1.0 - atten, rec.cloudHits)) * 100);
       let cloudClass = 'neutral';
       let cloudText = 'Clear Line of Sight';
@@ -141,11 +141,11 @@ class InspectionRadarView {
       if (rec.cloudHits === 1) {
         cloudClass = 'warning';
         cloudText = `-${totalAttenPct}% Attenuation (1 Cloud Cell)`;
-        cloudDesc = 'Single cloud cell in sensor path: moderate microwave RF attenuation.';
+        cloudDesc = 'Single cloud cell in sensor path: gentle microwave RF attenuation.';
       } else if (rec.cloudHits >= 2) {
-        cloudClass = 'negative';
+        cloudClass = 'warning';
         cloudText = `-${totalAttenPct}% Attenuation (${rec.cloudHits} Clouds)`;
-        cloudDesc = `${rec.cloudHits} overlapping cloud cells: severe microwave radar scattering.`;
+        cloudDesc = `${rec.cloudHits} cloud cells in path: minor microwave radar attenuation.`;
       } else if (!rec.inCone) {
         cloudClass = 'negative';
         cloudText = `NO RADAR SIGHT (${rec.offBoresightDeg}${sDeg})`;
