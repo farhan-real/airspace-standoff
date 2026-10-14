@@ -244,8 +244,8 @@ class SortieSpawner {
     }
 
     SortieSpawner.initSurfaceFacilities(game, mapW, mapH);
-    if (editorMission && (editorMission.defenses === 'LIGHT' || editorMission.defenses === 'OFF')) {
-      game.surfaceUnits = game.surfaceUnits.filter(unit => unit.type !== 'PANTSIR');
+    if (editorMission && editorMission.defenses === 'OFF') {
+      game.surfaceUnits = game.surfaceUnits.filter(unit => unit.type === 'BUNKER' || unit.type === 'AMMO_DUMP');
     }
     if (game.simulation) {
       game.simulation.civilianTraffic = [];
@@ -297,14 +297,12 @@ class SortieSpawner {
       new SurfaceUnit('BUNKER', 'friendly', 8, mapH / 2),
       new SurfaceUnit('RADAR_ARRAY', 'friendly', 10, mapH / 2 - 10),
       new SurfaceUnit('EW_JAMMER', 'friendly', 16, mapH / 2 - 20),
-      new SurfaceUnit('PANTSIR', 'friendly', 14, mapH / 2 + 10),
       new SurfaceUnit('FUEL_DEPOT', 'friendly', 12, 16),
       new SurfaceUnit('AMMO_DUMP', 'friendly', 32, mapH / 2 - 10),
 
       new SurfaceUnit('BUNKER', 'hostile', mapW - 8, mapH / 2),
       new SurfaceUnit('RADAR_ARRAY', 'hostile', mapW - 10, mapH / 2 - 10),
       new SurfaceUnit('EW_JAMMER', 'hostile', mapW - 16, mapH / 2 - 20),
-      new SurfaceUnit('PANTSIR', 'hostile', mapW - 14, mapH / 2 + 10),
       new SurfaceUnit('FUEL_DEPOT', 'hostile', mapW - 12, 16),
       new SurfaceUnit('AMMO_DUMP', 'hostile', mapW - 32, mapH / 2 + 10),
       new SurfaceUnit('RADAR_VAN', 'hostile', mapW - 20, 36)
