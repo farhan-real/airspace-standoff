@@ -53,15 +53,16 @@ class AINavigationHandler {
 
     const wingmanOffset = aiCommander.planning.getWingmanOffset(hostile, profile);
     const navTiers = {
-      CADET:   { turnMult: 0.45, throttle: 0.50, overshootDist: 6.5, overshootChance: 0.55 },
-      VETERAN: { turnMult: 0.55, throttle: 0.55, overshootDist: 6.0, overshootChance: 0.42 },
-      ELITE:   { turnMult: 0.65, throttle: 0.62, overshootDist: 5.2, overshootChance: 0.30 },
-      ACE:     { turnMult: 0.74, throttle: 0.70, overshootDist: 4.6, overshootChance: 0.20 },
-      MASTER:  { turnMult: 0.82, throttle: 0.75, overshootDist: 4.0, overshootChance: 0.14 },
-      LEGEND:  { turnMult: 0.88, throttle: 0.80, overshootDist: 3.6, overshootChance: 0.08 }
+      CADET:     { turnMult: 0.45, throttle: 0.50, overshootDist: 6.5, overshootChance: 0.55 },
+      BUFFER:    { turnMult: 0.50, throttle: 0.52, overshootDist: 6.2, overshootChance: 0.48 },
+      VETERAN:   { turnMult: 0.55, throttle: 0.55, overshootDist: 6.0, overshootChance: 0.42 },
+      ESCALATED: { turnMult: 0.60, throttle: 0.58, overshootDist: 5.6, overshootChance: 0.36 },
+      ELITE:     { turnMult: 0.65, throttle: 0.62, overshootDist: 5.2, overshootChance: 0.30 },
+      ACE:       { turnMult: 0.74, throttle: 0.70, overshootDist: 4.6, overshootChance: 0.20 },
+      MASTER:    { turnMult: 0.82, throttle: 0.75, overshootDist: 4.0, overshootChance: 0.14 },
+      LEGEND:    { turnMult: 0.88, throttle: 0.80, overshootDist: 3.6, overshootChance: 0.08 }
     };
-    const tier = navTiers[diffKey];
-    if (!tier) throw new Error(`Navigation tier configuration not found for difficulty: ${diffKey}`);
+    const tier = navTiers[diffKey] || navTiers.VETERAN;
 
     if (profile.verticalCombat) {
       const targetAlt = aiCommander.planning.getPlannedAltitude(hostile, profile, diffKey);

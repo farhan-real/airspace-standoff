@@ -46,8 +46,8 @@ const FleetGenerator = {
     const fleetItems = [];
     let spentBudget = 0.0;
 
-    const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : (diff === 'CADET' ? 0 : 1);
-    const aceCandidates = (diff === 'CADET' || diff === 'VETERAN')
+    const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : ((diff === 'CADET' || diff === 'BUFFER') ? 0 : 1);
+    const aceCandidates = (diff === 'CADET' || diff === 'BUFFER' || diff === 'VETERAN' || diff === 'ESCALATED')
       ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM', 'F-14D', 'Su-57', 'YF-23', 'J-20']
       : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B', 'F-22C-COFFIN', 'Su-57', 'YF-23', 'F-22A', 'F-15EX'];
 
@@ -80,9 +80,18 @@ const FleetGenerator = {
       }
     }
 
-    const ewChances = { CADET: 0.10, VETERAN: 0.35, ELITE: 0.60, ACE: 0.85, MASTER: 1.0, LEGEND: 1.0 };
-    const ewChance = ewChances[diff];
-    const ewPool = (diff === 'CADET' || diff === 'VETERAN')
+    const ewChances = {
+      CADET: 0.10,
+      BUFFER: 0.20,
+      VETERAN: 0.35,
+      ESCALATED: 0.48,
+      ELITE: 0.60,
+      ACE: 0.85,
+      MASTER: 1.0,
+      LEGEND: 1.0
+    };
+    const ewChance = ewChances[diff] !== undefined ? ewChances[diff] : 0.35;
+    const ewPool = (diff === 'CADET' || diff === 'BUFFER' || diff === 'VETERAN')
       ? ['Tornado-ECR', 'EF-111A']
       : (['MASTER', 'LEGEND'].includes(diff)
         ? ['EA-18G', 'J-16D', 'EF-111A', 'EA-36']
@@ -130,8 +139,12 @@ const FleetGenerator = {
 
       if (diff === 'CADET') {
         candidatePool = (roll < 0.20) ? highTierPool : ((roll < 0.65) ? midTierPool : lowTierPool);
+      } else if (diff === 'BUFFER') {
+        candidatePool = (roll < 0.32) ? highTierPool : ((roll < 0.74) ? midTierPool : lowTierPool);
       } else if (diff === 'VETERAN') {
         candidatePool = (roll < 0.45) ? highTierPool : ((roll < 0.80) ? midTierPool : ((roll < 0.90) ? flagshipPool : lowTierPool));
+      } else if (diff === 'ESCALATED') {
+        candidatePool = (roll < 0.48) ? highTierPool : ((roll < 0.78) ? midTierPool : ((roll < 0.88) ? flagshipPool : dronePool));
       } else if (diff === 'ELITE') {
         candidatePool = (roll < 0.50) ? highTierPool : ((roll < 0.75) ? flagshipPool : ((roll < 0.90) ? midTierPool : dronePool));
       } else if (diff === 'ACE') {

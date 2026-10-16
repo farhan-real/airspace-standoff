@@ -34,12 +34,14 @@ class AIMissileTactics {
 
     const airTargets = this.filterCandidateTargets(shooter, rawAirTargets, profile, diffKey);
     const fireTiers = {
-      CADET:   { minPk: 25, rangeRatio: profile.engagementRangeRatio || 0.95, hesitateChance: 0.50, maxOffAngle: Math.PI / 8.0 },
-      VETERAN: { minPk: 45, rangeRatio: profile.engagementRangeRatio || 0.80, hesitateChance: 0.35, maxOffAngle: Math.PI / 7.0 },
-      ELITE:   { minPk: 52, rangeRatio: profile.engagementRangeRatio || 0.70, hesitateChance: 0.24, maxOffAngle: Math.PI / 6.0 },
-      ACE:     { minPk: 58, rangeRatio: profile.engagementRangeRatio || 0.65, hesitateChance: 0.16, maxOffAngle: Math.PI / 5.0 },
-      MASTER:  { minPk: 64, rangeRatio: profile.engagementRangeRatio || 0.60, hesitateChance: 0.10, maxOffAngle: Math.PI / 4.5 },
-      LEGEND:  { minPk: 68, rangeRatio: profile.engagementRangeRatio || 0.55, hesitateChance: 0.05, maxOffAngle: Math.PI / 4.0 }
+      CADET:     { minPk: 25, rangeRatio: profile.engagementRangeRatio || 0.95, hesitateChance: 0.50, maxOffAngle: Math.PI / 8.0 },
+      BUFFER:    { minPk: 35, rangeRatio: profile.engagementRangeRatio || 0.88, hesitateChance: 0.42, maxOffAngle: Math.PI / 7.5 },
+      VETERAN:   { minPk: 45, rangeRatio: profile.engagementRangeRatio || 0.80, hesitateChance: 0.35, maxOffAngle: Math.PI / 7.0 },
+      ESCALATED: { minPk: 48, rangeRatio: profile.engagementRangeRatio || 0.75, hesitateChance: 0.30, maxOffAngle: Math.PI / 6.5 },
+      ELITE:     { minPk: 52, rangeRatio: profile.engagementRangeRatio || 0.70, hesitateChance: 0.24, maxOffAngle: Math.PI / 6.0 },
+      ACE:       { minPk: 58, rangeRatio: profile.engagementRangeRatio || 0.65, hesitateChance: 0.16, maxOffAngle: Math.PI / 5.0 },
+      MASTER:    { minPk: 64, rangeRatio: profile.engagementRangeRatio || 0.60, hesitateChance: 0.10, maxOffAngle: Math.PI / 4.5 },
+      LEGEND:    { minPk: 68, rangeRatio: profile.engagementRangeRatio || 0.55, hesitateChance: 0.05, maxOffAngle: Math.PI / 4.0 }
     };
     const tier = fireTiers[diffKey] || fireTiers.VETERAN;
 
@@ -117,7 +119,7 @@ class AIMissileTactics {
 
         if (tgt.isFlightLead) score += 18;
         if (tgt.hp <= 2) score += 16;
-        if (diffKey === 'CADET') score += (Math.random() * 30 - 15);
+        if (diffKey === 'CADET' || diffKey === 'BUFFER') score += (Math.random() * 20 - 10);
 
         if (score > bestScore) {
           bestScore = score;
@@ -205,7 +207,7 @@ class AIMissileTactics {
     const inbounds = allMissiles.filter(m => m.active && m.target && m.target.id === target.id && m.team === team);
     if (inbounds.length === 0) return target.hp;
 
-    if (diffKey === 'CADET' || diffKey === 'VETERAN') return target.hp;
+    if (diffKey === 'CADET' || diffKey === 'BUFFER' || diffKey === 'VETERAN') return target.hp;
     const hitRateEst = ['MASTER', 'LEGEND'].includes(diffKey) ? 0.75 : 0.60;
     const expectedDmg = inbounds.reduce((sum, m) => sum + ((m.weapon ? m.weapon.damage : 3) * hitRateEst), 0);
     return target.hp - expectedDmg;
@@ -213,7 +215,7 @@ class AIMissileTactics {
 
   static calculateSalvoComposition(match, availablePylons, diffKey, shooter, profile) {
     const tgt = match.target, w = match.weapon, pylonsToFire = [match.pylon];
-    if (w.category !== 'A2A' || diffKey === 'CADET' || diffKey === 'VETERAN') {
+    if (w.category !== 'A2A' || diffKey === 'CADET' || diffKey === 'BUFFER' || diffKey === 'VETERAN') {
       return { target: tgt, pylonsToFire, primaryWeapon: w };
     }
 
@@ -249,7 +251,16 @@ class AIMissileTactics {
     const res = this.evaluateShooterWeapons(shooter, airTargets, bunkers, profile, clouds, diffKey, allMissiles);
     if (res.isBingo && !shooter.isRTB) {
       if (shooter.gunAmmo && shooter.gunAmmo > 0) return false;
-      const rtbChances = { CADET: 0.15, VETERAN: 0.30, ELITE: 0.50, ACE: 0.65, MASTER: 0.80, LEGEND: 0.90 };
+      const rtbChances = {
+        CADET: 0.15,
+        BUFFER: 0.22,
+        VETERAN: 0.30,
+        ESCALATED: 0.40,
+        ELITE: 0.50,
+        ACE: 0.65,
+        MASTER: 0.80,
+        LEGEND: 0.90
+      };
       if (Math.random() < (rtbChances[diffKey] || 0.40)) {
         shooter.orderRTB();
       }

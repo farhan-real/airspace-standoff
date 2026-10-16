@@ -40,13 +40,15 @@ class AIPlanningSystem {
     if (!downedUnit || aliveHostiles.length === 0) return;
     const pauseTiers = {
       CADET: 6.0,
+      BUFFER: 5.5,
       VETERAN: 5.0,
+      ESCALATED: 4.5,
       ELITE: 4.0,
       ACE: 3.5,
       MASTER: 2.5,
       LEGEND: 1.8
     };
-    const hesitationSec = pauseTiers[diffKey] || 4.0;
+    const hesitationSec = pauseTiers[diffKey] || 4.5;
     aliveHostiles.forEach(h => {
       this.successionTimers.set(h.id, hesitationSec);
     });
@@ -128,13 +130,15 @@ class AIPlanningSystem {
       if (diffKey === 'LEGEND') return unit.spec && unit.spec.id === 'DARKSTAR' ? 58000 : 50000;
       if (diffKey === 'MASTER') return 46000;
       if (diffKey === 'ACE') return 42000;
-      return 38000;
+      if (diffKey === 'ELITE') return 38000;
+      return 36000;
     }
 
     if (role === 'INTERCEPT') {
       if (diffKey === 'LEGEND' || diffKey === 'MASTER') return 42000;
       if (diffKey === 'ACE') return 38000;
-      return 34000;
+      if (diffKey === 'ELITE') return 34000;
+      return 32000;
     }
 
     if (role === 'DOGFIGHT') {
@@ -153,7 +157,8 @@ class AIPlanningSystem {
       if (diffKey === 'LEGEND') return 5500;
       if (diffKey === 'MASTER') return 8000;
       if (diffKey === 'ACE') return 11000;
-      return 14000;
+      if (diffKey === 'ELITE') return 13000;
+      return 15000;
     }
 
     if (role === 'SEAD') {
@@ -182,36 +187,22 @@ class AIPlanningSystem {
     const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
 
     if (diffKey === 'LEGEND') {
-      if (dist < 46.0) {
-        return { heading: directAngle + Math.PI, throttle: 1.0, isCrank: false };
-      }
-      if (dist > 90.0) {
-        return { heading: directAngle, throttle: 0.90, isCrank: false };
-      }
+      if (dist < 46.0) return { heading: directAngle + Math.PI, throttle: 1.0, isCrank: false };
+      if (dist > 90.0) return { heading: directAngle, throttle: 0.90, isCrank: false };
       const crankAngle = directAngle + (Math.sin(unit.age || 0) > 0 ? 1.15 : -1.15);
       return { heading: crankAngle, throttle: 0.65, isCrank: true };
     }
 
     if (diffKey === 'MASTER') {
-      if (dist < 44.0) {
-        const dragHeading = directAngle + (Math.PI * 0.85);
-        return { heading: dragHeading, throttle: 0.85, isCrank: false };
-      }
-      if (dist > 85.0) {
-        return { heading: directAngle, throttle: 0.85, isCrank: false };
-      }
+      if (dist < 44.0) return { heading: directAngle + (Math.PI * 0.85), throttle: 0.85, isCrank: false };
+      if (dist > 85.0) return { heading: directAngle, throttle: 0.85, isCrank: false };
       const crankAngle = directAngle + (Math.sin(unit.age || 0) > 0 ? 1.0 : -1.0);
       return { heading: crankAngle, throttle: 0.60, isCrank: true };
     }
 
     if (diffKey === 'ACE') {
-      if (dist < 42.0) {
-        const retrogradeAngle = directAngle + (Math.PI * 0.75);
-        return { heading: retrogradeAngle, throttle: 0.50, isCrank: false };
-      }
-      if (dist > 80.0) {
-        return { heading: directAngle, throttle: 0.80, isCrank: false };
-      }
+      if (dist < 42.0) return { heading: directAngle + (Math.PI * 0.75), throttle: 0.50, isCrank: false };
+      if (dist > 80.0) return { heading: directAngle, throttle: 0.80, isCrank: false };
       return { heading: directAngle, throttle: 0.60, isCrank: false };
     }
 

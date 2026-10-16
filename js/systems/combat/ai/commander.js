@@ -4,12 +4,14 @@
  */
 
 window.AI_ACE_PROFILES = {
-  CADET:   { reactionCooldown: 3.8, notchChance: 0.25, decoyDiscrimination: 0.35, blunderChance: 0.20, mixedSeekerChance: 0.00, salvoMaxMissiles: 1 },
-  VETERAN: { reactionCooldown: 3.2, notchChance: 0.35, decoyDiscrimination: 0.45, blunderChance: 0.12, mixedSeekerChance: 0.15, salvoMaxMissiles: 2 },
-  ELITE:   { reactionCooldown: 2.4, notchChance: 0.50, decoyDiscrimination: 0.60, blunderChance: 0.06, mixedSeekerChance: 0.25, salvoMaxMissiles: 2 },
-  ACE:     { reactionCooldown: 1.8, notchChance: 0.60, decoyDiscrimination: 0.70, blunderChance: 0.02, mixedSeekerChance: 0.35, salvoMaxMissiles: 2 },
-  MASTER:  { reactionCooldown: 1.4, notchChance: 0.70, decoyDiscrimination: 0.80, blunderChance: 0.00, mixedSeekerChance: 0.45, salvoMaxMissiles: 3 },
-  LEGEND:  { reactionCooldown: 1.1, notchChance: 0.75, decoyDiscrimination: 0.85, blunderChance: 0.00, mixedSeekerChance: 0.55, salvoMaxMissiles: 3 }
+  CADET:     { reactionCooldown: 3.8, notchChance: 0.25, decoyDiscrimination: 0.35, blunderChance: 0.20, mixedSeekerChance: 0.00, salvoMaxMissiles: 1 },
+  BUFFER:    { reactionCooldown: 3.5, notchChance: 0.30, decoyDiscrimination: 0.40, blunderChance: 0.16, mixedSeekerChance: 0.05, salvoMaxMissiles: 1 },
+  VETERAN:   { reactionCooldown: 3.2, notchChance: 0.35, decoyDiscrimination: 0.45, blunderChance: 0.12, mixedSeekerChance: 0.15, salvoMaxMissiles: 2 },
+  ESCALATED: { reactionCooldown: 2.8, notchChance: 0.42, decoyDiscrimination: 0.52, blunderChance: 0.09, mixedSeekerChance: 0.20, salvoMaxMissiles: 2 },
+  ELITE:     { reactionCooldown: 2.4, notchChance: 0.50, decoyDiscrimination: 0.60, blunderChance: 0.06, mixedSeekerChance: 0.25, salvoMaxMissiles: 2 },
+  ACE:       { reactionCooldown: 1.8, notchChance: 0.60, decoyDiscrimination: 0.70, blunderChance: 0.02, mixedSeekerChance: 0.35, salvoMaxMissiles: 2 },
+  MASTER:    { reactionCooldown: 1.4, notchChance: 0.70, decoyDiscrimination: 0.80, blunderChance: 0.00, mixedSeekerChance: 0.45, salvoMaxMissiles: 3 },
+  LEGEND:    { reactionCooldown: 1.1, notchChance: 0.75, decoyDiscrimination: 0.85, blunderChance: 0.00, mixedSeekerChance: 0.55, salvoMaxMissiles: 3 }
 };
 
 class TacticalAICommander {
@@ -38,7 +40,7 @@ class TacticalAICommander {
     if (!baseProfile) throw new Error(`Unknown difficulty "${diffKey}" in getCognitiveProfile.`);
     const aceProfile = window.AI_ACE_PROFILES[diffKey];
 
-    const maxSlots = baseProfile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
+    const maxSlots = baseProfile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
     const activeFocusCount = this.focusedUnitIds.length;
     const isHesitating = this.planning.isHesitating(unitId);
     const successionTimer = this.planning.successionTimers.get(unitId) || 0;
@@ -94,7 +96,7 @@ class TacticalAICommander {
       this.focusTimers.set(id, Math.max(0, remaining));
     }
 
-    const maxSlots = profile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
+    const maxSlots = profile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
 
     const scoredUnits = aliveHostiles.map(h => {
       let score = 0;
@@ -173,7 +175,7 @@ class TacticalAICommander {
     }
 
     const tokenCost = window.CONFIG.TOKEN_ACTION_COST;
-    const maxSlots = profile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
+    const maxSlots = profile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
 
     if (this.actionCooldown <= 0 && this.game.tokenBucketRed >= tokenCost) {
       for (const focusedId of this.focusedUnitIds) {

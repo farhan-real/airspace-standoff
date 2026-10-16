@@ -123,6 +123,24 @@ window.AI_DIFFICULTIES = {
     formationDoctrine: 'DISORGANIZED',
     aceCount: 0
   },
+  BUFFER: {
+    name: 'Buffer Zone',
+    budgetCap: 260.0,
+    scoreMultiplier: 0.75,
+    reactionCooldown: 6.0,
+    attentionSpanSec: 4.8,
+    attentionSlots: 1,
+    engagementRangeRatio: 0.88,
+    blunderChance: 0.52,
+    notchChance: 0.02,
+    notchToleranceDeg: 38,
+    decoyDiscrimination: 0.08,
+    mixedSeekerChance: 0.0,
+    salvoMaxMissiles: 1,
+    verticalCombat: false,
+    formationDoctrine: 'STAGGERED_TRAIL',
+    aceCount: 0
+  },
   VETERAN: {
     name: 'Contested Airspace',
     budgetCap: 330.0,
@@ -139,6 +157,24 @@ window.AI_DIFFICULTIES = {
     salvoMaxMissiles: 1,
     verticalCombat: false,
     formationDoctrine: 'LOOSE_FOLLOW',
+    aceCount: 1
+  },
+  ESCALATED: {
+    name: 'Escalated Airspace',
+    budgetCap: 390.0,
+    scoreMultiplier: 1.25,
+    reactionCooldown: 4.3,
+    attentionSpanSec: 3.8,
+    attentionSlots: 2,
+    engagementRangeRatio: 0.75,
+    blunderChance: 0.40,
+    notchChance: 0.10,
+    notchToleranceDeg: 30,
+    decoyDiscrimination: 0.22,
+    mixedSeekerChance: 0.0,
+    salvoMaxMissiles: 2,
+    verticalCombat: true,
+    formationDoctrine: 'LOOSE_PAIRS',
     aceCount: 1
   },
   ELITE: {

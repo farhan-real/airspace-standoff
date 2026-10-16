@@ -58,7 +58,9 @@ class ProcurementManager {
       value: this.game.aiDifficulty || 'VETERAN',
       options: [
         { value: 'CADET', text: 'PERMISSIVE SECTOR (0.50x)' },
+        { value: 'BUFFER', text: 'BUFFER ZONE (0.75x)' },
         { value: 'VETERAN', text: 'CONTESTED AIRSPACE (1.00x)' },
+        { value: 'ESCALATED', text: 'ESCALATED AIRSPACE (1.25x)' },
         { value: 'ELITE', text: 'HOSTILE AIRSPACE (1.50x)' },
         { value: 'ACE', text: 'HIGH-THREAT SECTOR (2.00x)' },
         { value: 'MASTER', text: 'AIR DENIAL ZONE (2.60x)' },

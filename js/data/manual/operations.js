@@ -26,7 +26,7 @@ window.MANUAL_OPERATIONS = [
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Threat Contestation</td>
-              <td>Permissive Sector (0.50x) through Extreme Threat Sector (3.20x)</td>
+              <td>Permissive Sector (0.50x), Buffer Zone (0.75x), Contested Airspace (1.00x), Escalated Airspace (1.25x), Hostile Airspace (1.50x), High-Threat Sector (2.00x), Air Denial Zone (2.60x), Extreme Threat Sector (3.20x)</td>
               <td>Adjusts AI reaction speed, Doppler notch discipline, salvo sizing, and formation pairing.</td>
             </tr>
             <tr>
@@ -42,7 +42,7 @@ window.MANUAL_OPERATIONS = [
             <tr>
               <td style="color:#ffd700;font-weight:800;">Allied Blue Budget</td>
               <td>Standard Tiers or Custom Credit Value (10M - 2500M)</td>
-              <td>Configures expenditure allowance for blue fleet. Displays default budget for selected sector difficulty (e.g. 330M Default). Tap CUSTOM to enter any tailored credit amount. Automatically locks when Hangar is selected.</td>
+              <td>Configures expenditure allowance for blue fleet. Displays default budget for selected sector difficulty (e.g. 260M, 330M, 390M Default). Tap CUSTOM to enter any tailored credit amount. Automatically locks when Hangar is selected.</td>
             </tr>
             <tr>
               <td style="color:#fbbf24;font-weight:800;">Hostile Red Fleet</td>
@@ -147,7 +147,7 @@ window.MANUAL_OPERATIONS = [
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">Active Focus Slots</td>
-              <td>Shows current bandwidth utilization against total cognitive capacity (e.g. 1 slot on Permissive Sector / Contested Airspace, 2 on Hostile Airspace / High-Threat Sector, up to 3 on Air Denial Zone / Extreme Threat Sector).</td>
+              <td>Shows current bandwidth utilization against total cognitive capacity (e.g. 1 slot on Permissive Sector / Buffer Zone / Contested Airspace, 2 on Escalated Airspace / Hostile Airspace / High-Threat Sector, up to 3 on Air Denial Zone / Extreme Threat Sector).</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">Squadron Posture</td>

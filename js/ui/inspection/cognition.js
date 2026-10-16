@@ -30,6 +30,7 @@ class InspectionCognitionRenderer {
     if (isAce) {
       if (diffKey === 'LEGEND') return 'Extreme Threat Flagship Ace Command: Coordinates multi-axis volleys, utilizes directed-energy lasers, and executes sub-second defensive breaks.';
       if (diffKey === 'MASTER') return 'Air Denial Ace Lead: Operating stratospheric energy perch with railgun/pulse-laser snipes and high-G Kulbit capability.';
+      if (diffKey === 'ESCALATED') return 'Escalated Squadron Ace: Active two-ship element leader executing coordinated BVR missile volleys with high-G break authority.';
       return 'Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.';
     }
 

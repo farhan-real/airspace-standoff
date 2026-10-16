@@ -99,13 +99,31 @@ class FleetOutfitter {
 
     let enforceLightweight = false;
     if (isAgileDogfighter && !isHeavyTruck) {
-      const lightChances = { CADET: 0.0, VETERAN: 0.0, ELITE: 0.30, ACE: 0.50, MASTER: 0.60, LEGEND: 0.65 };
+      const lightChances = {
+        CADET: 0.0,
+        BUFFER: 0.0,
+        VETERAN: 0.0,
+        ESCALATED: 0.15,
+        ELITE: 0.30,
+        ACE: 0.50,
+        MASTER: 0.60,
+        LEGEND: 0.65
+      };
       enforceLightweight = (rng() < (lightChances[diff] || 0.0));
     }
 
     let enforceCleanStealth = false;
     if (isStealth && spec.id !== 'J-20') {
-      const cleanChances = { CADET: 0.0, VETERAN: 0.0, ELITE: 0.35, ACE: 0.45, MASTER: 0.55, LEGEND: 0.60 };
+      const cleanChances = {
+        CADET: 0.0,
+        BUFFER: 0.0,
+        VETERAN: 0.0,
+        ESCALATED: 0.18,
+        ELITE: 0.35,
+        ACE: 0.45,
+        MASTER: 0.55,
+        LEGEND: 0.60
+      };
       enforceCleanStealth = (rng() < (cleanChances[diff] || 0.0));
     }
 
@@ -130,14 +148,23 @@ class FleetOutfitter {
       role = 'ESCORT';
     }
 
-    const ulrWeights = { CADET: 0.0, VETERAN: 0.05, ELITE: 0.15, ACE: 0.35, MASTER: 0.50, LEGEND: 0.65 };
+    const ulrWeights = {
+      CADET: 0.0,
+      BUFFER: 0.02,
+      VETERAN: 0.05,
+      ESCALATED: 0.10,
+      ELITE: 0.15,
+      ACE: 0.35,
+      MASTER: 0.50,
+      LEGEND: 0.65
+    };
     const rollBvr = (allowUlr = true) => {
       const ulrRoll = rng();
-      const ulrThresh = ulrWeights[diff] || 0.0;
+      const ulrThresh = ulrWeights[diff] !== undefined ? ulrWeights[diff] : 0.05;
       if (allowUlr && class1Ulr.length > 0 && (ulrRoll < ulrThresh || role === 'SNIPER' || role === 'AMBUSH')) {
         return class1Ulr[Math.floor(rng() * class1Ulr.length)];
       }
-      if (class2Lr.length > 0 && (rng() < 0.65 || ['ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diff))) {
+      if (class2Lr.length > 0 && (rng() < 0.65 || ['ESCALATED', 'ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diff))) {
         return class2Lr[Math.floor(rng() * class2Lr.length)];
       }
       return class3Mr[Math.floor(rng() * class3Mr.length)] || 'AIM-120D';
@@ -249,7 +276,9 @@ class FleetOutfitter {
     const maxSockets = spec.upgradeSockets || 3;
     let targetSockets = 1;
     if (diff === 'CADET') targetSockets = rng() < 0.40 ? 0 : 1;
+    else if (diff === 'BUFFER') targetSockets = rng() < 0.25 ? 0 : 1;
     else if (diff === 'VETERAN') targetSockets = Math.min(maxSockets, 1 + Math.floor(rng() * 2));
+    else if (diff === 'ESCALATED') targetSockets = Math.min(maxSockets, 1 + Math.floor(rng() * 2));
     else if (diff === 'ELITE') targetSockets = Math.min(maxSockets, 2 + Math.floor(rng() * 2));
     else if (diff === 'ACE') targetSockets = Math.min(maxSockets, Math.max(2, maxSockets - 1));
     else targetSockets = maxSockets;

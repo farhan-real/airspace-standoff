@@ -14,12 +14,14 @@ class AIEvasionHandler {
     const isStealth = Boolean(nearestMsl.isStealthMissile || (nearestMsl.rcs <= 0.005));
 
     const defTiers = {
-      CADET:   { reactDist: 5.0, stealthDist: 3.2, blunderChance: 0.60, cmChance: 0.15, turnMult: 0.50, bonus: 0.25 },
-      VETERAN: { reactDist: 6.5, stealthDist: 4.0, blunderChance: 0.46, cmChance: 0.25, turnMult: 0.60, bonus: 0.32 },
-      ELITE:   { reactDist: 7.8, stealthDist: 4.8, blunderChance: 0.35, cmChance: 0.35, turnMult: 0.70, bonus: 0.38 },
-      ACE:     { reactDist: 9.0, stealthDist: 5.5, blunderChance: 0.25, cmChance: 0.45, turnMult: 0.78, bonus: 0.44 },
-      MASTER:  { reactDist: 9.8, stealthDist: 6.0, blunderChance: 0.18, cmChance: 0.52, turnMult: 0.84, bonus: 0.48 },
-      LEGEND:  { reactDist: 10.5, stealthDist: 6.5, blunderChance: 0.12, cmChance: 0.60, turnMult: 0.90, bonus: 0.52 }
+      CADET:     { reactDist: 5.0, stealthDist: 3.2, blunderChance: 0.60, cmChance: 0.15, turnMult: 0.50, bonus: 0.25 },
+      BUFFER:    { reactDist: 5.8, stealthDist: 3.6, blunderChance: 0.52, cmChance: 0.20, turnMult: 0.55, bonus: 0.28 },
+      VETERAN:   { reactDist: 6.5, stealthDist: 4.0, blunderChance: 0.46, cmChance: 0.25, turnMult: 0.60, bonus: 0.32 },
+      ESCALATED: { reactDist: 7.2, stealthDist: 4.4, blunderChance: 0.40, cmChance: 0.30, turnMult: 0.65, bonus: 0.35 },
+      ELITE:     { reactDist: 7.8, stealthDist: 4.8, blunderChance: 0.35, cmChance: 0.35, turnMult: 0.70, bonus: 0.38 },
+      ACE:       { reactDist: 9.0, stealthDist: 5.5, blunderChance: 0.25, cmChance: 0.45, turnMult: 0.78, bonus: 0.44 },
+      MASTER:    { reactDist: 9.8, stealthDist: 6.0, blunderChance: 0.18, cmChance: 0.52, turnMult: 0.84, bonus: 0.48 },
+      LEGEND:    { reactDist: 10.5, stealthDist: 6.5, blunderChance: 0.12, cmChance: 0.60, turnMult: 0.90, bonus: 0.52 }
     };
     const tier = defTiers[diffKey] || defTiers.VETERAN;
     const aceProf = (window.AI_ACE_PROFILES && window.AI_ACE_PROFILES[diffKey]);
@@ -103,12 +105,14 @@ class AIEvasionHandler {
     const aceProf = (window.AI_ACE_PROFILES && window.AI_ACE_PROFILES[diffKey]) || {};
 
     const aceTiers = {
-      CADET:   { delay: 3.8, notchRate: 0.25, climbAlt: 28000, throttleMod: true },
-      VETERAN: { delay: 3.2, notchRate: 0.35, climbAlt: 32000, throttleMod: true },
-      ELITE:   { delay: 2.4, notchRate: 0.50, climbAlt: 36000, throttleMod: true },
-      ACE:     { delay: 1.8, notchRate: 0.60, climbAlt: 38000, throttleMod: true },
-      MASTER:  { delay: 1.4, notchRate: 0.70, climbAlt: 40000, throttleMod: true },
-      LEGEND:  { delay: 1.1, notchRate: 0.75, climbAlt: 42000, throttleMod: true }
+      CADET:     { delay: 3.8, notchRate: 0.25, climbAlt: 28000, throttleMod: true },
+      BUFFER:    { delay: 3.5, notchRate: 0.30, climbAlt: 30000, throttleMod: true },
+      VETERAN:   { delay: 3.2, notchRate: 0.35, climbAlt: 32000, throttleMod: true },
+      ESCALATED: { delay: 2.8, notchRate: 0.42, climbAlt: 34000, throttleMod: true },
+      ELITE:     { delay: 2.4, notchRate: 0.50, climbAlt: 36000, throttleMod: true },
+      ACE:       { delay: 1.8, notchRate: 0.60, climbAlt: 38000, throttleMod: true },
+      MASTER:    { delay: 1.4, notchRate: 0.70, climbAlt: 40000, throttleMod: true },
+      LEGEND:    { delay: 1.1, notchRate: 0.75, climbAlt: 42000, throttleMod: true }
     };
     const aceTier = aceTiers[diffKey] || aceTiers.VETERAN;
 
