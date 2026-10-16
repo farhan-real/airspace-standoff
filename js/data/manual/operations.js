@@ -25,7 +25,7 @@ window.MANUAL_OPERATIONS = [
               <td>Skirmish deploys single wave clash; Dynamic Theater introduces reinforcing wave wings every 80 seconds.</td>
             </tr>
             <tr>
-              <td style="color:#00f5a0;font-weight:800;">Threat Contestation</td>
+              <td style="color:#00f5a0;font-weight:800;">Difficulty</td>
               <td>Permissive Sector (0.50x), Buffer Zone (0.75x), Contested Airspace (1.00x), Escalated Airspace (1.25x), Hostile Airspace (1.50x), High-Threat Sector (2.00x), Air Denial Zone (2.60x), Extreme Threat Sector (3.20x)</td>
               <td>Adjusts AI reaction speed, Doppler notch discipline, salvo sizing, and formation pairing.</td>
             </tr>
@@ -36,18 +36,18 @@ window.MANUAL_OPERATIONS = [
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">Allied Blue Force</td>
-              <td>Hangar Fleet or Sector Difficulty Fleet</td>
-              <td>Deploy your custom hangar fleet (budget locked to hangar) or deploy an autonomous fleet using any sector difficulty tier (Permissive Sector through Extreme Threat Sector) with independent budget configuration.</td>
+              <td>Hangar Fleet or Difficulty Fleet</td>
+              <td>Deploy your custom hangar fleet (budget locked to hangar) or deploy an autonomous fleet using any difficulty tier (Permissive Sector through Extreme Threat Sector) with independent budget configuration.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">Allied Blue Budget</td>
               <td>Standard Tiers or Custom Credit Value (10M - 2500M)</td>
-              <td>Configures expenditure allowance for blue fleet. Displays default budget for selected sector difficulty (e.g. 260M, 330M, 390M Default). Tap CUSTOM to enter any tailored credit amount. Automatically locks when Hangar is selected.</td>
+              <td>Configures expenditure allowance for blue fleet. Displays default budget for selected difficulty (e.g. 260M, 330M, 390M Default). Tap CUSTOM to enter any tailored credit amount. Automatically locks when Hangar is selected.</td>
             </tr>
             <tr>
               <td style="color:#fbbf24;font-weight:800;">Hostile Red Fleet</td>
-              <td>Sector Difficulty Fleet or Hangar Mirror</td>
-              <td>Select adversary fleet based on any sector difficulty doctrine (Permissive Sector through Extreme Threat Sector) or deploy an exact mirror of your current Hangar fleet.</td>
+              <td>Difficulty Fleet or Hangar Mirror</td>
+              <td>Select adversary fleet based on any difficulty setting (Permissive Sector through Extreme Threat Sector) or deploy an exact mirror of your current Hangar fleet.</td>
             </tr>
             <tr>
               <td style="color:#fbbf24;font-weight:800;">Hostile Red Budget</td>

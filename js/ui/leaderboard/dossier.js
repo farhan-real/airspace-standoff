@@ -55,7 +55,7 @@ class LeaderboardDossierRenderer {
         </div>
       </div>`).join('');
 
-    const sectorDisplayName = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[item.difficulty])
+    const difficultyDisplayName = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[item.difficulty])
       ? window.AI_DIFFICULTIES[item.difficulty].name
       : (item.difficulty || 'Contested Airspace');
 
@@ -92,7 +92,7 @@ class LeaderboardDossierRenderer {
 
         <div class="dossier-card">
           <div style="color:#ffd700;font-size:0.64rem;font-weight:800;border-bottom:1px solid #162c46;padding-bottom:3px;margin-bottom:3px;">THEATER MULTIPLIERS</div>
-          <div class="dossier-row"><span>SECTOR (${sectorDisplayName}):</span><b>x${(item.diffMult || 1.0).toFixed(2)}</b></div>
+          <div class="dossier-row"><span>DIFFICULTY (${difficultyDisplayName}):</span><b>x${(item.diffMult || 1.0).toFixed(2)}</b></div>
           <div class="dossier-row"><span>BUDGET TIER (${item.budgetTier || 400}M):</span><b>x${(item.budgetMult || 1.0).toFixed(2)}</b></div>
           <div class="dossier-row"><span>TOTAL MULTIPLIER:</span><b style="color:#00f5a0;">x${(item.totalMult || 1.0).toFixed(2)}</b></div>
           <div class="dossier-row"><span>AIR LOSSES:</span><span>BLUE: ${item.blueLosses || 0} &bull; RED: ${item.redLosses || 0}</span></div>

@@ -6,7 +6,7 @@
 window.MANUAL_THEATER = [
   {
     id: 'ch8_aces_difficulties',
-    title: 'SECTION 08: ADVERSARY TACTICAL DOCTRINE, THREAT TIERS & PLANNING',
+    title: 'SECTION 08: ADVERSARY TACTICAL DOCTRINE, DIFFICULTY TIERS & PLANNING',
     desc: `
       <div class="ge-subhead">1. THE 6 BEHAVIORAL DIMENSIONS</div>
       <div class="ge-grid-2">
@@ -60,7 +60,7 @@ window.MANUAL_THEATER = [
 
       <div class="ge-subhead">3. THE 8 COMBAT DIFFICULTY TIERS</div>
       <div class="ge-desc">
-        Adversary forces scale across pilot discipline, tactical decision-making, and package coordination rather than mathematical cheating. Below is the operational comparison across all theater engagement tiers:
+        Adversary forces scale across pilot discipline, tactical decision-making, and package coordination rather than mathematical cheating. Below is the operational comparison across all theater difficulty tiers:
       </div>
 
       <div class="table-scroll-wrapper">

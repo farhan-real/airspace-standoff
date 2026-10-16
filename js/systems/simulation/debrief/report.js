@@ -138,7 +138,7 @@ class DebriefReportSystem {
       ? AfterActionReportTimeline.getMergedTimelineEvents(game, blueWon)
       : ((game.simulation && game.simulation.timelineEvents) ? [...game.simulation.timelineEvents] : []);
 
-    const sectorDisplayName = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[metrics.scoreData.diffKey])
+    const difficultyDisplayName = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[metrics.scoreData.diffKey])
       ? window.AI_DIFFICULTIES[metrics.scoreData.diffKey].name
       : (metrics.scoreData.diffName || metrics.scoreData.diffKey || 'Contested Airspace');
 
@@ -154,7 +154,7 @@ class DebriefReportSystem {
         rawScore: metrics.rawBlueScore,
         timeBonus: metrics.timeBonus,
         totalScore: metrics.finalSortieScore,
-        difficulty: sectorDisplayName,
+        difficulty: difficultyDisplayName,
         diffMult: metrics.scoreData.diffMult,
         budgetTier: metrics.scoreData.budgetCap,
         budgetMult: metrics.scoreData.budgetMult,
