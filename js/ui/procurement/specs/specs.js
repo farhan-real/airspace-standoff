@@ -137,7 +137,7 @@ class ProcurementSpecs {
     const modal = document.getElementById('system-inspect-modal');
     const titleEl = document.getElementById('inspect-modal-title');
     const bodyEl = document.getElementById('inspect-modal-body');
-    const renderer = window.SpecsModalRenderer || window.InspectorModalRenderer;
+    const renderer = window.SpecsModalRenderer;
     if (!modal || !bodyEl || !renderer) return;
 
     if (window.Game && window.Game.controls) window.Game.controls.autoPauseOnDialogOpen();

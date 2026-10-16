@@ -199,4 +199,3 @@ class AIEvasionHandler {
 }
 
 window.AIEvasionHandler = AIEvasionHandler;
-window.AIDefenseHandler = AIEvasionHandler;

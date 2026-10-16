@@ -164,4 +164,3 @@ class SpecsModalRenderer {
 }
 
 window.SpecsModalRenderer = SpecsModalRenderer;
-window.InspectorModalRenderer = SpecsModalRenderer;

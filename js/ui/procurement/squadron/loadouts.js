@@ -40,14 +40,12 @@ class CustomLoadoutsManager {
     this.storage = new SafeStorageAdapter();
     this.fleetKey = 'AIRSPACE_STANDOFF_CUSTOM_LOADOUTS';
     this.aircraftTemplateKey = 'AIRSPACE_STANDOFF_AIRCRAFT_TEMPLATES';
-    this.legacyFleetKey = 'AIRSPACE_STANDOFF_LEGACY_CUSTOM_LOADOUTS';
-    this.legacyTemplateKey = 'AIRSPACE_STANDOFF_LEGACY_AIRCRAFT_TEMPLATES';
   }
 
   getAll() {
     try {
       let raw = this.storage.getItem(this.fleetKey);
-      if (!raw) raw = this.storage.getItem(this.legacyFleetKey);
+
       return raw ? JSON.parse(raw) : {};
     } catch (e) {
       return {};
@@ -95,7 +93,7 @@ class CustomLoadoutsManager {
     const defaults = this.getDefaultTemplates();
     try {
       let raw = this.storage.getItem(this.aircraftTemplateKey);
-      if (!raw) raw = this.storage.getItem(this.legacyTemplateKey);
+
       if (!raw) return defaults;
       const parsed = JSON.parse(raw);
       return Object.assign({}, defaults, parsed);

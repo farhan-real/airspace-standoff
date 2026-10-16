@@ -205,4 +205,3 @@ class SpecsSubsystemViews {
 }
 
 window.SpecsSubsystemViews = SpecsSubsystemViews;
-window.InspectorSubsystemViews = SpecsSubsystemViews;

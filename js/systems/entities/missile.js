@@ -198,14 +198,14 @@ class MissileEntity {
   }
 
   triggerLostTrack(reason) {
-    if (typeof MissileTerminalSystem !== 'undefined') {
-      MissileTerminalSystem.triggerLostTrack(this, reason);
+    if (typeof MissileImpactSystem !== 'undefined') {
+      MissileImpactSystem.triggerLostTrack(this, reason);
     }
   }
 
   resolveTerminalEngagement(weatherClouds) {
-    if (typeof MissileTerminalSystem !== 'undefined') {
-      MissileTerminalSystem.resolveTerminalEngagement(this, weatherClouds);
+    if (typeof MissileImpactSystem !== 'undefined') {
+      MissileImpactSystem.resolveTerminalEngagement(this, weatherClouds);
     }
   }
 }

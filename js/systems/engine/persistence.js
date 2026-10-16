@@ -8,15 +8,12 @@
 class PersistenceEngine {
   constructor() {
     this.storagePrefix = 'AIRSPACE_STANDOFF_';
-    this.legacyPrefix = 'AIRSPACE_STANDOFF_LEGACY_';
   }
 
   get(key, defaultValue = null) {
     try {
       let raw = localStorage.getItem(this.storagePrefix + key);
-      if (!raw) {
-        raw = localStorage.getItem(this.legacyPrefix + key);
-      }
+
       return raw ? JSON.parse(raw) : defaultValue;
     } catch (e) {
       console.warn('Persistence read error:', key, e);

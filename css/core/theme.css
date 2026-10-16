@@ -86,14 +86,7 @@
   --radius-modal: 16px;
   --radius-pill: 999px;
 
-  /* Legacy Compatibility Aliases */
-  --radius-buttons: var(--radius-btn);
-  --radius-cards: var(--radius-card);
-  --radius-badges: var(--radius-badge);
-  --radius-inputs: var(--radius-input);
-  --radius-modals: var(--radius-modal);
-  --color-midnight-canvas: var(--color-pitch-black);
-  --color-void-violet: var(--theme-primary);
+
   --gradient-ice-highlight: linear-gradient(135deg, #ffffff 0%, #e0f2fe 50%, #38bdf8 100%);
 
   /* Typography */

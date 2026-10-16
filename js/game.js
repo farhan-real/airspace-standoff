@@ -285,8 +285,8 @@ class AirspaceStandoffGame {
     }
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
     this.simulation.captureReplayFrame(true);
-    if (typeof AfterActionReportSystem === 'undefined') throw new Error('AfterActionReportSystem is not loaded.');
-    AfterActionReportSystem.renderSortieSummary(this, blueWon, msg);
+    if (typeof DebriefReportSystem === 'undefined') throw new Error('DebriefReportSystem is not loaded.');
+    DebriefReportSystem.renderSortieSummary(this, blueWon, msg);
   }
 }
 

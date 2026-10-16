@@ -231,4 +231,3 @@ class DebriefReportSystem {
 }
 
 window.DebriefReportSystem = DebriefReportSystem;
-window.AfterActionReportSystem = DebriefReportSystem;

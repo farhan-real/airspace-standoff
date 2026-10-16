@@ -166,12 +166,12 @@ class AICommander {
 
     this.updateAttention(aliveHostiles, profile, diffKey, allMissiles, candidateAirTargets, dt);
 
-    AIDefenseHandler.coordinateAceTactics(this, aliveHostiles.filter(h => h.isAce), candidateAirTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt);
+    AIEvasionHandler.coordinateAceTactics(this, aliveHostiles.filter(h => h.isAce), candidateAirTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt);
 
     for (const h of aliveHostiles) {
       if (!h.isAce) {
         const isFocused = this.isUnitFocused(h.id);
-        AIDefenseHandler.handleDefensiveBehavior(h, profile, diffKey, dt, allMissiles, isFocused);
+        AIEvasionHandler.handleDefensiveBehavior(h, profile, diffKey, dt, allMissiles, isFocused);
         AINavigationHandler.handleNavigation(this, h, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused);
       }
     }

@@ -228,5 +228,4 @@ class InspectionRadarView {
   }
 }
 
-window.InspectionRadar = InspectionRadarView;
 window.InspectionRadarView = InspectionRadarView;

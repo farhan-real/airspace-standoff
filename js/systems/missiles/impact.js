@@ -177,4 +177,3 @@ class MissileImpactSystem {
 }
 
 window.MissileImpactSystem = MissileImpactSystem;
-window.MissileTerminalSystem = MissileImpactSystem;

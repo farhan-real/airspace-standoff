@@ -98,4 +98,3 @@ class CombatGunsSystem {
 }
 
 window.CombatGunsSystem = CombatGunsSystem;
-window.AircraftGunSystem = CombatGunsSystem;

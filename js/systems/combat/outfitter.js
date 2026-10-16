@@ -315,4 +315,3 @@ class FleetOutfitter {
 }
 
 window.FleetOutfitter = FleetOutfitter;
-window.FleetLoadoutPlanner = FleetOutfitter;

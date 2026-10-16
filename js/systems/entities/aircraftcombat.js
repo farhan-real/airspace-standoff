@@ -248,7 +248,7 @@ Aircraft.prototype.rearmStandardPackage = function() {
 };
 
 Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer) {
-  if (typeof AircraftGunSystem !== 'undefined') {
-    AircraftGunSystem.updateAutomaticGun(this, dt, enemiesList, radarRenderer);
+  if (typeof CombatGunsSystem !== 'undefined') {
+    CombatGunsSystem.updateAutomaticGun(this, dt, enemiesList, radarRenderer);
   }
 };

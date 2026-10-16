@@ -13,7 +13,7 @@ class ProcurementManager {
 
     this.dialogModal = new DialogModal(this);
     this.specs = new ProcurementSpecs(this);
-    this.inspector = this.specs;
+
     this.shelf = new ProcurementShelf(this);
     this.roster = new ProcurementRoster(this);
     this.customLoadouts = new CustomLoadoutsManager();
