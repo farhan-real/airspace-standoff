@@ -44,11 +44,13 @@ class AIPlanningSystem {
       VETERAN: 5.0,
       ESCALATED: 4.5,
       ELITE: 4.0,
+      FORWARD: 3.8,
       ACE: 3.5,
+      FORTIFIED: 3.0,
       MASTER: 2.5,
       LEGEND: 1.8
     };
-    const hesitationSec = pauseTiers[diffKey] || 4.5;
+    const hesitationSec = pauseTiers[diffKey] || 4.0;
     aliveHostiles.forEach(h => {
       this.successionTimers.set(h.id, hesitationSec);
     });
@@ -72,7 +74,7 @@ class AIPlanningSystem {
     if (initialCount === 0) return;
     const survivalRate = aliveHostiles.length / initialCount;
 
-    if (['MASTER', 'LEGEND'].includes(diffKey) && survivalRate <= 0.40) {
+    if (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) && survivalRate <= 0.40) {
       this.posture = 'DEFENSIVE_HOLD';
     } else if (survivalRate <= 0.25) {
       this.posture = 'DEFENSIVE_HOLD';
@@ -113,7 +115,7 @@ class AIPlanningSystem {
     }
     if (!isWingman || !lead) return null;
 
-    const spacingKm = (profile.formationDoctrine === 'HIGH_LOW_BRACKET' || profile.formationDoctrine === 'CROSSFIRE_PAIRS') ? 7.0 : 4.5;
+    const spacingKm = (profile.formationDoctrine === 'HIGH_LOW_BRACKET' || profile.formationDoctrine === 'CROSSFIRE_PAIRS' || profile.formationDoctrine === 'PINCER_BRACKET') ? 7.0 : 4.5;
     const perpAngle = (lead.heading || 0) + Math.PI / 2;
     return {
       x: lead.x + Math.cos(perpAngle) * spacingKm,
@@ -129,14 +131,18 @@ class AIPlanningSystem {
     if (role === 'SNIPER') {
       if (diffKey === 'LEGEND') return unit.spec && unit.spec.id === 'DARKSTAR' ? 58000 : 50000;
       if (diffKey === 'MASTER') return 46000;
+      if (diffKey === 'FORTIFIED') return 44000;
       if (diffKey === 'ACE') return 42000;
+      if (diffKey === 'FORWARD') return 40000;
       if (diffKey === 'ELITE') return 38000;
       return 36000;
     }
 
     if (role === 'INTERCEPT') {
       if (diffKey === 'LEGEND' || diffKey === 'MASTER') return 42000;
+      if (diffKey === 'FORTIFIED') return 40000;
       if (diffKey === 'ACE') return 38000;
+      if (diffKey === 'FORWARD') return 36000;
       if (diffKey === 'ELITE') return 34000;
       return 32000;
     }
@@ -156,7 +162,9 @@ class AIPlanningSystem {
     if (role === 'STRIKE') {
       if (diffKey === 'LEGEND') return 5500;
       if (diffKey === 'MASTER') return 8000;
+      if (diffKey === 'FORTIFIED') return 9500;
       if (diffKey === 'ACE') return 11000;
+      if (diffKey === 'FORWARD') return 12000;
       if (diffKey === 'ELITE') return 13000;
       return 15000;
     }
@@ -164,18 +172,22 @@ class AIPlanningSystem {
     if (role === 'SEAD') {
       if (diffKey === 'LEGEND') return 36000;
       if (diffKey === 'MASTER') return 34000;
+      if (diffKey === 'FORTIFIED') return 33000;
       if (diffKey === 'ACE') return 32000;
+      if (diffKey === 'FORWARD') return 31000;
       return 30000;
     }
 
     if (role === 'AMBUSH') {
       if (diffKey === 'LEGEND') return 42000;
       if (diffKey === 'MASTER') return 40000;
+      if (diffKey === 'FORTIFIED') return 38000;
       if (diffKey === 'ACE') return 36000;
+      if (diffKey === 'FORWARD') return 34000;
       return 32000;
     }
 
-    if (profile.formationDoctrine === 'HIGH_LOW_BRACKET') {
+    if (profile.formationDoctrine === 'HIGH_LOW_BRACKET' || profile.formationDoctrine === 'PINCER_BRACKET') {
       const isWingman = [...this.elementPairs.values()].includes(unit.id);
       return isWingman ? 20000 : 34000;
     }
@@ -193,14 +205,14 @@ class AIPlanningSystem {
       return { heading: crankAngle, throttle: 0.65, isCrank: true };
     }
 
-    if (diffKey === 'MASTER') {
+    if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') {
       if (dist < 44.0) return { heading: directAngle + (Math.PI * 0.85), throttle: 0.85, isCrank: false };
       if (dist > 85.0) return { heading: directAngle, throttle: 0.85, isCrank: false };
       const crankAngle = directAngle + (Math.sin(unit.age || 0) > 0 ? 1.0 : -1.0);
       return { heading: crankAngle, throttle: 0.60, isCrank: true };
     }
 
-    if (diffKey === 'ACE') {
+    if (diffKey === 'ACE' || diffKey === 'FORWARD') {
       if (dist < 42.0) return { heading: directAngle + (Math.PI * 0.75), throttle: 0.50, isCrank: false };
       if (dist > 80.0) return { heading: directAngle, throttle: 0.80, isCrank: false };
       return { heading: directAngle, throttle: 0.60, isCrank: false };
@@ -239,13 +251,13 @@ class AIPlanningSystem {
       return { heading: Math.atan2(corridorY - unit.y, flankTargetX - unit.x), throttle: 0.80 };
     }
 
-    if (diffKey === 'MASTER') {
+    if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') {
       if (dist <= 34.0) return { heading: directAngle, throttle: 0.80 };
       const corridorY = unit.y < 50 ? 14.0 : 86.0;
       return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.75 };
     }
 
-    if (diffKey === 'ACE') {
+    if (diffKey === 'ACE' || diffKey === 'FORWARD') {
       if (dist <= 36.0) return { heading: directAngle, throttle: 0.75 };
       const corridorY = unit.y < 50 ? 16.0 : 84.0;
       return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.70 };

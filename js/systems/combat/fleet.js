@@ -47,7 +47,7 @@ const FleetGenerator = {
     let spentBudget = 0.0;
 
     const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : ((diff === 'CADET' || diff === 'BUFFER') ? 0 : 1);
-    const aceCandidates = (diff === 'CADET' || diff === 'BUFFER' || diff === 'VETERAN' || diff === 'ESCALATED')
+    const aceCandidates = (diff === 'CADET' || diff === 'BUFFER' || diff === 'VETERAN' || diff === 'ESCALATED' || diff === 'ELITE' || diff === 'FORWARD')
       ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM', 'F-14D', 'Su-57', 'YF-23', 'J-20']
       : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B', 'F-22C-COFFIN', 'Su-57', 'YF-23', 'F-22A', 'F-15EX'];
 
@@ -86,14 +86,16 @@ const FleetGenerator = {
       VETERAN: 0.35,
       ESCALATED: 0.48,
       ELITE: 0.60,
+      FORWARD: 0.72,
       ACE: 0.85,
+      FORTIFIED: 0.92,
       MASTER: 1.0,
       LEGEND: 1.0
     };
-    const ewChance = ewChances[diff] !== undefined ? ewChances[diff] : 0.35;
+    const ewChance = ewChances[diff] !== undefined ? ewChances[diff] : 0.45;
     const ewPool = (diff === 'CADET' || diff === 'BUFFER' || diff === 'VETERAN')
       ? ['Tornado-ECR', 'EF-111A']
-      : (['MASTER', 'LEGEND'].includes(diff)
+      : (['MASTER', 'LEGEND', 'FORTIFIED'].includes(diff)
         ? ['EA-18G', 'J-16D', 'EF-111A', 'EA-36']
         : ['EA-18G', 'J-16D', 'EF-111A']);
 
@@ -147,8 +149,12 @@ const FleetGenerator = {
         candidatePool = (roll < 0.48) ? highTierPool : ((roll < 0.78) ? midTierPool : ((roll < 0.88) ? flagshipPool : dronePool));
       } else if (diff === 'ELITE') {
         candidatePool = (roll < 0.50) ? highTierPool : ((roll < 0.75) ? flagshipPool : ((roll < 0.90) ? midTierPool : dronePool));
+      } else if (diff === 'FORWARD') {
+        candidatePool = (roll < 0.48) ? highTierPool : ((roll < 0.78) ? flagshipPool : ((roll < 0.91) ? midTierPool : dronePool));
       } else if (diff === 'ACE') {
         candidatePool = (roll < 0.45) ? highTierPool : ((roll < 0.80) ? flagshipPool : ((roll < 0.92) ? midTierPool : dronePool));
+      } else if (diff === 'FORTIFIED') {
+        candidatePool = (roll < 0.45) ? flagshipPool : ((roll < 0.82) ? highTierPool : ((roll < 0.92) ? midTierPool : dronePool));
       } else if (diff === 'MASTER') {
         candidatePool = (roll < 0.45) ? flagshipPool : ((roll < 0.85) ? highTierPool : ((roll < 0.93) ? midTierPool : dronePool));
       } else {
@@ -220,21 +226,21 @@ const FleetGenerator = {
   generateDynamicSquadronWave(waveIndex, team, theaterWidth, theaterHeight, difficultyKey) {
     const diff = difficultyKey;
     const isBlue = (team === 'friendly');
-    const count = (diff === 'MASTER' || diff === 'LEGEND') ? 3 : 2;
+    const count = (diff === 'FORTIFIED' || diff === 'MASTER' || diff === 'LEGEND') ? 3 : 2;
     const pool = isBlue
       ? ['F-15-SMTD', 'Eurofighter', 'Rafale-C', 'F-22A', 'MQ-101', 'KF-21', 'XFA-36B']
-      : (['ACE', 'MASTER', 'LEGEND'].includes(diff)
+      : (['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)
         ? ['Su-57', 'ADF-11F', 'CFA-44', 'X-02S', 'F-15EX', 'EA-18G', 'X-40', 'XFA-36B', ...(['MASTER', 'LEGEND'].includes(diff) ? ['EA-36'] : [])]
         : ['Su-35S', 'MiG-31BM', 'Su-30SM', 'Eurofighter', 'EA-18G']);
     const sqName = isBlue ? `Reinforcement Wing ${waveIndex}` : `Hostile Wave ${waveIndex}`;
 
     const items = [];
     for (let i = 0; i < count; i++) {
-      const specId = (i === 1 && !isBlue && ['ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diff))
+      const specId = (i === 1 && !isBlue && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff))
         ? (['MASTER', 'LEGEND'].includes(diff) && Math.random() < 0.5 ? 'EA-36' : 'EA-18G')
         : pool[i % pool.length];
       const isLead = (i === 0);
-      const isAce = (!isBlue && isLead && ['ACE', 'MASTER', 'LEGEND'].includes(diff));
+      const isAce = (!isBlue && isLead && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff));
       items.push({
         specId, isLead, isAce,
         callsign: isAce ? `Ace ${sqName}` : `${sqName} ${i + 1}`

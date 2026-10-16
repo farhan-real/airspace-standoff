@@ -6,12 +6,14 @@ const DIFFICULTY_DEFAULT_BUDGETS = {
   VETERAN: 330,
   ESCALATED: 390,
   ELITE: 450,
+  FORWARD: 510,
   ACE: 570,
+  FORTIFIED: 635,
   MASTER: 700,
   LEGEND: 820
 };
 
-const STANDARD_BUDGET_TIERS = [190, 250, 260, 300, 330, 390, 400, 450, 500, 570, 650, 700, 750, 800, 820, 900, 1000];
+const STANDARD_BUDGET_TIERS = [190, 250, 260, 300, 330, 390, 400, 450, 500, 510, 570, 635, 650, 700, 750, 800, 820, 900, 1000];
 
 const FLEET_DIFFICULTY_NAMES = {
   CADET: 'PERMISSIVE SECTOR FLEET',
@@ -19,7 +21,9 @@ const FLEET_DIFFICULTY_NAMES = {
   VETERAN: 'CONTESTED AIRSPACE FLEET',
   ESCALATED: 'ESCALATED AIRSPACE FLEET',
   ELITE: 'HOSTILE AIRSPACE FLEET',
+  FORWARD: 'FORWARD COMBAT ZONE FLEET',
   ACE: 'HIGH-THREAT SECTOR FLEET',
+  FORTIFIED: 'FORTIFIED AIRSPACE FLEET',
   MASTER: 'AIR DENIAL ZONE FLEET',
   LEGEND: 'EXTREME THREAT SECTOR FLEET'
 };
@@ -115,7 +119,9 @@ class MissionEditor {
           { value: 'VETERAN', text: 'CONTESTED AIRSPACE (1.00x)' },
           { value: 'ESCALATED', text: 'ESCALATED AIRSPACE (1.25x)' },
           { value: 'ELITE', text: 'HOSTILE AIRSPACE (1.50x)' },
+          { value: 'FORWARD', text: 'FORWARD COMBAT ZONE (1.75x)' },
           { value: 'ACE', text: 'HIGH-THREAT SECTOR (2.00x)' },
+          { value: 'FORTIFIED', text: 'FORTIFIED AIRSPACE (2.30x)' },
           { value: 'MASTER', text: 'AIR DENIAL ZONE (2.60x)' },
           { value: 'LEGEND', text: 'EXTREME THREAT SECTOR (3.20x)' }
         ]
@@ -130,7 +136,9 @@ class MissionEditor {
           { value: 'VETERAN', text: 'CONTESTED AIRSPACE FLEET' },
           { value: 'ESCALATED', text: 'ESCALATED AIRSPACE FLEET' },
           { value: 'ELITE', text: 'HOSTILE AIRSPACE FLEET' },
+          { value: 'FORWARD', text: 'FORWARD COMBAT ZONE FLEET' },
           { value: 'ACE', text: 'HIGH-THREAT SECTOR FLEET' },
+          { value: 'FORTIFIED', text: 'FORTIFIED AIRSPACE FLEET' },
           { value: 'MASTER', text: 'AIR DENIAL ZONE FLEET' },
           { value: 'LEGEND', text: 'EXTREME THREAT SECTOR FLEET' }
         ]
@@ -144,7 +152,9 @@ class MissionEditor {
           { value: 'BUFFER', text: 'BUFFER ZONE FLEET' },
           { value: 'ESCALATED', text: 'ESCALATED AIRSPACE FLEET' },
           { value: 'ELITE', text: 'HOSTILE AIRSPACE FLEET' },
+          { value: 'FORWARD', text: 'FORWARD COMBAT ZONE FLEET' },
           { value: 'ACE', text: 'HIGH-THREAT SECTOR FLEET' },
+          { value: 'FORTIFIED', text: 'FORTIFIED AIRSPACE FLEET' },
           { value: 'MASTER', text: 'AIR DENIAL ZONE FLEET' },
           { value: 'LEGEND', text: 'EXTREME THREAT SECTOR FLEET' },
           { value: 'HANGAR', text: 'HANGAR FLEET (MIRROR)' }
@@ -346,7 +356,9 @@ class MissionEditor {
       VETERAN: 'CONTESTED AIRSPACE (1.00x)',
       ESCALATED: 'ESCALATED AIRSPACE (1.25x)',
       ELITE: 'HOSTILE AIRSPACE (1.50x)',
+      FORWARD: 'FORWARD COMBAT ZONE (1.75x)',
       ACE: 'HIGH-THREAT SECTOR (2.00x)',
+      FORTIFIED: 'FORTIFIED AIRSPACE (2.30x)',
       MASTER: 'AIR DENIAL ZONE (2.60x)',
       LEGEND: 'EXTREME THREAT SECTOR (3.20x)'
     };
@@ -439,15 +451,15 @@ class MissionEditor {
     };
 
     const scenarioMode = choose('scenario', ['SKIRMISH', 'DYNAMIC_THEATER']);
-    const difficulty = choose('difficulty', ['CADET', 'BUFFER', 'VETERAN', 'ESCALATED', 'ELITE', 'ACE', 'MASTER', 'LEGEND']);
+    const difficulty = choose('difficulty', ['CADET', 'BUFFER', 'VETERAN', 'ESCALATED', 'ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND']);
     const doctrine = choose('doctrine', ['BALANCED', 'AGGRESSIVE', 'STANDOFF']);
 
-    const blueFleetOptions = ['HANGAR', 'CADET', 'BUFFER', 'VETERAN', 'ESCALATED', 'ELITE', 'ACE', 'MASTER', 'LEGEND'];
+    const blueFleetOptions = ['HANGAR', 'CADET', 'BUFFER', 'VETERAN', 'ESCALATED', 'ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'];
     const blueFleet = choose('blue-fleet', blueFleetOptions);
     const blueBudgetRaw = choose('blue-budget', STANDARD_BUDGET_TIERS.map(String));
     const blueBudget = blueFleet === 'HANGAR' ? game.budgetMax : (Number(blueBudgetRaw) || DIFFICULTY_DEFAULT_BUDGETS[blueFleet] || 400);
 
-    const redFleetOptions = ['VETERAN', 'CADET', 'BUFFER', 'ESCALATED', 'ELITE', 'ACE', 'MASTER', 'LEGEND', 'HANGAR'];
+    const redFleetOptions = ['VETERAN', 'CADET', 'BUFFER', 'ESCALATED', 'ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND', 'HANGAR'];
     const redFleet = choose('red-fleet', redFleetOptions);
     const redBudgetRaw = choose('red-budget', STANDARD_BUDGET_TIERS.map(String));
     const redBudget = redFleet === 'HANGAR' ? game.budgetMax : (Number(redBudgetRaw) || DIFFICULTY_DEFAULT_BUDGETS[redFleet] || 330);

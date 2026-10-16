@@ -7,7 +7,7 @@ class AINavigationHandler {
     if (!hostile || hostile.activeManeuverTimer > 0 || hostile.hp <= 0) return;
 
     if (hostile.isRTB) {
-      if (['MASTER', 'LEGEND'].includes(diffKey)) {
+      if (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
         const egressHeading = aiCommander.planning.getCoveredEgressHeading(hostile);
         let diff = egressHeading - hostile.heading;
         while (diff < -Math.PI) diff += Math.PI * 2;
@@ -58,7 +58,9 @@ class AINavigationHandler {
       VETERAN:   { turnMult: 0.55, throttle: 0.55, overshootDist: 6.0, overshootChance: 0.42 },
       ESCALATED: { turnMult: 0.60, throttle: 0.58, overshootDist: 5.6, overshootChance: 0.36 },
       ELITE:     { turnMult: 0.65, throttle: 0.62, overshootDist: 5.2, overshootChance: 0.30 },
+      FORWARD:   { turnMult: 0.70, throttle: 0.66, overshootDist: 4.9, overshootChance: 0.25 },
       ACE:       { turnMult: 0.74, throttle: 0.70, overshootDist: 4.6, overshootChance: 0.20 },
+      FORTIFIED: { turnMult: 0.78, throttle: 0.73, overshootDist: 4.3, overshootChance: 0.17 },
       MASTER:    { turnMult: 0.82, throttle: 0.75, overshootDist: 4.0, overshootChance: 0.14 },
       LEGEND:    { turnMult: 0.88, throttle: 0.80, overshootDist: 3.6, overshootChance: 0.08 }
     };
@@ -89,7 +91,7 @@ class AINavigationHandler {
     const dist = Math.hypot(target.x - hostile.x, target.y - hostile.y);
     let desiredHeading = Math.atan2(target.y - hostile.y, target.x - hostile.x);
 
-    if (role === 'SNIPER' && ['ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diffKey)) {
+    if (role === 'SNIPER' && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
       const sniperMove = aiCommander.planning.getSniperVector(hostile, target, dist, diffKey);
       desiredHeading = sniperMove.heading;
       hostile.engineAlpha = sniperMove.throttle;
@@ -101,7 +103,7 @@ class AINavigationHandler {
       const dogfightMove = aiCommander.planning.getDogfightVector(hostile, target, dist);
       desiredHeading = dogfightMove.heading;
       hostile.engineAlpha = dogfightMove.throttle;
-    } else if (role === 'AMBUSH' && ['ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diffKey)) {
+    } else if (role === 'AMBUSH' && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
       const ambushMove = aiCommander.planning.getAmbushVector(hostile, target, dist, diffKey);
       desiredHeading = ambushMove.heading;
       hostile.engineAlpha = ambushMove.throttle;
@@ -126,7 +128,7 @@ class AINavigationHandler {
 
     const sOpt = hostile.getOptimalCornerSpeed();
     if (role !== 'SNIPER' && role !== 'INTERCEPT') {
-      if (['ACE', 'MASTER', 'LEGEND'].includes(diffKey) && Math.abs(diff) > 0.40) {
+      if (['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) && Math.abs(diff) > 0.40) {
         if (hostile.speed > sOpt * 1.15) hostile.engineAlpha = 0.40;
         else if (hostile.speed < sOpt * 0.85) hostile.engineAlpha = 0.85;
         else hostile.engineAlpha = 0.65;

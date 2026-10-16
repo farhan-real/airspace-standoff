@@ -51,7 +51,7 @@ class FleetOutfitter {
       totalCost += (u.cost || 0);
     };
 
-    if ((isAce || ['MASTER', 'LEGEND'].includes(diff)) && spec.allowedGuns) {
+    if ((isAce || ['FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)) && spec.allowedGuns) {
       if (spec.allowedGuns.includes('EML_GUN') && rng() < 0.70) chosenGunId = 'EML_GUN';
       else if (spec.allowedGuns.includes('DE-PULSE') && rng() < 0.80) chosenGunId = 'DE-PULSE';
       else if (spec.allowedGuns.includes('PLSL_HEAVY') && rng() < 0.70) chosenGunId = 'PLSL_HEAVY';
@@ -88,7 +88,7 @@ class FleetOutfitter {
         if (spec.externalSlots >= 8) addWpn(srChoice, 'EXTERNAL');
       }
 
-      const aceSockets = ['MASTER', 'LEGEND'].includes(diff) ? Math.min(spec.upgradeSockets || 4, 4) : 3;
+      const aceSockets = ['FORTIFIED', 'MASTER', 'LEGEND'].includes(diff) ? Math.min(spec.upgradeSockets || 4, 4) : 3;
       const aceUpgPool = ['GAN_AESA_CORE', 'THRUST_VECTOR', 'SUPERCRUISE_VCE', 'RAM_NANO_COATING', 'ADAPTIVE_ECCM_SUITE', 'COFFIN_OPTICAL_BUS'];
       for (const uId of aceUpgPool) {
         if (upgrades.length >= aceSockets) break;
@@ -105,7 +105,9 @@ class FleetOutfitter {
         VETERAN: 0.0,
         ESCALATED: 0.15,
         ELITE: 0.30,
+        FORWARD: 0.40,
         ACE: 0.50,
+        FORTIFIED: 0.55,
         MASTER: 0.60,
         LEGEND: 0.65
       };
@@ -120,7 +122,9 @@ class FleetOutfitter {
         VETERAN: 0.0,
         ESCALATED: 0.18,
         ELITE: 0.35,
+        FORWARD: 0.40,
         ACE: 0.45,
+        FORTIFIED: 0.50,
         MASTER: 0.55,
         LEGEND: 0.60
       };
@@ -154,7 +158,9 @@ class FleetOutfitter {
       VETERAN: 0.05,
       ESCALATED: 0.10,
       ELITE: 0.15,
+      FORWARD: 0.25,
       ACE: 0.35,
+      FORTIFIED: 0.42,
       MASTER: 0.50,
       LEGEND: 0.65
     };
@@ -164,14 +170,14 @@ class FleetOutfitter {
       if (allowUlr && class1Ulr.length > 0 && (ulrRoll < ulrThresh || role === 'SNIPER' || role === 'AMBUSH')) {
         return class1Ulr[Math.floor(rng() * class1Ulr.length)];
       }
-      if (class2Lr.length > 0 && (rng() < 0.65 || ['ESCALATED', 'ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diff))) {
+      if (class2Lr.length > 0 && (rng() < 0.65 || ['ESCALATED', 'ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff))) {
         return class2Lr[Math.floor(rng() * class2Lr.length)];
       }
       return class3Mr[Math.floor(rng() * class3Mr.length)] || 'AIM-120D';
     };
 
     const rollWvr = () => {
-      if (['ACE', 'MASTER', 'LEGEND'].includes(diff)) {
+      if (['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)) {
         if (class4Sr.includes('PYTHON-5') && rng() < 0.45) return 'PYTHON-5';
         if (class4Sr.includes('IRIS-T') && rng() < 0.35) return 'IRIS-T';
       }
@@ -184,7 +190,7 @@ class FleetOutfitter {
       addWpn(rollBvr(false), 'EXTERNAL');
       addUpg('ADAPTIVE_ECCM_SUITE');
       if (spec.upgradeSockets >= 2) addUpg('ESM_PASSIVE_SUITE');
-      if (spec.upgradeSockets >= 3 && ['ACE', 'MASTER', 'LEGEND'].includes(diff)) addUpg('GAN_AESA_CORE');
+      if (spec.upgradeSockets >= 3 && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)) addUpg('GAN_AESA_CORE');
       return { weapons, upgrades, totalCost, chosenGunId, role };
     }
 
@@ -251,7 +257,7 @@ class FleetOutfitter {
       addUpg('MADL_BATTLE_LINK');
       if (spec.upgradeSockets >= 2) addUpg('EXPANDED_CM_DISPENSER');
     } else {
-      const primaryBvr = rollBvr(['MASTER', 'LEGEND'].includes(diff));
+      const primaryBvr = rollBvr(['FORTIFIED', 'MASTER', 'LEGEND'].includes(diff));
       const primaryWvr = rollWvr();
 
       if (spec.internalSlots > 0) {
@@ -266,7 +272,7 @@ class FleetOutfitter {
         addWpn(primaryWvr, 'EXTERNAL');
         if (spec.externalSlots >= 6 && !enforceLightweight) {
           addWpn(rollBvr(false), 'EXTERNAL');
-          if (spec.externalSlots >= 8 && ['ELITE', 'ACE', 'MASTER', 'LEGEND'].includes(diff)) {
+          if (spec.externalSlots >= 8 && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)) {
             addWpn(rollWvr(), 'EXTERNAL');
           }
         }
@@ -280,6 +286,7 @@ class FleetOutfitter {
     else if (diff === 'VETERAN') targetSockets = Math.min(maxSockets, 1 + Math.floor(rng() * 2));
     else if (diff === 'ESCALATED') targetSockets = Math.min(maxSockets, 1 + Math.floor(rng() * 2));
     else if (diff === 'ELITE') targetSockets = Math.min(maxSockets, 2 + Math.floor(rng() * 2));
+    else if (diff === 'FORWARD') targetSockets = Math.min(maxSockets, 2 + Math.floor(rng() * 2));
     else if (diff === 'ACE') targetSockets = Math.min(maxSockets, Math.max(2, maxSockets - 1));
     else targetSockets = maxSockets;
 

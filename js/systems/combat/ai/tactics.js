@@ -39,7 +39,9 @@ class AIMissileTactics {
       VETERAN:   { minPk: 45, rangeRatio: profile.engagementRangeRatio || 0.80, hesitateChance: 0.35, maxOffAngle: Math.PI / 7.0 },
       ESCALATED: { minPk: 48, rangeRatio: profile.engagementRangeRatio || 0.75, hesitateChance: 0.30, maxOffAngle: Math.PI / 6.5 },
       ELITE:     { minPk: 52, rangeRatio: profile.engagementRangeRatio || 0.70, hesitateChance: 0.24, maxOffAngle: Math.PI / 6.0 },
+      FORWARD:   { minPk: 55, rangeRatio: profile.engagementRangeRatio || 0.68, hesitateChance: 0.20, maxOffAngle: Math.PI / 5.5 },
       ACE:       { minPk: 58, rangeRatio: profile.engagementRangeRatio || 0.65, hesitateChance: 0.16, maxOffAngle: Math.PI / 5.0 },
+      FORTIFIED: { minPk: 61, rangeRatio: profile.engagementRangeRatio || 0.62, hesitateChance: 0.13, maxOffAngle: Math.PI / 4.8 },
       MASTER:    { minPk: 64, rangeRatio: profile.engagementRangeRatio || 0.60, hesitateChance: 0.10, maxOffAngle: Math.PI / 4.5 },
       LEGEND:    { minPk: 68, rangeRatio: profile.engagementRangeRatio || 0.55, hesitateChance: 0.05, maxOffAngle: Math.PI / 4.0 }
     };
@@ -87,7 +89,7 @@ class AIMissileTactics {
         if (isA2G !== isSurface) continue;
 
         const effectiveHp = this.estimateTargetEffectiveHp(tgt, allMissiles, shooter.team, diffKey);
-        if (effectiveHp <= 0 && ['ACE', 'MASTER', 'LEGEND'].includes(diffKey)) continue;
+        if (effectiveHp <= 0 && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) continue;
 
         const dist = Math.hypot(tgt.x - shooter.x, tgt.y - shooter.y);
         const maxRange = w.rangeKm * (shooter.isAce ? 0.70 : tier.rangeRatio);
@@ -208,7 +210,7 @@ class AIMissileTactics {
     if (inbounds.length === 0) return target.hp;
 
     if (diffKey === 'CADET' || diffKey === 'BUFFER' || diffKey === 'VETERAN') return target.hp;
-    const hitRateEst = ['MASTER', 'LEGEND'].includes(diffKey) ? 0.75 : 0.60;
+    const hitRateEst = ['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 0.75 : 0.60;
     const expectedDmg = inbounds.reduce((sum, m) => sum + ((m.weapon ? m.weapon.damage : 3) * hitRateEst), 0);
     return target.hp - expectedDmg;
   }
@@ -257,7 +259,9 @@ class AIMissileTactics {
         VETERAN: 0.30,
         ESCALATED: 0.40,
         ELITE: 0.50,
+        FORWARD: 0.58,
         ACE: 0.65,
+        FORTIFIED: 0.72,
         MASTER: 0.80,
         LEGEND: 0.90
       };

@@ -62,7 +62,9 @@ class ProcurementManager {
         { value: 'VETERAN', text: 'CONTESTED AIRSPACE (1.00x)' },
         { value: 'ESCALATED', text: 'ESCALATED AIRSPACE (1.25x)' },
         { value: 'ELITE', text: 'HOSTILE AIRSPACE (1.50x)' },
+        { value: 'FORWARD', text: 'FORWARD COMBAT ZONE (1.75x)' },
         { value: 'ACE', text: 'HIGH-THREAT SECTOR (2.00x)' },
+        { value: 'FORTIFIED', text: 'FORTIFIED AIRSPACE (2.30x)' },
         { value: 'MASTER', text: 'AIR DENIAL ZONE (2.60x)' },
         { value: 'LEGEND', text: 'EXTREME THREAT SECTOR (3.20x)' }
       ],

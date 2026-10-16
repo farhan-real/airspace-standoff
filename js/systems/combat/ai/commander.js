@@ -9,7 +9,9 @@ window.AI_ACE_PROFILES = {
   VETERAN:   { reactionCooldown: 3.2, notchChance: 0.35, decoyDiscrimination: 0.45, blunderChance: 0.12, mixedSeekerChance: 0.15, salvoMaxMissiles: 2 },
   ESCALATED: { reactionCooldown: 2.8, notchChance: 0.42, decoyDiscrimination: 0.52, blunderChance: 0.09, mixedSeekerChance: 0.20, salvoMaxMissiles: 2 },
   ELITE:     { reactionCooldown: 2.4, notchChance: 0.50, decoyDiscrimination: 0.60, blunderChance: 0.06, mixedSeekerChance: 0.25, salvoMaxMissiles: 2 },
+  FORWARD:   { reactionCooldown: 2.1, notchChance: 0.55, decoyDiscrimination: 0.65, blunderChance: 0.04, mixedSeekerChance: 0.30, salvoMaxMissiles: 2 },
   ACE:       { reactionCooldown: 1.8, notchChance: 0.60, decoyDiscrimination: 0.70, blunderChance: 0.02, mixedSeekerChance: 0.35, salvoMaxMissiles: 2 },
+  FORTIFIED: { reactionCooldown: 1.6, notchChance: 0.65, decoyDiscrimination: 0.75, blunderChance: 0.01, mixedSeekerChance: 0.40, salvoMaxMissiles: 3 },
   MASTER:    { reactionCooldown: 1.4, notchChance: 0.70, decoyDiscrimination: 0.80, blunderChance: 0.00, mixedSeekerChance: 0.45, salvoMaxMissiles: 3 },
   LEGEND:    { reactionCooldown: 1.1, notchChance: 0.75, decoyDiscrimination: 0.85, blunderChance: 0.00, mixedSeekerChance: 0.55, salvoMaxMissiles: 3 }
 };
@@ -40,7 +42,7 @@ class TacticalAICommander {
     if (!baseProfile) throw new Error(`Unknown difficulty "${diffKey}" in getCognitiveProfile.`);
     const aceProfile = window.AI_ACE_PROFILES[diffKey];
 
-    const maxSlots = baseProfile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
+    const maxSlots = baseProfile.attentionSlots || (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'FORWARD', 'ACE'].includes(diffKey) ? 2 : 1));
     const activeFocusCount = this.focusedUnitIds.length;
     const isHesitating = this.planning.isHesitating(unitId);
     const successionTimer = this.planning.successionTimers.get(unitId) || 0;
@@ -96,7 +98,7 @@ class TacticalAICommander {
       this.focusTimers.set(id, Math.max(0, remaining));
     }
 
-    const maxSlots = profile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
+    const maxSlots = profile.attentionSlots || (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'FORWARD', 'ACE'].includes(diffKey) ? 2 : 1));
 
     const scoredUnits = aliveHostiles.map(h => {
       let score = 0;
@@ -175,7 +177,7 @@ class TacticalAICommander {
     }
 
     const tokenCost = window.CONFIG.TOKEN_ACTION_COST;
-    const maxSlots = profile.attentionSlots || (['MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'ACE'].includes(diffKey) ? 2 : 1));
+    const maxSlots = profile.attentionSlots || (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'FORWARD', 'ACE'].includes(diffKey) ? 2 : 1));
 
     if (this.actionCooldown <= 0 && this.game.tokenBucketRed >= tokenCost) {
       for (const focusedId of this.focusedUnitIds) {

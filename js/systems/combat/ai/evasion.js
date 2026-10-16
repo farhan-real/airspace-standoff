@@ -19,7 +19,9 @@ class AIEvasionHandler {
       VETERAN:   { reactDist: 6.5, stealthDist: 4.0, blunderChance: 0.46, cmChance: 0.25, turnMult: 0.60, bonus: 0.32 },
       ESCALATED: { reactDist: 7.2, stealthDist: 4.4, blunderChance: 0.40, cmChance: 0.30, turnMult: 0.65, bonus: 0.35 },
       ELITE:     { reactDist: 7.8, stealthDist: 4.8, blunderChance: 0.35, cmChance: 0.35, turnMult: 0.70, bonus: 0.38 },
+      FORWARD:   { reactDist: 8.4, stealthDist: 5.2, blunderChance: 0.30, cmChance: 0.40, turnMult: 0.74, bonus: 0.41 },
       ACE:       { reactDist: 9.0, stealthDist: 5.5, blunderChance: 0.25, cmChance: 0.45, turnMult: 0.78, bonus: 0.44 },
+      FORTIFIED: { reactDist: 9.4, stealthDist: 5.8, blunderChance: 0.21, cmChance: 0.48, turnMult: 0.81, bonus: 0.46 },
       MASTER:    { reactDist: 9.8, stealthDist: 6.0, blunderChance: 0.18, cmChance: 0.52, turnMult: 0.84, bonus: 0.48 },
       LEGEND:    { reactDist: 10.5, stealthDist: 6.5, blunderChance: 0.12, cmChance: 0.60, turnMult: 0.90, bonus: 0.52 }
     };
@@ -29,7 +31,7 @@ class AIEvasionHandler {
     const reactDistance = isAce ? Math.max(tier.reactDist + 2.5, 9.0) : tier.reactDist;
     const stealthDistance = isAce ? Math.max(tier.stealthDist + 1.8, 5.8) : tier.stealthDist;
 
-    const focusFactor = isFocused ? 1.0 : (['ACE', 'MASTER', 'LEGEND'].includes(diffKey) ? 0.82 : 0.60);
+    const focusFactor = isFocused ? 1.0 : (['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 0.82 : 0.60);
     const triggerDistance = (isStealth ? stealthDistance : reactDistance) * focusFactor;
     if (nearestMsl.distanceToTarget > triggerDistance) return;
 
@@ -59,7 +61,7 @@ class AIEvasionHandler {
     }
 
     const isOptical = Boolean(nearestMsl.weapon && (nearestMsl.weapon.seeker === 'IIR' || nearestMsl.weapon.seeker === 'EO' || nearestMsl.weapon.seeker === 'OPT'));
-    if (isOptical && (isAce || ['ACE', 'MASTER', 'LEGEND'].includes(diffKey))) {
+    if (isOptical && (isAce || ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey))) {
       hostile.engineAlpha = 0.20;
     }
 
@@ -110,7 +112,9 @@ class AIEvasionHandler {
       VETERAN:   { delay: 3.2, notchRate: 0.35, climbAlt: 32000, throttleMod: true },
       ESCALATED: { delay: 2.8, notchRate: 0.42, climbAlt: 34000, throttleMod: true },
       ELITE:     { delay: 2.4, notchRate: 0.50, climbAlt: 36000, throttleMod: true },
+      FORWARD:   { delay: 2.1, notchRate: 0.55, climbAlt: 37000, throttleMod: true },
       ACE:       { delay: 1.8, notchRate: 0.60, climbAlt: 38000, throttleMod: true },
+      FORTIFIED: { delay: 1.6, notchRate: 0.65, climbAlt: 39000, throttleMod: true },
       MASTER:    { delay: 1.4, notchRate: 0.70, climbAlt: 40000, throttleMod: true },
       LEGEND:    { delay: 1.1, notchRate: 0.75, climbAlt: 42000, throttleMod: true }
     };

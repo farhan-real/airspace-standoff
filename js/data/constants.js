@@ -195,6 +195,24 @@ window.AI_DIFFICULTIES = {
     formationDoctrine: 'TWO_SHIP_ELEMENTS',
     aceCount: 1
   },
+  FORWARD: {
+    name: 'Forward Combat Zone',
+    budgetCap: 510.0,
+    scoreMultiplier: 1.75,
+    reactionCooldown: 3.2,
+    attentionSpanSec: 3.1,
+    attentionSlots: 2,
+    engagementRangeRatio: 0.68,
+    blunderChance: 0.30,
+    notchChance: 0.20,
+    notchToleranceDeg: 22,
+    decoyDiscrimination: 0.38,
+    mixedSeekerChance: 0.05,
+    salvoMaxMissiles: 2,
+    verticalCombat: true,
+    formationDoctrine: 'COMBAT_SPREAD',
+    aceCount: 1
+  },
   ACE: {
     name: 'High-Threat Sector',
     budgetCap: 570.0,
@@ -211,6 +229,24 @@ window.AI_DIFFICULTIES = {
     salvoMaxMissiles: 2,
     verticalCombat: true,
     formationDoctrine: 'MUTUAL_SUPPORT',
+    aceCount: 2
+  },
+  FORTIFIED: {
+    name: 'Fortified Airspace',
+    budgetCap: 635.0,
+    scoreMultiplier: 2.30,
+    reactionCooldown: 2.5,
+    attentionSpanSec: 2.5,
+    attentionSlots: 3,
+    engagementRangeRatio: 0.62,
+    blunderChance: 0.21,
+    notchChance: 0.32,
+    notchToleranceDeg: 18,
+    decoyDiscrimination: 0.50,
+    mixedSeekerChance: 0.18,
+    salvoMaxMissiles: 2,
+    verticalCombat: true,
+    formationDoctrine: 'PINCER_BRACKET',
     aceCount: 2
   },
   MASTER: {
