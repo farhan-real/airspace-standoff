@@ -21,13 +21,9 @@ window.formatCombatantDisplayName = formatCombatantDisplayName;
 
 class Aircraft {
   constructor(specId, team, spawnX, spawnY, heading, chosenGunId, callsign, squadronName, isFlightLead = false, isAce = false, spawnAltFt = null) {
-    if (!window.AIRCRAFT_CATALOG) {
-      throw new Error('AIRCRAFT_CATALOG is not loaded.');
-    }
+    if (!window.AIRCRAFT_CATALOG) throw new Error('AIRCRAFT_CATALOG is not loaded.');
     const baseSpec = window.AIRCRAFT_CATALOG[specId];
-    if (!baseSpec) {
-      throw new Error(`Aircraft specification "${specId}" not found in AIRCRAFT_CATALOG.`);
-    }
+    if (!baseSpec) throw new Error(`Aircraft specification "${specId}" not found in AIRCRAFT_CATALOG.`);
 
     const requiredSpecFields = ['id', 'name', 'category', 'cost', 'hp', 'AGI_0', 'S_0', 'sOpt', 'R_0', 'radarType', 'radarConeDeg', 'lookDownBonus', 'sigma_0', 'beamSpike', 'thermalBloom', 'M_max', 'G_limit'];
     for (const field of requiredSpecFields) {
@@ -39,33 +35,23 @@ class Aircraft {
     this.id = 'AC_' + Math.random().toString(36).substr(2, 6);
     this.spec = JSON.parse(JSON.stringify(baseSpec));
     this.team = team;
-
     if (typeof spawnX !== 'number' || isNaN(spawnX) || typeof spawnY !== 'number' || isNaN(spawnY)) {
       throw new Error(`Invalid spawn coordinates (${spawnX}, ${spawnY}) for aircraft "${specId}".`);
     }
     this.x = spawnX;
     this.y = spawnY;
-
-    if (typeof heading !== 'number' || isNaN(heading)) {
-      throw new Error(`Invalid heading (${heading}) for aircraft "${specId}".`);
-    }
+    if (typeof heading !== 'number' || isNaN(heading)) throw new Error(`Invalid heading (${heading}) for aircraft "${specId}".`);
     this.heading = heading;
 
     this.isAce = Boolean(isAce);
     this.isFlightLead = Boolean(isFlightLead);
-
     const isEW = (this.spec.category === 'EW' || this.spec.isEW);
     const isStrike = (this.spec.category === 'STRIKE');
     this.tacticalRole = isEW ? 'SEAD' : (isStrike ? 'STRIKE' : 'SWEEP');
 
-    if (!callsign || !callsign.trim()) {
-      throw new Error(`Aircraft "${specId}" requires an assigned callsign.`);
-    }
+    if (!callsign || !callsign.trim()) throw new Error(`Aircraft "${specId}" requires an assigned callsign.`);
     this.callsign = callsign.trim();
-
-    if (!squadronName || !squadronName.trim()) {
-      throw new Error(`Aircraft "${specId}" requires an assigned squadron name.`);
-    }
+    if (!squadronName || !squadronName.trim()) throw new Error(`Aircraft "${specId}" requires an assigned squadron name.`);
     this.squadronName = squadronName.trim();
 
     const minAlt = window.CONFIG.MIN_ALT_FT;
@@ -91,7 +77,6 @@ class Aircraft {
     this.baseThermalBloom = this.spec.thermalBloom;
     this.thermalBloom = this.baseThermalBloom;
     this.thermalBloomTimer = 0.0;
-
     this.aceEvasionBonus = 0.0;
     this.leadStressMitigation = 1.0;
     this.autocannonResistance = 0.0;
@@ -122,17 +107,11 @@ class Aircraft {
     this.chaffFlares = baseCm;
     this.cmTimer = 0.0;
 
-    if (!window.AUTOCANNONS_CATALOG) {
-      throw new Error('AUTOCANNONS_CATALOG is not loaded.');
-    }
+    if (!window.AUTOCANNONS_CATALOG) throw new Error('AUTOCANNONS_CATALOG is not loaded.');
     const effectiveGunId = chosenGunId || this.spec.builtInGun;
-    if (!effectiveGunId) {
-      throw new Error(`No gun defined for aircraft "${specId}".`);
-    }
+    if (!effectiveGunId) throw new Error(`No gun defined for aircraft "${specId}".`);
     const gunDef = window.AUTOCANNONS_CATALOG[effectiveGunId];
-    if (!gunDef) {
-      throw new Error(`Gun "${effectiveGunId}" not found in AUTOCANNONS_CATALOG.`);
-    }
+    if (!gunDef) throw new Error(`Gun "${effectiveGunId}" not found in AUTOCANNONS_CATALOG.`);
     this.gun = gunDef;
     this.gunAmmo = gunDef.defaultAmmo;
     this.gunCooldown = 0.0;
@@ -160,6 +139,9 @@ class Aircraft {
     this.hasMaldDecoy = false;
     this.maldDecoyCharges = 0;
     this.distanceTraveled = 0.0;
+    this.flightHistory = [];
+    this.historySampleTimer = 0.0;
+    this.totalProcurementCost = Number(this.spec.cost || 0);
 
     const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
     this.trackDurationBlue = (team === 'friendly' || is2P) ? 999.0 : 0.0;
@@ -206,13 +188,10 @@ class Aircraft {
   getTargetMach() {
     const maxSpd = this.effectiveMaxSpeed;
     const alpha = Math.max(0.20, Math.min(1.0, this.engineAlpha));
-    const ratio = 0.45 + (alpha - 0.20) * (0.55 / 0.80);
-    return Math.max(0.25, maxSpd * ratio);
+    return Math.max(0.25, maxSpd * (0.45 + (alpha - 0.20) * (0.55 / 0.80)));
   }
 
-  getOptimalCornerSpeed() {
-    return this.spec.sOpt;
-  }
+  getOptimalCornerSpeed() { return this.spec.sOpt; }
 
   getEffectiveAgility() {
     let agi = this.spec.AGI_0;
@@ -220,21 +199,14 @@ class Aircraft {
     if (this.thrustVector) agi *= 1.20;
     if (this.isCoffin) agi *= 1.20;
     if (this.Wr) agi *= Math.max(0.45, 1.0 - 0.30 * this.Wr);
-
-    let eturn = 1.0;
-    if (!this.isCoffin) {
-      const sOpt = this.getOptimalCornerSpeed();
-      eturn = Physics.calcTurnEfficiency(this.speed, sOpt);
-      eturn = Math.max(0.40, eturn);
-    }
+    let eturn = this.isCoffin ? 1.0 : Math.max(0.40, Physics.calcTurnEfficiency(this.speed, this.getOptimalCornerSpeed()));
     if (this.stress >= 0.65 && !this.isCoffin && !this.spec.isDrone) eturn *= 0.70;
     return agi * eturn;
   }
 
   steerLeft(dt) {
     if (this.hp <= 0.05 || this.glocTimer > 0) return;
-    const agi = this.getEffectiveAgility();
-    this.heading -= agi * 2.0 * dt;
+    this.heading -= this.getEffectiveAgility() * 2.0 * dt;
     while (this.heading < 0) this.heading += Math.PI * 2;
     this.energy = Math.max(0.20, this.energy - 0.10 * dt);
     this.speed = Math.max(0.30, this.speed - 0.06 * dt);
@@ -243,8 +215,7 @@ class Aircraft {
 
   steerRight(dt) {
     if (this.hp <= 0.05 || this.glocTimer > 0) return;
-    const agi = this.getEffectiveAgility();
-    this.heading += agi * 2.0 * dt;
+    this.heading += this.getEffectiveAgility() * 2.0 * dt;
     while (this.heading >= Math.PI * 2) this.heading -= Math.PI * 2;
     this.energy = Math.max(0.20, this.energy - 0.10 * dt);
     this.speed = Math.max(0.30, this.speed - 0.06 * dt);
@@ -280,88 +251,56 @@ class Aircraft {
 
   update(dt, incomingMissiles) {
     if (this.hp <= 0.05) { this.hp = 0; return; }
-
-    if (isNaN(this.x) || isNaN(this.y)) {
-      throw new Error(`Aircraft "${this.id}" coordinates corrupted to NaN (${this.x}, ${this.y}).`);
-    }
-    if (isNaN(this.speed)) {
-      throw new Error(`Aircraft "${this.id}" speed corrupted to NaN.`);
-    }
-    if (isNaN(this.heading)) {
-      throw new Error(`Aircraft "${this.id}" heading corrupted to NaN.`);
-    }
-
     if (this.isRTB) this.processRTB(dt);
-    if (this.glocTimer > 0) {
-      this.glocTimer -= dt;
-      if (this.glocTimer <= 0) this.stress = 0.40;
-    }
-    if (this.activeManeuverTimer > 0) {
-      this.activeManeuverTimer -= dt;
-      if (this.activeManeuverTimer <= 0) {
-        this.activeManeuverBonus = 0.0;
-        this.isNotching = false;
-        this.activeManeuverId = null;
-      }
+    if (this.glocTimer > 0 && (this.glocTimer -= dt) <= 0) this.stress = 0.40;
+    if (this.activeManeuverTimer > 0 && (this.activeManeuverTimer -= dt) <= 0) {
+      this.activeManeuverBonus = 0.0; this.isNotching = false; this.activeManeuverId = null;
     }
     if (this.cmTimer > 0) this.cmTimer -= dt;
     if (this.gunCooldown > 0) this.gunCooldown -= dt;
-
     for (let i = 0; i < this.equippedWeapons.length; i++) {
-      const item = this.equippedWeapons[i];
-      if (item && item.cooldown > 0) {
-        item.cooldown = Math.max(0, item.cooldown - dt);
+      if (this.equippedWeapons[i] && this.equippedWeapons[i].cooldown > 0) {
+        this.equippedWeapons[i].cooldown = Math.max(0, this.equippedWeapons[i].cooldown - dt);
       }
     }
-
-    if (!this.spec.isDrone && !this.isCoffin && this.stress > 0) {
-      this.stress = Math.max(0.0, this.stress - 0.06 * dt);
-    }
-
+    if (!this.spec.isDrone && !this.isCoffin && this.stress > 0) this.stress = Math.max(0.0, this.stress - 0.06 * dt);
     if (this.thermalBloomTimer > 0) {
-      this.thermalBloomTimer -= dt;
-      this.thermalBloom = Math.max(1.6, this.baseThermalBloom * 1.6);
+      this.thermalBloomTimer -= dt; this.thermalBloom = Math.max(1.6, this.baseThermalBloom * 1.6);
     } else {
-      let currentThrottleMultiplier = 1.0;
-      if (this.engineAlpha > 0.85) currentThrottleMultiplier = 1.45;
-      else if (this.engineAlpha < 0.35) currentThrottleMultiplier = 0.70;
-      this.thermalBloom = this.baseThermalBloom * currentThrottleMultiplier;
+      const mult = this.engineAlpha > 0.85 ? 1.45 : (this.engineAlpha < 0.35 ? 0.70 : 1.0);
+      this.thermalBloom = this.baseThermalBloom * mult;
     }
-
-    const recoveryRate = 0.09 * this.engineAlpha;
-    this.energy = Math.min(1.0, this.energy + recoveryRate * dt);
-
-    const targetMach = this.getTargetMach();
-    const speedDiff = targetMach - this.speed;
+    this.energy = Math.min(1.0, this.energy + 0.09 * this.engineAlpha * dt);
+    const speedDiff = this.getTargetMach() - this.speed;
     this.speed += speedDiff * ((speedDiff >= 0) ? (this.effectiveAcceleration * 1.2) : 0.28) * dt;
     this.speed = Math.max(0.20, Math.min(this.effectiveMaxSpeed * 1.35, this.speed));
-
     const maxClimbFpm = 12000.0 * Math.max(0.3, this.speed);
     this.vsiFpm = Math.max(-maxClimbFpm, Math.min(maxClimbFpm, (this.targetAltFt - this.altFt) * 1.5));
-    const minAlt = window.CONFIG.MIN_ALT_FT;
-    const maxAlt = window.CONFIG.MAX_ALT_FT;
+    const minAlt = window.CONFIG.MIN_ALT_FT, maxAlt = window.CONFIG.MAX_ALT_FT;
     this.altFt = Math.max(minAlt, Math.min(maxAlt, this.altFt + (this.vsiFpm / 60.0) * dt));
     this.alt = Math.max(0.08, Math.min(1.0, this.altFt / maxAlt));
-
     const dSpd = (this.speed - this.prevSpeed) / Math.max(0.001, dt);
     this.speedTrend = dSpd > 0.02 ? '^' : (dSpd < -0.02 ? 'v' : '--');
     this.prevSpeed = this.speed;
-
     this.altTrend = this.vsiFpm > 250 ? '^' : (this.vsiFpm < -250 ? 'v' : '--');
     this.prevAltFt = this.altFt;
-
     const step = this.speed * 0.35 * dt;
-    this.x += Math.cos(this.heading) * step;
-    this.y += Math.sin(this.heading) * step;
+    this.x += Math.cos(this.heading) * step; this.y += Math.sin(this.heading) * step;
     this.distanceTraveled += step;
 
-    const mapW = window.CONFIG.THEATER_WIDTH_KM;
-    const mapH = window.CONFIG.THEATER_HEIGHT_KM;
+    this.historySampleTimer = (this.historySampleTimer || 0) + dt;
+    if (this.historySampleTimer >= 0.5) {
+      this.historySampleTimer = 0;
+      const simTime = (window.Game && window.Game.simulation) ? window.Game.simulation.elapsedTimeSec : (performance.now() / 1000);
+      this.flightHistory.push({ time: simTime, speed: this.speed, altFt: this.altFt });
+      if (this.flightHistory.length > 120) this.flightHistory.shift();
+    }
+
+    const mapW = window.CONFIG.THEATER_WIDTH_KM, mapH = window.CONFIG.THEATER_HEIGHT_KM;
     if (this.x < 2) { this.x = 2; this.heading = Math.PI - this.heading; }
     if (this.x > mapW - 2) { this.x = mapW - 2; this.heading = Math.PI - this.heading; }
     if (this.y < 2) { this.y = 2; this.heading = -this.heading; }
     if (this.y > mapH - 2) { this.y = mapH - 2; this.heading = -this.heading; }
-
     while (this.heading < 0) this.heading += Math.PI * 2;
     while (this.heading >= Math.PI * 2) this.heading -= Math.PI * 2;
   }

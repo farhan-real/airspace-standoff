@@ -103,6 +103,7 @@ Aircraft.prototype.recalculateWeight = function() {
   let mass = this.gun ? Number(this.gun.mass || 100) : 100;
   let externalDragPenalty = 0;
   let extraRcs = 0;
+  let weaponsCost = 0;
   const upgCatalog = window.UPGRADES_CATALOG || {};
 
   for (const item of this.equippedWeapons) {
@@ -111,6 +112,7 @@ Aircraft.prototype.recalculateWeight = function() {
     const isMounted = item.ammo > 0;
     const ammoFraction = item.maxAmmo > 0 ? (item.ammo / item.maxAmmo) : (isMounted ? 1 : 0);
     mass += Number(w.mass || 0) * ammoFraction;
+    weaponsCost += Number(w.cost || 0);
 
     const station = item.station || (w.slotType === 'CENTERLINE' ? 'CENTERLINE' : (w.slotType === 'INTERNAL' && this.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL'));
     if (station === 'CENTERLINE') {
@@ -124,10 +126,17 @@ Aircraft.prototype.recalculateWeight = function() {
     }
   }
 
+  let upgradesCost = 0;
   for (const upgId of this.equippedUpgrades) {
     const upg = upgCatalog[upgId];
-    if (upg) mass += Number(upg.mass || 0);
+    if (upg) {
+      mass += Number(upg.mass || 0);
+      upgradesCost += Number(upg.cost || 0);
+    }
   }
+
+  const specCost = this.spec ? Number(this.spec.cost || 0) : 0;
+  this.totalProcurementCost = specCost + weaponsCost + upgradesCost;
 
   const maxMass = (this.spec && this.spec.M_max > 0) ? this.spec.M_max : 5000;
   let effectiveWr = Math.min(1.0, mass / maxMass);

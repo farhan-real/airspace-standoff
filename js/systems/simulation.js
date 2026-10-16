@@ -24,6 +24,8 @@ class SimulationSystem {
     this.elapsedTimeSec = 0;
     this.replaySnapshots = [];
     this.replayCaptureAccumulator = 0;
+    this.fleetStrengthHistory = [];
+    this.fleetStrengthTimer = 0;
     this._satelliteUplinkAnnouncedBlue = false;
     this.victoryDelayTimer = 0.0;
     this.pendingGameOver = null;
@@ -45,6 +47,8 @@ class SimulationSystem {
     this.elapsedTimeSec = 0;
     this.replaySnapshots = [];
     this.replayCaptureAccumulator = 0;
+    this.fleetStrengthHistory = [];
+    this.fleetStrengthTimer = 0;
     this.victoryDelayTimer = 0.0;
     this.pendingGameOver = null;
   }
@@ -77,26 +81,20 @@ class SimulationSystem {
   }
 
   initWeatherClouds() {
-    if (typeof SimulationTrafficSystem === 'undefined') {
-      throw new Error('SimulationTrafficSystem is not loaded.');
-    }
+    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
     this.weatherClouds = SimulationTrafficSystem.createClouds(this.cloudCoverage);
   }
 
   initGhostContacts() {
     this.ghostContacts = [];
-    if (typeof SimulationTrafficSystem === 'undefined') {
-      throw new Error('SimulationTrafficSystem is not loaded.');
-    }
+    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
     const g = SimulationTrafficSystem.createGhostContact(this.weatherClouds);
     if (g) this.ghostContacts.push(g);
   }
 
   spawnCivilianFlight() {
     if (!this.civilianTrafficEnabled) return;
-    if (typeof SimulationTrafficSystem === 'undefined') {
-      throw new Error('SimulationTrafficSystem is not loaded.');
-    }
+    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
     this.civilianTraffic.push(SimulationTrafficSystem.createCivilianFlight());
   }
 
@@ -182,6 +180,26 @@ class SimulationSystem {
       this.replayCaptureAccumulator %= 0.40;
       this.captureReplayFrame();
     }
+
+    this.fleetStrengthTimer += dt;
+    if (this.fleetStrengthTimer >= 0.50) {
+      this.fleetStrengthTimer %= 0.50;
+      let bVal = 0;
+      for (const a of this.game.alliedAircraft) {
+        if (a.hp > 0.05) bVal += (a.totalProcurementCost || 20) * (a.hp / Math.max(1, a.maxHp || 4));
+      }
+      let rVal = 0;
+      for (const h of this.game.hostileAircraft) {
+        if (h.hp > 0.05) rVal += (h.totalProcurementCost || 20) * (h.hp / Math.max(1, h.maxHp || 4));
+      }
+      this.fleetStrengthHistory.push({
+        time: this.elapsedTimeSec,
+        blueCost: Number(bVal.toFixed(1)),
+        redCost: Number(rVal.toFixed(1))
+      });
+      if (this.fleetStrengthHistory.length > 350) this.fleetStrengthHistory.shift();
+    }
+
     this.checkWinConditions(dt);
   }
 

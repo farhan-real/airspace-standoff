@@ -270,6 +270,9 @@ class InspectionModeController {
     if (typeof InspectionEventSystem !== 'undefined') {
       InspectionEventSystem.bindInteractions(this, content);
     }
+    if (this.activeTab === 'GRAPHS' && typeof InspectionGraphs !== 'undefined') {
+      InspectionGraphs.bindControls(this, content);
+    }
   }
 
   computeStructureSignature() {
@@ -327,6 +330,8 @@ class InspectionModeController {
           nextHtml = InspectionTelemetry.renderRadarDashboard(this, this.selectedEntity);
         } else if (this.activeTab === 'WEAPONS' && typeof InspectionWeapons !== 'undefined') {
           nextHtml = InspectionWeapons.renderWeaponsDashboard(this, this.selectedEntity);
+        } else if (this.activeTab === 'GRAPHS' && typeof InspectionGraphs !== 'undefined') {
+          nextHtml = InspectionGraphs.render(this, this.selectedEntity);
         } else if (this.activeTab === 'TRACE' && typeof InspectionViews !== 'undefined') {
           nextHtml = InspectionViews.renderEventTraceTab(this, this.focusedEvent);
         } else if (this.activeTab === 'RAW' && typeof InspectionViews !== 'undefined') {
@@ -336,11 +341,16 @@ class InspectionModeController {
         }
         content.innerHTML = nextHtml;
         this.bindInteractions(content);
+        if (this.activeTab === 'GRAPHS' && typeof InspectionGraphs !== 'undefined') {
+          InspectionGraphs.updateLive(this, this.selectedEntity, content);
+        }
       } else {
         if (this.activeTab === 'SENSORS' && typeof InspectionTelemetry !== 'undefined') {
           InspectionTelemetry.updateLive(this, this.selectedEntity, content);
         } else if (this.activeTab === 'WEAPONS' && typeof InspectionWeapons !== 'undefined') {
           InspectionWeapons.updateLive(this, this.selectedEntity, content);
+        } else if (this.activeTab === 'GRAPHS' && typeof InspectionGraphs !== 'undefined') {
+          InspectionGraphs.updateLive(this, this.selectedEntity, content);
         } else if (this.activeTab === 'OVERVIEW' && typeof InspectionViews !== 'undefined') {
           InspectionViews.updateLive(this, this.selectedEntity, content);
         } else if (this.activeTab === 'RAW' && typeof InspectionViews !== 'undefined') {

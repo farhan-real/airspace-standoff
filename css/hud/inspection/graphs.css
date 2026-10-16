@@ -1,0 +1,125 @@
+/* AIRSPACE STANDOFF: Inspection Graphs Workspace Stylesheet */
+
+.inspection-graph-card {
+  padding: 8px 10px;
+  background: var(--liquid-glass-bg);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-radius: var(--radius-card);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.inspection-graph-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.inspection-graph-title {
+  color: var(--theme-accent);
+  font: 700 0.66rem var(--font-dotdigital);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.inspection-graph-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.inspection-graph-select {
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
+  border-radius: var(--radius-badge);
+  color: var(--color-pure-white);
+  font: 600 0.58rem var(--font-dotdigital);
+  padding: 3px 6px;
+  outline: none;
+  cursor: pointer;
+  max-width: 170px;
+}
+
+.inspection-graph-select option {
+  background: #040916;
+  color: #ffffff;
+}
+
+.inspection-graph-canvas-wrap {
+  width: 100%;
+  position: relative;
+  background: #01040a;
+  border: 1px solid rgba(56, 189, 248, 0.20);
+  border-radius: var(--radius-input);
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+.inspection-graph-canvas {
+  display: block;
+  width: 100%;
+  height: 190px;
+}
+
+.inspection-graph-canvas.compact {
+  height: 170px;
+}
+
+.inspection-graph-canvas.turn-gauge {
+  height: 240px;
+}
+
+.inspection-graph-canvas.tall {
+  height: 220px;
+}
+
+.inspection-graph-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: 600 0.58rem var(--font-dotdigital);
+  color: var(--color-moon-mist);
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.inspection-graph-meta b {
+  color: var(--color-pure-white);
+}
+
+.threat-radar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.threat-radar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: var(--radius-badge);
+  background: rgba(255, 255, 255, 0.03);
+  font: 600 0.56rem var(--font-dotdigital);
+}
+
+.threat-radar-row.locked {
+  border-left: 2px solid var(--color-red);
+  background: rgba(244, 63, 94, 0.10);
+  color: #fecdd3;
+}
+
+.threat-radar-row.sweeping {
+  border-left: 2px solid var(--color-amber);
+  background: rgba(251, 191, 36, 0.08);
+  color: #fef08a;
+}
