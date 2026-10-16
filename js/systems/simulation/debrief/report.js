@@ -109,11 +109,9 @@ class DebriefReportSystem {
       `;
     }
 
-    const metrics = (typeof AARStatsCalculator !== 'undefined')
-      ? AARStatsCalculator.computeSortieMetrics(game, blueWon, durSec)
-      : { scoreData: { totalMult: 1.0, diffKey: 'VETERAN', diffName: 'Contested Airspace', diffMult: 1.0, budgetCap: 400.0, budgetMult: 1.0 }, timeBonus: 0, rawBlueScore: game.vpAlly || 0, adjustedRawScore: game.vpAlly || 0, finalSortieScore: game.vpAlly || 0, blueImpacts: 0, redImpacts: 0, blueKills: 0, redKills: 0, roeIncidents: 0, blueMissilesEvaded: 0, defensiveIntercepts: 0 };
+    const metrics = AARStatsCalculator.computeSortieMetrics(game, blueWon, durSec);
 
-    if (sEl && typeof AARStatsCalculator !== 'undefined') {
+    if (sEl) {
       sEl.innerHTML = AARStatsCalculator.generateReportHtml(game, blueWon, timeStr, metrics);
     }
 
@@ -140,7 +138,7 @@ class DebriefReportSystem {
 
     const difficultyDisplayName = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[metrics.scoreData.diffKey])
       ? window.AI_DIFFICULTIES[metrics.scoreData.diffKey].name
-      : (metrics.scoreData.diffName || metrics.scoreData.diffKey || 'Contested Airspace');
+      : (metrics.scoreData.diffName || metrics.scoreData.diffKey);
 
     if (!game.isMissionEditorMatch && window.Persistence && window.Persistence.saveTopSortie) {
       window.Persistence.saveTopSortie({

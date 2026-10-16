@@ -40,7 +40,7 @@ class AvionicsRosterDisplay {
         const isBlue = (a.team === 'friendly');
 
         const machNum = (a.speed || 0.85);
-        const sOpt = (a.effectiveMaxSpeed || 0.95) * 0.65;
+        const sOpt = a.getOptimalCornerSpeed();
         const spdColor = this.ui.getSpeedColor(machNum, sOpt, a.effectiveMaxSpeed || 1.0);
         const altColor = this.ui.getAltColor(a.altFt || 30000);
         const loadColor = this.ui.getLoadColor(a.Wr || 0);
@@ -124,7 +124,7 @@ class AvionicsRosterDisplay {
       cached.card.classList.toggle('destroyed', a.hp <= 0.05);
 
       const machNum = a.speed || 0.85;
-      const sOpt = (a.effectiveMaxSpeed || 0.95) * 0.65;
+      const sOpt = a.getOptimalCornerSpeed();
       const displayHp = a.hp > 0.05 ? Math.max(1, Math.round(a.hp)) : 0;
       const payloadPercent = Math.round((a.Wr || 0) * 100);
       const curStatus = a.isRTB ? 'RTB' : (a.activeManeuverTimer > 0 ? 'EVADE' : 'COMBAT');

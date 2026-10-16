@@ -30,8 +30,7 @@ class InspectionOverviewRenderer {
   }
 
   static renderAircraftOverview(controller, a, status, teamBadgeColor, actionButtons) {
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = StatEvaluator.rate;
 
     const maxHp = Math.max(1, a.maxHp || 4);
     const hp = Math.max(0, a.hp || 0);
@@ -46,7 +45,7 @@ class InspectionOverviewRenderer {
 
     const mach = (a.speed || 0.85).toFixed(2);
     const rSpd = rate('speed', a.speed || 0.85);
-    const sOpt = (typeof a.getOptimalCornerSpeed === 'function') ? a.getOptimalCornerSpeed() : 0.75;
+    const sOpt = a.getOptimalCornerSpeed();
     const isCornerOpt = Math.abs(a.speed - sOpt) <= 0.12;
 
     const altFt = Math.round(a.altFt || 30000);
@@ -171,8 +170,7 @@ class InspectionOverviewRenderer {
   }
 
   static renderSurfaceOverview(controller, s, status, teamBadgeColor, actionButtons) {
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = StatEvaluator.rate;
 
     const hp = Math.max(0, s.hp || 0);
     const maxHp = s.maxHp || s.hp || 6;
@@ -205,8 +203,7 @@ class InspectionOverviewRenderer {
   }
 
   static renderCivilianOverview(controller, c, status, teamBadgeColor, actionButtons) {
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = StatEvaluator.rate;
 
     const altFt = Math.round(c.altFt || 36000);
     const fl = `FL${Math.round(altFt / 100)}`;
@@ -321,8 +318,7 @@ class InspectionOverviewRenderer {
       InspectionCognitionRenderer.updateLive(controller, entity, content);
     }
 
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = StatEvaluator.rate;
 
     const hp = Math.max(0, entity.hp || 0);
     const maxHp = Math.max(1, entity.maxHp || 4);
@@ -341,7 +337,7 @@ class InspectionOverviewRenderer {
       pip.className = `insp-hp-pip ${isFilled ? (isCrit ? 'critical' : 'filled') : 'empty'}`;
     });
 
-    const sOpt = (typeof entity.getOptimalCornerSpeed === 'function') ? entity.getOptimalCornerSpeed() : 0.75;
+    const sOpt = entity.getOptimalCornerSpeed();
     const isCornerOpt = Math.abs(entity.speed - sOpt) <= 0.12;
     const rSpd = rate('speed', entity.speed || 0.85);
 

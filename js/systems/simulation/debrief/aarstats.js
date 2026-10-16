@@ -4,13 +4,8 @@
 
 class AARStatsCalculator {
   static computeSortieMetrics(game, blueWon, durSec) {
-    const scoreData = (game.simulation && game.simulation.scoring)
-      ? game.simulation.scoring.getScoreMultipliers()
-      : { diffKey: game.aiDifficulty || 'VETERAN', diffName: 'Contested Airspace', diffMult: 1.0, budgetCap: 400.0, budgetMult: 1.0, totalMult: 1.0 };
-
-    const timeBonus = (game.simulation && game.simulation.scoring)
-      ? game.simulation.scoring.calcTimeBonus(durSec, blueWon)
-      : 0;
+    const scoreData = game.simulation.scoring.getScoreMultipliers();
+    const timeBonus = game.simulation.scoring.calcTimeBonus(durSec, blueWon);
 
     const engagementEvents = (game.simulation && game.simulation.timelineEvents) || [];
     const blueKills = engagementEvents.filter(event => (event.type === 'kill' || event.type === 'ace-kill') && event.team === 'friendly').length;
@@ -36,7 +31,7 @@ class AARStatsCalculator {
     const { scoreData, timeBonus, rawBlueScore, adjustedRawScore, finalSortieScore } = metrics;
     const diffLabel = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[scoreData.diffKey])
       ? window.AI_DIFFICULTIES[scoreData.diffKey].name
-      : (scoreData.diffName || scoreData.diffKey || 'Contested Airspace');
+      : (scoreData.diffName || scoreData.diffKey);
     const budgetCap = scoreData.budgetCap || 400;
     const ordnanceExpended = (game.stats && game.stats.missilesLaunched !== undefined) ? game.stats.missilesLaunched : 0;
     const blueLosses = (game.stats && game.stats.blueLosses !== undefined) ? game.stats.blueLosses : 0;

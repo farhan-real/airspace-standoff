@@ -60,9 +60,7 @@ class InspectionSolutionsRenderer {
         `;
       }
 
-      const pkRes = (typeof Physics !== 'undefined')
-        ? Physics.calcPk(w, firingAircraft, target, clouds)
-        : { pk: 75, label: 'LOCKED', color: '#10b981' };
+      const pkRes = Physics.calcPk(w, firingAircraft, target, clouds);
       const pk = pkRes.pk || 0;
       const inRange = (dist <= (w.rangeKm || 50) && dist >= (w.minRangeKm || 0.8));
       const isValid = inRange && pk > 0;
@@ -116,9 +114,9 @@ class InspectionSolutionsRenderer {
     const clouds = (game && game.simulation && game.simulation.weatherClouds) || [];
     const dist = Math.hypot((tgt.x || 0) - missile.x, (tgt.y || 0) - missile.y);
 
-    const pkModel = (typeof MissileKinetics !== 'undefined' && tgt)
+    const pkModel = tgt
       ? MissileKinetics.explainHitProbability(missile, tgt, clouds, 1)
-      : { probability: 0.65, factors: {} };
+      : { probability: 0.0, factors: {} };
 
     const pkPct = Math.round(pkModel.probability * 100);
     const factors = pkModel.factors || {};

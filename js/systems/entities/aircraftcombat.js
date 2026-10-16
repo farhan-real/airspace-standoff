@@ -20,10 +20,7 @@ Aircraft.prototype.setGun = function(gunId) {
   const gunCatalog = window.AUTOCANNONS_CATALOG || {};
   const gun = gunCatalog[gunId];
   if (!gun) return false;
-  const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
-    ? window.AircraftRegistry.isGunCompatible(this.spec, gun)
-    : (!this.spec.allowedGuns || this.spec.allowedGuns.includes(gunId));
-  if (!isComp) return false;
+  if (!window.AircraftRegistry.isGunCompatible(this.spec, gun)) return false;
   this.gun = gun;
   this.gunAmmo = this.gun.defaultAmmo || 500;
   this.recalculateWeight();
@@ -211,14 +208,12 @@ Aircraft.prototype.processRTB = function(dt) {
 Aircraft.prototype.rearmStandardPackage = function() {
   this.hp = this.maxHp;
   this.energy = 1.0;
-  const baseCm = this.isAce ? 6 : (this.isFlightLead ? (this.leadExtraCm ? 4 + this.leadExtraCm : 6) : 4);
+  const baseCm = this.isAce ? 6 : (this.isFlightLead ? (4 + (this.leadExtraCm || 0)) : 4);
   this.chaff = baseCm;
   this.countermeasures = baseCm;
   this.chaffFlares = baseCm;
   this.gunAmmo = (this.gun && this.gun.defaultAmmo) ? this.gun.defaultAmmo : 500;
 
-  // Friendly players and human commanders receive full stores rearm.
-  // Enemy AI fighters/aces operate on their assigned sortie payload and do not have unlimited missile replenishment.
   const isHumanControlled = (this.team === 'friendly') || (window.Game && window.Game.playerMode === '2P');
   if (isHumanControlled) {
     for (const item of this.equippedWeapons) {
@@ -226,17 +221,7 @@ Aircraft.prototype.rearmStandardPackage = function() {
       item.cooldown = 0.0;
     }
     if (this.hasMaldDecoy) this.maldDecoyCharges = 2;
-    if (this.equippedWeapons.length === 0) {
-      if (this.internalSlots > 0) {
-        this.installWeapon('AIM-120D', 'INTERNAL');
-        this.installWeapon('AIM-9X-2', 'INTERNAL');
-      } else {
-        this.installWeapon('AIM-120D', 'EXTERNAL');
-        this.installWeapon('AIM-9X-2', 'EXTERNAL');
-      }
-    }
   } else {
-    // Enemy fighters do not get unlimited missiles; once expended, missile pylons remain depleted.
     for (const item of this.equippedWeapons) {
       item.cooldown = 0.0;
       if (item.weapon && (item.weapon.isLaser || item.weapon.category === 'GUN')) {

@@ -110,9 +110,7 @@ class ProcurementEquipHandler {
     if (itemData.type === 'gun') {
       const gun = (window.AUTOCANNONS_CATALOG || {})[itemData.id];
       if (!gun) return false;
-      return window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
-        ? window.AircraftRegistry.isGunCompatible(spec, gun)
-        : (!gun.lockedTo || gun.lockedTo.includes(spec.id));
+      return window.AircraftRegistry.isGunCompatible(spec, gun);
     }
 
     if (itemData.type === 'weapon') {
@@ -210,11 +208,7 @@ class ProcurementEquipHandler {
     if (itemData.type === 'gun') {
       const spec = (window.AIRCRAFT_CATALOG || {})[item.specId];
       const gun = (window.AUTOCANNONS_CATALOG || {})[itemData.id];
-      const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
-        ? window.AircraftRegistry.isGunCompatible(spec, gun)
-        : (spec && spec.allowedGuns ? spec.allowedGuns.includes(itemData.id) : true);
-
-      if (!isComp) {
+      if (!window.AircraftRegistry.isGunCompatible(spec, gun)) {
         this.pm.showAlertModal('INCOMPATIBLE', `${itemData.name} is not compatible with this aircraft.`);
         return;
       }

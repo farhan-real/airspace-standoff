@@ -225,16 +225,22 @@ class AIPlanningSystem {
   }
 
   getInterceptVector(unit, target, dist) {
-    const interceptAngle = (typeof Physics !== 'undefined')
-      ? Physics.calcLeadInterceptAngle(unit.x, unit.y, unit.speed || 1.1, target.x, target.y, target.heading || 0, target.speed || 0.8)
-      : Math.atan2(target.y - unit.y, target.x - unit.x);
+    const interceptAngle = Physics.calcLeadInterceptAngle(
+      unit.x,
+      unit.y,
+      unit.speed,
+      target.x,
+      target.y,
+      target.heading || 0,
+      target.speed || 0.8
+    );
     const sprintThrottle = dist > 30.0 ? 1.0 : 0.85;
     return { heading: interceptAngle, throttle: sprintThrottle };
   }
 
   getDogfightVector(unit, target, dist) {
     const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
-    const sOpt = (typeof unit.getOptimalCornerSpeed === 'function') ? unit.getOptimalCornerSpeed() : 0.75;
+    const sOpt = unit.getOptimalCornerSpeed();
     let targetThrottle = 0.65;
     if (unit.speed > sOpt * 1.10) targetThrottle = 0.35;
     else if (unit.speed < sOpt * 0.90) targetThrottle = 0.85;

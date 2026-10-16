@@ -34,9 +34,15 @@ class MissileGuidanceSystem {
       missile.hasStartedClosing = true;
     }
 
-    const desiredLead = (typeof Physics !== 'undefined')
-      ? Physics.calcLeadInterceptAngle(missile.x, missile.y, missile.speed, tgt.x, tgt.y, tgtHdg, tgt.speed || 0.8)
-      : los;
+    const desiredLead = Physics.calcLeadInterceptAngle(
+      missile.x,
+      missile.y,
+      missile.speed,
+      tgt.x,
+      tgt.y,
+      tgtHdg,
+      tgt.speed || 0.8
+    );
     let leadDiff = desiredLead - missile.heading;
     while (leadDiff < -Math.PI) leadDiff += Math.PI * 2;
     while (leadDiff > Math.PI) leadDiff -= Math.PI * 2;
@@ -123,17 +129,13 @@ class MissileGuidanceSystem {
     const isOptical = (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT');
     let aspectScore = (aspectDiff > 2.2) ? 1.00 : ((aspectDiff < 0.8) ? (isOptical ? 1.05 : 0.95) : 0.90);
 
-    const targetAgility = (typeof target.getEffectiveAgility === 'function')
-      ? target.getEffectiveAgility()
-      : ((target.spec && target.spec.AGI_0) ? target.spec.AGI_0 : 0.85);
+    const targetAgility = target.getEffectiveAgility();
     const agilityScale = Math.max(0.35, Math.min(1.65, targetAgility / 0.85));
 
-    const sOpt = (typeof target.getOptimalCornerSpeed === 'function')
-      ? target.getOptimalCornerSpeed()
-      : ((target.effectiveMaxSpeed || 0.95) * 0.65);
+    const sOpt = target.getOptimalCornerSpeed();
     const turnOptEff = target.isCoffin
       ? 1.0
-      : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(target.speed || 0.8, sOpt) : 0.85);
+      : Physics.calcTurnEfficiency(target.speed, sOpt);
 
     const isRadar = (w.seeker === 'ARH' || w.seeker === 'PASSIVE_RADAR');
 
@@ -164,7 +166,6 @@ class MissileGuidanceSystem {
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
     const salvoBonus = Math.min(0.30, Math.max(0, (salvoCount || 1) - 1) * 0.12);
-    // Moderate 12% cloud penalty only when target is submerged in a cloud
     const weatherPenalty = (weatherClouds && isOptical && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.12 : 0.0;
 
     let targetThermalMultiplier = Number(target.thermalBloom !== undefined ? target.thermalBloom : 1.0);

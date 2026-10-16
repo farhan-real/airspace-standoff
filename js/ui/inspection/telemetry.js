@@ -18,9 +18,9 @@ class InspectionTelemetry {
     const halfConeDeg = Math.round(((scanner.spec ? scanner.spec.radarConeDeg : (scanner.type ? 360 : 120)) / 2));
     const inCone = scanner.heading === undefined || !scanner.spec || scanner.spec.radarConeDeg >= 360 || (offBoresightDeg <= halfConeDeg);
 
-    const cloudHits = typeof Physics !== 'undefined' ? Physics.countIntersectingClouds(scanner.x, scanner.y, target.x, target.y, clouds) : 0;
-    const forwardRangeKm = typeof Physics !== 'undefined' ? Physics.getRadarMaxDetectionRange(Object.assign({}, scanner, { heading: angleToTarget }), target, clouds) : baseRangeKm;
-    const rangeKm = inCone ? (typeof Physics !== 'undefined' ? Physics.getRadarMaxDetectionRange(scanner, target, clouds) : baseRangeKm) : 0.0;
+    const cloudHits = Physics.countIntersectingClouds(scanner.x, scanner.y, target.x, target.y, clouds);
+    const forwardRangeKm = Physics.getRadarMaxDetectionRange(Object.assign({}, scanner, { heading: angleToTarget }), target, clouds);
+    const rangeKm = inCone ? Physics.getRadarMaxDetectionRange(scanner, target, clouds) : 0.0;
 
     let aspectAngleDeg = 0;
     let aspectMultiplier = 1.0;
@@ -163,7 +163,7 @@ class InspectionTelemetry {
 
       const cloudRow = acc.querySelector('.sensor-cloud-row');
       if (cloudRow) {
-        const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.03;
+        const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.04;
         const totalAttenPct = Math.round((1 - Math.pow(1.0 - atten, rec.cloudHits)) * 100);
         let cloudClass = 'neutral';
         let cloudText = 'Clear Line of Sight';

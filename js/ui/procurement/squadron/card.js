@@ -25,9 +25,7 @@ class RosterCardBuilder {
       item.callsign = pool[(sIdx * 3) % pool.length] || `Viper ${sIdx + 1}`;
     }
 
-    const metrics = (typeof LoadoutMetrics !== 'undefined')
-      ? LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead)
-      : null;
+    const metrics = LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead);
 
     const totalCost = metrics ? metrics.totalCost : Number(spec.cost || 0);
     const wrPercent = metrics ? metrics.wrPercent : 50;
@@ -35,15 +33,13 @@ class RosterCardBuilder {
     const weightColor = metrics ? metrics.weightColor : '#00f5a0';
     const totalMass = metrics ? metrics.totalMass : 100;
 
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = StatEvaluator.rate;
     const rG = rate('glimit', spec.G_limit || 9.0);
 
     const activeGun = gunsMap[item.chosenGunId] || gunsMap[spec.builtInGun] || gunsMap['M61A2'];
 
     const gunOptsList = Object.values(gunsMap).map(g => {
-      const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
-        ? window.AircraftRegistry.isGunCompatible(spec, g) : (!g.lockedTo || g.lockedTo.includes(spec.id));
+      const isComp = window.AircraftRegistry.isGunCompatible(spec, g);
       const isSelected = item.chosenGunId === g.id;
       return `<button type="button" class="custom-dropdown-opt ${isSelected ? 'active' : ''}" data-gun-id="${g.id}" ${isComp ? '' : 'disabled'}>
         ${isComp ? g.name + ' (' + (g.damagePerSec || 2.5) + ' HP/s)' : '[INCOMPATIBLE] ' + g.name}
@@ -70,9 +66,7 @@ class RosterCardBuilder {
       }
     }
 
-    const stationsHtml = (typeof RosterStationsRenderer !== 'undefined')
-      ? RosterStationsRenderer.renderStations(pm, card, item, sIdx, metrics)
-      : '';
+    const stationsHtml = RosterStationsRenderer.renderStations(pm, card, item, sIdx, metrics);
 
     const category = spec.category || 'MULTIROLE';
     const activeGunDmg = activeGun ? (activeGun.damagePerSec || 2.5) : 2.5;
@@ -187,8 +181,7 @@ class RosterCardBuilder {
           if (opt.disabled) return;
           const gunId = opt.getAttribute('data-gun-id');
           const gun = gunsMap[gunId];
-          const isComp = window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
-            ? window.AircraftRegistry.isGunCompatible(spec, gun) : (!gun.lockedTo || gun.lockedTo.includes(spec.id));
+          const isComp = window.AircraftRegistry.isGunCompatible(spec, gun);
 
           if (gunId && isComp) {
             item.chosenGunId = gunId;

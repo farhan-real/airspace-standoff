@@ -60,9 +60,7 @@ class ShelfAirframesRenderer {
       all = all.filter(a => a && ((a.name || '') + ' ' + (a.role || '') + ' ' + (a.category || '') + ' ' + (a.id || '')).toLowerCase().includes(lowerQ));
     }
 
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate
-      : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = StatEvaluator.rate;
 
     const catDescriptions = {
       STEALTH: 'Very Low Observable airframe designed to evade early radar detection (RCS <= 0.005 m2).',

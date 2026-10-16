@@ -35,13 +35,11 @@ class AIEvasionHandler {
     const triggerDistance = (isStealth ? stealthDistance : reactDistance) * focusFactor;
     if (nearestMsl.distanceToTarget > triggerDistance) return;
 
-    const effAgi = (typeof hostile.getEffectiveAgility === 'function')
-      ? hostile.getEffectiveAgility()
-      : ((hostile.spec && hostile.spec.AGI_0) ? hostile.spec.AGI_0 : 0.85);
+    const effAgi = hostile.getEffectiveAgility();
     const agiFactor = Math.max(0.40, Math.min(1.60, effAgi / 0.85));
 
-    const sOpt = (typeof hostile.getOptimalCornerSpeed === 'function') ? hostile.getOptimalCornerSpeed() : 0.75;
-    const turnOptEff = hostile.isCoffin ? 1.0 : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(hostile.speed || 0.8, sOpt) : 0.85);
+    const sOpt = hostile.getOptimalCornerSpeed();
+    const turnOptEff = hostile.isCoffin ? 1.0 : Physics.calcTurnEfficiency(hostile.speed, sOpt);
     const turnOptFactor = Math.max(0.40, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
 
     const baseBlunder = isAce && aceProf ? aceProf.blunderChance : tier.blunderChance;
@@ -161,11 +159,11 @@ class AIEvasionHandler {
           while (diff < -Math.PI) diff += Math.PI * 2;
           while (diff > Math.PI) diff -= Math.PI * 2;
 
-          const aceAgi = (typeof ace.getEffectiveAgility === 'function') ? ace.getEffectiveAgility() : (ace.spec ? ace.spec.AGI_0 : 1.15);
+          const aceAgi = ace.getEffectiveAgility();
           ace.heading += Math.max(-aceAgi * 1.1 * dt, Math.min(aceAgi * 1.1 * dt, diff));
 
           if (aceTier.throttleMod && Math.abs(diff) > 0.35) {
-            const sOpt = (typeof ace.getOptimalCornerSpeed === 'function') ? ace.getOptimalCornerSpeed() : 0.80;
+            const sOpt = ace.getOptimalCornerSpeed();
             if (ace.speed > sOpt * 1.12) ace.engineAlpha = 0.40;
             else if (ace.speed < sOpt * 0.88) ace.engineAlpha = 0.85;
             else ace.engineAlpha = 0.65;

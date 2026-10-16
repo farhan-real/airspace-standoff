@@ -50,9 +50,7 @@ class InspectionWeapons {
               const etaSec = (d / mSpeedKm).toFixed(1);
               const seeker = m.weapon ? m.weapon.seeker : 'ARH';
 
-              const pkModel = (typeof MissileKinetics !== 'undefined')
-                ? MissileKinetics.explainHitProbability(m, aircraft, clouds, 1)
-                : { probability: 0.70, factors: {} };
+              const pkModel = MissileKinetics.explainHitProbability(m, aircraft, clouds, 1);
               const pkPct = Math.round(pkModel.probability * 100);
 
               let recTitle = '';
@@ -187,9 +185,7 @@ class InspectionWeapons {
       const maxOff = isRear ? Math.PI : (isHobs ? Math.PI * 0.65 : Math.PI * 0.45);
       const isOutsideCone = !isRear && (offBoresight > maxOff);
 
-      const pkRes = (typeof Physics !== 'undefined')
-        ? Physics.calcPk(w, firingAircraft, target, clouds)
-        : { pk: 50, label: 'STANDBY', color: '#64748b' };
+      const pkRes = Physics.calcPk(w, firingAircraft, target, clouds);
       const pk = pkRes.pk || 0;
       const inRange = (dist <= (w.rangeKm || 50) && dist >= (w.minRangeKm || 0.8));
       const bd = pkRes.breakdown || {};
@@ -316,8 +312,9 @@ class InspectionWeapons {
       const mSpeedKm = Math.max(0.4, entity.speed * 0.35);
       const etaSec = (dist / mSpeedKm).toFixed(1);
 
-      const pkModel = (typeof MissileKinetics !== 'undefined' && tgt)
-        ? MissileKinetics.explainHitProbability(entity, tgt, clouds, 1) : { probability: 0.65 };
+      const pkModel = tgt
+        ? MissileKinetics.explainHitProbability(entity, tgt, clouds, 1)
+        : { probability: 0.0 };
       const pkPct = Math.round(pkModel.probability * 100);
 
       const card = content.querySelector('.inspection-probability-card');
@@ -373,8 +370,7 @@ class InspectionWeapons {
       const stageEl = acc.querySelector('.threat-stage');
       if (stageEl) stageEl.textContent = m.stage || 'BOOST';
 
-      const pkModel = (typeof MissileKinetics !== 'undefined')
-        ? MissileKinetics.explainHitProbability(m, entity, clouds, 1) : { probability: 0.70 };
+      const pkModel = MissileKinetics.explainHitProbability(m, entity, clouds, 1);
       const pkPct = Math.round(pkModel.probability * 100);
 
       const badge = acc.querySelector('.threat-badge');
@@ -408,8 +404,7 @@ class InspectionWeapons {
       const maxOff = isRear ? Math.PI : (isHobs ? Math.PI * 0.65 : Math.PI * 0.45);
       const isOutsideCone = !isRear && (offBoresight > maxOff);
 
-      const pkRes = (typeof Physics !== 'undefined')
-        ? Physics.calcPk(w, firingAircraft, target, clouds) : { pk: 50, label: 'STANDBY' };
+      const pkRes = Physics.calcPk(w, firingAircraft, target, clouds);
       const pk = pkRes.pk || 0;
       const inRange = (dist <= (w.rangeKm || 50) && dist >= (w.minRangeKm || 0.8));
       const isValidSolution = inRange && !isOutsideCone;
@@ -451,4 +446,4 @@ class InspectionWeapons {
   }
 }
 
-window.InspectionSolutionsRenderer = InspectionSolutionsRenderer;
+window.InspectionWeapons = InspectionWeapons;

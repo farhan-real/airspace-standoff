@@ -116,7 +116,7 @@ class Aircraft {
     this.activeManeuverId = null;
     this.isNotching = false;
 
-    const baseCm = this.isAce ? 6 : (this.isFlightLead ? (this.leadExtraCm ? 4 + this.leadExtraCm : 6) : 4);
+    const baseCm = this.isAce ? 6 : (this.isFlightLead ? (4 + (this.leadExtraCm || 0)) : 4);
     this.chaff = baseCm;
     this.countermeasures = baseCm;
     this.chaffFlares = baseCm;

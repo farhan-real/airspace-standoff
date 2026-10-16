@@ -13,7 +13,6 @@ class PersistenceEngine {
   get(key, defaultValue = null) {
     try {
       let raw = localStorage.getItem(this.storagePrefix + key);
-
       return raw ? JSON.parse(raw) : defaultValue;
     } catch (e) {
       console.warn('Persistence read error:', key, e);
@@ -94,12 +93,9 @@ class PersistenceEngine {
 
   getSquadronName() {
     let name = this.get('SQUADRON_NAME', '7th Tactical Squadron');
-    if (!name || typeof name !== 'string' || name.toLowerCase().includes('wardog')) {
+    if (!name || typeof name !== 'string') {
       name = '7th Tactical Squadron';
       this.saveSquadronName(name);
-      try {
-        localStorage.removeItem('AIRSPACE_STANDOFF_LEGACY_SQUADRON_NAME');
-      } catch (err) {}
     }
     return name;
   }

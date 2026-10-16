@@ -22,9 +22,7 @@ class LoadoutMetrics {
     const weaponsMap = window.WEAPONS_CATALOG || {};
     const upgradesMap = window.UPGRADES_CATALOG || {};
     const gunsMap = window.AUTOCANNONS_CATALOG || {};
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate
-      : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = StatEvaluator.rate;
 
     const activeGun = gunsMap[chosenGunId] || gunsMap[spec.builtInGun] || gunsMap['M61A2'];
     const gunMass = activeGun ? Number(activeGun.mass || 100) : 100;

@@ -37,9 +37,7 @@ class ProcurementShelf {
       ? this.pm.activeBayIndex : 0;
     const item = squadron[sIdx] || squadron[0];
     const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
-    const metrics = (typeof LoadoutMetrics !== 'undefined')
-      ? LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead)
-      : null;
+    const metrics = LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead);
 
     return {
       index: sIdx + 1, sIdx: sIdx,
@@ -99,9 +97,7 @@ class ProcurementShelf {
         btn.textContent = active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP';
         return;
       }
-      const isComp = activeSpec && window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
-        ? window.AircraftRegistry.isGunCompatible(activeSpec, gun)
-        : (!gun.lockedTo || (active && gun.lockedTo.includes(active.specId)));
+      const isComp = activeSpec ? window.AircraftRegistry.isGunCompatible(activeSpec, gun) : false;
       btn.disabled = !isComp;
       btn.textContent = !isComp ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP');
     });
@@ -137,9 +133,7 @@ class ProcurementShelf {
       const card = document.createElement('div');
       card.className = 'catalog-item-card';
 
-      const isComp = activeSpec && window.AircraftRegistry && typeof window.AircraftRegistry.isGunCompatible === 'function'
-        ? window.AircraftRegistry.isGunCompatible(activeSpec, g)
-        : (!g.lockedTo || (active && g.lockedTo.includes(active.specId)));
+      const isComp = activeSpec ? window.AircraftRegistry.isGunCompatible(activeSpec, g) : false;
       const isLocked = !isComp;
 
       card.setAttribute('draggable', isLocked ? 'false' : 'true');

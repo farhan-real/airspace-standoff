@@ -151,7 +151,7 @@ class AvionicsUI {
     }
 
     const machNum = u.speed || 0.85;
-    const sOpt = (typeof u.getOptimalCornerSpeed === 'function') ? u.getOptimalCornerSpeed() : ((u.effectiveMaxSpeed || 0.95) * 0.65);
+    const sOpt = u.getOptimalCornerSpeed();
     const fpm = Math.round(u.vsiFpm || 0);
 
     let eturn = Physics.calcTurnEfficiency(u.speed || 0.8, sOpt);
@@ -197,7 +197,7 @@ class AvionicsUI {
     }
 
     const pct = Math.round((u.engineAlpha !== undefined ? u.engineAlpha : 0.50) * 100);
-    const targetMach = (typeof u.getTargetMach === 'function') ? u.getTargetMach() : (u.speed || 0.85);
+    const targetMach = u.getTargetMach();
 
     if (slider && document.activeElement !== slider) {
       slider.value = pct;

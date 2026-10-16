@@ -82,8 +82,7 @@ class InspectionViews {
     if (!entity) return '<div class="inspection-empty"><b>NO OBJECT SELECTED</b></div>';
 
     const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = StatEvaluator.rate;
 
     const fmtNum = (n, dec = 2) => (typeof n === 'number' && Number.isFinite(n)) ? n.toFixed(dec) : 'N/A';
     const isAircraft = Boolean(entity.spec);
@@ -101,9 +100,9 @@ class InspectionViews {
 
     let aeroSection = '';
     if (isAircraft) {
-      const sOpt = (typeof entity.getOptimalCornerSpeed === 'function') ? entity.getOptimalCornerSpeed() : 0.75;
-      const turnEff = entity.isCoffin ? 1.0 : ((typeof Physics !== 'undefined') ? Physics.calcTurnEfficiency(entity.speed || 0.8, sOpt) : 0.85);
-      const effAgi = entity.getEffectiveAgility ? entity.getEffectiveAgility() : spec.AGI_0;
+      const sOpt = entity.getOptimalCornerSpeed();
+      const turnEff = entity.isCoffin ? 1.0 : Physics.calcTurnEfficiency(entity.speed || 0.8, sOpt);
+      const effAgi = entity.getEffectiveAgility();
       const rBaseAgi = rate('agility', spec.AGI_0 || 0.85);
       const rLiveAgi = rate('agility', effAgi);
       const rOptSpd = rate('speed', sOpt);
@@ -198,8 +197,7 @@ class InspectionViews {
     if (!entity || !content) return;
     const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
     const fmtNum = (n, dec = 2) => (typeof n === 'number' && Number.isFinite(n)) ? n.toFixed(dec) : 'N/A';
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = StatEvaluator.rate;
 
     const coordsVal = content.querySelector('.raw-coords-val');
     if (coordsVal) coordsVal.textContent = `${fmtNum(entity.x, 1)} km, ${fmtNum(entity.y, 1)} km`;
@@ -273,9 +271,9 @@ class InspectionViews {
 
     const liveAgi = content.querySelector('.raw-live-agility');
     if (liveAgi && entity.spec) {
-      const sOpt = (typeof entity.getOptimalCornerSpeed === 'function') ? entity.getOptimalCornerSpeed() : 0.75;
-      const turnEff = entity.isCoffin ? 1.0 : ((typeof Physics !== 'undefined') ? Physics.calcTurnEfficiency(entity.speed || 0.8, sOpt) : 0.85);
-      const effAgi = entity.getEffectiveAgility ? entity.getEffectiveAgility() : entity.spec.AGI_0;
+      const sOpt = entity.getOptimalCornerSpeed();
+      const turnEff = entity.isCoffin ? 1.0 : Physics.calcTurnEfficiency(entity.speed, sOpt);
+      const effAgi = entity.getEffectiveAgility();
       const rLiveAgi = rate('agility', effAgi);
       liveAgi.textContent = `${fmtNum(effAgi)} (${Math.round(turnEff * 100)}% Corner Opt)`;
       liveAgi.className = `inspection-data-value raw-live-agility ${rLiveAgi.colorClass}`;

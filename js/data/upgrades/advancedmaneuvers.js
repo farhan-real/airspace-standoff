@@ -30,17 +30,11 @@ window.ADVANCED_MANEUVER_CARDS = [
       unit.activeManeuverTimer = 7.5;
 
       let bonus = 0.45;
-      const agi = (typeof unit.getEffectiveAgility === 'function')
-        ? unit.getEffectiveAgility()
-        : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
+      const agi = unit.getEffectiveAgility();
       bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
 
-      const sOpt = (typeof unit.getOptimalCornerSpeed === 'function')
-        ? unit.getOptimalCornerSpeed()
-        : ((unit.effectiveMaxSpeed || 0.95) * 0.65);
-      const turnOptEff = unit.isCoffin
-        ? 1.0
-        : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(unit.speed || 0.8, sOpt) : 0.85);
+      const sOpt = unit.getOptimalCornerSpeed();
+      const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
       bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
 
       if (unit.stress >= 0.65) bonus *= 0.75;
@@ -79,17 +73,11 @@ window.ADVANCED_MANEUVER_CARDS = [
       unit.activeManeuverTimer = 8.0;
 
       let bonus = 0.42;
-      const agi = (typeof unit.getEffectiveAgility === 'function')
-        ? unit.getEffectiveAgility()
-        : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
+      const agi = unit.getEffectiveAgility();
       bonus *= Math.max(0.50, Math.min(1.40, agi / 0.85));
 
-      const sOpt = (typeof unit.getOptimalCornerSpeed === 'function')
-        ? unit.getOptimalCornerSpeed()
-        : ((unit.effectiveMaxSpeed || 0.95) * 0.65);
-      const turnOptEff = unit.isCoffin
-        ? 1.0
-        : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(unit.speed || 0.8, sOpt) : 0.85);
+      const sOpt = unit.getOptimalCornerSpeed();
+      const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
       bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
       unit.activeManeuverBonus = bonus;
 
@@ -121,17 +109,11 @@ window.ADVANCED_MANEUVER_CARDS = [
       unit.activeManeuverTimer = 8.0;
 
       let bonus = 0.38;
-      const agi = (typeof unit.getEffectiveAgility === 'function')
-        ? unit.getEffectiveAgility()
-        : ((unit.spec && unit.spec.AGI_0) ? unit.spec.AGI_0 : 0.85);
+      const agi = unit.getEffectiveAgility();
       bonus *= Math.max(0.40, Math.min(1.50, agi / 0.85));
 
-      const sOpt = (typeof unit.getOptimalCornerSpeed === 'function')
-        ? unit.getOptimalCornerSpeed()
-        : ((unit.effectiveMaxSpeed || 0.95) * 0.65);
-      const turnOptEff = unit.isCoffin
-        ? 1.0
-        : (typeof Physics !== 'undefined' ? Physics.calcTurnEfficiency(unit.speed || 0.8, sOpt) : 0.85);
+      const sOpt = unit.getOptimalCornerSpeed();
+      const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
       bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
       unit.activeManeuverBonus = bonus;
 

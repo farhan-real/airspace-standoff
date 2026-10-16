@@ -69,16 +69,11 @@ class MissileKinetics {
   }
 
   static computeGuidance(missile, dt) {
-    if (typeof MissileGuidanceSystem !== 'undefined') {
-      MissileGuidanceSystem.computeGuidance(missile, dt);
-    }
+    MissileGuidanceSystem.computeGuidance(missile, dt);
   }
 
   static checkTerminalTrigger(missile) {
-    if (typeof MissileGuidanceSystem !== 'undefined') {
-      return MissileGuidanceSystem.checkTerminalTrigger(missile);
-    }
-    return { shouldTrigger: false };
+    return MissileGuidanceSystem.checkTerminalTrigger(missile);
   }
 
   static updateSpeedAndFlight(missile, dt, distToTarget) {
@@ -192,10 +187,7 @@ class MissileKinetics {
   }
 
   static explainHitProbability(missile, target, weatherClouds, salvoCount) {
-    if (typeof MissileGuidanceSystem !== 'undefined') {
-      return MissileGuidanceSystem.explainHitProbability(missile, target, weatherClouds, salvoCount);
-    }
-    return { probability: 0.65, rawProbability: 0.65, factors: {} };
+    return MissileGuidanceSystem.explainHitProbability(missile, target, weatherClouds, salvoCount);
   }
 
   static applyThermobaricAoE(missile, primaryTarget, directDamage, game) {

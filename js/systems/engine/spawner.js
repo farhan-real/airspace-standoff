@@ -103,11 +103,6 @@ class SortieSpawner {
       });
     } else {
       let launchSquadron = game.procurementSquadron || [];
-      if (launchSquadron.length === 0) {
-        launchSquadron = ProcurementPresets.getBuiltinPreset('stealth');
-        game.procurementSquadron = launchSquadron;
-      }
-
       let chosenLeadIdx = launchSquadron.findIndex(it => it && it.isLead);
       if (chosenLeadIdx === -1) chosenLeadIdx = 0;
       launchSquadron.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
@@ -141,10 +136,6 @@ class SortieSpawner {
 
     if (is2P) {
       let redRosterSource = game.procurementSquadron || [];
-      if (redRosterSource.length === 0) {
-        redRosterSource = ProcurementPresets.getBuiltinPreset('stealth');
-      }
-
       let chosenLeadIdx = redRosterSource.findIndex(it => it && it.isLead);
       if (chosenLeadIdx === -1) chosenLeadIdx = 0;
       redRosterSource.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
@@ -191,10 +182,6 @@ class SortieSpawner {
       });
     } else if (editorMission && editorMission.redFleet === 'HANGAR') {
       let mirrorSquadron = game.procurementSquadron || [];
-      if (mirrorSquadron.length === 0) {
-        mirrorSquadron = ProcurementPresets.getBuiltinPreset('stealth');
-      }
-
       const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH, prng);
       spawnPlans.forEach(plan => {
         const item = plan.item;

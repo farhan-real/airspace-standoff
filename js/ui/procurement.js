@@ -106,7 +106,6 @@ class ProcurementManager {
     if (editBtn) {
       editBtn.onclick = () => {
         let curName = this.game.squadronName || '7th Tactical Squadron';
-        if (curName.toLowerCase().includes('wardog')) curName = '7th Tactical Squadron';
         this.showPromptModal('RENAME SQUADRON', 'Enter a name for your squadron:', curName, (newName) => {
           if (newName && newName.trim()) {
             this.game.setSquadronName(newName.trim());
@@ -273,7 +272,6 @@ class ProcurementManager {
     if (mobCount) mobCount.textContent = this.game.procurementSquadron.length;
 
     let cleanName = this.game.squadronName || '7th Tactical Squadron';
-    if (cleanName.toLowerCase().includes('wardog')) cleanName = '7th Tactical Squadron';
     this.game.squadronName = cleanName;
 
     const dispSqName = document.getElementById('display-squadron-name');

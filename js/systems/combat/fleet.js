@@ -28,8 +28,7 @@ const FleetGenerator = {
         diff = match[0];
         diffProfile = match[1];
       } else {
-        diff = 'VETERAN';
-        diffProfile = window.AI_DIFFICULTIES.VETERAN;
+        throw new Error(`Invalid difficulty setting "${difficultyKey}" provided to generateFleet.`);
       }
     }
 

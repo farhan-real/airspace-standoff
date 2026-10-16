@@ -127,9 +127,7 @@ class MissileImpactSystem {
       return;
     }
 
-    const impactModel = (typeof MissileKinetics !== 'undefined')
-      ? MissileKinetics.explainHitProbability(missile, tgt, weatherClouds, concurrent)
-      : { probability: 0.65, rawProbability: 0.65, factors: {} };
+    const impactModel = MissileKinetics.explainHitProbability(missile, tgt, weatherClouds, concurrent);
     const hitChance = impactModel.probability;
     const impactRoll = Math.random();
     const hit = impactRoll <= hitChance;
@@ -148,7 +146,7 @@ class MissileImpactSystem {
         window.Game.simulation.scoring.recordHitEvent(missile.team, tgt, missile.source, { weapon: w, damage: finalDamage, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       }
 
-      if (w.trait === 'SHOCKWAVE_DETONATION' && typeof MissileKinetics !== 'undefined') {
+      if (w.trait === 'SHOCKWAVE_DETONATION') {
         MissileKinetics.applyThermobaricAoE(missile, tgt, finalDamage, window.Game);
       } else {
         if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(finalDamage >= 4);

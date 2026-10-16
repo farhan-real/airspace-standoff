@@ -184,7 +184,7 @@ window.MANUAL_BASICS = [
         <div class="ge-card" style="border-left:3px solid #ffd700;">
           <b style="color:#ffd700;">AUTOMATED EVASIVE RESPONSE (+24% TO +30%)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Direct optic-nerve bus transmission eliminates neuromuscular latency. COFFIN airframes receive a constant passive <b>+24% to +30% evasive dodge bonus</b> against all incoming guided missiles.
+            High-bandwidth synthetic vision and predictive fly-by-wire processing eliminate control latency. COFFIN airframes receive a constant passive <b>+24% to +30% evasive dodge bonus</b> against all incoming guided missiles.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #38bdf8;">

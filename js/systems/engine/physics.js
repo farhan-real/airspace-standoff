@@ -4,8 +4,8 @@
 
 const Physics = {
   calcWr(mLoad, mMax) {
-    if (typeof mLoad !== 'number' || isNaN(mLoad)) return 0.50;
-    if (typeof mMax !== 'number' || isNaN(mMax) || mMax <= 0) return 0.50;
+    if (typeof mLoad !== 'number' || isNaN(mLoad) || mLoad <= 0) return 0.0;
+    if (typeof mMax !== 'number' || isNaN(mMax) || mMax <= 0) return 0.0;
     return Math.min(1.0, Math.max(0.0, mLoad / mMax));
   },
 
@@ -103,9 +103,9 @@ const Physics = {
     const tAlt = targetUnit.alt !== undefined ? targetUnit.alt : 0.0;
     const sAlt = sensorUnit.alt !== undefined ? sensorUnit.alt : 0.5;
     if (tAlt < 0.20 && sAlt > 0.40) {
-      const clutterFactor = (sensorUnit.spec && sensorUnit.spec.lookDownBonus !== undefined)
+      const clutterFactor = (sensorUnit.spec && typeof sensorUnit.spec.lookDownBonus === 'number')
         ? sensorUnit.spec.lookDownBonus
-        : 0.45;
+        : 0.0;
       maxDetectDist *= Math.max(0.50, Math.min(1.10, 0.55 + clutterFactor * 0.55));
     }
 
@@ -142,7 +142,6 @@ const Physics = {
     const dist = Math.hypot(target.x - attacker.x, target.y - attacker.y);
     const cloudHits = Physics.countIntersectingClouds(attacker.x, attacker.y, target.x, target.y, weatherClouds);
 
-    // Directed energy weapons scatter heavily in cloud moisture
     if (weapon.isLaser || weapon.seeker === 'DIRECT_ENERGY') {
       if (dist > weapon.rangeKm) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist)}km > ${weapon.rangeKm}km`, salvoCount: 0, hasMixedSeekers: false };
       if (cloudHits > 0) return { pk: Math.max(25, Math.round(95 - cloudHits * 25)), label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: `${cloudHits} cloud cells scattering beam`, salvoCount: 0, hasMixedSeekers: false };
@@ -234,7 +233,6 @@ const Physics = {
     let effectiveDefense = Math.min(0.50, Math.max(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
-    // Moderate 12% cloud weather penalty only when target is directly inside a cloud
     const weatherPenalty = (weatherClouds && isOpticalSeeker && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.12 : 0.0;
 
     const t0 = weapon.T_0 !== undefined ? weapon.T_0 : 0.80;
