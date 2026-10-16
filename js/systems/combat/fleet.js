@@ -24,13 +24,10 @@ const FleetGenerator = {
     const diffProfile = window.AI_DIFFICULTIES[diff];
     if (!diffProfile) throw new Error(`Unknown difficulty "${diff}" in FleetGenerator.`);
 
-    let s = (Date.now() ^ ((performance.now() * 1000) | 0) ^ (isBlue ? 0x12345678 : 0x9E3779B9)) >>> 0;
-    const rng = () => {
-      s = (s + 0x6D2B79F5) | 0;
-      let t = Math.imul(s ^ (s >>> 15), 1 | s);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
+    const seed = (Date.now() ^ ((performance.now() * 1000) | 0) ^ (isBlue ? 0x12345678 : 0x9E3779B9)) >>> 0;
+    const rng = (window.PRNG && typeof window.PRNG.create === 'function')
+      ? window.PRNG.create(seed)
+      : window.PRNG;
 
     const maxSquadronSize = window.CONFIG.MAX_SQUADRON_SIZE;
     const targetBudget = Number.isFinite(Number(options.budget)) && Number(options.budget) > 0
@@ -41,30 +38,31 @@ const FleetGenerator = {
     const callsignPool = isBlue
       ? window.CALLSIGN_POOL
       : ['Bandit', 'Outlaw', 'Razor', 'Havoc', 'Stalker', 'Cobra'];
-    const callsigns = [...callsignPool].sort(() => rng() - 0.5);
+    const callsigns = rng.shuffle([...callsignPool]);
 
     const fleetItems = [];
     let spentBudget = 0.0;
 
     let aceQuota = ((diff === 'CADET' || diff === 'BUFFER') ? 0 : 1);
     if (diff === 'VETERAN') {
-      aceQuota = (rng() < 0.50) ? 1 : 0;
+      aceQuota = rng.boolean(0.50) ? 1 : 0;
     } else if (diff === 'MASTER') {
-      aceQuota = (rng() < 0.50) ? 2 : 3;
+      aceQuota = rng.boolean(0.50) ? 2 : 3;
     } else if (typeof diffProfile.aceCount === 'number') {
       aceQuota = Number.isInteger(diffProfile.aceCount)
         ? diffProfile.aceCount
-        : (rng() < (diffProfile.aceCount - Math.floor(diffProfile.aceCount)) ? Math.ceil(diffProfile.aceCount) : Math.floor(diffProfile.aceCount));
+        : (rng.next() < (diffProfile.aceCount - Math.floor(diffProfile.aceCount)) ? Math.ceil(diffProfile.aceCount) : Math.floor(diffProfile.aceCount));
     }
 
     const aceCandidates = (diff === 'CADET' || diff === 'BUFFER' || diff === 'VETERAN' || diff === 'ESCALATED' || diff === 'ELITE' || diff === 'FORWARD')
       ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM', 'F-14D', 'Su-57', 'YF-23', 'J-20']
       : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B', 'F-22C-COFFIN', 'Su-57', 'YF-23', 'F-22A', 'F-15EX'];
 
-    const aceCallsigns = isBlue
-      ? ['Alpha Lead', 'Saber Lead', 'Ghost Lead', 'Viper Ace', 'Archangel'].sort(() => rng() - 0.5)
-      : ['Yellow 13', 'Pixy', 'Mihaly', 'Gault', 'Strigon', 'Wizard', 'Schwarze', 'Espada'].sort(() => rng() - 0.5);
-    const shuffledAces = [...aceCandidates].sort(() => rng() - 0.5);
+    const rawAceCallsigns = isBlue
+      ? ['Alpha Lead', 'Saber Lead', 'Ghost Lead', 'Viper Ace', 'Archangel']
+      : ['Yellow 13', 'Pixy', 'Mihaly', 'Gault', 'Strigon', 'Wizard', 'Schwarze', 'Espada'];
+    const aceCallsigns = rng.shuffle([...rawAceCallsigns]);
+    const shuffledAces = rng.shuffle([...aceCandidates]);
 
     for (let a = 0; a < aceQuota; a++) {
       if (fleetItems.length >= maxSquadronSize) break;
@@ -109,8 +107,8 @@ const FleetGenerator = {
         ? ['EA-18G', 'J-16D', 'EF-111A', 'EA-36']
         : ['EA-18G', 'J-16D', 'EF-111A']);
 
-    if (rng() < ewChance && fleetItems.length < maxSquadronSize) {
-      const specId = ewPool[Math.floor(rng() * ewPool.length)];
+    if (rng.boolean(ewChance) && fleetItems.length < maxSquadronSize) {
+      const specId = rng.pick(ewPool);
       const spec = catalog[specId];
       if (spec) {
         const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng);
@@ -146,7 +144,7 @@ const FleetGenerator = {
     const dronePool = ['MQ-99', 'MQ-101', 'XQ-58A', 'Kizilelma', 'MQ-28', 'RQ-180'];
 
     while (fleetItems.length < maxSquadronSize) {
-      const roll = rng();
+      const roll = rng.next();
       let candidatePool;
 
       if (diff === 'CADET') {
@@ -171,7 +169,7 @@ const FleetGenerator = {
         candidatePool = (roll < 0.55) ? flagshipPool : ((roll < 0.90) ? highTierPool : ((roll < 0.95) ? midTierPool : dronePool));
       }
 
-      const chosenId = candidatePool[Math.floor(rng() * candidatePool.length)];
+      const chosenId = rng.pick(candidatePool);
       const spec = catalog[chosenId];
       if (!spec) continue;
 
@@ -205,8 +203,8 @@ const FleetGenerator = {
 
     spawnPlans.forEach(plan => {
       const item = plan.item;
-      const heading = isBlue ? (rng() * 0.16 - 0.08) : (Math.PI + (rng() * 0.16 - 0.08));
-      const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(rng() * 18) * 1000);
+      const heading = isBlue ? rng.range(-0.08, 0.08) : (Math.PI + rng.range(-0.08, 0.08));
+      const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + rng.int(0, 17) * 1000);
       const defaultSquadName = isBlue ? (options.squadronName || 'Allied Strike Wing') : (item.isAce ? 'Elite Ace Cadre' : 'Hostile Intercept Wing');
       const midY = theaterHeight / 2.0;
       const spawnY = plan.isLead ? midY : plan.y;
@@ -236,6 +234,7 @@ const FleetGenerator = {
   generateDynamicSquadronWave(waveIndex, team, theaterWidth, theaterHeight, difficultyKey) {
     const diff = difficultyKey;
     const isBlue = (team === 'friendly');
+    const rng = window.PRNG || Math;
     const count = (diff === 'FORTIFIED' || diff === 'MASTER' || diff === 'LEGEND') ? 3 : 2;
     const pool = isBlue
       ? ['F-15-SMTD', 'Eurofighter', 'Rafale-C', 'F-22A', 'MQ-101', 'KF-21', 'XFA-36B']
@@ -247,7 +246,7 @@ const FleetGenerator = {
     const items = [];
     for (let i = 0; i < count; i++) {
       const specId = (i === 1 && !isBlue && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff))
-        ? (['MASTER', 'LEGEND'].includes(diff) && Math.random() < 0.5 ? 'EA-36' : 'EA-18G')
+        ? (['MASTER', 'LEGEND'].includes(diff) && (rng.boolean ? rng.boolean() : Math.random() < 0.5) ? 'EA-36' : 'EA-18G')
         : pool[i % pool.length];
       const isLead = (i === 0);
       const isAce = (!isBlue && isLead && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff));
@@ -257,10 +256,10 @@ const FleetGenerator = {
       });
     }
 
-    const plans = FormationPlanner.calculateFormationSpawns(items, team, theaterWidth, theaterHeight);
+    const plans = FormationPlanner.calculateFormationSpawns(items, team, theaterWidth, theaterHeight, rng);
     const midY = theaterHeight / 2.0;
     const waveSquadron = plans.map(p => {
-      const heading = isBlue ? (Math.random() * 0.16 - 0.08) : (Math.PI + (Math.random() * 0.16 - 0.08));
+      const heading = isBlue ? (rng.range ? rng.range(-0.08, 0.08) : (Math.random() * 0.16 - 0.08)) : (Math.PI + (rng.range ? rng.range(-0.08, 0.08) : (Math.random() * 0.16 - 0.08)));
       const spawnY = p.item.isLead ? midY : p.y;
       const ac = new Aircraft(p.item.specId, team, p.x, spawnY, heading, null, p.item.callsign, sqName, p.item.isLead, p.item.isAce, 28000);
 

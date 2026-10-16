@@ -5,6 +5,7 @@
 
 class SortieSpawner {
   static setupMission(game) {
+    const prng = window.PRNG || Math;
     if (game.pendingMissionEditorSettings) {
       game.missionEditorBaseSettings = {
         scenarioMode: game.scenarioMode,
@@ -31,7 +32,6 @@ class SortieSpawner {
     }
     if (game.procurement) game.procurement.updateUI();
 
-    // Hide procurement hangar and reveal battle UI
     const procModal = document.getElementById('procurement-modal');
     const hudContainer = document.getElementById('hud-container');
     if (procModal) {
@@ -80,7 +80,8 @@ class SortieSpawner {
     const mapW = window.CONFIG.THEATER_WIDTH_KM;
     const mapH = window.CONFIG.THEATER_HEIGHT_KM;
     const midY = mapH / 2.0;
-    const callsignPool = [...window.CALLSIGN_POOL].sort(() => Math.random() - 0.5);
+    const rawCalls = window.CALLSIGN_POOL || ['Viper', 'Ghost', 'Talon', 'Mobius'];
+    const callsignPool = prng.shuffle ? prng.shuffle([...rawCalls]) : [...rawCalls].sort(() => Math.random() - 0.5);
     const takeCallsign = () => callsignPool.length ? callsignPool.pop() : 'Viper';
 
     game.alliedAircraft = [];
@@ -110,12 +111,12 @@ class SortieSpawner {
       if (chosenLeadIdx === -1) chosenLeadIdx = 0;
       launchSquadron.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
 
-      const spawnPlans = FormationPlanner.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH);
+      const spawnPlans = FormationPlanner.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH, prng);
       spawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
-        const heading = (Math.random() * 0.16 - 0.08);
-        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(Math.random() * 18) * 1000);
+        const heading = prng.range ? prng.range(-0.08, 0.08) : (Math.random() * 0.16 - 0.08);
+        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + (prng.int ? prng.int(0, 17) : Math.floor(Math.random() * 18)) * 1000);
         const spawnY = plan.isLead ? midY : plan.y;
 
         const ac = new Aircraft(
@@ -159,18 +160,14 @@ class SortieSpawner {
         isAce: false
       }));
 
-      const randomizedRedRoster = [...clonedRedRoster];
-      for (let i = randomizedRedRoster.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [randomizedRedRoster[i], randomizedRedRoster[j]] = [randomizedRedRoster[j], randomizedRedRoster[i]];
-      }
+      const randomizedRedRoster = prng.shuffle ? prng.shuffle([...clonedRedRoster]) : [...clonedRedRoster].sort(() => Math.random() - 0.5);
 
-      const redSpawnPlans = FormationPlanner.calculateFormationSpawns(randomizedRedRoster, 'hostile', mapW, mapH);
+      const redSpawnPlans = FormationPlanner.calculateFormationSpawns(randomizedRedRoster, 'hostile', mapW, mapH, prng);
       redSpawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
-        const heading = Math.PI + (Math.random() * 0.16 - 0.08);
-        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(Math.random() * 18) * 1000);
+        const heading = Math.PI + (prng.range ? prng.range(-0.08, 0.08) : (Math.random() * 0.16 - 0.08));
+        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + (prng.int ? prng.int(0, 17) : Math.floor(Math.random() * 18)) * 1000);
         const spawnY = plan.isLead ? midY : plan.y;
 
         const ac = new Aircraft(
@@ -197,12 +194,12 @@ class SortieSpawner {
         mirrorSquadron = ProcurementPresets.getBuiltinPreset('stealth');
       }
 
-      const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH);
+      const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH, prng);
       spawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
-        const heading = Math.PI + (Math.random() * 0.16 - 0.08);
-        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + Math.floor(Math.random() * 18) * 1000);
+        const heading = Math.PI + (prng.range ? prng.range(-0.08, 0.08) : (Math.random() * 0.16 - 0.08));
+        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + (prng.int ? prng.int(0, 17) : Math.floor(Math.random() * 18)) * 1000);
         const spawnY = plan.isLead ? midY : plan.y;
 
         const ac = new Aircraft(

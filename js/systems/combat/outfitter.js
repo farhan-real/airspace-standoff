@@ -4,7 +4,20 @@
  */
 
 class FleetOutfitter {
-  static planAircraftLoadout(spec, isAce, doctrine, diff, rng) {
+  static planAircraftLoadout(spec, isAce, doctrine, diff, rngFn) {
+    const rng = rngFn ? (typeof rngFn === 'function' ? rngFn : () => rngFn.next()) : (() => (window.PRNG ? window.PRNG.next() : Math.random()));
+    const pick = (arr) => arr[Math.floor(rng() * arr.length)];
+    const shuffle = (arr) => {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        const temp = copy[i];
+        copy[i] = copy[j];
+        copy[j] = temp;
+      }
+      return copy;
+    };
+
     const wCatalog = window.WEAPONS_CATALOG || {};
     const uCatalog = window.UPGRADES_CATALOG || {};
     const weapons = [];
@@ -71,8 +84,8 @@ class FleetOutfitter {
         aceRole = 'DOGFIGHT';
       }
 
-      const ulrChoice = class1Ulr[Math.floor(rng() * class1Ulr.length)] || (class2Lr[0] || 'METEOR');
-      const lrChoice = class2Lr[Math.floor(rng() * class2Lr.length)] || 'METEOR';
+      const ulrChoice = pick(class1Ulr) || (class2Lr[0] || 'METEOR');
+      const lrChoice = pick(class2Lr) || 'METEOR';
       const srChoice = ['PYTHON-5', 'IRIS-T'].filter(id => isEligible(wCatalog[id]))[0] || (class4Sr[0] || 'AIM-9X-2');
 
       if (spec.internalSlots > 0) {
@@ -168,12 +181,12 @@ class FleetOutfitter {
       const ulrRoll = rng();
       const ulrThresh = ulrWeights[diff] !== undefined ? ulrWeights[diff] : 0.05;
       if (allowUlr && class1Ulr.length > 0 && (ulrRoll < ulrThresh || role === 'SNIPER' || role === 'AMBUSH')) {
-        return class1Ulr[Math.floor(rng() * class1Ulr.length)];
+        return pick(class1Ulr);
       }
       if (class2Lr.length > 0 && (rng() < 0.65 || ['ESCALATED', 'ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff))) {
-        return class2Lr[Math.floor(rng() * class2Lr.length)];
+        return pick(class2Lr);
       }
-      return class3Mr[Math.floor(rng() * class3Mr.length)] || 'AIM-120D';
+      return pick(class3Mr) || 'AIM-120D';
     };
 
     const rollWvr = () => {
@@ -181,7 +194,7 @@ class FleetOutfitter {
         if (class4Sr.includes('PYTHON-5') && rng() < 0.45) return 'PYTHON-5';
         if (class4Sr.includes('IRIS-T') && rng() < 0.35) return 'IRIS-T';
       }
-      return class4Sr[Math.floor(rng() * class4Sr.length)] || 'AIM-9X-2';
+      return pick(class4Sr) || 'AIM-9X-2';
     };
 
     if (role === 'SEAD') {
@@ -214,8 +227,8 @@ class FleetOutfitter {
       addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
     } else if (role === 'SNIPER') {
-      const primaryUlr = class1Ulr[Math.floor(rng() * class1Ulr.length)] || rollBvr(true);
-      const secondaryLr = class2Lr[Math.floor(rng() * class2Lr.length)] || rollBvr(false);
+      const primaryUlr = pick(class1Ulr) || rollBvr(true);
+      const secondaryLr = pick(class2Lr) || rollBvr(false);
 
       if (spec.internalSlots > 0) {
         addWpn(primaryUlr, 'INTERNAL');
@@ -291,7 +304,7 @@ class FleetOutfitter {
     else targetSockets = maxSockets;
 
     const upgPool = ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'THRUST_VECTOR', 'RAM_NANO_COATING', 'ADAPTIVE_ECCM_SUITE', 'EOTS_DUAL_OPTICS', 'DAS_360_OPTIC', 'TITANIUM_COCKPIT'];
-    const shuffledUpg = [...upgPool].sort(() => rng() - 0.5);
+    const shuffledUpg = shuffle(upgPool);
     for (const uId of shuffledUpg) {
       if (upgrades.length >= targetSockets) break;
       addUpg(uId);
