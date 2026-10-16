@@ -28,8 +28,8 @@ class InspectionCognitionRenderer {
 
   static getRoleAssessment(rawRole, isAce, isActivelyControlled, focusCount, maxSlots, diffKey) {
     if (isAce) {
-      if (diffKey === 'LEGEND') return 'Flagship Ace Command: Coordinates multi-axis volleys, utilizes directed-energy lasers, and executes sub-second defensive breaks.';
-      if (diffKey === 'MASTER') return 'Master Ace Lead: Operating stratospheric energy perch with railgun/pulse-laser snipes and high-G Kulbit capability.';
+      if (diffKey === 'LEGEND') return 'Extreme Threat Flagship Ace Command: Coordinates multi-axis volleys, utilizes directed-energy lasers, and executes sub-second defensive breaks.';
+      if (diffKey === 'MASTER') return 'Air Denial Ace Lead: Operating stratospheric energy perch with railgun/pulse-laser snipes and high-G Kulbit capability.';
       return 'Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.';
     }
 

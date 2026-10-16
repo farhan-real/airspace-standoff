@@ -31,7 +31,7 @@ window.MANUAL_THEATER = [
         <div class="ge-card">
           <b style="color:#f43f5e;">4. DEFENSIVE NOTCHING &amp; CHAFF DEFENSE</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Turning 90 degrees to break a radar lock (Doppler notching) is never automatic: Extreme Threat pilots notch on ~55% of long-range shots, and at close range (under 15 km) that drops below 30% because quick turns are much harder.
+            Turning 90 degrees to break a radar lock (Doppler notching) is never automatic: Extreme Threat Sector pilots notch on ~55% of long-range shots, and at close range (under 15 km) that drops below 30% because quick turns are much harder.
           </div>
         </div>
         <div class="ge-card">
@@ -68,12 +68,12 @@ window.MANUAL_THEATER = [
           <thead>
             <tr>
               <th>TACTICAL ELEMENT</th>
-              <th style="color:#8494ab;">PERMISSIVE SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">(CADET)</span></th>
-              <th style="color:#38bdf8;">CONTESTED AIRSPACE<br><span style="font-size:0.52rem;opacity:0.7;">(VETERAN)</span></th>
-              <th style="color:#00f0ff;">HOSTILE AIRSPACE<br><span style="font-size:0.52rem;opacity:0.7;">(ELITE)</span></th>
-              <th style="color:#ffd700;">HIGH-THREAT SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">(ACE)</span></th>
-              <th style="color:#c084fc;">AIR DENIAL ZONE<br><span style="font-size:0.52rem;opacity:0.7;">(MASTER)</span></th>
-              <th style="color:#ff3366;">EXTREME THREAT SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">(LEGEND)</span></th>
+              <th style="color:#8494ab;">PERMISSIVE SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">0.50x VP</span></th>
+              <th style="color:#38bdf8;">CONTESTED AIRSPACE<br><span style="font-size:0.52rem;opacity:0.7;">1.00x VP</span></th>
+              <th style="color:#00f0ff;">HOSTILE AIRSPACE<br><span style="font-size:0.52rem;opacity:0.7;">1.50x VP</span></th>
+              <th style="color:#ffd700;">HIGH-THREAT SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">2.00x VP</span></th>
+              <th style="color:#c084fc;">AIR DENIAL ZONE<br><span style="font-size:0.52rem;opacity:0.7;">2.60x VP</span></th>
+              <th style="color:#ff3366;">EXTREME THREAT SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">3.20x VP</span></th>
             </tr>
           </thead>
           <tbody>
@@ -117,7 +117,7 @@ window.MANUAL_THEATER = [
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
           <b style="color:#00f0ff;">STANDOFF SNIPER</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>High-Threat to Extreme Threat:</b> Stratospheric FL420 to FL500 cruise holding 50 to 90 km perimeter separation. Fires ultra-long-range ramjet missiles (PL-21, R-37M, AIM-260) and cranks 65&deg; off boresight at radar gimbal limits to deny return fire.
+            <b>High-Threat Sector to Extreme Threat Sector:</b> Stratospheric FL420 to FL500 cruise holding 50 to 90 km perimeter separation. Fires ultra-long-range ramjet missiles (PL-21, R-37M, AIM-260) and cranks 65&deg; off boresight at radar gimbal limits to deny return fire.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #38bdf8;">
@@ -135,7 +135,7 @@ window.MANUAL_THEATER = [
         <div class="ge-card" style="border-left:3px solid #c084fc;">
           <b style="color:#c084fc;">SWARM FLIGHT SCREEN</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Elite through Legend:</b> High-G autonomous drones (MQ-99, MQ-101, XQ-58A, Kizilelma) holding outer corner positions. Flanks formation boundaries to draw enemy missile fire, deploying saturation micro-missile ripples (MAM) with zero pilot G-LOC constraints.
+            <b>Hostile Airspace through Extreme Threat Sector:</b> High-G autonomous drones (MQ-99, MQ-101, XQ-58A, Kizilelma) holding outer corner positions. Flanks formation boundaries to draw enemy missile fire, deploying saturation micro-missile ripples (MAM) with zero pilot G-LOC constraints.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #00f5a0;">
@@ -147,13 +147,13 @@ window.MANUAL_THEATER = [
         <div class="ge-card" style="border-left:3px solid #14b8a6;">
           <b style="color:#2dd4bf;">STEALTH AMBUSH</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Elite through Legend:</b> Pure stealth airframes (F-22A, YF-23, Su-57, J-20, Su-75) cruising FL360 to FL420 with clean internal bays. Stalks lateral sector boundaries, exploiting player beam-aspect radar spikes to deliver surprise BVR missile traps.
+            <b>Hostile Airspace through Extreme Threat Sector:</b> Pure stealth airframes (F-22A, YF-23, Su-57, J-20, Su-75) cruising FL360 to FL420 with clean internal bays. Stalks lateral sector boundaries, exploiting player beam-aspect radar spikes to deliver surprise BVR missile traps.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #e11d48;">
           <b style="color:#fb7185;">STRIKE INTERDICTION</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Veteran through Legend:</b> Armored ground-attack aircraft and bombers (A-10C, Su-25SM3, Su-34, B-1B, F-15EX). Penetrates low beneath sensor horizons (FL055 to FL140) to deliver precision cruise missiles (JASSM-ER), glide bombs (SDB), or hypersonic Kinzhal strikes.
+            <b>Contested Airspace through Extreme Threat Sector:</b> Armored ground-attack aircraft and bombers (A-10C, Su-25SM3, Su-34, B-1B, F-15EX). Penetrates low beneath sensor horizons (FL055 to FL140) to deliver precision cruise missiles (JASSM-ER), glide bombs (SDB), or hypersonic Kinzhal strikes.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #a855f7;">
@@ -171,7 +171,7 @@ window.MANUAL_THEATER = [
         <div class="ge-card" style="border-left:3px solid #ffd700;">
           <b style="color:#ffd700;">COMMAND FLAGSHIP (ACE CADRE)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>Veteran through Legend:</b> Elite formation leaders flying superfighters (ADF-11F, CFA-44, X-02S, ADFX-01, DARKSTAR) or top 5th-gen platforms. Possesses sub-second reaction latencies, directed-energy pulse lasers, EML railguns, and post-stall maneuvers.
+            <b>Contested Airspace through Extreme Threat Sector:</b> Elite formation leaders flying superfighters (ADF-11F, CFA-44, X-02S, ADFX-01, DARKSTAR) or top 5th-gen platforms. Possesses sub-second reaction latencies, directed-energy pulse lasers, EML railguns, and post-stall maneuvers.
           </div>
         </div>
       </div>

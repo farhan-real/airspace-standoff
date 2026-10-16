@@ -147,7 +147,7 @@ window.MANUAL_OPERATIONS = [
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">Active Focus Slots</td>
-              <td>Shows current bandwidth utilization against total cognitive capacity (e.g. 1 slot on Cadet/Veteran, 2 on Elite/Ace, up to 3 on Master/Legend).</td>
+              <td>Shows current bandwidth utilization against total cognitive capacity (e.g. 1 slot on Permissive Sector / Contested Airspace, 2 on Hostile Airspace / High-Threat Sector, up to 3 on Air Denial Zone / Extreme Threat Sector).</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">Squadron Posture</td>
@@ -159,7 +159,7 @@ window.MANUAL_OPERATIONS = [
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">Chain of Command</td>
-              <td>Reports command health. If the enemy Flight Lead is eliminated, surviving wingmen enter a <code>COMMAND DISRUPTION</code> state with a hesitation timer (6.0s on Cadet down to 1.8s on Legend) where weapons are locked and throttle drops to 40%.</td>
+              <td>Reports command health. If the enemy Flight Lead is eliminated, surviving wingmen enter a <code>COMMAND DISRUPTION</code> state with a hesitation timer (6.0s on Permissive Sector down to 1.8s on Extreme Threat Sector) where weapons are locked and throttle drops to 40%.</td>
             </tr>
             <tr>
               <td style="color:#fbbf24;font-weight:800;">Behavioral Discipline</td>

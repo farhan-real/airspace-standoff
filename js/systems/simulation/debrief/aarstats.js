@@ -6,7 +6,7 @@ class AARStatsCalculator {
   static computeSortieMetrics(game, blueWon, durSec) {
     const scoreData = (game.simulation && game.simulation.scoring)
       ? game.simulation.scoring.getScoreMultipliers()
-      : { diffKey: game.aiDifficulty || 'VETERAN', diffMult: 1.0, budgetCap: 400.0, budgetMult: 1.0, totalMult: 1.0 };
+      : { diffKey: game.aiDifficulty || 'VETERAN', diffName: 'Contested Airspace', diffMult: 1.0, budgetCap: 400.0, budgetMult: 1.0, totalMult: 1.0 };
 
     const timeBonus = (game.simulation && game.simulation.scoring)
       ? game.simulation.scoring.calcTimeBonus(durSec, blueWon)
@@ -34,7 +34,9 @@ class AARStatsCalculator {
 
   static generateReportHtml(game, blueWon, timeStr, metrics) {
     const { scoreData, timeBonus, rawBlueScore, adjustedRawScore, finalSortieScore } = metrics;
-    const diffLabel = scoreData.diffKey || game.aiDifficulty || 'VETERAN';
+    const diffLabel = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[scoreData.diffKey])
+      ? window.AI_DIFFICULTIES[scoreData.diffKey].name
+      : (scoreData.diffName || scoreData.diffKey || 'Contested Airspace');
     const budgetCap = scoreData.budgetCap || 400;
     const ordnanceExpended = (game.stats && game.stats.missilesLaunched !== undefined) ? game.stats.missilesLaunched : 0;
     const blueLosses = (game.stats && game.stats.blueLosses !== undefined) ? game.stats.blueLosses : 0;

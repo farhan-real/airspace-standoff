@@ -85,11 +85,15 @@ class LeaderboardUI {
 
     const rowsHtml = list.map((item, idx) => {
       const rankClass = idx === 0 ? 'rank-gold' : (idx === 1 ? 'rank-silver' : (idx === 2 ? 'rank-bronze' : 'rank-standard'));
+      const sectorName = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[item.difficulty])
+        ? window.AI_DIFFICULTIES[item.difficulty].name
+        : (item.difficulty || 'Contested Airspace');
+
       return `
         <tr class="leaderboard-row ${idx === 0 ? 'selected' : ''}" data-idx="${idx}">
           <td><span class="leaderboard-rank-tag ${rankClass}">#${idx + 1}</span></td>
           <td><b>${item.squadronName || 'Squadron'}</b><br><span style="color:#8494ab;font-size:0.56rem;">${item.date || ''}</span></td>
-          <td style="color:#7dd3fc;">${item.difficulty || 'VETERAN'}</td>
+          <td style="color:#7dd3fc;">${sectorName}</td>
           <td style="color:#00f0ff;">${item.timeStr || '00:00'}</td>
           <td style="text-align:right;"><b style="color:#00f5a0;font-size:0.74rem;">${(item.totalScore || 0).toLocaleString()}</b></td>
         </tr>`;
@@ -97,7 +101,7 @@ class LeaderboardUI {
 
     tableContainer.innerHTML = `
       <table class="leaderboard-table">
-        <thead><tr><th>RANK</th><th>UNIT &amp; DATE</th><th>TIER</th><th>TIME</th><th style="text-align:right;">FINAL SCORE</th></tr></thead>
+        <thead><tr><th>RANK</th><th>UNIT &amp; DATE</th><th>SECTOR</th><th>TIME</th><th style="text-align:right;">FINAL SCORE</th></tr></thead>
         <tbody>${rowsHtml}</tbody>
       </table>`;
 

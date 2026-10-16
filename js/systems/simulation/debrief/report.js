@@ -111,7 +111,7 @@ class DebriefReportSystem {
 
     const metrics = (typeof AARStatsCalculator !== 'undefined')
       ? AARStatsCalculator.computeSortieMetrics(game, blueWon, durSec)
-      : { scoreData: { totalMult: 1.0, diffKey: 'VETERAN', diffMult: 1.0, budgetCap: 400.0, budgetMult: 1.0 }, timeBonus: 0, rawBlueScore: game.vpAlly || 0, adjustedRawScore: game.vpAlly || 0, finalSortieScore: game.vpAlly || 0, blueImpacts: 0, redImpacts: 0, blueKills: 0, redKills: 0, roeIncidents: 0, blueMissilesEvaded: 0, defensiveIntercepts: 0 };
+      : { scoreData: { totalMult: 1.0, diffKey: 'VETERAN', diffName: 'Contested Airspace', diffMult: 1.0, budgetCap: 400.0, budgetMult: 1.0 }, timeBonus: 0, rawBlueScore: game.vpAlly || 0, adjustedRawScore: game.vpAlly || 0, finalSortieScore: game.vpAlly || 0, blueImpacts: 0, redImpacts: 0, blueKills: 0, redKills: 0, roeIncidents: 0, blueMissilesEvaded: 0, defensiveIntercepts: 0 };
 
     if (sEl && typeof AARStatsCalculator !== 'undefined') {
       sEl.innerHTML = AARStatsCalculator.generateReportHtml(game, blueWon, timeStr, metrics);
@@ -138,6 +138,10 @@ class DebriefReportSystem {
       ? AfterActionReportTimeline.getMergedTimelineEvents(game, blueWon)
       : ((game.simulation && game.simulation.timelineEvents) ? [...game.simulation.timelineEvents] : []);
 
+    const sectorDisplayName = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[metrics.scoreData.diffKey])
+      ? window.AI_DIFFICULTIES[metrics.scoreData.diffKey].name
+      : (metrics.scoreData.diffName || metrics.scoreData.diffKey || 'Contested Airspace');
+
     if (!game.isMissionEditorMatch && window.Persistence && window.Persistence.saveTopSortie) {
       window.Persistence.saveTopSortie({
         id: 'SORTIE_' + Date.now(),
@@ -150,7 +154,7 @@ class DebriefReportSystem {
         rawScore: metrics.rawBlueScore,
         timeBonus: metrics.timeBonus,
         totalScore: metrics.finalSortieScore,
-        difficulty: metrics.scoreData.diffKey,
+        difficulty: sectorDisplayName,
         diffMult: metrics.scoreData.diffMult,
         budgetTier: metrics.scoreData.budgetCap,
         budgetMult: metrics.scoreData.budgetMult,

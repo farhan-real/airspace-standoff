@@ -52,9 +52,13 @@ class SimulationScoring {
     const totalMult = Number((diffMult * budgetMult).toFixed(2));
 
     return {
-      diffKey, diffMult,
-      budgetTierKey: bTierKey, budgetCap: bTierData.budget,
-      budgetMult, totalMult
+      diffKey,
+      diffName: diffData.name,
+      diffMult,
+      budgetTierKey: bTierKey,
+      budgetCap: bTierData.budget,
+      budgetMult,
+      totalMult
     };
   }
 
