@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Pseudo-Random Number Generator (PRNG) Engine
- * Implements Xoshiro128** with SplitMix32 seeding, high-entropy fallback, and Fisher-Yates shuffling.
+ * Implements Xoshiro128** with SplitMix32 seeding, high-resolution entropy, and Fisher-Yates shuffling.
  */
 
 class PRNG {
@@ -19,7 +19,7 @@ class PRNG {
       return buf[0];
     }
     const t = (typeof performance !== 'undefined' && performance.now) ? (performance.now() * 1000) | 0 : 0;
-    return (Date.now() ^ t ^ (Math.random() * 0x100000000)) >>> 0;
+    return (Date.now() ^ t) >>> 0;
   }
 
   splitMix32(val) {

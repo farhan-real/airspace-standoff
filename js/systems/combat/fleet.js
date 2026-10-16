@@ -8,8 +8,8 @@ const FleetGenerator = {
     return FormationPlanner.getFormationRank(spec, isLead, isAce);
   },
 
-  calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rngFn) {
-    return FormationPlanner.calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rngFn);
+  calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rng) {
+    return FormationPlanner.calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rng);
   },
 
   planAircraftLoadout(spec, isAce, doctrine, diff, rng) {
@@ -34,38 +34,14 @@ const FleetGenerator = {
     }
 
     const seed = (Date.now() ^ ((performance.now() * 1000) | 0) ^ (isBlue ? 0x12345678 : 0x9E3779B9)) >>> 0;
-    const prngEngine = (window.PRNG && typeof window.PRNG.create === 'function')
-      ? window.PRNG.create(seed)
-      : (window.PRNG || null);
+    const rng = window.PRNG.create(seed);
 
-    const rng = {
-      next: () => (prngEngine && prngEngine.next) ? prngEngine.next() : Math.random(),
-      range: (min, max) => (prngEngine && prngEngine.range) ? prngEngine.range(min, max) : (min + Math.random() * (max - min)),
-      int: (min, max) => (prngEngine && prngEngine.int) ? prngEngine.int(min, max) : Math.floor(min + Math.random() * (max - min + 1)),
-      boolean: (chance = 0.5) => (prngEngine && prngEngine.boolean) ? prngEngine.boolean(chance) : (Math.random() < chance),
-      pick: (list) => {
-        if (!Array.isArray(list) || list.length === 0) return null;
-        if (prngEngine && prngEngine.pick) return prngEngine.pick(list);
-        return list[Math.floor(Math.random() * list.length)];
-      },
-      shuffle: (list) => {
-        if (!Array.isArray(list)) return [];
-        if (prngEngine && prngEngine.shuffle) return prngEngine.shuffle(list);
-        const copy = [...list];
-        for (let i = copy.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [copy[i], copy[j]] = [copy[j], copy[i]];
-        }
-        return copy;
-      }
-    };
-
-    const maxSquadronSize = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
+    const maxSquadronSize = window.CONFIG.MAX_SQUADRON_SIZE || 16;
     const targetBudget = Number.isFinite(Number(options.budget)) && Number(options.budget) > 0
       ? Number(options.budget)
-      : (diffProfile ? diffProfile.budgetCap : 330.0);
+      : diffProfile.budgetCap;
 
-    const catalog = window.AIRCRAFT_CATALOG || {};
+    const catalog = window.AIRCRAFT_CATALOG;
     const callsignPool = isBlue
       ? (window.CALLSIGN_POOL || ['Viper', 'Ghost', 'Talon'])
       : ['Bandit', 'Outlaw', 'Razor', 'Havoc', 'Stalker', 'Cobra'];
@@ -100,7 +76,7 @@ const FleetGenerator = {
       const specId = shuffledAces[a % shuffledAces.length];
       const spec = catalog[specId];
       if (spec) {
-        const planned = this.planAircraftLoadout(spec, true, doctrine, diff, rng.next);
+        const planned = this.planAircraftLoadout(spec, true, doctrine, diff, rng);
         if (spentBudget + planned.totalCost <= targetBudget) {
           fleetItems.push({
             specId,
@@ -142,7 +118,7 @@ const FleetGenerator = {
       const specId = rng.pick(ewPool);
       const spec = catalog[specId];
       if (spec) {
-        const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng.next);
+        const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng);
         if (spentBudget + planned.totalCost <= targetBudget) {
           fleetItems.push({
             specId,
@@ -204,7 +180,7 @@ const FleetGenerator = {
       const spec = catalog[chosenId];
       if (!spec) continue;
 
-      const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng.next);
+      const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng);
 
       if (spentBudget + planned.totalCost <= targetBudget) {
         const hasLead = fleetItems.some(it => it.isLead);
@@ -229,7 +205,7 @@ const FleetGenerator = {
       fleetItems[0].isLead = true;
     }
 
-    const spawnPlans = FormationPlanner.calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rng.next);
+    const spawnPlans = FormationPlanner.calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rng);
     const squadron = [];
 
     spawnPlans.forEach(plan => {
@@ -265,12 +241,7 @@ const FleetGenerator = {
   generateDynamicSquadronWave(waveIndex, team, theaterWidth, theaterHeight, difficultyKey) {
     const diff = difficultyKey;
     const isBlue = (team === 'friendly');
-    const prngEngine = window.PRNG || null;
-    const rng = {
-      next: () => (prngEngine && prngEngine.next) ? prngEngine.next() : Math.random(),
-      range: (min, max) => (prngEngine && prngEngine.range) ? prngEngine.range(min, max) : (min + Math.random() * (max - min)),
-      boolean: (chance = 0.5) => (prngEngine && prngEngine.boolean) ? prngEngine.boolean(chance) : (Math.random() < chance)
-    };
+    const rng = window.PRNG;
 
     const count = (diff === 'FORTIFIED' || diff === 'MASTER' || diff === 'LEGEND') ? 3 : 2;
     const pool = isBlue
@@ -293,7 +264,7 @@ const FleetGenerator = {
       });
     }
 
-    const plans = FormationPlanner.calculateFormationSpawns(items, team, theaterWidth, theaterHeight, rng.next);
+    const plans = FormationPlanner.calculateFormationSpawns(items, team, theaterWidth, theaterHeight, rng);
     const midY = theaterHeight / 2.0;
     const waveSquadron = plans.map(p => {
       const heading = isBlue ? rng.range(-0.08, 0.08) : (Math.PI + rng.range(-0.08, 0.08));

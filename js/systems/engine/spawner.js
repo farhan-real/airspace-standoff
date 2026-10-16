@@ -5,25 +5,7 @@
 
 class SortieSpawner {
   static setupMission(game) {
-    const prngEngine = (window.PRNG && typeof window.PRNG.create === 'function')
-      ? window.PRNG.create()
-      : (window.PRNG || null);
-
-    const prng = {
-      next: () => (prngEngine && prngEngine.next) ? prngEngine.next() : Math.random(),
-      range: (min, max) => (prngEngine && prngEngine.range) ? prngEngine.range(min, max) : (min + Math.random() * (max - min)),
-      int: (min, max) => (prngEngine && prngEngine.int) ? prngEngine.int(min, max) : Math.floor(min + Math.random() * (max - min + 1)),
-      shuffle: (list) => {
-        if (!Array.isArray(list)) return [];
-        if (prngEngine && prngEngine.shuffle) return prngEngine.shuffle(list);
-        const copy = [...list];
-        for (let i = copy.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [copy[i], copy[j]] = [copy[j], copy[i]];
-        }
-        return copy;
-      }
-    };
+    const prng = window.PRNG;
 
     if (game.pendingMissionEditorSettings) {
       game.missionEditorBaseSettings = {
@@ -130,7 +112,7 @@ class SortieSpawner {
       if (chosenLeadIdx === -1) chosenLeadIdx = 0;
       launchSquadron.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
 
-      const spawnPlans = FormationPlanner.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH, prng.next);
+      const spawnPlans = FormationPlanner.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH, prng);
       spawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
@@ -181,7 +163,7 @@ class SortieSpawner {
 
       const randomizedRedRoster = prng.shuffle([...clonedRedRoster]);
 
-      const redSpawnPlans = FormationPlanner.calculateFormationSpawns(randomizedRedRoster, 'hostile', mapW, mapH, prng.next);
+      const redSpawnPlans = FormationPlanner.calculateFormationSpawns(randomizedRedRoster, 'hostile', mapW, mapH, prng);
       redSpawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
@@ -213,7 +195,7 @@ class SortieSpawner {
         mirrorSquadron = ProcurementPresets.getBuiltinPreset('stealth');
       }
 
-      const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH, prng.next);
+      const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH, prng);
       spawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;

@@ -14,13 +14,8 @@ class FormationPlanner {
     return 2;
   }
 
-  static calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rngFn) {
-    const rng = (rngFn && typeof rngFn === 'function')
-      ? rngFn
-      : ((rngFn && typeof rngFn.next === 'function')
-        ? () => rngFn.next()
-        : (() => (window.PRNG && typeof window.PRNG.next === 'function' ? window.PRNG.next() : Math.random())));
-
+  static calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rngInstance) {
+    const rng = (rngInstance && typeof rngInstance.range === 'function') ? rngInstance : window.PRNG;
     const isBlue = (team === 'friendly');
     const total = fleetItems.length;
     if (total === 0) return [];
@@ -47,14 +42,14 @@ class FormationPlanner {
       if (r < total) slotOrder.push(r++);
     }
 
-    const baseSpawnX = isBlue ? (13.0 + rng() * 2.0) : (theaterWidth - 14.0 - rng() * 2.0);
+    const baseSpawnX = isBlue ? (13.0 + rng.range(0, 2.0)) : (theaterWidth - 14.0 - rng.range(0, 2.0));
     const plans = new Array(total);
     for (let k = 0; k < total; k++) {
       const slotIndex = slotOrder[k];
       const assigned = sorted[k];
       const nominalY = (total === 1) ? midY : (startY + slotIndex * stepY);
-      const randomizedY = Math.max(8.0, Math.min(theaterHeight - 8.0, nominalY + (rng() * 2.6 - 1.3)));
-      const tightX = baseSpawnX + (rng() * 2.4 - 1.2);
+      const randomizedY = Math.max(8.0, Math.min(theaterHeight - 8.0, nominalY + rng.range(-1.3, 1.3)));
+      const tightX = baseSpawnX + rng.range(-1.2, 1.2);
 
       plans[assigned.originalIndex] = {
         item: assigned.item,
