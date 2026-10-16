@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Tactical Dialog Modal Submodule
- * Standardized operational dialogs and clean confirmations.
+ * AIRSPACE STANDOFF: Dialog Modal Controller
+ * Standardized operational dialogs and confirmations.
  */
 
 class DialogModal {
@@ -11,20 +11,27 @@ class DialogModal {
   }
 
   ensureModal() {
-    if (document.getElementById('dialog-modal')) return;
+    let modal = document.getElementById('dialog-modal') || document.getElementById('tactical-dialog-modal');
+    if (modal) {
+      this.bindModalEvents();
+      return modal;
+    }
     if (window.ModalDialogTemplates && typeof window.ModalDialogTemplates.ensure === 'function') {
       window.ModalDialogTemplates.ensure('dialog-modal');
     }
     this.bindModalEvents();
+    return document.getElementById('dialog-modal') || document.getElementById('tactical-dialog-modal');
   }
 
   bindModalEvents() {
+    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm') || document.getElementById('btn-tactical-dialog-confirm');
+    const dialogCancelBtn = document.getElementById('btn-dialog-cancel') || document.getElementById('btn-tactical-dialog-cancel');
+    const dialogCloseBtn = document.getElementById('btn-dialog-close') || document.getElementById('btn-tactical-dialog-close');
+    const dialogInput = document.getElementById('dialog-input') || document.getElementById('tactical-dialog-input');
+
+    if (!dialogConfirmBtn) return;
     if (this._modalBound) return;
     this._modalBound = true;
-    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm');
-    const dialogCancelBtn = document.getElementById('btn-dialog-cancel');
-    const dialogCloseBtn = document.getElementById('btn-dialog-close');
-    const dialogInput = document.getElementById('dialog-input');
 
     if (dialogCloseBtn) dialogCloseBtn.onclick = () => this.close();
     if (dialogCancelBtn) dialogCancelBtn.onclick = () => this.close();
@@ -46,22 +53,21 @@ class DialogModal {
   }
 
   close() {
-    const dialogModal = document.getElementById('dialog-modal');
+    const dialogModal = document.getElementById('dialog-modal') || document.getElementById('tactical-dialog-modal');
     if (dialogModal) dialogModal.classList.remove('active');
     this._dialogCallback = null;
     if (this.pm.game.controls) this.pm.game.controls.autoUnpauseOnDialogClose();
   }
 
   showPrompt(title, msg, defValue, onConfirm) {
-    this.ensureModal();
-    const dialogModal = document.getElementById('dialog-modal');
-    const dialogTitle = document.getElementById('dialog-title');
-    const dialogMsg = document.getElementById('dialog-msg');
-    const dialogInputWrap = document.getElementById('dialog-field-wrap');
-    const dialogInput = document.getElementById('dialog-input');
-    const dialogOptionsWrap = document.getElementById('dialog-options-wrap');
-    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm');
-    const dialogCancelBtn = document.getElementById('btn-dialog-cancel');
+    const dialogModal = this.ensureModal();
+    const dialogTitle = document.getElementById('dialog-title') || document.getElementById('tactical-dialog-title');
+    const dialogMsg = document.getElementById('dialog-msg') || document.getElementById('tactical-dialog-msg');
+    const dialogInputWrap = document.getElementById('dialog-field-wrap') || document.getElementById('tactical-dialog-field-wrap');
+    const dialogInput = document.getElementById('dialog-input') || document.getElementById('tactical-dialog-input');
+    const dialogOptionsWrap = document.getElementById('dialog-options-wrap') || document.getElementById('tactical-dialog-options-wrap');
+    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm') || document.getElementById('btn-tactical-dialog-confirm');
+    const dialogCancelBtn = document.getElementById('btn-dialog-cancel') || document.getElementById('btn-tactical-dialog-cancel');
 
     if (!dialogModal) return;
     if (this.pm.game.controls) this.pm.game.controls.autoPauseOnDialogOpen();
@@ -88,16 +94,19 @@ class DialogModal {
   }
 
   showConfirm(title, msg, onConfirm, options = {}) {
-    this.ensureModal();
-    const dialogModal = document.getElementById('dialog-modal');
-    const dialogTitle = document.getElementById('dialog-title');
-    const dialogMsg = document.getElementById('dialog-msg');
-    const dialogInputWrap = document.getElementById('dialog-field-wrap');
-    const dialogOptionsWrap = document.getElementById('dialog-options-wrap');
-    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm');
-    const dialogCancelBtn = document.getElementById('btn-dialog-cancel');
+    const dialogModal = this.ensureModal();
+    const dialogTitle = document.getElementById('dialog-title') || document.getElementById('tactical-dialog-title');
+    const dialogMsg = document.getElementById('dialog-msg') || document.getElementById('tactical-dialog-msg');
+    const dialogInputWrap = document.getElementById('dialog-field-wrap') || document.getElementById('tactical-dialog-field-wrap');
+    const dialogOptionsWrap = document.getElementById('dialog-options-wrap') || document.getElementById('tactical-dialog-options-wrap');
+    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm') || document.getElementById('btn-tactical-dialog-confirm');
+    const dialogCancelBtn = document.getElementById('btn-dialog-cancel') || document.getElementById('btn-tactical-dialog-cancel');
 
-    if (!dialogModal) return;
+    if (!dialogModal) {
+      if (onConfirm) onConfirm();
+      return;
+    }
+
     if (this.pm.game.controls) this.pm.game.controls.autoPauseOnDialogOpen();
     if (dialogTitle) dialogTitle.textContent = title || 'CONFIRMATION';
     if (dialogMsg) dialogMsg.textContent = msg || '';
@@ -114,14 +123,13 @@ class DialogModal {
   }
 
   showAlert(title, msg) {
-    this.ensureModal();
-    const dialogModal = document.getElementById('dialog-modal');
-    const dialogTitle = document.getElementById('dialog-title');
-    const dialogMsg = document.getElementById('dialog-msg');
-    const dialogInputWrap = document.getElementById('dialog-field-wrap');
-    const dialogOptionsWrap = document.getElementById('dialog-options-wrap');
-    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm');
-    const dialogCancelBtn = document.getElementById('btn-dialog-cancel');
+    const dialogModal = this.ensureModal();
+    const dialogTitle = document.getElementById('dialog-title') || document.getElementById('tactical-dialog-title');
+    const dialogMsg = document.getElementById('dialog-msg') || document.getElementById('tactical-dialog-msg');
+    const dialogInputWrap = document.getElementById('dialog-field-wrap') || document.getElementById('tactical-dialog-field-wrap');
+    const dialogOptionsWrap = document.getElementById('dialog-options-wrap') || document.getElementById('tactical-dialog-options-wrap');
+    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm') || document.getElementById('btn-tactical-dialog-confirm');
+    const dialogCancelBtn = document.getElementById('btn-dialog-cancel') || document.getElementById('btn-tactical-dialog-cancel');
 
     if (!dialogModal) return;
     if (this.pm.game.controls) this.pm.game.controls.autoPauseOnDialogOpen();
@@ -142,15 +150,14 @@ class DialogModal {
   openCallsignPicker(sIdx) {
     const item = this.pm.game.procurementSquadron[sIdx];
     if (!item) return;
-    this.ensureModal();
-    const dialogModal = document.getElementById('dialog-modal');
-    const dialogTitle = document.getElementById('dialog-title');
-    const dialogMsg = document.getElementById('dialog-msg');
-    const dialogInputWrap = document.getElementById('dialog-field-wrap');
-    const dialogInput = document.getElementById('dialog-input');
-    const dialogOptionsWrap = document.getElementById('dialog-options-wrap');
-    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm');
-    const dialogCancelBtn = document.getElementById('btn-dialog-cancel');
+    const dialogModal = this.ensureModal();
+    const dialogTitle = document.getElementById('dialog-title') || document.getElementById('tactical-dialog-title');
+    const dialogMsg = document.getElementById('dialog-msg') || document.getElementById('tactical-dialog-msg');
+    const dialogInputWrap = document.getElementById('dialog-field-wrap') || document.getElementById('tactical-dialog-field-wrap');
+    const dialogInput = document.getElementById('dialog-input') || document.getElementById('tactical-dialog-input');
+    const dialogOptionsWrap = document.getElementById('dialog-options-wrap') || document.getElementById('tactical-dialog-options-wrap');
+    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm') || document.getElementById('btn-tactical-dialog-confirm');
+    const dialogCancelBtn = document.getElementById('btn-dialog-cancel') || document.getElementById('btn-tactical-dialog-cancel');
 
     if (dialogTitle) dialogTitle.textContent = 'ASSIGN CALLSIGN';
     if (dialogMsg) dialogMsg.textContent = `Select an operational callsign for Aircraft #${sIdx + 1} or enter a custom identifier:`;

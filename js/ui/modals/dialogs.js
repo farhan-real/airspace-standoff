@@ -26,7 +26,7 @@ class ModalDialogTemplates {
             </div>
           </div>
         </div>`);
-    } else if (modalId === 'tactical-dialog-modal') {
+    } else if (modalId === 'dialog-modal' || modalId === 'tactical-dialog-modal') {
       container.insertAdjacentHTML('beforeend', `
         <div id="dialog-modal" class="modal-backdrop">
           <div class="inspect-window" style="max-width: 500px;">

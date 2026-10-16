@@ -13,7 +13,6 @@ class ProcurementManager {
 
     this.dialogModal = new DialogModal(this);
     this.specs = new ProcurementSpecs(this);
-
     this.shelf = new ProcurementShelf(this);
     this.roster = new ProcurementRoster(this);
     this.customLoadouts = new CustomLoadoutsManager();
@@ -187,15 +186,16 @@ class ProcurementManager {
         }
 
         const isEditorSortie = Boolean(this.game.pendingMissionEditorSettings);
-        const confirmText = isEditorSortie
-          ? 'Launch this custom editor sortie? It will not be ranked or saved to the leaderboard.'
-          : `Launch mission with ${this.game.procurementSquadron.length} aircraft?`;
-        this.showConfirmModal(
-          isEditorSortie ? 'COMMENCE UNRANKED MISSION' : 'COMMENCE MISSION',
-          confirmText,
-          () => this.game.scrambleFlight(),
-          { confirmText: 'LAUNCH MISSION', isAlert: false }
-        );
+        if (isEditorSortie) {
+          this.showConfirmModal(
+            'COMMENCE UNRANKED MISSION',
+            'Launch this custom editor sortie? It will not be ranked or saved to the leaderboard.',
+            () => this.game.scrambleFlight(),
+            { confirmText: 'LAUNCH MISSION', isAlert: false }
+          );
+        } else {
+          this.game.scrambleFlight();
+        }
       };
     }
 

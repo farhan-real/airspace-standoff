@@ -18,25 +18,56 @@ const FleetGenerator = {
 
   generateFleet(team, difficultyKey, doctrineKey, theaterWidth, theaterHeight, options = {}) {
     const isBlue = (team === 'friendly');
-    const diff = difficultyKey;
+    let diff = difficultyKey;
     const doctrine = doctrineKey;
 
-    const diffProfile = window.AI_DIFFICULTIES[diff];
-    if (!diffProfile) throw new Error(`Unknown difficulty "${diff}" in FleetGenerator.`);
+    let diffProfile = window.AI_DIFFICULTIES[diff];
+    if (!diffProfile) {
+      const match = Object.entries(window.AI_DIFFICULTIES).find(([k, v]) => v.name === diff || k === diff);
+      if (match) {
+        diff = match[0];
+        diffProfile = match[1];
+      } else {
+        diff = 'VETERAN';
+        diffProfile = window.AI_DIFFICULTIES.VETERAN;
+      }
+    }
 
     const seed = (Date.now() ^ ((performance.now() * 1000) | 0) ^ (isBlue ? 0x12345678 : 0x9E3779B9)) >>> 0;
-    const rng = (window.PRNG && typeof window.PRNG.create === 'function')
+    const prngEngine = (window.PRNG && typeof window.PRNG.create === 'function')
       ? window.PRNG.create(seed)
-      : window.PRNG;
+      : (window.PRNG || null);
 
-    const maxSquadronSize = window.CONFIG.MAX_SQUADRON_SIZE;
+    const rng = {
+      next: () => (prngEngine && prngEngine.next) ? prngEngine.next() : Math.random(),
+      range: (min, max) => (prngEngine && prngEngine.range) ? prngEngine.range(min, max) : (min + Math.random() * (max - min)),
+      int: (min, max) => (prngEngine && prngEngine.int) ? prngEngine.int(min, max) : Math.floor(min + Math.random() * (max - min + 1)),
+      boolean: (chance = 0.5) => (prngEngine && prngEngine.boolean) ? prngEngine.boolean(chance) : (Math.random() < chance),
+      pick: (list) => {
+        if (!Array.isArray(list) || list.length === 0) return null;
+        if (prngEngine && prngEngine.pick) return prngEngine.pick(list);
+        return list[Math.floor(Math.random() * list.length)];
+      },
+      shuffle: (list) => {
+        if (!Array.isArray(list)) return [];
+        if (prngEngine && prngEngine.shuffle) return prngEngine.shuffle(list);
+        const copy = [...list];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+    };
+
+    const maxSquadronSize = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
     const targetBudget = Number.isFinite(Number(options.budget)) && Number(options.budget) > 0
       ? Number(options.budget)
-      : diffProfile.budgetCap;
+      : (diffProfile ? diffProfile.budgetCap : 330.0);
 
-    const catalog = window.AIRCRAFT_CATALOG;
+    const catalog = window.AIRCRAFT_CATALOG || {};
     const callsignPool = isBlue
-      ? window.CALLSIGN_POOL
+      ? (window.CALLSIGN_POOL || ['Viper', 'Ghost', 'Talon'])
       : ['Bandit', 'Outlaw', 'Razor', 'Havoc', 'Stalker', 'Cobra'];
     const callsigns = rng.shuffle([...callsignPool]);
 
@@ -48,7 +79,7 @@ const FleetGenerator = {
       aceQuota = rng.boolean(0.50) ? 1 : 0;
     } else if (diff === 'MASTER') {
       aceQuota = rng.boolean(0.50) ? 2 : 3;
-    } else if (typeof diffProfile.aceCount === 'number') {
+    } else if (diffProfile && typeof diffProfile.aceCount === 'number') {
       aceQuota = Number.isInteger(diffProfile.aceCount)
         ? diffProfile.aceCount
         : (rng.next() < (diffProfile.aceCount - Math.floor(diffProfile.aceCount)) ? Math.ceil(diffProfile.aceCount) : Math.floor(diffProfile.aceCount));
@@ -69,7 +100,7 @@ const FleetGenerator = {
       const specId = shuffledAces[a % shuffledAces.length];
       const spec = catalog[specId];
       if (spec) {
-        const planned = this.planAircraftLoadout(spec, true, doctrine, diff, rng);
+        const planned = this.planAircraftLoadout(spec, true, doctrine, diff, rng.next);
         if (spentBudget + planned.totalCost <= targetBudget) {
           fleetItems.push({
             specId,
@@ -111,7 +142,7 @@ const FleetGenerator = {
       const specId = rng.pick(ewPool);
       const spec = catalog[specId];
       if (spec) {
-        const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng);
+        const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng.next);
         if (spentBudget + planned.totalCost <= targetBudget) {
           fleetItems.push({
             specId,
@@ -173,7 +204,7 @@ const FleetGenerator = {
       const spec = catalog[chosenId];
       if (!spec) continue;
 
-      const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng);
+      const planned = this.planAircraftLoadout(spec, false, doctrine, diff, rng.next);
 
       if (spentBudget + planned.totalCost <= targetBudget) {
         const hasLead = fleetItems.some(it => it.isLead);
@@ -198,7 +229,7 @@ const FleetGenerator = {
       fleetItems[0].isLead = true;
     }
 
-    const spawnPlans = FormationPlanner.calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rng);
+    const spawnPlans = FormationPlanner.calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rng.next);
     const squadron = [];
 
     spawnPlans.forEach(plan => {
@@ -234,7 +265,13 @@ const FleetGenerator = {
   generateDynamicSquadronWave(waveIndex, team, theaterWidth, theaterHeight, difficultyKey) {
     const diff = difficultyKey;
     const isBlue = (team === 'friendly');
-    const rng = window.PRNG || Math;
+    const prngEngine = window.PRNG || null;
+    const rng = {
+      next: () => (prngEngine && prngEngine.next) ? prngEngine.next() : Math.random(),
+      range: (min, max) => (prngEngine && prngEngine.range) ? prngEngine.range(min, max) : (min + Math.random() * (max - min)),
+      boolean: (chance = 0.5) => (prngEngine && prngEngine.boolean) ? prngEngine.boolean(chance) : (Math.random() < chance)
+    };
+
     const count = (diff === 'FORTIFIED' || diff === 'MASTER' || diff === 'LEGEND') ? 3 : 2;
     const pool = isBlue
       ? ['F-15-SMTD', 'Eurofighter', 'Rafale-C', 'F-22A', 'MQ-101', 'KF-21', 'XFA-36B']
@@ -246,7 +283,7 @@ const FleetGenerator = {
     const items = [];
     for (let i = 0; i < count; i++) {
       const specId = (i === 1 && !isBlue && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff))
-        ? (['MASTER', 'LEGEND'].includes(diff) && (rng.boolean ? rng.boolean() : Math.random() < 0.5) ? 'EA-36' : 'EA-18G')
+        ? (['MASTER', 'LEGEND'].includes(diff) && rng.boolean(0.50) ? 'EA-36' : 'EA-18G')
         : pool[i % pool.length];
       const isLead = (i === 0);
       const isAce = (!isBlue && isLead && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff));
@@ -256,10 +293,10 @@ const FleetGenerator = {
       });
     }
 
-    const plans = FormationPlanner.calculateFormationSpawns(items, team, theaterWidth, theaterHeight, rng);
+    const plans = FormationPlanner.calculateFormationSpawns(items, team, theaterWidth, theaterHeight, rng.next);
     const midY = theaterHeight / 2.0;
     const waveSquadron = plans.map(p => {
-      const heading = isBlue ? (rng.range ? rng.range(-0.08, 0.08) : (Math.random() * 0.16 - 0.08)) : (Math.PI + (rng.range ? rng.range(-0.08, 0.08) : (Math.random() * 0.16 - 0.08)));
+      const heading = isBlue ? rng.range(-0.08, 0.08) : (Math.PI + rng.range(-0.08, 0.08));
       const spawnY = p.item.isLead ? midY : p.y;
       const ac = new Aircraft(p.item.specId, team, p.x, spawnY, heading, null, p.item.callsign, sqName, p.item.isLead, p.item.isAce, 28000);
 

@@ -5,7 +5,26 @@
 
 class SortieSpawner {
   static setupMission(game) {
-    const prng = window.PRNG || Math;
+    const prngEngine = (window.PRNG && typeof window.PRNG.create === 'function')
+      ? window.PRNG.create()
+      : (window.PRNG || null);
+
+    const prng = {
+      next: () => (prngEngine && prngEngine.next) ? prngEngine.next() : Math.random(),
+      range: (min, max) => (prngEngine && prngEngine.range) ? prngEngine.range(min, max) : (min + Math.random() * (max - min)),
+      int: (min, max) => (prngEngine && prngEngine.int) ? prngEngine.int(min, max) : Math.floor(min + Math.random() * (max - min + 1)),
+      shuffle: (list) => {
+        if (!Array.isArray(list)) return [];
+        if (prngEngine && prngEngine.shuffle) return prngEngine.shuffle(list);
+        const copy = [...list];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+    };
+
     if (game.pendingMissionEditorSettings) {
       game.missionEditorBaseSettings = {
         scenarioMode: game.scenarioMode,
@@ -42,11 +61,11 @@ class SortieSpawner {
       hudContainer.classList.remove('hidden');
     }
 
-    ['system-inspect-modal', 'glossary-modal', 'settings-modal', 'rwr-briefing-modal', 'abort-confirm-modal', 'game-over-modal', 'pause-modal'].forEach(id => {
+    ['system-inspect-modal', 'glossary-modal', 'settings-modal', 'rwr-briefing-modal', 'abort-confirm-modal', 'game-over-modal', 'pause-modal', 'dialog-modal', 'tactical-dialog-modal'].forEach(id => {
       const m = document.getElementById(id); if (m) m.classList.remove('active');
     });
 
-    const maxTok = window.CONFIG.TOKEN_MAX;
+    const maxTok = (window.CONFIG && window.CONFIG.TOKEN_MAX) || 8.0;
     game.tokenBucketBlue = maxTok;
     game.tokenBucketRed = maxTok;
     game.missiles = [];
@@ -77,11 +96,11 @@ class SortieSpawner {
     const aarTimelineEl = document.getElementById('aar-timeline-list');
     if (aarTimelineEl) aarTimelineEl.innerHTML = '';
 
-    const mapW = window.CONFIG.THEATER_WIDTH_KM;
-    const mapH = window.CONFIG.THEATER_HEIGHT_KM;
+    const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
+    const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
     const midY = mapH / 2.0;
     const rawCalls = window.CALLSIGN_POOL || ['Viper', 'Ghost', 'Talon', 'Mobius'];
-    const callsignPool = prng.shuffle ? prng.shuffle([...rawCalls]) : [...rawCalls].sort(() => Math.random() - 0.5);
+    const callsignPool = prng.shuffle([...rawCalls]);
     const takeCallsign = () => callsignPool.length ? callsignPool.pop() : 'Viper';
 
     game.alliedAircraft = [];
@@ -111,12 +130,12 @@ class SortieSpawner {
       if (chosenLeadIdx === -1) chosenLeadIdx = 0;
       launchSquadron.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
 
-      const spawnPlans = FormationPlanner.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH, prng);
+      const spawnPlans = FormationPlanner.calculateFormationSpawns(launchSquadron, 'friendly', mapW, mapH, prng.next);
       spawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
-        const heading = prng.range ? prng.range(-0.08, 0.08) : (Math.random() * 0.16 - 0.08);
-        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + (prng.int ? prng.int(0, 17) : Math.floor(Math.random() * 18)) * 1000);
+        const heading = prng.range(-0.08, 0.08);
+        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + prng.int(0, 17) * 1000);
         const spawnY = plan.isLead ? midY : plan.y;
 
         const ac = new Aircraft(
@@ -160,14 +179,14 @@ class SortieSpawner {
         isAce: false
       }));
 
-      const randomizedRedRoster = prng.shuffle ? prng.shuffle([...clonedRedRoster]) : [...clonedRedRoster].sort(() => Math.random() - 0.5);
+      const randomizedRedRoster = prng.shuffle([...clonedRedRoster]);
 
-      const redSpawnPlans = FormationPlanner.calculateFormationSpawns(randomizedRedRoster, 'hostile', mapW, mapH, prng);
+      const redSpawnPlans = FormationPlanner.calculateFormationSpawns(randomizedRedRoster, 'hostile', mapW, mapH, prng.next);
       redSpawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
-        const heading = Math.PI + (prng.range ? prng.range(-0.08, 0.08) : (Math.random() * 0.16 - 0.08));
-        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + (prng.int ? prng.int(0, 17) : Math.floor(Math.random() * 18)) * 1000);
+        const heading = Math.PI + prng.range(-0.08, 0.08);
+        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + prng.int(0, 17) * 1000);
         const spawnY = plan.isLead ? midY : plan.y;
 
         const ac = new Aircraft(
@@ -194,12 +213,12 @@ class SortieSpawner {
         mirrorSquadron = ProcurementPresets.getBuiltinPreset('stealth');
       }
 
-      const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH, prng);
+      const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH, prng.next);
       spawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
-        const heading = Math.PI + (prng.range ? prng.range(-0.08, 0.08) : (Math.random() * 0.16 - 0.08));
-        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + (prng.int ? prng.int(0, 17) : Math.floor(Math.random() * 18)) * 1000);
+        const heading = Math.PI + prng.range(-0.08, 0.08);
+        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + prng.int(0, 17) * 1000);
         const spawnY = plan.isLead ? midY : plan.y;
 
         const ac = new Aircraft(
@@ -220,7 +239,7 @@ class SortieSpawner {
         game.hostileAircraft.push(ac);
       });
     } else {
-      const redDiff = (editorMission && editorMission.redFleet) ? editorMission.redFleet : game.aiDifficulty;
+      const redDiff = (editorMission && editorMission.redFleet) ? editorMission.redFleet : (game.aiDifficulty || 'VETERAN');
       const redBudget = (editorMission && editorMission.redBudget) ? Number(editorMission.redBudget) : null;
       game.hostileAircraft = FleetGenerator.generateHostileFleet(redDiff, game.aiDoctrine, mapW, mapH, { budget: redBudget });
     }

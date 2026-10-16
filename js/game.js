@@ -76,9 +76,13 @@ class AirspaceStandoffGame {
     this.detectedByBlue = new Set();
     this.detectedByRed = new Set();
 
-    if (typeof RadarRenderer === 'undefined') throw new Error('TacticalRadarRenderer class is not loaded.');
+    if (typeof RadarRenderer === 'undefined' && typeof TacticalRadarRenderer === 'undefined') {
+      throw new Error('RadarRenderer class is not loaded.');
+    }
     if (typeof DeckManager === 'undefined') throw new Error('DeckManager class is not loaded.');
-    if (typeof AICommander === 'undefined') throw new Error('TacticalAICommander class is not loaded.');
+    if (typeof AICommander === 'undefined' && typeof TacticalAICommander === 'undefined') {
+      throw new Error('AICommander class is not loaded.');
+    }
     if (typeof CombatSystem === 'undefined') throw new Error('CombatSystem class is not loaded.');
     if (typeof SimulationSystem === 'undefined') throw new Error('SimulationSystem class is not loaded.');
     if (typeof AvionicsUI === 'undefined') throw new Error('AvionicsUI class is not loaded.');
@@ -87,9 +91,12 @@ class AirspaceStandoffGame {
     if (typeof InspectionModeController === 'undefined') throw new Error('InspectionModeController class is not loaded.');
     if (typeof ProcurementManager === 'undefined') throw new Error('ProcurementManager class is not loaded.');
 
-    this.radar = new RadarRenderer('radar-canvas');
+    const RadarClass = typeof RadarRenderer !== 'undefined' ? RadarRenderer : TacticalRadarRenderer;
+    const AIClass = typeof AICommander !== 'undefined' ? AICommander : TacticalAICommander;
+
+    this.radar = new RadarClass('radar-canvas');
     this.deckManager = new DeckManager(this);
-    this.ai = new AICommander(this);
+    this.ai = new AIClass(this);
     this.combat = new CombatSystem(this);
     this.simulation = new SimulationSystem(this);
     this.avionics = new AvionicsUI(this);
@@ -285,8 +292,9 @@ class AirspaceStandoffGame {
     }
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
     this.simulation.captureReplayFrame(true);
-    if (typeof DebriefReportSystem === 'undefined') throw new Error('DebriefReportSystem is not loaded.');
-    DebriefReportSystem.renderSortieSummary(this, blueWon, msg);
+    const reportSys = (typeof DebriefReportSystem !== 'undefined') ? DebriefReportSystem : (typeof AfterActionReportSystem !== 'undefined' ? AfterActionReportSystem : null);
+    if (!reportSys) throw new Error('Debrief report system is not loaded.');
+    reportSys.renderSortieSummary(this, blueWon, msg);
   }
 }
 

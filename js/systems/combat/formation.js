@@ -15,7 +15,12 @@ class FormationPlanner {
   }
 
   static calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rngFn) {
-    const rng = rngFn ? (rngFn.next ? () => rngFn.next() : rngFn) : (() => (window.PRNG ? window.PRNG.next() : Math.random()));
+    const rng = (rngFn && typeof rngFn === 'function')
+      ? rngFn
+      : ((rngFn && typeof rngFn.next === 'function')
+        ? () => rngFn.next()
+        : (() => (window.PRNG && typeof window.PRNG.next === 'function' ? window.PRNG.next() : Math.random())));
+
     const isBlue = (team === 'friendly');
     const total = fleetItems.length;
     if (total === 0) return [];
