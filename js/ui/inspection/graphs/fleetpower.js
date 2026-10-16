@@ -1,13 +1,29 @@
 /**
  * AIRSPACE STANDOFF: Fleet Strength Over Time (Single Difference Line)
- * Difference line: Positive Y = Blue Advantage ($M), Negative Y = Red Advantage ($M)
+ * Supports live simulation state, archived leaderboard dossiers, and standalone history arrays.
  */
 
 class FleetPowerRenderer {
-  static renderCanvas(canvas, game) {
-    if (!canvas || !game) return;
+  static renderCanvas(canvas, source, optionalBudgetMax) {
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    let history = [];
+    let maxBudget = 400;
+
+    if (Array.isArray(source)) {
+      history = source;
+      maxBudget = Number(optionalBudgetMax) || 400;
+    } else if (source && source.simulation) {
+      history = (source.simulation.fleetStrengthHistory && source.simulation.fleetStrengthHistory.length > 0)
+        ? source.simulation.fleetStrengthHistory
+        : [];
+      maxBudget = Number(source.budgetMax) || 400;
+    } else if (source && typeof source === 'object') {
+      history = Array.isArray(source.fleetPower) ? source.fleetPower : [];
+      maxBudget = Number(source.budgetTier || source.budgetCap || optionalBudgetMax) || 400;
+    }
 
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const w = Math.max(1, canvas.clientWidth || 300);
@@ -22,6 +38,14 @@ class FleetPowerRenderer {
     ctx.fillStyle = '#01040a';
     ctx.fillRect(0, 0, w, h);
 
+    if (!history || history.length < 2) {
+      ctx.fillStyle = '#64748b';
+      ctx.font = '600 11px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('ACCUMULATING MATCH MOMENTUM...', w / 2, h / 2);
+      return;
+    }
+
     const padL = 48;
     const padR = 16;
     const padT = 18;
@@ -30,28 +54,19 @@ class FleetPowerRenderer {
     const plotH = h - padT - padB;
     const midY = padT + plotH / 2;
 
-    const history = (game.simulation && game.simulation.fleetStrengthHistory) || [];
-    if (history.length < 2) {
-      ctx.fillStyle = '#64748b';
-      ctx.font = '600 11px "JetBrains Mono", monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('ACCUMULATING MATCH MOMENTUM...', w / 2, h / 2);
-      return;
-    }
-
-    const maxBudget = Math.max(150, (game.budgetMax || 400) * 0.95);
+    const ceilingBudget = Math.max(150, maxBudget * 0.95);
     const tStart = history[0].time;
     const tEnd = history[history.length - 1].time;
     const tSpan = Math.max(5, tEnd - tStart);
 
     const toX = (t) => padL + ((t - tStart) / tSpan) * plotW;
-    const toYDiff = (diff) => midY - (Math.max(-maxBudget, Math.min(maxBudget, diff)) / maxBudget) * (plotH / 2);
+    const toYDiff = (diff) => midY - (Math.max(-ceilingBudget, Math.min(ceilingBudget, diff)) / ceilingBudget) * (plotH / 2);
 
     // Horizontal Grid Lines
     ctx.strokeStyle = 'rgba(56, 189, 248, 0.10)';
     ctx.lineWidth = 1;
 
-    [100, 200, 300].filter(v => v <= maxBudget).forEach(v => {
+    [100, 200, 300, 400].filter(v => v <= ceilingBudget).forEach(v => {
       // Upper half: Blue Advantage (+v M)
       const yB = toYDiff(v);
       ctx.beginPath(); ctx.moveTo(padL, yB); ctx.lineTo(w - padR, yB); ctx.stroke();
@@ -116,13 +131,11 @@ class FleetPowerRenderer {
         ctx.fillStyle = 'rgba(244, 63, 94, 0.32)';
         ctx.fill();
       } else {
-        // Zero crossing interpolation
         const span = p2.diff - p1.diff;
         const frac = span !== 0 ? (0 - p1.diff) / span : 0.5;
         const crossT = p1.t + frac * (p2.t - p1.t);
         const crossX = toX(crossT);
 
-        // First half
         ctx.beginPath();
         ctx.moveTo(x1, midY);
         ctx.lineTo(x1, y1);
@@ -131,7 +144,6 @@ class FleetPowerRenderer {
         ctx.fillStyle = p1.diff > 0 ? 'rgba(56, 189, 248, 0.32)' : 'rgba(244, 63, 94, 0.32)';
         ctx.fill();
 
-        // Second half
         ctx.beginPath();
         ctx.moveTo(crossX, midY);
         ctx.lineTo(x2, y2);
@@ -159,7 +171,7 @@ class FleetPowerRenderer {
       ctx.stroke();
     }
 
-    // Clean Telemetry Header Callouts (Raw Fleet Asset Values without signs)
+    // Clean Telemetry Header Callouts
     const last = history[history.length - 1];
     const curDiff = last.blueCost - last.redCost;
     const isAdvBlue = curDiff >= 0;
@@ -191,7 +203,7 @@ class FleetPowerRenderer {
     ctx.font = '600 8.5px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
     ctx.fillText('SORTIE LAUNCH', padL, h - padB + 13);
-    ctx.fillText('CURRENT MATCH TIME', padL + plotW, h - padB + 13);
+    ctx.fillText('SORTIE END', padL + plotW, h - padB + 13);
   }
 }
 

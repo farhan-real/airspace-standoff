@@ -25,6 +25,16 @@ class ModalDebriefTemplate {
 
             <div id="game-over-stats"></div>
 
+            <div class="aar-fleet-power-box">
+              <div class="aar-replay-heading">
+                <span class="strip-subhead" style="color: var(--color-ice-highlight); margin:0; border-bottom: none;">FLEET STRENGTH OVER TIME</span>
+                <span class="aar-replay-status">NET COMBAT POWER ADVANTAGE</span>
+              </div>
+              <div class="inspection-graph-canvas-wrap">
+                <canvas id="aar-fleet-power-canvas" class="inspection-graph-canvas" style="height: 185px;" aria-label="Fleet strength over time graph"></canvas>
+              </div>
+            </div>
+
             <div class="aar-replay-container">
               <div class="aar-replay-heading">
                 <span class="strip-subhead" style="color: var(--color-ice-highlight); margin:0; border-bottom: none;">SORTIE REPLAY</span>

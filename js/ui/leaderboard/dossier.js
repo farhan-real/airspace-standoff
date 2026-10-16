@@ -99,6 +99,16 @@ class LeaderboardDossierRenderer {
         </div>
       </div>
 
+      <div class="dossier-card dossier-fleet-power-card">
+        <div style="color:#00f0ff;font-size:0.64rem;font-weight:800;border-bottom:1px solid #162c46;padding-bottom:3px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+          <span>FLEET STRENGTH OVER TIME</span>
+          <span style="color:#8494ab;font-size:0.56rem;">NET COMBAT POWER ADVANTAGE</span>
+        </div>
+        <div class="inspection-graph-canvas-wrap">
+          <canvas class="dossier-fleet-power-canvas" style="display:block;width:100%;height:185px;" aria-label="Archived fleet strength graph"></canvas>
+        </div>
+      </div>
+
       <div class="aar-replay-container dossier-replay-container">
         <div class="aar-replay-heading">
           <span class="strip-subhead" style="color:#7dd3fc;margin:0;border-bottom:none;">SORTIE REPLAY</span>
@@ -135,6 +145,13 @@ class LeaderboardDossierRenderer {
         </div>
         <div class="dossier-roster-list">${pilotsListHtml || '<span style="color:#8494ab;font-size:0.60rem;font-style:italic;">No pilot records found.</span>'}</div>
       </div>`;
+
+    const dossierPowerCanvas = detailContainer.querySelector('.dossier-fleet-power-canvas');
+    if (dossierPowerCanvas && typeof FleetPowerRenderer !== 'undefined') {
+      requestAnimationFrame(() => {
+        FleetPowerRenderer.renderCanvas(dossierPowerCanvas, item);
+      });
+    }
 
     if (window.AfterActionReplay && typeof window.AfterActionReplay.showArchived === 'function') {
       window.AfterActionReplay.showArchived(

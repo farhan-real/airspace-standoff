@@ -4,6 +4,12 @@
  */
 
 class DebriefReportSystem {
+  static downsampleFleetHistory(history, maxPoints = 120) {
+    if (!history || history.length <= maxPoints) return history || [];
+    const stride = Math.ceil(history.length / maxPoints);
+    return history.filter((_, idx) => idx % stride === 0 || idx === history.length - 1);
+  }
+
   static renderSortieSummary(game, blueWon, msg) {
     if (window.ModalDebriefTemplate && typeof window.ModalDebriefTemplate.ensure === 'function') {
       window.ModalDebriefTemplate.ensure();
@@ -140,6 +146,10 @@ class DebriefReportSystem {
       ? window.AI_DIFFICULTIES[metrics.scoreData.diffKey].name
       : (metrics.scoreData.diffName || metrics.scoreData.diffKey);
 
+    const archivedFleetPower = this.downsampleFleetHistory(
+      (game.simulation && game.simulation.fleetStrengthHistory) ? game.simulation.fleetStrengthHistory : []
+    );
+
     if (!game.isMissionEditorMatch && window.Persistence && window.Persistence.saveTopSortie) {
       window.Persistence.saveTopSortie({
         id: 'SORTIE_' + Date.now(),
@@ -173,6 +183,7 @@ class DebriefReportSystem {
         },
         topPilots: archivedTopThree,
         timeline: archivedTimeline,
+        fleetPower: archivedFleetPower,
         replay: window.AfterActionReplay && typeof window.AfterActionReplay.encode === 'function'
           ? window.AfterActionReplay.encode((game.simulation && game.simulation.replaySnapshots) || [])
           : null,
@@ -221,6 +232,15 @@ class DebriefReportSystem {
     }
 
     modal.classList.add('active');
+
+    // Render Fleet Power Graph on End Screen regardless of inspection mode
+    const powerCanvas = document.getElementById('aar-fleet-power-canvas');
+    if (powerCanvas && typeof FleetPowerRenderer !== 'undefined') {
+      requestAnimationFrame(() => {
+        FleetPowerRenderer.renderCanvas(powerCanvas, game);
+      });
+    }
+
     if (window.AfterActionReplay && typeof window.AfterActionReplay.show === 'function') {
       window.AfterActionReplay.show(game);
     }

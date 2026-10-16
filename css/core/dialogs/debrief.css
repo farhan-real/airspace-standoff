@@ -67,7 +67,8 @@
 
 .ace-podium-section,
 .aar-full-roster-box,
-.aar-timeline-container {
+.aar-timeline-container,
+.aar-fleet-power-box {
   display: flex;
   flex-direction: column;
   gap: 6px;

@@ -43,6 +43,22 @@ class SimulationSystem {
   recordCivilianShootdown(team, civ, src, wpn) { this.scoring.recordCivilianShootdown(team, civ, src, wpn); }
   getElapsedTimeString() { return this.scoring.getElapsedTimeString(); }
 
+  sampleFleetStrength() {
+    let bVal = 0, rVal = 0;
+    for (const a of (this.game.alliedAircraft || [])) {
+      if (a.hp > 0.05) bVal += (a.totalProcurementCost || 20) * (a.hp / Math.max(1, a.maxHp || 4));
+    }
+    for (const h of (this.game.hostileAircraft || [])) {
+      if (h.hp > 0.05) rVal += (h.totalProcurementCost || 20) * (h.hp / Math.max(1, h.maxHp || 4));
+    }
+    this.fleetStrengthHistory.push({
+      time: Number(this.elapsedTimeSec.toFixed(1)),
+      blueCost: Number(bVal.toFixed(1)),
+      redCost: Number(rVal.toFixed(1))
+    });
+    if (this.fleetStrengthHistory.length > 350) this.fleetStrengthHistory.shift();
+  }
+
   resetReplay() {
     this.elapsedTimeSec = 0;
     this.replaySnapshots = [];
@@ -51,12 +67,11 @@ class SimulationSystem {
     this.fleetStrengthTimer = 0;
     this.victoryDelayTimer = 0.0;
     this.pendingGameOver = null;
+    this.sampleFleetStrength();
   }
 
   captureReplayFrame(force = false) {
-    if (typeof AfterActionReplayCodec === 'undefined') {
-      throw new Error('AfterActionReplayCodec is not loaded.');
-    }
+    if (typeof AfterActionReplayCodec === 'undefined') throw new Error('AfterActionReplayCodec is not loaded.');
     AfterActionReplayCodec.captureFrame(this, force);
   }
 
@@ -184,20 +199,7 @@ class SimulationSystem {
     this.fleetStrengthTimer += dt;
     if (this.fleetStrengthTimer >= 0.50) {
       this.fleetStrengthTimer %= 0.50;
-      let bVal = 0;
-      for (const a of this.game.alliedAircraft) {
-        if (a.hp > 0.05) bVal += (a.totalProcurementCost || 20) * (a.hp / Math.max(1, a.maxHp || 4));
-      }
-      let rVal = 0;
-      for (const h of this.game.hostileAircraft) {
-        if (h.hp > 0.05) rVal += (h.totalProcurementCost || 20) * (h.hp / Math.max(1, h.maxHp || 4));
-      }
-      this.fleetStrengthHistory.push({
-        time: this.elapsedTimeSec,
-        blueCost: Number(bVal.toFixed(1)),
-        redCost: Number(rVal.toFixed(1))
-      });
-      if (this.fleetStrengthHistory.length > 350) this.fleetStrengthHistory.shift();
+      this.sampleFleetStrength();
     }
 
     this.checkWinConditions(dt);
