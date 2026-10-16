@@ -157,7 +157,7 @@ window.AI_DIFFICULTIES = {
     salvoMaxMissiles: 1,
     verticalCombat: false,
     formationDoctrine: 'LOOSE_FOLLOW',
-    aceCount: 1
+    aceCount: 0.5
   },
   ESCALATED: {
     name: 'Escalated Airspace',
@@ -265,7 +265,7 @@ window.AI_DIFFICULTIES = {
     salvoMaxMissiles: 2,
     verticalCombat: true,
     formationDoctrine: 'HIGH_LOW_BRACKET',
-    aceCount: 2
+    aceCount: 2.5
   },
   LEGEND: {
     name: 'Extreme Threat Sector',

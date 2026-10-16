@@ -46,7 +46,17 @@ const FleetGenerator = {
     const fleetItems = [];
     let spentBudget = 0.0;
 
-    const aceQuota = diffProfile.aceCount !== undefined ? diffProfile.aceCount : ((diff === 'CADET' || diff === 'BUFFER') ? 0 : 1);
+    let aceQuota = ((diff === 'CADET' || diff === 'BUFFER') ? 0 : 1);
+    if (diff === 'VETERAN') {
+      aceQuota = (rng() < 0.50) ? 1 : 0;
+    } else if (diff === 'MASTER') {
+      aceQuota = (rng() < 0.50) ? 2 : 3;
+    } else if (typeof diffProfile.aceCount === 'number') {
+      aceQuota = Number.isInteger(diffProfile.aceCount)
+        ? diffProfile.aceCount
+        : (rng() < (diffProfile.aceCount - Math.floor(diffProfile.aceCount)) ? Math.ceil(diffProfile.aceCount) : Math.floor(diffProfile.aceCount));
+    }
+
     const aceCandidates = (diff === 'CADET' || diff === 'BUFFER' || diff === 'VETERAN' || diff === 'ESCALATED' || diff === 'ELITE' || diff === 'FORWARD')
       ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM', 'F-14D', 'Su-57', 'YF-23', 'J-20']
       : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B', 'F-22C-COFFIN', 'Su-57', 'YF-23', 'F-22A', 'F-15EX'];
