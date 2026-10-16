@@ -2,7 +2,7 @@
  * AIRSPACE STANDOFF // Tactical RWR Audio Tone Modulation Engine
  */
 
-class TacticalRWRAudio {
+class RWRAudio {
   constructor() {
     this.lastRwrState = 'clean';
     this.rwrPulseTimer = null;
@@ -81,4 +81,4 @@ class TacticalRWRAudio {
   }
 }
 
-window.TacticalRWRAudio = TacticalRWRAudio;
+window.RWRAudio = RWRAudio;

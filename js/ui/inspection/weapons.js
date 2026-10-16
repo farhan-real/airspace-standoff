@@ -6,7 +6,7 @@
 class InspectionWeapons {
   static renderWeaponsDashboard(controller, entity) {
     if (!entity) {
-      return '<div class="inspection-empty"><b>NO WEAPON TARGET</b><span>Select an aircraft or contact to evaluate tactical solutions.</span></div>';
+      return '<div class="inspection-empty"><b>NO WEAPON TARGET</b><span>Select an aircraft or contact to evaluate firing solutions.</span></div>';
     }
     if (entity.weapon && entity.target) {
       return (typeof InspectionSolutionsRenderer !== 'undefined')

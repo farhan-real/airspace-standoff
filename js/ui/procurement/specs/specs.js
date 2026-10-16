@@ -51,12 +51,12 @@ class ProcurementSpecs {
       const tagTarget = e.target.closest('[data-tag-tooltip]');
       if (tagTarget) {
         e.stopPropagation();
-        const title = tagTarget.getAttribute('data-tag-title') || 'TACTICAL SPECIFICATION';
+        const title = tagTarget.getAttribute('data-tag-title') || 'SYSTEM SPECIFICATION';
         const desc = tagTarget.getAttribute('data-tag-tooltip');
         if (desc) {
           const html = `
             <div class="tt-touch-close-bar">
-              <span class="tt-touch-title">TACTICAL DATA</span>
+              <span class="tt-touch-title">SYSTEM DATA</span>
               <button type="button" class="tt-touch-close-btn"><img src="icons/close.svg" width="9" height="9" alt="Close" style="vertical-align:middle;margin-right:2px;"> CLOSE</button>
             </div>
             <div class="tt-header-row"><span class="tt-title">${title}</span></div>
@@ -75,7 +75,7 @@ class ProcurementSpecs {
       if (document.body.classList.contains('has-touch') && this.tooltipEl.classList.contains('touch-pinned')) return;
       const tagTarget = e.target.closest('[data-tag-tooltip]');
       if (tagTarget) {
-        const title = tagTarget.getAttribute('data-tag-title') || 'TACTICAL SPECIFICATION';
+        const title = tagTarget.getAttribute('data-tag-title') || 'SYSTEM SPECIFICATION';
         const desc = tagTarget.getAttribute('data-tag-tooltip');
         if (desc) {
           const html = `<div class="tt-header-row"><span class="tt-title">${title}</span></div><div class="tt-footer-desc">${desc}</div>`;

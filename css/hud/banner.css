@@ -1,6 +1,6 @@
 /* AIRSPACE STANDOFF: Header Banner Console with Aerospace Obsidian Glass */
 
-.tactical-banner {
+.hud-banner {
   height: 44px;
   background: var(--liquid-glass-bg);
   border-bottom: 1px solid var(--glass-border);
@@ -18,8 +18,8 @@
   position: relative;
 }
 
-html.safe-zone-on .tactical-banner,
-body.safe-zone-on .tactical-banner {
+html.safe-zone-on .hud-banner,
+body.safe-zone-on .hud-banner {
   padding-left: max(12px, var(--safe-left, 0px)) !important;
   padding-right: max(12px, var(--safe-right, 0px)) !important;
 }
@@ -315,7 +315,7 @@ body.has-touch .banner-cam-controls {
 }
 
 @media (max-width: 1024px) {
-  .tactical-banner {
+  .hud-banner {
     overflow-x: auto !important;
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
@@ -323,10 +323,10 @@ body.has-touch .banner-cam-controls {
     padding-left: 8px !important;
     padding-right: 8px !important;
   }
-  .tactical-banner::-webkit-scrollbar { display: none; }
+  .hud-banner::-webkit-scrollbar { display: none; }
   .top-quick-actions { margin-left: 6px; }
 }
 
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
-  .tactical-banner { height: 40px !important; padding: 0 8px !important; gap: 6px !important; }
+  .hud-banner { height: 40px !important; padding: 0 8px !important; gap: 6px !important; }
 }

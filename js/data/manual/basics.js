@@ -190,7 +190,7 @@ window.MANUAL_BASICS = [
         <div class="ge-card" style="border-left:3px solid #38bdf8;">
           <b style="color:#38bdf8;">MANUAL CREWED FLIGHT CONTROL</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Unlike autonomous UCAV drones, COFFIN airframes (e.g. F-15 S/MT, Su-37, F-22C, ADF-11F) remain under <b>100% manual human pilot command</b>, blending machine reaction times with human tactical intuition.
+            Unlike autonomous UCAV drones, COFFIN airframes (e.g. F-15 S/MT, Su-37, F-22C, ADF-11F) remain under <b>100% manual human pilot command</b>, blending machine reaction times with human pilot intuition.
           </div>
         </div>
       </div>

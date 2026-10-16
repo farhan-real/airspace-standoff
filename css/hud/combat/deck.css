@@ -1,6 +1,6 @@
-/* AIRSPACE STANDOFF: Tactical Maneuver Deck with Obsidian Glass */
+/* AIRSPACE STANDOFF: Maneuver Deck with Obsidian Glass */
 
-.tactical-deck-bay {
+.maneuver-deck-bay {
   height: 120px;
   min-height: 120px;
   max-height: 120px;
@@ -15,8 +15,8 @@
   box-sizing: border-box;
 }
 
-html.safe-zone-on .tactical-deck-bay,
-body.safe-zone-on .tactical-deck-bay {
+html.safe-zone-on .maneuver-deck-bay,
+body.safe-zone-on .maneuver-deck-bay {
   padding-left: max(10px, var(--safe-left, 0px)) !important;
   padding-right: max(10px, var(--safe-right, 0px)) !important;
 }
@@ -211,14 +211,14 @@ body.safe-zone-on .tactical-deck-bay {
 .recom-badge.hidden { display: none; }
 
 @media (max-width: 1024px) and (orientation: portrait) {
-  .tactical-deck-bay {
+  .maneuver-deck-bay {
     height: 56px !important;
     min-height: 56px !important;
     max-height: 56px !important;
     padding: 3px 8px !important;
   }
-  html.safe-zone-on .tactical-deck-bay,
-  body.safe-zone-on .tactical-deck-bay {
+  html.safe-zone-on .maneuver-deck-bay,
+  body.safe-zone-on .maneuver-deck-bay {
     padding-left: max(8px, var(--safe-left, 0px)) !important;
     padding-right: max(8px, var(--safe-right, 0px)) !important;
   }
@@ -239,14 +239,14 @@ body.safe-zone-on .tactical-deck-bay {
 }
 
 @media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
-  .tactical-deck-bay {
+  .maneuver-deck-bay {
     height: 54px !important;
     min-height: 54px !important;
     max-height: 54px !important;
     padding: 3px 8px !important;
   }
-  html.safe-zone-on .tactical-deck-bay,
-  body.safe-zone-on .tactical-deck-bay {
+  html.safe-zone-on .maneuver-deck-bay,
+  body.safe-zone-on .maneuver-deck-bay {
     padding-left: max(8px, var(--safe-left, 0px)) !important;
     padding-right: max(8px, var(--safe-right, 0px)) !important;
   }

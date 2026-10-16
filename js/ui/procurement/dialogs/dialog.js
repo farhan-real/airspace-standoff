@@ -3,7 +3,7 @@
  * Standardized operational dialogs and clean confirmations.
  */
 
-class TacticalDialogModal {
+class DialogModal {
   constructor(procurementManager) {
     this.pm = procurementManager;
     this._dialogCallback = null;
@@ -11,9 +11,9 @@ class TacticalDialogModal {
   }
 
   ensureModal() {
-    if (document.getElementById('tactical-dialog-modal')) return;
+    if (document.getElementById('dialog-modal')) return;
     if (window.ModalDialogTemplates && typeof window.ModalDialogTemplates.ensure === 'function') {
-      window.ModalDialogTemplates.ensure('tactical-dialog-modal');
+      window.ModalDialogTemplates.ensure('dialog-modal');
     }
     this.bindModalEvents();
   }
@@ -21,10 +21,10 @@ class TacticalDialogModal {
   bindModalEvents() {
     if (this._modalBound) return;
     this._modalBound = true;
-    const dialogConfirmBtn = document.getElementById('btn-tactical-dialog-confirm');
-    const dialogCancelBtn = document.getElementById('btn-tactical-dialog-cancel');
-    const dialogCloseBtn = document.getElementById('btn-tactical-dialog-close');
-    const dialogInput = document.getElementById('tactical-dialog-input');
+    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm');
+    const dialogCancelBtn = document.getElementById('btn-dialog-cancel');
+    const dialogCloseBtn = document.getElementById('btn-dialog-close');
+    const dialogInput = document.getElementById('dialog-input');
 
     if (dialogCloseBtn) dialogCloseBtn.onclick = () => this.close();
     if (dialogCancelBtn) dialogCancelBtn.onclick = () => this.close();
@@ -46,7 +46,7 @@ class TacticalDialogModal {
   }
 
   close() {
-    const dialogModal = document.getElementById('tactical-dialog-modal');
+    const dialogModal = document.getElementById('dialog-modal');
     if (dialogModal) dialogModal.classList.remove('active');
     this._dialogCallback = null;
     if (this.pm.game.controls) this.pm.game.controls.autoUnpauseOnDialogClose();
@@ -54,14 +54,14 @@ class TacticalDialogModal {
 
   showPrompt(title, msg, defValue, onConfirm) {
     this.ensureModal();
-    const dialogModal = document.getElementById('tactical-dialog-modal');
-    const dialogTitle = document.getElementById('tactical-dialog-title');
-    const dialogMsg = document.getElementById('tactical-dialog-msg');
-    const dialogInputWrap = document.getElementById('tactical-dialog-field-wrap');
-    const dialogInput = document.getElementById('tactical-dialog-input');
-    const dialogOptionsWrap = document.getElementById('tactical-dialog-options-wrap');
-    const dialogConfirmBtn = document.getElementById('btn-tactical-dialog-confirm');
-    const dialogCancelBtn = document.getElementById('btn-tactical-dialog-cancel');
+    const dialogModal = document.getElementById('dialog-modal');
+    const dialogTitle = document.getElementById('dialog-title');
+    const dialogMsg = document.getElementById('dialog-msg');
+    const dialogInputWrap = document.getElementById('dialog-field-wrap');
+    const dialogInput = document.getElementById('dialog-input');
+    const dialogOptionsWrap = document.getElementById('dialog-options-wrap');
+    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm');
+    const dialogCancelBtn = document.getElementById('btn-dialog-cancel');
 
     if (!dialogModal) return;
     if (this.pm.game.controls) this.pm.game.controls.autoPauseOnDialogOpen();
@@ -73,7 +73,7 @@ class TacticalDialogModal {
     if (dialogCancelBtn) dialogCancelBtn.style.display = 'inline-flex';
     if (dialogConfirmBtn) {
       dialogConfirmBtn.textContent = 'CONFIRM';
-      dialogConfirmBtn.className = 'hud-btn tactical-dialog-btn highlight';
+      dialogConfirmBtn.className = 'hud-btn dialog-btn highlight';
       dialogConfirmBtn.style.display = 'inline-flex';
     }
     this._dialogCallback = onConfirm;
@@ -89,13 +89,13 @@ class TacticalDialogModal {
 
   showConfirm(title, msg, onConfirm, options = {}) {
     this.ensureModal();
-    const dialogModal = document.getElementById('tactical-dialog-modal');
-    const dialogTitle = document.getElementById('tactical-dialog-title');
-    const dialogMsg = document.getElementById('tactical-dialog-msg');
-    const dialogInputWrap = document.getElementById('tactical-dialog-field-wrap');
-    const dialogOptionsWrap = document.getElementById('tactical-dialog-options-wrap');
-    const dialogConfirmBtn = document.getElementById('btn-tactical-dialog-confirm');
-    const dialogCancelBtn = document.getElementById('btn-tactical-dialog-cancel');
+    const dialogModal = document.getElementById('dialog-modal');
+    const dialogTitle = document.getElementById('dialog-title');
+    const dialogMsg = document.getElementById('dialog-msg');
+    const dialogInputWrap = document.getElementById('dialog-field-wrap');
+    const dialogOptionsWrap = document.getElementById('dialog-options-wrap');
+    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm');
+    const dialogCancelBtn = document.getElementById('btn-dialog-cancel');
 
     if (!dialogModal) return;
     if (this.pm.game.controls) this.pm.game.controls.autoPauseOnDialogOpen();
@@ -106,7 +106,7 @@ class TacticalDialogModal {
     if (dialogCancelBtn) dialogCancelBtn.style.display = 'inline-flex';
     if (dialogConfirmBtn) {
       dialogConfirmBtn.textContent = options.confirmText || 'CONFIRM';
-      dialogConfirmBtn.className = 'hud-btn tactical-dialog-btn ' + (options.isAlert ? 'alert' : 'highlight');
+      dialogConfirmBtn.className = 'hud-btn dialog-btn ' + (options.isAlert ? 'alert' : 'highlight');
       dialogConfirmBtn.style.display = 'inline-flex';
     }
     this._dialogCallback = () => { if (onConfirm) onConfirm(); };
@@ -115,13 +115,13 @@ class TacticalDialogModal {
 
   showAlert(title, msg) {
     this.ensureModal();
-    const dialogModal = document.getElementById('tactical-dialog-modal');
-    const dialogTitle = document.getElementById('tactical-dialog-title');
-    const dialogMsg = document.getElementById('tactical-dialog-msg');
-    const dialogInputWrap = document.getElementById('tactical-dialog-field-wrap');
-    const dialogOptionsWrap = document.getElementById('tactical-dialog-options-wrap');
-    const dialogConfirmBtn = document.getElementById('btn-tactical-dialog-confirm');
-    const dialogCancelBtn = document.getElementById('btn-tactical-dialog-cancel');
+    const dialogModal = document.getElementById('dialog-modal');
+    const dialogTitle = document.getElementById('dialog-title');
+    const dialogMsg = document.getElementById('dialog-msg');
+    const dialogInputWrap = document.getElementById('dialog-field-wrap');
+    const dialogOptionsWrap = document.getElementById('dialog-options-wrap');
+    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm');
+    const dialogCancelBtn = document.getElementById('btn-dialog-cancel');
 
     if (!dialogModal) return;
     if (this.pm.game.controls) this.pm.game.controls.autoPauseOnDialogOpen();
@@ -132,7 +132,7 @@ class TacticalDialogModal {
     if (dialogCancelBtn) dialogCancelBtn.style.display = 'none';
     if (dialogConfirmBtn) {
       dialogConfirmBtn.textContent = 'OK';
-      dialogConfirmBtn.className = 'hud-btn tactical-dialog-btn highlight';
+      dialogConfirmBtn.className = 'hud-btn dialog-btn highlight';
       dialogConfirmBtn.style.display = 'inline-flex';
     }
     this._dialogCallback = null;
@@ -143,14 +143,14 @@ class TacticalDialogModal {
     const item = this.pm.game.procurementSquadron[sIdx];
     if (!item) return;
     this.ensureModal();
-    const dialogModal = document.getElementById('tactical-dialog-modal');
-    const dialogTitle = document.getElementById('tactical-dialog-title');
-    const dialogMsg = document.getElementById('tactical-dialog-msg');
-    const dialogInputWrap = document.getElementById('tactical-dialog-field-wrap');
-    const dialogInput = document.getElementById('tactical-dialog-input');
-    const dialogOptionsWrap = document.getElementById('tactical-dialog-options-wrap');
-    const dialogConfirmBtn = document.getElementById('btn-tactical-dialog-confirm');
-    const dialogCancelBtn = document.getElementById('btn-tactical-dialog-cancel');
+    const dialogModal = document.getElementById('dialog-modal');
+    const dialogTitle = document.getElementById('dialog-title');
+    const dialogMsg = document.getElementById('dialog-msg');
+    const dialogInputWrap = document.getElementById('dialog-field-wrap');
+    const dialogInput = document.getElementById('dialog-input');
+    const dialogOptionsWrap = document.getElementById('dialog-options-wrap');
+    const dialogConfirmBtn = document.getElementById('btn-dialog-confirm');
+    const dialogCancelBtn = document.getElementById('btn-dialog-cancel');
 
     if (dialogTitle) dialogTitle.textContent = 'ASSIGN CALLSIGN';
     if (dialogMsg) dialogMsg.textContent = `Select an operational callsign for Aircraft #${sIdx + 1} or enter a custom identifier:`;
@@ -159,7 +159,7 @@ class TacticalDialogModal {
     if (dialogCancelBtn) dialogCancelBtn.style.display = 'inline-flex';
     if (dialogConfirmBtn) {
       dialogConfirmBtn.textContent = 'ASSIGN';
-      dialogConfirmBtn.className = 'hud-btn tactical-dialog-btn highlight';
+      dialogConfirmBtn.className = 'hud-btn dialog-btn highlight';
       dialogConfirmBtn.style.display = 'inline-flex';
     }
 
@@ -187,4 +187,4 @@ class TacticalDialogModal {
   }
 }
 
-window.TacticalDialogModal = TacticalDialogModal;
+window.DialogModal = DialogModal;

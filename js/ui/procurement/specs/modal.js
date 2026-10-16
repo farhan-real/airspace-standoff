@@ -144,7 +144,7 @@ class SpecsModalRenderer {
       </div>
 
       <div class="inspect-desc-box">
-        <div class="inspect-sec-head">TACTICAL DOCTRINE &amp; PILOT GUIDANCE:</div>
+        <div class="inspect-sec-head">OPERATIONAL DOCTRINE &amp; PILOT GUIDANCE:</div>
         ${a.desc || 'Standard multirole air superiority platform.'}
       </div>
 

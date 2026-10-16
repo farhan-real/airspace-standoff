@@ -23,7 +23,7 @@ window.AUTOCANNONS_BALLISTIC = {
     kineticConcussion: 0.30,
     thermalBloom: 1.0,
     cloudScattering: 0.0,
-    desc: 'High-cyclic 20mm Gatling firing a rapid 4-round burst (1.40 HP total, 1.6s reload). Compact 24-round magazine allows 6 tactical bursts. Zero thermal bloom preserves VLO stealth; 100% cloud penetration.'
+    desc: 'High-cyclic 20mm Gatling firing a rapid 4-round burst (1.40 HP total, 1.6s reload). Compact 24-round magazine allows 6 concentrated bursts. Zero thermal bloom preserves VLO stealth; 100% cloud penetration.'
   },
   'GSH-30-1': {
     id: 'GSH-30-1',

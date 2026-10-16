@@ -9,7 +9,7 @@ window.MANUAL_OPERATIONS = [
     title: 'SECTION 10: MISSION EDITOR & CUSTOM SORTIE GENERATOR',
     desc: `
       <div class="ge-desc">
-        Access the <b>MISSION EDITOR</b> from the Hangar header bar to construct tailored tactical engagements. Test airframe doctrines, force ratios, and weapon configurations in an unranked combat laboratory.
+        Access the <b>MISSION EDITOR</b> from the Hangar header bar to construct tailored combat engagements. Test airframe doctrines, force ratios, and weapon configurations in an unranked combat laboratory.
       </div>
 
       <div class="ge-subhead">1. THEATER PARAMETERS &amp; FORCE BALANCE</div>
@@ -127,9 +127,9 @@ window.MANUAL_OPERATIONS = [
         </div>
       </div>
 
-      <div class="ge-subhead">3. AI TACTICAL COGNITION &amp; ATTENTION TELEMETRY</div>
+      <div class="ge-subhead">3. AI COGNITIVE PROFILE &amp; ATTENTION TELEMETRY</div>
       <div class="ge-desc">
-        When an enemy aircraft is selected during inspection, the <b>OVERVIEW</b> tab displays the <b>AI TACTICAL COGNITION</b> dossier, revealing the adversary's cognitive state, command hierarchy, and difficulty-scaled role execution:
+        When an enemy aircraft is selected during inspection, the <b>OVERVIEW</b> tab displays the <b>AI COGNITIVE PROFILE</b> dossier, revealing the adversary's cognitive state, command hierarchy, and difficulty-scaled role execution:
       </div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
@@ -155,7 +155,7 @@ window.MANUAL_OPERATIONS = [
             </tr>
             <tr>
               <td style="color:#f43f5e;font-weight:800;">Formation Role</td>
-              <td>Reveals tactical placement: Flight Lead, Wingman (with designated element partner callsign), or Independent Element.</td>
+              <td>Reveals formation placement: Flight Lead, Wingman (with designated element partner callsign), or Independent Element.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">Chain of Command</td>
@@ -206,7 +206,7 @@ window.MANUAL_OPERATIONS = [
     title: 'SECTION 12: MISSION DEBRIEFS, REPLAYS & SQUADRON ARCHIVE',
     desc: `
       <div class="ge-desc">
-        Upon sortie completion or mission abort, the After Action Report provides complete performance metrics, pilot podium rankings, chronological engagement timelines, and interactive tactical mission replays.
+        Upon sortie completion or mission abort, the After Action Report provides complete performance metrics, pilot podium rankings, chronological engagement timelines, and interactive sortie replays.
       </div>
 
       <div class="ge-subhead">1. SORTIE REPLAY CONTROLS</div>
@@ -235,7 +235,7 @@ window.MANUAL_OPERATIONS = [
         <div class="ge-card">
           <b style="color:var(--theme-accent);">HISTORICAL SQUADRON DOSSIER</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Top 10 ranked missions are saved to local persistent storage. Revisit previous debriefs, examine participating rosters, and re-watch recorded tactical replays from the Leaderboard.
+            Top 10 ranked missions are saved to local persistent storage. Revisit previous debriefs, examine participating rosters, and re-watch recorded sortie replays from the Leaderboard.
           </div>
         </div>
       </div>

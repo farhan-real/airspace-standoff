@@ -6,7 +6,7 @@
 window.MANUAL_THEATER = [
   {
     id: 'ch8_aces_difficulties',
-    title: 'SECTION 08: ADVERSARY TACTICAL DOCTRINE, DIFFICULTY TIERS & PLANNING',
+    title: 'SECTION 08: ADVERSARY COMBAT DOCTRINE, DIFFICULTY TIERS & PLANNING',
     desc: `
       <div class="ge-subhead">1. THE 6 BEHAVIORAL DIMENSIONS</div>
       <div class="ge-grid-2">
@@ -67,7 +67,7 @@ window.MANUAL_THEATER = [
         <table class="ge-table">
           <thead>
             <tr>
-              <th>TACTICAL ELEMENT</th>
+              <th>DOCTRINE ELEMENT</th>
               <th style="color:#8494ab;">PERMISSIVE SECTOR<br><span style="font-size:0.52rem;opacity:0.7;">0.50x VP</span></th>
               <th style="color:#93c5fd;">BUFFER ZONE<br><span style="font-size:0.52rem;opacity:0.7;">0.75x VP</span></th>
               <th style="color:#38bdf8;">CONTESTED AIRSPACE<br><span style="font-size:0.52rem;opacity:0.7;">1.00x VP</span></th>
@@ -104,7 +104,7 @@ window.MANUAL_THEATER = [
 
       <div class="ge-subhead">4. AIRFRAME WEIGHT &amp; STEALTH RULES</div>
       <div class="ge-desc">
-        Aerodynamic weight tuning and stealth cleanliness are applied selectively based on airframe design and tactical mission:
+        Aerodynamic weight tuning and stealth cleanliness are applied selectively based on airframe design and combat mission:
         <ul style="list-style:none;padding-left:0;margin-top:6px;">
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Heavy Missile Carriers (F-15EX, J-20, MiG-31BM, Su-34):</b> Never restricted to light weight. They carry heavy external racks (Wr = 70% - 90%) and oversized standoff missiles (R-37M, PL-21, Kinzhal) to maximize missile magazine capacity.</li>
           <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Agile Dogfighters (Rafale, Su-35S, Eurofighter, Mirage-2000, F-16V):</b> On higher difficulties, they selectively roll lightweight loadouts (Wr &le; 50%), preserving 100% corner-speed turn authority.</li>
@@ -115,7 +115,7 @@ window.MANUAL_THEATER = [
 
       <div class="ge-subhead">5. TACTICAL COMBAT ROLES &amp; DIFFICULTY INTELLIGENCE</div>
       <div class="ge-desc">
-        Adversary aircraft operate under ten distinct combat roles that scale in tactical intelligence and flight dynamics:
+        Adversary aircraft operate under ten distinct combat roles that scale in combat intelligence and flight dynamics:
       </div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #00f0ff;">

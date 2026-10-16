@@ -89,7 +89,7 @@ class InspectionSolutionsRenderer {
               </span>
             </div>
             <div class="inspection-reason-box ${isValid ? '' : 'warning'}" style="margin-top:6px;">
-              <b>TACTICAL ASSESSMENT:</b> ${isValid ? `Target is within ballistic delivery basket. Weapon impact will deliver ${w.damage} structural damage.` : `Installation is beyond delivery reach by ${(dist - w.rangeKm).toFixed(1)} km. Advance to close distance.`}
+              <b>COMBAT ASSESSMENT:</b> ${isValid ? `Target is within ballistic delivery basket. Weapon impact will deliver ${w.damage} structural damage.` : `Installation is beyond delivery reach by ${(dist - w.rangeKm).toFixed(1)} km. Advance to close distance.`}
             </div>
           </div>
         </details>

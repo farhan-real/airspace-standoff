@@ -178,7 +178,7 @@ window.AIRCRAFT_STEALTH = {
     name: 'Su-75 Checkmate',
     category: 'STEALTH',
     badge: 'BUDGET STEALTH',
-    role: 'Lightweight Tactical Stealth',
+    role: 'Lightweight Stealth Interceptor',
     cost: 28.0,
     hp: 3,
     AGI_0: 0.84,
@@ -205,7 +205,7 @@ window.AIRCRAFT_STEALTH = {
     totalSlots: 6,
     maxPylonRating: 'Type M',
     upgradeSockets: 3,
-    desc: 'Lightweight 5th-gen tactical fighter. Single engine with serrated vectoring nozzle provides 0.75x thermal bloom. 4 internal bay slots and 2 external pylons.'
+    desc: 'Lightweight 5th-gen stealth fighter. Single engine with serrated vectoring nozzle provides 0.75x thermal bloom. 4 internal bay slots and 2 external pylons.'
   },
   'FC-31': {
     id: 'FC-31',

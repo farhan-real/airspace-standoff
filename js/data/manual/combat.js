@@ -89,11 +89,11 @@ window.MANUAL_COMBAT = [
         Turn your aircraft exactly <b>90&deg; perpendicular</b> to the threat's radar vector (beam aspect). Pulse-Doppler radars filter out stationary ground returns by ignoring zero radial velocity echoes. Turning 90&deg; drops your closure rate into the Doppler filter, breaking lock. Dispensing chaff while in the notch creates an artificial zero-Doppler clutter bloom that seduces the missile's seeker gate away from your airframe.
       </div>
 
-      <div class="ge-subhead">2. TACTICAL DEFENSIVE MANEUVERS</div>
+      <div class="ge-subhead">2. DEFENSIVE MANEUVERS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>MANEUVER</th><th>COST</th><th>DURATION</th><th>EVASION BONUS</th><th>TACTICAL TRIGGER &amp; OPERATIONAL EFFECT</th></tr>
+            <tr><th>MANEUVER</th><th>COST</th><th>DURATION</th><th>EVASION BONUS</th><th>TRIGGER CONDITION &amp; OPERATIONAL EFFECT</th></tr>
           </thead>
           <tbody>
             <tr>

@@ -18,7 +18,7 @@ class InspectionViews {
         return `
           <section class="inspection-card">
             <h3>CAUSAL EVENT LOG</h3>
-            <p class="inspection-muted" style="margin-top:6px; line-height:1.5;">Waiting for tactical engagement events (missile launches, hits, kills, chaff deployments)...</p>
+            <p class="inspection-muted" style="margin-top:6px; line-height:1.5;">Waiting for combat engagement events (missile launches, hits, kills, chaff deployments)...</p>
           </section>
         `;
       }
@@ -28,7 +28,7 @@ class InspectionViews {
             <h3 style="margin:0;">CAUSAL EVENT LOG</h3>
             <span class="factor-chip neutral">${events.length} RECORDED</span>
           </div>
-          <p class="inspection-muted" style="margin-top:4px;">Tap any tactical event to inspect detailed kinematics, hit probability factors, and causal telemetry.</p>
+          <p class="inspection-muted" style="margin-top:4px;">Tap any combat event to inspect detailed kinematics, hit probability factors, and causal telemetry.</p>
           <div class="inspection-event-list" style="max-height:360px; overflow-y:auto; margin-top:8px;">
             ${events.map(ev => `
               <button type="button" class="inspection-event-row" data-ev-id="${ev.id}">
@@ -146,7 +146,7 @@ class InspectionViews {
 
     return `
       <div class="inspection-data-section">
-        <span class="inspection-data-title">TACTICAL IDENTITY AND FACTION</span>
+        <span class="inspection-data-title">COMBATANT IDENTITY AND FACTION</span>
         <div class="inspection-data-row"><span class="inspection-data-label">Callsign / Name</span><b class="inspection-data-value">${controller.escape(entity.callsign || entity.name || entity.flightCode || entity.id)}</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Airframe Model</span><b class="inspection-data-value">${spec.name || entity.model || 'Standard'}</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Category / Role</span><b class="inspection-data-value">${spec.category || entity.type || 'Combatant'}</b></div>

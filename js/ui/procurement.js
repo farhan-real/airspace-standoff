@@ -11,7 +11,7 @@ class ProcurementManager {
     this.activeBayIndex = 0;
     this._isUpdatingUI = false;
 
-    this.dialogModal = new TacticalDialogModal(this);
+    this.dialogModal = new DialogModal(this);
     this.specs = new ProcurementSpecs(this);
     this.inspector = this.specs;
     this.shelf = new ProcurementShelf(this);

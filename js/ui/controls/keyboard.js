@@ -196,10 +196,10 @@ class KeyboardControlsHandler {
         const gm = document.getElementById('glossary-modal');
         const isOpen = gm && gm.classList.contains('active');
         if (isOpen) {
-          if (typeof window.closeTacticalManual === 'function') window.closeTacticalManual();
+          if (typeof window.closeFlightManual === 'function') window.closeFlightManual();
           else if (gm) { gm.classList.remove('active'); this.sys.autoUnpauseOnDialogClose(); }
         } else {
-          if (typeof window.openTacticalManual === 'function') window.openTacticalManual();
+          if (typeof window.openFlightManual === 'function') window.openFlightManual();
           else if (gm) { gm.classList.add('active'); this.sys.autoPauseOnDialogOpen(); }
         }
         return;

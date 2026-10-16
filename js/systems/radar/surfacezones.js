@@ -2,7 +2,7 @@
  * AIRSPACE STANDOFF: Tactical Radar Viewport: Surface Facilities & Civilian Traffic
  */
 
-class RadarTacticalSurfaceRenderer {
+class RadarSurfaceRenderer {
   static drawSurface(ctx, cam, units, team, detectedSet, activeUnit, selectedTarget, cssWidth, declutterMode, cleanFn) {
     if (!units || units.length === 0) return;
     const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0 };
@@ -155,4 +155,4 @@ class RadarTacticalSurfaceRenderer {
   }
 }
 
-window.RadarTacticalSurfaceRenderer = RadarTacticalSurfaceRenderer;
+window.RadarSurfaceRenderer = RadarSurfaceRenderer;

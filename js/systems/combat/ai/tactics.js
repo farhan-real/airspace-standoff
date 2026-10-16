@@ -249,7 +249,7 @@ class AIMissileTactics {
     return { target: tgt, pylonsToFire, primaryWeapon: w };
   }
 
-  static executeTacticalEngagements(commander, shooter, airTargets, bunkers, profile, clouds, diffKey, tokenCost, allMissiles) {
+  static executeEngagements(commander, shooter, airTargets, bunkers, profile, clouds, diffKey, tokenCost, allMissiles) {
     const res = this.evaluateShooterWeapons(shooter, airTargets, bunkers, profile, clouds, diffKey, allMissiles);
     if (res.isBingo && !shooter.isRTB) {
       if (shooter.gunAmmo && shooter.gunAmmo > 0) return false;

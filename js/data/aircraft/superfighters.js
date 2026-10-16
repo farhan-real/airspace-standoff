@@ -15,7 +15,7 @@ window.AIRCRAFT_SUPERFIGHTERS = {
     S_0: 1.52,
     sOpt: 0.98,
     R_0: 88.0,
-    radarType: 'Tactical Array AESA',
+    radarType: 'Phased Array AESA',
     radarConeDeg: 140,
     lookDownBonus: 0.70,
     sigma_0: 0.006,

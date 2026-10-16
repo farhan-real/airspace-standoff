@@ -67,7 +67,7 @@ class ShelfAirframesRenderer {
     const catDescriptions = {
       STEALTH: 'Very Low Observable airframe designed to evade early radar detection (RCS <= 0.005 m2).',
       SUPERIORITY: 'Air superiority fighter engineered for high-altitude BVR intercept and energy merges.',
-      MULTIROLE: 'Versatile tactical fighter balancing BVR missile combat with close-in dogfight agility.',
+      MULTIROLE: 'Versatile multirole fighter balancing BVR missile combat with close-in dogfight agility.',
       STRIKE: 'Armored ground-attack or strategic penetrator carrying heavy payloads against surface bases.',
       EW: 'Electronic Warfare escort projecting standoff microwave jamming and passive ESM radar geolocation.',
       DRONES: 'Unmanned Combat Air Vehicle (UCAV) executing high-G maneuvers (up to 20G) without pilot G-LOC.',
@@ -118,7 +118,7 @@ class ShelfAirframesRenderer {
           <div class="adc-cost ${rCost.colorClass}" data-tag-title="ACQUISITION COST" data-tag-tooltip="Deducted from squadron defense budget ($${Number(spec.cost || 0).toFixed(1)}M).">$${Number(spec.cost || 0).toFixed(1)}M</div>
         </div>
         <div class="adc-badges-row">
-          <span class="adc-badge badge-cat-${category.toLowerCase()}" data-tag-title="${category} DOCTRINE" data-tag-tooltip="${catDescriptions[category] || 'Tactical airframe.'}">${category}</span>
+          <span class="adc-badge badge-cat-${category.toLowerCase()}" data-tag-title="${category} DOCTRINE" data-tag-tooltip="${catDescriptions[category] || 'Combat airframe.'}">${category}</span>
           <span class="adc-badge adc-feat" data-tag-title="AIRFRAME TRAIT" data-tag-tooltip="${spec.desc || 'Operational fighter.'}">${spec.badge || 'READY'}</span>
           <span class="adc-badge" style="background:#091e36;border:1px solid #0284c7;color:#7dd3fc;" data-tag-title="FLIGHT DYNAMICS" data-tag-tooltip="${tvcDesc}">${tvcLabel}</span>
           <span class="adc-badge" style="background:#051424;border:1px solid #162a42;color:#94a3b8;" data-tag-title="CLUTTER SUPPRESSION" data-tag-tooltip="Look-down clutter filter (+${Math.round((spec.lookDownBonus || 0.2)*100)}%) allows radar tracking of deck-skimming targets.">CLUTTER: +${Math.round((spec.lookDownBonus || 0.2)*100)}%</span>

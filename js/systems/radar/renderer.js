@@ -1,6 +1,6 @@
-/* AIRSPACE STANDOFF: Tactical Radar Viewport Renderer Engine */
+/* AIRSPACE STANDOFF: Radar Viewport Renderer Engine */
 
-class TacticalRadarRenderer {
+class RadarRenderer {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas ? this.canvas.getContext('2d', { alpha: false, desynchronized: true }) : null;
@@ -206,15 +206,15 @@ class TacticalRadarRenderer {
       RadarEnvironmentRenderer.drawClouds(ctx, this.cam, clouds, w, h);
     }
 
-    if (typeof RadarTacticalSurfaceRenderer !== 'undefined') {
-      RadarTacticalSurfaceRenderer.drawSurface(ctx, this.cam, surface, commanderTeam, detectedSet, activeUnit, this.selectedTarget, w, this.declutterMode, this.boundCleanCanvasText);
-      RadarTacticalSurfaceRenderer.drawCivilianTraffic(ctx, this.cam, civilians, detectedSet, activeUnit, this.declutterMode, w, this.boundCleanCanvasText);
+    if (typeof RadarSurfaceRenderer !== 'undefined') {
+      RadarSurfaceRenderer.drawSurface(ctx, this.cam, surface, commanderTeam, detectedSet, activeUnit, this.selectedTarget, w, this.declutterMode, this.boundCleanCanvasText);
+      RadarSurfaceRenderer.drawCivilianTraffic(ctx, this.cam, civilians, detectedSet, activeUnit, this.declutterMode, w, this.boundCleanCanvasText);
     }
 
-    if (typeof RadarTacticalRenderer !== 'undefined') {
-      RadarTacticalRenderer.drawRadarLocks(ctx, this.cam, allied, hostiles, activeUnit, commanderTeam, detectedSet);
-      RadarTacticalRenderer.drawSalvoCoordinations(ctx, this.cam, missiles, commanderTeam);
-      RadarTacticalRenderer.drawMissiles(ctx, this.cam, missiles, commanderTeam, detectedSet, this.declutterMode, this.boundCleanCanvasText);
+    if (typeof RadarCombatRenderer !== 'undefined') {
+      RadarCombatRenderer.drawRadarLocks(ctx, this.cam, allied, hostiles, activeUnit, commanderTeam, detectedSet);
+      RadarCombatRenderer.drawSalvoCoordinations(ctx, this.cam, missiles, commanderTeam);
+      RadarCombatRenderer.drawMissiles(ctx, this.cam, missiles, commanderTeam, detectedSet, this.declutterMode, this.boundCleanCanvasText);
     }
 
     if (typeof RadarContactsAuxRenderer !== 'undefined') {
@@ -243,15 +243,15 @@ class TacticalRadarRenderer {
       }
     }
 
-    if (this.hoveredContact && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0.05) && typeof this.hoveredContact.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {
-      RadarTacticalRenderer.drawHoverReticle(ctx, this.cam, this.hoveredContact);
+    if (this.hoveredContact && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0.05) && typeof this.hoveredContact.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
+      RadarCombatRenderer.drawHoverReticle(ctx, this.cam, this.hoveredContact);
     }
-    if (this.selectedTarget && (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0.05) && typeof this.selectedTarget.x === 'number' && typeof RadarTacticalRenderer !== 'undefined') {
-      RadarTacticalRenderer.drawTargetReticle(ctx, this.cam, this.selectedTarget);
+    if (this.selectedTarget && (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0.05) && typeof this.selectedTarget.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
+      RadarCombatRenderer.drawTargetReticle(ctx, this.cam, this.selectedTarget);
     }
 
     this.fx.draw(ctx, 0.016);
   }
 }
 
-window.TacticalRadarRenderer = TacticalRadarRenderer;
+window.RadarRenderer = RadarRenderer;

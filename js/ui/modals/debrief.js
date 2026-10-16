@@ -30,7 +30,7 @@ class ModalDebriefTemplate {
                 <span class="strip-subhead" style="color: var(--color-ice-highlight); margin:0; border-bottom: none;">SORTIE REPLAY</span>
                 <span id="aar-replay-status" class="aar-replay-status">RECORDED BATTLE PLAYBACK</span>
               </div>
-              <canvas id="aar-replay-canvas" class="aar-replay-canvas" aria-label="Tactical replay of the completed sortie"></canvas>
+              <canvas id="aar-replay-canvas" class="aar-replay-canvas" aria-label="Sortie replay of the completed mission"></canvas>
               <div class="aar-replay-controls">
                 <button type="button" id="btn-aar-replay-play" class="hud-btn small aar-replay-play">PLAY</button>
                 <button type="button" id="btn-aar-replay-restart" class="hud-btn small aar-replay-restart">RESTART</button>

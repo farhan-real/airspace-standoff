@@ -17,7 +17,7 @@ for (const [name, moduleData] of requiredManualModules) {
   }
 }
 
-window.TACTICAL_FLIGHT_MANUAL = [
+window.FLIGHT_MANUAL = [
   ...window.MANUAL_BASICS,
   ...window.MANUAL_SENSORS,
   ...window.MANUAL_COMBAT,
@@ -26,9 +26,9 @@ window.TACTICAL_FLIGHT_MANUAL = [
   ...window.MANUAL_CONTROLS
 ];
 
-window.FLIGHT_MANUAL = window.TACTICAL_FLIGHT_MANUAL;
+window.FLIGHT_MANUAL = window.FLIGHT_MANUAL;
 
-window.initTacticalManual = function() {
+window.initFlightManual = function() {
   const chapters = [
     { id: 'ch1_quickstart', label: '01: DOCTRINE & ROE' },
     { id: 'ch2_kinematics', label: '02: KINEMATICS & POWER' },
@@ -159,7 +159,7 @@ window.initTacticalManual = function() {
     if (lastQuery === q && c.children.length > 0) return;
     lastQuery = q;
 
-    const sourceData = window.TACTICAL_FLIGHT_MANUAL;
+    const sourceData = window.FLIGHT_MANUAL;
     const matchingIds = new Set();
     const filtered = sourceData.filter(ch => {
       const descContent = typeof ch.getDesc === 'function' ? ch.getDesc() : ch.desc;
@@ -284,8 +284,8 @@ window.initTacticalManual = function() {
     if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
   };
 
-  window.openTacticalManual = openModal;
-  window.closeTacticalManual = closeModal;
+  window.openFlightManual = openModal;
+  window.closeFlightManual = closeModal;
 
   const openHangarBtn = document.getElementById('btn-open-glossary');
   const openHudBtn = document.getElementById('btn-hud-glossary');
@@ -294,7 +294,7 @@ window.initTacticalManual = function() {
 };
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', window.initTacticalManual);
+  document.addEventListener('DOMContentLoaded', window.initFlightManual);
 } else {
-  window.initTacticalManual();
+  window.initFlightManual();
 }

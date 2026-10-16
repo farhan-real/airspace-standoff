@@ -16,7 +16,7 @@ window.AI_ACE_PROFILES = {
   LEGEND:    { reactionCooldown: 1.1, notchChance: 0.75, decoyDiscrimination: 0.85, blunderChance: 0.00, mixedSeekerChance: 0.55, salvoMaxMissiles: 3 }
 };
 
-class TacticalAICommander {
+class AICommander {
   constructor(gameEngine) {
     if (!gameEngine) throw new Error('TacticalAICommander requires gameEngine instance.');
     this.game = gameEngine;
@@ -186,7 +186,7 @@ class TacticalAICommander {
         if (this.planning.isHesitating(shooter.id)) continue;
         if (this.game.tokenBucketRed < tokenCost) break;
 
-        const fired = AIMissileTactics.executeTacticalEngagements(this, shooter, candidateAirTargets, visibleBunkers, profile, clouds, diffKey, tokenCost, allMissiles);
+        const fired = AIMissileTactics.executeEngagements(this, shooter, candidateAirTargets, visibleBunkers, profile, clouds, diffKey, tokenCost, allMissiles);
         if (fired) {
           const interUnitDelay = Math.max(0.35, profile.reactionCooldown / (maxSlots * 1.5));
           this.actionCooldown = interUnitDelay;
@@ -197,4 +197,4 @@ class TacticalAICommander {
   }
 }
 
-window.TacticalAICommander = TacticalAICommander;
+window.AICommander = AICommander;

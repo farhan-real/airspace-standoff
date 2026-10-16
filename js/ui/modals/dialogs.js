@@ -28,19 +28,19 @@ class ModalDialogTemplates {
         </div>`);
     } else if (modalId === 'tactical-dialog-modal') {
       container.insertAdjacentHTML('beforeend', `
-        <div id="tactical-dialog-modal" class="modal-backdrop">
+        <div id="dialog-modal" class="modal-backdrop">
           <div class="inspect-window" style="max-width: 500px;">
             <div class="inspect-header">
-              <div class="modal-title-row"><h2 id="tactical-dialog-title">CONFIRMATION</h2></div>
-              <button id="btn-tactical-dialog-close" class="hud-btn small"><img src="icons/close.svg" width="10" height="10" alt="Close"></button>
+              <div class="modal-title-row"><h2 id="dialog-title">CONFIRMATION</h2></div>
+              <button id="btn-dialog-close" class="hud-btn small"><img src="icons/close.svg" width="10" height="10" alt="Close"></button>
             </div>
             <div class="inspect-body" style="padding: 16px 18px; gap: 12px;">
-              <p id="tactical-dialog-msg" style="font-size: 0.80rem; color: var(--color-moon-mist); line-height: 1.5;"></p>
-              <div id="tactical-dialog-field-wrap"><input type="text" id="tactical-dialog-input" class="hud-search-input" style="font-size: 0.78rem; padding: 7px 12px; width: 100%;"></div>
-              <div id="tactical-dialog-options-wrap" style="display:none; flex-direction:column; gap:5px; max-height:200px; overflow-y:auto;"></div>
-              <div class="tactical-dialog-actions">
-                <button id="btn-tactical-dialog-cancel" class="hud-btn tactical-dialog-btn">CANCEL</button>
-                <button id="btn-tactical-dialog-confirm" class="hud-btn tactical-dialog-btn highlight">CONFIRM</button>
+              <p id="dialog-msg" style="font-size: 0.80rem; color: var(--color-moon-mist); line-height: 1.5;"></p>
+              <div id="dialog-field-wrap"><input type="text" id="dialog-input" class="hud-search-input" style="font-size: 0.78rem; padding: 7px 12px; width: 100%;"></div>
+              <div id="dialog-options-wrap" style="display:none; flex-direction:column; gap:5px; max-height:200px; overflow-y:auto;"></div>
+              <div class="dialog-actions">
+                <button id="btn-dialog-cancel" class="hud-btn dialog-btn">CANCEL</button>
+                <button id="btn-dialog-confirm" class="hud-btn dialog-btn highlight">CONFIRM</button>
               </div>
             </div>
           </div>

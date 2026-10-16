@@ -9,7 +9,7 @@ class InspectionEventSystem {
     const event = {
       id: `EV_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
       time: sim && sim.getElapsedTimeString ? sim.getElapsedTimeString() : '00:00',
-      type: String(type || 'TACTICAL EVENT'),
+      type: String(type || 'COMBAT EVENT'),
       title: String(title || type),
       sourceName: controller.getName(source),
       targetName: controller.getName(target),

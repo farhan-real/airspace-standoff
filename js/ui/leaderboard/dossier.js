@@ -104,7 +104,7 @@ class LeaderboardDossierRenderer {
           <span class="strip-subhead" style="color:#7dd3fc;margin:0;border-bottom:none;">SORTIE REPLAY</span>
           <span class="aar-replay-status">LOADING ARCHIVED PLAYBACK</span>
         </div>
-        <canvas class="aar-replay-canvas" aria-label="Tactical replay of the archived sortie"></canvas>
+        <canvas class="aar-replay-canvas" aria-label="Sortie replay of the archived mission"></canvas>
         <div class="aar-replay-controls">
           <button type="button" class="hud-btn small aar-replay-play">PLAY</button>
           <button type="button" class="hud-btn small aar-replay-restart">RESTART</button>

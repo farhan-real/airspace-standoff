@@ -124,8 +124,8 @@ class ControlsSystem {
     }
     if (btnManual) {
       btnManual.onclick = () => {
-        if (typeof window.openTacticalManual === 'function') {
-          window.openTacticalManual();
+        if (typeof window.openFlightManual === 'function') {
+          window.openFlightManual();
         }
       };
     }

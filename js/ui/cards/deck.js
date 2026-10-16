@@ -13,7 +13,7 @@ class ManeuverDeckRenderer {
     if (!container) return;
 
     if (!activeUnit || activeUnit.hp <= 0) {
-      container.innerHTML = '<div class="deck-empty-prompt">SELECT AN OPERATIONAL AIRFRAME TO DRAW TACTICAL CARDS</div>';
+      container.innerHTML = '<div class="deck-empty-prompt">SELECT AN OPERATIONAL AIRFRAME TO ISSUE FLIGHT MANEUVERS</div>';
       this.currentUnitId = null;
       return;
     }
@@ -34,7 +34,7 @@ class ManeuverDeckRenderer {
             <span class="mcard-name">${card.name}</span>
             <span class="mcard-cost">${card.cost || 0.7} TOK</span>
           </div>
-          <div class="mcard-badge">[${card.badge || 'TACTICAL'}]</div>
+          <div class="mcard-badge">[${card.badge || 'MANEUVER'}]</div>
           <div class="mcard-hint-box">
             <div class="mcard-when">${card.whenToUse || ''}</div>
             <div class="mcard-why">${card.whyToUse || ''}</div>

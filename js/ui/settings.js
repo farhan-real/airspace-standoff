@@ -234,7 +234,7 @@ class SettingsManager {
         <button type="button" id="btn-toggle-safe-zone" class="hud-btn ${this.safeZone ? 'highlight' : ''}">${this.safeZone ? 'SAFE ZONE: ON' : 'SAFE ZONE: OFF'}</button>
       </div>
       <div class="settings-form-row">
-        <div class="settings-label-group"><label>VIEWPORT ZOOM</label><span class="settings-hint">Current tactical radar magnification scale</span></div>
+        <div class="settings-label-group"><label>VIEWPORT ZOOM</label><span class="settings-hint">Current radar magnification scale</span></div>
         <span class="slider-num" style="color:#38bdf8;">${curZoom}x</span>
       </div>
       <div class="settings-form-row">

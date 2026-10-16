@@ -2,7 +2,7 @@
  * AIRSPACE STANDOFF: Advanced Web Audio Synthesizer Core
  */
 
-class TacticalAudioEngine {
+class AudioEngine {
   constructor() {
     this.ctx = null;
     this.enabled = true;
@@ -10,7 +10,7 @@ class TacticalAudioEngine {
     this.rwrVolume = 0.70;
     this.fxVolume = 0.85;
     this.compressor = null;
-    this.rwr = (typeof TacticalRWRAudio !== 'undefined') ? new TacticalRWRAudio() : null;
+    this.rwr = (typeof RWRAudio !== 'undefined') ? new RWRAudio() : null;
   }
 
   ensureContext() {
@@ -52,54 +52,54 @@ class TacticalAudioEngine {
   playClick() {
     if (!this.enabled || this.masterVolume <= 0) return;
     this.ensureContext();
-    if (!this.ctx || typeof TacticalAudioSynthesizer === 'undefined') return;
+    if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
-      TacticalAudioSynthesizer.playClick(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
+      AudioSynthesizer.playClick(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
     } catch (e) {}
   }
 
   playGunBurst() {
     if (!this.enabled || this.masterVolume <= 0) return;
     this.ensureContext();
-    if (!this.ctx || typeof TacticalAudioSynthesizer === 'undefined') return;
+    if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
-      TacticalAudioSynthesizer.playGunBurst(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
+      AudioSynthesizer.playGunBurst(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
     } catch (e) {}
   }
 
   playLaunch() {
     if (!this.enabled || this.masterVolume <= 0) return;
     this.ensureContext();
-    if (!this.ctx || typeof TacticalAudioSynthesizer === 'undefined') return;
+    if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
-      TacticalAudioSynthesizer.playLaunch(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
+      AudioSynthesizer.playLaunch(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
     } catch (e) {}
   }
 
   playMissileLost() {
     if (!this.enabled || this.masterVolume <= 0) return;
     this.ensureContext();
-    if (!this.ctx || typeof TacticalAudioSynthesizer === 'undefined') return;
+    if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
-      TacticalAudioSynthesizer.playMissileLost(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
+      AudioSynthesizer.playMissileLost(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
     } catch (e) {}
   }
 
   playExplosion(isLarge = false) {
     if (!this.enabled || this.masterVolume <= 0) return;
     this.ensureContext();
-    if (!this.ctx || typeof TacticalAudioSynthesizer === 'undefined') return;
+    if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
-      TacticalAudioSynthesizer.playExplosion(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume, isLarge);
+      AudioSynthesizer.playExplosion(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume, isLarge);
     } catch (e) {}
   }
 
   playLaser() {
     if (!this.enabled || this.masterVolume <= 0) return;
     this.ensureContext();
-    if (!this.ctx || typeof TacticalAudioSynthesizer === 'undefined') return;
+    if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
-      TacticalAudioSynthesizer.playLaser(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
+      AudioSynthesizer.playLaser(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
     } catch (e) {}
   }
 
@@ -111,5 +111,5 @@ class TacticalAudioEngine {
   }
 }
 
-const AudioSys = new TacticalAudioEngine();
+const AudioSys = new AudioEngine();
 window.AudioSys = AudioSys;

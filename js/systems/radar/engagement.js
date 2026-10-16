@@ -2,18 +2,18 @@
  * AIRSPACE STANDOFF: Radar Tactical Sub-Renderer: Locks, Trajectories & Volleys
  */
 
-class RadarTacticalRenderer {
+class RadarCombatRenderer {
   static _salvoGroupMap = new Map();
   static _salvoActiveGroups = [];
   static _visibleMissilesPool = [];
   static _clusterPool = [];
 
   static drawSurface(...args) {
-    if (typeof RadarTacticalSurfaceRenderer !== 'undefined') RadarTacticalSurfaceRenderer.drawSurface(...args);
+    if (typeof RadarSurfaceRenderer !== 'undefined') RadarSurfaceRenderer.drawSurface(...args);
   }
 
   static drawCivilianTraffic(...args) {
-    if (typeof RadarTacticalSurfaceRenderer !== 'undefined') RadarTacticalSurfaceRenderer.drawCivilianTraffic(...args);
+    if (typeof RadarSurfaceRenderer !== 'undefined') RadarSurfaceRenderer.drawCivilianTraffic(...args);
   }
 
   static drawRadarLocks(ctx, cam, craftA, craftB, activeUnit, team, detectedSet) {
@@ -298,4 +298,4 @@ class RadarTacticalRenderer {
   }
 }
 
-window.RadarTacticalRenderer = RadarTacticalRenderer;
+window.RadarCombatRenderer = RadarCombatRenderer;

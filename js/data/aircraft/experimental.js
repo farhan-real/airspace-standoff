@@ -123,7 +123,7 @@ window.AIRCRAFT_EXPERIMENTAL = {
     S_0: 1.10,
     sOpt: 0.78,
     R_0: 68.0,
-    radarType: 'Compact Tactical Radar',
+    radarType: 'Compact Multi-Mode Radar',
     radarConeDeg: 110,
     lookDownBonus: 0.25,
     sigma_0: 1.5,

@@ -134,7 +134,7 @@ class SpecsSubsystemViews {
         <div class="inspect-stat-item"><span>MECHANISM WEIGHT:</span><b class="${rMass.colorClass}">+${g.mass || 100} kg</b></div>
       </div>
 
-      <div class="inspect-sec-head">2. TACTICAL ADVANTAGES &amp; DOCTRINE</div>
+      <div class="inspect-sec-head">2. COMBAT CAPABILITIES &amp; DOCTRINE</div>
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>BORESIGHT CONE AUTHORITY:</span><b style="color:${coneDeg >= 48 ? '#00f5a0' : '#f97316'};">${coneDeg} deg Boresight Cone (${coneDeg >= 48 ? 'Forgiving High-G Snapshot' : 'Narrow Pinpoint Beam'})</b></div>
         <div class="inspect-stat-item"><span>THERMAL STEALTH IMPACT:</span><b style="color:${g.thermalBloom > 1 ? '#f97316' : '#00f5a0'};">${stealthImpact}</b></div>

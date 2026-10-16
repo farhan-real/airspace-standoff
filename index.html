@@ -33,8 +33,8 @@
   <link rel="stylesheet" href="css/hud/flight/tape.css">
   <link rel="stylesheet" href="css/hud/flight/mfd.css">
   <link rel="stylesheet" href="css/hud/flight/roster.css">
-  <link rel="stylesheet" href="css/hud/tactical/sms.css">
-  <link rel="stylesheet" href="css/hud/tactical/deck.css">
+  <link rel="stylesheet" href="css/hud/combat/sms.css">
+  <link rel="stylesheet" href="css/hud/combat/deck.css">
   <link rel="stylesheet" href="css/procurement/layout.css">
   <link rel="stylesheet" href="css/procurement/header.css">
   <link rel="stylesheet" href="css/procurement/presets.css">
@@ -124,7 +124,7 @@
   </div>
 </div>
 <div id="hud-container" class="hud-container hidden">
-  <header class="tactical-banner">
+  <header class="hud-banner">
     <div id="pvp-switcher-bar" class="pvp-switcher hidden">
       <button id="btn-switch-blue" class="pvp-team-btn blue active">BLUE</button>
       <button id="btn-switch-red" class="pvp-team-btn red">RED</button>
@@ -302,7 +302,7 @@
       <div class="pylon-bay"><div id="pylon-rack" class="pylon-rack-grid"></div></div>
     </aside>
   </div>
-  <footer class="tactical-deck-bay">
+  <footer class="maneuver-deck-bay">
     <div class="deck-header"><span>FLIGHT MANEUVERS</span><span class="deck-alert" id="maneuver-alert">READY</span></div>
     <div id="maneuver-deck" class="deck-grid"></div>
   </footer>
@@ -377,7 +377,7 @@
 <script src="js/systems/radar/auxcontacts.js"></script>
 <script src="js/systems/radar/contacts.js"></script>
 <script src="js/systems/radar/surfacezones.js"></script>
-<script src="js/systems/radar/tactical.js"></script>
+<script src="js/systems/radar/engagement.js"></script>
 <script src="js/systems/radar/renderer.js"></script>
 <script src="js/systems/radar.js"></script>
 

@@ -28,11 +28,11 @@ window.AUTOCANNONS_ENERGY = {
     kineticConcussion: 0.0,
     thermalBloom: 1.4,
     cloudScattering: 0.70,
-    desc: 'Lightweight tactical pulse laser firing 3-pulse bursts (1.14 HP total, 1.8s reload). 18 pulses allow 6 bursts. Focused 34-degree cone; electrical discharge increases thermal bloom and beam scatters heavily in clouds.'
+    desc: 'Lightweight pulse laser firing 3-pulse bursts (1.14 HP total, 1.8s reload). 18 pulses allow 6 bursts. Focused 34-degree cone; electrical discharge increases thermal bloom and beam scatters heavily in clouds.'
   },
   'PLSL_MED': {
     id: 'PLSL_MED',
-    name: 'PLSL-20 Tactical Pulse Laser',
+    name: 'PLSL-20 Pulse Laser',
     caliber: 'Directed Energy (Pulse Laser)',
     rpm: 900,
     rangeKm: 15.0,
@@ -83,7 +83,7 @@ window.AUTOCANNONS_ENERGY = {
   },
   'DE-PULSE': {
     id: 'DE-PULSE',
-    name: 'Solid-State Tactical Laser (80 kW)',
+    name: 'Solid-State Laser (80 kW)',
     caliber: 'Directed Energy (DEW)',
     rpm: 9999,
     rangeKm: 7.5,

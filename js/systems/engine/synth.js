@@ -3,7 +3,7 @@
  * Procedural synthesizers for weapons, impacts, laser emitters, and explosions.
  */
 
-class TacticalAudioSynthesizer {
+class AudioSynthesizer {
   static playClick(ctx, dest, masterVol, fxVol) {
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -243,4 +243,4 @@ class TacticalAudioSynthesizer {
   }
 }
 
-window.TacticalAudioSynthesizer = TacticalAudioSynthesizer;
+window.AudioSynthesizer = AudioSynthesizer;

@@ -55,7 +55,7 @@ class InspectionCognitionRenderer {
 
     if (rawRole === 'SNIPER') {
       if (diffKey === 'LEGEND') return 'Standoff F-Pole Skate: Stratospheric FL500 cruise, maintaining 46 to 90 km standoff and cranking 65 deg off boresight to deny return fire.';
-      if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') return 'Stratospheric Energy Skate: Cruising FL440 to FL460, holding 50 to 85 km range and performing tactical retrograde drags to drain incoming missiles.';
+      if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') return 'Stratospheric Energy Skate: Cruising FL440 to FL460, holding 50 to 85 km range and performing retrograde drags to drain incoming missiles.';
       if (diffKey === 'ACE' || diffKey === 'FORWARD') return 'Distance Drag & Standoff: Cruising FL400 to FL420 at 50 to 80 km range, executing 135 deg retrograde turns when targets close inside 45 km.';
       return 'Standoff Perimeter: Holding 45 to 75 km range at FL360 to FL380, turning beam perpendicular if targets approach inside 38 km.';
     }
@@ -83,7 +83,7 @@ class InspectionCognitionRenderer {
 
     if (rawRole === 'SWEEP') {
       if (diffKey === 'LEGEND') return 'Dynamic 3D Air Dominance: High-speed fighter merge, utilizing optimal cornering throttle cuts and post-stall snapshot bursts.';
-      if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') return 'Tactical Drag & Intercept: High-Low element pairing, pulling defenders into turning dogfights while wingmen take high-off-boresight shots.';
+      if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') return 'Combat Drag & Intercept: High-Low element pairing, pulling defenders into turning dogfights while wingmen take high-off-boresight shots.';
       if (diffKey === 'ACE' || diffKey === 'FORWARD') return 'Defensive Screen & Merge: Patrolling FL280 to engage allied fighters and clear corridors for friendly snipers and strike craft.';
       return 'Offensive Combat Sweep: Maneuvering to engage allied fighters directly in forward air merges.';
     }
@@ -131,7 +131,7 @@ class InspectionCognitionRenderer {
       <section class="inspection-card insp-cognition-card ${cardClass}" data-insp-enemy-cognition="${aircraft.id}">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h3 style="margin:0; color:${headerColor};">
-            ${isAce ? 'ACE PILOT COGNITION' : 'AI TACTICAL COGNITION'}
+            ${isAce ? 'ACE PILOT COGNITION' : 'AI COGNITIVE PROFILE'}
           </h3>
           <span class="factor-chip ${statusChipClass} cog-status-chip">
             ${statusChipText}
