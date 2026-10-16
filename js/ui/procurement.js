@@ -186,16 +186,16 @@ class ProcurementManager {
         }
 
         const isEditorSortie = Boolean(this.game.pendingMissionEditorSettings);
-        if (isEditorSortie) {
-          this.showConfirmModal(
-            'COMMENCE UNRANKED MISSION',
-            'Launch this custom editor sortie? It will not be ranked or saved to the leaderboard.',
-            () => this.game.scrambleFlight(),
-            { confirmText: 'LAUNCH MISSION', isAlert: false }
-          );
-        } else {
-          this.game.scrambleFlight();
-        }
+        const confirmText = isEditorSortie
+          ? 'Commence this custom editor sortie? It will not be ranked or saved to the leaderboard.'
+          : `Commence sortie with ${this.game.procurementSquadron.length} aircraft?`;
+
+        this.showConfirmModal(
+          isEditorSortie ? 'COMMENCE UNRANKED SORTIE' : 'COMMENCE SORTIE',
+          confirmText,
+          () => this.game.scrambleFlight(),
+          { confirmText: 'COMMENCE SORTIE', isAlert: false }
+        );
       };
     }
 
