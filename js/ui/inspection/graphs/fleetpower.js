@@ -46,9 +46,10 @@ class FleetPowerRenderer {
       return;
     }
 
-    const padL = 48;
+    const isCompact = w < 500;
+    const padL = w < 360 ? 40 : 48;
     const padR = 16;
-    const padT = 18;
+    const padT = isCompact ? 29 : 18;
     const padB = 22;
     const plotW = w - padL - padR;
     const plotH = h - padT - padB;
@@ -95,7 +96,8 @@ class FleetPowerRenderer {
     ctx.fillStyle = '#94a3b8';
     ctx.font = '700 8px "JetBrains Mono", monospace';
     ctx.textAlign = 'right';
-    ctx.fillText('0 (PARITY)', padL - 4, midY + 3);
+    const parityLabel = w < 360 ? 'PARITY' : '0 (PARITY)';
+    ctx.fillText(parityLabel, padL - 4, midY + 3);
 
     // Build dense path segments with zero-crossing interpolation
     const diffPoints = history.map(pt => ({
@@ -176,33 +178,61 @@ class FleetPowerRenderer {
     const curDiff = last.blueCost - last.redCost;
     const isAdvBlue = curDiff >= 0;
 
-    ctx.font = '700 8.5px "JetBrains Mono", monospace';
-    ctx.textAlign = 'left';
-    ctx.fillStyle = '#38bdf8';
-    ctx.fillText(`BLUE FLEET: $${last.blueCost.toFixed(1)}M`, padL + 4, padT - 5);
-
-    ctx.fillStyle = '#f43f5e';
-    ctx.textAlign = 'right';
-    ctx.fillText(`RED FLEET: $${last.redCost.toFixed(1)}M`, w - padR - 4, padT - 5);
-
-    // Center Net Advantage Callout (Always Positive for the Leading Team)
-    ctx.textAlign = 'center';
+    let advantageText = 'EVEN COMBAT PARITY';
+    let advantageColor = '#00f5a0';
     if (Math.abs(curDiff) < 0.5) {
-      ctx.fillStyle = '#00f5a0';
-      ctx.fillText('EVEN COMBAT PARITY', w / 2, padT - 5);
+      advantageText = w < 300 ? 'EVEN PARITY' : 'EVEN COMBAT PARITY';
+      advantageColor = '#00f5a0';
     } else if (isAdvBlue) {
-      ctx.fillStyle = '#00f0ff';
-      ctx.fillText(`BLUE ADVANTAGE: +$${curDiff.toFixed(1)}M`, w / 2, padT - 5);
+      advantageText = w < 300 ? `BLUE +$${curDiff.toFixed(1)}M` : `BLUE ADVANTAGE: +$${curDiff.toFixed(1)}M`;
+      advantageColor = '#00f0ff';
     } else {
+      advantageText = w < 300 ? `RED +$${Math.abs(curDiff).toFixed(1)}M` : `RED ADVANTAGE: +$${Math.abs(curDiff).toFixed(1)}M`;
+      advantageColor = '#f43f5e';
+    }
+
+    if (isCompact) {
+      // Row 1: Net Advantage Callout (Centered, Full Width Clearance)
+      ctx.font = '700 8.5px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = advantageColor;
+      ctx.fillText(advantageText, w / 2, 11);
+
+      // Row 2: Individual Fleet Budgets (Left & Right)
+      ctx.font = '700 8.5px "JetBrains Mono", monospace';
+      const blueLabel = w < 350 ? `BLUE: $${last.blueCost.toFixed(1)}M` : `BLUE FLEET: $${last.blueCost.toFixed(1)}M`;
+      const redLabel = w < 350 ? `RED: $${last.redCost.toFixed(1)}M` : `RED FLEET: $${last.redCost.toFixed(1)}M`;
+
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText(blueLabel, padL, 22);
+
+      ctx.textAlign = 'right';
       ctx.fillStyle = '#f43f5e';
-      ctx.fillText(`RED ADVANTAGE: +$${Math.abs(curDiff).toFixed(1)}M`, w / 2, padT - 5);
+      ctx.fillText(redLabel, w - padR, 22);
+    } else {
+      // Single Row: Left, Center, Right (Desktop & Wide Displays)
+      ctx.font = '700 8.5px "JetBrains Mono", monospace';
+
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText(`BLUE FLEET: $${last.blueCost.toFixed(1)}M`, padL + 4, padT - 5);
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#f43f5e';
+      ctx.fillText(`RED FLEET: $${last.redCost.toFixed(1)}M`, w - padR - 4, padT - 5);
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = advantageColor;
+      ctx.fillText(advantageText, w / 2, padT - 5);
     }
 
     // Time Axis
     ctx.fillStyle = '#64748b';
     ctx.font = '600 8.5px "JetBrains Mono", monospace';
-    ctx.textAlign = 'center';
+    ctx.textAlign = 'left';
     ctx.fillText('SORTIE LAUNCH', padL, h - padB + 13);
+    ctx.textAlign = 'right';
     ctx.fillText('SORTIE END', padL + plotW, h - padB + 13);
   }
 }
