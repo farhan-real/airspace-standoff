@@ -147,6 +147,7 @@ class RosterCardBuilder {
       if (!e.target.closest('button, input, select, .squad-callsign-tag, .custom-dropdown, .empty-internal-slot, .empty-bay-indicator, .installed-item-card')) {
         if (pm.activeBayIndex !== sIdx) {
           pm.activeBayIndex = sIdx;
+          pm.targetEquipStation = null;
           pm.updateUI();
         }
       }

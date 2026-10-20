@@ -42,10 +42,10 @@ class ProcurementShelf {
     return {
       index: sIdx + 1, sIdx: sIdx,
       callsign: item.callsign || 'Pilot', model: spec.name || item.specId, specId: item.specId,
-      internalCapacity: metrics ? metrics.internalCapacity : (spec.internalSlots || 0),
-      remainingInternal: metrics ? metrics.remainingInternal : 0,
-      externalCapacity: metrics ? metrics.externalCapacity : (spec.externalSlots || 6),
-      remainingExternal: metrics ? metrics.remainingExternal : 6,
+      internalCapacity: metrics ? Number(metrics.internalCapacity !== undefined ? metrics.internalCapacity : 0) : Number(spec.internalSlots || 0),
+      remainingInternal: metrics ? Number(metrics.remainingInternal !== undefined ? metrics.remainingInternal : 0) : 0,
+      externalCapacity: metrics ? Number(metrics.externalCapacity !== undefined ? metrics.externalCapacity : 0) : Number(spec.externalSlots !== undefined ? spec.externalSlots : 0),
+      remainingExternal: metrics ? Number(metrics.remainingExternal !== undefined ? metrics.remainingExternal : 0) : Number(spec.externalSlots !== undefined ? spec.externalSlots : 0),
       hasCenterline: metrics ? metrics.hasCenterline : Boolean(spec.hasCenterline),
       centerlineUsed: metrics ? metrics.centerlineUsed : 0,
       totalSockets: spec.upgradeSockets || 3, usedSockets: (item.upgrades || []).length
@@ -70,14 +70,15 @@ class ProcurementShelf {
       const sockText = remSockets === 1 ? 'SOCKET' : 'SOCKETS';
       el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSockets} ${sockText} AVAILABLE &bull; DRAG OR CLICK TO EQUIP</span>`;
     } else {
-      if (this.pm.targetEquipStation === 'EXTERNAL') {
+      if (this.pm.targetEquipStation === 'EXTERNAL' && active.externalCapacity > 0) {
         el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">EQUIPPING TO EXTERNAL PYLONS (${active.remainingExternal}/${active.externalCapacity} SLOTS)</span>`;
-      } else if (this.pm.targetEquipStation === 'INTERNAL') {
+      } else if (this.pm.targetEquipStation === 'INTERNAL' && active.internalCapacity > 0) {
         el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">EQUIPPING TO INTERNAL BAY (${active.remainingInternal}/${active.internalCapacity} SLOTS)</span>`;
       } else {
-        const intMsg = active.internalCapacity > 0 ? `INT BAY: ${active.remainingInternal}/${active.internalCapacity} &bull; ` : '';
-        const extMsg = `EXT PYLONS: ${active.remainingExternal}/${active.externalCapacity}`;
-        el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${intMsg}${extMsg} AVAILABLE</span>`;
+        const intMsg = active.internalCapacity > 0 ? `INT BAY: ${active.remainingInternal}/${active.internalCapacity}` : '';
+        const extMsg = active.externalCapacity > 0 ? `EXT PYLONS: ${active.remainingExternal}/${active.externalCapacity}` : '';
+        const parts = [intMsg, extMsg].filter(Boolean).join(' &bull; ');
+        el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${parts ? `${parts} AVAILABLE` : 'NO WEAPON STATIONS'}</span>`;
       }
     }
   }

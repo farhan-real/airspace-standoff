@@ -7,39 +7,28 @@ class RosterStationsRenderer {
     if (!item || !item.weapons) return;
     const weaponsMap = window.WEAPONS_CATALOG || {};
     const intCap = Number(spec.internalSlots || 0);
-    const extCap = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+    const extCap = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots !== undefined ? spec.totalSlots : 6));
     const ctrCap = Number(spec.centerlineSlots !== undefined ? spec.centerlineSlots : (spec.hasCenterline ? 6 : 0));
 
-    let intUsed = 0;
-    let extUsed = 0;
-    let ctrUsed = 0;
-
+    let intUsed = 0, extUsed = 0, ctrUsed = 0;
     item.weapons = item.weapons.map(wEntry => {
       const wId = (typeof wEntry === 'object' && wEntry !== null) ? (wEntry.id || wEntry.specId) : wEntry;
       const w = weaponsMap[wId];
       if (!w) return null;
-
       const wSlots = Number(w.slots || 1);
       let assignedStation = (typeof wEntry === 'object' && wEntry !== null && wEntry.station) ? wEntry.station : null;
 
       if (!assignedStation) {
-        if (w.slotType === 'CENTERLINE' && spec.hasCenterline && ctrUsed + wSlots <= ctrCap) {
-          assignedStation = 'CENTERLINE';
-        } else if (w.slotType === 'INTERNAL' && intUsed + wSlots <= intCap) {
-          assignedStation = 'INTERNAL';
-        } else if (extUsed + wSlots <= extCap) {
-          assignedStation = 'EXTERNAL';
-        } else if (spec.hasCenterline && ctrUsed + wSlots <= ctrCap) {
-          assignedStation = 'CENTERLINE';
-        } else {
-          assignedStation = 'EXTERNAL';
-        }
+        if (w.slotType === 'CENTERLINE' && spec.hasCenterline && ctrUsed + wSlots <= ctrCap) assignedStation = 'CENTERLINE';
+        else if (w.slotType === 'INTERNAL' && intUsed + wSlots <= intCap) assignedStation = 'INTERNAL';
+        else if (extCap > 0 && extUsed + wSlots <= extCap) assignedStation = 'EXTERNAL';
+        else if (spec.hasCenterline && ctrUsed + wSlots <= ctrCap) assignedStation = 'CENTERLINE';
+        else assignedStation = extCap > 0 ? 'EXTERNAL' : 'INTERNAL';
       }
 
       if (assignedStation === 'INTERNAL') intUsed += wSlots;
       else if (assignedStation === 'CENTERLINE') ctrUsed += wSlots;
       else extUsed += wSlots;
-
       return { id: wId, station: assignedStation };
     }).filter(Boolean);
   }
@@ -49,34 +38,21 @@ class RosterStationsRenderer {
     const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
     this.normalizeWeapons(item, spec);
 
-    const intCap = metrics ? (metrics.internalCapacity || 0) : (spec.internalSlots || 0);
-    const extCap = metrics ? (metrics.externalCapacity || 6) : (spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
-    const ctrCap = metrics ? (metrics.centerlineCapacity || 6) : (spec.centerlineSlots || 6);
+    const intCap = metrics ? Number(metrics.internalCapacity !== undefined ? metrics.internalCapacity : 0) : Number(spec.internalSlots || 0);
+    const extCap = metrics ? Number(metrics.externalCapacity !== undefined ? metrics.externalCapacity : 0) : Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots !== undefined ? spec.totalSlots : 6));
+    const ctrCap = metrics ? Number(metrics.centerlineCapacity !== undefined ? metrics.centerlineCapacity : 0) : Number(spec.centerlineSlots !== undefined ? spec.centerlineSlots : (spec.hasCenterline ? 6 : 0));
 
-    const internalItems = [];
-    const externalItems = [];
-    const centerlineItems = [];
-
-    let intUsed = 0;
-    let extUsed = 0;
-    let ctrUsed = 0;
+    const internalItems = [], externalItems = [], centerlineItems = [];
+    let intUsed = 0, extUsed = 0, ctrUsed = 0;
 
     item.weapons.forEach((entry, wIdx) => {
       const w = weaponsMap[entry.id];
       if (!w) return;
       const wSlots = Number(w.slots || 1);
       const data = { wId: entry.id, w, wIdx, station: entry.station, slots: wSlots };
-
-      if (entry.station === 'INTERNAL') {
-        intUsed += wSlots;
-        internalItems.push(data);
-      } else if (entry.station === 'CENTERLINE') {
-        ctrUsed += wSlots;
-        centerlineItems.push(data);
-      } else {
-        extUsed += wSlots;
-        externalItems.push(data);
-      }
+      if (entry.station === 'INTERNAL') { intUsed += wSlots; internalItems.push(data); }
+      else if (entry.station === 'CENTERLINE') { ctrUsed += wSlots; centerlineItems.push(data); }
+      else { extUsed += wSlots; externalItems.push(data); }
     });
 
     const remInternal = Math.max(0, intCap - intUsed);
@@ -84,8 +60,7 @@ class RosterStationsRenderer {
     const remCenterline = Math.max(0, ctrCap - ctrUsed);
 
     const renderCard = (data, canUp, canDown) => {
-      const w = data.w;
-      const wIdx = data.wIdx;
+      const w = data.w, wIdx = data.wIdx;
       const dmg = w.damage !== undefined ? w.damage : 2;
       const itemSlotWord = data.slots === 1 ? 'SLOT' : 'SLOTS';
       let seekerTag = w.seeker || 'GUIDED';
@@ -126,7 +101,7 @@ class RosterStationsRenderer {
       const cardsHtml = internalItems.map((itemData, i) => {
         const canUp = (i > 0);
         let canDown = (i < internalItems.length - 1);
-        if (!canDown) {
+        if (!canDown && extCap > 0) {
           if (remExternal >= itemData.slots) canDown = true;
           else if (externalItems.length > 0) {
             const firstExtW = weaponsMap[externalItems[0].wId];
@@ -155,41 +130,44 @@ class RosterStationsRenderer {
         </div>`;
     }
 
-    const extCardsHtml = externalItems.map((itemData, j) => {
-      let canUp = (j > 0);
-      if (!canUp && itemData.w.slotType === 'INTERNAL') {
-        if (remInternal >= itemData.slots) canUp = true;
-        else if (internalItems.length > 0) {
-          const lastIntW = weaponsMap[internalItems[internalItems.length - 1].wId];
-          if (lastIntW) {
-            canUp = (intUsed - (lastIntW.slots || 1) + itemData.slots <= intCap && extUsed - itemData.slots + (lastIntW.slots || 1) <= extCap);
+    let externalPylonsHtml = '';
+    if (extCap > 0 || externalItems.length > 0) {
+      const extCardsHtml = externalItems.map((itemData, j) => {
+        let canUp = (j > 0);
+        if (!canUp && itemData.w.slotType === 'INTERNAL' && intCap > 0) {
+          if (remInternal >= itemData.slots) canUp = true;
+          else if (internalItems.length > 0) {
+            const lastIntW = weaponsMap[internalItems[internalItems.length - 1].wId];
+            if (lastIntW) {
+              canUp = (intUsed - (lastIntW.slots || 1) + itemData.slots <= intCap && extUsed - itemData.slots + (lastIntW.slots || 1) <= extCap);
+            }
           }
         }
-      }
-      const canDown = (j < externalItems.length - 1) || (spec.hasCenterline && itemData.w.slotType === 'CENTERLINE' && remCenterline >= itemData.slots);
-      return renderCard(itemData, canUp, canDown);
-    }).join('');
+        const canDown = (j < externalItems.length - 1) || (spec.hasCenterline && itemData.w.slotType === 'CENTERLINE' && remCenterline >= itemData.slots);
+        return renderCard(itemData, canUp, canDown);
+      }).join('');
 
-    const addExtBtn = (remExternal > 0)
-      ? `<button type="button" class="slot-action-btn btn-add-external-slot" data-sidx="${sIdx}" data-station="EXTERNAL">ADD EXTERNAL WEAPONS (${remExternal} SLOTS REMAINING)</button>`
-      : '';
+      const addExtBtn = (remExternal > 0)
+        ? `<button type="button" class="slot-action-btn btn-add-external-slot" data-sidx="${sIdx}" data-station="EXTERNAL">ADD EXTERNAL WEAPONS (${remExternal} SLOTS REMAINING)</button>`
+        : '';
 
-    const externalPylonsHtml = `
-      <div class="station-section external-pylons-group">
-        <div class="station-header-row">
-          <span class="station-title">EXTERNAL WING PYLONS: <b>${extUsed} / ${extCap} SLOTS</b></span>
-          <span class="station-tag external-tag">STANDARD PYLONS</span>
-        </div>
-        <div class="station-items-container">
-          ${extCardsHtml || (remExternal === extCap ? `<div class="empty-bay-indicator" data-sidx="${sIdx}" data-station="EXTERNAL">NO EXTERNAL PYLONS EQUIPPED (${extCap} SLOTS AVAILABLE)</div>` : '')}
-          ${addExtBtn}
-        </div>
-      </div>`;
+      externalPylonsHtml = `
+        <div class="station-section external-pylons-group">
+          <div class="station-header-row">
+            <span class="station-title">EXTERNAL WING PYLONS: <b>${extUsed} / ${extCap} SLOTS</b></span>
+            <span class="station-tag external-tag">STANDARD PYLONS</span>
+          </div>
+          <div class="station-items-container">
+            ${extCardsHtml || (remExternal === extCap ? `<div class="empty-bay-indicator" data-sidx="${sIdx}" data-station="EXTERNAL">NO EXTERNAL PYLONS EQUIPPED (${extCap} SLOTS AVAILABLE)</div>` : '')}
+            ${addExtBtn}
+          </div>
+        </div>`;
+    }
 
     let centerlineHtml = '';
     if (centerlineItems.length > 0 || (metrics && metrics.hasCenterline)) {
       const ctrCardsHtml = centerlineItems.map((itemData, k) => {
-        const canUp = (k > 0) || (itemData.w.slotType !== 'CENTERLINE' && remExternal >= itemData.slots);
+        const canUp = (k > 0) || (itemData.w.slotType !== 'CENTERLINE' && extCap > 0 && remExternal >= itemData.slots);
         const canDown = (k < centerlineItems.length - 1);
         return renderCard(itemData, canUp, canDown);
       }).join('');
@@ -226,7 +204,7 @@ class RosterStationsRenderer {
     if (!w) return;
 
     const intCap = Number(spec.internalSlots || 0);
-    const extCap = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+    const extCap = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots !== undefined ? spec.totalSlots : 6));
     const ctrCap = Number(spec.centerlineSlots !== undefined ? spec.centerlineSlots : (spec.hasCenterline ? 6 : 0));
 
     const internalItems = item.weapons.filter(e => e.station === 'INTERNAL');
@@ -252,7 +230,7 @@ class RosterStationsRenderer {
           const prev = externalItems[j - 1];
           const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(prev)];
           [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-        } else if (j === 0 && w.slotType === 'INTERNAL') {
+        } else if (j === 0 && w.slotType === 'INTERNAL' && intCap > 0) {
           if (remInternal >= (w.slots || 1)) {
             targetEntry.station = 'INTERNAL';
             const [removed] = item.weapons.splice(wIdx, 1);
@@ -275,7 +253,7 @@ class RosterStationsRenderer {
           const prev = centerlineItems[k - 1];
           const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(prev)];
           [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-        } else if (k === 0 && w.slotType !== 'CENTERLINE' && remExternal >= (w.slots || 1)) {
+        } else if (k === 0 && w.slotType !== 'CENTERLINE' && extCap > 0 && remExternal >= (w.slots || 1)) {
           targetEntry.station = 'EXTERNAL';
           const [removed] = item.weapons.splice(wIdx, 1);
           const lastExtIdx = item.weapons.map(e => e.station).lastIndexOf('EXTERNAL');
@@ -289,7 +267,7 @@ class RosterStationsRenderer {
           const next = internalItems[i + 1];
           const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(next)];
           [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-        } else if (i === internalItems.length - 1) {
+        } else if (i === internalItems.length - 1 && extCap > 0) {
           if (remExternal >= (w.slots || 1)) {
             targetEntry.station = 'EXTERNAL';
             const [removed] = item.weapons.splice(wIdx, 1);
@@ -332,13 +310,8 @@ class RosterStationsRenderer {
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
-  static moveWeaponUp(pm, sIdx, wIdx) {
-    this.shiftWeapon(pm, sIdx, wIdx, -1);
-  }
-
-  static moveWeaponDown(pm, sIdx, wIdx) {
-    this.shiftWeapon(pm, sIdx, wIdx, 1);
-  }
+  static moveWeaponUp(pm, sIdx, wIdx) { this.shiftWeapon(pm, sIdx, wIdx, -1); }
+  static moveWeaponDown(pm, sIdx, wIdx) { this.shiftWeapon(pm, sIdx, wIdx, 1); }
 }
 
 window.RosterStationsRenderer = RosterStationsRenderer;

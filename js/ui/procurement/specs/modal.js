@@ -89,7 +89,10 @@ class SpecsModalRenderer {
     const internalBayDesc = a.internalSlots > 0
       ? `${a.internalSlots} Slots (Concealed VLO Bay - Zero Drag & Zero Extra RCS)`
       : 'None (Conventional Airframe)';
-    const externalPylonsDesc = `${a.externalSlots !== undefined ? a.externalSlots : (a.totalSlots || 6)} Pylons (${a.maxPylonRating || 'Type M'} Max Rating)`;
+    const extSlotsVal = a.externalSlots !== undefined ? a.externalSlots : (a.totalSlots !== undefined ? a.totalSlots : 6);
+    const externalPylonsDesc = extSlotsVal > 0
+      ? `${extSlotsVal} Pylons (${a.maxPylonRating || 'Type M'} Max Rating)`
+      : 'None (Internal Weapons Only)';
     const centerlineDesc = a.hasCenterline
       ? `1 Heavy Station (${a.centerlineSlots || 6} Slots Max - Kinzhal Compatible)`
       : 'None';
@@ -134,7 +137,7 @@ class SpecsModalRenderer {
       <div class="inspect-sec-head">3. ORDNANCE ARCHITECTURE &amp; HARDPOINTS</div>
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>INTERNAL WEAPONS BAY:</span><b class="${a.internalSlots > 0 ? 'stat-tier-1' : 'stat-tier-4'}">${internalBayDesc}</b></div>
-        <div class="inspect-stat-item"><span>EXTERNAL WING PYLONS:</span><b class="stat-tier-2">${externalPylonsDesc}</b></div>
+        <div class="inspect-stat-item"><span>EXTERNAL WING PYLONS:</span><b class="${extSlotsVal > 0 ? 'stat-tier-2' : 'stat-tier-4'}">${externalPylonsDesc}</b></div>
         <div class="inspect-stat-item"><span>CENTERLINE FUSELAGE STATION:</span><b class="${a.hasCenterline ? 'stat-tier-2' : 'stat-tier-4'}">${centerlineDesc}</b></div>
         <div class="inspect-stat-item"><span>TOTAL COMBINED CAPACITY:</span><b class="${rSlots.colorClass}">${a.totalSlots || 6} Max Slots</b></div>
         <div class="inspect-stat-item"><span>MAX PAYLOAD CARRIAGE:</span><b class="${rMass.colorClass}">${maxPayloadKg} kg</b></div>

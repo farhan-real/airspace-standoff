@@ -28,7 +28,7 @@ class LoadoutMetrics {
     const gunMass = activeGun ? Number(activeGun.mass || 100) : 100;
 
     const internalCapacity = Number(spec.internalSlots || 0);
-    const externalCapacity = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+    const externalCapacity = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots !== undefined ? spec.totalSlots : 6));
     const hasCenterline = Boolean(spec.hasCenterline);
     const centerlineCapacity = Number(spec.centerlineSlots !== undefined ? spec.centerlineSlots : (hasCenterline ? 6 : 0));
     const baselineTotalSlots = Number(spec.totalSlots !== undefined ? spec.totalSlots : (internalCapacity + externalCapacity));
@@ -55,12 +55,12 @@ class LoadoutMetrics {
           assignedStation = 'CENTERLINE';
         } else if (wType === 'INTERNAL' && (internalUsed + wSlots <= internalCapacity)) {
           assignedStation = 'INTERNAL';
-        } else if (externalUsed + wSlots <= externalCapacity) {
+        } else if (externalCapacity > 0 && externalUsed + wSlots <= externalCapacity) {
           assignedStation = 'EXTERNAL';
         } else if (hasCenterline && (centerlineUsed + wSlots <= centerlineCapacity)) {
           assignedStation = 'CENTERLINE';
         } else {
-          assignedStation = 'EXTERNAL';
+          assignedStation = externalCapacity > 0 ? 'EXTERNAL' : 'INTERNAL';
         }
       }
 
@@ -227,7 +227,9 @@ class LoadoutMetrics {
     let intPill = internalCapacity > 0
       ? `<span class="station-slot-pill int-pill">${internalUsed}/${internalCapacity} INT</span>`
       : '';
-    let extPill = `<span class="station-slot-pill ext-pill">${externalUsed}/${externalCapacity} EXT</span>`;
+    let extPill = externalCapacity > 0
+      ? `<span class="station-slot-pill ext-pill">${externalUsed}/${externalCapacity} EXT</span>`
+      : '';
     let ctrPill = hasCenterline
       ? `<span class="station-slot-pill ctr-pill ${centerlineUsed > 0 ? 'occupied' : ''}">${centerlineUsed}/${centerlineCapacity} CTR</span>`
       : '';

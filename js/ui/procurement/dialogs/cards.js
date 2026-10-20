@@ -51,11 +51,11 @@ class PreconfigCardsRenderer {
     const wrPercent = metrics ? metrics.wrPercent : 50;
 
     const intSlots = Number(spec.internalSlots || 0);
-    const extSlots = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+    const extSlots = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots !== undefined ? spec.totalSlots : 6));
     const hasCtr = Boolean(spec.hasCenterline);
 
     let defaultIntPill = intSlots > 0 ? `<span class="station-slot-pill int-pill">${intSlots} INT</span>` : '';
-    let defaultExtPill = `<span class="station-slot-pill ext-pill">${extSlots} EXT</span>`;
+    let defaultExtPill = extSlots > 0 ? `<span class="station-slot-pill ext-pill">${extSlots} EXT</span>` : '';
     let defaultCtrPill = hasCtr ? `<span class="station-slot-pill ctr-pill">+ CTR</span>` : '';
     const fallbackBadges = `<span class="station-tag-box">${defaultIntPill}${defaultExtPill}${defaultCtrPill}</span>`;
 

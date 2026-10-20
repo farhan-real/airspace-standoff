@@ -99,11 +99,11 @@ class ShelfAirframesRenderer {
         : (spec.isCoffin ? 'COFFIN Synthetic Vision enclosed cockpit: eliminates G-LOC blackout and grants +25% evasion.' : 'Conventional aerodynamic control surfaces.');
 
       const intSlots = Number(spec.internalSlots || 0);
-      const extSlots = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots || 6));
+      const extSlots = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots !== undefined ? spec.totalSlots : 6));
       const hasCtr = Boolean(spec.hasCenterline);
 
       let intPill = intSlots > 0 ? `<span class="station-slot-pill int-pill">${intSlots} INT</span>` : '';
-      let extPill = `<span class="station-slot-pill ext-pill">${extSlots} EXT</span>`;
+      let extPill = extSlots > 0 ? `<span class="station-slot-pill ext-pill">${extSlots} EXT</span>` : '';
       let ctrPill = hasCtr ? `<span class="station-slot-pill ctr-pill">+ CTR</span>` : '';
       const stationsBadgeHtml = `<span class="station-tag-box">${intPill}${extPill}${ctrPill}</span>`;
 
