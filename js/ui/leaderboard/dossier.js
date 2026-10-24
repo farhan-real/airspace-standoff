@@ -55,9 +55,10 @@ class LeaderboardDossierRenderer {
         </div>
       </div>`).join('');
 
-    const difficultyDisplayName = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[item.difficulty])
-      ? window.AI_DIFFICULTIES[item.difficulty].name
-      : (item.difficulty || 'Contested Airspace');
+    const diffKey = item.difficulty;
+    const diffEntry = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) ||
+                      (window.AI_DIFFICULTIES && Object.values(window.AI_DIFFICULTIES).find(d => d.name === diffKey));
+    const difficultyDisplayName = item.difficultyName || (diffEntry ? diffEntry.name : (diffKey || 'Contested Airspace'));
 
     detailContainer.innerHTML = `
       <div class="dossier-header-box">

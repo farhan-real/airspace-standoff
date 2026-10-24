@@ -121,17 +121,21 @@ class SurfaceUnit {
       }
     }
     this.hp = Math.max(0, this.hp - effectiveDamage);
+    if (this.hp <= 0.05) this.hp = 0;
     if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(this.type === 'BUNKER');
   }
 
   update(dt, enemyAircraftList, enemyMissilesList, spawnedMissiles, radarArrayActive) {
-    if (this.hp <= 0) return;
+    if (this.hp <= 0.05) {
+      this.hp = 0;
+      return;
+    }
     if (this.fireCooldown > 0) this.fireCooldown -= dt;
 
     if (this.type === 'S-400' && radarArrayActive && this.fireCooldown <= 0) {
       const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
       for (const plane of enemyAircraftList) {
-        if (!plane || plane.hp <= 0 || plane.isCivilian) continue;
+        if (!plane || plane.hp <= 0.05 || plane.isCivilian) continue;
         const isDetected = is2P || (typeof plane.isIdentifiedBy === 'function'
           ? plane.isIdentifiedBy(this.team)
           : Boolean(plane.isIdentified));

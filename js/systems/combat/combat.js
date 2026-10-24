@@ -10,7 +10,7 @@ class CombatSystem {
   }
 
   canFire(sourceUnit, item, targetEntity) {
-    if (!sourceUnit || sourceUnit.hp <= 0) return false;
+    if (!sourceUnit || sourceUnit.hp <= 0.05) return false;
     if (!item || item.ammo <= 0 || (item.cooldown && item.cooldown > 0)) return false;
     const w = item.weapon;
     if (!w || w.isJammerPod) return false;
@@ -20,13 +20,14 @@ class CombatSystem {
 
     if (w.isDecoy || w.isDecoyDrone || w.isGunpod || w.category === 'GUN') return true;
 
-    if (!targetEntity || targetEntity.hp <= 0) return false;
+    if (!targetEntity || targetEntity.hp <= 0.05) return false;
     if (typeof targetEntity.x !== 'number' || typeof targetEntity.y !== 'number' || isNaN(targetEntity.x) || isNaN(targetEntity.y)) {
       throw new Error(`Target entity "${targetEntity.id}" has invalid coordinates.`);
     }
 
     const dist = Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y);
     if (isNaN(dist) || dist > w.rangeKm) return false;
+    if (w.minRangeKm && dist < w.minRangeKm) return false;
 
     const isSurface = (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) || Boolean(targetEntity.type && !targetEntity.spec && !targetEntity.isCivilian);
     if (isSurface) {
@@ -50,7 +51,7 @@ class CombatSystem {
   }
 
   fire(sourceUnit, pylonIdx, targetEntity) {
-    if (!sourceUnit || sourceUnit.hp <= 0) return;
+    if (!sourceUnit || sourceUnit.hp <= 0.05) return;
     if (!sourceUnit.equippedWeapons || pylonIdx < 0 || pylonIdx >= sourceUnit.equippedWeapons.length) {
       throw new Error(`Invalid pylon index ${pylonIdx} for unit "${sourceUnit.id}".`);
     }
@@ -140,7 +141,7 @@ class CombatSystem {
             else if (targetEntity.isCivilian) targetEntity.takeDamage(roundDmg, sourceUnit, w, r === numRounds - 1);
             else {
               targetEntity.hp = Math.max(0, targetEntity.hp - roundDmg);
-              if (targetEntity.hp < 0.05) targetEntity.hp = 0;
+              if (targetEntity.hp <= 0.05) targetEntity.hp = 0;
               if (typeof targetEntity.applyActionStress === 'function') targetEntity.applyActionStress(0.08);
             }
             landedDmg += roundDmg;
@@ -153,7 +154,8 @@ class CombatSystem {
             if (r === numRounds - 1 && this.game.radar) {
               this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `POD BURST -${landedDmg.toFixed(1)}HP (${numRounds} RDS)`, '#fbbf24');
             }
-            if (wasAlive && targetEntity.hp <= 0 && this.game.simulation && !targetEntity.isCivilian) {
+            if (wasAlive && targetEntity.hp <= 0.05 && this.game.simulation && !targetEntity.isCivilian) {
+              targetEntity.hp = 0;
               this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
             }
           } else {
@@ -179,7 +181,6 @@ class CombatSystem {
 
       const clouds = (this.game && this.game.simulation && this.game.simulation.weatherClouds) || [];
       const cloudHits = (typeof Physics !== 'undefined' && targetEntity) ? Physics.countIntersectingClouds(sourceUnit.x, sourceUnit.y, targetEntity.x, targetEntity.y, clouds) : 0;
-      // Laser beams scatter significantly in clouds: drops down to 15% damage in dense cloud banks
       const cloudScatterFactor = cloudHits > 0 ? Math.max(0.15, Math.pow(0.55, cloudHits)) : 1.0;
 
       for (let p = 0; p < numPulses; p++) {
@@ -193,7 +194,7 @@ class CombatSystem {
             else if (targetEntity.isCivilian) targetEntity.takeDamage(effectivePulseDmg, sourceUnit, w, p === numPulses - 1);
             else {
               targetEntity.hp = Math.max(0, targetEntity.hp - effectivePulseDmg);
-              if (targetEntity.hp < 0.05) targetEntity.hp = 0;
+              if (targetEntity.hp <= 0.05) targetEntity.hp = 0;
               if (typeof targetEntity.applyActionStress === 'function') targetEntity.applyActionStress(0.12);
             }
             landedDmg += effectivePulseDmg;
@@ -203,7 +204,8 @@ class CombatSystem {
               const scatterTag = cloudHits > 0 ? ` (SCATTERED -${Math.round((1 - cloudScatterFactor) * 100)}%)` : '';
               this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `LASER -${landedDmg.toFixed(1)}HP${scatterTag}`, '#00f0ff');
             }
-            if (wasAlive && targetEntity.hp <= 0 && this.game.simulation && !targetEntity.isCivilian) {
+            if (wasAlive && targetEntity.hp <= 0.05 && this.game.simulation && !targetEntity.isCivilian) {
+              targetEntity.hp = 0;
               this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
             }
           }

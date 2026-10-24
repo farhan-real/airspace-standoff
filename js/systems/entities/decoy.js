@@ -46,7 +46,10 @@ class DecoyDrone {
   }
 
   update(dt) {
-    if (this.hp <= 0) return;
+    if (this.hp <= 0.05) {
+      this.hp = 0;
+      return;
+    }
     this.age += dt;
     if (this.age >= this.lifespan) {
       this.hp = 0;
@@ -65,7 +68,8 @@ class DecoyDrone {
   }
 
   takeDamage(amount) {
-    this.hp = Math.max(0, this.hp - amount);
+    this.hp = Math.max(0, this.hp - (Number(amount) || 0));
+    if (this.hp <= 0.05) this.hp = 0;
   }
 }
 

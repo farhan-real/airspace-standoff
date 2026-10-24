@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF // Tactical RWR Audio Tone Modulation Engine
+ * AIRSPACE STANDOFF: Tactical RWR Audio Tone Modulation Engine
  */
 
 class RWRAudio {
@@ -53,7 +53,9 @@ class RWRAudio {
           osc2.start(now);
           osc1.stop(now + 0.075);
           osc2.stop(now + 0.075);
-        } catch (e) {}
+        } catch (e) {
+          console.warn('RWR lock pulse generation failed:', e);
+        }
       };
 
       playMilLockPulse();
@@ -76,7 +78,9 @@ class RWRAudio {
         gain.connect(dest);
         osc.start(now);
         osc.stop(now + 0.055);
-      } catch (e) {}
+      } catch (e) {
+        console.warn('RWR sweep tone generation failed:', e);
+      }
     }
   }
 }

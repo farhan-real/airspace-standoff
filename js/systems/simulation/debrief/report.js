@@ -146,6 +146,8 @@ class DebriefReportSystem {
       ? window.AI_DIFFICULTIES[metrics.scoreData.diffKey].name
       : (metrics.scoreData.diffName || metrics.scoreData.diffKey);
 
+    const difficultyKey = metrics.scoreData.diffKey || game.aiDifficulty || 'VETERAN';
+
     const archivedFleetPower = this.downsampleFleetHistory(
       (game.simulation && game.simulation.fleetStrengthHistory) ? game.simulation.fleetStrengthHistory : []
     );
@@ -162,7 +164,8 @@ class DebriefReportSystem {
         rawScore: metrics.rawBlueScore,
         timeBonus: metrics.timeBonus,
         totalScore: metrics.finalSortieScore,
-        difficulty: difficultyDisplayName,
+        difficulty: difficultyKey,
+        difficultyName: difficultyDisplayName,
         diffMult: metrics.scoreData.diffMult,
         budgetTier: metrics.scoreData.budgetCap,
         budgetMult: metrics.scoreData.budgetMult,
@@ -233,7 +236,6 @@ class DebriefReportSystem {
 
     modal.classList.add('active');
 
-    // Render Fleet Power Graph on End Screen regardless of inspection mode
     const powerCanvas = document.getElementById('aar-fleet-power-canvas');
     if (powerCanvas && typeof FleetPowerRenderer !== 'undefined') {
       requestAnimationFrame(() => {

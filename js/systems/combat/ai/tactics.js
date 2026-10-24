@@ -11,23 +11,19 @@ class AIMissileTactics {
 
     return rawTargets.filter(t => {
       if (!t || t.hp <= 0.05) return false;
-      if (t.isDecoyDrone || t.isGhost) {
-        if (Math.random() < descChance) return false;
-      }
+      if ((t.isDecoyDrone || t.isGhost) && Math.random() < descChance) return false;
       return true;
     });
   }
 
   static evaluateShooterWeapons(shooter, rawAirTargets, bunkers, profile, clouds, diffKey, allMissiles) {
-    if (!shooter || !shooter.equippedWeapons || shooter.equippedWeapons.length === 0) {
-      return { isBingo: true, plan: null };
-    }
+    if (!shooter || !shooter.equippedWeapons || shooter.equippedWeapons.length === 0) return { isBingo: true, plan: null };
 
     const availablePylons = [];
     for (let i = 0; i < shooter.equippedWeapons.length; i++) {
       const item = shooter.equippedWeapons[i];
       if (item && item.ammo > 0 && item.weapon && !item.weapon.isJammerPod && !item.weapon.isDecoy && !item.weapon.isDecoyDrone && !item.weapon.isGunpod && item.weapon.category !== 'GUN') {
-        availablePylons.push({ index: i, item: item, weapon: item.weapon });
+        availablePylons.push({ index: i, item, weapon: item.weapon });
       }
     }
     if (availablePylons.length === 0) return { isBingo: true, plan: null };
@@ -46,10 +42,7 @@ class AIMissileTactics {
       LEGEND:    { minPk: 68, rangeRatio: profile.engagementRangeRatio || 0.55, hesitateChance: 0.05, maxOffAngle: Math.PI / 4.0 }
     };
     const tier = fireTiers[diffKey] || fireTiers.VETERAN;
-
-    if (!shooter.isAce && Math.random() < tier.hesitateChance) {
-      return { isBingo: false, plan: null };
-    }
+    if (!shooter.isAce && Math.random() < tier.hesitateChance) return { isBingo: false, plan: null };
 
     const role = shooter.tacticalRole || (shooter.spec && shooter.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
     let possibleTargets = [];
@@ -76,20 +69,19 @@ class AIMissileTactics {
     if (possibleTargets.length === 0) return { isBingo: false, plan: null };
 
     const requiredPk = tier.minPk || 45;
-    let bestScore = -999;
-    let bestMatch = null;
+    let bestScore = -999, bestMatch = null;
 
     for (const pylon of availablePylons) {
       const w = pylon.weapon;
       const isA2G = Boolean(w.category === 'A2G' || w.isBunkerCracker);
 
       for (const tgt of possibleTargets) {
-        if (tgt.hp <= 0 || tgt.isCivilian) continue;
+        if (!tgt || tgt.hp <= 0.05 || tgt.isCivilian) continue;
         const isSurface = Boolean(tgt.type && !tgt.spec && !tgt.isCivilian);
         if (isA2G !== isSurface) continue;
 
         const effectiveHp = this.estimateTargetEffectiveHp(tgt, allMissiles, shooter.team, diffKey);
-        if (effectiveHp <= 0 && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) continue;
+        if (effectiveHp <= 0.05 && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) continue;
 
         const dist = Math.hypot(tgt.x - shooter.x, tgt.y - shooter.y);
         const maxRange = w.rangeKm * (shooter.isAce ? 0.70 : tier.rangeRatio);
@@ -111,14 +103,12 @@ class AIMissileTactics {
         const sweetMin = w.sweetSpotMin || (w.rangeKm * 0.20);
         const sweetMax = w.sweetSpotMax || (w.rangeKm * 0.65);
         if (dist >= sweetMin && dist <= sweetMax) score += 20;
-
         if (dist <= 22.0 && (w.seeker === 'IIR' || w.seeker === 'EO' || w.seeker === 'OPT')) score += 20;
         else if (dist >= 30.0 && w.seeker === 'ARH') score += 18;
 
         if (role === 'DOGFIGHT' && (w.seeker === 'IIR' || w.seeker === 'EO' || w.trait === 'HOBS_VANE')) score += 25;
         if (role === 'INTERCEPT' && dist >= 25.0 && w.speedMach >= 3.5) score += 22;
         if (role === 'SWARM' && w.trait === 'SWARM_RIPPLE') score += 20;
-
         if (tgt.isFlightLead) score += 18;
         if (tgt.hp <= 2) score += 16;
         if (diffKey === 'CADET' || diffKey === 'BUFFER') score += (Math.random() * 20 - 10);
@@ -142,14 +132,14 @@ class AIMissileTactics {
     for (let i = 0; i < ace.equippedWeapons.length; i++) {
       const item = ace.equippedWeapons[i];
       if (item && item.ammo > 0 && item.weapon && !item.weapon.isJammerPod && !item.weapon.isDecoy && !item.weapon.isDecoyDrone && !item.weapon.isGunpod && item.weapon.category !== 'GUN') {
-        availablePylons.push({ index: i, item: item, weapon: item.weapon });
+        availablePylons.push({ index: i, item, weapon: item.weapon });
       }
     }
     if (availablePylons.length === 0) return null;
 
     const aceProf = (window.AI_ACE_PROFILES && window.AI_ACE_PROFILES[diffKey]) || profile;
     const filtered = this.filterCandidateTargets(ace, candidateTargets, aceProf, diffKey);
-    const viableTargets = filtered.filter(t => t && t.hp > 0 && !t.isCivilian);
+    const viableTargets = filtered.filter(t => t && t.hp > 0.05 && !t.isCivilian);
     if (viableTargets.length === 0) return null;
 
     viableTargets.sort((a, b) => {
@@ -208,11 +198,10 @@ class AIMissileTactics {
     if (!allMissiles || allMissiles.length === 0) return target.hp;
     const inbounds = allMissiles.filter(m => m.active && m.target && m.target.id === target.id && m.team === team);
     if (inbounds.length === 0) return target.hp;
-
     if (diffKey === 'CADET' || diffKey === 'BUFFER' || diffKey === 'VETERAN') return target.hp;
     const hitRateEst = ['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 0.75 : 0.60;
     const expectedDmg = inbounds.reduce((sum, m) => sum + ((m.weapon ? m.weapon.damage : 3) * hitRateEst), 0);
-    return target.hp - expectedDmg;
+    return Math.max(0, target.hp - expectedDmg);
   }
 
   static calculateSalvoComposition(match, availablePylons, diffKey, shooter, profile) {
@@ -254,16 +243,8 @@ class AIMissileTactics {
     if (res.isBingo && !shooter.isRTB) {
       if (shooter.gunAmmo && shooter.gunAmmo > 0) return false;
       const rtbChances = {
-        CADET: 0.15,
-        BUFFER: 0.22,
-        VETERAN: 0.30,
-        ESCALATED: 0.40,
-        ELITE: 0.50,
-        FORWARD: 0.58,
-        ACE: 0.65,
-        FORTIFIED: 0.72,
-        MASTER: 0.80,
-        LEGEND: 0.90
+        CADET: 0.15, BUFFER: 0.22, VETERAN: 0.30, ESCALATED: 0.40, ELITE: 0.50,
+        FORWARD: 0.58, ACE: 0.65, FORTIFIED: 0.72, MASTER: 0.80, LEGEND: 0.90
       };
       if (Math.random() < (rtbChances[diffKey] || 0.40)) {
         shooter.orderRTB();
@@ -293,16 +274,17 @@ class AIMissileTactics {
           tgt.takeDamage(pylon.weapon.damage, shooter, pylon.weapon, true);
         } else {
           tgt.hp = Math.max(0, tgt.hp - pylon.weapon.damage);
-          if (tgt.hp < 0.05) tgt.hp = 0;
+          if (tgt.hp <= 0.05) tgt.hp = 0;
           if (typeof tgt.applyActionStress === 'function') tgt.applyActionStress(0.20);
         }
         if (commander.game.radar) {
           commander.game.radar.spawnExplosionFX(tgt.x, tgt.y, false);
           commander.game.radar.spawnCombatText(tgt.x, tgt.y, `LASER -${pylon.weapon.damage}HP`, '#f43f5e');
         }
-        if (wasAlive && tgt.hp <= 0 && commander.game.simulation && !tgt.isCivilian) {
+        if (wasAlive && tgt.hp <= 0.05 && commander.game.simulation && !tgt.isCivilian) {
+          tgt.hp = 0;
           commander.game.simulation.recordKillEvent(shooter.team, tgt, shooter, { weapon: pylon.weapon, isSalvo: false, salvoCount: 1 });
-        } else if (wasAlive && tgt.hp > 0 && commander.game.simulation && commander.game.simulation.scoring && !tgt.isCivilian && (!tgt.isIndestructible)) {
+        } else if (wasAlive && tgt.hp > 0.05 && commander.game.simulation && commander.game.simulation.scoring && !tgt.isCivilian && (!tgt.isIndestructible)) {
           commander.game.simulation.scoring.recordHitEvent(shooter.team, tgt, shooter, { weapon: pylon.weapon, damage: pylon.weapon.damage });
         }
       } else if (!pylon.weapon.isGunpod && pylon.weapon.category !== 'GUN') {

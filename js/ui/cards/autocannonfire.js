@@ -81,7 +81,6 @@ class AutocannonFireExecutor {
 
             const clouds = (game && game.simulation && game.simulation.weatherClouds) || [];
             const cloudHits = Physics.countIntersectingClouds(unit.x, unit.y, targetCheck.x, targetCheck.y, clouds);
-            // Energy weapons scatter heavily in cloud moisture
             if (cloudHits > 0 && gun.cloudScattering && gun.cloudScattering > 0) {
               roundDmg *= Math.max(0.10, Math.pow(1.0 - gun.cloudScattering, cloudHits));
             }
@@ -99,7 +98,7 @@ class AutocannonFireExecutor {
               targetCheck.takeDamage(roundDmg, unit, gun, r === numRounds - 1);
             } else {
               targetCheck.hp = Math.max(0, targetCheck.hp - roundDmg);
-              if (targetCheck.hp < 0.05) targetCheck.hp = 0;
+              if (targetCheck.hp <= 0.05) targetCheck.hp = 0;
 
               if (gun.kineticConcussion && gun.kineticConcussion > 0) {
                 if (typeof targetCheck.applyActionStress === 'function') targetCheck.applyActionStress(gun.kineticConcussion * 0.25);
@@ -119,7 +118,8 @@ class AutocannonFireExecutor {
               });
             }
 
-            if (wasAlive && targetCheck.hp <= 0 && game && game.simulation && !targetCheck.isCivilian) {
+            if (wasAlive && targetCheck.hp <= 0.05 && game && game.simulation && !targetCheck.isCivilian) {
+              targetCheck.hp = 0;
               game.simulation.recordKillEvent(unit.team, targetCheck, unit, {
                 weapon: gun,
                 isSalvo: mountedPods.length > 0,

@@ -4,7 +4,7 @@
 
 class AINavigationHandler {
   static handleNavigation(aiCommander, hostile, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused) {
-    if (!hostile || hostile.activeManeuverTimer > 0 || hostile.hp <= 0) return;
+    if (!hostile || hostile.activeManeuverTimer > 0 || hostile.hp <= 0.05) return;
 
     if (hostile.isRTB) {
       if (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
@@ -26,14 +26,14 @@ class AINavigationHandler {
 
     let target = null;
     if (role === 'SEAD') {
-      const hostileRadars = (aiCommander.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0 && (s.type === 'RADAR_ARRAY' || s.type === 'EW_JAMMER' || s.type === 'S-400' || s.type === 'PANTSIR' || s.type === 'RADAR_VAN'));
+      const hostileRadars = (aiCommander.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0.05 && (s.type === 'RADAR_ARRAY' || s.type === 'EW_JAMMER' || s.type === 'S-400' || s.type === 'PANTSIR' || s.type === 'RADAR_VAN'));
       if (hostileRadars.length > 0) {
         target = hostileRadars[0];
       } else if (candidateAirTargets.length > 0) {
         target = candidateAirTargets[0];
       }
     } else if (role === 'STRIKE') {
-      const strikeTargets = (aiCommander.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0 && (s.type === 'BUNKER' || s.type === 'FUEL_DEPOT' || !s.isIndestructible));
+      const strikeTargets = (aiCommander.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0.05 && (s.type === 'BUNKER' || s.type === 'FUEL_DEPOT' || !s.isIndestructible));
       if (strikeTargets.length > 0) {
         target = strikeTargets[0];
       } else if (candidateAirTargets.length > 0) {

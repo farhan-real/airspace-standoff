@@ -54,6 +54,7 @@ class MissileImpactSystem {
     const tgt = missile.target;
     const w = missile.weapon;
     if (!tgt || tgt.hp <= 0.05) {
+      if (tgt) tgt.hp = 0;
       missile.active = false;
       missile.isDead = true;
       return;
@@ -101,12 +102,12 @@ class MissileImpactSystem {
     if (typeof SurfaceUnit !== 'undefined' && tgt instanceof SurfaceUnit) {
       const isEmitter = (tgt.type === 'S-400' || tgt.type === 'RADAR_ARRAY' || tgt.type === 'EW_JAMMER' || tgt.type === 'RADAR_VAN');
       const dmg = w.damage * ((w.trait === 'EMITTER_KILLER' && isEmitter) ? 3 : 1);
-      const wasDead = tgt.hp <= 0;
+      const wasDead = tgt.hp <= 0.05;
       tgt.takeDamage(dmg, w.isBunkerCracker);
       missile.isDead = true;
-      if (!wasDead && tgt.hp <= 0 && window.Game && window.Game.simulation) {
+      if (!wasDead && tgt.hp <= 0.05 && window.Game && window.Game.simulation) {
         window.Game.simulation.recordKillEvent(missile.team, tgt, missile.source, { weapon: w, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
-      } else if (!wasDead && tgt.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
+      } else if (!wasDead && tgt.hp > 0.05 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
         window.Game.simulation.scoring.recordHitEvent(missile.team, tgt, missile.source, { weapon: w, damage: dmg, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       }
       if (window.Game && window.Game.radar) {
@@ -137,12 +138,12 @@ class MissileImpactSystem {
       let finalDamage = w.damage;
       if (tgt.isFlightLead && tgt.missileDamageReduction) finalDamage = Math.max(1, finalDamage - tgt.missileDamageReduction);
       tgt.hp = Math.max(0, tgt.hp - finalDamage);
-      if (tgt.hp < 0.05) tgt.hp = 0;
+      if (tgt.hp <= 0.05) tgt.hp = 0;
       if (typeof tgt.applyActionStress === 'function') tgt.applyActionStress(0.35);
 
-      if (tgt.hp <= 0 && window.Game && window.Game.simulation) {
+      if (tgt.hp <= 0.05 && window.Game && window.Game.simulation) {
         window.Game.simulation.recordKillEvent(missile.team, tgt, missile.source, { weapon: w, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
-      } else if (tgt.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
+      } else if (tgt.hp > 0.05 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
         window.Game.simulation.scoring.recordHitEvent(missile.team, tgt, missile.source, { weapon: w, damage: finalDamage, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       }
 

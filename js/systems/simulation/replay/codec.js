@@ -136,10 +136,10 @@ class AfterActionReplayCodec {
 
     return replay.frames.map(row => {
       const aircraft = (rows, groupTag) => unpack(rows, defs.aircraft || [], (d, r, idx) => {
-        const hasIdInDef = typeof d[0] === 'string' && d[0].startsWith('AC_');
-        const offset = hasIdInDef ? 1 : 0;
-        const assignedId = hasIdInDef ? d[0] : `${groupTag}_${r[0] !== undefined ? r[0] : idx}`;
-        const team = (groupTag === 'blue') ? 'friendly' : 'hostile';
+        const isV1FullDef = (d.length >= 9);
+        const offset = isV1FullDef ? 1 : 0;
+        const assignedId = isV1FullDef ? (d[0] || `${groupTag}_${r[0] !== undefined ? r[0] : idx}`) : `${groupTag}_${r[0] !== undefined ? r[0] : idx}`;
+        const team = isV1FullDef ? (d[5] || (groupTag === 'blue' ? 'friendly' : 'hostile')) : (groupTag === 'blue' ? 'friendly' : 'hostile');
 
         return {
           id: assignedId,

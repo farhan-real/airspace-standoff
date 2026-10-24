@@ -46,7 +46,10 @@ class CivilianAirliner {
   }
 
   update(dt) {
-    if (this.hp <= 0) return;
+    if (this.hp <= 0.05) {
+      this.hp = 0;
+      return;
+    }
 
     const kmPerSec = this.speed * 0.35;
     this.x += Math.cos(this.heading) * kmPerSec * dt;
@@ -62,7 +65,8 @@ class CivilianAirliner {
 
   takeDamage(amount, firingSource, weapon, isEndOfBurst = true) {
     const wasAlive = this.hp > 0.05;
-    this.hp = Math.max(0, this.hp - amount);
+    this.hp = Math.max(0, this.hp - (Number(amount) || 0));
+    if (this.hp <= 0.05) this.hp = 0;
     const firingTeam = (firingSource && firingSource.team) || 'friendly';
 
     const now = (window.Game && window.Game.simulation) ? window.Game.simulation.elapsedTimeSec : performance.now() / 1000;

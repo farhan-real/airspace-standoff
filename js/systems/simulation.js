@@ -129,7 +129,7 @@ class SimulationSystem {
       this.spawnCivilianFlight();
     }
     for (const civ of this.civilianTraffic) civ.update(dt);
-    this.civilianTraffic = this.civilianTraffic.filter(c => c.hp > 0);
+    this.civilianTraffic = this.civilianTraffic.filter(c => c.hp > 0.05);
 
     this.ghostSpawnTimer += dt;
     if (this.ghostSpawnTimer >= 90.0 && this.ghostContacts.length < 1) {
@@ -137,10 +137,10 @@ class SimulationSystem {
       this.initGhostContacts();
     }
     for (const ghost of this.ghostContacts) ghost.update(dt);
-    this.ghostContacts = this.ghostContacts.filter(g => !g.isDissolved && g.hp > 0);
+    this.ghostContacts = this.ghostContacts.filter(g => !g.isDissolved && g.hp > 0.05);
 
     for (const decoy of this.decoyDrones) decoy.update(dt);
-    this.decoyDrones = this.decoyDrones.filter(d => d.hp > 0);
+    this.decoyDrones = this.decoyDrones.filter(d => d.hp > 0.05);
 
     if (this.game.scenarioMode === 'DYNAMIC_THEATER' && this.game.playerMode !== '2P') {
       this.waveSpawnTimer += dt;
@@ -176,8 +176,8 @@ class SimulationSystem {
       hostile.updateAutomaticGun(dt, this.game.alliedAircraft, this.game.radar);
     }
 
-    const hostileRadarAlive = this.game.surfaceUnits.some(s => s.type === 'RADAR_ARRAY' && s.team === 'hostile' && s.hp > 0);
-    const friendlyRadarAlive = this.game.surfaceUnits.some(s => s.type === 'RADAR_ARRAY' && s.team === 'friendly' && s.hp > 0);
+    const hostileRadarAlive = this.game.surfaceUnits.some(s => s.type === 'RADAR_ARRAY' && s.team === 'hostile' && s.hp > 0.05);
+    const friendlyRadarAlive = this.game.surfaceUnits.some(s => s.type === 'RADAR_ARRAY' && s.team === 'friendly' && s.hp > 0.05);
     for (const surf of this.game.surfaceUnits) {
       const isRed = (surf.team === 'hostile');
       surf.update(dt, isRed ? this.game.alliedAircraft : this.game.hostileAircraft, this.game.missiles, this.game.missiles, isRed ? hostileRadarAlive : friendlyRadarAlive);
@@ -210,12 +210,12 @@ class SimulationSystem {
     const perAcRegen = window.CONFIG.TOKEN_PER_AIRCRAFT_REGEN;
     const maxToken = window.CONFIG.TOKEN_MAX;
 
-    const liveAllies = this.game.alliedAircraft.filter(a => a.hp > 0);
+    const liveAllies = this.game.alliedAircraft.filter(a => a.hp > 0.05);
     const allyDatalinkTotal = liveAllies.reduce((sum, a) => sum + (a.datalinkBonus || 0), 0);
     const regenBlue = baseRegen + perAcRegen * liveAllies.length + allyDatalinkTotal;
     this.game.tokenBucketBlue = Math.min(maxToken, this.game.tokenBucketBlue + regenBlue * dt);
 
-    const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0);
+    const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0.05);
     const hostileDatalinkTotal = liveHostiles.reduce((sum, h) => sum + (h.datalinkBonus || 0), 0);
     const regenRed = baseRegen + perAcRegen * liveHostiles.length + hostileDatalinkTotal;
     this.game.tokenBucketRed = Math.min(maxToken, this.game.tokenBucketRed + regenRed * dt);
@@ -232,9 +232,9 @@ class SimulationSystem {
   }
 
   resolveUnitFocus() {
-    if (this.game.activeUnit && this.game.activeUnit.hp <= 0) {
+    if (this.game.activeUnit && this.game.activeUnit.hp <= 0.05) {
       const roster = (this.game.currentPvpCommander === 'friendly') ? this.game.alliedAircraft : this.game.hostileAircraft;
-      const nextLive = roster.find(a => a.hp > 0);
+      const nextLive = roster.find(a => a.hp > 0.05);
       if (nextLive) {
         this.game.activeUnit = nextLive;
         if (this.game.radar && this.game.radar.cam && this.game.radar.trackingUnit) {
@@ -242,7 +242,7 @@ class SimulationSystem {
         }
       }
     }
-    if (this.game.selectedTarget && (this.game.selectedTarget.hp <= 0 || this.game.selectedTarget.isDissolved)) {
+    if (this.game.selectedTarget && (this.game.selectedTarget.hp <= 0.05 || this.game.selectedTarget.isDissolved)) {
       this.game.selectedTarget = null;
       const targetInfo = document.getElementById('selected-target-info');
       if (targetInfo) targetInfo.textContent = 'TARGET: NONE';
@@ -262,10 +262,10 @@ class SimulationSystem {
     }
 
     for (const h of this.game.hostileAircraft) {
-      if (h && h.hp > 0 && h.hp <= 0.05) h.hp = 0;
+      if (h && h.hp <= 0.05) h.hp = 0;
     }
     for (const a of this.game.alliedAircraft) {
-      if (a && a.hp > 0 && a.hp <= 0.05) a.hp = 0;
+      if (a && a.hp <= 0.05) a.hp = 0;
     }
 
     if (this.victoryDelayTimer > 0) {
@@ -277,12 +277,12 @@ class SimulationSystem {
       return;
     }
 
-    const allAlliesDead = this.game.alliedAircraft.length > 0 && this.game.alliedAircraft.every(a => a.hp <= 0);
-    const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0);
+    const allAlliesDead = this.game.alliedAircraft.length > 0 && this.game.alliedAircraft.every(a => a.hp <= 0.05);
+    const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0.05);
     const hasUpcomingWaves = this.game.scenarioMode === 'DYNAMIC_THEATER' && this.game.playerMode !== '2P' && this.currentWave <= 3;
 
     if (allHostilesDead && !hasUpcomingWaves) {
-      const hostileBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'hostile' && s.hp <= 0);
+      const hostileBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'hostile' && s.hp <= 0.05);
       const winReason = hostileBunkerDestroyed
         ? 'ALL HOSTILE AIR ASSETS NEUTRALIZED & COMMAND BUNKER DESTROYED'
         : 'ALL HOSTILE AIR ASSETS NEUTRALIZED: AIR SUPERIORITY SECURED';

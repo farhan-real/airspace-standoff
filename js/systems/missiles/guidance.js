@@ -162,7 +162,7 @@ class MissileGuidanceSystem {
       hasMixedSeekers = (inbounds.some(m => m.weapon && isRf(m.weapon.seeker)) && inbounds.some(m => m.weapon && isOpt(m.weapon.seeker)));
     }
 
-    let effectiveDefense = Math.min(0.65, primaryActiveEvasion + 0.25 * primaryPassiveBaseline);
+    let effectiveDefense = Math.min(0.75, primaryActiveEvasion + 0.25 * primaryPassiveBaseline);
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
     const salvoBonus = Math.min(0.30, Math.max(0, (salvoCount || 1) - 1) * 0.12);
@@ -190,13 +190,12 @@ class MissileGuidanceSystem {
     const turnOptBonus = (turnOptEff - 0.70) * 0.10;
 
     const rawProb = (basePk * aspectScore * kineticRetention) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + thermalModifier + heavyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
-    const probabilityFloor = isManeuvering ? 0.15 : (target.isAce ? 0.20 : (target.isCoffin ? 0.15 : (target.isFlightLead ? 0.18 : 0.20)));
-    const probability = Math.max(probabilityFloor, Math.min(0.95, rawProb));
+    const probability = Math.max(0.0, Math.min(0.95, rawProb));
 
     return {
       probability,
       rawProbability: rawProb,
-      probabilityFloor,
+      probabilityFloor: 0.0,
       probabilityCeiling: 0.95,
       factors: {
         baseHitProbability: basePk,

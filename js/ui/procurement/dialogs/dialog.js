@@ -103,7 +103,7 @@ class DialogModal {
     const dialogCancelBtn = document.getElementById('btn-dialog-cancel') || document.getElementById('btn-tactical-dialog-cancel');
 
     if (!dialogModal) {
-      if (onConfirm) onConfirm();
+      console.error('showConfirm: modal backdrop element could not be found or initialized.');
       return;
     }
 

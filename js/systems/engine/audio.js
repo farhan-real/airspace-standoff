@@ -28,7 +28,9 @@ class AudioEngine {
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume().catch(() => {});
+      this.ctx.resume().catch((err) => {
+        console.warn('AudioContext resume deferred until user gesture:', err);
+      });
     }
   }
 
@@ -55,7 +57,9 @@ class AudioEngine {
     if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
       AudioSynthesizer.playClick(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Audio playClick failed:', e);
+    }
   }
 
   playGunBurst() {
@@ -64,7 +68,9 @@ class AudioEngine {
     if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
       AudioSynthesizer.playGunBurst(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Audio playGunBurst failed:', e);
+    }
   }
 
   playLaunch() {
@@ -73,7 +79,9 @@ class AudioEngine {
     if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
       AudioSynthesizer.playLaunch(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Audio playLaunch failed:', e);
+    }
   }
 
   playMissileLost() {
@@ -82,7 +90,9 @@ class AudioEngine {
     if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
       AudioSynthesizer.playMissileLost(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Audio playMissileLost failed:', e);
+    }
   }
 
   playExplosion(isLarge = false) {
@@ -91,7 +101,9 @@ class AudioEngine {
     if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
       AudioSynthesizer.playExplosion(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume, isLarge);
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Audio playExplosion failed:', e);
+    }
   }
 
   playLaser() {
@@ -100,7 +112,9 @@ class AudioEngine {
     if (!this.ctx || typeof AudioSynthesizer === 'undefined') return;
     try {
       AudioSynthesizer.playLaser(this.ctx, this.getMasterDestination(), this.masterVolume, this.fxVolume);
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Audio playLaser failed:', e);
+    }
   }
 
   updateRWR(threatState) {

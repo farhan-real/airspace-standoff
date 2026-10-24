@@ -45,9 +45,11 @@ class CustomLoadoutsManager {
   getAll() {
     try {
       let raw = this.storage.getItem(this.fleetKey);
-
-      return raw ? JSON.parse(raw) : {};
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      return (parsed && typeof parsed === 'object') ? parsed : {};
     } catch (e) {
+      console.warn('Failed to parse saved custom loadouts from storage:', e);
       return {};
     }
   }
@@ -93,11 +95,11 @@ class CustomLoadoutsManager {
     const defaults = this.getDefaultTemplates();
     try {
       let raw = this.storage.getItem(this.aircraftTemplateKey);
-
       if (!raw) return defaults;
       const parsed = JSON.parse(raw);
       return Object.assign({}, defaults, parsed);
     } catch (e) {
+      console.warn('Failed to parse saved aircraft templates from storage:', e);
       return defaults;
     }
   }
@@ -121,7 +123,9 @@ class CustomLoadoutsManager {
         this.storage.setItem(this.aircraftTemplateKey, JSON.stringify(parsed));
         return true;
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Failed to delete template from storage:', e);
+    }
     return false;
   }
 }

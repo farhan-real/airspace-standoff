@@ -85,9 +85,10 @@ class LeaderboardUI {
 
     const rowsHtml = list.map((item, idx) => {
       const rankClass = idx === 0 ? 'rank-gold' : (idx === 1 ? 'rank-silver' : (idx === 2 ? 'rank-bronze' : 'rank-standard'));
-      const difficultyName = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[item.difficulty])
-        ? window.AI_DIFFICULTIES[item.difficulty].name
-        : (item.difficulty || 'Contested Airspace');
+      const diffKey = item.difficulty;
+      const diffEntry = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) ||
+                        (window.AI_DIFFICULTIES && Object.values(window.AI_DIFFICULTIES).find(d => d.name === diffKey));
+      const difficultyName = item.difficultyName || (diffEntry ? diffEntry.name : (diffKey || 'Contested Airspace'));
 
       return `
         <tr class="leaderboard-row ${idx === 0 ? 'selected' : ''}" data-idx="${idx}">

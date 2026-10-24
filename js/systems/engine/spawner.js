@@ -182,31 +182,37 @@ class SortieSpawner {
       });
     } else if (editorMission && editorMission.redFleet === 'HANGAR') {
       let mirrorSquadron = game.procurementSquadron || [];
-      const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH, prng);
-      spawnPlans.forEach(plan => {
-        const item = plan.item;
-        if (!item) return;
-        const heading = Math.PI + prng.range(-0.08, 0.08);
-        const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + prng.int(0, 17) * 1000);
-        const spawnY = plan.isLead ? midY : plan.y;
+      if (mirrorSquadron.length === 0) {
+        const redDiff = editorMission.difficulty || game.aiDifficulty || 'VETERAN';
+        const redBudget = Number(editorMission.redBudget) || (window.CONFIG && window.CONFIG.BUDGET_MAX_MILLIONS) || 400.0;
+        game.hostileAircraft = FleetGenerator.generateHostileFleet(redDiff, game.aiDoctrine, mapW, mapH, { budget: redBudget });
+      } else {
+        const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH, prng);
+        spawnPlans.forEach(plan => {
+          const item = plan.item;
+          if (!item) return;
+          const heading = Math.PI + prng.range(-0.08, 0.08);
+          const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + prng.int(0, 17) * 1000);
+          const spawnY = plan.isLead ? midY : plan.y;
 
-        const ac = new Aircraft(
-          item.specId, 'hostile', plan.x, spawnY, heading, item.chosenGunId,
-          `Red ${item.callsign || 'Bandit'}`, 'Red Aggressor Wing',
-          plan.isLead, false, initialAltFt
-        );
-        (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
-        (item.weapons || []).forEach(w => {
-          const wId = (typeof w === 'object' && w !== null) ? (w.id || w.specId) : w;
-          const targetStation = (typeof w === 'object' && w !== null) ? w.station : null;
-          ac.installWeapon(wId, targetStation);
+          const ac = new Aircraft(
+            item.specId, 'hostile', plan.x, spawnY, heading, item.chosenGunId,
+            `Red ${item.callsign || 'Bandit'}`, 'Red Aggressor Wing',
+            plan.isLead, false, initialAltFt
+          );
+          (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
+          (item.weapons || []).forEach(w => {
+            const wId = (typeof w === 'object' && w !== null) ? (w.id || w.specId) : w;
+            const targetStation = (typeof w === 'object' && w !== null) ? w.station : null;
+            ac.installWeapon(wId, targetStation);
+          });
+          ac.recalculateWeight();
+          ac.speed = ac.getTargetMach();
+          ac.prevSpeed = ac.speed;
+          ac.speedTrend = '--';
+          game.hostileAircraft.push(ac);
         });
-        ac.recalculateWeight();
-        ac.speed = ac.getTargetMach();
-        ac.prevSpeed = ac.speed;
-        ac.speedTrend = '--';
-        game.hostileAircraft.push(ac);
-      });
+      }
     } else {
       const redDiff = (editorMission && editorMission.redFleet) ? editorMission.redFleet : (game.aiDifficulty || 'VETERAN');
       const redBudget = (editorMission && editorMission.redBudget) ? Number(editorMission.redBudget) : null;
@@ -240,7 +246,7 @@ class SortieSpawner {
       game.simulation.spawnCivilianFlight();
     }
 
-    game.activeUnit = game.alliedAircraft.find(a => a.isFlightLead) || game.alliedAircraft[0];
+    game.activeUnit = game.alliedAircraft.find(a => a.hp > 0.05 && a.isFlightLead) || game.alliedAircraft.find(a => a.hp > 0.05) || game.alliedAircraft[0];
     game.currentPvpCommander = 'friendly';
 
     const pvpSwitcher = document.getElementById('pvp-switcher-bar');

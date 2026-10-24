@@ -129,7 +129,7 @@ const Physics = {
 
   calcPk(weapon, attacker, target, weatherClouds) {
     if (!weapon || !attacker) return { pk: 0, label: 'ERROR', color: '#64748b' };
-    if (!target || target.hp <= 0 || isNaN(target.x) || isNaN(attacker.x)) {
+    if (!target || target.hp <= 0.05 || isNaN(target.x) || isNaN(attacker.x)) {
       return { pk: 0, label: 'NO TARGET', color: '#64748b', arrow: '--', desc: 'Select target', salvoCount: 0, hasMixedSeekers: false };
     }
     if (weapon.isJammerPod) {
@@ -144,7 +144,7 @@ const Physics = {
 
     if (weapon.isLaser || weapon.seeker === 'DIRECT_ENERGY') {
       if (dist > weapon.rangeKm) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist)}km > ${weapon.rangeKm}km`, salvoCount: 0, hasMixedSeekers: false };
-      if (cloudHits > 0) return { pk: Math.max(25, Math.round(95 - cloudHits * 25)), label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: `${cloudHits} cloud cells scattering beam`, salvoCount: 0, hasMixedSeekers: false };
+      if (cloudHits > 0) return { pk: Math.max(10, Math.round(95 - cloudHits * 25)), label: 'SCATTERED', color: '#f59e0b', arrow: '--', desc: `${cloudHits} cloud cells scattering beam`, salvoCount: 0, hasMixedSeekers: false };
       return { pk: 95, label: 'DIRECT BEAM', color: '#00f0ff', arrow: '--', desc: 'Speed-of-light directed energy beam', salvoCount: 0, hasMixedSeekers: false };
     }
 
@@ -157,7 +157,7 @@ const Physics = {
 
     if (isNaN(dist) || dist > weapon.rangeKm) return { pk: 0, label: 'OUT OF RANGE', color: '#ef4444', arrow: '--', desc: `${Math.round(dist || 0)}km > ${weapon.rangeKm}km Max`, salvoCount: 0, hasMixedSeekers: false };
     const minR = weapon.minRangeKm || 1.0;
-    if (dist < minR) return { pk: 15, label: 'TOO CLOSE', color: '#ef4444', arrow: 'v', desc: `Inside arming basket (<${minR}km)`, salvoCount: 0, hasMixedSeekers: false };
+    if (dist < minR) return { pk: 0, label: 'TOO CLOSE', color: '#ef4444', arrow: 'v', desc: `Inside arming basket (<${minR}km)`, salvoCount: 0, hasMixedSeekers: false };
 
     const lambda = weapon.lambda !== undefined ? weapon.lambda : 0.40;
     const pExp = weapon.p !== undefined ? weapon.p : 1.0;
@@ -230,14 +230,14 @@ const Physics = {
     const activeEvasion = Math.max((target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? target.activeManeuverBonus : 0.0, notchBonus, chaffBonus);
     const passiveBaseline = Math.max(target.isCoffin ? 0.25 : 0.0, target.isAce ? 0.08 : 0.0, target.isFlightLead ? 0.08 : 0.0);
     const targetEnergy = Math.max(0.20, Math.min(1.0, target.energy !== undefined ? target.energy : 1.0));
-    let effectiveDefense = Math.min(0.50, Math.max(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
+    let effectiveDefense = Math.min(0.70, Math.max(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
     const weatherPenalty = (weatherClouds && isOpticalSeeker && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.12 : 0.0;
 
     const t0 = weapon.T_0 !== undefined ? weapon.T_0 : 0.80;
     const basePk = t0 * rangeScore * aspectScore - effectiveDefense + salvoBonus + thermalModifier - offBoresightPenalty - weatherPenalty;
-    const pkPercent = Math.round(Math.max(15, Math.min(95, basePk * 100)));
+    const pkPercent = Math.round(Math.max(0, Math.min(95, basePk * 100)));
     const isClosing = (aspectDiff > 1.8);
     const arrow = isClosing ? '^' : 'v';
 
@@ -246,11 +246,12 @@ const Physics = {
     if (isRearShot) { label = 'REAR SHOT'; color = '#00f5a0'; }
     else if (pkPercent >= 70) { label = 'OPTIMAL'; color = '#10b981'; }
     else if (pkPercent >= 45) { label = 'GOOD'; color = '#38bdf8'; }
-    else { label = 'POOR'; color = '#f43f5e'; }
+    else if (pkPercent > 0) { label = 'POOR'; color = '#f43f5e'; }
+    else { label = 'DEFEATED'; color = '#64748b'; }
 
     return {
       pk: pkPercent, label, color, arrow,
-      desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Rear trajectory lock' : 'Target solution locked'),
+      desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Rear trajectory lock' : (pkPercent > 0 ? 'Target solution locked' : 'Kinematically defeated')),
       salvoCount, hasMixedSeekers
     };
   }

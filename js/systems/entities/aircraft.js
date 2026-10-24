@@ -128,7 +128,8 @@ class Aircraft {
     this.equippedWeapons = [];
     this.equippedUpgrades = [];
 
-    const isPlayerTeam = (team === 'friendly');
+    const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
+    const isPlayerTeam = (team === 'friendly' || is2P);
     this.isCoffin = Boolean(this.spec.isCoffin);
     this.isAutonomous = (!isPlayerTeam && this.spec.isDrone && !this.isCoffin);
     this.autonomousOverride = isPlayerTeam;
@@ -143,7 +144,6 @@ class Aircraft {
     this.historySampleTimer = 0.0;
     this.totalProcurementCost = Number(this.spec.cost || 0);
 
-    const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
     this.trackDurationBlue = (team === 'friendly' || is2P) ? 999.0 : 0.0;
     this.trackDurationRed = (team === 'hostile' || is2P) ? 999.0 : 0.0;
     this.identifiedByBlue = (team === 'friendly' || is2P);
@@ -166,6 +166,17 @@ class Aircraft {
     this.recalculateWeight();
     this.speed = this.getTargetMach();
     this.prevSpeed = this.speed;
+  }
+
+  takeDamage(amount) {
+    if (this.hp <= 0.05) {
+      this.hp = 0;
+      return 0;
+    }
+    const damageDealt = Math.max(0, Number(amount) || 0);
+    this.hp = Math.max(0, this.hp - damageDealt);
+    if (this.hp <= 0.05) this.hp = 0;
+    return damageDealt;
   }
 
   isIdentifiedBy(team) {

@@ -112,7 +112,7 @@ class AICommander {
       }
 
       if (h.hp <= 2) score += 30;
-      if (h.radarLockedTarget && h.radarLockedTarget.hp > 0) {
+      if (h.radarLockedTarget && h.radarLockedTarget.hp > 0.05) {
         const d = Math.hypot(h.radarLockedTarget.x - h.x, h.radarLockedTarget.y - h.y);
         if (d <= 45.0) score += 35;
       }
@@ -150,17 +150,17 @@ class AICommander {
     const profile = window.AI_DIFFICULTIES[diffKey];
     if (!profile) throw new Error(`Unknown difficulty "${diffKey}" in AI update.`);
 
-    const aliveHostiles = (this.game.hostileAircraft || []).filter(a => a.hp > 0);
+    const aliveHostiles = (this.game.hostileAircraft || []).filter(a => a.hp > 0.05);
     if (aliveHostiles.length === 0) return;
 
     this.planning.update(dt, aliveHostiles, profile, diffKey);
 
     const redDetected = this.game.detectedByRed || new Set();
-    const visibleAllies = (this.game.alliedAircraft || []).filter(a => a.hp > 0 && redDetected.has(a.id) && (a.identifiedByRed || a.isIdentifiedBy('hostile')));
-    const blueDecoys = (this.game.simulation && this.game.simulation.decoyDrones || []).filter(d => d.hp > 0 && d.team === 'friendly' && redDetected.has(d.id));
+    const visibleAllies = (this.game.alliedAircraft || []).filter(a => a.hp > 0.05 && redDetected.has(a.id) && (a.identifiedByRed || a.isIdentifiedBy('hostile')));
+    const blueDecoys = (this.game.simulation && this.game.simulation.decoyDrones || []).filter(d => d.hp > 0.05 && d.team === 'friendly' && redDetected.has(d.id));
 
     const candidateAirTargets = visibleAllies.concat(blueDecoys);
-    const visibleBunkers = (this.game.surfaceUnits || []).filter(s => s.team === 'friendly' && s.hp > 0 && !s.isIndestructible);
+    const visibleBunkers = (this.game.surfaceUnits || []).filter(s => s.team === 'friendly' && s.hp > 0.05 && !s.isIndestructible);
     const clouds = (this.game.simulation && this.game.simulation.weatherClouds) || [];
     const allMissiles = this.game.missiles || [];
 
@@ -182,7 +182,7 @@ class AICommander {
     if (this.actionCooldown <= 0 && this.game.tokenBucketRed >= tokenCost) {
       for (const focusedId of this.focusedUnitIds) {
         const shooter = aliveHostiles.find(h => h.id === focusedId && !h.isAce);
-        if (!shooter || shooter.hp <= 0 || shooter.isRTB) continue;
+        if (!shooter || shooter.hp <= 0.05 || shooter.isRTB) continue;
         if (this.planning.isHesitating(shooter.id)) continue;
         if (this.game.tokenBucketRed < tokenCost) break;
 

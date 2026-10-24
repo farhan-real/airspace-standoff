@@ -39,16 +39,8 @@ class AIPlanningSystem {
   handleLeadDowned(downedUnit, aliveHostiles, diffKey) {
     if (!downedUnit || aliveHostiles.length === 0) return;
     const pauseTiers = {
-      CADET: 6.0,
-      BUFFER: 5.5,
-      VETERAN: 5.0,
-      ESCALATED: 4.5,
-      ELITE: 4.0,
-      FORWARD: 3.8,
-      ACE: 3.5,
-      FORTIFIED: 3.0,
-      MASTER: 2.5,
-      LEGEND: 1.8
+      CADET: 6.0, BUFFER: 5.5, VETERAN: 5.0, ESCALATED: 4.5, ELITE: 4.0,
+      FORWARD: 3.8, ACE: 3.5, FORTIFIED: 3.0, MASTER: 2.5, LEGEND: 1.8
     };
     const hesitationSec = pauseTiers[diffKey] || 4.0;
     aliveHostiles.forEach(h => {
@@ -109,7 +101,7 @@ class AIPlanningSystem {
     for (const [leadId, wingId] of this.elementPairs.entries()) {
       if (wingId === unit.id) {
         isWingman = true;
-        lead = (this.game.hostileAircraft || []).find(h => h.id === leadId && h.hp > 0);
+        lead = (this.game.hostileAircraft || []).find(h => h.id === leadId && h.hp > 0.05);
         break;
       }
     }
@@ -137,7 +129,6 @@ class AIPlanningSystem {
       if (diffKey === 'ELITE') return 38000;
       return 36000;
     }
-
     if (role === 'INTERCEPT') {
       if (diffKey === 'LEGEND' || diffKey === 'MASTER') return 42000;
       if (diffKey === 'FORTIFIED') return 40000;
@@ -146,19 +137,9 @@ class AIPlanningSystem {
       if (diffKey === 'ELITE') return 34000;
       return 32000;
     }
-
-    if (role === 'DOGFIGHT') {
-      return 20000;
-    }
-
-    if (role === 'SWARM') {
-      return 18000;
-    }
-
-    if (role === 'ESCORT') {
-      return 28000;
-    }
-
+    if (role === 'DOGFIGHT') return 20000;
+    if (role === 'SWARM') return 18000;
+    if (role === 'ESCORT') return 28000;
     if (role === 'STRIKE') {
       if (diffKey === 'LEGEND') return 5500;
       if (diffKey === 'MASTER') return 8000;
@@ -168,7 +149,6 @@ class AIPlanningSystem {
       if (diffKey === 'ELITE') return 13000;
       return 15000;
     }
-
     if (role === 'SEAD') {
       if (diffKey === 'LEGEND') return 36000;
       if (diffKey === 'MASTER') return 34000;
@@ -177,7 +157,6 @@ class AIPlanningSystem {
       if (diffKey === 'FORWARD') return 31000;
       return 30000;
     }
-
     if (role === 'AMBUSH') {
       if (diffKey === 'LEGEND') return 42000;
       if (diffKey === 'MASTER') return 40000;
@@ -186,56 +165,41 @@ class AIPlanningSystem {
       if (diffKey === 'FORWARD') return 34000;
       return 32000;
     }
-
     if (profile.formationDoctrine === 'HIGH_LOW_BRACKET' || profile.formationDoctrine === 'PINCER_BRACKET') {
       const isWingman = [...this.elementPairs.values()].includes(unit.id);
       return isWingman ? 20000 : 34000;
     }
-
     return 28000;
   }
 
   getSniperVector(unit, target, dist, diffKey) {
     const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
-
     if (diffKey === 'LEGEND') {
       if (dist < 46.0) return { heading: directAngle + Math.PI, throttle: 1.0, isCrank: false };
       if (dist > 90.0) return { heading: directAngle, throttle: 0.90, isCrank: false };
       const crankAngle = directAngle + (Math.sin(unit.age || 0) > 0 ? 1.15 : -1.15);
       return { heading: crankAngle, throttle: 0.65, isCrank: true };
     }
-
     if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') {
       if (dist < 44.0) return { heading: directAngle + (Math.PI * 0.85), throttle: 0.85, isCrank: false };
       if (dist > 85.0) return { heading: directAngle, throttle: 0.85, isCrank: false };
       const crankAngle = directAngle + (Math.sin(unit.age || 0) > 0 ? 1.0 : -1.0);
       return { heading: crankAngle, throttle: 0.60, isCrank: true };
     }
-
     if (diffKey === 'ACE' || diffKey === 'FORWARD') {
       if (dist < 42.0) return { heading: directAngle + (Math.PI * 0.75), throttle: 0.50, isCrank: false };
       if (dist > 80.0) return { heading: directAngle, throttle: 0.80, isCrank: false };
       return { heading: directAngle, throttle: 0.60, isCrank: false };
     }
-
-    if (dist < 38.0) {
-      return { heading: directAngle + (Math.PI / 2), throttle: 0.50, isCrank: false };
-    }
+    if (dist < 38.0) return { heading: directAngle + (Math.PI / 2), throttle: 0.50, isCrank: false };
     return { heading: directAngle, throttle: 0.65, isCrank: false };
   }
 
   getInterceptVector(unit, target, dist) {
     const interceptAngle = Physics.calcLeadInterceptAngle(
-      unit.x,
-      unit.y,
-      unit.speed,
-      target.x,
-      target.y,
-      target.heading || 0,
-      target.speed || 0.8
+      unit.x, unit.y, unit.speed, target.x, target.y, target.heading || 0, target.speed || 0.8
     );
-    const sprintThrottle = dist > 30.0 ? 1.0 : 0.85;
-    return { heading: interceptAngle, throttle: sprintThrottle };
+    return { heading: interceptAngle, throttle: dist > 30.0 ? 1.0 : 0.85 };
   }
 
   getDogfightVector(unit, target, dist) {
@@ -249,28 +213,20 @@ class AIPlanningSystem {
 
   getAmbushVector(unit, target, dist, diffKey) {
     const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
-
+    const corridorY = unit.y < 50 ? 14.0 : 86.0;
     if (diffKey === 'LEGEND') {
       if (dist <= 30.0) return { heading: directAngle, throttle: 0.85 };
-      const corridorY = unit.y < 50 ? 12.0 : 88.0;
-      const flankTargetX = target.x + 8.0;
-      return { heading: Math.atan2(corridorY - unit.y, flankTargetX - unit.x), throttle: 0.80 };
+      return { heading: Math.atan2(corridorY - unit.y, target.x + 8.0 - unit.x), throttle: 0.80 };
     }
-
     if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') {
       if (dist <= 34.0) return { heading: directAngle, throttle: 0.80 };
-      const corridorY = unit.y < 50 ? 14.0 : 86.0;
       return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.75 };
     }
-
     if (diffKey === 'ACE' || diffKey === 'FORWARD') {
       if (dist <= 36.0) return { heading: directAngle, throttle: 0.75 };
-      const corridorY = unit.y < 50 ? 16.0 : 84.0;
       return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.70 };
     }
-
     if (dist <= 35.0) return { heading: directAngle, throttle: 0.70 };
-    const corridorY = unit.y < 50 ? 18.0 : 82.0;
     return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.65 };
   }
 
@@ -281,26 +237,24 @@ class AIPlanningSystem {
     const homeX = isBlue ? 10.0 : (mapW - 10.0);
     const homeY = mapH / 2.0;
 
-    const teamUnits = (this.game.surfaceUnits || []).filter(s => s && s.team === unit.team && s.hp > 0);
-
+    const teamUnits = (this.game.surfaceUnits || []).filter(s => s && s.team === unit.team && s.hp > 0.05);
     const airDefenses = teamUnits.filter(s => s.type === 'S-400' || s.type === 'PANTSIR');
     if (airDefenses.length > 0) {
-      const nearestDefense = airDefenses.reduce((best, s) => {
+      const nearest = airDefenses.reduce((best, s) => {
         const d = Math.hypot(s.x - unit.x, s.y - unit.y);
         return d < best.d ? { s, d } : best;
       }, { s: airDefenses[0], d: 9999 }).s;
-      return Math.atan2(nearestDefense.y - unit.y, nearestDefense.x - unit.x);
+      return Math.atan2(nearest.y - unit.y, nearest.x - unit.x);
     }
 
-    const baseInstallations = teamUnits.filter(s => s.type === 'BUNKER' || s.type === 'AMMO_DUMP' || s.type === 'EW_JAMMER');
-    if (baseInstallations.length > 0) {
-      const nearestBase = baseInstallations.reduce((best, s) => {
+    const bases = teamUnits.filter(s => s.type === 'BUNKER' || s.type === 'AMMO_DUMP' || s.type === 'EW_JAMMER');
+    if (bases.length > 0) {
+      const nearest = bases.reduce((best, s) => {
         const d = Math.hypot(s.x - unit.x, s.y - unit.y);
         return d < best.d ? { s, d } : best;
-      }, { s: baseInstallations[0], d: 9999 }).s;
-      return Math.atan2(nearestBase.y - unit.y, nearestBase.x - unit.x);
+      }, { s: bases[0], d: 9999 }).s;
+      return Math.atan2(nearest.y - unit.y, nearest.x - unit.x);
     }
-
     return Math.atan2(homeY - unit.y, homeX - unit.x);
   }
 }

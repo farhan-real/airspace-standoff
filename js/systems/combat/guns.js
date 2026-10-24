@@ -33,7 +33,6 @@ class CombatGunsSystem {
           const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
           const cloudHits = typeof Physics !== 'undefined' ? Physics.countIntersectingClouds(aircraft.x, aircraft.y, enemy.x, enemy.y, clouds) : 0;
 
-          // Energy beams scatter heavily in cloud moisture
           if (cloudHits > 0 && isEnergy && aircraft.gun.cloudScattering) {
             const factor = Math.max(0.10, Math.pow(1.0 - aircraft.gun.cloudScattering, cloudHits));
             sustainedDmg *= factor;
@@ -50,7 +49,7 @@ class CombatGunsSystem {
           const hpBefore = enemy.hp;
           const wasAlive = enemy.hp > 0.05;
           enemy.hp = Math.max(0, enemy.hp - sustainedDmg);
-          if (enemy.hp < 0.05) enemy.hp = 0;
+          if (enemy.hp <= 0.05) enemy.hp = 0;
 
           if (aircraft.gun.kineticConcussion && aircraft.gun.kineticConcussion > 0) {
             if (typeof enemy.applyActionStress === 'function') enemy.applyActionStress(aircraft.gun.kineticConcussion * 0.4 * dt);
@@ -85,9 +84,10 @@ class CombatGunsSystem {
             });
           }
 
-          if (wasAlive && enemy.hp <= 0 && window.Game && window.Game.simulation) {
+          if (wasAlive && enemy.hp <= 0.05 && window.Game && window.Game.simulation) {
+            enemy.hp = 0;
             window.Game.simulation.recordKillEvent(aircraft.team, enemy, aircraft, { weapon: aircraft.gun || { name: 'Autocannon' }, isSalvo: activeGunpods.length > 0, salvoCount: activeGunpods.length + 1 });
-          } else if (wasAlive && enemy.hp > 0 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
+          } else if (wasAlive && enemy.hp > 0.05 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
             window.Game.simulation.scoring.recordHitEvent(aircraft.team, enemy, aircraft, { weapon: aircraft.gun || { name: 'Autocannon' }, damage: sustainedDmg, isSalvo: activeGunpods.length > 0, salvoCount: activeGunpods.length + 1 });
           }
           break;

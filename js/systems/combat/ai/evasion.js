@@ -5,7 +5,7 @@
 
 class AIEvasionHandler {
   static handleDefensiveBehavior(hostile, profile, diffKey, dt, missiles, isFocused = true) {
-    if (!hostile || !missiles || hostile.hp <= 0) return;
+    if (!hostile || !missiles || hostile.hp <= 0.05) return;
     const incoming = missiles.filter(m => m.active && m.target && m.target.id === hostile.id);
     if (incoming.length === 0) return;
 
@@ -119,7 +119,7 @@ class AIEvasionHandler {
     const aceTier = aceTiers[diffKey] || aceTiers.VETERAN;
 
     for (const ace of aces) {
-      if (ace.hp <= 0) continue;
+      if (ace.hp <= 0.05) continue;
       const isFocused = aiCommander.isUnitFocused(ace.id);
 
       const hasAmmo = ace.equippedWeapons && ace.equippedWeapons.some(p => p && p.ammo > 0 && p.weapon && !p.weapon.isJammerPod && !p.weapon.isDecoy && !p.weapon.isDecoyDrone);
