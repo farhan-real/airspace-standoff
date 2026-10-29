@@ -18,6 +18,7 @@ class AfterActionReplayCodec {
       maxHp: aircraft.maxHp,
       altFt: aircraft.altFt,
       callsign: aircraft.callsign,
+      cleanCallsign: String(aircraft.callsign || 'PILOT').replace(/<[^>]*>/g, '').trim(),
       model: aircraft.spec ? (aircraft.spec.name || aircraft.spec.id) : 'AIRCRAFT',
       category: aircraft.spec ? aircraft.spec.category : 'MULTIROLE',
       isAce: Boolean(aircraft.isAce),
@@ -140,10 +141,13 @@ class AfterActionReplayCodec {
         const offset = isV1FullDef ? 1 : 0;
         const assignedId = isV1FullDef ? (d[0] || `${groupTag}_${r[0] !== undefined ? r[0] : idx}`) : `${groupTag}_${r[0] !== undefined ? r[0] : idx}`;
         const team = isV1FullDef ? (d[5] || (groupTag === 'blue' ? 'friendly' : 'hostile')) : (groupTag === 'blue' ? 'friendly' : 'hostile');
+        const rawCallsign = d[offset] || 'PILOT';
+        const cleanCallsign = String(rawCallsign).replace(/<[^>]*>/g, '').trim();
 
         return {
           id: assignedId,
-          callsign: d[offset] || 'PILOT',
+          callsign: rawCallsign,
+          cleanCallsign: cleanCallsign,
           model: d[offset + 1] || 'AIRCRAFT',
           category: d[offset + 2] || 'MULTIROLE',
           maxHp: (d[offset + 3] || 40) / 10,

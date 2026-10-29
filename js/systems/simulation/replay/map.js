@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Sortie Replay Tactical Map & Distinct Simple Arrow Renderer
- * Distinct simple arrows for friendly (delta arrow), hostile (swept diamond arrow), and missiles (forward kinetic dart).
+ * Optimized rendering pipeline with zero-allocation coordinate transforms and batched draw calls.
  */
 
 class ReplayMapRenderer {
@@ -20,92 +20,154 @@ class ReplayMapRenderer {
     const fieldHeight = mapHeight * scaleY;
     const left = padding;
     const top = padding;
-    const point = (x, y) => ({ x: left + x * scaleX, y: top + y * scaleY });
+
+    const toX = (x) => left + x * scaleX;
+    const toY = (y) => top + y * scaleY;
 
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = '#030814';
     ctx.fillRect(left, top, fieldWidth, fieldHeight);
 
+    // Batched theater grid lines
     ctx.strokeStyle = 'rgba(56, 189, 248, 0.10)';
     ctx.lineWidth = 1;
+    ctx.beginPath();
     for (let x = 0; x <= mapWidth; x += 25) {
-      const pTop = point(x, 0), pBottom = point(x, mapHeight);
-      ctx.beginPath(); ctx.moveTo(pTop.x, pTop.y); ctx.lineTo(pTop.x, pBottom.y); ctx.stroke();
+      const sx = toX(x);
+      ctx.moveTo(sx, top);
+      ctx.lineTo(sx, top + fieldHeight);
     }
     for (let y = 0; y <= mapHeight; y += 25) {
-      const pLeft = point(0, y), pRight = point(mapWidth, y);
-      ctx.beginPath(); ctx.moveTo(pLeft.x, pLeft.y); ctx.lineTo(pRight.x, pRight.y); ctx.stroke();
+      const sy = toY(y);
+      ctx.moveTo(left, sy);
+      ctx.lineTo(left + fieldWidth, sy);
     }
+    ctx.stroke();
+
     ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
     ctx.strokeRect(left, top, fieldWidth, fieldHeight);
 
-    (state.clouds || []).forEach(cloud => {
-      const p = point(cloud.x, cloud.y);
+    // Batched clouds
+    const clouds = state.clouds;
+    if (clouds && clouds.length > 0) {
+      ctx.fillStyle = 'rgba(40, 56, 80, 0.16)';
+      ctx.strokeStyle = 'rgba(80, 110, 150, 0.25)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 5]);
       ctx.beginPath();
-      ctx.ellipse(p.x, p.y, Math.max(3, cloud.rx * scaleX), Math.max(3, cloud.ry * scaleY), 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(40, 56, 80, 0.16)'; ctx.fill();
-      ctx.strokeStyle = 'rgba(80, 110, 150, 0.25)'; ctx.setLineDash([4, 5]); ctx.stroke(); ctx.setLineDash([]);
-    });
+      for (let i = 0; i < clouds.length; i++) {
+        const c = clouds[i];
+        ctx.moveTo(toX(c.x) + c.rx * scaleX, toY(c.y));
+        ctx.ellipse(toX(c.x), toY(c.y), Math.max(3, c.rx * scaleX), Math.max(3, c.ry * scaleY), 0, 0, Math.PI * 2);
+      }
+      ctx.fill();
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
 
-    (state.surfaceUnits || []).forEach(unit => {
-      const p = point(unit.x, unit.y);
-      ctx.strokeStyle = unit.hp <= 0 ? '#475569' : (unit.team === 'hostile' ? '#ef4444' : '#38bdf8');
+    // Surface installations
+    const surfaces = state.surfaceUnits;
+    if (surfaces && surfaces.length > 0) {
       ctx.lineWidth = 1.4;
-      ctx.strokeRect(p.x - 4, p.y - 4, 8, 8);
-      if (unit.hp > 0) {
-        ctx.fillStyle = ctx.strokeStyle;
-        ctx.fillRect(p.x - 1.5, p.y - 1.5, 3, 3);
+      for (let i = 0; i < surfaces.length; i++) {
+        const unit = surfaces[i];
+        const px = toX(unit.x);
+        const py = toY(unit.y);
+        ctx.strokeStyle = unit.hp <= 0 ? '#475569' : (unit.team === 'hostile' ? '#ef4444' : '#38bdf8');
+        ctx.strokeRect(px - 4, py - 4, 8, 8);
+        if (unit.hp > 0) {
+          ctx.fillStyle = ctx.strokeStyle;
+          ctx.fillRect(px - 1.5, py - 1.5, 3, 3);
+        }
       }
-    });
+    }
 
-    (state.civilianTraffic || []).forEach(civilian => {
-      if (civilian.hp <= 0) return;
-      const p = point(civilian.x, civilian.y);
-      ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#7dd3fc'; ctx.fill();
-      ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.0; ctx.stroke();
-    });
-
-    (state.decoys || []).forEach(decoy => {
-      if (decoy.hp <= 0) return;
-      const p = point(decoy.x, decoy.y);
-      ctx.beginPath(); ctx.arc(p.x, p.y, 3.2, 0, Math.PI * 2);
-      ctx.strokeStyle = '#c084fc'; ctx.setLineDash([2, 2]); ctx.stroke(); ctx.setLineDash([]);
-    });
-
-    (state.missiles || []).forEach(missile => {
-      const p = point(missile.x, missile.y);
-      const isBlue = (missile.team === 'friendly');
-      const missileColor = isBlue ? '#38bdf8' : '#fb7185';
-      ReplayMapRenderer.drawMissileMarker(ctx, p, missile.heading || 0, missileColor);
-    });
-
-    (state.alliedAircraft || []).forEach(aircraft => {
-      const p = point(aircraft.x, aircraft.y);
-      if (aircraft.hp <= 0.05) {
-        ReplayMapRenderer.drawWreckage(ctx, p, aircraft);
-        return;
+    // Civilian flights
+    const civilians = state.civilianTraffic;
+    if (civilians && civilians.length > 0) {
+      ctx.fillStyle = '#7dd3fc';
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1.0;
+      for (let i = 0; i < civilians.length; i++) {
+        const civ = civilians[i];
+        if (civ.hp <= 0) continue;
+        const px = toX(civ.x);
+        const py = toY(civ.y);
+        ctx.beginPath();
+        ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
       }
-      ReplayMapRenderer.drawAircraftMarker(ctx, p, aircraft.heading, '#00f0ff', false, aircraft.isFlightLead, true);
-      if (width >= 460) {
-        ReplayMapRenderer.drawAircraftLabel(ctx, p, aircraft, '#00f0ff');
-      }
-    });
+    }
 
-    (state.hostileAircraft || []).forEach(aircraft => {
-      const p = point(aircraft.x, aircraft.y);
-      if (aircraft.hp <= 0.05) {
-        ReplayMapRenderer.drawWreckage(ctx, p, aircraft);
-        return;
+    // Decoy drones
+    const decoys = state.decoys;
+    if (decoys && decoys.length > 0) {
+      ctx.strokeStyle = '#c084fc';
+      ctx.setLineDash([2, 2]);
+      for (let i = 0; i < decoys.length; i++) {
+        const d = decoys[i];
+        if (d.hp <= 0) continue;
+        const px = toX(d.x);
+        const py = toY(d.y);
+        ctx.beginPath();
+        ctx.arc(px, py, 3.2, 0, Math.PI * 2);
+        ctx.stroke();
       }
-      const color = aircraft.isAce ? '#ffd700' : '#f43f5e';
-      ReplayMapRenderer.drawAircraftMarker(ctx, p, aircraft.heading, color, aircraft.isAce, false, false);
-      if (width >= 460) {
-        ReplayMapRenderer.drawAircraftLabel(ctx, p, aircraft, color);
-      }
-    });
+      ctx.setLineDash([]);
+    }
 
+    // Guided missiles
+    const missiles = state.missiles;
+    if (missiles && missiles.length > 0) {
+      for (let i = 0; i < missiles.length; i++) {
+        const m = missiles[i];
+        const px = toX(m.x);
+        const py = toY(m.y);
+        const isBlue = (m.team === 'friendly');
+        ReplayMapRenderer.drawMissileMarker(ctx, px, py, m.heading || 0, isBlue ? '#38bdf8' : '#fb7185');
+      }
+    }
+
+    // Allied aircraft
+    const allies = state.alliedAircraft;
+    if (allies && allies.length > 0) {
+      for (let i = 0; i < allies.length; i++) {
+        const a = allies[i];
+        const px = toX(a.x);
+        const py = toY(a.y);
+        if (a.hp <= 0.05) {
+          ReplayMapRenderer.drawWreckage(ctx, px, py, a.cleanCallsign || a.callsign);
+          continue;
+        }
+        ReplayMapRenderer.drawAircraftMarker(ctx, px, py, a.heading, '#00f0ff', false, a.isFlightLead, true);
+        if (width >= 460) {
+          ReplayMapRenderer.drawAircraftLabel(ctx, px, py, a, '#00f0ff');
+        }
+      }
+    }
+
+    // Hostile aircraft
+    const hostiles = state.hostileAircraft;
+    if (hostiles && hostiles.length > 0) {
+      for (let i = 0; i < hostiles.length; i++) {
+        const h = hostiles[i];
+        const px = toX(h.x);
+        const py = toY(h.y);
+        if (h.hp <= 0.05) {
+          ReplayMapRenderer.drawWreckage(ctx, px, py, h.cleanCallsign || h.callsign);
+          continue;
+        }
+        const color = h.isAce ? '#ffd700' : '#f43f5e';
+        ReplayMapRenderer.drawAircraftMarker(ctx, px, py, h.heading, color, h.isAce, false, false);
+        if (width >= 460) {
+          ReplayMapRenderer.drawAircraftLabel(ctx, px, py, h, color);
+        }
+      }
+    }
+
+    // Replay header indicator
     ctx.font = '700 9.5px "JetBrains Mono", ui-monospace, monospace';
     ctx.fillStyle = '#00f0ff';
     ctx.fillText(`SORTIE REPLAY - ${ReplayMapRenderer.formatTime(state.time - startTime)}`, 10, 16);
@@ -117,9 +179,9 @@ class ReplayMapRenderer {
     ctx.fillText('RED', width - 32, 16);
   }
 
-  static drawAircraftMarker(ctx, position, heading, color, isAce, isLead, isBlue = true) {
+  static drawAircraftMarker(ctx, px, py, heading, color, isAce, isLead, isBlue = true) {
     ctx.save();
-    ctx.translate(position.x, position.y);
+    ctx.translate(px, py);
     ctx.rotate(heading || 0);
 
     const size = isAce ? 8.0 : (isLead ? 7.0 : 6.0);
@@ -153,9 +215,9 @@ class ReplayMapRenderer {
     ctx.restore();
   }
 
-  static drawMissileMarker(ctx, position, heading, color) {
+  static drawMissileMarker(ctx, px, py, heading, color) {
     ctx.save();
-    ctx.translate(position.x, position.y);
+    ctx.translate(px, py);
     ctx.rotate(heading || 0);
 
     ctx.fillStyle = color;
@@ -174,38 +236,35 @@ class ReplayMapRenderer {
     ctx.restore();
   }
 
-  static drawWreckage(ctx, position, aircraft) {
-    ctx.save();
+  static drawWreckage(ctx, px, py, callsign) {
     ctx.strokeStyle = 'rgba(239, 68, 68, 0.45)';
     ctx.lineWidth = 1.0;
     ctx.beginPath();
-    ctx.arc(position.x, position.y, 6.5, 0, Math.PI * 2);
+    ctx.arc(px, py, 6.5, 0, Math.PI * 2);
     ctx.stroke();
 
     ctx.strokeStyle = '#f43f5e';
     ctx.lineWidth = 1.4;
     ctx.beginPath();
-    ctx.moveTo(position.x - 4, position.y - 4);
-    ctx.lineTo(position.x + 4, position.y + 4);
-    ctx.moveTo(position.x + 4, position.y - 4);
-    ctx.lineTo(position.x - 4, position.y + 4);
+    ctx.moveTo(px - 4, py - 4);
+    ctx.lineTo(px + 4, py + 4);
+    ctx.moveTo(px + 4, py - 4);
+    ctx.lineTo(px - 4, py + 4);
     ctx.stroke();
 
-    if (aircraft && aircraft.callsign) {
+    if (callsign) {
       ctx.font = '600 8px "JetBrains Mono", ui-monospace, monospace';
       ctx.fillStyle = '#94a3b8';
-      const cleanCallsign = String(aircraft.callsign).replace(/<[^>]*>/g, '');
-      ctx.fillText(`${cleanCallsign} [LOST]`, position.x + 8, position.y - 3);
+      ctx.fillText(`${callsign} [LOST]`, px + 8, py - 3);
     }
-    ctx.restore();
   }
 
-  static drawAircraftLabel(ctx, position, aircraft, color) {
+  static drawAircraftLabel(ctx, px, py, aircraft, color) {
     ctx.font = '600 8.5px "JetBrains Mono", ui-monospace, monospace';
     ctx.fillStyle = color;
-    const callsign = aircraft.callsign || 'PILOT';
+    const callsign = aircraft.cleanCallsign || aircraft.callsign || 'PILOT';
     const model = aircraft.model ? aircraft.model.split(' ')[0] : 'JET';
-    ctx.fillText(aircraft.identified ? `${callsign} [${model}]` : 'BOGEY', position.x + 8, position.y - 6);
+    ctx.fillText(aircraft.identified ? `${callsign} [${model}]` : 'BOGEY', px + 8, py - 6);
   }
 }
 

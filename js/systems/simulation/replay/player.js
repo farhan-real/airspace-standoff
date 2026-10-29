@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Sortie Replay Playback & Playback Controller
- * Synchronized missile impacts and target kill moments with clean simple arrows and zero delay.
+ * Zero-allocation in-place state interpolation, O(1) frame lookup, and throttled UI updates.
  */
 
 class AfterActionReplay {
@@ -15,8 +15,10 @@ class AfterActionReplay {
   }
 
   static stopArchived() {
-    if (this.archiveInstance) this.archiveInstance.pause();
-    this.archiveInstance = null;
+    if (this.archiveInstance) {
+      this.archiveInstance.destroy();
+      this.archiveInstance = null;
+    }
   }
 
   static showArchived(root, replay, events = []) {
@@ -41,14 +43,14 @@ class AfterActionReplay {
   constructor(root = document) {
     this.root = root;
     this.canvas = root.querySelector('.aar-replay-canvas');
-    this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+    this.ctx = this.canvas ? this.canvas.getContext('2d', { alpha: false }) : null;
     this.slider = root.querySelector('.aar-replay-slider');
     this.clock = root.querySelector('.aar-replay-clock');
     this.playButton = root.querySelector('.aar-replay-play');
     this.speedButton = root.querySelector('.aar-replay-speed');
     this.eventList = root.querySelector('.aar-replay-events');
     this.status = root.querySelector('.aar-replay-status');
-    this.game = null;
+
     this.frames = [];
     this.startTime = 0;
     this.endTime = 0;
@@ -61,48 +63,76 @@ class AfterActionReplay {
     this.lastAnimationTime = 0;
     this.viewWidth = 800;
     this.viewHeight = 220;
-    this.pixelRatio = 1;
+    this.lastLeftIndex = 0;
+    this.lastUiUpdateTime = -1;
+    this.renderPending = false;
+
+    // Zero-allocation reusable state buffers
+    this.state = {
+      time: 0,
+      clouds: [],
+      alliedAircraft: [],
+      hostileAircraft: [],
+      surfaceUnits: [],
+      missiles: [],
+      civilianTraffic: [],
+      decoys: []
+    };
 
     if (this.playButton) this.playButton.onclick = () => this.togglePlayback();
     if (this.speedButton) this.speedButton.onclick = () => this.cycleSpeed();
+
+    this.onWindowPointerUp = () => { this.isUserDragging = false; };
+    window.addEventListener('pointerup', this.onWindowPointerUp);
+    window.addEventListener('pointercancel', this.onWindowPointerUp);
 
     if (this.slider) {
       this.slider.addEventListener('pointerdown', () => {
         this.isUserDragging = true;
         this.pause();
       });
-      const endDrag = () => {
-        this.isUserDragging = false;
-      };
-      this.slider.addEventListener('pointerup', endDrag);
-      this.slider.addEventListener('pointercancel', endDrag);
-
       this.slider.oninput = () => {
         this.pause();
-        this.seek(Number(this.slider.value), false);
+        const targetTime = Number(this.slider.value);
+        this.currentTime = Math.max(this.startTime, Math.min(this.endTime, targetTime));
+        if (!this.renderPending) {
+          this.renderPending = true;
+          requestAnimationFrame(() => {
+            this.renderPending = false;
+            this.drawAt(this.currentTime, false);
+          });
+        }
       };
     }
 
     const restartButton = root.querySelector('.aar-replay-restart');
     if (restartButton) restartButton.onclick = () => { this.pause(); this.seek(this.startTime, true); };
 
-    window.addEventListener('resize', () => this.resizeCanvas());
+    this.onWindowResize = () => this.resizeCanvas();
+    window.addEventListener('resize', this.onWindowResize);
+  }
+
+  destroy() {
+    this.pause();
+    window.removeEventListener('resize', this.onWindowResize);
+    window.removeEventListener('pointerup', this.onWindowPointerUp);
+    window.removeEventListener('pointercancel', this.onWindowPointerUp);
   }
 
   open(game) {
-    this.game = game;
     this.openFrames((game && game.simulation && game.simulation.replaySnapshots) || [],
       (game && game.simulation && game.simulation.timelineEvents) || [], true);
   }
 
   openFrames(frames, events = [], liveReplay = false) {
     this.pause();
-    this.game = null;
     this.frames = Array.isArray(frames) ? frames : [];
     this.startTime = this.frames.length ? this.frames[0].time : 0;
     this.endTime = this.frames.length ? this.frames[this.frames.length - 1].time : 0;
     this.currentTime = this.startTime;
     this.speed = 1;
+    this.lastLeftIndex = 0;
+    this.lastUiUpdateTime = -1;
 
     if (this.slider) {
       this.slider.min = String(this.startTime);
@@ -119,19 +149,22 @@ class AfterActionReplay {
     this.updateButtons();
     this.renderEventJumps(events);
     this.resizeCanvas();
-    this.drawAt(this.currentTime, true);
+    requestAnimationFrame(() => {
+      this.resizeCanvas();
+      this.drawAt(this.currentTime, true);
+    });
   }
 
   renderEventJumps(events) {
     if (!this.eventList) return;
     this.eventList.replaceChildren();
     const keyEvents = events
-      .filter(event => event && ['kill', 'ace-kill', 'hit', 'roe_penalty'].includes(event.type))
-      .map(event => ({
-        event,
-        time: (typeof event.timeSec === 'number' && Number.isFinite(event.timeSec))
-          ? event.timeSec
-          : this.parseEventTime(event.time)
+      .filter(ev => ev && ['kill', 'ace-kill', 'hit', 'roe_penalty'].includes(ev.type))
+      .map(ev => ({
+        event: ev,
+        time: (typeof ev.timeSec === 'number' && Number.isFinite(ev.timeSec))
+          ? ev.timeSec
+          : this.parseEventTime(ev.time)
       }))
       .filter(item => Number.isFinite(item.time))
       .sort((a, b) => a.time - b.time)
@@ -154,17 +187,16 @@ class AfterActionReplay {
       button.title = event.reason || `${event.source || 'Unit'} engaged ${event.target || 'target'}`;
       button.onclick = () => {
         this.pause();
-        const approachSeek = Math.max(this.startTime, time - 1.0);
-        this.seek(approachSeek, true);
+        this.seek(Math.max(this.startTime, time - 1.0), true);
       };
       this.eventList.appendChild(button);
     });
   }
 
-  parseEventTime(value) {
-    if (typeof value !== 'string') return NaN;
-    const parts = value.split(':').map(Number);
-    if (parts.length !== 2 || parts.some(part => !Number.isFinite(part))) return NaN;
+  parseEventTime(val) {
+    if (typeof val !== 'string') return NaN;
+    const parts = val.split(':').map(Number);
+    if (parts.length !== 2 || parts.some(p => !Number.isFinite(p))) return NaN;
     return parts[0] * 60 + parts[1];
   }
 
@@ -211,137 +243,148 @@ class AfterActionReplay {
   }
 
   cycleSpeed() {
-    const currentIndex = this.speedOptions.indexOf(this.speed);
-    this.speed = this.speedOptions[(currentIndex + 1) % this.speedOptions.length];
+    const idx = this.speedOptions.indexOf(this.speed);
+    this.speed = this.speedOptions[(idx + 1) % this.speedOptions.length];
     this.updateButtons();
   }
 
   updateButtons() {
     if (this.playButton) this.playButton.textContent = this.isPlaying ? 'PAUSE' : 'PLAY';
     if (this.speedButton) this.speedButton.textContent = `${this.speed}x SPEED`;
-    const replayAvailable = this.frames.length > 1 && this.endTime > this.startTime;
-    if (this.playButton) this.playButton.disabled = !replayAvailable;
-    if (this.slider) this.slider.disabled = !replayAvailable;
-    const restartButton = this.root.querySelector('.aar-replay-restart');
-    if (restartButton) restartButton.disabled = !replayAvailable;
-    if (this.speedButton) this.speedButton.disabled = !replayAvailable;
+    const available = this.frames.length > 1 && this.endTime > this.startTime;
+    if (this.playButton) this.playButton.disabled = !available;
+    if (this.slider) this.slider.disabled = !available;
+    const restartBtn = this.root.querySelector('.aar-replay-restart');
+    if (restartBtn) restartBtn.disabled = !available;
+    if (this.speedButton) this.speedButton.disabled = !available;
   }
 
   drawAt(time, syncSlider = false) {
     if (!this.ctx || !this.canvas || this.frames.length === 0) return;
+
+    if (this.canvas.clientWidth > 0 && Math.abs(this.canvas.clientWidth - this.viewWidth) > 2) {
+      this.resizeCanvas();
+    }
+
     const state = this.interpolateFrame(time);
     if (typeof ReplayMapRenderer !== 'undefined') {
       ReplayMapRenderer.drawMap(this.ctx, state, this.viewWidth, this.viewHeight, this.startTime);
     }
 
-    if (syncSlider && this.slider && !this.isUserDragging) {
-      this.slider.value = String(time);
+    // Throttle DOM slider and clock updates to avoid layout thrashing at 60 FPS
+    if (syncSlider && (!this.lastUiUpdateTime || Math.abs(time - this.lastUiUpdateTime) >= 0.1 || time >= this.endTime)) {
+      this.lastUiUpdateTime = time;
+      if (this.slider && !this.isUserDragging) {
+        this.slider.value = String(time);
+      }
+      if (this.clock) {
+        const fmt = (typeof ReplayMapRenderer !== 'undefined') ? ReplayMapRenderer.formatTime : s => String(Math.floor(s));
+        this.clock.textContent = `${fmt(time - this.startTime)} / ${fmt(this.endTime - this.startTime)}`;
+      }
     }
-    if (this.clock) {
-      const formatTime = (typeof ReplayMapRenderer !== 'undefined') ? ReplayMapRenderer.formatTime : s => String(Math.floor(s));
-      this.clock.textContent = `${formatTime(time - this.startTime)} / ${formatTime(this.endTime - this.startTime)}`;
+  }
+
+  findLeftIndex(time) {
+    const frames = this.frames;
+    const len = frames.length;
+    if (len <= 2) return 0;
+
+    let idx = this.lastLeftIndex || 0;
+    if (idx >= len - 2) idx = len - 2;
+
+    if (time >= frames[idx].time) {
+      if (idx + 1 < len && time < frames[idx + 1].time) return idx;
+      if (idx + 2 < len && time >= frames[idx + 1].time && time < frames[idx + 2].time) {
+        this.lastLeftIndex = idx + 1;
+        return idx + 1;
+      }
     }
+
+    let low = 0, high = len - 2;
+    while (low <= high) {
+      const mid = (low + high) >> 1;
+      if (frames[mid + 1].time <= time) low = mid + 1;
+      else if (frames[mid].time > time) high = mid - 1;
+      else {
+        this.lastLeftIndex = mid;
+        return mid;
+      }
+    }
+    const res = Math.max(0, Math.min(len - 2, low));
+    this.lastLeftIndex = res;
+    return res;
   }
 
   interpolateFrame(time) {
     if (this.frames.length === 1) return this.frames[0];
 
-    let leftIndex = 0;
-    while (leftIndex < this.frames.length - 2 && this.frames[leftIndex + 1].time < time) {
-      leftIndex++;
-    }
-    const left = this.frames[leftIndex];
-    const right = this.frames[Math.min(leftIndex + 1, this.frames.length - 1)];
+    const leftIdx = this.findLeftIndex(time);
+    const left = this.frames[leftIdx];
+    const right = this.frames[Math.min(leftIdx + 1, this.frames.length - 1)];
     const span = right.time - left.time;
     const amount = span > 0 ? Math.max(0, Math.min(1, (time - left.time) / span)) : 0;
-    const state = { time, clouds: this.interpolateClouds(left.clouds || [], right.clouds || [], amount) };
 
-    ['alliedAircraft', 'hostileAircraft', 'surfaceUnits', 'missiles', 'civilianTraffic', 'decoys'].forEach(key => {
-      state[key] = this.interpolateEntities(left[key] || [], right[key] || [], amount, span);
-    });
-    return state;
-  }
-
-  interpolateEntities(left, right, amount, span = 0.4) {
-    if (!left || left.length === 0) return right || [];
-    if (!right || right.length === 0) return left || [];
     if (amount <= 0.001) return left;
     if (amount >= 0.999) return right;
 
-    const rightById = new Map();
-    right.forEach(e => { if (e && e.id) rightById.set(e.id, e); });
+    const s = this.state;
+    s.time = time;
+    s.clouds = left.clouds || [];
+    s.surfaceUnits = right.surfaceUnits || left.surfaceUnits || [];
+    s.civilianTraffic = right.civilianTraffic || left.civilianTraffic || [];
+    s.decoys = right.decoys || left.decoys || [];
+    s.missiles = (amount >= 0.50 ? right.missiles : left.missiles) || [];
 
-    const result = [];
-    const processedRightIds = new Set();
+    this.interpolateAircraftArray(left.alliedAircraft, right.alliedAircraft, s.alliedAircraft, amount);
+    this.interpolateAircraftArray(left.hostileAircraft, right.hostileAircraft, s.hostileAircraft, amount);
 
-    left.forEach(prev => {
-      if (!prev) return;
-      const next = rightById.get(prev.id);
-      if (next) {
-        processedRightIds.add(next.id);
-        const item = { ...next };
-        if (Number.isFinite(prev.x) && Number.isFinite(next.x)) {
-          item.x = prev.x + (next.x - prev.x) * amount;
-        }
-        if (Number.isFinite(prev.y) && Number.isFinite(next.y)) {
-          item.y = prev.y + (next.y - prev.y) * amount;
-        }
-        if (Number.isFinite(prev.speed) && Number.isFinite(next.speed)) {
-          item.speed = prev.speed + (next.speed - prev.speed) * amount;
-        }
-
-        if (Number.isFinite(prev.hp) && Number.isFinite(next.hp)) {
-          if (next.hp <= 0.05 && prev.hp > 0.05) {
-            item.hp = (amount >= 0.70) ? 0 : prev.hp;
-          } else {
-            item.hp = prev.hp + (next.hp - prev.hp) * amount;
-          }
-        }
-
-        if (Number.isFinite(prev.heading) && Number.isFinite(next.heading)) {
-          let diff = next.heading - prev.heading;
-          while (diff < -Math.PI) diff += Math.PI * 2;
-          while (diff > Math.PI) diff -= Math.PI * 2;
-          item.heading = prev.heading + diff * amount;
-        }
-        result.push(item);
-      } else {
-        if (prev.weapon !== undefined || prev.stage !== undefined) {
-          if (amount < 0.70) {
-            const flightTime = Math.max(0.1, span) * amount;
-            const dist = (prev.speed || 2.4) * 0.35 * flightTime;
-            result.push({
-              ...prev,
-              x: prev.x + Math.cos(prev.heading || 0) * dist,
-              y: prev.y + Math.sin(prev.heading || 0) * dist
-            });
-          }
-        } else if (amount < 0.50 && prev.hp > 0.05) {
-          result.push(prev);
-        }
-      }
-    });
-
-    right.forEach(next => {
-      if (!processedRightIds.has(next.id) && amount >= 0.50) {
-        result.push(next);
-      }
-    });
-
-    return result;
+    return s;
   }
 
-  interpolateClouds(left, right, amount) {
-    return right.map((cloud, index) => {
-      const previous = left[index];
-      if (!previous) return cloud;
-      return {
-        x: previous.x + (cloud.x - previous.x) * amount,
-        y: previous.y + (cloud.y - previous.y) * amount,
-        rx: previous.rx + (cloud.rx - previous.rx) * amount,
-        ry: previous.ry + (cloud.ry - previous.ry) * amount
-      };
-    });
+  interpolateAircraftArray(leftArr, rightArr, targetArr, amount) {
+    const len = rightArr ? rightArr.length : (leftArr ? leftArr.length : 0);
+    targetArr.length = len;
+
+    for (let i = 0; i < len; i++) {
+      const prev = leftArr ? leftArr[i] : null;
+      const next = rightArr ? rightArr[i] : null;
+
+      if (!prev && next) { targetArr[i] = next; continue; }
+      if (prev && !next) { targetArr[i] = prev; continue; }
+      if (!prev && !next) continue;
+
+      let item = targetArr[i];
+      if (!item) {
+        item = {};
+        targetArr[i] = item;
+      }
+
+      item.id = next.id;
+      item.callsign = next.callsign;
+      item.cleanCallsign = next.cleanCallsign || next.callsign;
+      item.model = next.model;
+      item.category = next.category;
+      item.maxHp = next.maxHp;
+      item.team = next.team;
+      item.isAce = next.isAce;
+      item.isFlightLead = next.isFlightLead;
+      item.isCoffin = next.isCoffin;
+      item.isRTB = next.isRTB;
+      item.identified = next.identified;
+
+      item.x = prev.x + (next.x - prev.x) * amount;
+      item.y = prev.y + (next.y - prev.y) * amount;
+      item.speed = prev.speed + (next.speed - prev.speed) * amount;
+      item.altFt = prev.altFt + (next.altFt - prev.altFt) * amount;
+      item.hp = (next.hp <= 0.05 && prev.hp > 0.05)
+        ? (amount >= 0.70 ? 0 : prev.hp)
+        : (prev.hp + (next.hp - prev.hp) * amount);
+
+      let diff = next.heading - prev.heading;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      item.heading = prev.heading + diff * amount;
+    }
   }
 
   resizeCanvas() {
@@ -354,7 +397,6 @@ class AfterActionReplay {
 
     this.viewWidth = width;
     this.viewHeight = height;
-    this.pixelRatio = ratio;
 
     if (this.canvas.width !== pixelWidth || this.canvas.height !== pixelHeight) {
       this.canvas.width = pixelWidth;

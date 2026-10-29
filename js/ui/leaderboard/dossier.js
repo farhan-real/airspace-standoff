@@ -8,6 +8,10 @@ class LeaderboardDossierRenderer {
     const detailContainer = document.getElementById('leaderboard-detail-view');
     if (!detailContainer || !item) return;
 
+    if (window.AfterActionReplay && typeof window.AfterActionReplay.stopArchived === 'function') {
+      window.AfterActionReplay.stopArchived();
+    }
+
     const timeBonusVal = item.timeBonus || 0;
     const pilots = item.pilots || [];
     const topThreePilots = (item.topPilots && item.topPilots.length > 0)
