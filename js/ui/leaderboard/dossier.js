@@ -26,15 +26,24 @@ class LeaderboardDossierRenderer {
       const rankClass = 'rank-' + (p.rank || idx + 1);
       const isBlue = (p.team === 'friendly');
       const teamClass = isBlue ? 'team-blue' : 'team-red';
-      const teamTag = p.isAce ? `${isBlue ? 'BLUE' : 'RED'} ACE` : (isBlue ? 'BLUE' : 'RED');
-      const teamColor = p.isAce ? '#ffd700' : (isBlue ? '#38bdf8' : '#f43f5e');
+      const teamBadgeClass = isBlue ? 'blue' : 'red';
+      const teamLabel = isBlue ? 'BLUE' : 'RED';
+      const aceIcon = p.isAce ? '<img src="icons/diamond.svg" width="9" height="9" alt="Ace" style="vertical-align:middle;margin-left:2px;">' : '';
+      const badgeText = p.isAce ? `${teamLabel} ACE${aceIcon}` : teamLabel;
+      const callsign = p.callsign || 'Pilot';
+
       return `
         <div class="dossier-podium-card ${rankClass} ${teamClass}">
-          <div class="dossier-podium-head"><span style="color:#ffffff;">#${p.rank || idx + 1} PILOT</span><b style="color:${teamColor};">[${teamTag}]</b></div>
-          <div class="dossier-podium-cs">${p.callsign || 'Pilot'}</div>
-          <div class="dossier-podium-sub">${p.model || 'JET'} &bull; <span style="color:${p.survived ? '#00f5a0' : '#f43f5e'};">${p.survived ? 'SURVIVED' : 'LOST'}</span></div>
+          <div class="dossier-podium-head">
+            <span style="color:#ffffff;">#${p.rank || idx + 1} PILOT</span>
+            <span class="ace-team-badge ${teamBadgeClass}">${badgeText}</span>
+          </div>
+          <div class="dossier-podium-cs">${callsign}</div>
+          <div class="dossier-podium-sub">${p.model || 'JET'} &bull; <span style="color:${p.survived ? 'var(--stat-tier-2)' : '#f43f5e'};">${p.survived ? 'SURVIVED' : 'LOST'}</span></div>
           <div class="dossier-podium-metrics">
-            <span><b>${p.kills || 0}</b> KILLS</span><span><b>${p.evaded || 0}</b> EVADED</span><b style="color:${isBlue ? '#00f5a0' : '#f87171'};">${(p.points || 0).toLocaleString()} VP</b>
+            <span><b>${p.kills || 0}</b> KILLS</span>
+            <span><b>${p.evaded || 0}</b> EVADED</span>
+            <b style="color:${isBlue ? '#38bdf8' : '#f43f5e'};">${(p.points || 0).toLocaleString()} VP</b>
           </div>
         </div>`;
     }).join('');
@@ -209,7 +218,7 @@ class LeaderboardDossierRenderer {
         </div>`;
     } else if (isTimeBonus) {
       return `
-        <div class="timeline-entry" style="background:rgba(0,245,160,0.08);border-left:3px solid #00f5a0;">
+        <div class="timeline-entry" style="background:rgba(0,245,160,0.08);border-left:2px solid #00f5a0;">
           <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#00f5a0;">[SPEED BONUS]</b> <span>Rapid air neutralization speed bonus</span></div>
           <b style="color:#00f5a0;white-space:nowrap;">+${(ev.points || 0).toLocaleString()} VP</b>
         </div>`;

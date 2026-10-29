@@ -51,19 +51,25 @@ class DebriefReportSystem {
         const rankClass = 'rank-' + (idx + 1);
         const isBlue = (p.team === 'friendly');
         const teamClass = isBlue ? 'team-blue' : 'team-red';
-        const teamName = isBlue ? 'BLUE' : 'RED';
-        const teamColor = p.isAce ? '#ffd700' : (isBlue ? '#38bdf8' : '#f43f5e');
-        const teamTag = p.isAce ? `${teamName} ACE` : teamName;
+        const teamBadgeClass = isBlue ? 'blue' : 'red';
+        const teamLabel = isBlue ? 'BLUE' : 'RED';
+        const aceIcon = p.isAce ? '<img src="icons/diamond.svg" width="9" height="9" alt="Ace" style="vertical-align:middle;margin-left:2px;">' : '';
+        const badgeText = p.isAce ? `${teamLabel} ACE${aceIcon}` : teamLabel;
+        const callsign = p.callsign || 'PILOT';
+        const subName = p.squadronName || (isBlue ? 'Allied Wing' : 'Hostile Wing');
 
         return `
           <div class="ace-card ${rankClass} ${teamClass}">
-            <div class="ace-rank-title"><span>#${idx + 1} - ${rankNames[idx]}</span> <b style="color:${teamColor}">[${teamTag}]</b></div>
-            <div class="ace-callsign">${p.callsign || 'PILOT'}</div>
-            <div class="ace-sub">${p.spec ? p.spec.name : 'AIRCRAFT'} - ${p.squadronName || (isBlue ? 'Allied Fleet' : 'Hostile Fleet')}</div>
+            <div class="ace-rank-title">
+              <span>#${idx + 1} - ${rankNames[idx]}</span>
+              <span class="ace-team-badge ${teamBadgeClass}">${badgeText}</span>
+            </div>
+            <div class="ace-callsign">${callsign}</div>
+            <div class="ace-sub">${p.spec ? p.spec.name : 'AIRCRAFT'} &bull; ${subName}</div>
             <div class="ace-stats">
               <span>KILLS: <b>${p.kills || 0}</b></span>
               <span>EVADED: <b>${p.missilesEvadedCount || 0}</b></span>
-              <span>POINTS: <b>${p.scorePoints || 0}</b></span>
+              <span>POINTS: <b style="color:${isBlue ? '#38bdf8' : '#f43f5e'};">${(p.scorePoints || 0).toLocaleString()}</b></span>
             </div>
           </div>`;
       }).join('');
@@ -93,7 +99,7 @@ class DebriefReportSystem {
             <td><b style="color:${col};">[${isBlue ? 'BLUE' : 'RED'}]</b></td>
             <td style="color:#ffffff;font-family:var(--font-dotdigital);">${p.kills || 0}</td>
             <td style="color:var(--color-moon-mist);font-family:var(--font-dotdigital);">${p.missilesEvadedCount || 0}</td>
-            <td style="color:var(--stat-tier-2);font-weight:700;font-family:var(--font-dotdigital);">${(p.scorePoints || 0).toLocaleString()}</td>
+            <td style="color:${col};font-weight:700;font-family:var(--font-dotdigital);">${(p.scorePoints || 0).toLocaleString()}</td>
             <td>${statusStr}</td>
           </tr>
         `;
