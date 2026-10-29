@@ -331,12 +331,12 @@ class AfterActionReplay {
     s.time = time;
     s.clouds = left.clouds || [];
     s.surfaceUnits = right.surfaceUnits || left.surfaceUnits || [];
-    s.civilianTraffic = right.civilianTraffic || left.civilianTraffic || [];
-    s.decoys = right.decoys || left.decoys || [];
     s.missiles = (amount >= 0.50 ? right.missiles : left.missiles) || [];
 
     this.interpolateAircraftArray(left.alliedAircraft, right.alliedAircraft, s.alliedAircraft, amount);
     this.interpolateAircraftArray(left.hostileAircraft, right.hostileAircraft, s.hostileAircraft, amount);
+    this.interpolateGenericEntities(left.civilianTraffic, right.civilianTraffic, s.civilianTraffic, amount);
+    this.interpolateGenericEntities(left.decoys, right.decoys, s.decoys, amount);
 
     return s;
   }
@@ -384,6 +384,37 @@ class AfterActionReplay {
       while (diff < -Math.PI) diff += Math.PI * 2;
       while (diff > Math.PI) diff -= Math.PI * 2;
       item.heading = prev.heading + diff * amount;
+    }
+  }
+
+  interpolateGenericEntities(leftArr, rightArr, targetArr, amount) {
+    const len = rightArr ? rightArr.length : (leftArr ? leftArr.length : 0);
+    targetArr.length = len;
+
+    for (let i = 0; i < len; i++) {
+      const prev = leftArr ? leftArr[i] : null;
+      const next = rightArr ? rightArr[i] : null;
+
+      if (!prev && next) { targetArr[i] = next; continue; }
+      if (prev && !next) { targetArr[i] = prev; continue; }
+      if (!prev && !next) continue;
+
+      let item = targetArr[i];
+      if (!item) {
+        item = {};
+        targetArr[i] = item;
+      }
+
+      Object.assign(item, next);
+      item.x = prev.x + (next.x - prev.x) * amount;
+      item.y = prev.y + (next.y - prev.y) * amount;
+
+      if (Number.isFinite(prev.heading) && Number.isFinite(next.heading)) {
+        let diff = next.heading - prev.heading;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        item.heading = prev.heading + diff * amount;
+      }
     }
   }
 

@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Sortie Replay Tactical Map & Distinct Simple Arrow Renderer
- * Optimized rendering pipeline with zero-allocation coordinate transforms and batched draw calls.
+ * AIRSPACE STANDOFF: Sortie Replay Tactical Map & Distinct Marker Renderer
+ * Directional markers for combatants, transports, and drones with zero unlabelled circles.
  */
 
 class ReplayMapRenderer {
@@ -48,7 +48,7 @@ class ReplayMapRenderer {
     ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
     ctx.strokeRect(left, top, fieldWidth, fieldHeight);
 
-    // Batched clouds
+    // Weather clouds
     const clouds = state.clouds;
     if (clouds && clouds.length > 0) {
       ctx.fillStyle = 'rgba(40, 56, 80, 0.16)';
@@ -74,7 +74,7 @@ class ReplayMapRenderer {
         const unit = surfaces[i];
         const px = toX(unit.x);
         const py = toY(unit.y);
-        ctx.strokeStyle = unit.hp <= 0 ? '#475569' : (unit.team === 'hostile' ? '#ef4444' : '#38bdf8');
+        ctx.strokeStyle = unit.hp <= 0 ? '#475569' : (unit.team === 'hostile' ? '#f43f5e' : '#38bdf8');
         ctx.strokeRect(px - 4, py - 4, 8, 8);
         if (unit.hp > 0) {
           ctx.fillStyle = ctx.strokeStyle;
@@ -83,39 +83,34 @@ class ReplayMapRenderer {
       }
     }
 
-    // Civilian flights
+    // Civilian airliner flights (Neutral transport silhouette with directional heading)
     const civilians = state.civilianTraffic;
     if (civilians && civilians.length > 0) {
-      ctx.fillStyle = '#7dd3fc';
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 1.0;
       for (let i = 0; i < civilians.length; i++) {
         const civ = civilians[i];
         if (civ.hp <= 0) continue;
         const px = toX(civ.x);
         const py = toY(civ.y);
-        ctx.beginPath();
-        ctx.arc(px, py, 3.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        ReplayMapRenderer.drawCivilianMarker(ctx, px, py, civ.heading || 0);
+        if (width >= 460) {
+          ctx.font = '600 8px "JetBrains Mono", ui-monospace, monospace';
+          ctx.fillStyle = '#94a3b8';
+          ctx.fillText(`CIV [${civ.flightCode || 'TRANSIT'}]`, px + 8, py - 4);
+        }
       }
     }
 
-    // Decoy drones
+    // Decoy drones (Directional miniature drone chevrons)
     const decoys = state.decoys;
     if (decoys && decoys.length > 0) {
-      ctx.strokeStyle = '#c084fc';
-      ctx.setLineDash([2, 2]);
       for (let i = 0; i < decoys.length; i++) {
         const d = decoys[i];
         if (d.hp <= 0) continue;
         const px = toX(d.x);
         const py = toY(d.y);
-        ctx.beginPath();
-        ctx.arc(px, py, 3.2, 0, Math.PI * 2);
-        ctx.stroke();
+        const isBlue = (d.team === 'friendly');
+        ReplayMapRenderer.drawDecoyMarker(ctx, px, py, d.heading || 0, isBlue);
       }
-      ctx.setLineDash([]);
     }
 
     // Guided missiles
@@ -126,7 +121,7 @@ class ReplayMapRenderer {
         const px = toX(m.x);
         const py = toY(m.y);
         const isBlue = (m.team === 'friendly');
-        ReplayMapRenderer.drawMissileMarker(ctx, px, py, m.heading || 0, isBlue ? '#38bdf8' : '#fb7185');
+        ReplayMapRenderer.drawMissileMarker(ctx, px, py, m.heading || 0, isBlue ? '#38bdf8' : '#f43f5e');
       }
     }
 
@@ -141,9 +136,9 @@ class ReplayMapRenderer {
           ReplayMapRenderer.drawWreckage(ctx, px, py, a.cleanCallsign || a.callsign);
           continue;
         }
-        ReplayMapRenderer.drawAircraftMarker(ctx, px, py, a.heading, '#00f0ff', false, a.isFlightLead, true);
+        ReplayMapRenderer.drawAircraftMarker(ctx, px, py, a.heading, '#38bdf8', false, a.isFlightLead, true);
         if (width >= 460) {
-          ReplayMapRenderer.drawAircraftLabel(ctx, px, py, a, '#00f0ff');
+          ReplayMapRenderer.drawAircraftLabel(ctx, px, py, a, '#38bdf8');
         }
       }
     }
@@ -169,11 +164,11 @@ class ReplayMapRenderer {
 
     // Replay header indicator
     ctx.font = '700 9.5px "JetBrains Mono", ui-monospace, monospace';
-    ctx.fillStyle = '#00f0ff';
+    ctx.fillStyle = '#38bdf8';
     ctx.fillText(`SORTIE REPLAY - ${ReplayMapRenderer.formatTime(state.time - startTime)}`, 10, 16);
     ctx.fillStyle = '#94a3b8';
     ctx.fillText('BLUE', width - 82, 16);
-    ctx.fillStyle = '#00f0ff'; ctx.fillRect(width - 104, 10, 14, 2.5);
+    ctx.fillStyle = '#38bdf8'; ctx.fillRect(width - 104, 10, 14, 2.5);
     ctx.fillStyle = '#f43f5e'; ctx.fillRect(width - 50, 10, 14, 2.5);
     ctx.fillStyle = '#94a3b8';
     ctx.fillText('RED', width - 32, 16);
@@ -215,6 +210,59 @@ class ReplayMapRenderer {
     ctx.restore();
   }
 
+  static drawCivilianMarker(ctx, px, py, heading) {
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(heading || 0);
+
+    ctx.beginPath();
+    ctx.moveTo(7, 0);
+    ctx.lineTo(2, -1.8);
+    ctx.lineTo(-2, -8);
+    ctx.lineTo(-3.5, -8);
+    ctx.lineTo(-1.5, -1.8);
+    ctx.lineTo(-5, -1.5);
+    ctx.lineTo(-7, -3.5);
+    ctx.lineTo(-8.5, -3.5);
+    ctx.lineTo(-7.5, 0);
+    ctx.lineTo(-8.5, 3.5);
+    ctx.lineTo(-7, 3.5);
+    ctx.lineTo(-5, 1.5);
+    ctx.lineTo(-1.5, 1.8);
+    ctx.lineTo(-3.5, 8);
+    ctx.lineTo(-2, 8);
+    ctx.lineTo(2, 1.8);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.40)';
+    ctx.fill();
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 1.0;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  static drawDecoyMarker(ctx, px, py, heading, isBlue) {
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(heading || 0);
+
+    const color = isBlue ? '#c084fc' : '#f97316';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.0;
+    ctx.setLineDash([2, 2]);
+    ctx.beginPath();
+    ctx.moveTo(4.5, 0);
+    ctx.lineTo(-3, -3.5);
+    ctx.lineTo(-1.2, 0);
+    ctx.lineTo(-3, 3.5);
+    ctx.closePath();
+    ctx.fillStyle = isBlue ? 'rgba(192, 132, 252, 0.22)' : 'rgba(249, 115, 22, 0.22)';
+    ctx.fill();
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
   static drawMissileMarker(ctx, px, py, heading, color) {
     ctx.save();
     ctx.translate(px, py);
@@ -237,13 +285,7 @@ class ReplayMapRenderer {
   }
 
   static drawWreckage(ctx, px, py, callsign) {
-    ctx.strokeStyle = 'rgba(239, 68, 68, 0.45)';
-    ctx.lineWidth = 1.0;
-    ctx.beginPath();
-    ctx.arc(px, py, 6.5, 0, Math.PI * 2);
-    ctx.stroke();
-
-    ctx.strokeStyle = '#f43f5e';
+    ctx.strokeStyle = 'rgba(244, 63, 94, 0.7)';
     ctx.lineWidth = 1.4;
     ctx.beginPath();
     ctx.moveTo(px - 4, py - 4);
@@ -254,8 +296,8 @@ class ReplayMapRenderer {
 
     if (callsign) {
       ctx.font = '600 8px "JetBrains Mono", ui-monospace, monospace';
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillText(`${callsign} [LOST]`, px + 8, py - 3);
+      ctx.fillStyle = '#64748b';
+      ctx.fillText(`${callsign}`, px + 7, py - 2);
     }
   }
 
