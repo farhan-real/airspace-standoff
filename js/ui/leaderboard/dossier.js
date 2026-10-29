@@ -25,15 +25,16 @@ class LeaderboardDossierRenderer {
     const podiumCardsHtml = topThreePilots.map((p, idx) => {
       const rankClass = 'rank-' + (p.rank || idx + 1);
       const isBlue = (p.team === 'friendly');
+      const teamClass = isBlue ? 'team-blue' : 'team-red';
       const teamTag = p.isAce ? `${isBlue ? 'BLUE' : 'RED'} ACE` : (isBlue ? 'BLUE' : 'RED');
-      const teamColor = p.isAce ? '#ffd700' : (isBlue ? '#00f0ff' : '#ff3366');
+      const teamColor = p.isAce ? '#ffd700' : (isBlue ? '#38bdf8' : '#f43f5e');
       return `
-        <div class="dossier-podium-card ${rankClass}">
+        <div class="dossier-podium-card ${rankClass} ${teamClass}">
           <div class="dossier-podium-head"><span style="color:#ffffff;">#${p.rank || idx + 1} PILOT</span><b style="color:${teamColor};">[${teamTag}]</b></div>
           <div class="dossier-podium-cs">${p.callsign || 'Pilot'}</div>
-          <div class="dossier-podium-sub">${p.model || 'JET'} &bull; <span style="color:${p.survived ? '#00f5a0' : '#ef4444'};">${p.survived ? 'SURVIVED' : 'LOST'}</span></div>
+          <div class="dossier-podium-sub">${p.model || 'JET'} &bull; <span style="color:${p.survived ? '#00f5a0' : '#f43f5e'};">${p.survived ? 'SURVIVED' : 'LOST'}</span></div>
           <div class="dossier-podium-metrics">
-            <span><b>${p.kills || 0}</b> KILLS</span><span><b>${p.evaded || 0}</b> EVADED</span><b style="color:#00f5a0;">${(p.points || 0).toLocaleString()} VP</b>
+            <span><b>${p.kills || 0}</b> KILLS</span><span><b>${p.evaded || 0}</b> EVADED</span><b style="color:${isBlue ? '#00f5a0' : '#f87171'};">${(p.points || 0).toLocaleString()} VP</b>
           </div>
         </div>`;
     }).join('');
@@ -83,9 +84,9 @@ class LeaderboardDossierRenderer {
 
       <div class="dossier-meta-grid">
         <div class="dossier-card">
-          <div style="color:#00f0ff;font-size:0.64rem;font-weight:800;border-bottom:1px solid #162c46;padding-bottom:3px;margin-bottom:3px;">ENGAGEMENT METRICS</div>
+          <div style="color:#38bdf8;font-size:0.64rem;font-weight:800;border-bottom:1px solid #162c46;padding-bottom:3px;margin-bottom:3px;">ENGAGEMENT METRICS</div>
           <div class="dossier-row"><span>MISSION STATUS:</span><b style="color:${item.blueWon ? '#00f5a0' : '#f97316'};">${item.outcome || 'COMPLETED'}</b></div>
-          <div class="dossier-row"><span>SORTIE DURATION:</span><b style="color:#00f0ff;">${item.timeStr || '00:00'}</b></div>
+          <div class="dossier-row"><span>SORTIE DURATION:</span><b style="color:#38bdf8;">${item.timeStr || '00:00'}</b></div>
           <div class="dossier-row"><span>SPEED TIME BONUS:</span><b class="time-bonus-tag">+${timeBonusVal.toLocaleString()} VP</b></div>
           <div class="dossier-row"><span>BASE RAW SCORE:</span><b>${(item.rawScore || 0).toLocaleString()} VP</b></div>
           <div class="dossier-row"><span>BLUE IMPACTS / KILLS:</span><b>${item.combatSummary ? `${summaryValue('blueImpacts')} / ${summaryValue('blueKills')}` : '—'}</b></div>
@@ -105,7 +106,7 @@ class LeaderboardDossierRenderer {
       </div>
 
       <div class="dossier-card dossier-fleet-power-card">
-        <div style="color:#00f0ff;font-size:0.64rem;font-weight:800;border-bottom:1px solid #162c46;padding-bottom:3px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="color:#38bdf8;font-size:0.64rem;font-weight:800;border-bottom:1px solid #162c46;padding-bottom:3px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
           <span>FLEET STRENGTH OVER TIME</span>
           <span style="color:#8494ab;font-size:0.56rem;">NET COMBAT POWER ADVANTAGE</span>
         </div>
@@ -116,7 +117,7 @@ class LeaderboardDossierRenderer {
 
       <div class="aar-replay-container dossier-replay-container">
         <div class="aar-replay-heading">
-          <span class="strip-subhead" style="color:#7dd3fc;margin:0;border-bottom:none;">SORTIE REPLAY</span>
+          <span class="strip-subhead" style="color:#38bdf8;margin:0;border-bottom:none;">SORTIE REPLAY</span>
           <span class="aar-replay-status">LOADING ARCHIVED PLAYBACK</span>
         </div>
         <canvas class="aar-replay-canvas" aria-label="Sortie replay of the archived mission"></canvas>
@@ -136,7 +137,7 @@ class LeaderboardDossierRenderer {
       </div>
 
       <div class="dossier-timeline-container">
-        <div style="color:#00f0ff;font-size:0.64rem;font-weight:800;border-bottom:1px solid #162c46;padding-bottom:3px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="color:#38bdf8;font-size:0.64rem;font-weight:800;border-bottom:1px solid #162c46;padding-bottom:3px;display:flex;justify-content:space-between;align-items:center;">
           <span>SORTIE ENGAGEMENT TIMELINE</span>
           <span style="color:#8494ab;font-size:0.56rem;">${timelineEvents.length} EVENTS RECORDED</span>
         </div>
@@ -194,25 +195,27 @@ class LeaderboardDossierRenderer {
     const isHit = ev.type === 'hit';
     const isTimeBonus = ev.type === 'time_bonus';
     const isVictory = ev.type === 'victory';
-    const col = isVictory ? '#00f0ff' : (ev.type === 'ace-kill' ? '#ffd700' : (isTimeBonus ? '#00f5a0' : (isKill ? (ev.team === 'friendly' ? '#00f0ff' : '#ff3366') : (isRoe ? '#f97316' : (isHit ? '#38bdf8' : '#94a3b8')))));
-    const teamStr = isVictory ? 'VICTORY' : (isTimeBonus ? 'TIME BONUS' : (ev.type === 'ace-kill' ? 'LEADER DOWN' : (ev.team ? (ev.team === 'friendly' ? 'BLUE' : 'RED') : '')));
-    const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge" style="color:#00f0ff;font-size:0.56rem;margin-left:4px;">[Salvo: ${ev.salvoBreakdown || ('x' + (ev.salvoCount || 2))}]</span>` : '';
+    const isBlue = (ev.team === 'friendly');
+    const teamClass = isBlue ? 'team-blue' : 'team-red';
+    const col = isVictory ? '#38bdf8' : (ev.type === 'ace-kill' ? (isBlue ? '#ffd700' : '#f97316') : (isTimeBonus ? '#00f5a0' : (isKill ? (isBlue ? '#38bdf8' : '#f43f5e') : (isRoe ? '#f97316' : (isHit ? (isBlue ? '#38bdf8' : '#f43f5e') : '#94a3b8')))));
+    const teamStr = isVictory ? 'VICTORY' : (isTimeBonus ? 'TIME BONUS' : (ev.type === 'ace-kill' ? 'LEADER DOWN' : (ev.team ? (isBlue ? 'BLUE' : 'RED') : '')));
+    const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge" style="color:${isBlue ? '#38bdf8' : '#fca5a5'};font-size:0.56rem;margin-left:4px;">[Salvo: ${ev.salvoBreakdown || ('x' + (ev.salvoCount || 2))}]</span>` : '';
 
     if (isVictory) {
       return `
         <div class="timeline-entry victory-entry">
-          <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#00f0ff;">[MISSION COMPLETE]</b> <span class="timeline-combatant"><b>${ev.source || 'Squadron'}</b> secured theater air dominance</span></div>
-          <b style="color:#00f0ff;white-space:nowrap;">AIR DOMINANCE</b>
+          <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#38bdf8;">[MISSION COMPLETE]</b> <span class="timeline-combatant"><b>${ev.source || 'Squadron'}</b> secured theater air dominance</span></div>
+          <b style="color:#38bdf8;white-space:nowrap;">AIR DOMINANCE</b>
         </div>`;
     } else if (isTimeBonus) {
       return `
-        <div class="timeline-entry" style="background:rgba(0,245,160,0.08);border-left:2px solid #00f5a0;">
+        <div class="timeline-entry" style="background:rgba(0,245,160,0.08);border-left:3px solid #00f5a0;">
           <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#00f5a0;">[SPEED BONUS]</b> <span>Rapid air neutralization speed bonus</span></div>
           <b style="color:#00f5a0;white-space:nowrap;">+${(ev.points || 0).toLocaleString()} VP</b>
         </div>`;
     } else if (isKill) {
       return `
-        <div class="timeline-entry ${ev.type === 'ace-kill' ? 'ace-kill' : 'kill'}">
+        <div class="timeline-entry ${ev.type === 'ace-kill' ? 'ace-kill' : 'kill'} ${teamClass}">
           <div class="timeline-main-info">
             <span class="timeline-time">[${ev.time || '00:00'}]</span>
             <b style="color:${col};">[${teamStr}]</b>
@@ -227,17 +230,17 @@ class LeaderboardDossierRenderer {
     } else if (isHit) {
       const dmg = (typeof ev.damage === 'number' && Number.isFinite(ev.damage)) ? Number(ev.damage.toFixed(1)) : (ev.damage || 2);
       return `
-        <div class="timeline-entry hit">
+        <div class="timeline-entry hit ${teamClass}">
           <div class="timeline-main-info">
             <span class="timeline-time">[${ev.time || '00:00'}]</span>
-            <b style="color:#38bdf8;">[${teamStr}]</b>
+            <b style="color:${col};">[${teamStr}]</b>
             <span class="timeline-combatant"><b>${ev.source || 'PILOT'}</b> (${ev.sourceType || 'AIRCRAFT'})</span>
             <span>struck</span>
             <span class="timeline-combatant"><b>${ev.target || 'TARGET'}</b> (${ev.targetType || 'TARGET'})</span>
             <span class="timeline-weapon-tag">with <b>${ev.weapon || 'Missile'}</b> (-${dmg} HP)</span>
             ${salvoBadge}
           </div>
-          <b style="color:#64748b;white-space:nowrap;">STRIKE</b>
+          <b style="color:${isBlue ? '#64748b' : '#9f1239'};white-space:nowrap;">STRIKE</b>
         </div>`;
     } else if (isRoe) {
       return `

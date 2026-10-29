@@ -98,23 +98,25 @@ class AfterActionReportTimeline {
         const isHit = ev.type === 'hit';
         const isTimeBonus = ev.type === 'time_bonus';
         const isVictory = ev.type === 'victory';
-        const col = isVictory ? '#00f0ff' : (ev.type === 'ace-kill' ? '#ffd700' : (isTimeBonus ? '#00f5a0' : (isKill ? (ev.team === 'friendly' ? '#00f0ff' : '#ff3366') : (isRoe ? '#f97316' : (isHit ? '#38bdf8' : '#94a3b8')))));
-        const teamStr = isVictory ? 'VICTORY' : (isTimeBonus ? 'TIME BONUS' : (ev.type === 'ace-kill' ? 'LEADER DOWN' : (ev.team ? (ev.team === 'friendly' ? 'BLUE' : 'RED') : '')));
+        const isBlue = (ev.team === 'friendly');
+        const teamClass = isBlue ? 'team-blue' : 'team-red';
+        const col = isVictory ? '#38bdf8' : (ev.type === 'ace-kill' ? (isBlue ? '#ffd700' : '#f97316') : (isTimeBonus ? '#00f5a0' : (isKill ? (isBlue ? '#38bdf8' : '#f43f5e') : (isRoe ? '#f97316' : (isHit ? (isBlue ? '#38bdf8' : '#f43f5e') : '#94a3b8')))));
+        const teamStr = isVictory ? 'VICTORY' : (isTimeBonus ? 'TIME BONUS' : (ev.type === 'ace-kill' ? 'LEADER DOWN' : (ev.team ? (isBlue ? 'BLUE' : 'RED') : '')));
 
         if (isVictory) {
           return `
             <div class="timeline-entry victory-entry">
               <div class="timeline-main-info">
                 <span class="timeline-time">[${ev.time}]</span>
-                <b style="color:#00f0ff;">[MISSION COMPLETE]</b>
+                <b style="color:#38bdf8;">[MISSION COMPLETE]</b>
                 <span class="timeline-combatant"><b>${ev.source}</b> secured theater air dominance</span>
               </div>
-              <b style="color:#00f0ff;white-space:nowrap;">AIR DOMINANCE</b>
+              <b style="color:#38bdf8;white-space:nowrap;">AIR DOMINANCE</b>
             </div>
           `;
         } else if (isTimeBonus) {
           return `
-            <div class="timeline-entry" style="background:rgba(0,245,160,0.08);border-left:2px solid #00f5a0;">
+            <div class="timeline-entry" style="background:rgba(0,245,160,0.08);border-left:3px solid #00f5a0;">
               <div class="timeline-main-info">
                 <span class="timeline-time">[${ev.time}]</span>
                 <b style="color:#00f5a0;">[SPEED BONUS]</b>
@@ -124,9 +126,9 @@ class AfterActionReportTimeline {
             </div>
           `;
         } else if (isKill) {
-          const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge" style="color:#00f0ff;font-size:0.56rem;margin-left:4px;">[Salvo: ${ev.salvoBreakdown || ('x' + ev.salvoCount)}]</span>` : '';
+          const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge" style="color:${isBlue ? '#38bdf8' : '#fca5a5'};font-size:0.56rem;margin-left:4px;">[Salvo: ${ev.salvoBreakdown || ('x' + ev.salvoCount)}]</span>` : '';
           return `
-            <div class="timeline-entry ${ev.type === 'ace-kill' ? 'ace-kill' : 'kill'}">
+            <div class="timeline-entry ${ev.type === 'ace-kill' ? 'ace-kill' : 'kill'} ${teamClass}">
               <div class="timeline-main-info">
                 <span class="timeline-time">[${ev.time}]</span>
                 <b style="color:${col};">[${teamStr}]</b>
@@ -140,20 +142,20 @@ class AfterActionReportTimeline {
             </div>
           `;
         } else if (isHit) {
-          const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge" style="color:#38bdf8;font-size:0.56rem;margin-left:4px;">[Salvo: ${ev.salvoBreakdown || ('x' + ev.salvoCount)}]</span>` : '';
+          const salvoBadge = ev.isSalvo ? `<span class="timeline-salvo-badge" style="color:${isBlue ? '#38bdf8' : '#fca5a5'};font-size:0.56rem;margin-left:4px;">[Salvo: ${ev.salvoBreakdown || ('x' + ev.salvoCount)}]</span>` : '';
           const dmg = (typeof ev.damage === 'number' && Number.isFinite(ev.damage)) ? Number(ev.damage.toFixed(1)) : (ev.damage || 2);
           return `
-            <div class="timeline-entry hit">
+            <div class="timeline-entry hit ${teamClass}">
               <div class="timeline-main-info">
                 <span class="timeline-time">[${ev.time}]</span>
-                <b style="color:#38bdf8;">[${teamStr}]</b>
+                <b style="color:${col};">[${teamStr}]</b>
                 <span class="timeline-combatant"><b>${ev.source}</b> (${ev.sourceType || 'AIRCRAFT'})</span>
                 <span>struck</span>
                 <span class="timeline-combatant"><b>${ev.target}</b> (${ev.targetType || 'TARGET'})</span>
                 <span class="timeline-weapon-tag">with <b>${ev.weapon || 'Missile'}</b> (-${dmg} HP)</span>
                 ${salvoBadge}
               </div>
-              <b style="color:#64748b;white-space:nowrap;">STRIKE</b>
+              <b style="color:${isBlue ? '#64748b' : '#9f1239'};white-space:nowrap;">STRIKE</b>
             </div>
           `;
         } else if (isRoe) {

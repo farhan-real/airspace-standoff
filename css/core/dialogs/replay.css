@@ -80,7 +80,7 @@
 
 .aar-report-card {
   background: #020712;
-  border: 1px solid #0284c7;
+  border: 1px solid var(--theme-primary);
   border-radius: 6px;
   padding: 10px 14px;
   display: flex;
@@ -113,8 +113,8 @@
   padding: 1px 6px;
   border-radius: 4px;
   background: transparent;
-  color: #00f0ff;
-  border: 1px solid #00f0ff;
+  color: var(--theme-accent);
+  border: 1px solid var(--theme-accent);
   letter-spacing: 0.4px;
 }
 
@@ -241,27 +241,57 @@
 
 .timeline-entry.kill {
   background: rgba(56, 189, 248, 0.12);
-  border-left: 2px solid var(--theme-accent);
+  border-left: 3px solid #38bdf8;
+}
+
+.timeline-entry.kill.team-blue {
+  background: rgba(56, 189, 248, 0.14);
+  border-left: 3px solid #38bdf8;
+}
+
+.timeline-entry.kill.team-red {
+  background: rgba(244, 63, 94, 0.16);
+  border-left: 3px solid #f43f5e;
 }
 
 .timeline-entry.hit {
-  background: var(--theme-primary-dim);
-  border-left: 2px solid var(--theme-primary);
+  background: rgba(56, 189, 248, 0.08);
+  border-left: 3px solid rgba(56, 189, 248, 0.65);
+}
+
+.timeline-entry.hit.team-blue {
+  background: rgba(56, 189, 248, 0.08);
+  border-left: 3px solid rgba(56, 189, 248, 0.65);
+}
+
+.timeline-entry.hit.team-red {
+  background: rgba(244, 63, 94, 0.10);
+  border-left: 3px solid rgba(244, 63, 94, 0.65);
 }
 
 .timeline-entry.ace-kill {
   background: rgba(251, 191, 36, 0.14);
-  border-left: 2px solid #fbbf24;
+  border-left: 3px solid #fbbf24;
+}
+
+.timeline-entry.ace-kill.team-blue {
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.18) 0%, rgba(251, 191, 36, 0.12) 100%);
+  border-left: 3px solid #38bdf8;
+}
+
+.timeline-entry.ace-kill.team-red {
+  background: linear-gradient(90deg, rgba(244, 63, 94, 0.20) 0%, rgba(251, 191, 36, 0.12) 100%);
+  border-left: 3px solid #f43f5e;
 }
 
 .timeline-entry.roe {
   background: rgba(244, 63, 94, 0.12);
-  border-left: 2px solid #f43f5e;
+  border-left: 3px solid #f43f5e;
 }
 
 .timeline-entry.victory-entry {
-  background: rgba(2, 132, 199, 0.22);
-  border-left: 2px solid var(--theme-accent);
+  background: rgba(56, 189, 248, 0.16);
+  border-left: 3px solid #38bdf8;
 }
 
 @media (max-width: 768px) {

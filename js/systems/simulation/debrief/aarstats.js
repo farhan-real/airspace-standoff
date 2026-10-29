@@ -51,11 +51,11 @@ class AARStatsCalculator {
               <span class="aar-card-badge">LOG</span>
             </div>
             <div class="aar-metrics-table">
-              <div class="aar-metric-row"><span>MISSION DURATION:</span><b style="color:#00f0ff;">${timeStr}</b></div>
+              <div class="aar-metric-row"><span>MISSION DURATION:</span><b style="color:#38bdf8;">${timeStr}</b></div>
               <div class="aar-metric-row"><span>SPEED TIME BONUS:</span><b style="color:#00f5a0;">+${timeBonus.toLocaleString()} VP</b></div>
               <div class="aar-metric-row"><span>ORDNANCE EXPENDED:</span><b style="color:#ffffff;">${ordnanceExpended}</b></div>
-              <div class="aar-metric-row"><span>FRIENDLY LOSSES (BLUE):</span><b style="color:${blueLosses > 0 ? '#f43f5e' : '#00f5a0'};">${blueLosses}</b></div>
-              <div class="aar-metric-row"><span>HOSTILE LOSSES (RED):</span><b style="color:#00f0ff;">${redLosses}</b></div>
+              <div class="aar-metric-row"><span>FRIENDLY LOSSES (BLUE):</span><b style="color:${blueLosses > 0 ? '#f43f5e' : '#38bdf8'};">${blueLosses}</b></div>
+              <div class="aar-metric-row"><span>HOSTILE LOSSES (RED):</span><b style="color:${redLosses > 0 ? '#f43f5e' : '#94a3b8'};">${redLosses}</b></div>
             </div>
           </div>
 

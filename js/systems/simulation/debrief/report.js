@@ -33,7 +33,7 @@ class DebriefReportSystem {
 
     if (tEl) {
       tEl.textContent = blueWon ? 'MISSION SUCCESSFUL' : 'MISSION ABORTED';
-      tEl.style.color = blueWon ? 'var(--color-ice-highlight)' : 'var(--color-red)';
+      tEl.style.color = blueWon ? '#38bdf8' : '#f43f5e';
     }
     if (dEl) {
       const sortieNote = game.isMissionEditorMatch ? ' - CUSTOM EDITOR SORTIE - NOT LEADERBOARD RANKED' : '';
@@ -49,15 +49,17 @@ class DebriefReportSystem {
       const rankNames = ['TOP SCORING PILOT', '2ND HIGHEST SCORE', '3RD HIGHEST SCORE'];
       podiumEl.innerHTML = topThree.map((p, idx) => {
         const rankClass = 'rank-' + (idx + 1);
-        const teamName = p.team === 'friendly' ? 'BLUE' : 'RED';
-        const teamColor = p.isAce ? '#ffd700' : (p.team === 'friendly' ? 'var(--theme-accent)' : 'var(--color-red)');
+        const isBlue = (p.team === 'friendly');
+        const teamClass = isBlue ? 'team-blue' : 'team-red';
+        const teamName = isBlue ? 'BLUE' : 'RED';
+        const teamColor = p.isAce ? '#ffd700' : (isBlue ? '#38bdf8' : '#f43f5e');
         const teamTag = p.isAce ? `${teamName} ACE` : teamName;
 
         return `
-          <div class="ace-card ${rankClass}">
+          <div class="ace-card ${rankClass} ${teamClass}">
             <div class="ace-rank-title"><span>#${idx + 1} - ${rankNames[idx]}</span> <b style="color:${teamColor}">[${teamTag}]</b></div>
             <div class="ace-callsign">${p.callsign || 'PILOT'}</div>
-            <div class="ace-sub">${p.spec ? p.spec.name : 'AIRCRAFT'} - ${p.squadronName || (p.team === 'friendly' ? 'Allied Fleet' : 'Hostile Fleet')}</div>
+            <div class="ace-sub">${p.spec ? p.spec.name : 'AIRCRAFT'} - ${p.squadronName || (isBlue ? 'Allied Fleet' : 'Hostile Fleet')}</div>
             <div class="ace-stats">
               <span>KILLS: <b>${p.kills || 0}</b></span>
               <span>EVADED: <b>${p.missilesEvadedCount || 0}</b></span>
@@ -70,17 +72,18 @@ class DebriefReportSystem {
     if (fullRosterContainer) {
       const rowsHtml = allPilots.map((p, i) => {
         const isBlue = (p.team === 'friendly');
-        const col = isBlue ? 'var(--theme-accent)' : 'var(--color-red)';
+        const teamClass = isBlue ? 'team-blue' : 'team-red';
+        const col = isBlue ? '#38bdf8' : '#f43f5e';
         const isAlive = p.hp > 0.05;
         const displayHp = isAlive ? Math.max(1, Math.round(p.hp)) : 0;
         const statusStr = isAlive
           ? `<b style="color:var(--stat-tier-2);">SURVIVED (${displayHp} HP)</b>`
-          : `<span style="color:var(--color-red);">DESTROYED</span>`;
+          : `<span style="color:#f43f5e;">DESTROYED</span>`;
         const aceBadge = p.isAce
           ? `<img src="icons/diamond.svg" width="10" height="10" alt="Ace" style="vertical-align:middle;margin-left:3px;" title="Ace Pilot">`
           : '';
         const rankClass = i === 0 ? 'rank-gold' : (i === 1 ? 'rank-silver' : (i === 2 ? 'rank-bronze' : 'rank-standard'));
-        const rowClass = i === 0 ? 'top-scoring-row' : '';
+        const rowClass = `${teamClass} ${i === 0 ? 'top-scoring-row' : ''}`;
 
         return `
           <tr class="${rowClass}">

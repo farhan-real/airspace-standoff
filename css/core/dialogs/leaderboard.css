@@ -265,9 +265,62 @@
   box-shadow: var(--glass-3d-card-shadow);
 }
 
-.dossier-podium-card.rank-1 { border-color: rgba(251, 191, 36, 0.5); border-top-color: #fef08a; background: linear-gradient(180deg, rgba(251, 191, 36, 0.12) 0%, rgba(4, 9, 24, 0.8) 100%); }
-.dossier-podium-card.rank-2 { border-color: rgba(56, 189, 248, 0.5); border-top-color: #ffffff; background: linear-gradient(180deg, rgba(56, 189, 248, 0.10) 0%, rgba(4, 9, 24, 0.8) 100%); }
-.dossier-podium-card.rank-3 { border-color: rgba(148, 163, 184, 0.4); border-top-color: #ffffff; background: linear-gradient(180deg, rgba(148, 163, 184, 0.08) 0%, rgba(4, 9, 24, 0.8) 100%); }
+.dossier-podium-card.team-blue {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.12) 0%, rgba(4, 12, 28, 0.90) 100%);
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+.dossier-podium-card.team-blue.rank-1 {
+  border-color: rgba(251, 191, 36, 0.65);
+  border-top-color: #fef08a;
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.20) 0%, rgba(4, 12, 28, 0.90) 100%);
+}
+
+.dossier-podium-card.team-blue.rank-2 {
+  border-color: #38bdf8;
+  border-top-color: #ffffff;
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.20) 0%, rgba(4, 12, 28, 0.90) 100%);
+}
+
+.dossier-podium-card.team-blue.rank-3 {
+  border-color: rgba(148, 163, 184, 0.50);
+  border-top-color: #ffffff;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.14) 0%, rgba(4, 12, 28, 0.90) 100%);
+}
+
+.dossier-podium-card.team-red {
+  background: linear-gradient(180deg, rgba(244, 63, 94, 0.16) 0%, rgba(28, 4, 10, 0.92) 100%) !important;
+  border-color: rgba(244, 63, 94, 0.50) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 140, 165, 0.25), 0 2px 8px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dossier-podium-card.team-red.rank-1 {
+  border-color: rgba(251, 191, 36, 0.65) !important;
+  border-top-color: #fef08a !important;
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.22) 0%, rgba(28, 4, 10, 0.92) 100%) !important;
+}
+
+.dossier-podium-card.team-red.rank-2 {
+  border-color: #f43f5e !important;
+  border-top-color: #ffffff !important;
+  background: linear-gradient(180deg, rgba(244, 63, 94, 0.22) 0%, rgba(28, 4, 10, 0.92) 100%) !important;
+}
+
+.dossier-podium-card.team-red.rank-3 {
+  border-color: rgba(244, 63, 94, 0.45) !important;
+  border-top-color: #fecdd3 !important;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.14) 0%, rgba(28, 4, 10, 0.92) 100%) !important;
+}
+
+.dossier-podium-card.team-red .dossier-podium-metrics {
+  border-top-color: rgba(244, 63, 94, 0.35);
+  color: #fecdd3;
+}
+
+.dossier-podium-card.team-blue .dossier-podium-metrics {
+  border-top-color: rgba(56, 189, 248, 0.35);
+  color: #bae6fd;
+}
 
 .dossier-podium-head {
   display: flex;
@@ -299,7 +352,6 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.56rem;
-  color: var(--color-frost-glow);
   border-top: 1px solid var(--glass-border);
   padding-top: 3px;
   margin-top: 2px;
