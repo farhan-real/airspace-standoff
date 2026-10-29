@@ -154,6 +154,62 @@ class SpecsSubsystemViews {
     `;
   }
 
+  static getUpgradeCompatibility(u, allAirframes) {
+    if (!u.isAllowed) {
+      return {
+        summary: 'Universal (All Airframes)',
+        groupText: 'Stealth, Superiority, Multirole, Strike, EW, Drones, Experimental',
+        exceptionsText: 'None',
+        compatibleList: allAirframes.map(a => a.id).join(', ')
+      };
+    }
+
+    const compatible = allAirframes.filter(s => u.isAllowed(s));
+    const isUniversal = (compatible.length === allAirframes.length);
+
+    if (isUniversal) {
+      return {
+        summary: 'Universal (All Airframes)',
+        groupText: 'Stealth, Superiority, Multirole, Strike, EW, Drones, Experimental',
+        exceptionsText: 'None',
+        compatibleList: allAirframes.map(a => a.id).join(', ')
+      };
+    }
+
+    let summary = `${compatible.length} of ${allAirframes.length} Airframes`;
+    let groupText = 'Specific compatible groups';
+    let exceptionsText = 'Restricted';
+
+    if (u.id === 'THRUST_VECTOR') {
+      summary = 'Universal except Drones and COFFIN';
+      groupText = 'Conventional crewed fighters (Stealth, Superiority, Multirole, Strike, EW, Experimental)';
+      exceptionsText = 'Drones (UCAVs) and COFFIN capsules (aerodynamic and cockpit limits)';
+    } else if (u.id === 'TITANIUM_COCKPIT') {
+      summary = 'Universal except Drones and COFFIN';
+      groupText = 'Physical crewed cockpits (Stealth, Superiority, Multirole, Strike, EW, Experimental)';
+      exceptionsText = 'Autonomous drones and COFFIN synthetic vision capsules';
+    } else if (u.id === 'ZOE_NEURAL_PROCESSOR') {
+      summary = 'Drones and COFFIN airframes only';
+      groupText = 'Autonomous Swarm Drones and COFFIN Synthetic Vision airframes';
+      exceptionsText = 'Conventional crewed aircraft';
+    } else if (u.id === 'COFFIN_OPTICAL_BUS') {
+      summary = 'Experimental, COFFIN, and Drones only';
+      groupText = 'Technology demonstrators, COFFIN conversions, and autonomous drones';
+      exceptionsText = 'Standard production fighters (Stealth, Superiority, Multirole, Strike, EW)';
+    } else if (u.id === 'SWARM_AI_COPROCESSOR') {
+      summary = 'Drones only (UCAVs)';
+      groupText = 'Autonomous Swarm Drones and UCAVs';
+      exceptionsText = 'All crewed airframes (Universal except drones)';
+    }
+
+    return {
+      summary,
+      groupText,
+      exceptionsText,
+      compatibleList: compatible.map(a => a.id).join(', ')
+    };
+  }
+
   static renderUpgrade(u) {
     if (!u) return '<div class="inspect-desc-box">NO UPGRADE DATA AVAILABLE</div>';
 
@@ -163,6 +219,10 @@ class SpecsSubsystemViews {
 
     const rCost = rate('cost_upgrade', u.cost || 1.0);
     const rMass = rate('component_mass', u.mass || 50);
+
+    const allAirframes = Object.values(window.AIRCRAFT_CATALOG || {});
+    const compat = this.getUpgradeCompatibility(u, allAirframes);
+    const isUniversal = !u.isAllowed || allAirframes.every(s => u.isAllowed(s));
 
     return `
       <div class="inspect-type-banner">
@@ -177,9 +237,21 @@ class SpecsSubsystemViews {
         <div class="inspect-stat-item"><span>SUBSYSTEM DISCIPLINE:</span><b>${u.category || 'AVIONICS'} Enhancement Core</b></div>
         <div class="inspect-stat-item"><span>COMPONENT MASS:</span><b class="${rMass.colorClass}">+${u.mass || 50} kg</b></div>
         <div class="inspect-stat-item"><span>SOCKET OCCUPANCY:</span><b>1 Modular Component Socket</b></div>
+        <div class="inspect-stat-item"><span>AIRFRAME COMPATIBILITY:</span><b style="color:${isUniversal ? 'var(--stat-tier-2)' : 'var(--stat-tier-3)'};">${compat.summary}</b></div>
       </div>
 
-      <div class="inspect-sec-head">2. FUNCTIONAL BENEFIT</div>
+      <div class="inspect-sec-head">2. COMPATIBLE AIRFRAMES &amp; INTEGRATION REQUIREMENTS</div>
+      <div class="inspect-stat-grid">
+        <div class="inspect-stat-item"><span>COMPATIBILITY ENVELOPE:</span><b style="color:${isUniversal ? 'var(--stat-tier-2)' : 'var(--stat-tier-3)'};">${compat.summary}</b></div>
+        <div class="inspect-stat-item"><span>COMPATIBLE GROUPS:</span><b style="color:var(--color-ice-highlight);">${compat.groupText}</b></div>
+        <div class="inspect-stat-item"><span>EXCEPTIONS:</span><b style="color:${isUniversal ? 'var(--stat-tier-2)' : 'var(--stat-tier-5)'};">${compat.exceptionsText}</b></div>
+        <div class="inspect-stat-item" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <span>COMPATIBLE AIRFRAMES:</span>
+          <b style="color:#fef08a;font-size:0.62rem;line-height:1.45;text-align:left;font-family:var(--font-dotdigital);">${compat.compatibleList}</b>
+        </div>
+      </div>
+
+      <div class="inspect-sec-head">3. FUNCTIONAL BENEFIT</div>
       <div class="inspect-desc-box">
         <div style="color:#f8fafc;">${u.desc || ''}</div>
       </div>

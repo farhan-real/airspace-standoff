@@ -188,12 +188,31 @@ class ProcurementShelf {
       card.dataset.dragId = upg.id;
       card.dataset.dragName = upg.name;
 
+      let compBadge = 'UNIVERSAL';
+      let compTip = 'Compatible: universal across all airframes.';
+      if (upg.id === 'THRUST_VECTOR' || upg.id === 'TITANIUM_COCKPIT') {
+        compBadge = 'EXCEPT DRONES & COFFIN';
+        compTip = 'Compatible: universal except drones and COFFIN capsules.';
+      } else if (upg.id === 'ZOE_NEURAL_PROCESSOR') {
+        compBadge = 'DRONES & COFFIN ONLY';
+        compTip = 'Compatible: autonomous drones and COFFIN airframes only.';
+      } else if (upg.id === 'COFFIN_OPTICAL_BUS') {
+        compBadge = 'EXP, COFFIN & DRONES';
+        compTip = 'Compatible: experimental, COFFIN, and drone airframes.';
+      } else if (upg.id === 'SWARM_AI_COPROCESSOR') {
+        compBadge = 'DRONES ONLY';
+        compTip = 'Compatible: autonomous swarm drones (UCAVs) only.';
+      }
+      const isUniv = (compBadge === 'UNIVERSAL');
+      const badgeColor = isUniv ? '#00f5a0' : '#fbbf24';
+
       card.innerHTML = `
         <div class="cic-top"><span class="cic-title">${upg.name}</span><span class="cic-cost">$${Number(upg.cost || 0).toFixed(1)}M</span></div>
         <div class="cic-type-bar">
           <span class="badge-category" data-tag-title="${upg.category} SUBSYSTEM" data-tag-tooltip="${upg.desc}">${upg.category}</span>
           <span class="badge-mass" data-tag-title="COMPONENT WEIGHT" data-tag-tooltip="+${upg.mass} kg payload weight added to airframe.">+${upg.mass} kg</span>
           <span class="badge-slots" data-tag-title="SOCKET REQ" data-tag-tooltip="Requires 1 open modular component socket.">1 SOCKET</span>
+          <span class="badge-category" style="color:${badgeColor};" data-tag-title="AIRFRAME COMPATIBILITY" data-tag-tooltip="${compTip}">${compBadge}</span>
         </div>
         <div class="cic-desc">${upg.desc}</div>
         <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
