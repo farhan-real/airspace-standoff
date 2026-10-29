@@ -63,6 +63,7 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
+
 .settings-nav-tabs::-webkit-scrollbar {
   display: none;
 }
@@ -278,10 +279,22 @@
     min-height: 0;
     border-radius: var(--radius-card);
   }
-  .settings-header { padding: 7px 9px; }
-  .settings-body { padding: 8px; }
-  .settings-form-row { padding: 7px 9px; }
-  .settings-slider { width: 90px; }
+
+  .settings-header {
+    padding: 7px 9px;
+  }
+
+  .settings-body {
+    padding: 8px;
+  }
+
+  .settings-form-row {
+    padding: 7px 9px;
+  }
+
+  .settings-slider {
+    width: 90px;
+  }
 }
 
 @media (max-height: 550px) {
@@ -291,7 +304,16 @@
     max-height: 94dvh;
     min-height: 0;
   }
-  .settings-header { padding: 5px 8px; }
-  .settings-body { padding: 5px 8px; }
-  .settings-footer { padding: 5px 8px; }
+
+  .settings-header {
+    padding: 5px 8px;
+  }
+
+  .settings-body {
+    padding: 5px 8px;
+  }
+
+  .settings-footer {
+    padding: 5px 8px;
+  }
 }

@@ -66,8 +66,6 @@
 }
 
 .ace-podium-section,
-.aar-full-roster-box,
-.aar-timeline-container,
 .aar-fleet-power-box {
   display: flex;
   flex-direction: column;
@@ -181,10 +179,25 @@
   align-items: center;
 }
 
-.ace-callsign { font-size: 0.88rem; font-weight: 700; }
-.ace-card.team-blue .ace-callsign { color: #38bdf8; text-shadow: 0 0 8px rgba(56, 189, 248, 0.5); }
-.ace-card.team-red .ace-callsign { color: #f43f5e; text-shadow: 0 0 8px rgba(244, 63, 94, 0.5); }
-.ace-sub { font-size: 0.62rem; color: var(--color-moon-mist); }
+.ace-callsign {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.ace-card.team-blue .ace-callsign {
+  color: #38bdf8;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+}
+
+.ace-card.team-red .ace-callsign {
+  color: #f43f5e;
+  text-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
+}
+
+.ace-sub {
+  font-size: 0.62rem;
+  color: var(--color-moon-mist);
+}
 
 .ace-stats {
   display: flex;
@@ -205,62 +218,6 @@
   border-top-color: rgba(56, 189, 248, 0.35);
   color: #bae6fd;
 }
-
-.aar-roster-toggle-row,
-.aar-timeline-toggle-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.aar-roster-content.hidden,
-.aar-timeline-content.hidden {
-  display: none !important;
-}
-
-.debrief-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 0.66rem;
-  font-family: var(--font-untitled-sans);
-}
-
-.debrief-table thead {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: rgba(4, 9, 24, 0.96);
-}
-
-.debrief-table th {
-  text-align: left;
-  padding: 7px 8px;
-  background: transparent;
-  color: var(--color-ice-highlight);
-  font-family: var(--font-dotdigital);
-  font-size: 0.60rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.4);
-  white-space: nowrap;
-}
-
-.debrief-table td {
-  padding: 6px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: var(--color-moon-mist);
-  white-space: nowrap;
-  transition: background-color 0.14s ease;
-}
-
-.debrief-table tr.team-blue td { background: rgba(56, 189, 248, 0.08); }
-.debrief-table tr.team-red td { background: rgba(244, 63, 94, 0.09); }
-.debrief-table tr.team-blue.top-scoring-row td { background: rgba(56, 189, 248, 0.18) !important; }
-.debrief-table tr.team-red.top-scoring-row td { background: rgba(244, 63, 94, 0.20) !important; }
-.debrief-table tbody tr.team-blue:hover td, .debrief-table tr.team-blue:hover td { background: rgba(56, 189, 248, 0.22) !important; }
-.debrief-table tbody tr.team-red:hover td, .debrief-table tr.team-red:hover td { background: rgba(244, 63, 94, 0.22) !important; }
 
 @media (max-width: 1024px) {
   .game-over-dialog {

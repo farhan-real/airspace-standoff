@@ -1,0 +1,177 @@
+/* AIRSPACE STANDOFF: Squadron Leaderboard Window & List Table */
+
+#leaderboard-modal {
+  z-index: 3000 !important;
+}
+
+.leaderboard-window {
+  width: 92vw;
+  max-width: 920px;
+  height: 90vh;
+  height: 90dvh;
+  max-height: 90dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--glass-bg-modal);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-bottom: 1px solid var(--liquid-glass-border-bottom);
+  border-radius: var(--radius-modal);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), inset 0 0 20px rgba(56, 189, 248, 0.05), 0 20px 60px rgba(0, 0, 0, 0.85);
+  font-family: var(--font-untitled-sans);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.leaderboard-window .inspect-header {
+  padding: 9px 14px;
+}
+
+.leaderboard-window .inspect-header .hud-btn.small {
+  flex-shrink: 0;
+  min-width: 30px;
+}
+
+.leaderboard-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 38% 62%;
+  gap: 10px;
+  padding: 10px 12px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.leaderboard-table-pane {
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-bottom: 1px solid var(--liquid-glass-border-bottom);
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+  box-sizing: border-box;
+  box-shadow: var(--glass-3d-card-shadow);
+  padding: 6px 8px;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.65rem;
+}
+
+.leaderboard-table th {
+  text-align: left;
+  padding: 6px 8px;
+  background: rgba(6, 14, 30, 0.95);
+  color: var(--color-frost-glow);
+  border-bottom: 1px solid var(--glass-border);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.leaderboard-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--color-moon-mist);
+  transition: background-color 0.14s ease, color 0.14s ease;
+}
+
+.leaderboard-row {
+  cursor: pointer;
+  transition: background-color 0.14s ease;
+}
+
+.leaderboard-row:hover td {
+  background: rgba(56, 189, 248, 0.10);
+}
+
+.leaderboard-row.selected td {
+  background: rgba(2, 132, 199, 0.24);
+  color: #ffffff;
+  border-bottom-color: rgba(56, 189, 248, 0.28);
+}
+
+.leaderboard-row.selected:hover td {
+  background: rgba(2, 132, 199, 0.32);
+}
+
+.leaderboard-row.selected td:first-child {
+  border-left: 3px solid var(--theme-accent);
+}
+
+.leaderboard-rank-tag {
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-badge);
+  display: inline-block;
+  font-size: 0.60rem;
+  font-family: var(--font-dotdigital);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.rank-gold {
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.3) 0%, rgba(69, 26, 3, 0.8) 100%);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.5);
+  border-top: 1px solid #fef08a;
+}
+
+.rank-silver {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.3) 0%, rgba(3, 30, 60, 0.8) 100%);
+  color: #bae6fd;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  border-top: 1px solid #ffffff;
+}
+
+.rank-bronze {
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.25) 0%, rgba(15, 23, 42, 0.8) 100%);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-top: 1px solid #ffffff;
+}
+
+.rank-standard {
+  background: var(--glass-3d-well-bg);
+  color: var(--color-moon-mist);
+  border: 1px solid var(--glass-3d-well-border);
+}
+
+@media (max-width: 900px) {
+  .leaderboard-window {
+    width: 96vw;
+    height: 94vh;
+    height: 94dvh;
+    max-height: 94dvh;
+    border-radius: var(--radius-card);
+  }
+
+  .leaderboard-window .inspect-header {
+    padding: 7px 9px;
+  }
+
+  .leaderboard-window .inspect-header .subtext {
+    display: none !important;
+  }
+
+  .leaderboard-body {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 6px;
+  }
+}
+
+@media (max-height: 550px) {
+  .leaderboard-window {
+    height: 96vh;
+    height: 96dvh;
+    max-height: 96dvh;
+  }
+}

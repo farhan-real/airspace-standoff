@@ -1,18 +1,53 @@
 /* AIRSPACE STANDOFF: Core Dialogs & System Inspection Window with Obsidian Depth */
 
 #dialog-modal,
-#tactical-dialog-modal { z-index: 4500 !important; }
-#mission-editor-modal { z-index: 3600 !important; }
-#system-inspect-modal { z-index: 3200 !important; }
-#leaderboard-modal { z-index: 3000 !important; }
-#settings-modal { z-index: 3000 !important; }
-#glossary-modal { z-index: 3000 !important; }
-#rwr-briefing-modal { z-index: 2900 !important; }
-#abort-confirm-modal { z-index: 2800 !important; }
-#pause-modal { z-index: 2500 !important; }
-#preconfig-aircraft-modal { z-index: 1400 !important; }
-#game-over-modal { z-index: 1000 !important; }
-#procurement-modal { z-index: 500 !important; }
+#tactical-dialog-modal {
+  z-index: 4500 !important;
+}
+
+#mission-editor-modal {
+  z-index: 3600 !important;
+}
+
+#system-inspect-modal {
+  z-index: 3200 !important;
+}
+
+#leaderboard-modal {
+  z-index: 3000 !important;
+}
+
+#settings-modal {
+  z-index: 3000 !important;
+}
+
+#glossary-modal {
+  z-index: 3000 !important;
+}
+
+#rwr-briefing-modal {
+  z-index: 2900 !important;
+}
+
+#abort-confirm-modal {
+  z-index: 2800 !important;
+}
+
+#pause-modal {
+  z-index: 2500 !important;
+}
+
+#preconfig-aircraft-modal {
+  z-index: 1400 !important;
+}
+
+#game-over-modal {
+  z-index: 1000 !important;
+}
+
+#procurement-modal {
+  z-index: 500 !important;
+}
 
 .modal-title-row {
   display: flex;
@@ -321,12 +356,28 @@
     max-height: 92dvh;
     border-radius: var(--radius-card);
   }
-  .inspect-header { padding: 8px 10px; }
-  .inspect-body { padding: 10px; gap: 8px; }
+
+  .inspect-header {
+    padding: 8px 10px;
+  }
+
+  .inspect-body {
+    padding: 10px;
+    gap: 8px;
+  }
 }
 
 @media (max-height: 550px) {
-  .inspect-window { max-height: 94vh; max-height: 94dvh; }
-  .inspect-header { padding: 6px 10px; }
-  .inspect-body { padding: 8px 10px; }
+  .inspect-window {
+    max-height: 94vh;
+    max-height: 94dvh;
+  }
+
+  .inspect-header {
+    padding: 6px 10px;
+  }
+
+  .inspect-body {
+    padding: 8px 10px;
+  }
 }

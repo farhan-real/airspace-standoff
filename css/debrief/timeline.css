@@ -1,0 +1,99 @@
+/* AIRSPACE STANDOFF: Engagement Timeline Display Styles */
+
+.aar-timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-bottom: 1px solid var(--liquid-glass-border-bottom);
+  border-radius: var(--radius-card);
+  padding: 8px 12px;
+  box-shadow: var(--glass-3d-card-shadow);
+}
+
+.aar-timeline-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.aar-timeline-content {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.aar-timeline-content.hidden {
+  display: none !important;
+}
+
+.timeline-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.64rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 4px 6px;
+  color: var(--color-moon-mist);
+  gap: 8px;
+}
+
+.timeline-entry.kill {
+  background: rgba(56, 189, 248, 0.12);
+  border-left: 3px solid #38bdf8;
+}
+
+.timeline-entry.kill.team-blue {
+  background: rgba(56, 189, 248, 0.14);
+  border-left: 3px solid #38bdf8;
+}
+
+.timeline-entry.kill.team-red {
+  background: rgba(244, 63, 94, 0.16);
+  border-left: 3px solid #f43f5e;
+}
+
+.timeline-entry.hit {
+  background: rgba(56, 189, 248, 0.08);
+  border-left: 3px solid rgba(56, 189, 248, 0.65);
+}
+
+.timeline-entry.hit.team-blue {
+  background: rgba(56, 189, 248, 0.08);
+  border-left: 3px solid rgba(56, 189, 248, 0.65);
+}
+
+.timeline-entry.hit.team-red {
+  background: rgba(244, 63, 94, 0.10);
+  border-left: 3px solid rgba(244, 63, 94, 0.65);
+}
+
+.timeline-entry.ace-kill {
+  background: rgba(251, 191, 36, 0.14);
+  border-left: 3px solid #fbbf24;
+}
+
+.timeline-entry.ace-kill.team-blue {
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.18) 0%, rgba(251, 191, 36, 0.12) 100%);
+  border-left: 3px solid #38bdf8;
+}
+
+.timeline-entry.ace-kill.team-red {
+  background: linear-gradient(90deg, rgba(244, 63, 94, 0.20) 0%, rgba(251, 191, 36, 0.12) 100%);
+  border-left: 3px solid #f43f5e;
+}
+
+.timeline-entry.roe {
+  background: rgba(244, 63, 94, 0.12);
+  border-left: 3px solid #f43f5e;
+}
+
+.timeline-entry.victory-entry {
+  background: rgba(56, 189, 248, 0.16);
+  border-left: 3px solid #38bdf8;
+}

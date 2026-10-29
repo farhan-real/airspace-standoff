@@ -52,11 +52,35 @@ span.stat-tier-5 {
   backdrop-filter: blur(8px);
 }
 
-.stat-badge-tier.tier-1 { background: rgba(0, 240, 255, 0.14); border: 1px solid rgba(0, 240, 255, 0.45); color: var(--stat-tier-1); }
-.stat-badge-tier.tier-2 { background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.45); color: var(--stat-tier-2); }
-.stat-badge-tier.tier-3 { background: rgba(251, 191, 36, 0.14); border: 1px solid rgba(251, 191, 36, 0.45); color: var(--stat-tier-3); }
-.stat-badge-tier.tier-4 { background: rgba(249, 115, 22, 0.14); border: 1px solid rgba(249, 115, 22, 0.45); color: var(--stat-tier-4); }
-.stat-badge-tier.tier-5 { background: rgba(244, 63, 94, 0.14); border: 1px solid rgba(244, 63, 94, 0.45); color: var(--stat-tier-5); }
+.stat-badge-tier.tier-1 {
+  background: rgba(0, 240, 255, 0.14);
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  color: var(--stat-tier-1);
+}
+
+.stat-badge-tier.tier-2 {
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: var(--stat-tier-2);
+}
+
+.stat-badge-tier.tier-3 {
+  background: rgba(251, 191, 36, 0.14);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  color: var(--stat-tier-3);
+}
+
+.stat-badge-tier.tier-4 {
+  background: rgba(249, 115, 22, 0.14);
+  border: 1px solid rgba(249, 115, 22, 0.45);
+  color: var(--stat-tier-4);
+}
+
+.stat-badge-tier.tier-5 {
+  background: rgba(244, 63, 94, 0.14);
+  border: 1px solid rgba(244, 63, 94, 0.45);
+  color: var(--stat-tier-5);
+}
 
 .dual-val {
   display: inline-flex;
@@ -124,8 +148,32 @@ span.stat-tier-5 {
   font-weight: 600;
 }
 
-.legend-chip.tier-1 { background: rgba(0, 240, 255, 0.12); border: 1px solid rgba(0, 240, 255, 0.45); color: var(--stat-tier-1); }
-.legend-chip.tier-2 { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.45); color: var(--stat-tier-2); }
-.legend-chip.tier-3 { background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.45); color: var(--stat-tier-3); }
-.legend-chip.tier-4 { background: rgba(249, 115, 22, 0.12); border: 1px solid rgba(249, 115, 22, 0.45); color: var(--stat-tier-4); }
-.legend-chip.tier-5 { background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.45); color: var(--stat-tier-5); }
+.legend-chip.tier-1 {
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  color: var(--stat-tier-1);
+}
+
+.legend-chip.tier-2 {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: var(--stat-tier-2);
+}
+
+.legend-chip.tier-3 {
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  color: var(--stat-tier-3);
+}
+
+.legend-chip.tier-4 {
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.45);
+  color: var(--stat-tier-4);
+}
+
+.legend-chip.tier-5 {
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.45);
+  color: var(--stat-tier-5);
+}
