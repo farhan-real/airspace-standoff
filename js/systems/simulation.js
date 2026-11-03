@@ -71,7 +71,7 @@ class SimulationSystem {
   }
 
   captureReplayFrame(force = false) {
-    if (typeof AfterActionReplayCodec !== 'undefined') throw new Error('AfterActionReplayCodec is not loaded.');
+    if (typeof AfterActionReplayCodec === 'undefined') throw new Error('AfterActionReplayCodec is not loaded.');
     AfterActionReplayCodec.captureFrame(this, force);
   }
 
@@ -96,20 +96,20 @@ class SimulationSystem {
   }
 
   initWeatherClouds() {
-    if (typeof SimulationTrafficSystem !== 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
+    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
     this.weatherClouds = SimulationTrafficSystem.createClouds(this.cloudCoverage);
   }
 
   initGhostContacts() {
     this.ghostContacts = [];
-    if (typeof SimulationTrafficSystem !== 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
+    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
     const g = SimulationTrafficSystem.createGhostContact(this.weatherClouds);
     if (g) this.ghostContacts.push(g);
   }
 
   spawnCivilianFlight() {
     if (!this.civilianTrafficEnabled) return;
-    if (typeof SimulationTrafficSystem !== 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
+    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
     this.civilianTraffic.push(SimulationTrafficSystem.createCivilianFlight());
   }
 

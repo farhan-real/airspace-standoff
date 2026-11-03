@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Theater Traffic, Weather Clouds & Atmosphere Generation
+ * AIRSPACE STANDOFF: Theater Air Traffic, Weather Clouds & Atmosphere Generation
  * Procedural clouds, civilian flights, radar reflections, and dynamic wave reinforcements.
  */
 
@@ -12,10 +12,17 @@ class SimulationTrafficSystem {
     const configuredCount = coverageCounts[cloudCoverage];
     const roll = rng.next();
     const count = Number.isFinite(configuredCount) ? configuredCount : (roll < 0.15 ? 2 : (roll < 0.70 ? 3 : (roll < 0.92 ? 4 : 5)));
-    const sizeProfiles = [{ rxMin: 25, rxMax: 32, ryMin: 16, ryMax: 22 }, { rxMin: 24, rxMax: 32, ryMin: 12, ryMax: 16 }, { rxMin: 18, rxMax: 25, ryMin: 13, ryMax: 18 }];
+    const sizeProfiles = [
+      { rxMin: 25, rxMax: 32, ryMin: 16, ryMax: 22 },
+      { rxMin: 24, rxMax: 32, ryMin: 12, ryMax: 16 },
+      { rxMin: 18, rxMax: 25, ryMin: 13, ryMax: 18 }
+    ];
     const rawSectors = [
-      { minX: 25, maxX: 65, minY: 18, maxY: 45 }, { minX: 85, maxX: 125, minY: 18, maxY: 45 },
-      { minX: 55, maxX: 95, minY: 35, maxY: 65 }, { minX: 25, maxX: 65, minY: 55, maxY: 82 }, { minX: 85, maxX: 125, minY: 55, maxY: 82 }
+      { minX: 25, maxX: 65, minY: 18, maxY: 45 },
+      { minX: 85, maxX: 125, minY: 18, maxY: 45 },
+      { minX: 55, maxX: 95, minY: 35, maxY: 65 },
+      { minX: 25, maxX: 65, minY: 55, maxY: 82 },
+      { minX: 85, maxX: 125, minY: 55, maxY: 82 }
     ];
     const sectors = rng.shuffle([...rawSectors]);
 
