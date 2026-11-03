@@ -243,11 +243,26 @@ class RadarRenderer {
       }
     }
 
-    if (this.hoveredContact && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0.05) && typeof this.hoveredContact.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
-      RadarCombatRenderer.drawHoverReticle(ctx, this.cam, this.hoveredContact);
+    const isInspection = Boolean(state && state.inspectionMode);
+    const showGround = Boolean(this.cam && this.cam.showGroundTargets);
+
+    if (this.hoveredContact && typeof this.hoveredContact.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
+      const isMsl = Boolean(this.hoveredContact.weapon && this.hoveredContact.target);
+      const isGnd = Boolean(this.hoveredContact.type && !this.hoveredContact.spec && !this.hoveredContact.isCivilian);
+      if ((!isMsl || isInspection) && (!isGnd || showGround)) {
+        if (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0.05) {
+          RadarCombatRenderer.drawHoverReticle(ctx, this.cam, this.hoveredContact);
+        }
+      }
     }
-    if (this.selectedTarget && (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0.05) && typeof this.selectedTarget.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
-      RadarCombatRenderer.drawTargetReticle(ctx, this.cam, this.selectedTarget);
+    if (this.selectedTarget && typeof this.selectedTarget.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
+      const isMsl = Boolean(this.selectedTarget.weapon && this.selectedTarget.target);
+      const isGnd = Boolean(this.selectedTarget.type && !this.selectedTarget.spec && !this.selectedTarget.isCivilian);
+      if ((!isMsl || isInspection) && (!isGnd || showGround)) {
+        if (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0.05) {
+          RadarCombatRenderer.drawTargetReticle(ctx, this.cam, this.selectedTarget);
+        }
+      }
     }
 
     this.fx.draw(ctx, 0.016);

@@ -36,11 +36,16 @@ class ControlsTargetingHandler {
         detected.push({ entity: d, dist: Math.hypot(d.x - active.x, d.y - active.y) });
       }
     }
-    for (const s of this.game.surfaceUnits) {
-      if (s && s.team === enemyTeamTag && s.hp > 0 && !s.isIndestructible && (is2P || (detectedSet && detectedSet.has(s.id)))) {
-        detected.push({ entity: s, dist: Math.hypot(s.x - active.x, s.y - active.y) });
+
+    const showGround = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
+    if (showGround) {
+      for (const s of this.game.surfaceUnits) {
+        if (s && s.team === enemyTeamTag && s.hp > 0 && !s.isIndestructible && (is2P || (detectedSet && detectedSet.has(s.id)))) {
+          detected.push({ entity: s, dist: Math.hypot(s.x - active.x, s.y - active.y) });
+        }
       }
     }
+
     const civilians = (this.game.simulation && this.game.simulation.civilianTraffic) || [];
     for (const c of civilians) {
       if (c && c.hp > 0 && (is2P || (detectedSet && detectedSet.has(c.id)))) {
@@ -104,6 +109,14 @@ class ControlsTargetingHandler {
   }
 
   lockTargetEntity(target) {
+    if (!target) return;
+    const isMissile = Boolean(target.weapon && target.target);
+    if (isMissile && (!this.game.inspection || !this.game.inspection.isOpen)) return;
+
+    const isGround = Boolean(target.type && !target.spec && !target.isCivilian);
+    const showGround = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
+    if (isGround && !showGround) return;
+
     const active = this.game.activeUnit;
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
     const is2P = Boolean(this.game && this.game.playerMode === '2P');

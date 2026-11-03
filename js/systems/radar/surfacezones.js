@@ -4,7 +4,7 @@
 
 class RadarSurfaceRenderer {
   static drawSurface(ctx, cam, units, team, detectedSet, activeUnit, selectedTarget, cssWidth, declutterMode, cleanFn) {
-    if (!units || units.length === 0) return;
+    if (!units || units.length === 0 || !cam.showGroundTargets) return;
     const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0 };
     ctx.save();
 
@@ -12,7 +12,6 @@ class RadarSurfaceRenderer {
       const s = units[i];
       if (!s || s.hp <= 0 || typeof s.x !== 'number') continue;
       const isSelectedSurface = Boolean(selectedTarget && selectedTarget.id === s.id);
-      if (!cam.showGroundTargets && !isSelectedSurface) continue;
 
       const pos = cam.toScreen(s.x, s.y);
       const px = pos.x;

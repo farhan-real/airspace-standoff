@@ -109,7 +109,8 @@ class InspectionModeController {
     const pane = document.getElementById('inspection-pane');
     const hud = document.getElementById('hud-container');
     if (pane) pane.classList.remove('hidden');
-    if (hud) hud.classList.add('inspection-layout');
+    if (hud) hud.classList.remove('inspection-layout');
+    hud.classList.add('inspection-layout');
     this.resizeRadar();
     const toggle = document.getElementById('btn-inspection-mode');
     if (toggle) toggle.textContent = 'CLOSE ANALYSIS';
@@ -131,6 +132,15 @@ class InspectionModeController {
     const timeStop = document.getElementById('inspection-time-stop');
     if (timeStop) timeStop.classList.toggle('hidden', !this.enabled);
     this.updateTimeStopButton();
+
+    if (this.selectedEntity && this.selectedEntity.weapon && this.selectedEntity.target) {
+      this.selectedEntity = this.game.activeUnit || null;
+    }
+    if (this.game && this.game.selectedTarget && this.game.selectedTarget.weapon && this.game.selectedTarget.target) {
+      this.game.selectedTarget = null;
+      const targetInfo = document.getElementById('selected-target-info');
+      if (targetInfo) targetInfo.textContent = 'TARGET: NONE';
+    }
   }
 
   toggleTimeStop() {
@@ -182,15 +192,20 @@ class InspectionModeController {
 
   selectMapEntity(entity) {
     if (!entity) return;
+    const gnd = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
+    if (entity.type && !entity.spec && !entity.isCivilian && !gnd) return;
     if (this.selectedEntity && this.selectedEntity.id === entity.id) return;
 
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
     const isEnemy = entity.team && entity.team !== commanderTeam;
+    const isMissile = Boolean(entity.weapon && entity.target);
 
     if (isEnemy && !this.showEnemyDetails) {
-      this.game.selectedTarget = entity;
-      if (this.game.avionics) this.game.avionics.updateActiveUnitMFD();
-      this.selectionNotice = `Locked ${this.getName(entity)} as combat target.`;
+      if (!isMissile) {
+        this.game.selectedTarget = entity;
+        if (this.game.avionics) this.game.avionics.updateActiveUnitMFD();
+        this.selectionNotice = `Locked ${this.getName(entity)} as combat target.`;
+      }
       this.refreshAt = performance.now() + 150;
       this.render(true);
       return;
@@ -202,7 +217,7 @@ class InspectionModeController {
         this.game.avionics.renderFlightRoster();
         this.game.avionics.updateActiveUnitMFD();
       }
-    } else if (entity.hp > 0) {
+    } else if (entity.hp > 0 && !isMissile) {
       this.game.selectedTarget = entity;
       if (this.game.avionics) this.game.avionics.updateActiveUnitMFD();
     }
@@ -228,10 +243,11 @@ class InspectionModeController {
 
   getAllEntities() {
     const sim = this.game && this.game.simulation;
+    const gnd = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
     return [
       ...(this.game.alliedAircraft || []),
       ...(this.game.hostileAircraft || []),
-      ...(this.game.surfaceUnits || []),
+      ...(gnd ? (this.game.surfaceUnits || []) : []),
       ...(this.game.missiles || []),
       ...((sim && sim.civilianTraffic) || []),
       ...((sim && sim.ghostContacts) || []),
@@ -249,6 +265,13 @@ class InspectionModeController {
     if (!this.enabled) return;
     this.updateTimeStopButton();
     if (!this.isOpen) return;
+
+    const gnd = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
+    if (this.selectedEntity && this.selectedEntity.type && !this.selectedEntity.spec && !this.selectedEntity.isCivilian && !gnd) {
+      this.selectedEntity = this.game.activeUnit || null;
+      this.render(true);
+      return;
+    }
 
     if (this.selectedEntity && this.selectedEntity.isDead) {
       this.selectedEntity = this.game.activeUnit || null;

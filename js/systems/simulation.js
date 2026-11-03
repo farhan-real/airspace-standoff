@@ -71,7 +71,7 @@ class SimulationSystem {
   }
 
   captureReplayFrame(force = false) {
-    if (typeof AfterActionReplayCodec === 'undefined') throw new Error('AfterActionReplayCodec is not loaded.');
+    if (typeof AfterActionReplayCodec !== 'undefined') throw new Error('AfterActionReplayCodec is not loaded.');
     AfterActionReplayCodec.captureFrame(this, force);
   }
 
@@ -96,20 +96,20 @@ class SimulationSystem {
   }
 
   initWeatherClouds() {
-    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
+    if (typeof SimulationTrafficSystem !== 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
     this.weatherClouds = SimulationTrafficSystem.createClouds(this.cloudCoverage);
   }
 
   initGhostContacts() {
     this.ghostContacts = [];
-    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
+    if (typeof SimulationTrafficSystem !== 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
     const g = SimulationTrafficSystem.createGhostContact(this.weatherClouds);
     if (g) this.ghostContacts.push(g);
   }
 
   spawnCivilianFlight() {
     if (!this.civilianTrafficEnabled) return;
-    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
+    if (typeof SimulationTrafficSystem !== 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
     this.civilianTraffic.push(SimulationTrafficSystem.createCivilianFlight());
   }
 
@@ -237,12 +237,17 @@ class SimulationSystem {
       const nextLive = roster.find(a => a.hp > 0.05);
       if (nextLive) {
         this.game.activeUnit = nextLive;
-        if (this.game.radar && this.game.radar.cam && this.game.radar.trackingUnit) {
+        if (this.game.radar && this.game.radar.cam && this.game.radar.cam.trackingUnit) {
           this.game.radar.cam.trackActiveCraft(nextLive);
         }
       }
     }
-    if (this.game.selectedTarget && (this.game.selectedTarget.hp <= 0.05 || this.game.selectedTarget.isDissolved)) {
+    const tgt = this.game.selectedTarget;
+    const isMsl = Boolean(tgt && tgt.weapon && tgt.target);
+    const isGnd = Boolean(tgt && tgt.type && !tgt.spec && !tgt.isCivilian);
+    const gndShown = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
+    const inspOpen = Boolean(this.game.inspection && this.game.inspection.isOpen);
+    if (tgt && ((typeof tgt.hp === 'number' && tgt.hp <= 0.05) || tgt.isDissolved || tgt.isDead || (isMsl && !inspOpen) || (isGnd && !gndShown))) {
       this.game.selectedTarget = null;
       const targetInfo = document.getElementById('selected-target-info');
       if (targetInfo) targetInfo.textContent = 'TARGET: NONE';

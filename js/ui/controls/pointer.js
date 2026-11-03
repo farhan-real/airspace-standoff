@@ -120,6 +120,12 @@ class PointerControlsHandler {
             if (typeof AudioSys !== 'undefined') AudioSys.playClick();
             return;
           }
+
+          if (entity.weapon && entity.target) return;
+          const isGround = Boolean(entity.type && !entity.spec && !entity.isCivilian);
+          const showGround = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
+          if (isGround && !showGround) return;
+
           const commanderTeam = this.game.currentPvpCommander || 'friendly';
 
           if (entity.team === commanderTeam && entity instanceof Aircraft) {
@@ -193,11 +199,14 @@ class PointerControlsHandler {
       }
     }
 
-    for (const s of this.game.surfaceUnits) {
-      if (s.hp > 0 && (inspectionOpen || s.team === commanderTeam || detectedSet.has(s.id))) {
-        const pS = this.game.radar.toScreen(s.x, s.y);
-        const distS = Math.hypot(pS.x - screenX, pS.y - screenY);
-        if (distS <= maxRadiusPx) candidates.push({ entity: s, distPx: distS });
+    const showGround = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
+    if (showGround) {
+      for (const s of this.game.surfaceUnits) {
+        if (s.hp > 0 && (inspectionOpen || s.team === commanderTeam || detectedSet.has(s.id))) {
+          const pS = this.game.radar.toScreen(s.x, s.y);
+          const distS = Math.hypot(pS.x - screenX, pS.y - screenY);
+          if (distS <= maxRadiusPx) candidates.push({ entity: s, distPx: distS });
+        }
       }
     }
 
@@ -210,11 +219,13 @@ class PointerControlsHandler {
       }
     }
 
-    for (const missile of this.game.missiles || []) {
-      if (!missile.isDead && (inspectionOpen || missile.team === commanderTeam || detectedSet.has(missile.id))) {
-        const pM = this.game.radar.toScreen(missile.x, missile.y);
-        const distM = Math.hypot(pM.x - screenX, pM.y - screenY);
-        if (distM <= maxRadiusPx) candidates.push({ entity: missile, distPx: distM });
+    if (inspectionOpen) {
+      for (const missile of this.game.missiles || []) {
+        if (!missile.isDead) {
+          const pM = this.game.radar.toScreen(missile.x, missile.y);
+          const distM = Math.hypot(pM.x - screenX, pM.y - screenY);
+          if (distM <= maxRadiusPx) candidates.push({ entity: missile, distPx: distM });
+        }
       }
     }
 

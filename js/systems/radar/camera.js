@@ -43,6 +43,16 @@ class RadarCameraController {
 
   toggleGroundTargets() {
     this.showGroundTargets = !this.showGroundTargets;
+    if (!this.showGroundTargets && window.Game) {
+      const tgt = window.Game.selectedTarget;
+      if (tgt && tgt.type && !tgt.spec && !tgt.isCivilian) {
+        window.Game.selectedTarget = null;
+        if (window.Game.activeUnit) window.Game.activeUnit.radarLockedTarget = null;
+        const targetInfo = document.getElementById('selected-target-info');
+        if (targetInfo) targetInfo.textContent = 'TARGET: NONE';
+        if (window.Game.avionics) window.Game.avionics.updateActiveUnitMFD();
+      }
+    }
     return this.showGroundTargets;
   }
 
