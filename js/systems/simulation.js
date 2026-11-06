@@ -95,22 +95,33 @@ class SimulationSystem {
     if (pModal) pModal.classList.toggle('active', this.game.simulation.isPaused);
   }
 
+  getAtmosphereSystem() {
+    return window.SimulationAtmosphereSystem || window.SimulationTrafficSystem ||
+      (typeof SimulationAtmosphereSystem !== 'undefined' ? SimulationAtmosphereSystem :
+      (typeof SimulationTrafficSystem !== 'undefined' ? SimulationTrafficSystem : null));
+  }
+
   initWeatherClouds() {
-    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
-    this.weatherClouds = SimulationTrafficSystem.createClouds(this.cloudCoverage);
+    const sys = this.getAtmosphereSystem();
+    if (sys && typeof sys.createClouds === 'function') {
+      this.weatherClouds = sys.createClouds(this.cloudCoverage);
+    } else {
+      this.weatherClouds = [];
+    }
   }
 
   initGhostContacts() {
     this.ghostContacts = [];
-    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
-    const g = SimulationTrafficSystem.createGhostContact(this.weatherClouds);
+    const sys = this.getAtmosphereSystem();
+    const g = (sys && typeof sys.createGhostContact === 'function') ? sys.createGhostContact(this.weatherClouds) : null;
     if (g) this.ghostContacts.push(g);
   }
 
   spawnCivilianFlight() {
     if (!this.civilianTrafficEnabled) return;
-    if (typeof SimulationTrafficSystem === 'undefined') throw new Error('SimulationTrafficSystem is not loaded.');
-    this.civilianTraffic.push(SimulationTrafficSystem.createCivilianFlight());
+    const sys = this.getAtmosphereSystem();
+    const flight = (sys && typeof sys.createCivilianFlight === 'function') ? sys.createCivilianFlight() : null;
+    if (flight) this.civilianTraffic.push(flight);
   }
 
   step(realDt) {
