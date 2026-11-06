@@ -14,6 +14,8 @@ You don't just fly the jet, you dictate the battle. Stationed at a high-contrast
 
 **Missiles start the fight, but information wins it.** Sift ground truth from electronic deception, sever the enemy's situational awareness, and strike while they are still flying blind. In modern air warfare, whoever commands the data commands the sky.
 
+Play at [](https://airspace-standoff.pages.dev/) or [farhan-real.github.io/airspace-standoff](https://farhan-real.github.io/airspace-standoff/)
+
 ---
 
 ## Overview
