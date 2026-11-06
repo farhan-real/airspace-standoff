@@ -168,7 +168,7 @@ Toggle **Inspection Mode** during any mission to access real-time C4ISR telemetr
 | **Audio Architecture** | Web Audio API | 100% procedural sound synthesis |
 | **User Interface** | Modular Vanilla CSS | Pitch-black liquid-glass theme, responsive flex/grid layouts, SVG icons|
 | **Data Persistence** | Client-Side Web Storage | Full sortie replays, custom aircraft presets |
-| **Dependencies** | None (Zero Dependencies) | Zero third-party runtime frameworks or build steps |
+| **Dependencies** | None | Zero third-party runtime frameworks or build steps |
 
 ---
 
