@@ -5,6 +5,7 @@
 class SpecsSubsystemViews {
   static renderWeapon(w) {
     if (!w) return '<div class="inspect-desc-box">NO WEAPON DATA AVAILABLE</div>';
+    if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     const rate = window.StatEvaluator.rate;
 
     const rRange = rate('missile_range', w.rangeKm || 20.0);
@@ -14,7 +15,6 @@ class SpecsSubsystemViews {
     const rAmmo = rate('ammo_count', w.ammoCount || 4);
     const rMass = rate('ordnance_mass', w.mass || 100);
     const rCost = rate('cost_weapon', w.cost || 1.0);
-
     const category = w.category;
 
     let seekerText = w.seeker || 'GUIDED';
@@ -87,11 +87,14 @@ class SpecsSubsystemViews {
       `;
     }
 
+    const specialDetailHtml = window.BehaviorCodex.renderSpecsDetailHtml('weapon', w);
+
     return `
       <div class="inspect-type-banner">
         <span class="inspect-badge badge-cat-${category.toLowerCase()}">${category}</span>
         <span class="inspect-cost-tag ${rCost.colorClass}">$${w.cost.toFixed(1)}M</span>
       </div>
+      ${specialDetailHtml}
       ${SpecsModalRenderer.getLegendHtml()}
       <div class="inspect-sec-head">1. ENGAGEMENT BASKET &amp; KINEMATICS</div>
       <div class="inspect-stat-grid">
@@ -120,16 +123,19 @@ class SpecsSubsystemViews {
 
   static renderGun(g) {
     if (!g) return '<div class="inspect-desc-box">NO GUN DATA AVAILABLE</div>';
+    if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     const rate = window.StatEvaluator.rate;
     const rRpm = rate('gun_rpm', g.rpm);
     const rDps = rate('gun_dps', g.damagePerSec);
     const rMass = rate('ordnance_mass', g.mass);
+    const specialDetailHtml = window.BehaviorCodex.renderSpecsDetailHtml('gun', g);
 
     return `
       <div class="inspect-type-banner">
         <span class="inspect-badge">${g.caliber}</span>
         <span class="inspect-cost-tag">BUILT-IN AUTOCANNON</span>
       </div>
+      ${specialDetailHtml}
       ${SpecsModalRenderer.getLegendHtml()}
       <div class="inspect-sec-head">1. BALLISTIC SPECIFICATIONS</div>
       <div class="inspect-stat-grid">
@@ -152,17 +158,20 @@ class SpecsSubsystemViews {
 
   static renderUpgrade(u) {
     if (!u) return '<div class="inspect-desc-box">NO UPGRADE DATA AVAILABLE</div>';
+    if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     const rate = window.StatEvaluator.rate;
     const rCost = rate('cost_upgrade', u.cost);
     const rMass = rate('component_mass', u.mass);
     const allAirframes = Object.values(window.AIRCRAFT_CATALOG);
     const compatible = !u.isAllowed ? allAirframes : allAirframes.filter(s => u.isAllowed(s));
+    const specialDetailHtml = window.BehaviorCodex.renderSpecsDetailHtml('upgrade', u);
 
     return `
       <div class="inspect-type-banner">
         <span class="inspect-badge">${u.category}</span>
         <span class="inspect-cost-tag ${rCost.colorClass}">$${u.cost.toFixed(1)}M</span>
       </div>
+      ${specialDetailHtml}
       ${SpecsModalRenderer.getLegendHtml()}
       <div class="inspect-sec-head">1. SUBSYSTEM INTEGRATION &amp; WEIGHT IMPACT</div>
       <div class="inspect-stat-grid">
@@ -179,9 +188,9 @@ class SpecsSubsystemViews {
     `;
   }
 
-  static renderLeadBuffs(spec) { return (typeof SpecsFacilitiesViews !== 'undefined') ? SpecsFacilitiesViews.renderLeadBuffs(spec) : ''; }
-  static renderCivilian(c) { return (typeof SpecsFacilitiesViews !== 'undefined') ? SpecsFacilitiesViews.renderCivilian(c) : ''; }
-  static renderSurfaceUnit(s) { return (typeof SpecsFacilitiesViews !== 'undefined') ? SpecsFacilitiesViews.renderSurfaceUnit(s) : ''; }
+  static renderLeadBuffs(spec) { return SpecsFacilitiesViews.renderLeadBuffs(spec); }
+  static renderCivilian(c) { return SpecsFacilitiesViews.renderCivilian(c); }
+  static renderSurfaceUnit(s) { return SpecsFacilitiesViews.renderSurfaceUnit(s); }
 }
 
 window.SpecsSubsystemViews = SpecsSubsystemViews;

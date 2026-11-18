@@ -1,10 +1,10 @@
 /**
- * AIRSPACE STANDOFF: Preconfigured Aircraft Preset Card Builder
- * Displays stations inside tag-like box badges as 1 cohesive stat matching the armory shelf.
+ * js/ui/procurement/dialogs/cards.js - Preconfigured Aircraft Preset Card Builder.
  */
 
 class PreconfigCardsRenderer {
   static buildCard(tpl, acMap, wpnMap, upgMap, deployCb, deleteCb) {
+    if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     const spec = acMap[tpl.specId];
     if (!spec) return null;
 
@@ -58,6 +58,7 @@ class PreconfigCardsRenderer {
     let defaultExtPill = extSlots > 0 ? `<span class="station-slot-pill ext-pill">${extSlots} EXT</span>` : '';
     let defaultCtrPill = hasCtr ? `<span class="station-slot-pill ctr-pill">+ CTR</span>` : '';
     const fallbackBadges = `<span class="station-tag-box">${defaultIntPill}${defaultExtPill}${defaultCtrPill}</span>`;
+    const specialLineHtml = window.BehaviorCodex.renderCardSummaryHtml('airframe', spec);
 
     card.innerHTML = `
       <div class="pc-top-row">
@@ -82,6 +83,7 @@ class PreconfigCardsRenderer {
         <div class="pc-stat-cell"><span>RCS</span>${metrics ? metrics.rcsDualHtml : `<b>${spec.sigma_0 || 1.0}m2</b>`}</div>
         <div class="pc-stat-cell" data-tag-title="STATIONS BREAKDOWN" data-tag-tooltip="Configured stations across internal bay, external pylons, and centerline station."><span>STATIONS</span>${metrics ? metrics.stationsBadgeHtml : fallbackBadges}</div>
       </div>
+      ${specialLineHtml}
       <div class="pc-loadout-summary">
         <div class="pc-loadout-line"><span class="pc-tag-label">GUN:</span>${gunHtml}</div>
         <div class="pc-loadout-line"><span class="pc-tag-label">WEAPONS:</span>${weaponsListHtml || '<span style="color:#64748b;">NONE</span>'}</div>
@@ -100,9 +102,7 @@ class PreconfigCardsRenderer {
     `;
 
     const deployBtn = card.querySelector('.btn-deploy-tpl');
-    if (deployBtn && deployCb) {
-      deployBtn.onclick = () => deployCb(tpl);
-    }
+    if (deployBtn && deployCb) deployBtn.onclick = () => deployCb(tpl);
 
     const delBtn = card.querySelector('.btn-delete-tpl');
     if (delBtn && deleteCb) {

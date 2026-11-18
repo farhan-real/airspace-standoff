@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Specifications Facilities & Ground Views Submodule
+ * js/ui/procurement/specs/facilities.js - Specifications Facilities & Ground Views Submodule.
  */
 
 class SpecsFacilitiesViews {
@@ -28,6 +28,16 @@ class SpecsFacilitiesViews {
         <span class="inspect-cost-tag" style="color:var(--stat-tier-2);">SQUADRON COMMAND BUFF</span>
       </div>
 
+      <div class="inspect-special-box">
+        <div class="inspect-special-title">FLIGHT LEAD SPECIAL BEHAVIOURS</div>
+        <div class="inspect-special-list">
+          <div class="inspect-special-row">
+            <b class="inspect-special-head" style="color:#fbbf24;">Central Formation Anchor &amp; High-Value Target (+1.5x Kill Bounty)</b>
+            <span class="inspect-special-desc">${data.summary}</span>
+          </div>
+        </div>
+      </div>
+
       <div class="inspect-sec-head">FLIGHT LEAD TACTICAL SUITE: ${data.title.toUpperCase()}</div>
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>ASSIGNED ROLE:</span><b style="color:#ffffff;">${data.role}</b></div>
@@ -37,11 +47,6 @@ class SpecsFacilitiesViews {
 
       <div class="inspect-sec-head">SPECIALIZED LEAD MODIFICATIONS</div>
       <div class="inspect-stat-grid">${buffsListHtml}</div>
-
-      <div class="inspect-desc-box" style="border-left-color:var(--theme-accent);">
-        <div class="inspect-sec-head" style="color:var(--theme-accent);margin-top:0;">OPERATIONAL SUMMARY:</div>
-        <div style="color:#f8fafc;margin-top:2px;">${data.summary}</div>
-      </div>
 
       <div class="inspect-action-bar">
         <button type="button" class="inspect-action-btn close-btn" onclick="const m=document.getElementById('system-inspect-modal');if(m)m.classList.remove('active');if(window.Game&&window.Game.controls)window.Game.controls.autoUnpauseOnDialogClose();">CLOSE</button>
@@ -55,6 +60,15 @@ class SpecsFacilitiesViews {
       <div class="inspect-type-banner">
         <span class="inspect-badge" style="background:#065f46;color:#a7f3d0;">NEUTRAL NON-COMBATANT</span>
         <span class="inspect-cost-tag" style="color:#ff3366;">ROE PENALTIES: UNVERIFIED FIRE -600 VP &bull; STRIKE -500 VP &bull; DESTRUCTION -2000 VP</span>
+      </div>
+      <div class="inspect-special-box">
+        <div class="inspect-special-title">RULES OF ENGAGEMENT (ROE) SPECIAL BEHAVIOUR</div>
+        <div class="inspect-special-list">
+          <div class="inspect-special-row">
+            <b class="inspect-special-head" style="color:#fb7185;">Protected Civilian Transponder Traffic (-500 VP Fire / -2,000 VP Kill)</b>
+            <span class="inspect-special-desc">Starts as BOGEY [?] until scanned continuously for ~6 seconds; verify track before firing to avoid severe ROE penalties.</span>
+          </div>
+        </div>
       </div>
       <div class="inspect-sec-head">CIVILIAN TRANSIT FLIGHT SPECIFICATIONS</div>
       <div class="inspect-stat-grid">
@@ -77,12 +91,14 @@ class SpecsFacilitiesViews {
 
   static renderSurfaceUnit(s) {
     if (!s) return '<div class="inspect-desc-box">NO INSTALLATION DATA AVAILABLE</div>';
+    if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     const hpTag = s.isIndestructible ? 'INDESTRUCTIBLE (UNLIMITED CAPACITY)' : `${s.hp} / ${s.maxHp || s.hp} HP`;
     const armorCol = s.armorClass === 'FORTIFIED' ? '#f43f5e' : (s.armorClass === 'ARMORED' ? '#fbbf24' : '#00f5a0');
     const floorText = (s.minAltFt && s.minAltFt > 1000)
       ? `${s.minAltFt.toLocaleString()} ft (${s.cuedMinAltFt ? s.cuedMinAltFt.toLocaleString() + ' ft cued' : 'fixed'})`
       : '1,000 ft (All Low Altitude)';
     const hybridText = (s.isAaaGun && s.missileSpec) ? `Twin Flak (${s.aaaRangeKm} km) &amp; ${s.missileSpec.name} (${s.rangeKm} km)` : null;
+    const specialDetailHtml = window.BehaviorCodex.renderSpecsDetailHtml('surface', s);
 
     return `
       <div class="inspect-type-banner">
@@ -90,6 +106,7 @@ class SpecsFacilitiesViews {
         <span class="inspect-badge" style="color:${armorCol};border-color:${armorCol};">${s.armorClass || 'SOFT'} ARMOR</span>
         <span class="inspect-cost-tag">${s.vpValue ? `+${s.vpValue} VP` : 'SURFACE INSTALLATION'}</span>
       </div>
+      ${specialDetailHtml}
       <div class="inspect-sec-head">FACILITY &amp; IADS SPECIFICATIONS</div>
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>DESIGNATION:</span><b style="color:#00f0ff;">${s.name || s.type}</b></div>

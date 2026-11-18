@@ -4,12 +4,15 @@
 
 class ShelfCardBuilders {
   static buildGunCard(pm, g, active, activeSpec) {
+    if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     const card = document.createElement('div');
     card.className = 'catalog-item-card';
     const isComp = activeSpec ? window.AircraftRegistry.isGunCompatible(activeSpec, g) : false;
     card.setAttribute('draggable', isComp ? 'true' : 'false');
     card.dataset.dragType = 'gun'; card.dataset.dragId = g.id; card.dataset.dragName = g.name;
     const burstDmg = g.damagePerBurst.toFixed(2);
+    const specialLineHtml = window.BehaviorCodex.renderCardSummaryHtml('gun', g);
+
     card.innerHTML = `
       <div class="cic-top"><span class="cic-title">${g.name}</span><span class="cic-cost" style="color:#7dd3fc;">${g.caliber}</span></div>
       <div class="cic-type-bar">
@@ -17,6 +20,7 @@ class ShelfCardBuilders {
         <span class="badge-mass">+${g.mass} kg</span>
         <span class="badge-category" style="color:#00f5a0;">${burstDmg} HP (${g.roundsPerBurst} rds, ${g.burstCooldown.toFixed(1)}s)</span>
       </div>
+      ${specialLineHtml}
       <div class="cic-desc">${g.desc}</div>
       <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
         <button type="button" class="spec-inspect-btn" data-inspect-type="gun" data-inspect-id="${g.id}">SPECS</button>
@@ -30,6 +34,7 @@ class ShelfCardBuilders {
   }
 
   static buildUpgradeCard(pm, upg, active, activeSpec) {
+    if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     const card = document.createElement('div');
     card.className = 'catalog-item-card';
     const isDisallowed = Boolean(upg.isAllowed && activeSpec && !upg.isAllowed(activeSpec));
@@ -44,6 +49,7 @@ class ShelfCardBuilders {
     else if (upg.id === 'COFFIN_OPTICAL_BUS') compBadge = 'EXP, COFFIN & DRONES';
     else if (upg.id === 'SWARM_AI_COPROCESSOR') compBadge = 'DRONES ONLY';
     const badgeColor = (compBadge === 'UNIVERSAL') ? '#00f5a0' : '#fbbf24';
+    const specialLineHtml = window.BehaviorCodex.renderCardSummaryHtml('upgrade', upg);
 
     card.innerHTML = `
       <div class="cic-top"><span class="cic-title">${upg.name}</span><span class="cic-cost">$${upg.cost.toFixed(1)}M</span></div>
@@ -53,6 +59,7 @@ class ShelfCardBuilders {
         <span class="badge-slots">1 SOCKET</span>
         <span class="badge-category" style="color:${badgeColor};">${compBadge}</span>
       </div>
+      ${specialLineHtml}
       <div class="cic-desc">${upg.desc}</div>
       <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
         <button type="button" class="spec-inspect-btn" data-inspect-type="upgrade" data-inspect-id="${upg.id}">SPECS</button>
@@ -66,6 +73,7 @@ class ShelfCardBuilders {
   }
 
   static buildWeaponCard(pm, wpn, active, activeSpec) {
+    if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     const card = document.createElement('div');
     card.className = 'catalog-item-card';
     const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
@@ -107,6 +115,7 @@ class ShelfCardBuilders {
     }
 
     const seekerLabel = wpn.grantsESM ? 'PASSIVE ELINT' : (wpn.grantsIRST ? 'PASSIVE IRST' : (wpn.isTargetingPod ? 'OPTICAL / LASER' : (wpn.isJammerPod ? 'BROADBAND ECM' : (wpn.isDecoy || wpn.isDecoyDrone ? 'RF DECOY' : (wpn.seeker || 'GUIDED')))));
+    const specialLineHtml = window.BehaviorCodex.renderCardSummaryHtml('weapon', wpn);
 
     card.innerHTML = `
       <div class="cic-top"><span class="cic-title">${wpn.name}</span><span class="cic-cost">$${wpn.cost.toFixed(1)}M</span></div>
@@ -118,6 +127,7 @@ class ShelfCardBuilders {
         <span class="badge-category" style="color:#00f0ff;">${seekerLabel}</span>
       </div>
       <div class="cic-specs">${specsRow}</div>
+      ${specialLineHtml}
       <div class="cic-desc">${wpn.behaviorDesc || wpn.desc}</div>
       <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
         <button type="button" class="spec-inspect-btn" data-inspect-type="weapon" data-inspect-id="${wpn.id}">SPECS</button>

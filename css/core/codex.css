@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: High-Contrast Spec Evaluation Codex */
+/* css/core/codex.css - High-Contrast Spec Evaluation Codex, Card Behavior Callouts, and Top Specs Behavior Box */
 
 .stat-tier-1,
 b.stat-tier-1,
@@ -176,4 +176,83 @@ span.stat-tier-5 {
   background: rgba(244, 63, 94, 0.12);
   border: 1px solid rgba(244, 63, 94, 0.45);
   color: var(--stat-tier-5);
+}
+
+/* Concise colored special behavior summary inside armory & preset cards without clipping */
+.card-special-line {
+  display: block;
+  background: rgba(2, 10, 26, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.20);
+  border-left: 2.5px solid var(--theme-accent);
+  border-radius: var(--radius-badge);
+  padding: 4px 7px;
+  font-size: 0.61rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #e2e8f0;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.csb-tag {
+  color: var(--color-ice-highlight);
+  font-family: var(--font-dotdigital);
+  font-weight: 700;
+  font-size: 0.55rem;
+  letter-spacing: 0.4px;
+}
+
+.csb-sep {
+  color: var(--color-fog-veil);
+  font-weight: 700;
+}
+
+/* Top special behaviors dossier inside Specs modal */
+.inspect-special-box {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.14) 0%, rgba(4, 9, 22, 0.92) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-left: 3px solid var(--theme-accent);
+  border-radius: var(--radius-card);
+  padding: 9px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inspect-special-title {
+  font-family: var(--font-dotdigital);
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: var(--theme-accent);
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+  padding-bottom: 4px;
+}
+
+.inspect-special-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.inspect-special-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px 7px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: var(--radius-badge);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.inspect-special-head {
+  font-family: var(--font-dotdigital);
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+.inspect-special-desc {
+  font-size: 0.68rem;
+  color: var(--color-moon-mist);
+  line-height: 1.4;
 }

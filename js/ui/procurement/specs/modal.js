@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Specifications Modal Renderer
- * Displays comprehensive airframe specifications with station breakdown, optimal corner speeds, and thermal suppression tiers.
+ * js/ui/procurement/specs/modal.js - Specifications Modal Renderer with top special behavior dossier.
  */
 
 class SpecsModalRenderer {
@@ -33,13 +32,11 @@ class SpecsModalRenderer {
 
   static renderAirframe(a, guns) {
     if (!a) return '<div class="inspect-desc-box">NO AIRFRAME DATA AVAILABLE</div>';
+    if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     guns = guns || window.AUTOCANNONS_CATALOG || {};
 
     const inHangar = Boolean(document.getElementById('procurement-modal') && document.getElementById('procurement-modal').classList.contains('active'));
-
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate
-      : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = window.StatEvaluator.rate;
 
     const rSpeed = rate('speed', a.S_0 || 0.90);
     const rAgi = rate('agility', a.AGI_0 || 0.85);
@@ -100,6 +97,7 @@ class SpecsModalRenderer {
     const addBtnHtml = inHangar
       ? '<button type="button" class="inspect-action-btn req-btn" id="inspect-btn-req">ADD TO SQUADRON</button>'
       : '';
+    const specialDetailHtml = window.BehaviorCodex.renderSpecsDetailHtml('airframe', a);
 
     return `
       <div class="inspect-type-banner">
@@ -110,6 +108,7 @@ class SpecsModalRenderer {
         <span class="inspect-cost-tag ${rCost.colorClass}">$${Number(a.cost || 0).toFixed(1)}M</span>
       </div>
 
+      ${specialDetailHtml}
       ${SpecsModalRenderer.getLegendHtml()}
 
       <div class="inspect-sec-head">1. KINEMATICS &amp; FLIGHT ENVELOPE</div>

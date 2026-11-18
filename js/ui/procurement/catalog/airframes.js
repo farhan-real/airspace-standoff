@@ -34,6 +34,8 @@ class ShelfAirframesRenderer {
     grid.innerHTML = '';
 
     if (!window.AIRCRAFT_CATALOG) throw new Error('AIRCRAFT_CATALOG is not loaded.');
+    if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
+
     let all = Object.values(window.AIRCRAFT_CATALOG);
     if (catFilter && catFilter !== 'ALL') {
       all = all.filter(a => a && a.category === catFilter);
@@ -87,6 +89,7 @@ class ShelfAirframesRenderer {
       const extPill = spec.externalSlots > 0 ? `<span class="station-slot-pill ext-pill">${spec.externalSlots} EXT</span>` : '';
       const ctrPill = spec.hasCenterline ? `<span class="station-slot-pill ctr-pill">+ CTR</span>` : '';
       const stationsBadgeHtml = `<span class="station-tag-box">${intPill}${extPill}${ctrPill}</span>`;
+      const specialLineHtml = window.BehaviorCodex.renderCardSummaryHtml('airframe', spec);
 
       card.innerHTML = `
         <div class="adc-header">
@@ -110,6 +113,7 @@ class ShelfAirframesRenderer {
           <div class="adc-metric-cell" data-tag-title="ARMOR HP" data-tag-tooltip="Fuselage damage tolerance: ${spec.hp} Hit Points. Deflects close-in kinetic fire."><span>ARMOR:</span><b class="${rHp.colorClass}">${spec.hp} HP</b></div>
           <div class="adc-metric-cell" data-tag-title="STATIONS BREAKDOWN" data-tag-tooltip="Internal Bay: ${spec.internalSlots} slots &bull; External Pylons: ${spec.externalSlots} slots &bull; Centerline: ${spec.hasCenterline ? 'Available' : 'None'} (Total: ${spec.totalSlots} Slots)."><span>STATIONS:</span>${stationsBadgeHtml}</div>
         </div>
+        ${specialLineHtml}
         <div class="adc-desc">${spec.desc}</div>
         <div class="adc-footer">
           <button type="button" class="spec-inspect-btn" data-inspect-type="airframe" data-inspect-id="${spec.id}">SPECS</button>
