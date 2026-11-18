@@ -4,8 +4,11 @@
 
 const requiredWeaponModules = [
   ['WEAPONS_A2A', window.WEAPONS_A2A],
+  ['WEAPONS_A2A_LEGACY', window.WEAPONS_A2A_LEGACY],
+  ['WEAPONS_A2A_RAMJET', window.WEAPONS_A2A_RAMJET],
   ['WEAPONS_A2A_ULR', window.WEAPONS_A2A_ULR],
   ['WEAPONS_A2A_WVR', window.WEAPONS_A2A_WVR],
+  ['WEAPONS_A2A_MICRO', window.WEAPONS_A2A_MICRO],
   ['WEAPONS_A2G', window.WEAPONS_A2G],
   ['WEAPONS_A2G_CLUSTER', window.WEAPONS_A2G_CLUSTER],
   ['WEAPONS_A2G_GLIDE', window.WEAPONS_A2G_GLIDE],
@@ -42,8 +45,11 @@ for (const [name, moduleData] of requiredGunModules) {
 window.WEAPONS_CATALOG = Object.assign(
   {},
   window.WEAPONS_A2A,
+  window.WEAPONS_A2A_LEGACY,
+  window.WEAPONS_A2A_RAMJET,
   window.WEAPONS_A2A_ULR,
   window.WEAPONS_A2A_WVR,
+  window.WEAPONS_A2A_MICRO,
   window.WEAPONS_A2G,
   window.WEAPONS_A2G_CLUSTER,
   window.WEAPONS_A2G_GLIDE,

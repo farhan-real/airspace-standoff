@@ -56,7 +56,7 @@ class ProcurementShelf {
     if (!input) return;
     const placeholders = {
       airframes: 'Search aircraft by name, radar, or role...',
-      a2a: 'Search A2A missiles by name, seeker, or range (e.g. Astra, Meteor)...',
+      a2a: 'Search A2A missiles (e.g. Meteor, R-27ET, Sparrow, HOJ, CUDA)...',
       a2g: 'Search A2G bombs, rockets, ATGMs, ARMs, cruise, or loitering...',
       guns: 'Search internal cannons, gunpods, and lasers by caliber or name...',
       utility: 'Search EW jammers, targeting pods, IRST, ELINT, and decoys...',
@@ -261,8 +261,10 @@ class ProcurementShelf {
   renderWeaponsTab(container, filterCat, query) {
     if (filterCat === 'A2A') {
       this.renderFilterPills(container, [
-        { id: 'ALL', label: 'ALL A2A' }, { id: 'WVR', label: 'WVR / DOGFIGHT' }, { id: 'MR_BVR', label: 'MEDIUM BVR' },
-        { id: 'LR_BVR', label: 'LONG-RANGE BVR' }, { id: 'ULR_BVR', label: 'ULTRA-LONG & AOE' }, { id: 'SWARM_MICRO', label: 'MICRO & SWARM' }
+        { id: 'ALL', label: 'ALL A2A' }, { id: 'WVR', label: 'WVR / DOGFIGHT' }, { id: 'PASSIVE_IR', label: 'SILENT IR BVR' },
+        { id: 'LEGACY_SARH', label: 'LEGACY BVR' }, { id: 'MR_BVR', label: 'MEDIUM BVR' }, { id: 'LR_BVR', label: 'LONG-RANGE BVR' },
+        { id: 'RAMJET_BVR', label: 'RAMJET' }, { id: 'HOJ_A2A', label: 'HOME-ON-JAM' }, { id: 'ULR_BVR', label: 'ULTRA-LONG' },
+        { id: 'SWARM_MICRO', label: 'MICRO & SWARM' }, { id: 'AOE_SPECIAL', label: 'AREA BURST' }
       ], this.pm.currentA2ACategory, (id) => { this.pm.currentA2ACategory = id; this.pm.renderCatalog(); });
     } else if (filterCat === 'A2G') {
       this.renderFilterPills(container, [

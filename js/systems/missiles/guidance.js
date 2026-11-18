@@ -182,12 +182,14 @@ class MissileGuidanceSystem {
       energyTurnPenalty = Math.min(0.12, (missile.cumulativeTurn - Math.PI) * 0.05);
     }
 
+    const hojTargetActive = Boolean(target.jamEfficiency > 0 || (target.spec && (target.spec.isEW || target.spec.category === 'EW' || target.spec.R_0 >= 90)));
+    const hojBonus = (w.hojBonus > 0 && hojTargetActive) ? w.hojBonus : 0.0;
     const heavyBonus = w.heavyTargetBonus ? (target.Wr * 0.25) : 0.0;
     const energyDeficitBonus = (1.0 - target.energy) * 0.25;
     const agilityDefenseBonus = (targetAgility - 0.85) * 0.12;
     const turnOptBonus = (turnOptEff - 0.70) * 0.10;
 
-    const rawProb = (basePk * aspectScore * kineticRetention) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + thermalModifier + heavyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
+    const rawProb = (basePk * aspectScore * kineticRetention) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + thermalModifier + hojBonus + heavyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
     const probability = Math.max(0.0, Math.min(0.95, rawProb));
 
     return {
@@ -197,7 +199,7 @@ class MissileGuidanceSystem {
         aspectDifferenceRad: aspectDiff, aspectScore, activeManeuverEvasion: activeManeuver,
         notchBonus, chaffBonus, dircmBonus, combinedActiveEvasion: primaryActiveEvasion, passiveEvasionBaseline: primaryPassiveBaseline,
         effectiveDefense, mixedSeekers: hasMixedSeekers, salvoBonus, mixedSeekerBonus: mixedSynergyBonus,
-        thermalModifier, targetThermalBloom: targetThermalMultiplier, heavyTargetBonus: heavyBonus,
+        thermalModifier, targetThermalBloom: targetThermalMultiplier, hojBonus, heavyTargetBonus: heavyBonus,
         targetEnergyBonus: energyDeficitBonus, agilityPenalty: agilityDefenseBonus,
         turnEfficiency: turnOptEff, turnEfficiencyPenalty: turnOptBonus,
         opticalWeatherPenalty: weatherPenalty, excessiveTurnPenalty: energyTurnPenalty

@@ -17,66 +17,34 @@ class WeaponBehaviorCodex {
 
     if (w.isTargetingPod) {
       if (w.grantsESM) {
-        items.push({
-          color: '#fbbf24',
-          short: 'Passive ELINT Pod (135km emitter ID & +15% ARM reach)',
-          detail: 'Exposes active enemy ground radars and SAMs out to 135 km and boosts Anti-Radiation Missile reach by +15%.'
-        });
+        items.push({ color: '#fbbf24', short: 'Passive ELINT Pod (135km emitter ID & +15% ARM reach)', detail: 'Exposes active enemy ground radars and SAMs out to 135 km and boosts Anti-Radiation Missile reach by +15%.' });
       }
       if (w.grantsIRST) {
-        items.push({
-          color: '#00f0ff',
-          short: 'Passive Air IRST (28km stealth track, ignores notches & ECM)',
-          detail: 'Enables silent optical air-to-air stealth detection inside 28 km and holds lock through Doppler notching and radar jamming.'
-        });
+        items.push({ color: '#00f0ff', short: 'Passive Air IRST (28km stealth track, ignores notches & ECM)', detail: 'Enables silent optical air-to-air stealth detection inside 28 km and holds lock through Doppler notching and radar jamming.' });
       }
       if (w.cloudMitigation >= 0.40) {
-        items.push({
-          color: '#00f5a0',
-          short: `Heavy Cloud Cut (-${Math.round(w.cloudMitigation * 100)}% laser scatter & 50+km Thermal decoy ID)`,
-          detail: `Cuts cloud laser attenuation by ${Math.round(w.cloudMitigation * 100)}% and exposes Thermal & Visual SAM mockups out to ${w.spotRangeKm} km.`
-        });
+        items.push({ color: '#00f5a0', short: `Heavy Cloud Cut (-${Math.round(w.cloudMitigation * 100)}% laser scatter & 50+km Thermal decoy ID)`, detail: `Cuts cloud laser attenuation by ${Math.round(w.cloudMitigation * 100)}% and exposes Thermal & Visual SAM mockups out to ${w.spotRangeKm} km.` });
       }
       return items;
     }
 
     if (w.isDecoyDrone) {
-      items.push({
-        color: '#c084fc',
-        short: 'Flying Bait Drone (mirrors RCS to waste enemy & SAM missiles)',
-        detail: `Launches autonomous gliders for 55s that mirror your radar signature, deceiving enemy fighters and baiting Attack Mode SAM ready racks.`
-      });
+      items.push({ color: '#c084fc', short: 'Flying Bait Drone (mirrors RCS to waste enemy & SAM missiles)', detail: 'Launches autonomous gliders for 55s that mirror your radar signature, deceiving enemy fighters and baiting Attack Mode SAM ready racks.' });
       return items;
     }
 
     if (w.isDecoy) {
-      items.push({
-        color: '#c084fc',
-        short: `RF Repeater (${w.ammoCount}x expendable or towed decoy charges)`,
-        detail: `Expands your active RF countermeasure charges by ${w.ammoCount} to pull radar-guided missiles off your aircraft.`
-      });
+      items.push({ color: '#c084fc', short: `RF Repeater (${w.ammoCount}x expendable or towed decoy charges)`, detail: `Expands your active RF countermeasure charges by ${w.ammoCount} to pull radar-guided missiles off your aircraft.` });
       return items;
     }
 
     if (w.isGunpod) {
       if (w.isLaser) {
-        items.push({
-          color: '#00f0ff',
-          short: 'Hitscan Laser Pod (0 lead needed, -45% dmg per cloud cell)',
-          detail: 'Speed-of-light beam hits instantly without lead prediction, but intersecting clouds scatter 45% of beam energy per cell.'
-        });
+        items.push({ color: '#00f0ff', short: 'Hitscan Laser Pod (0 lead needed, -45% dmg per cloud cell)', detail: 'Speed-of-light beam hits instantly without lead prediction, but intersecting clouds scatter 45% of beam energy per cell.' });
       } else if (w.isBunkerCracker) {
-        items.push({
-          color: '#fbbf24',
-          short: '37mm Bunker-Piercing Pod (2.0x ground dmg & 100% AP)',
-          detail: 'Tungsten-core shells deal 2.0x ground damage at 100% armor piercing and penetrate Fortified bunker and shelter roofs.'
-        });
+        items.push({ color: '#fbbf24', short: '37mm Bunker-Piercing Pod (2.0x ground dmg & 100% AP)', detail: 'Tungsten-core shells deal 2.0x ground damage at 100% armor piercing and penetrate Fortified bunker and shelter roofs.' });
       } else if (w.isA2GGunpod) {
-        items.push({
-          color: '#fbbf24',
-          short: `Ground Strafe Pod (${w.groundDamageMult}x ground dmg, ${Math.round(w.armorPiercing * 100)}% AP)`,
-          detail: `Fires alongside built-in guns on every burst, multiplying ground damage by ${w.groundDamageMult}x with ${Math.round(w.armorPiercing * 100)}% armor piercing.`
-        });
+        items.push({ color: '#fbbf24', short: `Ground Strafe Pod (${w.groundDamageMult}x ground dmg, ${Math.round(w.armorPiercing * 100)}% AP)`, detail: `Fires alongside built-in guns on every burst, multiplying ground damage by ${w.groundDamageMult}x with ${Math.round(w.armorPiercing * 100)}% armor piercing.` });
       }
       return items;
     }
@@ -86,23 +54,32 @@ class WeaponBehaviorCodex {
     } else if (w.trait === 'DUAL_PULSE_SURGE') {
       items.push({ color: '#00f5a0', short: 'Dual-Pulse (+0.9M surge & +18% Pk inside 22km)', detail: 'Second rocket motor ignites inside 22 km, surging +0.90 Mach and adding +16% to +18% terminal kill probability.' });
     } else if (w.trait === 'STEALTH_SEEKER') {
-      items.push({ color: '#00f0ff', short: 'VLO Missile (0.0005m2 RCS) & +35% notch resistance', detail: 'Very low observable missile delays enemy radar and RWR warning while resisting 35% of Doppler notch maneuvers.' });
+      items.push({ color: '#00f0ff', short: `VLO Missile (0.0005m2 RCS) & +${Math.round((w.antiNotchBonus || 0.35) * 100)}% notch resistance`, detail: 'Very low observable missile delays enemy radar and RWR warning while resisting Doppler notch maneuvers.' });
     } else if (w.trait === 'AESA_ANTI_NOTCH') {
-      items.push({ color: '#00f0ff', short: 'Micro-AESA (+30% notch & 50% chaff resistance)', detail: 'Active phased-array seeker resists 30% of Doppler notching and rejects 50% of chaff interference.' });
+      items.push({ color: '#00f0ff', short: `Micro-AESA (+${Math.round((w.antiNotchBonus || 0.30) * 100)}% notch & ${Math.round((w.decoyResistance || 0.50) * 100)}% chaff resistance)`, detail: 'Active phased-array seeker resists Doppler notching and rejects chaff interference.' });
     } else if (w.trait === 'SHOCKWAVE_DETONATION') {
-      items.push({ color: '#fb7185', short: '8.5km Thermobaric Blast (up to 5 HP splash damage)', detail: 'Detonates an 8.5 km shockwave on hit, inflicting up to 5 HP splash damage to all nearby aircraft and ground targets.' });
+      const rKm = w.aoeRadiusKm || 8.5, sDmg = w.aoeDamage || 5;
+      items.push({ color: '#fb7185', short: `${rKm}km Thermobaric Blast (up to ${sDmg} HP splash damage)`, detail: `Detonates a ${rKm} km shockwave on hit, inflicting up to ${sDmg} HP splash damage to all nearby aircraft and ground targets.` });
     } else if (w.trait === 'REAR_ENGAGE') {
       items.push({ color: '#c084fc', short: '180 deg Rear Launch (fires backwards without turning)', detail: 'Full-sphere optical lock lets you shoot directly behind your aircraft at pursuing bandits.' });
     } else if (w.trait === 'ALL_ASPECT_BURST') {
       items.push({ color: '#c084fc', short: '360 deg Omni-Volley (zero boresight cone restriction)', detail: 'Launches micro-missiles across a full 360 deg sphere regardless of aircraft heading.' });
     } else if (w.trait === 'IMAGE_RECOGNITION') {
-      items.push({ color: '#00f5a0', short: `${w.id === 'MICA-IR' ? 'Silent 38km IR ambush & ' : ''}${Math.round((w.decoyResistance || 0.75) * 100)}% decoy reject`, detail: `Optical silhouette matching rejects ${Math.round((w.decoyResistance || 0.75) * 100)}% of thermal flares.${w.id === 'MICA-IR' ? ' Silent 38 km BVR IR seeker triggers zero RWR alert.' : ''}` });
+      items.push({ color: '#00f5a0', short: `${w.rangeKm >= 38 ? `Silent ${w.rangeKm}km IR ambush & ` : ''}${Math.round((w.decoyResistance || 0.75) * 100)}% decoy reject`, detail: `Optical silhouette matching rejects ${Math.round((w.decoyResistance || 0.75) * 100)}% of thermal flares.${w.rangeKm >= 38 ? ` Silent ${w.rangeKm} km BVR IR seeker triggers zero RWR alert.` : ''}` });
     } else if (w.trait === 'HOBS_VANE' && w.category === 'A2A' && w.a2aGroup !== 'WVR') {
-      items.push({ color: '#38bdf8', short: '1-Slot Wide-Cone BVR (90 deg off-boresight radar shot)', detail: 'Thrust-vectored compact BVR missile capable of 90 deg off-boresight active radar launches.' });
+      items.push({ color: '#38bdf8', short: `${w.rangeKm}km Wide-Cone BVR (90 deg off-boresight launch)`, detail: 'Thrust-vectored compact missile capable of 90 deg off-boresight launches.' });
     } else if (w.a2aGroup === 'SWARM_MICRO') {
-      items.push({ color: '#38bdf8', short: `Micro-Saturation (${w.ammoCount}x compact volley rounds)`, detail: `High-density ${w.ammoCount}-round rack designed to overwhelm point defenses and saturate targets.` });
+      items.push({ color: '#38bdf8', short: `${w.isHitToKill ? 'Hit-to-Kill ' : ''}Micro-Saturation (${w.ammoCount}x compact volley rounds)`, detail: `High-density ${w.ammoCount}-round rack designed to overwhelm point defenses and saturate targets.` });
     }
 
+    if (w.hojBonus > 0) {
+      items.push({ color: '#c084fc', short: `Home-On-Jam (+${Math.round(w.hojBonus * 100)}% Pk vs ECM/EW & High-Power Radars)`, detail: `Locks directly onto enemy jamming emissions and high-power radars for +${Math.round(w.hojBonus * 100)}% Pk and strong anti-notch tracking.` });
+    }
+    if (w.category === 'A2A' && w.seeker === 'IIR' && w.rangeKm >= 40) {
+      items.push({ color: '#00f5a0', short: `Silent ${w.rangeKm}km IR BVR (zero RWR alert, notch/chaff immune)`, detail: 'Passive thermal homing gives targets zero radar warning and ignores chaff and 90-degree Doppler notching.' });
+    } else if (w.category === 'A2A' && w.seeker === 'PASSIVE_RADAR' && !w.hojBonus) {
+      items.push({ color: '#fbbf24', short: 'Passive Anti-Radar A2A (homes on enemy radar emissions)', detail: 'Stealthy passive RF homing locks onto active enemy aircraft radars without emitting.' });
+    }
     if (w.heavyTargetBonus) {
       items.push({ color: '#fbbf24', short: 'Heavy-Target Bonus (up to +25% Pk vs loaded jets)', detail: 'Gains up to +25% Pk against high-payload-ratio (Wr) bombers and heavily loaded fighters.' });
     }

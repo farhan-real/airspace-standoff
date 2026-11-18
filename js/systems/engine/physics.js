@@ -205,12 +205,9 @@ const Physics = {
       const mitlAdd = (isAcAttacker && (weapon.seeker === 'GPS_INS' || weapon.seeker === 'IIR' || weapon.seeker === 'INS')) ? attacker.mitlBonus : 0.0;
       const cloudMit = isAcAttacker ? attacker.cloudMitigation : 0.0;
       const laserWeatherPen = isLaserSeeker ? (cloudHits * 0.20 * (1.0 - cloudMit)) : 0.0;
-      const altDispersionPen = (weapon.seeker === 'UNGUIDED' && !weapon.isRocketPod && attacker.altFt > 26000 && ccipAdd <= 0)
-        ? (tgpBonus > 0 ? 0.08 : 0.18) : 0.0;
-      const jamPen = (weapon.seeker !== 'UNGUIDED' && this.getGroundJammingImpact(target, attacker) > 0)
-        ? 0.10 * (1.0 - (isAcAttacker ? attacker.eccmBonus : 0.0)) : 0.0;
-      const rawA2g = (weapon.T_0 * rangeScore) + tgpBonus + ccipAdd + armAdd + mitlAdd - laserWeatherPen - altDispersionPen - jamPen;
-      const pkPct = Math.round(Math.max(15, Math.min(95, rawA2g * 100)));
+      const altDispersionPen = (weapon.seeker === 'UNGUIDED' && !weapon.isRocketPod && attacker.altFt > 26000 && ccipAdd <= 0) ? (tgpBonus > 0 ? 0.08 : 0.18) : 0.0;
+      const jamPen = (weapon.seeker !== 'UNGUIDED' && this.getGroundJammingImpact(target, attacker) > 0) ? 0.10 * (1.0 - (isAcAttacker ? attacker.eccmBonus : 0.0)) : 0.0;
+      const pkPct = Math.round(Math.max(15, Math.min(95, ((weapon.T_0 * rangeScore) + tgpBonus + ccipAdd + armAdd + mitlAdd - laserWeatherPen - altDispersionPen - jamPen) * 100)));
       const label = pkPct >= 75 ? 'OPTIMAL' : (pkPct >= 50 ? 'GOOD' : 'MARGINAL');
       const color = pkPct >= 75 ? '#10b981' : (pkPct >= 50 ? '#38bdf8' : '#f59e0b');
       return { pk: pkPct, label, color, arrow: '--', desc: tgpBonus > 0 ? 'Targeting Pod lock boost' : 'Ballistic ground solution', salvoCount: 0, hasMixedSeekers: false };
@@ -237,7 +234,7 @@ const Physics = {
 
     const isRadarSeeker = (weapon.seeker === 'ARH' || weapon.seeker === 'PASSIVE_RADAR');
     const notchBonus = (target.isNotching && isRadarSeeker) ? (attacker.hasIRST ? 0.16 : 0.38 * (1.0 - (weapon.antiNotchBonus || 0))) : 0.0;
-    const chaffBonus = (target.cmTimer > 0) ? (isRadarSeeker ? 0.34 : 0.18) : 0.0;
+    const chaffBonus = (target.cmTimer > 0) ? (isRadarSeeker ? 0.34 * (1.0 - (weapon.decoyResistance || 0)) : 0.18 * (1.0 - (weapon.decoyResistance || 0))) : 0.0;
     const dircmBonus = (isOpticalSeeker && typeof target.dircmEvasion === 'number') ? target.dircmEvasion : 0.0;
     const activeEvasion = Math.max((target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? target.activeManeuverBonus : 0.0, notchBonus, chaffBonus, dircmBonus);
     const passiveBaseline = Math.max(target.isCoffin ? 0.25 : 0.0, target.isAce ? 0.08 : 0.0, target.isFlightLead ? 0.08 : 0.0);
@@ -245,19 +242,22 @@ const Physics = {
     let effectiveDefense = Math.min(0.70, Math.max(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
+    const hojTargetActive = Boolean(target.jamEfficiency > 0 || (target.spec && (target.spec.isEW || target.spec.category === 'EW' || target.spec.R_0 >= 90)));
+    const hojAdd = (weapon.hojBonus > 0 && hojTargetActive) ? weapon.hojBonus : 0.0;
     const weatherPenalty = (weatherClouds && isOpticalSeeker && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.12 : 0.0;
-    const basePk = weapon.T_0 * rangeScore * aspectScore - effectiveDefense + salvoBonus + thermalModifier - offBoresightPenalty - weatherPenalty;
+    const basePk = weapon.T_0 * rangeScore * aspectScore - effectiveDefense + salvoBonus + thermalModifier + hojAdd - offBoresightPenalty - weatherPenalty;
     const pkPercent = Math.round(Math.max(0, Math.min(95, basePk * 100)));
     const arrow = (aspectDiff > 1.8) ? '^' : 'v';
 
     let label = 'MARGINAL', color = '#f59e0b';
     if (isRearShot) { label = 'REAR SHOT'; color = '#00f5a0'; }
+    else if (hojAdd > 0) { label = 'HOJ LOCK'; color = '#c084fc'; }
     else if (pkPercent >= 70) { label = 'OPTIMAL'; color = '#10b981'; }
     else if (pkPercent >= 45) { label = 'GOOD'; color = '#38bdf8'; }
     else if (pkPercent > 0) { label = 'POOR'; color = '#f43f5e'; }
     else { label = 'DEFEATED'; color = '#64748b'; }
 
-    return { pk: pkPercent, label, color, arrow, desc: salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Rear trajectory lock' : (pkPercent > 0 ? 'Target solution locked' : 'Kinematically defeated')), salvoCount, hasMixedSeekers };
+    return { pk: pkPercent, label, color, arrow, desc: hojAdd > 0 ? `Home-On-Jam (+${Math.round(hojAdd * 100)}% Pk)` : (salvoCount > 0 ? `Salvo x${salvoCount + 1}` : (isRearShot ? 'Rear trajectory lock' : (pkPercent > 0 ? 'Target solution locked' : 'Kinematically defeated'))), salvoCount, hasMixedSeekers };
   }
 };
 

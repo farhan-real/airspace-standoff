@@ -258,7 +258,9 @@ class MissileKinetics {
 
   static applyThermobaricAoE(missile, primaryTarget, directDamage, game) {
     if (!game) return;
-    const blastRadiusKm = 8.5;
+    const w = missile.weapon || {};
+    const blastRadiusKm = w.aoeRadiusKm || 8.5;
+    const maxSplashDmg = w.aoeDamage || 5.0;
     const sourceUnit = missile.source;
     const firingTeam = missile.team;
     const allTargets = [...(game.alliedAircraft || []), ...(game.hostileAircraft || []), ...(game.surfaceUnits || [])];
@@ -266,7 +268,7 @@ class MissileKinetics {
     if (game.radar) {
       game.radar.spawnExplosionFX(missile.x, missile.y, true);
       game.radar.spawnShockwave(missile.x, missile.y, '#f59e0b', 75);
-      game.radar.spawnCombatText(missile.x, missile.y, 'MPBM THERMOBARIC BLAST', '#f59e0b');
+      game.radar.spawnCombatText(missile.x, missile.y, `${w.id || 'MPBM'} THERMOBARIC BLAST`, '#f59e0b');
     }
 
     for (const other of allTargets) {
@@ -274,7 +276,7 @@ class MissileKinetics {
       const dist = Math.hypot(other.x - missile.x, other.y - missile.y);
       if (dist <= blastRadiusKm) {
         const falloff = 1.0 - (dist / blastRadiusKm);
-        const aoeDamage = Math.max(1, Math.round(5.0 * falloff));
+        const aoeDamage = Math.max(1, Math.round(maxSplashDmg * falloff));
         const wasAlive = other.hp > 0;
         if (typeof SurfaceUnit !== 'undefined' && other instanceof SurfaceUnit) other.takeDamage(aoeDamage, false, missile.weapon);
         else if (other.isCivilian && typeof other.takeDamage === 'function') other.takeDamage(aoeDamage, sourceUnit, missile.weapon, true);
@@ -285,7 +287,7 @@ class MissileKinetics {
         }
         if (game.radar) game.radar.spawnCombatText(other.x, other.y, `BLAST -${aoeDamage}HP`, '#f59e0b');
         if (wasAlive && other.hp <= 0 && game.simulation && !other.isCivilian) {
-          game.simulation.recordKillEvent(firingTeam, other, sourceUnit, { weapon: missile.weapon, isSalvo: false, salvoCount: 1, salvoBreakdown: 'MPBM Secondary Blast' });
+          game.simulation.recordKillEvent(firingTeam, other, sourceUnit, { weapon: missile.weapon, isSalvo: false, salvoCount: 1, salvoBreakdown: `${w.id || 'MPBM'} Secondary Blast` });
         }
       }
     }

@@ -29,10 +29,10 @@ class FleetOutfitter {
     if (specRatingIndex === -1) throw new Error(`Invalid maxPylonRating "${spec.maxPylonRating}" on "${spec.id}".`);
 
     const isEligible = (w) => Boolean(w && ratings.indexOf(w.minRating) <= specRatingIndex && (!w.allowedAirframes || w.allowedAirframes.includes(spec.id)));
-    const class1Ulr = ['AIM-260', 'ASTRA-MK3', 'R-37M', 'PL-21', 'PL-17', 'AIM-174B', 'KS-172', 'AIM-152', 'KINZHAL'].filter(id => isEligible(wCatalog[id]));
-    const class2Lr = ['METEOR', 'PL-15E', 'ASTRA-MK2', 'R-77M', 'AAM-4B', 'AGM-88G'].filter(id => isEligible(wCatalog[id]));
-    const class3Mr = ['AIM-120D', 'R-77-1', 'MICA-EM', 'ASTRA-MK1', 'I-DERBY-ER', 'MPBM'].filter(id => isEligible(wCatalog[id]));
-    const class4Sr = ['PYTHON-5', 'IRIS-T', 'AIM-9X-2', 'R-73', 'ASRAAM', 'MICA-IR', 'PL-10', 'AAM-5B', 'R-74M2', 'MAM', 'PEREGRINE'].filter(id => isEligible(wCatalog[id]));
+    const class1Ulr = ['AIM-260', 'AIM-260B-HOJ', 'ASTRA-MK3', 'R-37M', 'R-33S', 'PL-21', 'PL-17', 'AIM-174B', 'KS-172', 'K-100', 'AIM-152', 'AIM-54C', 'KINZHAL'].filter(id => isEligible(wCatalog[id]));
+    const class2Lr = ['METEOR', 'JNAAM', 'FMRAAM', 'GOKHAN', 'RVV-AE-PD', 'PL-15E', 'PL-15', 'PL-15-HOJ', 'ASTRA-MK2', 'R-77M', 'K-77ME', 'AIM-120D-3', 'AAM-4B', 'R-27ER', 'R-27ET', 'R-27EP', 'AGM-88G'].filter(id => isEligible(wCatalog[id]));
+    const class3Mr = ['AIM-120D', 'AIM-120C-7', 'AIM-120D-HOJ', 'R-77-1', 'R-77', 'R-77T', 'MICA-EM', 'ASTRA-MK1', 'I-DERBY-ER', 'GOKDOGAN', 'PL-12', 'AAM-4', 'AIM-7P', 'R-27R', 'R-27T', 'R-27P', 'CUDA-SAC', 'MPBM', 'MPBM-II'].filter(id => isEligible(wCatalog[id]));
+    const class4Sr = ['PYTHON-5', 'IRIS-T', 'IRIS-T-LR', 'AIM-9X-2', 'AIM-9X-B3', 'R-73', 'ASRAAM', 'MICA-IR', 'PL-10', 'PL-10E-ER', 'AAM-5B', 'R-74M2', 'BOZDOGAN', 'CACM-6', 'SADM-8', 'MAM', 'PEREGRINE'].filter(id => isEligible(wCatalog[id]));
 
     const addWpn = (wId, station) => {
       const w = wCatalog[wId];
@@ -117,7 +117,7 @@ class FleetOutfitter {
     const rollWvr = () => {
       if (docProfile.preferWeapons === 'INTERNAL_STEALTH' && isEligible(wCatalog['MICA-IR'])) return 'MICA-IR';
       if (['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff) || docProfile.preferWeapons === 'AGGRESSIVE') {
-        const highWvr = ['PYTHON-5', 'IRIS-T', 'ASRAAM', 'PL-10', 'AAM-5B'].filter(id => isEligible(wCatalog[id]));
+        const highWvr = ['PYTHON-5', 'IRIS-T', 'ASRAAM', 'PL-10', 'AAM-5B', 'BOZDOGAN'].filter(id => isEligible(wCatalog[id]));
         if (highWvr.length > 0 && rng.boolean(0.60)) return rng.pick(highWvr);
       }
       return rng.pick(class4Sr);
