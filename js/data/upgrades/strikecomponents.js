@@ -9,7 +9,7 @@ window.STRIKE_UPGRADES_CATALOG = {
     cost: 1.6,
     mass: 95,
     category: 'STRIKE',
-    desc: 'Automated nap-of-the-earth contour system. Raises hostile LR/MR SAM engagement altitude floors by +2,500 ft below FL100 and cuts enemy look-down radar range by 25%.',
+    desc: 'Low-altitude terrain-hugging radar system. When flying below 10,000 ft (FL100), raises enemy long/medium-range SAM minimum target altitude by +2,500 ft and cuts enemy look-down radar detection range by 25%.',
     apply: function(unit) {
       unit.hasTfrMasking = true;
       unit.tfrFloorBonusFt = 2500;
@@ -23,7 +23,7 @@ window.STRIKE_UPGRADES_CATALOG = {
     cost: 1.3,
     mass: 40,
     category: 'STRIKE',
-    desc: 'Continuously Computed Impact Point processor. Boosts unguided iron bombs, cluster dispensers, and rocket pods by +16% accuracy and +15% release range.',
+    desc: 'Automated bombing computer (CCIP / CCRP) that calculates exact ground impact points. Boosts unguided iron bombs, cluster bombs, and rocket pods by +16% accuracy and +15% release range.',
     apply: function(unit) {
       unit.ccipBonus = 0.16;
       unit.bombRangeBonus = 1.15;
@@ -36,7 +36,7 @@ window.STRIKE_UPGRADES_CATALOG = {
     cost: 1.8,
     mass: 65,
     category: 'SEAD',
-    desc: 'Dedicated SEAD emitter geolocation suite. Extends Anti-Radiation Missile range by +20%, adds +14% ARM accuracy, and classifies active ground emitters out to 130 km.',
+    desc: 'SEAD radar-hunting targeting system. Extends Anti-Radiation Missile (ARM) range by +20%, adds +14% ARM accuracy, and detects and identifies active enemy ground radars out to 130 km.',
     apply: function(unit) {
       unit.hasHtsPod = true;
       unit.hasESM = true;
@@ -51,7 +51,7 @@ window.STRIKE_UPGRADES_CATALOG = {
     cost: 1.4,
     mass: 90,
     category: 'STRIKE',
-    desc: 'Streamlined external pylon fairings. Cuts external ordnance wave drag penalties by 40% and reduces effective payload weight ratio penalties by 20%.',
+    desc: 'Streamlined aerodynamic covers for external weapon racks. Cuts external weapon air-drag speed penalties by 40% and reduces heavy payload weight penalties by 20%.',
     apply: function(unit) {
       unit.pylonDragRelief = 0.40;
     },
@@ -63,7 +63,7 @@ window.STRIKE_UPGRADES_CATALOG = {
     cost: 1.5,
     mass: 320,
     category: 'ARMOR',
-    desc: 'Reinforced lower-hemisphere strike plating. Grants +1 Max HP and reduces incoming AAA and CIWS gun damage by 45% during low-altitude passes.',
+    desc: 'Armored titanium-kevlar belly plating. Adds +1 Max HP and reduces damage from enemy AAA flak and CIWS guns by 45% during low-altitude attack runs.',
     apply: function(unit) {
       unit.maxHp = (unit.maxHp || 4) + 1;
       unit.hp = Math.min(unit.maxHp, (unit.hp || 4) + 1);
@@ -77,7 +77,7 @@ window.STRIKE_UPGRADES_CATALOG = {
     cost: 1.6,
     mass: 55,
     category: 'STRIKE',
-    desc: 'Internal FLIR and laser spot designator without occupying an external pylon. Adds +15% A2G accuracy and 35% cloud laser scatter mitigation.',
+    desc: 'Built-in thermal camera and laser targeter that saves an external weapon pylon. Adds +15% air-to-ground accuracy and cuts cloud laser scattering penalties by 35%.',
     apply: function(unit) {
       unit.targetingPodBonus = Math.max(unit.targetingPodBonus || 0, 0.15);
       unit.cloudMitigation = Math.max(unit.cloudMitigation || 0, 0.35);
@@ -90,7 +90,7 @@ window.STRIKE_UPGRADES_CATALOG = {
     cost: 1.5,
     mass: 35,
     category: 'DATALINK',
-    desc: 'Man-in-the-loop terminal guidance link. Adds +14% accuracy to GPS/INS glide bombs, cruise missiles, and optical standoff munitions while cutting jamming interference by 50%.',
+    desc: 'Two-way guidance radio link to steer launched weapons in flight. Adds +14% accuracy to GPS/INS glide bombs, cruise missiles, and optical standoff weapons while cutting jamming interference by 50%.',
     apply: function(unit) {
       unit.mitlBonus = 0.14;
       unit.eccmBonus = Math.max(unit.eccmBonus || 0, 0.50);
@@ -103,7 +103,7 @@ window.STRIKE_UPGRADES_CATALOG = {
     cost: 1.7,
     mass: 75,
     category: 'STEALTH',
-    desc: 'Directional infrared laser countermeasure turret protecting strike airframes. Grants +24% evasion against passive IR SHORAD and IIR seekers plus +2 countermeasures.',
+    desc: 'Laser turret that blinds incoming heat-seeking missiles. Grants +24% evasion against passive IR SAMs (SHORAD) and heat-seeking A2A missiles, plus +2 countermeasures.',
     apply: function(unit) {
       unit.dircmEvasion = 0.24;
       unit.chaff = (unit.chaff || 4) + 2;
