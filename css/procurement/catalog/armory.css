@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Armory Catalog Shelf with 3D Liquid Glass Depth */
+/* css/procurement/catalog/armory.css - Armory Catalog Shelf with Obsidian Glass Depth and Sticky Search */
 
 .shelf-tabs {
   flex-shrink: 0;
@@ -39,6 +39,57 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 12px var(--theme-primary-glow);
 }
 
+.catalog-search-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.hud-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
+  color: var(--color-pure-white);
+  font-family: var(--font-untitled-sans);
+  font-size: 0.70rem;
+  padding: 6px 10px;
+  border-radius: var(--radius-input);
+  outline: none;
+  box-shadow: var(--glass-3d-well-shadow);
+  transition: all 0.16s ease;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  touch-action: auto !important;
+}
+
+.hud-search-input:focus {
+  border-color: var(--theme-accent);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 12px var(--theme-primary-dim);
+}
+
+.catalog-search-clear {
+  background: rgba(244, 63, 94, 0.18);
+  border: 1px solid rgba(244, 63, 94, 0.45);
+  border-radius: var(--radius-input);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.14s ease;
+}
+
+.catalog-search-clear:hover {
+  background: rgba(244, 63, 94, 0.36);
+  border-color: #f43f5e;
+}
+
 .shelf-helper-bar {
   flex-shrink: 0;
   background: var(--glass-3d-well-bg);
@@ -61,30 +112,6 @@
   text-shadow: 0 0 6px var(--theme-accent-glow);
 }
 
-.catalog-search-row {
-  margin-bottom: 6px;
-  flex-shrink: 0;
-}
-
-.hud-search-input {
-  width: 100%;
-  background: var(--glass-3d-well-bg);
-  border: 1px solid var(--glass-3d-well-border);
-  color: var(--color-pure-white);
-  font-family: var(--font-untitled-sans);
-  font-size: 0.70rem;
-  padding: 6px 10px;
-  border-radius: var(--radius-input);
-  outline: none;
-  box-shadow: var(--glass-3d-well-shadow);
-  transition: all 0.16s ease;
-}
-
-.hud-search-input:focus {
-  border-color: var(--theme-accent);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 12px var(--theme-primary-dim);
-}
-
 .catalog-grid {
   flex: 1 1 auto;
   min-height: 0;
@@ -101,6 +128,22 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 6px;
+}
+
+.catalog-empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 28px 14px;
+  background: var(--glass-3d-well-bg);
+  border: 1px dashed var(--glass-border);
+  border-radius: var(--radius-card);
+  color: var(--color-moon-mist);
+  font-family: var(--font-dotdigital);
+  font-size: 0.68rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .catalog-item-card {
@@ -127,9 +170,7 @@
 }
 
 .catalog-item-card[draggable="true"],
-.airframe-dense-card[draggable="true"] {
-  cursor: grab;
-}
+.airframe-dense-card[draggable="true"] { cursor: grab; }
 
 .catalog-item-card.dragging,
 .airframe-dense-card.dragging {
@@ -174,12 +215,7 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-.badge-mass {
-  color: var(--stat-tier-3);
-  padding: 2px 6px;
-  font-size: 0.62rem;
-  font-weight: 700;
-}
+.badge-mass { color: var(--stat-tier-3); padding: 2px 6px; font-size: 0.62rem; font-weight: 700; }
 
 .cic-specs {
   display: grid;
@@ -194,11 +230,7 @@
   box-shadow: var(--glass-3d-well-shadow);
 }
 
-.cic-desc {
-  font-size: 0.70rem;
-  color: var(--color-moon-mist);
-  line-height: 1.45;
-}
+.cic-desc { font-size: 0.70rem; color: var(--color-moon-mist); line-height: 1.45; }
 
 .btn-quick-equip {
   background: var(--glass-3d-btn-bg);
@@ -244,14 +276,7 @@
 
 @media (max-width: 1024px) {
   .shelf-helper-bar { display: none !important; }
-  .shelf-tabs {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 2px;
-    width: 100%;
-    box-sizing: border-box;
-  }
+  .shelf-tabs { flex-wrap: nowrap; overflow-x: auto; white-space: nowrap; padding-bottom: 2px; width: 100%; box-sizing: border-box; }
   .shelf-tab-btn { padding: 4px 8px; font-size: 0.60rem; flex-shrink: 0; }
   .dense-sub-grid { grid-template-columns: 1fr; width: 100%; box-sizing: border-box; }
 }
