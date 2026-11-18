@@ -8,6 +8,7 @@ window.AUTOCANNONS_ENERGY = {
     rpm: 1200, rangeKm: 12.5, damagePerSec: 2.0, roundsPerBurst: 3, damagePerRound: 0.38,
     damagePerBurst: 1.14, burstCooldown: 1.8, ammoPerBurst: 3, coneAngleDeg: 34, mass: 65,
     tracerColor: '#38bdf8', badge: '34 DEG PULSE LASER', defaultAmmo: 18,
+    groundDamageMult: 1.0, armorPiercing: 0.40,
     lockedTo: [
       'MQ-99', 'MQ-101', 'F-22A', 'FB-22', 'YF-23', 'F-35A', 'Su-57', 'J-20', 'Su-75',
       'FC-31', 'J-35', 'B-21', 'F-15EX', 'F-22C-COFFIN', 'ADF-11F', 'ADFX-01', 'CFA-44',
@@ -21,6 +22,7 @@ window.AUTOCANNONS_ENERGY = {
     rpm: 900, rangeKm: 15.0, damagePerSec: 2.8, roundsPerBurst: 3, damagePerRound: 0.50,
     damagePerBurst: 1.50, burstCooldown: 2.0, ammoPerBurst: 3, coneAngleDeg: 30, mass: 135,
     tracerColor: '#00f0ff', badge: '30 DEG MEDIUM LASER', defaultAmmo: 15,
+    groundDamageMult: 1.0, armorPiercing: 0.50,
     lockedTo: ['MQ-99', 'MQ-101', 'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B'],
     kineticConcussion: 0.0, thermalBloom: 1.5, cloudScattering: 0.75,
     desc: 'Medium-tier optical pulse emitter firing 3-pulse bursts (1.50 HP total, 2.0s reload). 15 pulses allow 5 focused bursts. Narrow 30-degree beam requires close boresight tracking; scattered by cloud moisture.'
@@ -30,6 +32,7 @@ window.AUTOCANNONS_ENERGY = {
     rpm: 600, rangeKm: 18.0, damagePerSec: 3.8, roundsPerBurst: 3, damagePerRound: 0.65,
     damagePerBurst: 1.95, burstCooldown: 2.5, ammoPerBurst: 3, coneAngleDeg: 26, mass: 240,
     tracerColor: '#c084fc', badge: '26 DEG HEAVY LASER', defaultAmmo: 12,
+    groundDamageMult: 1.15, armorPiercing: 0.60,
     lockedTo: ['ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR', 'X-40'],
     kineticConcussion: 0.0, thermalBloom: 1.7, cloudScattering: 0.80,
     desc: 'High-energy optical burst weapon firing 3-pulse bursts (1.95 HP total, 2.5s reload). 12 pulses deliver 4 heavy bursts. Tight 26-degree pencil beam; heavy capacitor discharge spikes thermal signature.'
@@ -39,6 +42,7 @@ window.AUTOCANNONS_ENERGY = {
     rpm: 9999, rangeKm: 7.5, damagePerSec: 3.6, roundsPerBurst: 3, damagePerRound: 0.55,
     damagePerBurst: 1.65, burstCooldown: 2.4, ammoPerBurst: 3, coneAngleDeg: 28, mass: 220,
     tracerColor: '#00f0ff', badge: '28 DEG PENCIL BEAM', defaultAmmo: 15,
+    groundDamageMult: 1.0, armorPiercing: 0.50,
     lockedTo: [
       'F-22A', 'Su-57', 'X-02S', 'B-21', 'J-20', 'F-15EX', 'FC-31', 'YF-23', 'ADF-11F',
       'ADFX-01', 'DARKSTAR', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'CFA-44', 'X-40', 'XFA-36B', 'EA-36'
@@ -51,6 +55,7 @@ window.AUTOCANNONS_ENERGY = {
     rpm: 120, rangeKm: 9.5, damagePerSec: 2.6, roundsPerBurst: 2, damagePerRound: 0.95,
     damagePerBurst: 1.90, burstCooldown: 2.8, ammoPerBurst: 2, coneAngleDeg: 22, mass: 320,
     tracerColor: '#38bdf8', badge: '22 DEG PINPOINT RAILGUN', defaultAmmo: 8,
+    groundDamageMult: 1.40, armorPiercing: 0.90,
     lockedTo: ['CFA-44', 'X-02S', 'ADF-11F', 'ADFX-01', 'X-40', 'XFA-36B'],
     kineticConcussion: 0.40, thermalBloom: 1.3, cloudScattering: 0.0,
     desc: 'Electromagnetic railgun firing 2 kinetic slugs (1.90 HP total, 2.8s reload). 8 slugs permit 4 sniper shots. Out-ranges conventional cannons; tight 22-degree boresight.'

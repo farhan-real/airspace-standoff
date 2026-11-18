@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Raw Telemetry Data Tab Renderer
+ * js/ui/inspection/rawdata.js - Raw Telemetry Data Tab Renderer.
  */
 
 class InspectionRawDataRenderer {
@@ -49,7 +49,7 @@ class InspectionRawDataRenderer {
           <div class="inspection-data-row"><span class="inspection-data-label">TFR Terrain Masking</span><b class="inspection-data-value">${entity.hasTfrMasking ? `+${entity.tfrFloorBonusFt} ft Floor (<FL100), -25% Look-Down` : 'Inactive'}</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">Targeting Pod &amp; Cloud</span><b class="inspection-data-value">+${Math.round((entity.targetingPodBonus || 0) * 100)}% A2G Pk | ${entity.targetingSpotRangeKm || 0}km Spot | -${Math.round((entity.cloudMitigation || 0) * 100)}% Cloud</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">CCIP / MITL / HTS</span><b class="inspection-data-value">CCIP +${Math.round((entity.ccipBonus || 0) * 100)}% | MITL +${Math.round((entity.mitlBonus || 0) * 100)}% | ARM ${(entity.armRangeMult || 1).toFixed(2)}x</b></div>
-          <div class="inspection-data-row"><span class="inspection-data-label">DIRCM / Kevlar / ECCM</span><b class="inspection-data-value">DIRCM +${Math.round((entity.dircmEvasion || 0) * 100)}% | AAA -${Math.round((entity.aaaResistance || 0) * 100)}% | ECCM ${Math.round((entity.eccmBonus || 0) * 100)}%</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">DIRCM / Flak / ECCM</span><b class="inspection-data-value">DIRCM +${Math.round((entity.dircmEvasion || 0) * 100)}% | AAA -${Math.round((entity.aaaResistance || 0) * 100)}% | ECCM ${Math.round((entity.eccmBonus || 0) * 100)}%</b></div>
         </div>`;
     }
 
@@ -91,6 +91,8 @@ class InspectionRawDataRenderer {
   static renderSurfaceRaw(controller, s) {
     const mods = (typeof SurfaceCombatSystem !== 'undefined') ? SurfaceCombatSystem.getAttackModifiers(s) : null;
     const isAttack = (controller.game.scenarioMode === 'ATTACK');
+    const ammoStr = s.canAttack && s.missileSpec ? InspectionSurfaceOverview.formatSamRackText(s) : 'N/A';
+
     return `
       <div class="inspection-data-section">
         <span class="inspection-data-title">INSTALLATION IDENTITY &amp; ARMOR</span>
@@ -109,6 +111,7 @@ class InspectionRawDataRenderer {
       <div class="inspection-data-section">
         <span class="inspection-data-title">ARMAMENT &amp; IADS MODIFIERS</span>
         <div class="inspection-data-row"><span class="inspection-data-label">Range &amp; Cooldown</span><b class="inspection-data-value raw-surf-cd">${s.rangeKm} km | CD: ${s.fireCooldown > 0 ? `${s.fireCooldown.toFixed(1)}s` : 'READY'} / ${s.cooldownMax}s</b></div>
+        <div class="inspection-data-row"><span class="inspection-data-label">SAM Magazine &amp; Channels</span><b class="inspection-data-value raw-surf-ammo">${ammoStr} | Max ${s.maxActiveMissiles} Active</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Altitude Floors</span><b class="inspection-data-value">${s.minAltFt} ft uncued / ${s.cuedMinAltFt} ft cued</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">CIWS &amp; AAA Flak</span><b class="inspection-data-value">${s.canInterceptMissiles ? `CIWS ${Math.round((mods ? mods.ciwsAccuracy : s.interceptAccuracy) * 100)}%` : 'No CIWS'} | ${s.isAaaGun || s.type === 'PANTSIR' ? `AAA ${s.aaaRangeKm}km/${s.aaaMaxAltFt}ft` : 'No AAA'}</b></div>
         ${isAttack && mods ? `<div class="inspection-data-row"><span class="inspection-data-label">IADS Link State</span><b class="inspection-data-value">EW:${mods.hasEwCue ? 'ON' : 'OFF'} | LowCue:${mods.hasLowAltCue ? 'ON' : 'OFF'} | Pwr:${mods.isPowerActive ? 'ON' : 'CUT'} | Reload:${mods.samCooldownMult.toFixed(2)}x | Gate:${Math.round(mods.ambushRatio * 100)}%</b></div>` : ''}
@@ -146,6 +149,8 @@ class InspectionRawDataRenderer {
       if (emEl) emEl.textContent = entity.isEmitter ? (entity.emconTimer > 0 ? `EMCON (${entity.emconTimer.toFixed(1)}s)` : 'ACTIVE RF') : 'PASSIVE / SILENT';
       const cdEl = content.querySelector('.raw-surf-cd');
       if (cdEl) cdEl.textContent = `${entity.rangeKm} km | CD: ${entity.fireCooldown > 0 ? `${entity.fireCooldown.toFixed(1)}s` : 'READY'} / ${entity.cooldownMax}s`;
+      const ammoEl = content.querySelector('.raw-surf-ammo');
+      if (ammoEl && entity.canAttack && entity.missileSpec) ammoEl.textContent = `${InspectionSurfaceOverview.formatSamRackText(entity)} | Max ${entity.maxActiveMissiles} Active`;
       const pkEl = content.querySelector('.raw-surf-parked');
       if (pkEl && entity.airbaseId) pkEl.textContent = `${entity.airbaseId}${entity.isRunwaySegment ? ` Seg ${entity.segmentIndex + 1}/${entity.totalSegments}` : ''}${entity.isAircraftParking ? ` | Parked: ${(entity.parkedAircraft || []).length}` : ''}`;
       return;

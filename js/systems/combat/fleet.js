@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Dynamic Fleet Generator (150km x 100km Theater)
+ * js/systems/combat/fleet.js - Dynamic Fleet Generator (150km x 100km Theater)
  * Integrates AIR_DOCTRINES into squadron drafting while preserving difficulty budget curves.
  */
 
@@ -106,9 +106,9 @@ const FleetGenerator = {
     }
 
     const flagshipPool = ['ADF-11F', 'CFA-44', 'X-02S', 'ADFX-01', 'DARKSTAR', 'X-40', 'XFA-36B'];
-    const highTierPool = ['Su-57', 'F-22A', 'YF-23', 'J-20', 'F-15EX', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'Su-47', 'F-15-SMTD', 'F-35A', 'Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'MiG-31BM', 'Su-30SM', 'B-1B', 'Su-34'];
-    const midTierPool = ['F-15EX', 'Eurofighter', 'Rafale-C', 'Su-35S', 'KF-21', 'F-18E', 'F-2A', 'J-16', 'Su-30SM', 'MiG-31BM', 'JAS-39E', 'Su-34', 'A-10C', 'Su-25SM3', 'S-70', 'Su-75', 'FC-31', 'J-35'];
-    const lowTierPool = ['F-15EX', 'F-16V', 'Mirage-2000', 'Tejas-MK2', 'MiG-29K', 'X-29A', 'Tornado-ECR', 'A-10C', 'Su-25SM3'];
+    const highTierPool = ['Su-57', 'F-22A', 'YF-23', 'J-20', 'F-15EX', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'Su-47', 'F-15-SMTD', 'F-35A', 'Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'MiG-31BM', 'Su-30SM', 'B-1B', 'Su-34', 'F-16XL'];
+    const midTierPool = ['F-15EX', 'Eurofighter', 'Rafale-C', 'Su-35S', 'KF-21', 'F-18E', 'F-2A', 'J-16', 'Su-30SM', 'MiG-31BM', 'JAS-39E', 'Su-34', 'A-10C', 'Su-25SM3', 'Su-39', 'MiG-27K', 'A-16', 'F-16XL', 'S-70', 'Su-75', 'FC-31', 'J-35'];
+    const lowTierPool = ['F-15EX', 'F-16V', 'Mirage-2000', 'Tejas-MK2', 'MiG-29K', 'X-29A', 'Tornado-ECR', 'A-10C', 'Su-25SM3', 'AV-8B-PLUS', 'JAGUAR-GR3'];
     const dronePool = ['MQ-99', 'MQ-101', 'XQ-58A', 'Kizilelma', 'MQ-28', 'RQ-180', 'S-70'];
     const stealthPool = ['F-22A', 'YF-23', 'F-35A', 'Su-57', 'J-20', 'Su-75', 'FC-31', 'J-35', 'S-70'];
 

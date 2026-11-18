@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Guided Missile Kinematics, A2G Flight Profiles & Cluster Splash
- * ProNav guidance with responsive A2G turn rates, aerodynamic ballistic decay, and staging.
+ * js/systems/missiles/kinetics.js - Guided Missile Kinematics, A2G Flight Profiles, SAM Turn Tuning & Cluster Splash.
  */
 
 class MissileKinetics {
@@ -36,6 +35,16 @@ class MissileKinetics {
     const w = missile.weapon || {};
     const trait = w.trait || '';
     let baseRate = 2.4;
+
+    if (w.category === 'SAM') {
+      const samRange = w.rangeKm || 40;
+      if (samRange >= 50) baseRate = 1.45;
+      else if (samRange >= 24) baseRate = 1.75;
+      else baseRate = 2.20;
+      const cap = samRange >= 50 ? 2.1 : (samRange >= 24 ? 2.5 : 2.9);
+      if (missile.distanceToTarget && missile.distanceToTarget <= 5.5) return Math.max(baseRate, cap);
+      return baseRate;
+    }
 
     if (w.category === 'A2G' || w.isBunkerCracker || w.isCluster || w.isAntiRadiation || w.isRocketPod) {
       if (w.a2gGroup === 'ATGM') baseRate = 3.2;

@@ -37,7 +37,7 @@ class LoadoutMetrics {
     const baselineTotalSlots = spec.totalSlots;
 
     let internalUsed = 0, externalUsed = 0, centerlineUsed = 0;
-    let totalOrdnanceMass = 0, externalDragMach = 0, extraRcs = 0, weaponsCost = 0;
+    let totalOrdnanceMass = 0, externalDragFactor = 0, extraRcs = 0, weaponsCost = 0;
 
     (weaponsList || []).forEach(wItem => {
       const wId = (typeof wItem === 'object' && wItem !== null) ? (wItem.id || wItem.specId) : wItem;
@@ -64,11 +64,11 @@ class LoadoutMetrics {
       } else if (assignedStation === 'CENTERLINE') {
         centerlineUsed += wSlots;
         extraRcs += w.sigmaPylon;
-        externalDragMach += 0.05;
+        externalDragFactor += 0.032;
       } else {
         externalUsed += wSlots;
         extraRcs += w.sigmaPylon;
-        externalDragMach += 0.02 * wSlots;
+        externalDragFactor += 0.014 * wSlots;
       }
     });
 
@@ -94,7 +94,7 @@ class LoadoutMetrics {
       if (uId === 'KEVLAR_BELLY_ARMOR') hasKevlarBelly = true;
     });
 
-    if (hasPylonFairings) externalDragMach *= 0.60;
+    externalDragFactor = Math.min(0.22, externalDragFactor) * (hasPylonFairings ? 0.60 : 1.0);
 
     const totalMass = 100 + activeGun.mass + totalOrdnanceMass + upgradesMass;
     const maxMass = spec.M_max;
@@ -126,7 +126,7 @@ class LoadoutMetrics {
     if (hasSupercruise) baseSpeed *= 1.10;
     if (hasRangeTurbo) baseSpeed *= 0.96;
 
-    const loadedSpeed = Math.max(0.35, baseSpeed * (1.0 - 0.22 * effectiveWr) - externalDragMach);
+    const loadedSpeed = Math.max(0.35, baseSpeed * (1.0 - 0.22 * effectiveWr - externalDragFactor));
     const baseSpeedRating = rate('speed', baseSpeed), loadedSpeedRating = rate('speed', loadedSpeed);
 
     const baseAgility = spec.AGI_0;
@@ -139,7 +139,7 @@ class LoadoutMetrics {
       else if (spec.category === 'DRONES') loadedAgility += 0.15;
     }
     loadedAgility *= Math.max(0.45, 1.0 - 0.30 * effectiveWr);
-    if (externalUsed > 0 || centerlineUsed > 0) loadedAgility -= (externalDragMach * 0.4);
+    if (externalUsed > 0 || centerlineUsed > 0) loadedAgility -= (externalDragFactor * 0.45);
     loadedAgility = Math.min(1.80, Math.max(0.12, loadedAgility));
 
     const baseAgiRating = rate('agility', baseAgility), loadedAgiRating = rate('agility', loadedAgility);

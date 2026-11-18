@@ -1,5 +1,5 @@
 /**
- * js/systems/entities/surface.js - Surface air-defense batteries, radars, multi-segment runways, and facilities.
+ * js/systems/entities/surface.js - Surface air-defense batteries, finite SAM magazines, radars, and runways.
  */
 
 class SurfaceUnit {
@@ -51,7 +51,10 @@ class SurfaceUnit {
     this.maxHp = this.hp;
     this.rangeKm = spec.rangeKm;
     this.cooldownMax = spec.cooldownMax !== undefined ? spec.cooldownMax : 999.0;
-    this.fireCooldown = Math.random() * 1.5;
+    this.aaaCooldownMax = spec.aaaCooldownMax !== undefined ? spec.aaaCooldownMax : this.cooldownMax;
+    this.fireCooldown = Math.random() * 2.0;
+    this.aaaCooldown = Math.random() * 1.2;
+    this.pdCooldown = Math.random() * 1.0;
 
     this.canAttack = Boolean(spec.canAttack);
     this.canInterceptMissiles = Boolean(spec.canInterceptMissiles);
@@ -66,6 +69,15 @@ class SurfaceUnit {
     this.requiresEwCue = Boolean(spec.requiresEwCue);
     this.counterStealthMult = spec.counterStealthMult !== undefined ? spec.counterStealthMult : 1.0;
     this.lowAltCueBonus = Boolean(spec.lowAltCueBonus);
+
+    this.maxAmmo = typeof spec.maxAmmo === 'number' ? spec.maxAmmo : (this.canAttack && spec.missileSpec ? 8 : 0);
+    this.ammo = this.maxAmmo;
+    this.readyRackSize = typeof spec.readyRackSize === 'number' ? spec.readyRackSize : Math.min(4, this.maxAmmo);
+    this.readyAmmo = Math.min(this.ammo, this.readyRackSize);
+    this.rackReloadSec = typeof spec.rackReloadSec === 'number' ? spec.rackReloadSec : 26.0;
+    this.rackReloadTimer = 0.0;
+    this.maxActiveMissiles = typeof spec.maxActiveMissiles === 'number' ? spec.maxActiveMissiles : 1;
+    this.targetAcquireTimers = new Map();
 
     this.isCivilian = false;
     this.isJammerStation = Boolean(spec.isJammerStation);

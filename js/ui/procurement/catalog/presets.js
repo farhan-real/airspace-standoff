@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Fleet Presets & Preconfigured Aircraft Toolbar
+ * js/ui/procurement/catalog/presets.js - Fleet Presets & Preconfigured Aircraft Toolbar.
  */
 
 class ProcurementPresets {
@@ -20,18 +20,20 @@ class ProcurementPresets {
       ],
       strike: [
         { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['GBU-28', 'GBU-39', 'AGM-88G', 'AN-AAQ-33', 'AIM-120D', 'AIM-9X-2'], upgrades: ['GAN_AESA_CORE', 'MADL_BATTLE_LINK'] },
-        { specId: 'A-10C', chosenGunId: 'GAU-8', weapons: ['BK-37-POD', 'AGM-65G', 'CBU-105', 'HYDRA-70', 'AN-AAQ-28', 'AIM-9X-2'], upgrades: ['TITANIUM_COCKPIT'] },
+        { specId: 'A-10C', chosenGunId: 'GAU-8', weapons: ['BK-37-POD', 'AGM-65G', 'CBU-105', 'HYDRA-70', 'AN-AAQ-28', 'AIM-9X-2'], upgrades: ['TITANIUM_COCKPIT', 'KEVLAR_BELLY_ARMOR'] },
+        { specId: 'MiG-27K', chosenGunId: 'GSH-6-30', weapons: ['GSH-30-2K', 'S-25OFM', 'KH-38ML', 'S-13OF', 'SAPSAN-E'], upgrades: ['TFR_TERRAIN_RADAR', 'CCIP_BALLISTIC_COMP'] },
+        { specId: 'Su-39', chosenGunId: 'GSH-30-2', weapons: ['S-25OFM', 'KH-58USHKE', 'RBK-500', 'S-8KOM', 'SAPSAN-E'], upgrades: ['KEVLAR_BELLY_ARMOR', 'SEAD_HTS_POD'] },
+        { specId: 'A-16', chosenGunId: 'GAU-13', weapons: ['GPU-5A', 'CRV7-MPSM', 'AGM-88G', 'GBU-54', 'AN-AAQ-33', 'AIM-9X-2'], upgrades: ['CCIP_BALLISTIC_COMP', 'TFR_TERRAIN_RADAR'] },
+        { specId: 'F-16XL', chosenGunId: 'GAU-13', weapons: ['BK-37-POD', 'ZUNI-127', 'CBU-105', 'AGM-158B', 'AN-ASQ-228', 'AIM-120D'], upgrades: ['HEAVY_PYLON_FAIRINGS', 'MITL_DATALINK_TRANSCEIVER'] },
+        { specId: 'EA-18G', chosenGunId: 'M61A2', weapons: ['AN-ALQ-249', 'AGM-88G', 'AN-AAQ-28', 'AIM-120D'], upgrades: ['ESM_PASSIVE_SUITE', 'ADAPTIVE_ECCM_SUITE'] },
         { specId: 'F-35A', chosenGunId: 'GAU-22', weapons: ['AGM-154C', 'GBU-53', 'AGM-88G', 'AIM-260'], upgrades: ['RAM_NANO_COATING', 'EOTS_DUAL_OPTICS'] },
-        { specId: 'EA-18G', chosenGunId: 'M61A2', weapons: ['AN-ALQ-99', 'AGM-88G', 'AN-AAQ-28', 'AIM-120D', 'AIM-9X-2'], upgrades: ['ESM_PASSIVE_SUITE', 'ADAPTIVE_ECCM_SUITE'] },
-        { specId: 'Su-34', chosenGunId: 'GAU-8', weapons: ['KAB-1500L', 'KH-58USHKE', 'RBK-500', 'SAPSAN-E', 'R-73'], upgrades: ['TITANIUM_COCKPIT'] },
-        { specId: 'B-1B', chosenGunId: 'M61A2', weapons: ['STORM-SHADOW', 'GBU-31', 'AGM-154A'], upgrades: ['EXTENDED_RANGE_TURBO'] },
         { specId: 'F-22A', chosenGunId: 'M61A2', weapons: ['AIM-260', 'AIM-120D', 'METEOR', 'AIM-9X-2'], upgrades: ['RAM_NANO_COATING'] }
       ],
       sead: [
         { specId: 'EA-18G', chosenGunId: 'M61A2', weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-120D', 'ADM-160B'], upgrades: ['GAN_AESA_CORE', 'ESM_PASSIVE_SUITE'] },
-        { specId: 'Su-34', chosenGunId: 'GAU-8', weapons: ['AGM-158B', 'AGM-88G', 'GBU-39', 'AN-ALQ-99', 'R-73'], upgrades: ['TITANIUM_COCKPIT'] },
+        { specId: 'Su-39', chosenGunId: 'GSH-30-2', weapons: ['KH-58USHKE', 'AGM-88G', 'S-13OF', 'S-8KOM', 'AN-ALQ-184', 'R-73'], upgrades: ['SEAD_HTS_POD', 'TFR_TERRAIN_RADAR'] },
         { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['AGM-158B', 'AGM-88G', 'GBU-39', 'AIM-120D', 'AN-ALQ-184', 'AIM-9X-2', 'AIM-9X-2'], upgrades: ['MADL_BATTLE_LINK'] },
-        { specId: 'A-10C', chosenGunId: 'GAU-8', weapons: ['GPU-5A', 'GBU-39', 'AIM-9X-2', 'AN-ALQ-184'], upgrades: ['TITANIUM_COCKPIT'] },
+        { specId: 'A-16', chosenGunId: 'GAU-13', weapons: ['GPU-5A', 'CRV7-MPSM', 'AGM-88G', 'TALD-DECOY', 'AIM-9X-2'], upgrades: ['SEAD_HTS_POD', 'CCIP_BALLISTIC_COMP'] },
         { specId: 'Tornado-ECR', chosenGunId: 'BK-27', weapons: ['AGM-88G', 'AIM-120D', 'ALE-55'], upgrades: ['ESM_PASSIVE_SUITE'] }
       ],
       swarm: [

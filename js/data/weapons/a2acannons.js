@@ -7,12 +7,12 @@ window.WEAPONS_A2A_CANNONS = {
     id: 'DEFA-554-POD', name: 'CC422 DEFA 30mm Gunpod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
     mass: 390, cost: 0.5, rangeKm: 4.5, speedMach: 3.0, seeker: 'DIRECT_FIRE',
     trait: 'EXTRA_GUN_BATTERY', traitBadge: '1-SLOT 30MM POD',
-    behaviorDesc: 'Lightweight 1-slot 30mm revolver cannon pod firing 3-round HEI bursts (1.65 HP total, 3.0 HP/s, 1.6s reload). Ideal for Mirage, Tejas, and light attackers.',
+    behaviorDesc: 'Lightweight 1-slot 30mm revolver cannon pod firing 3-round HEI bursts (1.65 HP total, 3.0 HP/s, 1.6s reload). Ideal for Mirage, Jaguar, Tejas, and light attackers.',
     damage: 2, roundsPerBurst: 3, damagePerRound: 0.55, damagePerBurst: 1.65, damagePerSec: 3.0,
     burstCooldown: 1.6, ammoCount: 18, ammoPerBurst: 3, isGunpod: true, sigmaPylon: 0.07,
     category: 'GUN', gunGroup: 'A2A_POD', tracerColor: '#facc15',
-    allowedAirframes: ['Mirage-2000', 'Mirage-2000D', 'Rafale-C', 'Tejas-MK2', 'A-29B', 'Tornado-GR4', 'Tornado-ECR', 'JAS-39E', 'F-16V', 'F-18E'],
-    desc: 'Compact 1-slot 30mm revolver gunpod (18 rounds, 6 bursts) certified for delta fighters and light CAS platforms.'
+    allowedAirframes: ['Mirage-2000', 'Mirage-2000D', 'Rafale-C', 'Tejas-MK2', 'A-29B', 'Tornado-GR4', 'Tornado-ECR', 'JAS-39E', 'F-16V', 'F-18E', 'JAGUAR-GR3', 'AV-8B-PLUS', 'A-16', 'F-16XL'],
+    desc: 'Compact 1-slot 30mm revolver gunpod (18 rounds, 6 bursts) certified for delta fighters and fast CAS platforms.'
   },
   'SUU-23A': {
     id: 'SUU-23A', name: 'SUU-23/A 20mm Vulcan Gunpod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
@@ -25,7 +25,8 @@ window.WEAPONS_A2A_CANNONS = {
     allowedAirframes: [
       'F-16V', 'F-18E', 'F-2A', 'Mirage-2000', 'Mirage-2000D', 'F-15EX', 'F-15E', 'F-14D',
       'Eurofighter', 'Rafale-C', 'A-10C', 'B-1B', 'F-15-SMTD', 'F-15-SMT-COFFIN', 'F-111F',
-      'Tornado-GR4', 'X-29A', 'ADFX-01', 'X-02S', 'KF-21', 'XFA-36B', 'EA-36'
+      'Tornado-GR4', 'X-29A', 'ADFX-01', 'X-02S', 'KF-21', 'XFA-36B', 'EA-36',
+      'A-16', 'F-16XL', 'AV-8B-PLUS', 'JAGUAR-GR3'
     ],
     desc: 'Self-contained 20mm Vulcan Gatling pod (20 rounds, 5 bursts). Mounts on external wing or fuselage stations.'
   },
@@ -38,7 +39,7 @@ window.WEAPONS_A2A_CANNONS = {
     burstCooldown: 1.5, ammoCount: 16, ammoPerBurst: 4, isGunpod: true, sigmaPylon: 0.08,
     category: 'GUN', gunGroup: 'A2A_POD', tracerColor: '#fb923c',
     allowedAirframes: [
-      'Su-25SM3', 'Su-34', 'Su-35S', 'Su-30SM', 'Su-24M2', 'Su-24MP', 'MiG-31BM', 'J-16',
+      'Su-25SM3', 'Su-39', 'MiG-27K', 'Su-34', 'Su-35S', 'Su-30SM', 'Su-24M2', 'Su-24MP', 'MiG-31BM', 'J-16',
       'J-16D', 'J-15D', 'JH-7A', 'MiG-29K', 'Tejas-MK2', 'Su-47', 'Su-37', 'Su-37-COFFIN', 'S-70', 'FC-31', 'J-35'
     ],
     desc: 'Twin 23mm autocannon pod (16 rounds, 4 bursts) certified for external hardpoints on Eastern strike fighters and Flankers.'
@@ -47,11 +48,11 @@ window.WEAPONS_A2A_CANNONS = {
     id: 'GSH-6-23-POD', name: 'SPPU-6 Six-Barrel 23mm Pod', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
     mass: 840, cost: 0.8, rangeKm: 4.8, speedMach: 3.3, seeker: 'DIRECT_FIRE',
     trait: 'EXTRA_GUN_BATTERY', traitBadge: '9000 RPM ROTARY POD',
-    behaviorDesc: 'Six-barrel 23mm rotary cannon pod firing 5-round high-cyclic bursts (1.90 HP total, 3.6 HP/s, 1.7s reload) for Flankers and Fencers.',
+    behaviorDesc: 'Six-barrel 23mm rotary cannon pod firing 5-round high-cyclic bursts (1.90 HP total, 3.6 HP/s, 1.7s reload) for Flankers, Floggers, and Frogfoots.',
     damage: 2, roundsPerBurst: 5, damagePerRound: 0.38, damagePerBurst: 1.90, damagePerSec: 3.6,
     burstCooldown: 1.7, ammoCount: 25, ammoPerBurst: 5, isGunpod: true, sigmaPylon: 0.13,
     category: 'GUN', gunGroup: 'A2A_POD', tracerColor: '#f97316',
-    allowedAirframes: ['Su-24M2', 'Su-24MP', 'Su-25SM3', 'Su-34', 'Su-35S', 'Su-30SM', 'MiG-31BM', 'J-16', 'J-15D', 'JH-7A'],
+    allowedAirframes: ['Su-24M2', 'Su-24MP', 'Su-25SM3', 'Su-39', 'MiG-27K', 'Su-34', 'Su-35S', 'Su-30SM', 'MiG-31BM', 'J-16', 'J-15D', 'JH-7A'],
     desc: 'High-rate 6-barrel 23mm Gatling pod (25 rounds, 5 bursts) devastating close dogfighters and soft ground targets.'
   },
   'GPU-5A': {
@@ -60,11 +61,11 @@ window.WEAPONS_A2A_CANNONS = {
     trait: 'ARMOR_BURST', traitBadge: '30MM ROTARY BATTERY',
     behaviorDesc: 'Heavy 4-barrel 30mm rotary cannon pod firing 4-round bursts (2.00 HP total, 3.4 HP/s, 2.0s reload). Restricted to heavy strike and CAS airframes.',
     damage: 2, roundsPerBurst: 4, damagePerRound: 0.50, damagePerBurst: 2.00, damagePerSec: 3.4,
-    burstCooldown: 2.0, ammoCount: 20, ammoPerBurst: 4, isGunpod: true, sigmaPylon: 0.15,
+    burstCooldown: 2.0, ammoCount: 20, ammoPerBurst: 4, isGunpod: true, groundDamageMult: 1.45, armorPiercing: 0.85, sigmaPylon: 0.15,
     category: 'GUN', gunGroup: 'A2A_POD', tracerColor: '#f97316',
     allowedAirframes: [
-      'A-10C', 'Su-25SM3', 'Su-34', 'Su-24M2', 'F-15EX', 'F-15E', 'F-18E', 'F-2A',
-      'F-111F', 'Tornado-GR4', 'J-16', 'Su-30SM', 'Su-35S', 'B-1B', 'F-15-SMTD', 'F-15-SMT-COFFIN'
+      'A-10C', 'A-16', 'F-16XL', 'AV-8B-PLUS', 'Su-25SM3', 'Su-39', 'MiG-27K', 'Su-34', 'Su-24M2',
+      'F-15EX', 'F-15E', 'F-18E', 'F-2A', 'F-111F', 'Tornado-GR4', 'J-16', 'Su-30SM', 'Su-35S', 'B-1B', 'F-15-SMTD', 'F-15-SMT-COFFIN'
     ],
     desc: 'Heavy 30mm rotary cannon pod (20 rounds, 5 bursts) restricted to reinforced external pylons on heavy strike and CAS airframes.'
   },

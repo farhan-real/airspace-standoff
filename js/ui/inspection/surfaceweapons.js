@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Surface Installation Defenses & Air-to-Ground Strike Solutions
+ * js/ui/inspection/surfaceweapons.js - Surface Installation Defenses & Air-to-Ground Strike Solutions.
  */
 
 class InspectionSurfaceWeaponsRenderer {
@@ -96,7 +96,7 @@ class InspectionSurfaceWeaponsRenderer {
 
   static renderSurfaceDefenseSolutions(controller, s) {
     const game = controller.game;
-    const mods = (typeof SurfaceCombatSystem !== 'undefined') ? SurfaceCombatSystem.getAttackModifiers(s) : { hasEwCue: false, hasLowAltCue: false, samCooldownMult: 1, ambushRatio: 1, ciwsAccuracy: s.interceptAccuracy, aaaHitBonus: 0 };
+    const mods = (typeof SurfaceCombatSystem !== 'undefined') ? SurfaceCombatSystem.getAttackModifiers(s) : { hasEwCue: false, hasLowAltCue: false, samCooldownMult: 1, ambushRatio: 1, ciwsAccuracy: s.interceptAccuracy, aaaHitBonus: 0, samReactionDelaySec: 2.5 };
     const isAttack = (game.scenarioMode === 'ATTACK');
 
     if (!s.canAttack && !s.canInterceptMissiles && !s.isAaaGun) {
@@ -117,19 +117,20 @@ class InspectionSurfaceWeaponsRenderer {
       const dist = Math.hypot(ac.x - s.x, ac.y - s.y);
       const tfrBonus = (ac.hasTfrMasking && ac.altFt <= 10000) ? ac.tfrFloorBonusFt : 0;
       const effFloor = activeFloor + tfrBonus;
-      const rcsFactor = Math.max(0.45, Math.min(1.15, Math.pow(Math.max(0.0005, ac.effectiveRcs), 0.16)));
+      const rcsFactor = Math.max(0.45, Math.min(1.0, Math.pow(Math.max(0.0005, ac.effectiveRcs), 0.16)));
       const lockGate = ambushKm * rcsFactor;
       const inSam = Boolean(s.canAttack && s.missileSpec && dist <= lockGate && ac.altFt >= effFloor);
       const inAaa = Boolean((s.isAaaGun || s.type === 'PANTSIR') && s.aaaRangeKm > 0 && dist <= s.aaaRangeKm && ac.altFt <= s.aaaMaxAltFt);
 
       let tag = 'CLEAR', cls = 'positive';
       if (s.emconTimer > 0) { tag = 'EMCON LOCKOUT'; cls = 'neutral'; }
+      else if (s.canAttack && s.ammo <= 0) { tag = 'SAM OUT OF AMMO'; cls = 'positive'; }
       else if (inSam || inAaa) { tag = inAaa && inSam ? 'SAM + AAA ENGAGING' : (inSam ? 'IN SAM ENVELOPE' : 'IN AAA FLAK'); cls = 'negative'; }
       else if (ac.altFt < effFloor && dist <= lockGate) { tag = tfrBonus > 0 ? 'MASKED BY TFR' : 'BELOW SAM FLOOR'; cls = 'positive'; }
 
       return `
         <div class="inspection-factor-row ${cls}" data-surf-tgt="${ac.id}">
-          <span class="factor-name">${controller.escape(controller.getName(ac))} (${dist.toFixed(1)} km, FL${Math.round(ac.altFt / 100)})<span class="factor-desc">Gate: ${lockGate.toFixed(1)} km | Floor: ${effFloor.toLocaleString()} ft${ac.aaaResistance > 0 ? ' | Kevlar Belly -45% AAA' : ''}</span></span>
+          <span class="factor-name">${controller.escape(controller.getName(ac))} (${dist.toFixed(1)} km, FL${Math.round(ac.altFt / 100)})<span class="factor-desc">Gate: ${lockGate.toFixed(1)} km | Floor: ${effFloor.toLocaleString()} ft${ac.aaaResistance > 0 ? ` | Flak Armor -${Math.round(ac.aaaResistance * 100)}%` : ''}</span></span>
           <span class="factor-delta ${cls} surf-tgt-badge">${tag}</span>
         </div>`;
     }).join('');
@@ -145,6 +146,8 @@ class InspectionSurfaceWeaponsRenderer {
         </div>`;
     }
 
+    const ammoStatus = s.canAttack && s.missileSpec ? InspectionSurfaceOverview.formatSamRackText(s) : 'N/A';
+
     return `
       <section class="inspection-card">
         <h3>BATTERY ARMAMENT &amp; THREAT ENVELOPE</h3>
@@ -153,6 +156,7 @@ class InspectionSurfaceWeaponsRenderer {
           <div>AMBUSH GATE: <b style="color:var(--stat-tier-3);">${ambushKm.toFixed(1)} / ${effRange.toFixed(1)} km</b></div>
           <div>ACTIVE FLOOR: <b>${activeFloor.toLocaleString()} ft</b></div>
           <div>RELOAD TIMER: <b class="surf-wpn-cd">${s.fireCooldown > 0 ? `${s.fireCooldown.toFixed(1)}s` : 'READY'} (${(s.cooldownMax * mods.samCooldownMult).toFixed(1)}s cycle)</b></div>
+          ${s.canAttack && s.missileSpec ? `<div>MAGAZINE / RACK: <b class="surf-wpn-ammo" style="color:var(--stat-tier-3);">${ammoStatus}</b></div><div>CHANNELS / ACQ: <b>Max ${s.maxActiveMissiles} Active | ${mods.samReactionDelaySec.toFixed(1)}s Lock</b></div>` : ''}
           ${s.isAaaGun || s.type === 'PANTSIR' ? `<div>AAA FLAK: <b style="color:var(--stat-tier-4);">${s.aaaRangeKm} km (up to ${s.aaaMaxAltFt.toLocaleString()} ft)</b></div><div>AAA DMG: <b>${s.aaaDamage.toFixed(1)} HP</b></div>` : ''}
         </div>
         ${ciwsSection}
@@ -167,6 +171,8 @@ class InspectionSurfaceWeaponsRenderer {
     const mods = (typeof SurfaceCombatSystem !== 'undefined') ? SurfaceCombatSystem.getAttackModifiers(s) : { hasEwCue: false, hasLowAltCue: false, samCooldownMult: 1, ambushRatio: 1 };
     const cdEl = content.querySelector('.surf-wpn-cd');
     if (cdEl) cdEl.textContent = `${s.fireCooldown > 0 ? `${s.fireCooldown.toFixed(1)}s` : 'READY'} (${(s.cooldownMax * mods.samCooldownMult).toFixed(1)}s cycle)`;
+    const ammoEl = content.querySelector('.surf-wpn-ammo');
+    if (ammoEl && s.canAttack && s.missileSpec) ammoEl.textContent = InspectionSurfaceOverview.formatSamRackText(s);
 
     let effRange = s.rangeKm;
     if (s.requiresEwCue && game.scenarioMode === 'ATTACK' && !mods.hasEwCue) effRange *= 0.48;
@@ -180,13 +186,14 @@ class InspectionSurfaceWeaponsRenderer {
       const dist = Math.hypot(ac.x - s.x, ac.y - s.y);
       const tfrBonus = (ac.hasTfrMasking && ac.altFt <= 10000) ? ac.tfrFloorBonusFt : 0;
       const effFloor = activeFloor + tfrBonus;
-      const rcsFactor = Math.max(0.45, Math.min(1.15, Math.pow(Math.max(0.0005, ac.effectiveRcs), 0.16)));
+      const rcsFactor = Math.max(0.45, Math.min(1.0, Math.pow(Math.max(0.0005, ac.effectiveRcs), 0.16)));
       const lockGate = ambushKm * rcsFactor;
       const inSam = Boolean(s.canAttack && s.missileSpec && dist <= lockGate && ac.altFt >= effFloor);
       const inAaa = Boolean((s.isAaaGun || s.type === 'PANTSIR') && s.aaaRangeKm > 0 && dist <= s.aaaRangeKm && ac.altFt <= s.aaaMaxAltFt);
 
       let tag = 'CLEAR', cls = 'positive';
       if (s.emconTimer > 0) { tag = 'EMCON LOCKOUT'; cls = 'neutral'; }
+      else if (s.canAttack && s.ammo <= 0) { tag = 'SAM OUT OF AMMO'; cls = 'positive'; }
       else if (inSam || inAaa) { tag = inAaa && inSam ? 'SAM + AAA ENGAGING' : (inSam ? 'IN SAM ENVELOPE' : 'IN AAA FLAK'); cls = 'negative'; }
       else if (ac.altFt < effFloor && dist <= lockGate) { tag = tfrBonus > 0 ? 'MASKED BY TFR' : 'BELOW SAM FLOOR'; cls = 'positive'; }
 

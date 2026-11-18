@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Autocannon Manual Burst Execution Submodule
+ * js/ui/cards/autocannonfire.js - Autocannon Manual Burst Execution Submodule.
  */
 
 class AutocannonFireExecutor {
@@ -71,7 +71,7 @@ class AutocannonFireExecutor {
           if (angleDiff <= maxConeRad) {
             const wasAlive = targetCheck.hp > 0.05;
             const isSurf = (typeof SurfaceUnit !== 'undefined' && targetCheck instanceof SurfaceUnit);
-            let roundDmg = gun.damagePerRound;
+            let roundDmg = gun.damagePerRound * (isSurf && gun.groundDamageMult ? gun.groundDamageMult : 1.0);
             mountedPods.forEach(p => {
               const podDmg = p.weapon.damagePerRound * (isSurf && p.weapon.groundDamageMult ? p.weapon.groundDamageMult : 1.0);
               roundDmg += podDmg;
@@ -89,9 +89,9 @@ class AutocannonFireExecutor {
             if (targetCheck.isGhost || targetCheck.isDecoyDrone) {
               targetCheck.takeDamage(roundDmg);
             } else if (isSurf) {
-              const ap = (gun.id === 'GAU-8' || gun.id === 'EML_GUN') ? 0.85 : ((gun.id === 'GSH-30-1' || gun.id === 'BK-27') ? 0.50 : 0.25);
+              const baseAp = typeof gun.armorPiercing === 'number' ? gun.armorPiercing : 0.25;
               const podBunkerCracker = mountedPods.some(p => p.weapon && p.weapon.isBunkerCracker);
-              const podAp = mountedPods.reduce((m, p) => Math.max(m, (p.weapon && p.weapon.armorPiercing) || 0), ap);
+              const podAp = mountedPods.reduce((m, p) => Math.max(m, (p.weapon && p.weapon.armorPiercing) || 0), baseAp);
               targetCheck.takeDamage(roundDmg, podBunkerCracker, { armorPiercing: podAp });
             } else if (targetCheck.isCivilian && typeof targetCheck.takeDamage === 'function') {
               targetCheck.takeDamage(roundDmg, unit, gun, r === numRounds - 1);

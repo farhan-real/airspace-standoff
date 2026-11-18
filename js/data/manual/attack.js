@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Flight Manual Submodule: Section 11
+ * js/data/manual/attack.js - Flight Manual Submodule: Section 11
  * Covers: Ground Attack Theater Rules, Objectives, Armor Classes, Secondary Blasts & A2G Ordnance
  */
 
@@ -43,12 +43,12 @@ window.MANUAL_ATTACK = [
             <tr>
               <td style="color:#fbbf24;font-weight:800;">ARMORED</td>
               <td>S-400, Patriot, S-300V4, HQ-9B, Buk-M3, NASAMS, Tor-M2, CIWS, Gepard, Tunguska, Hangars, Munition Dumps, Logistics Hubs</td>
-              <td><b>100% damage</b> from ATGMs, Precision Bombs, Cruise Missiles, ARMs, or AP &ge; 0.70 weapons. Takes <b>65% damage</b> from light unguided rockets and basic cluster fragments.</td>
+              <td><b>100% damage</b> from ATGMs, Precision Bombs, Cruise Missiles, ARMs, heavy CAS cannons (GAU-8, GSh-6-30, GSh-30-2, GAU-13, BK-37), or AP &ge; 0.70 weapons. Takes <b>65% damage</b> from light rockets and basic cluster fragments.</td>
             </tr>
             <tr>
               <td style="color:#f43f5e;font-weight:800;">FORTIFIED</td>
               <td>Command Bunkers (18 HP), Runways (7 HP/seg), Hardened Shelters (10 HP), Radomes (13 HP), Supply Bridges (9 HP)</td>
-              <td>Deflects <b>80%</b> of light rockets and fragments (0.20x damage), or <b>50%</b> for mid-AP weapons. Use <b>Bunker Penetrators</b> (1.0x full damage) or <b>Anti-Runway</b> bombs (<b>2.0x vs Runways</b>)!</td>
+              <td>Deflects <b>80%</b> of light rockets and fragments (0.20x damage), or <b>50%</b> for mid-AP weapons and heavy 30mm rotary cannons. Use <b>Bunker Penetrators</b> (1.0x full damage) or <b>Anti-Runway</b> bombs (<b>2.0x vs Runways</b>)!</td>
             </tr>
           </tbody>
         </table>
@@ -62,7 +62,7 @@ window.MANUAL_ATTACK = [
           </thead>
           <tbody>
             <tr><td><b>Strategic Fuel Depot</b></td><td>6.0 km Blast (-5 HP nearby)</td><td>Slows nearby airbase QRA launch cadence by <b>+35%</b> delay.</td></tr>
-            <tr><td><b>Forward Munition Depot</b></td><td>7.5 km Blast (-6 HP nearby)</td><td>Increases nearby SAM reload times by <b>+80%</b> and cuts new QRA missile loadouts!</td></tr>
+            <tr><td><b>Forward Munition Depot</b></td><td>7.5 km Blast (-6 HP nearby)</td><td>Increases nearby SAM reload and rack-replenish times by <b>+80%</b> and cuts new QRA missile loadouts!</td></tr>
             <tr><td><b>Airbase Logistics Hub</b></td><td>4.5 km Blast (-4 HP nearby)</td><td>Eliminates the 18% airfield QRA launch speedup bonus.</td></tr>
             <tr><td><b>Grid Power Substation</b></td><td>None</td><td>Cuts nearby Krasukha-4 ground jammer strength by <b>55%</b>.</td></tr>
             <tr><td><b>C4I Comms Relay &amp; C2 Bunker</b></td><td>None</td><td>Breaks long-range EW radar cueing to SAMs (135 km to 90 km) and slows SAM reactions by <b>+40%</b>.</td></tr>
@@ -79,9 +79,9 @@ window.MANUAL_ATTACK = [
           <tbody>
             <tr>
               <td><b style="color:#f97316;">Unguided Iron &amp; Rockets</b></td>
-              <td>OFAB-250, Mk-82/83/84, FAB-500/1500/3000, Hydra-70, S-8, Zuni, S-13/24</td>
-              <td>8.5 - 14 km reach. Immune to ECM jamming and chaff; huge blast per credit.</td>
-              <td>Dropping unguided bombs above <b>26,000 ft</b> without a CCIP computer or TGP lowers hit accuracy by <b>-18%</b>. Exposed to AAA/SHORAD.</td>
+              <td>OFAB-250, Mk-82/83/84, FAB-500/1500/3000, Hydra-70, S-8, CRV7-MPSM, Zuni, S-13/24, S-25OFM</td>
+              <td>11 - 18 km rocket reach; immune to ECM jamming and chaff; high blast per credit and fast salvo clearing.</td>
+              <td>Dropping unguided bombs above <b>26,000 ft</b> without a CCIP computer or TGP lowers hit accuracy by <b>-18%</b>. Requires low-to-mid ingress inside SAM rings.</td>
             </tr>
             <tr>
               <td><b style="color:#fbbf24;">Cluster Dispensers</b></td>
@@ -102,10 +102,10 @@ window.MANUAL_ATTACK = [
               <td>Pure laser bombs lose <b>-20% Pk per cloud cell</b> unless mitigated by a Targeting Pod or dual-mode GPS (Paveway IV, GBU-54).</td>
             </tr>
             <tr>
-              <td><b style="color:#c084fc;">ATGMs &amp; Strafe Gunpods</b></td>
-              <td>Hellfire, JAGM, Maverick, Spike-NLOS, Brimstone II, Kh-25/29/38ML, BK-37, GSh-30-2K</td>
-              <td>14 - 42 km ATGMs and 4.0 - 5.8 km AP cannons. High armor piercing and fast supersonic closure (Mach 2.2 - 2.4 on Kh-29/38).</td>
-              <td>Requires medium or close ingress inside SAM coverage; pair with Kevlar Belly Armor and TFR masking.</td>
+              <td><b style="color:#c084fc;">Heavy CAS Guns, Pods &amp; ATGMs</b></td>
+              <td>GAU-8, GSh-6-30, GSh-30-2, GAU-13, GAU-12, BK-37, GSh-30-2K, Hellfire, JAGM, Maverick, Brimstone II, Kh-38ML</td>
+              <td>4.4 - 6.0 km AP cannons (1.55x - 2.0x ground damage) and 14 - 42 km ATGMs. Fast CAS jets (MiG-27K, A-16, F-16XL, Su-39) and A-10C shred armored SAMs and AAA!</td>
+              <td>Requires closing inside AAA/SHORAD envelopes; pair with high speed, Kevlar Belly Armor, and ECM/TFR masking.</td>
             </tr>
             <tr>
               <td><b style="color:#00f0ff;">ARMs, Cruise &amp; Loitering</b></td>

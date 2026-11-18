@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Inspection Overview Submodule for Ground Installations & Ghosts
+ * js/ui/inspection/surfaceoverview.js - Inspection Overview Submodule for Ground Installations & Ghosts.
  */
 
 class InspectionSurfaceOverview {
@@ -95,7 +95,7 @@ class InspectionSurfaceOverview {
               <b style="color:${neutralized ? 'var(--stat-tier-2)' : 'var(--stat-tier-5)'};">${neutralized ? 'NEUTRALIZED' : `MAX RUN: ${runInfo.maxLength} SEG | QRA: ${timerSec}s`}</b>
             </div>
             <div class="inspection-chips-wrap">${segChips}</div>
-            <small class="inspection-meter-note">Launch req: 1 Seg UCAVs | 2 Seg Light/STOL | 3 Seg Fighters | 4 Seg Heavy/Bombers</small>
+            <small class="inspection-meter-note">Launch req: 1 Seg UCAVs | 2 Seg Light/CAS | 3 Seg Fighters | 4 Seg Heavy/Bombers</small>
           </div>`;
       }
     }
@@ -117,6 +117,13 @@ class InspectionSurfaceOverview {
 
     if (!runwayHtml && !parkedHtml) return '';
     return `<section class="inspection-card"><h3>AIRBASE &amp; QRA READINESS</h3>${runwayHtml}${parkedHtml}</section>`;
+  }
+
+  static formatSamRackText(s) {
+    if (!s.canAttack || !s.missileSpec) return 'PASSIVE';
+    if (s.ammo <= 0) return 'OUT OF AMMO';
+    if (s.rackReloadTimer > 0) return `RELOADING (${s.rackReloadTimer.toFixed(1)}s) [${s.ammo}/${s.maxAmmo}]`;
+    return `${s.readyAmmo}/${s.readyRackSize} READY (${s.ammo}/${s.maxAmmo} TOTAL)`;
   }
 
   static renderSurfaceOverview(controller, s, status, teamBadgeColor, actionButtons) {
@@ -160,6 +167,7 @@ class InspectionSurfaceOverview {
           <div>RECOGNITION: <b class="ovr-surf-reveal" style="color:${s.identifiedByBlue ? 'var(--stat-tier-2)' : (s.isRevealedToBlue ? 'var(--stat-tier-3)' : 'var(--stat-tier-5)')};">${s.identifiedByBlue ? 'IDENTIFIED' : (s.isRevealedToBlue ? 'EMITTING [?]' : 'CONCEALED')}</b></div>
           <div>EMCON STATE: <b class="ovr-surf-emcon" style="color:${s.emconTimer > 0 ? 'var(--stat-tier-3)' : 'var(--stat-tier-2)'};">${s.emconTimer > 0 ? `SILENT (${s.emconTimer.toFixed(1)}s)` : (s.isEmitter ? 'EMITTING' : 'ZERO RF')}</b></div>
           <div>COOLDOWN: <b class="ovr-surf-cd">${(s.canAttack || s.canInterceptMissiles || s.isAaaGun) ? (s.fireCooldown > 0 ? `${s.fireCooldown.toFixed(1)}s` : 'READY') : 'PASSIVE'}</b></div>
+          ${s.canAttack && s.missileSpec ? `<div style="grid-column: 1 / -1;">MISSILE MAGAZINE: <b class="ovr-surf-ammo" style="color:${s.ammo > 0 ? 'var(--stat-tier-3)' : 'var(--stat-tier-2)'};">${this.formatSamRackText(s)}</b></div>` : ''}
         </div>
         <p class="inspection-muted" style="margin-top:6px;">${controller.escape(s.desc || '')}</p>
       </section>
@@ -221,6 +229,10 @@ class InspectionSurfaceOverview {
     const cdEl = content.querySelector('.ovr-surf-cd');
     if (cdEl && (s.canAttack || s.canInterceptMissiles || s.isAaaGun)) {
       cdEl.textContent = s.fireCooldown > 0 ? `${s.fireCooldown.toFixed(1)}s` : 'READY';
+    }
+    const ammoEl = content.querySelector('.ovr-surf-ammo');
+    if (ammoEl && s.canAttack && s.missileSpec) {
+      ammoEl.textContent = this.formatSamRackText(s);
     }
   }
 

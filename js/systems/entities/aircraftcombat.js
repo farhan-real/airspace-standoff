@@ -1,5 +1,5 @@
 /**
- * js/systems/entities/aircraftcombat.js - Aircraft combat actions, stores management, and live kinematics updates.
+ * js/systems/entities/aircraftcombat.js - Aircraft combat actions, stores management, and weight/drag updates.
  */
 
 function formatAircraftDisplayName(aircraft) {
@@ -117,7 +117,10 @@ Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
     cooldown: 0.0
   });
 
-  if (wpn.isJammerPod) this.jamEfficiency = Math.max(this.jamEfficiency, wpn.jamEfficiency);
+  if (wpn.isJammerPod) {
+    this.jamEfficiency = Math.max(this.jamEfficiency, wpn.jamEfficiency);
+    this.maxJamRangeKm = Math.max(this.maxJamRangeKm, wpn.rangeKm);
+  }
   if (wpn.isTargetingPod) {
     this.targetingPodBonus = Math.max(this.targetingPodBonus, wpn.a2gPkBonus);
     if (wpn.exposesDecoys) this.targetingSpotRangeKm = Math.max(this.targetingSpotRangeKm, wpn.spotRangeKm);
@@ -138,7 +141,7 @@ Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
 Aircraft.prototype.recalculateWeight = function() {
   if (!window.UPGRADES_CATALOG) throw new Error('UPGRADES_CATALOG is not loaded.');
   let mass = this.gun.mass;
-  let externalDragPenalty = 0;
+  let externalDragFactor = 0;
   let extraRcs = 0;
   let weaponsCost = 0;
 
@@ -152,10 +155,10 @@ Aircraft.prototype.recalculateWeight = function() {
 
     if (item.station === 'CENTERLINE' && isMounted) {
       extraRcs += w.sigmaPylon;
-      externalDragPenalty += 0.05 * ammoFraction;
+      externalDragFactor += 0.032 * ammoFraction;
     } else if (item.station !== 'INTERNAL' && isMounted) {
       extraRcs += w.sigmaPylon;
-      externalDragPenalty += 0.02 * w.slots * ammoFraction;
+      externalDragFactor += 0.014 * w.slots * ammoFraction;
     }
   }
 
@@ -167,7 +170,7 @@ Aircraft.prototype.recalculateWeight = function() {
     upgradesCost += upg.cost;
   }
 
-  externalDragPenalty *= (1.0 - this.pylonDragRelief);
+  externalDragFactor = Math.min(0.22, externalDragFactor) * (1.0 - this.pylonDragRelief);
   this.totalProcurementCost = this.spec.cost + weaponsCost + upgradesCost;
 
   let effectiveWr = Math.min(1.0, mass / this.spec.M_max);
@@ -179,7 +182,7 @@ Aircraft.prototype.recalculateWeight = function() {
   if (this.equippedUpgrades.includes('RAM_NANO_COATING')) baseRcs *= 0.55;
   this.effectiveRcs = Math.max(0.00005, baseRcs + extraRcs);
 
-  this.effectiveMaxSpeed = Math.max(0.35, this.spec.S_0 * (1.0 - 0.22 * this.Wr) - externalDragPenalty);
+  this.effectiveMaxSpeed = Math.max(0.35, this.spec.S_0 * (1.0 - 0.22 * this.Wr - externalDragFactor));
   this.effectiveAcceleration = (0.24 + this.accelBonus) / (1.0 + 0.70 * this.Wr);
 
   if (this.distanceTraveled === 0) {

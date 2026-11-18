@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Simulation System Orchestrator
+ * js/systems/simulation.js - Simulation System Orchestrator
  * Real-time time warp, weather cloud generation, combat physics loop, and Attack mode updates.
  */
 
@@ -199,9 +199,14 @@ class SimulationSystem {
 
     const hostileRadarAlive = this.game.surfaceUnits.some(s => (s.category === 'EW_RADAR' || s.type === 'RADAR_ARRAY') && s.team === 'hostile' && s.hp > 0.05 && s.emconTimer <= 0);
     const friendlyRadarAlive = this.game.surfaceUnits.some(s => (s.category === 'EW_RADAR' || s.type === 'RADAR_ARRAY') && s.team === 'friendly' && s.hp > 0.05 && s.emconTimer <= 0);
+    const blueDecoys = this.decoyDrones.filter(d => d.team === 'friendly' && d.hp > 0.05);
+    const redDecoys = this.decoyDrones.filter(d => d.team === 'hostile' && d.hp > 0.05);
+    const alliedSurfaceTargets = blueDecoys.length > 0 ? this.game.alliedAircraft.concat(blueDecoys) : this.game.alliedAircraft;
+    const hostileSurfaceTargetsAir = redDecoys.length > 0 ? this.game.hostileAircraft.concat(redDecoys) : this.game.hostileAircraft;
+
     for (const surf of this.game.surfaceUnits) {
       const isRed = (surf.team === 'hostile');
-      surf.update(dt, isRed ? this.game.alliedAircraft : this.game.hostileAircraft, this.game.missiles, this.game.missiles, isRed ? hostileRadarAlive : friendlyRadarAlive);
+      surf.update(dt, isRed ? alliedSurfaceTargets : hostileSurfaceTargetsAir, this.game.missiles, this.game.missiles, isRed ? hostileRadarAlive : friendlyRadarAlive);
     }
 
     for (const m of this.game.missiles) m.update(dt, this.weatherClouds);

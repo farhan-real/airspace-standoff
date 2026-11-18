@@ -1,13 +1,13 @@
 /**
- * AIRSPACE STANDOFF: Multi-segment runway, takeoff roll, and parking dispatch system.
+ * js/systems/combat/airbase.js - Multi-segment runway, takeoff roll, and parking dispatch system.
  */
 
 class AirbaseSystem {
   static TAKEOFF_SEGMENTS = {
-    'MQ-99': 1, 'MQ-101': 1, 'XQ-58A': 1, 'MQ-28': 1, 'RQ-180': 1, 'A-29B': 1, 'AKINCI': 1,
+    'MQ-99': 1, 'MQ-101': 1, 'XQ-58A': 1, 'MQ-28': 1, 'RQ-180': 1, 'A-29B': 1, 'AKINCI': 1, 'AV-8B-PLUS': 1,
     'JAS-39E': 2, 'F-16V': 2, 'Mirage-2000': 2, 'Mirage-2000D': 2, 'Tejas-MK2': 2, 'MiG-29K': 2,
-    'F-18E': 2, 'F-2A': 2, 'Rafale-C': 2, 'A-10C': 2, 'Su-25SM3': 2, 'MQ-20': 2,
-    'Kizilelma': 2, 'X-29A': 2, 'F-35A': 2,
+    'F-18E': 2, 'F-2A': 2, 'Rafale-C': 2, 'A-10C': 2, 'Su-25SM3': 2, 'Su-39': 2, 'MiG-27K': 2,
+    'A-16': 2, 'JAGUAR-GR3': 2, 'F-16XL': 2, 'MQ-20': 2, 'Kizilelma': 2, 'X-29A': 2, 'F-35A': 2,
     'Eurofighter': 3, 'KF-21': 3, 'Su-30SM': 3, 'Su-35S': 3, 'Su-37': 3, 'Su-47': 3,
     'F-15EX': 3, 'F-15E': 3, 'F-15-SMTD': 3, 'F-14D': 3, 'J-16': 3, 'J-16D': 3, 'J-15D': 3,
     'EA-18G': 3, 'Tornado-ECR': 3, 'Tornado-GR4': 3, 'EF-111A': 3, 'Su-24M2': 3, 'Su-24MP': 3,

@@ -1,69 +1,87 @@
 /**
- * js/data/weapons/a2grockets.js - Unguided saturation rocket pods and laser-guided precision rockets.
+ * js/data/weapons/a2grockets.js - Unguided saturation rocket pods, high-velocity flechette pods, and laser-guided heavy rockets.
  */
 
 window.WEAPONS_A2G_ROCKETS = {
   'HYDRA-70': {
     id: 'HYDRA-70', name: 'LAU-61 Hydra-70 Rockets (12x)', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
-    mass: 380, cost: 0.3, rangeKm: 8.5, speedMach: 1.9, seeker: 'UNGUIDED', rcs: 0.02,
+    mass: 380, cost: 0.3, rangeKm: 11.0, speedMach: 2.0, seeker: 'UNGUIDED', rcs: 0.02,
     trait: 'ROCKET_SALVO', traitBadge: 'IMMUNE TO ECM',
-    behaviorDesc: '19-tube 70mm folding-fin rocket pod (12 bursts, Mach 1.9). Zero ECM vulnerability; rapidly clears AAA, radar vans, and decoys at close range.',
-    damage: 1.5, ammoCount: 12, minRangeKm: 0.8, sweetSpotMin: 1.5, sweetSpotMax: 7.0, lambda: 0.45, p: 1.4, T_0: 0.78,
+    behaviorDesc: '19-tube 70mm folding-fin rocket pod (12 bursts, 11 km, Mach 2.0). Zero ECM vulnerability; rapidly clears AAA, radar vans, and decoys.',
+    damage: 1.5, ammoCount: 12, minRangeKm: 0.8, sweetSpotMin: 1.5, sweetSpotMax: 9.0, lambda: 0.38, p: 1.3, T_0: 0.80,
     isRocketPod: true, sigmaPylon: 0.06, category: 'A2G', a2gGroup: 'ROCKETS',
-    desc: 'Compact 70mm rocket pod (12 bursts) immune to radar jammers and chaff.'
+    desc: 'Compact 70mm rocket pod (12 bursts, 11 km) immune to radar jammers and chaff.'
   },
   'S-8KOM': {
     id: 'S-8KOM', name: 'B-8M1 S-8KOM Rockets (12x)', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
-    mass: 420, cost: 0.3, rangeKm: 9.0, speedMach: 2.0, seeker: 'UNGUIDED', rcs: 0.02,
+    mass: 420, cost: 0.3, rangeKm: 11.5, speedMach: 2.1, seeker: 'UNGUIDED', rcs: 0.02,
     trait: 'SHAPED_CHARGE_ROCKET', traitBadge: 'HEAT SHAPED CHARGE',
-    behaviorDesc: '20-tube 80mm HEAT shaped-charge rocket pod (12 bursts, 2.0 HP, Mach 2.0). Penetrates lightly armored SHORAD and mobile SAMs.',
-    damage: 2, ammoCount: 12, minRangeKm: 0.8, sweetSpotMin: 1.5, sweetSpotMax: 7.5, lambda: 0.42, p: 1.4, T_0: 0.78,
+    behaviorDesc: '20-tube 80mm HEAT shaped-charge rocket pod (12 bursts, 2.0 HP, 11.5 km). Penetrates armored SHORAD and mobile SAMs.',
+    damage: 2, ammoCount: 12, minRangeKm: 0.8, sweetSpotMin: 1.5, sweetSpotMax: 9.5, lambda: 0.36, p: 1.3, T_0: 0.80,
     isRocketPod: true, armorPiercing: 0.80, sigmaPylon: 0.07, category: 'A2G', a2gGroup: 'ROCKETS',
-    desc: '80mm shaped-charge rocket pod (12 bursts) ideal for close air support against armored air defenses.'
+    desc: '80mm shaped-charge rocket pod (12 bursts, 11.5 km) ideal for fast CAS passes against armored air defenses.'
+  },
+  'CRV7-MPSM': {
+    id: 'CRV7-MPSM', name: 'CRV7-MPSM High-Velocity Rockets (12x)', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
+    mass: 440, cost: 0.5, rangeKm: 13.5, speedMach: 2.6, seeker: 'UNGUIDED', rcs: 0.02,
+    trait: 'HIGH_VELOCITY_ROCKET', traitBadge: 'MACH 2.6 FLECHETTE POD',
+    behaviorDesc: 'High-energy 70mm tungsten-flechette rocket pod (12 bursts, 2.5 HP, 13.5 km, Mach 2.6). Outpaces SHORAD and punches through armored SAMs.',
+    damage: 2.5, ammoCount: 12, minRangeKm: 0.8, sweetSpotMin: 2.0, sweetSpotMax: 11.5, lambda: 0.32, p: 1.2, T_0: 0.84,
+    isRocketPod: true, armorPiercing: 0.85, sigmaPylon: 0.06, category: 'A2G', a2gGroup: 'ROCKETS',
+    desc: 'High-velocity Mach 2.6 CRV7 anti-armor rocket pod (12 bursts, 13.5 km) built for fast supersonic CAS passes.'
   },
   'ZUNI-127': {
     id: 'ZUNI-127', name: 'LAU-10 Zuni 127mm Rockets (8x)', slots: 1, slotType: 'EXTERNAL', minRating: 'Type M',
-    mass: 480, cost: 0.4, rangeKm: 11.0, speedMach: 2.2, seeker: 'UNGUIDED', rcs: 0.03,
+    mass: 480, cost: 0.4, rangeKm: 13.5, speedMach: 2.3, seeker: 'UNGUIDED', rcs: 0.03,
     trait: 'HEAVY_ROCKET_POD', traitBadge: '127MM SUPERSONIC',
-    behaviorDesc: 'Heavy 127mm Zuni rocket pod (8 bursts, 3.0 HP, Mach 2.2). High velocity clears light CIWS reaction windows.',
-    damage: 3, ammoCount: 8, minRangeKm: 1.0, sweetSpotMin: 2.0, sweetSpotMax: 9.0, lambda: 0.40, p: 1.4, T_0: 0.80,
+    behaviorDesc: 'Heavy 127mm Zuni rocket pod (8 bursts, 3.0 HP, 13.5 km, Mach 2.3). High velocity clears light CIWS reaction windows.',
+    damage: 3, ammoCount: 8, minRangeKm: 1.0, sweetSpotMin: 2.0, sweetSpotMax: 11.0, lambda: 0.34, p: 1.3, T_0: 0.82,
     isRocketPod: true, armorPiercing: 0.75, sigmaPylon: 0.08, category: 'A2G', a2gGroup: 'ROCKETS',
-    desc: 'High-velocity 127mm heavy rocket pod (8 bursts) for aggressive low-level suppression runs.'
+    desc: 'High-velocity 127mm heavy rocket pod (8 bursts, 13.5 km) for aggressive low-level suppression runs.'
   },
   'S-13OF': {
     id: 'S-13OF', name: 'B-13L S-13OF Heavy Rockets (8x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
-    mass: 720, cost: 0.6, rangeKm: 12.5, speedMach: 2.1, seeker: 'UNGUIDED', rcs: 0.04,
+    mass: 720, cost: 0.6, rangeKm: 15.0, speedMach: 2.2, seeker: 'UNGUIDED', rcs: 0.04,
     trait: 'PENETRATING_ROCKET', traitBadge: '122MM BUNKER ROCKET',
-    behaviorDesc: 'Heavy 122mm bunker-piercing rocket pod (8 bursts, 4.0 HP). Damages concrete shelters and runways without relying on electronic guidance.',
-    damage: 4, ammoCount: 8, minRangeKm: 1.2, sweetSpotMin: 2.5, sweetSpotMax: 10.5, lambda: 0.36, p: 1.3, T_0: 0.80,
+    behaviorDesc: 'Heavy 122mm bunker-piercing rocket pod (8 bursts, 4.0 HP, 15 km). Damages concrete shelters and runways without relying on electronic guidance.',
+    damage: 4, ammoCount: 8, minRangeKm: 1.2, sweetSpotMin: 2.5, sweetSpotMax: 12.5, lambda: 0.30, p: 1.2, T_0: 0.82,
     isRocketPod: true, isBunkerCracker: true, sigmaPylon: 0.11, category: 'A2G', a2gGroup: 'ROCKETS',
-    desc: 'Heavy 122mm penetrating rocket pod (8 bursts) capable of damaging hardened aircraft shelters.'
+    desc: 'Heavy 122mm penetrating rocket pod (8 bursts, 15 km) capable of damaging hardened aircraft shelters.'
   },
   'S-24B': {
     id: 'S-24B', name: 'S-24B 240mm Heavy Rockets (4x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
-    mass: 940, cost: 0.7, rangeKm: 14.0, speedMach: 2.3, seeker: 'UNGUIDED', rcs: 0.05,
+    mass: 940, cost: 0.7, rangeKm: 16.5, speedMach: 2.4, seeker: 'UNGUIDED', rcs: 0.05,
     trait: 'HEAVY_ASSAULT_ROCKET', traitBadge: '240MM CONCRETE ROCKET',
-    behaviorDesc: 'Unpowered-warhead 240mm unguided assault rockets (4x, 6.0 HP, Mach 2.3). Punches through hangars, SAM launchers, and fortified bunker doors.',
-    damage: 6, ammoCount: 4, minRangeKm: 1.5, sweetSpotMin: 3.0, sweetSpotMax: 11.5, lambda: 0.30, p: 1.3, T_0: 0.82,
+    behaviorDesc: 'Heavy 240mm unguided assault rockets (4x, 6.0 HP, 16.5 km, Mach 2.4). Punches through hangars, SAM launchers, and fortified bunker doors.',
+    damage: 6, ammoCount: 4, minRangeKm: 1.5, sweetSpotMin: 3.0, sweetSpotMax: 14.0, lambda: 0.26, p: 1.2, T_0: 0.84,
     isRocketPod: true, isBunkerCracker: true, armorPiercing: 0.85, sigmaPylon: 0.14, category: 'A2G', a2gGroup: 'ROCKETS',
-    desc: 'Heavy 240mm unguided bunker-busting assault rockets (4x) immune to ECM and chaff countermeasures.'
+    desc: 'Heavy 240mm unguided bunker-busting assault rockets (4x, 16.5 km) immune to ECM and chaff countermeasures.'
+  },
+  'S-25OFM': {
+    id: 'S-25OFM', name: 'S-25L/OFM 340mm Super Rockets (4x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
+    mass: 1480, cost: 0.9, rangeKm: 18.0, speedMach: 2.5, seeker: 'LASER', rcs: 0.05,
+    trait: 'HEAVY_LASER_ROCKET', traitBadge: '340MM CONCRETE BREAKER',
+    behaviorDesc: 'Massive 340mm laser-guided concrete-piercing heavy rockets (4x, 8.5 HP, 18 km, Mach 2.5). Cracks fortified shelters, runways, and armored SAMs from outside AAA range.',
+    damage: 8.5, ammoCount: 4, minRangeKm: 1.8, sweetSpotMin: 3.5, sweetSpotMax: 15.5, lambda: 0.18, p: 1.1, T_0: 0.88,
+    isRocketPod: true, isBunkerCracker: true, armorPiercing: 0.95, sigmaPylon: 0.15, category: 'A2G', a2gGroup: 'ROCKETS',
+    desc: 'Laser-guided 340mm heavy assault rockets (4x, 18 km, 8.5 HP) built for Frogfoot, Flogger, and fast CAS strikers.'
   },
   'APKWS-II': {
     id: 'APKWS-II', name: 'APKWS-II Laser Rockets (10x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
-    mass: 360, cost: 0.7, rangeKm: 15.0, speedMach: 2.1, seeker: 'LASER', rcs: 0.015,
-    trait: 'LASER_ROCKET_SALVO', traitBadge: 'GUIDED 15KM ROCKETS',
-    behaviorDesc: 'Precision laser-guided 70mm rockets (10 rounds, 2.5 HP, Mach 2.1). High accuracy against AAA, SHORAD, and decoys; amplified by Targeting Pods.',
-    damage: 2.5, ammoCount: 10, minRangeKm: 1.0, sweetSpotMin: 2.5, sweetSpotMax: 13.0, lambda: 0.18, p: 1.1, T_0: 0.90,
+    mass: 360, cost: 0.7, rangeKm: 17.5, speedMach: 2.2, seeker: 'LASER', rcs: 0.015,
+    trait: 'LASER_ROCKET_SALVO', traitBadge: 'GUIDED 17.5KM ROCKETS',
+    behaviorDesc: 'Precision laser-guided 70mm rockets (10 rounds, 2.5 HP, 17.5 km, Mach 2.2). High accuracy against AAA, SHORAD, and decoys; amplified by Targeting Pods.',
+    damage: 2.5, ammoCount: 10, minRangeKm: 1.0, sweetSpotMin: 2.5, sweetSpotMax: 15.0, lambda: 0.16, p: 1.1, T_0: 0.90,
     isRocketPod: true, sigmaPylon: 0.05, category: 'A2G', a2gGroup: 'ROCKETS',
-    desc: 'Precision laser-guided rocket pods (10x, 15 km) delivering pinpoint suppression of mobile AAA and radar vans.'
+    desc: 'Precision laser-guided rocket pods (10x, 17.5 km) delivering pinpoint suppression of mobile AAA and radar vans.'
   },
   'CRV7-PG': {
     id: 'CRV7-PG', name: 'CRV7-PG Laser Anti-Armor (10x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
-    mass: 410, cost: 0.8, rangeKm: 16.5, speedMach: 2.4, seeker: 'LASER', rcs: 0.015,
-    trait: 'LASER_ARMOR_ROCKET', traitBadge: '16.5KM AP ROCKETS',
-    behaviorDesc: 'High-kinetic-velocity 70mm laser-guided anti-armor rockets (10x, 3.0 HP, Mach 2.4). High armor piercing capability against armored SAM TELARs.',
-    damage: 3.0, ammoCount: 10, minRangeKm: 1.0, sweetSpotMin: 3.0, sweetSpotMax: 14.5, lambda: 0.16, p: 1.1, T_0: 0.91,
+    mass: 410, cost: 0.8, rangeKm: 19.0, speedMach: 2.5, seeker: 'LASER', rcs: 0.015,
+    trait: 'LASER_ARMOR_ROCKET', traitBadge: '19KM AP ROCKETS',
+    behaviorDesc: 'High-kinetic-velocity 70mm laser-guided anti-armor rockets (10x, 3.0 HP, 19 km, Mach 2.5). High armor piercing capability against armored SAM TELARs.',
+    damage: 3.0, ammoCount: 10, minRangeKm: 1.0, sweetSpotMin: 3.0, sweetSpotMax: 16.5, lambda: 0.14, p: 1.1, T_0: 0.91,
     isRocketPod: true, armorPiercing: 0.90, sigmaPylon: 0.05, category: 'A2G', a2gGroup: 'ROCKETS',
-    desc: 'High-velocity laser-guided anti-armor rockets (10x, 16.5 km) built for close air support and SHORAD hunting.'
+    desc: 'High-velocity laser-guided anti-armor rockets (10x, 19 km) built for fast CAS and SHORAD hunting.'
   }
 };

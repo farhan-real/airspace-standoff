@@ -63,11 +63,11 @@ window.STRIKE_UPGRADES_CATALOG = {
     cost: 1.5,
     mass: 320,
     category: 'ARMOR',
-    desc: 'Armored titanium-kevlar belly plating. Adds +1 Max HP and reduces damage from enemy AAA flak and CIWS guns by 45% during low-altitude attack runs.',
+    desc: 'Armored titanium-kevlar belly plating. Adds +1 Max HP and reduces damage from enemy AAA flak and CIWS guns by +45% (stacks up to 75% on armored CAS airframes).',
     apply: function(unit) {
       unit.maxHp = (unit.maxHp || 4) + 1;
       unit.hp = Math.min(unit.maxHp, (unit.hp || 4) + 1);
-      unit.aaaResistance = 0.45;
+      unit.aaaResistance = Math.min(0.75, (unit.aaaResistance || 0) + 0.45);
     },
     isAllowed: function(spec) { return !spec.isDrone; }
   },
@@ -103,9 +103,9 @@ window.STRIKE_UPGRADES_CATALOG = {
     cost: 1.7,
     mass: 75,
     category: 'STEALTH',
-    desc: 'Laser turret that blinds incoming heat-seeking missiles. Grants +24% evasion against passive IR SAMs (SHORAD) and heat-seeking A2A missiles, plus +2 countermeasures.',
+    desc: 'Laser turret that blinds incoming heat-seeking missiles. Grants +24% evasion against passive IR SAMs (SHORAD) and heat-seeking A2A missiles (stacks up to 42%), plus +2 countermeasures.',
     apply: function(unit) {
-      unit.dircmEvasion = 0.24;
+      unit.dircmEvasion = Math.min(0.42, (unit.dircmEvasion || 0) + 0.24);
       unit.chaff = (unit.chaff || 4) + 2;
       unit.countermeasures = (unit.countermeasures || 4) + 2;
       unit.chaffFlares = (unit.chaffFlares || 4) + 2;

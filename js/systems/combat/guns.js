@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Combat Guns Subsystem
- * Automatic boresight cannon burst calculations against aircraft and low-altitude ground targets.
+ * js/systems/combat/guns.js - Automatic boresight cannon burst calculations against aircraft and ground targets.
  */
 
 class CombatGunsSystem {
@@ -34,14 +33,13 @@ class CombatGunsSystem {
           if (isEnemy && !aircraft.isAce && Math.random() < (diffKey === 'CADET' ? 0.60 : 0.40)) break;
 
           const isSurface = (typeof SurfaceUnit !== 'undefined' && enemy instanceof SurfaceUnit);
-          let totalBurstDamage = aircraft.gun.damagePerBurst;
-          if (isSurface) {
-            activeGunpods.forEach(p => {
-              if (p.weapon && p.weapon.groundDamageMult) {
-                totalBurstDamage += p.weapon.damagePerBurst * (p.weapon.groundDamageMult - 1.0);
-              }
-            });
-          }
+          let totalBurstDamage = aircraft.gun.damagePerBurst * (isSurface && aircraft.gun.groundDamageMult ? aircraft.gun.groundDamageMult : 1.0);
+          activeGunpods.forEach(p => {
+            if (p.weapon) {
+              const podMult = (isSurface && p.weapon.groundDamageMult) ? p.weapon.groundDamageMult : 1.0;
+              totalBurstDamage += p.weapon.damagePerBurst * podMult;
+            }
+          });
 
           let sustainedDmg = totalBurstDamage;
           const damageFactors = [];
@@ -66,9 +64,9 @@ class CombatGunsSystem {
           const hpBefore = enemy.hp;
           const wasAlive = enemy.hp > 0.05;
           if (isSurface) {
-            const ap = (aircraft.gun.id === 'GAU-8' || aircraft.gun.id === 'EML_GUN') ? 0.85 : ((aircraft.gun.id === 'GSH-30-1' || aircraft.gun.id === 'BK-27') ? 0.50 : 0.25);
+            const baseAp = typeof aircraft.gun.armorPiercing === 'number' ? aircraft.gun.armorPiercing : 0.25;
             const podBunkerCracker = activeGunpods.some(p => p.weapon && p.weapon.isBunkerCracker);
-            const podAp = activeGunpods.reduce((m, p) => Math.max(m, (p.weapon && p.weapon.armorPiercing) || 0), ap);
+            const podAp = activeGunpods.reduce((m, p) => Math.max(m, (p.weapon && p.weapon.armorPiercing) || 0), baseAp);
             enemy.takeDamage(sustainedDmg, podBunkerCracker, { armorPiercing: podAp });
           } else {
             enemy.hp = Math.max(0, enemy.hp - sustainedDmg);
@@ -104,7 +102,7 @@ class CombatGunsSystem {
             activeGunpods.forEach(p => radarRenderer.spawnGunTracer(aircraft.x, aircraft.y, enemy.x, enemy.y, p.weapon.tracerColor || '#fbbf24'));
           }
 
-          if (wasAlive && enemy.hp <= 0.05 && window.Game && window.Game.simulation) {
+          if (wasAlive && enemy.hp <= 0.05 && window.Game && window.Game.simulation && !enemy.isCivilian) {
             enemy.hp = 0;
             window.Game.simulation.recordKillEvent(aircraft.team, enemy, aircraft, { weapon: aircraft.gun, isSalvo: activeGunpods.length > 0, salvoCount: activeGunpods.length + 1 });
           } else if (wasAlive && enemy.hp > 0.05 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {

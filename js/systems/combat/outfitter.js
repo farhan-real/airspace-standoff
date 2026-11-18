@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Tactical AI Loadout Planner
+ * js/systems/combat/outfitter.js - Tactical AI Loadout Planner
  * Matches airframe pylon ratings, weapon range classes, and active AIR_DOCTRINES preferences.
  */
 
@@ -20,9 +20,9 @@ class FleetOutfitter {
 
     const isEW = (spec.category === 'EW' || spec.isEW), isStrike = (spec.category === 'STRIKE');
     const isDrone = (spec.category === 'DRONES' || spec.isDrone), isStealth = (spec.internalSlots > 0 && spec.category === 'STEALTH');
-    const isHeavyTruck = ['F-15EX', 'F-15E', 'MiG-31BM', 'J-16', 'Su-34', 'A-10C', 'B-1B', 'B-52H', 'Tu-160M', 'F-111F'].includes(spec.id);
-    const isAgileDogfighter = ['Rafale-C', 'Eurofighter', 'Su-35S', 'Mirage-2000', 'Mirage-2000D', 'F-16V', 'JAS-39E', 'Tejas-MK2', 'Su-47', 'X-29A', 'Su-37'].includes(spec.id);
-    const isHighSpeed = (spec.S_0 >= 1.25 || ['MiG-31BM', 'DARKSTAR', 'F-15EX', 'F-15E', 'YF-23', 'F-14D', 'Tu-160M'].includes(spec.id));
+    const isHeavyTruck = ['F-15EX', 'F-15E', 'F-16XL', 'MiG-31BM', 'J-16', 'Su-34', 'A-10C', 'Su-39', 'MiG-27K', 'A-16', 'B-1B', 'B-52H', 'Tu-160M', 'F-111F'].includes(spec.id);
+    const isAgileDogfighter = ['Rafale-C', 'Eurofighter', 'Su-35S', 'Mirage-2000', 'Mirage-2000D', 'F-16V', 'A-16', 'F-16XL', 'AV-8B-PLUS', 'JAS-39E', 'Tejas-MK2', 'Su-47', 'X-29A', 'Su-37'].includes(spec.id);
+    const isHighSpeed = (spec.S_0 >= 1.25 || ['MiG-31BM', 'DARKSTAR', 'F-15EX', 'F-15E', 'F-16XL', 'MiG-27K', 'A-16', 'YF-23', 'F-14D', 'Tu-160M'].includes(spec.id));
 
     const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
     const specRatingIndex = ratings.indexOf(spec.maxPylonRating);
@@ -53,7 +53,6 @@ class FleetOutfitter {
       else if (spec.allowedGuns.includes('DE-PULSE') && rng.boolean(0.80)) chosenGunId = 'DE-PULSE';
       else if (spec.allowedGuns.includes('PLSL_HEAVY') && rng.boolean(0.70)) chosenGunId = 'PLSL_HEAVY';
       else if (spec.allowedGuns.includes('PLSL_MED') && rng.boolean(0.65)) chosenGunId = 'PLSL_MED';
-      else if (isHeavyTruck && spec.allowedGuns.includes('GPU-5A') && rng.boolean(0.50)) chosenGunId = 'GPU-5A';
     }
 
     if (isAce) {
@@ -169,8 +168,8 @@ class FleetOutfitter {
       if (spec.upgradeSockets >= 2) addUpg('EOTS_DUAL_OPTICS');
     } else if (role === 'INTERCEPT') {
       addWpn(rollBvr(true), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
-      addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       addUpg('SUPERCRUISE_VCE');
       if (spec.upgradeSockets >= 2) addUpg('GAN_AESA_CORE');
     } else if (role === 'DOGFIGHT') {
