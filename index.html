@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- index.html - AIRSPACE STANDOFF application entry point, cockpit DOM structure, and module loader -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -67,14 +68,7 @@
           </div>
         </div>
         <div class="mode-and-ai-controls">
-          <div class="segmented-control" id="control-mode-group">
-            <button id="mode-btn-1p" class="seg-btn active">SINGLE PLAYER</button>
-            <button id="mode-btn-2p" class="seg-btn">TWO PLAYER</button>
-          </div>
-          <div class="segmented-control" id="scenario-mode-group">
-            <button id="scenario-btn-skirmish" class="seg-btn active">SKIRMISH</button>
-            <button id="scenario-btn-dynamic" class="seg-btn">DYNAMIC THEATER</button>
-          </div>
+          <div id="cdd-gamemode"></div>
           <div class="ai-config-group" id="ai-config-panel">
             <div id="cdd-budget"></div>
             <div id="cdd-difficulty"></div>
@@ -313,12 +307,19 @@
     <div id="maneuver-deck" class="deck-grid"></div>
   </footer>
 </div>
-
 <script src="js/data/constants.js"></script>
+<script src="js/data/aidifficulties.js"></script>
+<script src="js/data/attackdifficulties.js"></script>
+<script src="js/data/ground/radars.js"></script>
+<script src="js/data/ground/sams.js"></script>
+<script src="js/data/ground/bases.js"></script>
+<script src="js/data/groundunits.js"></script>
 <script src="js/data/manual/basics.js"></script>
 <script src="js/data/manual/sensors.js"></script>
 <script src="js/data/manual/combat.js"></script>
+<script src="js/data/manual/theaterdata.js"></script>
 <script src="js/data/manual/theater.js"></script>
+<script src="js/data/manual/attack.js"></script>
 <script src="js/data/manual/operations.js"></script>
 <script src="js/data/manual/controls.js"></script>
 <script src="js/data/manual.js"></script>
@@ -328,6 +329,7 @@
 <script src="js/data/aircraft/superiority.js"></script>
 <script src="js/data/aircraft/multirole.js"></script>
 <script src="js/data/aircraft/strike.js"></script>
+<script src="js/data/aircraft/interdictors.js"></script>
 <script src="js/data/aircraft/ew.js"></script>
 <script src="js/data/aircraft/drones.js"></script>
 <script src="js/data/aircraft/experimental.js"></script>
@@ -335,15 +337,28 @@
 <script src="js/data/aircraft/coffin.js"></script>
 <script src="js/data/aircraft.js"></script>
 <script src="js/data/weapons/a2a.js"></script>
+<script src="js/data/weapons/a2aulr.js"></script>
 <script src="js/data/weapons/wvr.js"></script>
 <script src="js/data/weapons/a2g.js"></script>
+<script src="js/data/weapons/a2gcluster.js"></script>
+<script src="js/data/weapons/a2gglide.js"></script>
+<script src="js/data/weapons/a2glaser.js"></script>
+<script src="js/data/weapons/a2gbunker.js"></script>
+<script src="js/data/weapons/a2grockets.js"></script>
+<script src="js/data/weapons/a2gmissiles.js"></script>
+<script src="js/data/weapons/a2garms.js"></script>
+<script src="js/data/weapons/a2gcruise.js"></script>
+<script src="js/data/weapons/a2gloitering.js"></script>
+<script src="js/data/weapons/a2acannons.js"></script>
+<script src="js/data/weapons/a2gcannons.js"></script>
+<script src="js/data/weapons/targetingpods.js"></script>
 <script src="js/data/weapons/pods.js"></script>
 <script src="js/data/weapons.js"></script>
 <script src="js/data/upgrades/components.js"></script>
+<script src="js/data/upgrades/strikecomponents.js"></script>
 <script src="js/data/upgrades/advancedmaneuvers.js"></script>
 <script src="js/data/upgrades/maneuvers.js"></script>
 <script src="js/data/upgrades.js"></script>
-
 <script src="js/data/templates/stealth.js"></script>
 <script src="js/data/templates/superiority.js"></script>
 <script src="js/data/templates/multirole.js"></script>
@@ -353,7 +368,6 @@
 <script src="js/data/templates/experimental.js"></script>
 <script src="js/data/templates/superfighters.js"></script>
 <script src="js/data/templates.js"></script>
-
 <script src="js/systems/engine/prng.js"></script>
 <script src="js/systems/engine/persistence.js"></script>
 <script src="js/systems/engine/rwr.js"></script>
@@ -361,11 +375,9 @@
 <script src="js/systems/engine/audio.js"></script>
 <script src="js/systems/engine/physics.js"></script>
 <script src="js/systems/engine/spawner.js"></script>
-
 <script src="js/systems/missiles/guidance.js"></script>
 <script src="js/systems/missiles/kinetics.js"></script>
 <script src="js/systems/missiles/impact.js"></script>
-
 <script src="js/systems/entities/cloud.js"></script>
 <script src="js/systems/entities/civilian.js"></script>
 <script src="js/systems/entities/ghost.js"></script>
@@ -374,9 +386,9 @@
 <script src="js/systems/entities/aircraft.js"></script>
 <script src="js/systems/entities/aircraftcombat.js"></script>
 <script src="js/systems/entities/missile.js"></script>
+<script src="js/systems/entities/surfacecombat.js"></script>
 <script src="js/systems/entities/surface.js"></script>
 <script src="js/systems/entities.js"></script>
-
 <script src="js/systems/radar/camera.js"></script>
 <script src="js/systems/radar/effects.js"></script>
 <script src="js/systems/radar/environment.js"></script>
@@ -386,18 +398,20 @@
 <script src="js/systems/radar/engagement.js"></script>
 <script src="js/systems/radar/renderer.js"></script>
 <script src="js/systems/radar.js"></script>
-
 <script src="js/systems/combat/formation.js"></script>
 <script src="js/systems/combat/guns.js"></script>
 <script src="js/systems/combat/combat.js"></script>
 <script src="js/systems/combat/outfitter.js"></script>
+<script src="js/systems/combat/waves.js"></script>
 <script src="js/systems/combat/fleet.js"></script>
+<script src="js/systems/combat/airbase.js"></script>
+<script src="js/systems/combat/attackgenerator.js"></script>
+<script src="js/systems/combat/attackdirector.js"></script>
 <script src="js/systems/combat/ai/navigation.js"></script>
 <script src="js/systems/combat/ai/tactics.js"></script>
 <script src="js/systems/combat/ai/evasion.js"></script>
 <script src="js/systems/combat/ai/planning.js"></script>
 <script src="js/systems/combat/ai/commander.js"></script>
-
 <script src="js/systems/simulation/scoring.js"></script>
 <script src="js/systems/simulation/debrief/aarstats.js"></script>
 <script src="js/systems/simulation/debrief/timeline.js"></script>
@@ -408,12 +422,10 @@
 <script src="js/systems/simulation/detection.js"></script>
 <script src="js/systems/simulation/atmosphere.js"></script>
 <script src="js/systems/simulation.js"></script>
-
 <script src="js/ui/modals/dialogs.js"></script>
 <script src="js/ui/modals/editor.js"></script>
 <script src="js/ui/modals/debrief.js"></script>
 <script src="js/ui/modals/panels.js"></script>
-
 <script src="js/ui/dropdown.js"></script>
 <script src="js/ui/settings.js"></script>
 <script src="js/ui/leaderboard/dossier.js"></script>
@@ -436,7 +448,6 @@
 <script src="js/ui/cards/updater.js"></script>
 <script src="js/ui/cards/pylons.js"></script>
 <script src="js/ui/cards.js"></script>
-
 <script src="js/ui/procurement/specs/eval.js"></script>
 <script src="js/ui/procurement/specs/facilities.js"></script>
 <script src="js/ui/procurement/specs/views.js"></script>
@@ -448,13 +459,13 @@
 <script src="js/ui/procurement/dialogs/cards.js"></script>
 <script src="js/ui/procurement/dialogs/preconfig.js"></script>
 <script src="js/ui/procurement/catalog/airframes.js"></script>
+<script src="js/ui/procurement/catalog/shelfcards.js"></script>
 <script src="js/ui/procurement/catalog/shelf.js"></script>
 <script src="js/ui/procurement/squadron/stations.js"></script>
 <script src="js/ui/procurement/squadron/card.js"></script>
 <script src="js/ui/procurement/squadron/roster.js"></script>
 <script src="js/ui/procurement/equip.js"></script>
 <script src="js/ui/procurement/dialogs/dialog.js"></script>
-
 <script src="js/ui/inspection/cognition.js"></script>
 <script src="js/ui/inspection/overview.js"></script>
 <script src="js/ui/inspection/solutions.js"></script>
@@ -470,7 +481,6 @@
 <script src="js/ui/inspection/graphs.js"></script>
 <script src="js/ui/inspection/views.js"></script>
 <script src="js/ui/inspection/controller.js"></script>
-
 <script src="js/game.js"></script>
 </body>
 </html>

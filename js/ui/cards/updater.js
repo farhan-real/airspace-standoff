@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Pylon Card Real-time Status & Live P_k Updater
+ * AIRSPACE STANDOFF: Pylon Card Real-time Status & Live Pk Updater
  */
 
 class PylonCardUpdater {
@@ -19,7 +19,7 @@ class PylonCardUpdater {
 
       const ammoTag = cardEl.querySelector('.pylon-ammo-counter');
       if (ammoTag) {
-        const expectedAmmo = isMobile ? `${item.ammo}/${item.maxAmmo}` : `${item.ammo} / ${item.maxAmmo}`;
+        const expectedAmmo = (w.isJammerPod || w.isTargetingPod) ? 'ACTIVE' : (isMobile ? `${item.ammo}/${item.maxAmmo}` : `${item.ammo} / ${item.maxAmmo}`);
         if (ammoTag.textContent !== expectedAmmo) ammoTag.textContent = expectedAmmo;
       }
 
@@ -37,6 +37,9 @@ class PylonCardUpdater {
         if (w.isJammerPod) {
           expectedTag = isMobile ? '[ECM]' : 'ACTIVE: [ECM]';
           expectedColor = '#00f0ff';
+        } else if (w.isTargetingPod) {
+          expectedTag = isMobile ? '[TGP]' : `ACTIVE: [TGP +${Math.round((w.a2gPkBonus || 0.18) * 100)}%]`;
+          expectedColor = '#00f5a0';
         } else if (w.isDecoy || w.isDecoyDrone) {
           expectedTag = isMobile ? '[DECOY]' : 'DEFENSE: [DECOY]';
           expectedColor = '#c084fc';
@@ -52,7 +55,8 @@ class PylonCardUpdater {
           expectedTag = isMobile ? `[${seeker}]${mixedTag}` : `HOMING: [${seeker}]${mixedTag}`;
           const seekerColors = {
             'ARH': '#00f0ff', 'IIR': '#00f5a0', 'EO': '#38bdf8', 'OPT': '#38bdf8',
-            'PASSIVE_RADAR': '#ffb830', 'GPS_INS': '#94a3b8', 'INS': '#ffd700', 'INS_RADAR': '#ffd700', 'DIRECT_FIRE': '#fbbf24'
+            'PASSIVE_RADAR': '#ffb830', 'GPS_INS': '#94a3b8', 'INS': '#ffd700', 'LASER': '#00f5a0',
+            'MMW': '#c084fc', 'MMW_IIR': '#c084fc', 'UNGUIDED': '#f97316', 'DIRECT_FIRE': '#fbbf24'
           };
           expectedColor = pkResult.hasMixedSeekers ? '#00f5a0' : (seekerColors[seeker] || '#7dd3fc');
         }
@@ -62,8 +66,14 @@ class PylonCardUpdater {
       }
 
       if (w.isJammerPod) {
-        if (pkFill) pkFill.style.width = `${Math.round((w.jamEfficiency || 0.45)*100)}%`;
+        if (pkFill) pkFill.style.width = `${Math.round((w.jamEfficiency || 0.45) * 100)}%`;
         if (fireBtn && !fireBtn.disabled) { fireBtn.disabled = true; fireBtn.textContent = 'ECM ACTIVE'; }
+        return;
+      }
+
+      if (w.isTargetingPod) {
+        if (pkFill) { pkFill.style.width = '100%'; pkFill.style.background = '#00f5a0'; }
+        if (fireBtn && !fireBtn.disabled) { fireBtn.disabled = true; fireBtn.textContent = `TGP RECON (${w.spotRangeKm || 40}km)`; }
         return;
       }
 
@@ -102,9 +112,8 @@ class PylonCardUpdater {
         }
         cardEl.classList.add('depleted-rack');
         return;
-      } else {
-        cardEl.classList.remove('depleted-rack');
       }
+      cardEl.classList.remove('depleted-rack');
 
       if (w.isGunpod || w.category === 'GUN') {
         const hasTokens = (curTokens >= tokenCost);
@@ -149,7 +158,7 @@ class PylonCardUpdater {
           (typeof validTarget.isIdentifiedBy === 'function' ? validTarget.isIdentifiedBy(curGame.currentPvpCommander || 'friendly') : validTarget.isIdentified)
         );
 
-        if (pkResult.label === 'AIR ONLY' || pkResult.label === 'GROUND ONLY' || pkResult.label === 'IMMUNE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OUT OF RANGE' || pkResult.label === 'OFF BORESIGHT') {
+        if (['AIR ONLY', 'GROUND ONLY', 'IMMUNE', 'TOO CLOSE', 'OUT OF RANGE', 'OFF BORESIGHT'].includes(pkResult.label)) {
           expectedBtnText = pkResult.label;
           if (pkResult.label === 'OUT OF RANGE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OFF BORESIGHT') {
             expectedBtnColor = '#f87171';
@@ -163,7 +172,7 @@ class PylonCardUpdater {
           expectedBtnColor = '#fbbf24';
           expectedBtnBorder = 'rgba(251, 191, 36, 0.35)';
         } else if (validTarget.isCivilian) {
-          expectedBtnText = `CIVILIAN ROE (-2000 VP)`;
+          expectedBtnText = 'CIVILIAN ROE (-2000 VP)';
           expectedBtnColor = '#f43f5e';
           expectedBtnBorder = 'rgba(244, 63, 94, 0.5)';
         } else if (!isKnown) {

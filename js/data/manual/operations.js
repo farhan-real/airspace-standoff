@@ -21,13 +21,13 @@ window.MANUAL_OPERATIONS = [
           <tbody>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">Scenario Mode</td>
-              <td>Skirmish vs Dynamic Theater</td>
-              <td>Skirmish deploys single wave clash; Dynamic Theater introduces reinforcing wave wings every 80 seconds.</td>
+              <td>Skirmish, Dynamic Theater, or Ground Attack</td>
+              <td>Skirmish deploys single wave clash; Dynamic Theater introduces reinforcing wave wings every 80 seconds; Ground Attack opens the 240x160 IADS theater.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Difficulty</td>
               <td>Permissive Sector (0.50x), Buffer Zone (0.75x), Contested Airspace (1.00x), Escalated Airspace (1.25x), Hostile Airspace (1.50x), Forward Combat Zone (1.75x), High-Threat Sector (2.00x), Fortified Airspace (2.30x), Air Denial Zone (2.60x), Extreme Threat Sector (3.20x)</td>
-              <td>Adjusts AI reaction speed, Doppler notch discipline, salvo sizing, and formation pairing.</td>
+              <td>Adjusts AI reaction speed, Doppler notch discipline, salvo sizing, formation pairing, and Attack ground defense density.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">AI Combat Doctrine</td>
@@ -42,7 +42,7 @@ window.MANUAL_OPERATIONS = [
             <tr>
               <td style="color:#ffd700;font-weight:800;">Allied Blue Budget</td>
               <td>Standard Tiers or Custom Credit Value (10M - 2500M)</td>
-              <td>Configures expenditure allowance for blue fleet. Displays default budget for selected difficulty (e.g. 260M, 330M, 390M, 510M, 635M Default). Tap CUSTOM to enter any tailored credit amount. Automatically locks when Hangar is selected.</td>
+              <td>Configures expenditure allowance for blue fleet. Displays default budget for selected difficulty (e.g. 205M, 265M, 315M, 400M, 490M Default). Tap CUSTOM to enter any tailored credit amount. Automatically locks when Hangar is selected.</td>
             </tr>
             <tr>
               <td style="color:#fbbf24;font-weight:800;">Hostile Red Fleet</td>
@@ -57,11 +57,11 @@ window.MANUAL_OPERATIONS = [
             <tr>
               <td style="color:#c084fc;font-weight:800;">Weather &amp; Clouds</td>
               <td>Clear, Light, Scattered, Dense Overcast</td>
-              <td>Controls cloud cell counts, microwave radar attenuation (-8% per cell), and IR optical scattering.</td>
+              <td>Controls cloud cell counts, microwave radar attenuation (-4% per cell), and IR optical scattering.</td>
             </tr>
             <tr>
               <td style="color:#f43f5e;font-weight:800;">Ground IADS Grid</td>
-              <td>Full (S-400 + CIWS + EW), Light, Off</td>
+              <td>Full (SAMs + CIWS + EW), Light, Off</td>
               <td>Controls surface air-defense coverage, radar arrays, and command bunker defenses.</td>
             </tr>
             <tr>
@@ -169,7 +169,7 @@ window.MANUAL_OPERATIONS = [
         </table>
       </div>
 
-      <div class="ge-subhead">4. THE 5 DIAGNOSTIC WORKSPACE TABS</div>
+      <div class="ge-subhead">4. THE 6 DIAGNOSTIC WORKSPACE TABS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
@@ -189,7 +189,11 @@ window.MANUAL_OPERATIONS = [
               <td>Dynamic hit probability (P_k percentage gauge), factor-by-factor breakdown (proportional navigation, energy deficit, cloud scattering), and inbound threat alerts with step-by-step countermeasure protocols.</td>
             </tr>
             <tr>
-              <td style="color:#c084fc;font-weight:800;">TRACE</td>
+              <td style="color:#38bdf8;font-weight:800;">GRAPHS</td>
+              <td>Dynamic Launch Zone (DLZ), 360-degree RCS polar radiation diagram, turn speed gauge, rolling 60s speed/altitude history, and live fleet combat value curve.</td>
+            </tr>
+            <tr>
+              <td style="color:#c084fc;font-weight:800;">EVENTS</td>
               <td>Chronological Causal Log recording weapon launches, missile intercepts, chaff deployments, and kill events. Tap any event to inspect detailed launch range, speed, and probability factors.</td>
             </tr>
             <tr>

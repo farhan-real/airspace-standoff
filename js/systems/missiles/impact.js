@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Missile Impact & Terminal Engagement Subsystem
- * Evaluates terminal hit results, damage application, and evasion classifications.
+ * js/systems/missiles/impact.js - Missile impact evaluation, ground strike hit modeling, and cluster splash.
  */
 
 class MissileImpactSystem {
@@ -25,21 +24,19 @@ class MissileImpactSystem {
     const isGenuineEvade = isLiveTarget && (
       reason === 'KINETIC OVERSHOOT' || reason.includes('DOPPLER NOTCH') || reason.includes('COBRA') ||
       reason.includes('BARREL ROLL') || reason.includes('SPLIT-S') || reason.includes('CHAFF') ||
-      (reason.includes('CLIMB') || reason.includes('ENERGY')) || reason.includes('BREAK') || reason.includes('DODGE') || reason === 'OBSCURED IN CLOUDS'
+      reason.includes('CLIMB') || reason.includes('ENERGY') || reason.includes('BREAK') || reason.includes('DODGE') || reason === 'OBSCURED IN CLOUDS'
     );
 
-    if (isGenuineEvade) {
-      if (missile.target.missilesEvadedCount !== undefined) {
-        const isSwarm = (missile.weapon && (missile.weapon.trait === 'SWARM_RIPPLE' || missile.weapon.trait === 'ALL_ASPECT_BURST'));
-        if (isSwarm) {
-          missile.target._swarmEvadeAccum = (missile.target._swarmEvadeAccum || 0) + 1;
-          if (missile.target._swarmEvadeAccum >= 4) {
-            missile.target.missilesEvadedCount++;
-            missile.target._swarmEvadeAccum = 0;
-          }
-        } else {
+    if (isGenuineEvade && missile.target.missilesEvadedCount !== undefined) {
+      const isSwarm = (missile.weapon && (missile.weapon.trait === 'SWARM_RIPPLE' || missile.weapon.trait === 'ALL_ASPECT_BURST'));
+      if (isSwarm) {
+        missile.target._swarmEvadeAccum = (missile.target._swarmEvadeAccum || 0) + 1;
+        if (missile.target._swarmEvadeAccum >= 4) {
           missile.target.missilesEvadedCount++;
+          missile.target._swarmEvadeAccum = 0;
         }
+      } else {
+        missile.target.missilesEvadedCount++;
       }
       if (missile.target.energy !== undefined) {
         missile.target.energy = Math.max(0.20, missile.target.energy - 0.15);
@@ -50,7 +47,47 @@ class MissileImpactSystem {
     if (window.Game && window.Game.radar) window.Game.radar.spawnCombatText(missile.x, missile.y, `${reason}`, '#f97316');
   }
 
+  static calcSurfaceHitChance(missile, tgt, weatherClouds) {
+    const w = missile.weapon;
+    const normDist = Math.max(0.0, Math.min(1.0, missile.launchDistKm / Math.max(1.0, missile.maxRangeKm)));
+    const rangeScore = Math.max(0.20, 1.0 - w.lambda * Math.pow(normDist, w.p));
+
+    const targetInCloud = weatherClouds && weatherClouds.some(c => c.containsPoint(tgt.x, tgt.y)) ? 1 : 0;
+    const cloudHits = Math.max(missile.launchCloudHits, targetInCloud);
+    const laserWeatherPen = (w.seeker === 'LASER') ? (cloudHits * 0.20 * (1.0 - missile.launchCloudMitigation)) : 0.0;
+    const altDispersionPen = (w.seeker === 'UNGUIDED' && !w.isRocketPod && missile.launchAltFt > 26000 && missile.launchCcipBonus <= 0)
+      ? (missile.launchTgpBonus > 0 ? 0.08 : 0.18) : 0.0;
+    const jamImpact = (w.seeker !== 'UNGUIDED' && missile.source)
+      ? Physics.getGroundJammingImpact(tgt, missile.source) : 0.0;
+    const jamPen = (jamImpact > 0) ? 0.10 * (1.0 - missile.launchEccmBonus) : 0.0;
+
+    const rawA2g = (w.T_0 * rangeScore) + missile.launchTgpBonus + missile.launchCcipBonus + missile.launchArmPkBonus + missile.launchMitlBonus - laserWeatherPen - altDispersionPen - jamPen;
+    return Math.max(0.25, Math.min(0.96, rawA2g));
+  }
+
+  static applyGroundPhaseClusterHits(missile, w) {
+    const game = window.Game;
+    if (!game || !w || !w.isCluster) return;
+    const radius = w.clusterRadiusKm;
+    const dmg = w.clusterDamage;
+
+    for (const ac of game.hostileAircraft) {
+      if (!ac || ac.hp <= 0.05 || !ac.groundPhase) continue;
+      if (Math.hypot(ac.x - missile.x, ac.y - missile.y) <= radius) {
+        const wasAlive = ac.hp > 0.05;
+        ac.takeDamage(dmg);
+        if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, `GROUNDED JET -${dmg.toFixed(1)}HP`, '#fbbf24');
+        if (wasAlive && ac.hp <= 0.05 && game.simulation) {
+          game.simulation.recordKillEvent(missile.team, ac, missile.source, { weapon: w, isSalvo: false, salvoCount: 1 });
+        }
+      }
+    }
+  }
+
   static resolveTerminalEngagement(missile, weatherClouds) {
+    if (!missile || !missile.weapon) throw new Error('MissileImpactSystem.resolveTerminalEngagement requires missile with weapon.');
+    if (typeof MissileKinetics === 'undefined') throw new Error('MissileKinetics is not loaded.');
+
     const tgt = missile.target;
     const w = missile.weapon;
     if (!tgt || tgt.hp <= 0.05) {
@@ -87,7 +124,7 @@ class MissileImpactSystem {
 
     if (tgt.isDecoyDrone) {
       missile.isDead = true;
-      tgt.takeDamage(w.damage || 1);
+      tgt.takeDamage(w.damage);
       if (window.Game && window.Game.simulation) {
         window.Game.simulation.recordKillEvent(missile.team, tgt, missile.source, { weapon: w, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       }
@@ -100,19 +137,46 @@ class MissileImpactSystem {
     }
 
     if (typeof SurfaceUnit !== 'undefined' && tgt instanceof SurfaceUnit) {
-      const isEmitter = (tgt.type === 'S-400' || tgt.type === 'RADAR_ARRAY' || tgt.type === 'EW_JAMMER' || tgt.type === 'RADAR_VAN');
-      const dmg = w.damage * ((w.trait === 'EMITTER_KILLER' && isEmitter) ? 3 : 1);
+      if (w.isAntiRadiation && tgt.emconTimer > 0 && !w.antiEmcon) {
+        MissileImpactSystem.triggerLostTrack(missile, 'RADAR EMCON SHUTDOWN');
+        return;
+      }
+
+      const hitChance = this.calcSurfaceHitChance(missile, tgt, weatherClouds);
+      if (Math.random() > hitChance) {
+        const missReason = (w.seeker === 'LASER') ? 'LASER SCATTER MISS' : 'BALLISTIC DISPERSION MISS';
+        MissileImpactSystem.triggerLostTrack(missile, missReason);
+        return;
+      }
+
+      let armMult = 1;
+      if (w.trait === 'EMITTER_KILLER' && tgt.isEmitter) {
+        armMult = (tgt.emconTimer > 0) ? 1.5 : 3;
+      }
+      const dmg = w.damage * armMult;
       const wasDead = tgt.hp <= 0.05;
-      tgt.takeDamage(dmg, w.isBunkerCracker);
+      tgt.takeDamage(dmg, Boolean(w.isBunkerCracker), w);
       missile.isDead = true;
+
+      if (w.isCluster) {
+        MissileKinetics.applyClusterAoE(missile, tgt, window.Game);
+        this.applyGroundPhaseClusterHits(missile, w);
+      }
+
       if (!wasDead && tgt.hp <= 0.05 && window.Game && window.Game.simulation) {
         window.Game.simulation.recordKillEvent(missile.team, tgt, missile.source, { weapon: w, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       } else if (!wasDead && tgt.hp > 0.05 && window.Game && window.Game.simulation && window.Game.simulation.scoring) {
         window.Game.simulation.scoring.recordHitEvent(missile.team, tgt, missile.source, { weapon: w, damage: dmg, isSalvo, salvoCount: concurrent, salvoBreakdown: salvoDetails });
       }
       if (window.Game && window.Game.radar) {
-        window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, true);
-        window.Game.radar.spawnCombatText(tgt.x, tgt.y, `-${dmg} HP`, '#ff3366');
+        window.Game.radar.spawnExplosionFX(tgt.x, tgt.y, dmg >= 5 || w.isCluster);
+        if (tgt.isGroundDecoy) {
+          window.Game.radar.spawnCombatText(tgt.x, tgt.y, 'DECOY HIT (WASTED)', '#fbbf24');
+        } else if (w.isAntiRunway && tgt.isAirbaseRunway) {
+          window.Game.radar.spawnCombatText(tgt.x, tgt.y, `RUNWAY CRATERED -${(dmg * 2).toFixed(1)} HP`, '#00f5a0');
+        } else {
+          window.Game.radar.spawnCombatText(tgt.x, tgt.y, `-${dmg.toFixed(1)} HP`, '#ff3366');
+        }
       }
       return;
     }
@@ -129,9 +193,7 @@ class MissileImpactSystem {
     }
 
     const impactModel = MissileKinetics.explainHitProbability(missile, tgt, weatherClouds, concurrent);
-    const hitChance = impactModel.probability;
-    const impactRoll = Math.random();
-    const hit = impactRoll <= hitChance;
+    const hit = Math.random() <= impactModel.probability;
 
     if (hit) {
       missile.isDead = true;

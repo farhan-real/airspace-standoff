@@ -58,6 +58,16 @@ class LeaderboardUI {
     if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
   }
 
+  static resolveDifficultyName(item) {
+    const diffKey = item.difficulty;
+    const aiEntry = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) ||
+                    (window.AI_DIFFICULTIES && Object.values(window.AI_DIFFICULTIES).find(d => d.name === diffKey));
+    const atkEntry = (window.ATTACK_DIFFICULTIES && window.ATTACK_DIFFICULTIES[diffKey]) ||
+                     (window.ATTACK_DIFFICULTIES && Object.values(window.ATTACK_DIFFICULTIES).find(d => d.name === diffKey));
+    const entry = aiEntry || atkEntry;
+    return item.difficultyName || (entry ? entry.name : (diffKey || 'Contested Airspace'));
+  }
+
   static render() {
     this.ensureModal();
     const tableContainer = document.getElementById('leaderboard-list-table');
@@ -85,10 +95,7 @@ class LeaderboardUI {
 
     const rowsHtml = list.map((item, idx) => {
       const rankClass = idx === 0 ? 'rank-gold' : (idx === 1 ? 'rank-silver' : (idx === 2 ? 'rank-bronze' : 'rank-standard'));
-      const diffKey = item.difficulty;
-      const diffEntry = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) ||
-                        (window.AI_DIFFICULTIES && Object.values(window.AI_DIFFICULTIES).find(d => d.name === diffKey));
-      const difficultyName = item.difficultyName || (diffEntry ? diffEntry.name : (diffKey || 'Contested Airspace'));
+      const difficultyName = LeaderboardUI.resolveDifficultyName(item);
 
       return `
         <tr class="leaderboard-row ${idx === 0 ? 'selected' : ''}" data-idx="${idx}">

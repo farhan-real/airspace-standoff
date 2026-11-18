@@ -1,6 +1,13 @@
 /* AIRSPACE STANDOFF: Radar Viewport Renderer Engine */
 
 class RadarRenderer {
+  static cleanText(str) {
+    if (!str) return '';
+    const s = String(str);
+    if (!s.includes('<') && !s.includes('\\') && !s.includes('{')) return s;
+    return s.replace(/<[^>]*>/g, '').replace(/[\{\}\\]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas ? this.canvas.getContext('2d', { alpha: false, desynchronized: true }) : null;
@@ -18,7 +25,6 @@ class RadarRenderer {
 
     this.inspectionDetectedSet = new Set();
     this.emptyDetectedSet = new Set();
-    this.boundCleanCanvasText = this.cleanCanvasText.bind(this);
 
     this.resize();
     window.addEventListener('resize', () => this.resize(), { passive: true });
@@ -49,10 +55,7 @@ class RadarRenderer {
   spawnCombatText(x, y, t, c) { this.fx.spawnCombatText(x, y, t, c); }
 
   cleanCanvasText(str) {
-    if (!str) return '';
-    const s = String(str);
-    if (!s.includes('<') && !s.includes('\\') && !s.includes('{')) return s;
-    return s.replace(/<[^>]*>/g, '').replace(/[\{\}\\]/g, '').replace(/\s+/g, ' ').trim();
+    return RadarRenderer.cleanText(str);
   }
 
   resize() {
@@ -150,19 +153,20 @@ class RadarRenderer {
 
   render(state) {
     if (!this.ctx || !this.canvas) return;
+    const parent = this.canvas.parentElement;
+    if (parent && parent.clientWidth > 0 && parent.clientHeight > 0 &&
+        (Math.abs(parent.clientWidth - this.cssWidth) > 2 || Math.abs(parent.clientHeight - this.cssHeight) > 2)) {
+      this.resize();
+    }
 
-    const ctx = this.ctx;
-    const w = this.cssWidth;
-    const h = this.cssHeight;
-
+    const ctx = this.ctx, w = this.cssWidth, h = this.cssHeight;
     this.cam.updateScales();
 
     const allied = (state && state.alliedAircraft) || (window.Game && window.Game.alliedAircraft) || [];
     const hostiles = (state && state.hostileAircraft) || (window.Game && window.Game.hostileAircraft) || [];
     const surface = (state && state.surfaceUnits) || (window.Game && window.Game.surfaceUnits) || [];
     const missiles = (state && state.missiles && state.missiles.length > 0)
-      ? state.missiles
-      : ((window.Game && window.Game.missiles) ? window.Game.missiles : ((state && state.missiles) || []));
+      ? state.missiles : ((window.Game && window.Game.missiles) || []);
     const sim = window.Game && window.Game.simulation;
     const civilians = (sim && sim.civilianTraffic) || [];
     const ghosts = (sim && sim.ghostContacts) || [];
@@ -207,39 +211,50 @@ class RadarRenderer {
     }
 
     if (typeof RadarSurfaceRenderer !== 'undefined') {
-      RadarSurfaceRenderer.drawSurface(ctx, this.cam, surface, commanderTeam, detectedSet, activeUnit, this.selectedTarget, w, this.declutterMode, this.boundCleanCanvasText);
-      RadarSurfaceRenderer.drawCivilianTraffic(ctx, this.cam, civilians, detectedSet, activeUnit, this.declutterMode, w, this.boundCleanCanvasText);
+      RadarSurfaceRenderer.drawSurface(ctx, this.cam, surface, commanderTeam, detectedSet, activeUnit, this.selectedTarget, w, this.declutterMode);
+      RadarSurfaceRenderer.drawCivilianTraffic(ctx, this.cam, civilians, detectedSet, activeUnit, this.declutterMode, w);
     }
 
     if (typeof RadarCombatRenderer !== 'undefined') {
       RadarCombatRenderer.drawRadarLocks(ctx, this.cam, allied, hostiles, activeUnit, commanderTeam, detectedSet);
       RadarCombatRenderer.drawSalvoCoordinations(ctx, this.cam, missiles, commanderTeam);
-      RadarCombatRenderer.drawMissiles(ctx, this.cam, missiles, commanderTeam, detectedSet, this.declutterMode, this.boundCleanCanvasText);
+      RadarCombatRenderer.drawMissiles(ctx, this.cam, missiles, commanderTeam, detectedSet, this.declutterMode);
     }
 
     if (typeof RadarContactsAuxRenderer !== 'undefined') {
-      RadarContactsAuxRenderer.drawGhostContacts(ctx, this.cam, ghosts, detectedSet, this.selectedTarget, activeUnit, this.zoom, this.boundCleanCanvasText);
-      RadarContactsAuxRenderer.drawDecoyDrones(ctx, this.cam, decoys, detectedSet, commanderTeam, activeUnit, this.boundCleanCanvasText);
+      RadarContactsAuxRenderer.drawGhostContacts(ctx, this.cam, ghosts, detectedSet, this.selectedTarget, activeUnit, this.zoom);
+      RadarContactsAuxRenderer.drawDecoyDrones(ctx, this.cam, decoys, detectedSet, commanderTeam, activeUnit);
     }
 
     if (typeof RadarContactsRenderer !== 'undefined') {
-      RadarContactsRenderer.drawAircraft(ctx, this.cam, hostiles, 'hostile', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode, this.boundCleanCanvasText);
-      RadarContactsRenderer.drawAircraft(ctx, this.cam, allied, 'friendly', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode, this.boundCleanCanvasText);
+      RadarContactsRenderer.drawAircraft(ctx, this.cam, hostiles, 'hostile', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode);
+      RadarContactsRenderer.drawAircraft(ctx, this.cam, allied, 'friendly', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode);
     }
 
-    let liveHostileCount = 0;
-    for (let i = 0; i < hostiles.length; i++) {
-      if (hostiles[i] && hostiles[i].hp > 0.05) liveHostileCount++;
-    }
-    const shouldShowUplink = (!is2P && commanderTeam === 'friendly' && liveHostileCount > 0 && liveHostileCount <= 3);
-
+    const isAttackMode = Boolean(window.Game && window.Game.scenarioMode === 'ATTACK');
     const uplinkBannerEl = document.getElementById('radar-uplink-banner');
+
     if (uplinkBannerEl) {
-      if (shouldShowUplink) {
-        uplinkBannerEl.textContent = `SATELLITE RADAR UPLINK: ${liveHostileCount} HOSTILE${liveHostileCount > 1 ? 'S' : ''} REMAINING (PINPOINTED)`;
+      if (isAttackMode && typeof AttackDirector !== 'undefined') {
+        const obj = AttackDirector.getObjectiveSummary(window.Game);
+        uplinkBannerEl.textContent = `PRIMARY STRIKE OBJECTIVES: ${obj.remaining} / ${obj.total} ACTIVE`;
+        uplinkBannerEl.style.borderColor = obj.remaining === 0 ? '#00f5a0' : '#ffd700';
+        uplinkBannerEl.style.color = obj.remaining === 0 ? '#00f5a0' : '#fef08a';
         uplinkBannerEl.classList.remove('hidden');
       } else {
-        uplinkBannerEl.classList.add('hidden');
+        let liveHostileCount = 0;
+        for (let i = 0; i < hostiles.length; i++) {
+          if (hostiles[i] && hostiles[i].hp > 0.05) liveHostileCount++;
+        }
+        const shouldShowUplink = (!is2P && commanderTeam === 'friendly' && liveHostileCount > 0 && liveHostileCount <= 3);
+        if (shouldShowUplink) {
+          uplinkBannerEl.textContent = `SATELLITE RADAR UPLINK: ${liveHostileCount} HOSTILE${liveHostileCount > 1 ? 'S' : ''} REMAINING (PINPOINTED)`;
+          uplinkBannerEl.style.borderColor = '';
+          uplinkBannerEl.style.color = '';
+          uplinkBannerEl.classList.remove('hidden');
+        } else {
+          uplinkBannerEl.classList.add('hidden');
+        }
       }
     }
 
@@ -249,19 +264,15 @@ class RadarRenderer {
     if (this.hoveredContact && typeof this.hoveredContact.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
       const isMsl = Boolean(this.hoveredContact.weapon && this.hoveredContact.target);
       const isGnd = Boolean(this.hoveredContact.type && !this.hoveredContact.spec && !this.hoveredContact.isCivilian);
-      if ((!isMsl || isInspection) && (!isGnd || showGround)) {
-        if (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0.05) {
-          RadarCombatRenderer.drawHoverReticle(ctx, this.cam, this.hoveredContact);
-        }
+      if ((!isMsl || isInspection) && (!isGnd || showGround) && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0.05)) {
+        RadarCombatRenderer.drawHoverReticle(ctx, this.cam, this.hoveredContact);
       }
     }
     if (this.selectedTarget && typeof this.selectedTarget.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
       const isMsl = Boolean(this.selectedTarget.weapon && this.selectedTarget.target);
       const isGnd = Boolean(this.selectedTarget.type && !this.selectedTarget.spec && !this.selectedTarget.isCivilian);
-      if ((!isMsl || isInspection) && (!isGnd || showGround)) {
-        if (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0.05) {
-          RadarCombatRenderer.drawTargetReticle(ctx, this.cam, this.selectedTarget);
-        }
+      if ((!isMsl || isInspection) && (!isGnd || showGround) && (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0.05)) {
+        RadarCombatRenderer.drawTargetReticle(ctx, this.cam, this.selectedTarget);
       }
     }
 

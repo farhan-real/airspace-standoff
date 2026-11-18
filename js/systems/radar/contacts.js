@@ -13,7 +13,7 @@ class RadarContactsRenderer {
     }
   }
 
-  static drawAircraft(ctx, cam, list, team, activeUnit, selectedTarget, commanderTeam, detectedSet, cssWidth, declutterMode, cleanFn) {
+  static drawAircraft(ctx, cam, list, team, activeUnit, selectedTarget, commanderTeam, detectedSet, cssWidth, declutterMode) {
     if (!list || list.length === 0) return;
     const isBlue = (team === 'friendly');
     const isEnemy = (team !== commanderTeam);
@@ -22,7 +22,7 @@ class RadarContactsRenderer {
     const mainCol = isBlue ? '#00f0ff' : '#ef4444';
 
     let isLastFew = false;
-    if (!is2P && isEnemy) {
+    if (!is2P && isEnemy && (!window.Game || window.Game.scenarioMode !== 'ATTACK')) {
       let liveCount = 0;
       for (let i = 0; i < list.length; i++) {
         if (list[i] && list[i].hp > 0.05) liveCount++;
@@ -53,7 +53,7 @@ class RadarContactsRenderer {
       const clampedY = Math.max(margin, Math.min(cssHeight - margin, py));
       if (px !== clampedX || py !== clampedY) {
         if (typeof RadarContactsAuxRenderer !== 'undefined') {
-          const safeModel = cleanFn ? cleanFn(a.spec ? a.spec.id : 'JET') : (a.spec ? a.spec.id : 'JET');
+          const safeModel = RadarRenderer.cleanText(a.spec ? a.spec.id : 'JET');
           RadarContactsAuxRenderer.drawOffscreenIndicator(ctx, { x: px, y: py }, clampedX, clampedY, cssWidth, cssHeight, isIdentified, isAce, isBlue, safeModel, relDistKm);
         }
         continue;
@@ -150,32 +150,30 @@ class RadarContactsRenderer {
       const leadTag = (isAce && isIdentified) ? ' [ACE]' : ((a.isFlightLead && isIdentified) ? ' LEAD' : '');
       const pinpointTag = (isLastFew && isIdentified) ? ' PINPOINTED' : '';
       const rangeTag = (relDistKm !== null) ? (' R:' + relDistKm + 'km') : '';
-      const safeModel = cleanFn ? cleanFn(a.spec ? a.spec.id : 'JET') : (a.spec ? a.spec.id : 'JET');
-      const safeCallsign = cleanFn ? cleanFn(a.callsign || 'PILOT') : (a.callsign || 'PILOT');
+      const safeModel = RadarRenderer.cleanText(a.spec ? a.spec.id : 'JET');
+      const safeCallsign = RadarRenderer.cleanText(a.callsign || 'PILOT');
 
       if (declutterMode && !isSelected && !isTgt) {
         ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = !isIdentified ? '#f97316' : ((isAce && isIdentified) ? '#ffd700' : (isBlue ? '#38bdf8' : '#ef4444'));
-        ctx.fillText(cleanFn(!isIdentified ? 'BOGEY' + rangeTag : safeModel + leadTag + pinpointTag), labelX, labelY);
+        ctx.fillText(RadarRenderer.cleanText(!isIdentified ? 'BOGEY' + rangeTag : safeModel + leadTag + pinpointTag), labelX, labelY);
+      } else if (!isIdentified) {
+        ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
+        ctx.fillStyle = isSelected ? '#ffffff' : '#f97316';
+        ctx.fillText(RadarRenderer.cleanText('BOGEY' + rangeTag), labelX, labelY);
+        ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(RadarRenderer.cleanText(mch + ' ' + fl), labelX, labelY + 11);
       } else {
-        if (!isIdentified) {
-          ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
-          ctx.fillStyle = isSelected ? '#ffffff' : '#f97316';
-          ctx.fillText(cleanFn('BOGEY' + rangeTag), labelX, labelY);
-          ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
-          ctx.fillStyle = '#94a3b8';
-          ctx.fillText(cleanFn(mch + ' ' + fl), labelX, labelY + 11);
-        } else {
-          const displayHp = a.hp > 0.05 ? Math.max(1, Math.round(a.hp)) : 0;
-          ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
-          ctx.fillStyle = isAce ? '#ffd700' : (isSelected ? '#ffffff' : (isBlue ? '#00f0ff' : '#ef4444'));
-          ctx.fillText(cleanFn(safeModel + leadTag + rtbTag + rangeTag + pinpointTag), labelX, labelY);
-          ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
-          ctx.fillStyle = isAce ? '#fef08a' : '#94a3b8';
-          ctx.fillText(cleanFn(safeCallsign + ' ' + cat), labelX, labelY + 11);
-          ctx.fillStyle = displayHp <= 1 ? '#ef4444' : (isBlue ? '#00f5a0' : '#f87171');
-          ctx.fillText(cleanFn(mch + ' ' + fl + ' ' + displayHp + '/' + a.maxHp + ' HP'), labelX, labelY + 22);
-        }
+        const displayHp = a.hp > 0.05 ? Math.max(1, Math.round(a.hp)) : 0;
+        ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
+        ctx.fillStyle = isAce ? '#ffd700' : (isSelected ? '#ffffff' : (isBlue ? '#00f0ff' : '#ef4444'));
+        ctx.fillText(RadarRenderer.cleanText(safeModel + leadTag + rtbTag + rangeTag + pinpointTag), labelX, labelY);
+        ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
+        ctx.fillStyle = isAce ? '#fef08a' : '#94a3b8';
+        ctx.fillText(RadarRenderer.cleanText(safeCallsign + ' ' + cat), labelX, labelY + 11);
+        ctx.fillStyle = displayHp <= 1 ? '#ef4444' : (isBlue ? '#00f5a0' : '#f87171');
+        ctx.fillText(RadarRenderer.cleanText(mch + ' ' + fl + ' ' + displayHp + '/' + a.maxHp + ' HP'), labelX, labelY + 22);
       }
 
       if (isSelected) {

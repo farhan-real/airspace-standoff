@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Guided Missile Entity & Engagement Resolution
- * Enforces ProNav guidance, impact-time hit resolution, and contextual maneuver deflection reasons.
+ * js/systems/entities/missile.js - Guided missile entity, range scaling, and engagement resolution.
  */
 
 class MissileEntity {
@@ -11,6 +10,11 @@ class MissileEntity {
     if (typeof weapon.rangeKm !== 'number' || isNaN(weapon.rangeKm)) {
       throw new Error(`Weapon "${weapon.id || 'UNKNOWN'}" has invalid rangeKm.`);
     }
+    if (typeof sourceUnit.x !== 'number' || isNaN(sourceUnit.x) || typeof sourceUnit.y !== 'number' || isNaN(sourceUnit.y)) {
+      throw new Error(`SourceUnit "${sourceUnit.id}" has invalid coordinates.`);
+    }
+    if (typeof MissileKinetics === 'undefined') throw new Error('MissileKinetics is not loaded.');
+    if (typeof MissileImpactSystem === 'undefined') throw new Error('MissileImpactSystem is not loaded.');
 
     this.id = 'MSL_' + Math.random().toString(36).substr(2, 6);
     this.weapon = weapon;
@@ -18,9 +22,6 @@ class MissileEntity {
     this.target = targetUnit;
     this.team = sourceUnit.team;
 
-    if (typeof sourceUnit.x !== 'number' || isNaN(sourceUnit.x) || typeof sourceUnit.y !== 'number' || isNaN(sourceUnit.y)) {
-      throw new Error(`SourceUnit "${sourceUnit.id}" has invalid coordinates.`);
-    }
     this.x = sourceUnit.x;
     this.y = sourceUnit.y;
     this.alt = sourceUnit.alt;
@@ -30,6 +31,23 @@ class MissileEntity {
     this.minDistanceReached = this.distanceToTarget;
     this.hasStartedClosing = false;
     this.cumulativeTurn = 0.0;
+
+    const isAcSource = (typeof Aircraft !== 'undefined' && sourceUnit instanceof Aircraft);
+    const rangeScale = isAcSource
+      ? (weapon.isAntiRadiation ? sourceUnit.armRangeMult : ((weapon.seeker === 'UNGUIDED' || weapon.isRocketPod) ? sourceUnit.bombRangeBonus : 1.0))
+      : 1.0;
+    this.maxRangeKm = weapon.rangeKm * rangeScale;
+
+    const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
+    this.launchDistKm = this.distanceToTarget;
+    this.launchTgpBonus = isAcSource ? ((sourceUnit.targetingPodBonus || 0) + (sourceUnit.hasIRST && !sourceUnit.targetingPodBonus ? 0.08 : 0.0)) : 0.0;
+    this.launchCcipBonus = (isAcSource && (weapon.seeker === 'UNGUIDED' || weapon.isCluster || weapon.isRocketPod)) ? sourceUnit.ccipBonus : 0.0;
+    this.launchArmPkBonus = (isAcSource && weapon.isAntiRadiation) ? sourceUnit.armPkBonus : 0.0;
+    this.launchMitlBonus = (isAcSource && (weapon.seeker === 'GPS_INS' || weapon.seeker === 'IIR' || weapon.seeker === 'INS')) ? sourceUnit.mitlBonus : 0.0;
+    this.launchCloudMitigation = isAcSource ? sourceUnit.cloudMitigation : 0.0;
+    this.launchEccmBonus = isAcSource ? sourceUnit.eccmBonus : 0.0;
+    this.launchAltFt = typeof sourceUnit.altFt === 'number' ? sourceUnit.altFt : 25000;
+    this.launchCloudHits = Physics.countIntersectingClouds(sourceUnit.x, sourceUnit.y, targetUnit.x, targetUnit.y, clouds);
 
     this.rcs = weapon.rcs !== undefined ? weapon.rcs : 0.04;
     this.isStealthMissile = weapon.isStealthMissile || (this.rcs <= 0.005);
@@ -78,19 +96,16 @@ class MissileEntity {
     while (this.heading < 0) this.heading += Math.PI * 2;
     while (this.heading >= Math.PI * 2) this.heading -= Math.PI * 2;
 
-    if (typeof MissileKinetics !== 'undefined') {
-      MissileKinetics.initMissile(this);
-    }
+    MissileKinetics.initMissile(this);
 
     const inspection = window.Game && window.Game.inspection;
     if (inspection && inspection.enabled) {
-      const clouds = window.Game.simulation ? window.Game.simulation.weatherClouds : [];
       const launchSolution = Physics.calcPk(weapon, sourceUnit, targetUnit, clouds);
-      inspection.recordEvent('WEAPON LAUNCH', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(sourceUnit) : (sourceUnit.callsign || sourceUnit.name || sourceUnit.id)} fired ${weapon.name || weapon.id}`, sourceUnit, targetUnit, {
+      inspection.recordEvent('WEAPON LAUNCH', `${window.formatCombatantDisplayName(sourceUnit)} fired ${weapon.name || weapon.id}`, sourceUnit, targetUnit, {
         weapon: weapon.name || weapon.id,
         seeker: weapon.seeker || 'UNGUIDED',
         launchRangeKm: this.distanceToTarget,
-        weaponMaxRangeKm: weapon.rangeKm,
+        weaponMaxRangeKm: this.maxRangeKm,
         estimatedLaunchPk: launchSolution.pk,
         launchAssessment: launchSolution.label,
         assessmentReason: launchSolution.desc
@@ -99,11 +114,13 @@ class MissileEntity {
   }
 
   isIdentifiedBy(team) {
+    if (team !== 'friendly' && team !== 'hostile') throw new Error(`Invalid team "${team}" in MissileEntity.isIdentifiedBy.`);
     return (team === 'friendly') ? Boolean(this.identifiedByBlue) : Boolean(this.identifiedByRed);
   }
 
   get isIdentified() {
-    return this.isIdentifiedBy((window.Game && window.Game.currentPvpCommander) || 'friendly');
+    const commander = window.Game ? window.Game.currentPvpCommander : 'friendly';
+    return this.isIdentifiedBy(commander);
   }
 
   set isIdentified(val) {
@@ -169,7 +186,7 @@ class MissileEntity {
     this.distanceToTarget = Math.hypot(this.target.x - this.x, this.target.y - this.y);
     this.minDistanceReached = Math.min(this.minDistanceReached, this.distanceToTarget);
 
-    if (this.distanceTraveled >= this.weapon.rangeKm) {
+    if (this.distanceTraveled >= this.maxRangeKm) {
       this.triggerLostTrack('KINETIC EXHAUSTION');
       return;
     }
@@ -198,15 +215,11 @@ class MissileEntity {
   }
 
   triggerLostTrack(reason) {
-    if (typeof MissileImpactSystem !== 'undefined') {
-      MissileImpactSystem.triggerLostTrack(this, reason);
-    }
+    MissileImpactSystem.triggerLostTrack(this, reason);
   }
 
   resolveTerminalEngagement(weatherClouds) {
-    if (typeof MissileImpactSystem !== 'undefined') {
-      MissileImpactSystem.resolveTerminalEngagement(this, weatherClouds);
-    }
+    MissileImpactSystem.resolveTerminalEngagement(this, weatherClouds);
   }
 }
 

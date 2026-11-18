@@ -4,9 +4,13 @@
 
 class AutocannonFireExecutor {
   static fireAutocannonManual(unit, target, game) {
-    if (!unit || unit.hp <= 0.05 || unit.gunAmmo <= 0 || unit.gunCooldown > 0) return;
+    if (!unit || unit.hp <= 0.05 || unit.gunAmmo <= 0 || unit.gunCooldown > 0 || unit.groundPhase) return;
+    if (!game || !game.combat) throw new Error('AutocannonFireExecutor requires valid game and combat system.');
     const gun = unit.gun;
     if (!gun) throw new Error(`Unit "${unit.id}" has no equipped autocannon.`);
+    if (typeof gun.burstCooldown !== 'number' || typeof gun.roundsPerBurst !== 'number' || typeof gun.rangeKm !== 'number' || typeof gun.coneAngleDeg !== 'number') {
+      throw new Error(`Autocannon "${gun.id}" is missing required ballistic fields.`);
+    }
 
     const cd = gun.burstCooldown;
     unit.gunCooldown = cd;
@@ -25,29 +29,21 @@ class AutocannonFireExecutor {
     const isDEW = Boolean(gun.damagePerPulse || (gun.caliber && gun.caliber.includes('DEW')) || gun.id.startsWith('PLSL') || gun.id === 'DE-PULSE' || gun.id === 'EML_GUN');
     if (gun.thermalBloom && gun.thermalBloom > 1.0) {
       unit.thermalBloomTimer = 3.5;
-      if (game && game.radar) game.radar.spawnCombatText(unit.x, unit.y, 'THERMAL BLOOM (STEALTH COMPROMISED)', '#f97316');
+      if (game.radar) game.radar.spawnCombatText(unit.x, unit.y, 'THERMAL BLOOM (STEALTH COMPROMISED)', '#f97316');
     }
 
     const validTarget = (target && target.hp > 0.05 && typeof target.x === 'number' && typeof target.y === 'number' && !isNaN(target.x) && !isNaN(target.y) && !target.isDissolved) ? target : null;
 
-    if (validTarget && validTarget.isCivilian && unit.team === 'friendly' && game && game.simulation) {
+    if (validTarget && validTarget.isCivilian && unit.team === 'friendly' && game.simulation) {
       const penalty = window.CONFIG.VP_CIVILIAN_FIRE_PENALTY;
       game.simulation.logScoreEvent('friendly', -penalty, `ROE VIOLATION: Fired autocannon at civilian aircraft (${validTarget.flightCode || validTarget.name})`);
-      if (game.simulation.scoring) {
-        game.simulation.scoring.recordCivilianFirePenalty('friendly', unit, validTarget, gun, penalty);
-      }
-      if (game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, `ROE VIOLATION: CIVILIAN TARGET (-${penalty} VP)`, '#f43f5e');
-      }
-    } else if (validTarget && !validTarget.isIdentified && unit.team === 'friendly' && game && game.simulation) {
+      if (game.simulation.scoring) game.simulation.scoring.recordCivilianFirePenalty('friendly', unit, validTarget, gun, penalty);
+      if (game.radar) game.radar.spawnCombatText(unit.x, unit.y, `ROE VIOLATION: CIVILIAN TARGET (-${penalty} VP)`, '#f43f5e');
+    } else if (validTarget && !validTarget.isIdentified && unit.team === 'friendly' && game.simulation) {
       const penalty = window.CONFIG.VP_UNIDENTIFIED_FIRE_PENALTY;
       game.simulation.logScoreEvent('friendly', -penalty, 'ROE INFRACTION: Fired autocannon on unverified track [BOGEY ?]');
-      if (game.simulation.scoring) {
-        game.simulation.scoring.recordBogeyFirePenalty('friendly', unit, validTarget, gun, penalty);
-      }
-      if (game.radar) {
-        game.radar.spawnCombatText(unit.x, unit.y, `ROE INFRACTION: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
-      }
+      if (game.simulation.scoring) game.simulation.scoring.recordBogeyFirePenalty('friendly', unit, validTarget, gun, penalty);
+      if (game.radar) game.radar.spawnCombatText(unit.x, unit.y, `ROE INFRACTION: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
     }
 
     if (typeof AudioSys !== 'undefined') {
@@ -57,9 +53,10 @@ class AutocannonFireExecutor {
 
     let totalBurstDamage = 0;
     let roundsLanded = 0;
+    const schedule = (delay, fn) => game.combat.scheduleWeaponPulse(delay, fn);
 
     for (let r = 0; r < numRounds; r++) {
-      setTimeout(() => {
+      schedule(r * 50, () => {
         if (!unit || unit.hp <= 0.05) return;
         const targetCheck = (target && target.hp > 0.05 && typeof target.x === 'number' && typeof target.y === 'number' && !isNaN(target.x) && !isNaN(target.y) && !target.isDissolved) ? target : null;
         const heading = unit.heading;
@@ -73,13 +70,14 @@ class AutocannonFireExecutor {
 
           if (angleDiff <= maxConeRad) {
             const wasAlive = targetCheck.hp > 0.05;
-            let roundDmg = gun.damagePerRound || (gun.damagePerBurst / numRounds);
+            const isSurf = (typeof SurfaceUnit !== 'undefined' && targetCheck instanceof SurfaceUnit);
+            let roundDmg = gun.damagePerRound;
             mountedPods.forEach(p => {
-              const podDmg = p.weapon.damagePerRound || (p.weapon.damagePerBurst / numRounds);
+              const podDmg = p.weapon.damagePerRound * (isSurf && p.weapon.groundDamageMult ? p.weapon.groundDamageMult : 1.0);
               roundDmg += podDmg;
             });
 
-            const clouds = (game && game.simulation && game.simulation.weatherClouds) || [];
+            const clouds = (game.simulation && game.simulation.weatherClouds) || [];
             const cloudHits = Physics.countIntersectingClouds(unit.x, unit.y, targetCheck.x, targetCheck.y, clouds);
             if (cloudHits > 0 && gun.cloudScattering && gun.cloudScattering > 0) {
               roundDmg *= Math.max(0.10, Math.pow(1.0 - gun.cloudScattering, cloudHits));
@@ -88,12 +86,13 @@ class AutocannonFireExecutor {
             if (targetCheck.spec && targetCheck.spec.category === 'STRIKE') roundDmg *= 0.60;
             if (targetCheck.isFlightLead && targetCheck.autocannonResistance) roundDmg *= (1.0 - targetCheck.autocannonResistance);
 
-            if (targetCheck.isGhost) {
+            if (targetCheck.isGhost || targetCheck.isDecoyDrone) {
               targetCheck.takeDamage(roundDmg);
-            } else if (targetCheck.isDecoyDrone) {
-              targetCheck.takeDamage(roundDmg);
-            } else if (typeof SurfaceUnit !== 'undefined' && targetCheck instanceof SurfaceUnit) {
-              targetCheck.takeDamage(roundDmg, true);
+            } else if (isSurf) {
+              const ap = (gun.id === 'GAU-8' || gun.id === 'EML_GUN') ? 0.85 : ((gun.id === 'GSH-30-1' || gun.id === 'BK-27') ? 0.50 : 0.25);
+              const podBunkerCracker = mountedPods.some(p => p.weapon && p.weapon.isBunkerCracker);
+              const podAp = mountedPods.reduce((m, p) => Math.max(m, (p.weapon && p.weapon.armorPiercing) || 0), ap);
+              targetCheck.takeDamage(roundDmg, podBunkerCracker, { armorPiercing: podAp });
             } else if (targetCheck.isCivilian && typeof targetCheck.takeDamage === 'function') {
               targetCheck.takeDamage(roundDmg, unit, gun, r === numRounds - 1);
             } else {
@@ -111,14 +110,14 @@ class AutocannonFireExecutor {
 
             const jitterX = (Math.random() - 0.5) * 0.35;
             const jitterY = (Math.random() - 0.5) * 0.35;
-            if (game && game.radar) {
+            if (game.radar) {
               game.radar.spawnGunTracer(unit.x, unit.y, targetCheck.x + jitterX, targetCheck.y + jitterY, gun.tracerColor);
               mountedPods.forEach(p => {
                 game.radar.spawnGunTracer(unit.x, unit.y, targetCheck.x + jitterX, targetCheck.y + jitterY, p.weapon.tracerColor);
               });
             }
 
-            if (wasAlive && targetCheck.hp <= 0.05 && game && game.simulation && !targetCheck.isCivilian) {
+            if (wasAlive && targetCheck.hp <= 0.05 && game.simulation && !targetCheck.isCivilian) {
               targetCheck.hp = 0;
               game.simulation.recordKillEvent(unit.team, targetCheck, unit, {
                 weapon: gun,
@@ -126,21 +125,17 @@ class AutocannonFireExecutor {
                 salvoCount: mountedPods.length + 1
               });
             }
-          } else {
-            if (game && game.radar) {
-              game.radar.spawnGunTracer(unit.x, unit.y, unit.x + Math.cos(tracerAngle) * gun.rangeKm, unit.y + Math.sin(tracerAngle) * gun.rangeKm, gun.tracerColor);
-            }
-          }
-        } else {
-          if (game && game.radar) {
+          } else if (game.radar) {
             game.radar.spawnGunTracer(unit.x, unit.y, unit.x + Math.cos(tracerAngle) * gun.rangeKm, unit.y + Math.sin(tracerAngle) * gun.rangeKm, gun.tracerColor);
-            mountedPods.forEach(p => {
-              game.radar.spawnGunTracer(unit.x, unit.y, unit.x + Math.cos(tracerAngle) * p.weapon.rangeKm, unit.y + Math.sin(tracerAngle) * p.weapon.rangeKm, p.weapon.tracerColor);
-            });
           }
+        } else if (game.radar) {
+          game.radar.spawnGunTracer(unit.x, unit.y, unit.x + Math.cos(tracerAngle) * gun.rangeKm, unit.y + Math.sin(tracerAngle) * gun.rangeKm, gun.tracerColor);
+          mountedPods.forEach(p => {
+            game.radar.spawnGunTracer(unit.x, unit.y, unit.x + Math.cos(tracerAngle) * p.weapon.rangeKm, unit.y + Math.sin(tracerAngle) * p.weapon.rangeKm, p.weapon.tracerColor);
+          });
         }
 
-        if (r === numRounds - 1 && game) {
+        if (r === numRounds - 1) {
           const podNote = mountedPods.length > 0 ? `+${mountedPods.length} PODS ` : '';
           if (roundsLanded > 0 && targetCheck) {
             if (game.radar) {
@@ -158,7 +153,7 @@ class AutocannonFireExecutor {
             game.radar.spawnCombatText(unit.x, unit.y, `${isDEW ? 'LASER PULSE' : 'STRAFE BURST'} (${numRounds} RDS)`, '#00f0ff');
           }
         }
-      }, r * 50);
+      });
     }
   }
 }

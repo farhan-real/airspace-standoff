@@ -17,12 +17,8 @@ class ControlsSystem {
     this.initTimeWarpControls();
     this.initExitButtons();
     this.initLeaderboardModal();
-    if (window.MissionEditor && typeof window.MissionEditor.init === 'function') {
-      window.MissionEditor.init(this.game);
-    }
-    if (this.fullscreen && this.fullscreen.init) {
-      this.fullscreen.init();
-    }
+    if (window.MissionEditor && typeof window.MissionEditor.init === 'function') window.MissionEditor.init(this.game);
+    if (this.fullscreen && this.fullscreen.init) this.fullscreen.init();
   }
 
   initExitButtons() {
@@ -31,9 +27,7 @@ class ControlsSystem {
   }
 
   initLeaderboardModal() {
-    if (window.LeaderboardUI && typeof window.LeaderboardUI.init === 'function') {
-      window.LeaderboardUI.init();
-    }
+    if (window.LeaderboardUI && typeof window.LeaderboardUI.init === 'function') window.LeaderboardUI.init();
   }
 
   exitGame() {
@@ -46,7 +40,6 @@ class ControlsSystem {
         }
       } catch (e) {}
       try { window.close(); } catch (e) {}
-
       document.body.innerHTML = `
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#03070d;color:#00f0ff;font-family:ui-monospace,monospace;text-align:center;padding:20px;">
           <h1 style="letter-spacing:1px;margin-bottom:12px;">SIMULATION ENDED</h1>
@@ -66,7 +59,6 @@ class ControlsSystem {
     const btn1x = document.getElementById('btn-time-1x');
     const btn2x = document.getElementById('btn-time-2x');
     const btn4x = document.getElementById('btn-time-4x');
-
     if (btnPause) btnPause.onclick = () => this.togglePause();
     if (btn1x) btn1x.onclick = () => this.setTimeWarp(1);
     if (btn2x) btn2x.onclick = () => this.setTimeWarp(2);
@@ -109,38 +101,13 @@ class ControlsSystem {
     const btnManual = document.getElementById('btn-pause-manual');
     const btnAbort = document.getElementById('btn-pause-abort');
 
-    if (btnResume) {
-      btnResume.onclick = () => {
-        pauseModal.classList.remove('active');
-        this.setTimeWarp(1);
-      };
-    }
-    if (btnSettings) {
-      btnSettings.onclick = () => {
-        if (this.game.settings && typeof this.game.settings.open === 'function') {
-          this.game.settings.open();
-        }
-      };
-    }
-    if (btnManual) {
-      btnManual.onclick = () => {
-        if (typeof window.openFlightManual === 'function') {
-          window.openFlightManual();
-        }
-      };
-    }
-    if (btnAbort) {
-      btnAbort.onclick = () => {
-        pauseModal.classList.remove('active');
-        this.game.abortSortie();
-      };
-    }
+    if (btnResume) btnResume.onclick = () => { pauseModal.classList.remove('active'); this.setTimeWarp(1); };
+    if (btnSettings) btnSettings.onclick = () => { if (this.game.settings && typeof this.game.settings.open === 'function') this.game.settings.open(); };
+    if (btnManual) btnManual.onclick = () => { if (typeof window.openFlightManual === 'function') window.openFlightManual(); };
+    if (btnAbort) btnAbort.onclick = () => { pauseModal.classList.remove('active'); this.game.abortSortie(); };
 
     pauseModal.onclick = (e) => {
-      if (e.target === pauseModal) {
-        pauseModal.classList.remove('active');
-        this.setTimeWarp(1);
-      }
+      if (e.target === pauseModal) { pauseModal.classList.remove('active'); this.setTimeWarp(1); }
     };
   }
 
@@ -171,9 +138,7 @@ class ControlsSystem {
         this.game.avionics.renderFlightRoster();
       }
     };
-    const closeDrawer = () => {
-      if (fleetPane) fleetPane.classList.remove('drawer-open');
-    };
+    const closeDrawer = () => { if (fleetPane) fleetPane.classList.remove('drawer-open'); };
 
     if (openFleetBtn) openFleetBtn.onclick = toggleDrawer;
     if (closeFleetBtn) closeFleetBtn.onclick = closeDrawer;
@@ -215,24 +180,18 @@ class ControlsSystem {
         this.game.activeUnit.engineAlpha = parseInt(e.target.value, 10) / 100.0;
         this.game.avionics.updateActiveUnitMFD();
       };
-
       const removeFocus = () => { try { slider.blur(); } catch (err) {} };
       slider.addEventListener('change', removeFocus);
       slider.addEventListener('pointerup', removeFocus);
       slider.addEventListener('mouseup', removeFocus);
       slider.addEventListener('touchend', removeFocus);
       slider.addEventListener('keydown', (e) => {
-        if (e.key && e.key.startsWith('Arrow')) {
-          e.preventDefault();
-          e.stopPropagation();
-          removeFocus();
-        }
+        if (e.key && e.key.startsWith('Arrow')) { e.preventDefault(); e.stopPropagation(); removeFocus(); }
       });
     }
 
     const diveBtn = document.getElementById('btn-pitch-dive');
     if (diveBtn) diveBtn.onclick = () => this.executeDive();
-
     const climbBtn = document.getElementById('btn-pitch-climb');
     if (climbBtn) climbBtn.onclick = () => this.executeZoomClimb();
 
@@ -245,20 +204,8 @@ class ControlsSystem {
         const abortModal = document.getElementById('abort-confirm-modal');
         const confirmAbort = document.getElementById('btn-confirm-abort');
         const cancelAbort = document.getElementById('btn-cancel-abort');
-
-        if (cancelAbort) {
-          cancelAbort.onclick = () => {
-            if (abortModal) abortModal.classList.remove('active');
-            this.autoUnpauseOnDialogClose();
-          };
-        }
-        if (confirmAbort) {
-          confirmAbort.onclick = () => {
-            if (abortModal) abortModal.classList.remove('active');
-            this.game.abortSortie();
-          };
-        }
-
+        if (cancelAbort) cancelAbort.onclick = () => { if (abortModal) abortModal.classList.remove('active'); this.autoUnpauseOnDialogClose(); };
+        if (confirmAbort) confirmAbort.onclick = () => { if (abortModal) abortModal.classList.remove('active'); this.game.abortSortie(); };
         this.autoPauseOnDialogOpen();
         if (abortModal) abortModal.classList.add('active');
       };
@@ -270,7 +217,9 @@ class ControlsSystem {
     if (!u || u.hp <= 0.05) return;
     if (this.game.consumeCurrentCommanderTokens(0.4)) {
       u.dive();
-      if (this.game.inspection && this.game.inspection.enabled) this.game.inspection.recordEvent('FLIGHT ACTION', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : u.callsign} executed a dive`, u, null, { altitudeFt: u.altFt, targetAltitudeFt: u.targetAltFt, speedMach: u.speed, energy: u.energy, stress: u.stress });
+      if (this.game.inspection && this.game.inspection.enabled) {
+        this.game.inspection.recordEvent('FLIGHT ACTION', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : u.callsign} executed a dive`, u, null, { altitudeFt: u.altFt, targetAltitudeFt: u.targetAltFt, speedMach: u.speed, energy: u.energy, stress: u.stress });
+      }
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'DIVE', '#00f0ff');
       this.game.avionics.updateActiveUnitMFD();
@@ -286,7 +235,9 @@ class ControlsSystem {
     }
     if (this.game.consumeCurrentCommanderTokens(0.4)) {
       u.zoomClimb();
-      if (this.game.inspection && this.game.inspection.enabled) this.game.inspection.recordEvent('FLIGHT ACTION', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : u.callsign} executed a zoom climb`, u, null, { altitudeFt: u.altFt, targetAltitudeFt: u.targetAltFt, speedMach: u.speed, energy: u.energy, stress: u.stress });
+      if (this.game.inspection && this.game.inspection.enabled) {
+        this.game.inspection.recordEvent('FLIGHT ACTION', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : u.callsign} executed a zoom climb`, u, null, { altitudeFt: u.altFt, targetAltitudeFt: u.targetAltFt, speedMach: u.speed, energy: u.energy, stress: u.stress });
+      }
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'CLIMB', '#00f5a0');
       this.game.avionics.updateActiveUnitMFD();
@@ -330,8 +281,7 @@ class ControlsSystem {
 
   firePylonByIndex(pIdx) {
     const u = this.game.activeUnit;
-    if (!u || u.hp <= 0.05) return;
-    if (!u.equippedWeapons || !u.equippedWeapons[pIdx]) return;
+    if (!u || u.hp <= 0.05 || !u.equippedWeapons || !u.equippedWeapons[pIdx]) return;
     const item = u.equippedWeapons[pIdx];
     const w = item.weapon;
     if (!w) return;
@@ -339,23 +289,16 @@ class ControlsSystem {
     if (!w.isDecoy && !w.isDecoyDrone && !w.isGunpod && w.category !== 'GUN') {
       let tgt = this.game.selectedTarget;
       if (!tgt || tgt.hp <= 0.05) {
-        if (this.targeting) {
-          this.targeting.autoLock();
-          tgt = this.game.selectedTarget;
-        }
+        if (this.targeting) { this.targeting.autoLock(); tgt = this.game.selectedTarget; }
       }
       if (!tgt || tgt.hp <= 0.05) {
-        if (this.game.radar) {
-          this.game.radar.spawnCombatText(u.x, u.y, 'NO TARGET SELECTED [PRESS T OR TAP RADAR]', '#f97316');
-        }
+        if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'NO TARGET SELECTED [PRESS T OR TAP RADAR]', '#f97316');
         if (typeof AudioSys !== 'undefined') AudioSys.playClick();
         return;
       }
       const dist = Math.hypot(tgt.x - u.x, tgt.y - u.y);
       if (dist > (w.rangeKm || 50)) {
-        if (this.game.radar) {
-          this.game.radar.spawnCombatText(u.x, u.y, `OUT OF RANGE (${dist.toFixed(0)}km > ${w.rangeKm}km)`, '#f43f5e');
-        }
+        if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, `OUT OF RANGE (${dist.toFixed(0)}km > ${w.rangeKm}km)`, '#f43f5e');
         if (typeof AudioSys !== 'undefined') AudioSys.playClick();
         return;
       }
@@ -364,56 +307,11 @@ class ControlsSystem {
   }
 
   initModeSelectors() {
-    const btn1p = document.getElementById('mode-btn-1p');
-    const btn2p = document.getElementById('mode-btn-2p');
-    const btnSkirmish = document.getElementById('scenario-btn-skirmish');
-    const btnDynamic = document.getElementById('scenario-btn-dynamic');
     const aiPanel = document.getElementById('ai-config-panel');
     const pvpSwitcher = document.getElementById('pvp-switcher-bar');
-
-    if (btn1p && btn2p) {
-      const is1p = (this.game.playerMode === '1P');
-      btn1p.classList.toggle('active', is1p);
-      btn2p.classList.toggle('active', !is1p);
-      if (aiPanel) aiPanel.style.display = is1p ? 'flex' : 'none';
-      if (pvpSwitcher) pvpSwitcher.classList.toggle('hidden', is1p);
-
-      btn1p.onclick = () => {
-        this.game.playerMode = '1P';
-        btn1p.classList.add('active'); btn2p.classList.remove('active');
-        if (aiPanel) aiPanel.style.display = 'flex';
-        if (pvpSwitcher) pvpSwitcher.classList.add('hidden');
-        this.game.updateModeIndicator();
-        this.game.saveGameplaySettings();
-      };
-      btn2p.onclick = () => {
-        this.game.playerMode = '2P';
-        btn2p.classList.add('active'); btn1p.classList.remove('active');
-        if (aiPanel) aiPanel.style.display = 'none';
-        if (pvpSwitcher) pvpSwitcher.classList.remove('hidden');
-        this.game.updateModeIndicator();
-        this.game.saveGameplaySettings();
-      };
-    }
-
-    if (btnSkirmish && btnDynamic) {
-      const isSkirmish = (this.game.scenarioMode === 'SKIRMISH');
-      btnSkirmish.classList.toggle('active', isSkirmish);
-      btnDynamic.classList.toggle('active', !isSkirmish);
-
-      btnSkirmish.onclick = () => {
-        this.game.scenarioMode = 'SKIRMISH';
-        btnSkirmish.classList.add('active'); btnDynamic.classList.remove('active');
-        this.game.updateModeIndicator();
-        this.game.saveGameplaySettings();
-      };
-      btnDynamic.onclick = () => {
-        this.game.scenarioMode = 'DYNAMIC_THEATER';
-        btnDynamic.classList.add('active'); btnSkirmish.classList.remove('active');
-        this.game.updateModeIndicator();
-        this.game.saveGameplaySettings();
-      };
-    }
+    const is1p = (this.game.playerMode === '1P');
+    if (aiPanel) aiPanel.style.display = is1p ? 'flex' : 'none';
+    if (pvpSwitcher) pvpSwitcher.classList.toggle('hidden', is1p);
 
     const btnBlue = document.getElementById('btn-switch-blue');
     const btnRed = document.getElementById('btn-switch-red');

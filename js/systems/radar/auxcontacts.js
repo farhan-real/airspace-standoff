@@ -17,7 +17,7 @@ class RadarContactsAuxRenderer {
     ctx.restore();
   }
 
-  static drawGhostContacts(ctx, cam, ghosts, detectedSet, selectedTarget, activeUnit, zoom, cleanFn) {
+  static drawGhostContacts(ctx, cam, ghosts, detectedSet, selectedTarget, activeUnit, zoom) {
     if (!ghosts || ghosts.length === 0) return;
     ctx.save();
     for (const ghost of ghosts) {
@@ -69,24 +69,24 @@ class RadarContactsAuxRenderer {
       if (!ghost.isDissolving) {
         ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = isSelectedTarget ? '#ffffff' : '#f97316';
-        ctx.fillText(cleanFn('BOGEY' + distTag), px + 13, py - 8);
+        ctx.fillText(RadarRenderer.cleanText('BOGEY' + distTag), px + 13, py - 8);
         ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = '#94a3b8';
-        ctx.fillText(cleanFn(mch + ' ' + fl), px + 13, py + 11);
+        ctx.fillText(RadarRenderer.cleanText(mch + ' ' + fl), px + 13, py + 11);
       } else {
         ctx.font = '700 10.5px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = '#94a3b8';
-        ctx.fillText(cleanFn('FALSE ECHO' + distTag), px + 13, py - 4);
+        ctx.fillText(RadarRenderer.cleanText('FALSE ECHO' + distTag), px + 13, py - 4);
         ctx.font = '600 9px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = '#64748b';
-        ctx.fillText(cleanFn(ghost.ghostType || 'CLUTTER'), px + 13, py + 8);
+        ctx.fillText(RadarRenderer.cleanText(ghost.ghostType || 'CLUTTER'), px + 13, py + 8);
       }
       ctx.restore();
     }
     ctx.restore();
   }
 
-  static drawDecoyDrones(ctx, cam, decoys, detectedSet, commanderTeam, activeUnit, cleanFn) {
+  static drawDecoyDrones(ctx, cam, decoys, detectedSet, commanderTeam, activeUnit) {
     if (!decoys || decoys.length === 0) return;
     const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
     ctx.save();
@@ -129,18 +129,18 @@ class RadarContactsAuxRenderer {
       if (isFriendly) {
         ctx.font = '700 10.5px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = '#c084fc';
-        ctx.fillText(cleanFn('DECOY ' + decoy.mirroredModel + distTag), px + 13, py - 3);
+        ctx.fillText(RadarRenderer.cleanText('DECOY ' + decoy.mirroredModel + distTag), px + 13, py - 3);
       } else if (!isIdentified) {
         ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = '#f97316';
-        ctx.fillText(cleanFn('BOGEY' + distTag), px + 13, py - 8);
+        ctx.fillText(RadarRenderer.cleanText('BOGEY' + distTag), px + 13, py - 8);
         ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = '#94a3b8';
-        ctx.fillText(cleanFn(mch + ' ' + fl), px + 13, py + 11);
+        ctx.fillText(RadarRenderer.cleanText(mch + ' ' + fl), px + 13, py + 11);
       } else {
         ctx.font = '700 11px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = '#f43f5e';
-        ctx.fillText(cleanFn('DECOY ' + decoy.mirroredModel + distTag), px + 13, py - 3);
+        ctx.fillText(RadarRenderer.cleanText('DECOY ' + decoy.mirroredModel + distTag), px + 13, py - 3);
       }
     }
     ctx.restore();

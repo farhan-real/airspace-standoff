@@ -7,6 +7,7 @@ class ProcurementManager {
     this.game = gameEngine;
     this.currentTab = 'airframes';
     this.currentAirframeCategory = 'ALL';
+    this.currentA2GCategory = 'ALL';
     this.searchQuery = '';
     this.activeBayIndex = 0;
     this._isUpdatingUI = false;
@@ -32,8 +33,49 @@ class ProcurementManager {
   openCallsignPickerModal(sIdx) { this.dialogModal.openCallsignPicker(sIdx); }
   openPreconfiguredAircraftModal() { this.preconfigModal.open(); }
 
+  getAirDifficultyOptions() {
+    return Object.entries(window.AI_DIFFICULTIES || {}).map(([key, d]) => ({
+      value: key,
+      text: `${d.name.toUpperCase()} (${d.scoreMultiplier.toFixed(2)}x)`
+    }));
+  }
+
+  getAttackDifficultyOptions() {
+    return Object.entries(window.ATTACK_DIFFICULTIES || {}).map(([key, d]) => ({
+      value: key,
+      text: `${d.name.toUpperCase()} (${d.scoreMultiplier.toFixed(2)}x)`
+    }));
+  }
+
+  getAirDoctrineOptions() {
+    return [
+      { value: 'BALANCED', text: 'BALANCED' },
+      { value: 'AGGRESSIVE', text: 'AGGRESSIVE' },
+      { value: 'STANDOFF', text: 'STAND-OFF' }
+    ];
+  }
+
+  getAttackDoctrineOptions() {
+    return Object.entries(window.ATTACK_DOCTRINES || {}).map(([key, d]) => ({
+      value: key,
+      text: d.name
+    }));
+  }
+
   initHangarCustomDropdowns() {
     if (typeof CustomDropdown === 'undefined') return;
+
+    CustomDropdown.setup('cdd-gamemode', {
+      label: 'MODE',
+      value: this.game.gameMode || 'SP_SKIRMISH',
+      options: [
+        { value: 'SP_SKIRMISH', text: 'SINGLE PLAYER SKIRMISH' },
+        { value: 'TP_SKIRMISH', text: 'TWO PLAYER SKIRMISH' },
+        { value: 'SP_DYNAMIC', text: 'SINGLE PLAYER DYNAMIC' },
+        { value: 'SP_ATTACK', text: 'SINGLE PLAYER ATTACK' }
+      ],
+      onChange: (val) => this.game.setGameMode(val)
+    });
 
     CustomDropdown.setup('cdd-budget', {
       label: 'BUDGET',
@@ -52,23 +94,14 @@ class ProcurementManager {
       onChange: (val) => this.game.setPlayerBudgetTier(val)
     });
 
+    const isAttack = (this.game.scenarioMode === 'ATTACK');
     CustomDropdown.setup('cdd-difficulty', {
       label: 'DIFFICULTY',
-      value: this.game.aiDifficulty || 'VETERAN',
-      options: [
-        { value: 'CADET', text: 'PERMISSIVE SECTOR (0.50x)' },
-        { value: 'BUFFER', text: 'BUFFER ZONE (0.75x)' },
-        { value: 'VETERAN', text: 'CONTESTED AIRSPACE (1.00x)' },
-        { value: 'ESCALATED', text: 'ESCALATED AIRSPACE (1.25x)' },
-        { value: 'ELITE', text: 'HOSTILE AIRSPACE (1.50x)' },
-        { value: 'FORWARD', text: 'FORWARD COMBAT ZONE (1.75x)' },
-        { value: 'ACE', text: 'HIGH-THREAT SECTOR (2.00x)' },
-        { value: 'FORTIFIED', text: 'FORTIFIED AIRSPACE (2.30x)' },
-        { value: 'MASTER', text: 'AIR DENIAL ZONE (2.60x)' },
-        { value: 'LEGEND', text: 'EXTREME THREAT SECTOR (3.20x)' }
-      ],
+      value: isAttack ? (this.game.attackDifficulty || 'FORWARD_GARRISON') : (this.game.aiDifficulty || 'VETERAN'),
+      options: isAttack ? this.getAttackDifficultyOptions() : this.getAirDifficultyOptions(),
       onChange: (val) => {
-        this.game.aiDifficulty = val;
+        if (this.game.scenarioMode === 'ATTACK') this.game.attackDifficulty = val;
+        else this.game.aiDifficulty = val;
         this.game.updateModeIndicator();
         this.game.saveGameplaySettings();
       }
@@ -76,36 +109,54 @@ class ProcurementManager {
 
     CustomDropdown.setup('cdd-doctrine', {
       label: 'DOCTRINE',
-      value: this.game.aiDoctrine || 'BALANCED',
-      options: [
-        { value: 'BALANCED', text: 'BALANCED' },
-        { value: 'AGGRESSIVE', text: 'AGGRESSIVE' },
-        { value: 'STANDOFF', text: 'STAND-OFF' }
-      ],
+      value: isAttack ? (this.game.attackDoctrine || 'BALANCED') : (this.game.aiDoctrine || 'BALANCED'),
+      options: isAttack ? this.getAttackDoctrineOptions() : this.getAirDoctrineOptions(),
       onChange: (val) => {
-        this.game.aiDoctrine = val;
+        if (this.game.scenarioMode === 'ATTACK') this.game.attackDoctrine = val;
+        else this.game.aiDoctrine = val;
         this.game.saveGameplaySettings();
       }
     });
   }
 
-  setLeadAirframe(sIdx) {
-    if (typeof ProcurementActionDispatcher !== 'undefined') {
-      ProcurementActionDispatcher.setLeadAirframe(this, sIdx);
+  syncModeDropdowns() {
+    if (typeof CustomDropdown === 'undefined') return;
+    const modeCdd = CustomDropdown.get('cdd-gamemode');
+    if (modeCdd && modeCdd.getValue() !== this.game.gameMode) {
+      modeCdd.setValue(this.game.gameMode, false);
+    }
+
+    const isAttack = (this.game.scenarioMode === 'ATTACK');
+    const diffCdd = CustomDropdown.get('cdd-difficulty');
+    if (diffCdd) {
+      diffCdd.setOptions(
+        isAttack ? this.getAttackDifficultyOptions() : this.getAirDifficultyOptions(),
+        isAttack ? (this.game.attackDifficulty || 'FORWARD_GARRISON') : (this.game.aiDifficulty || 'VETERAN')
+      );
+    }
+
+    const docCdd = CustomDropdown.get('cdd-doctrine');
+    if (docCdd) {
+      docCdd.setOptions(
+        isAttack ? this.getAttackDoctrineOptions() : this.getAirDoctrineOptions(),
+        isAttack ? (this.game.attackDoctrine || 'BALANCED') : (this.game.aiDoctrine || 'BALANCED')
+      );
     }
   }
 
+  setLeadAirframe(sIdx) {
+    if (typeof ProcurementActionDispatcher !== 'undefined') ProcurementActionDispatcher.setLeadAirframe(this, sIdx);
+  }
+
   saveSquadronBayConfig(sIdx, callback) {
-    if (typeof ProcurementActionDispatcher !== 'undefined') {
-      ProcurementActionDispatcher.saveSquadronBayConfig(this, sIdx, callback);
-    }
+    if (typeof ProcurementActionDispatcher !== 'undefined') ProcurementActionDispatcher.saveSquadronBayConfig(this, sIdx, callback);
   }
 
   initSquadronNameEditor() {
     const editBtn = document.getElementById('btn-edit-squadron-name');
     if (editBtn) {
       editBtn.onclick = () => {
-        let curName = this.game.squadronName || '7th Tactical Squadron';
+        const curName = this.game.squadronName || '7th Tactical Squadron';
         this.showPromptModal('RENAME SQUADRON', 'Enter a name for your squadron:', curName, (newName) => {
           if (newName && newName.trim()) {
             this.game.setSquadronName(newName.trim());
@@ -173,8 +224,7 @@ class ProcurementManager {
     if (bScramble) {
       bScramble.onclick = (e) => {
         e.preventDefault();
-        const editorRandomRoster = window.MissionEditor
-          && window.MissionEditor.canProvideRandomSquadron(this.game);
+        const editorRandomRoster = window.MissionEditor && window.MissionEditor.canProvideRandomSquadron(this.game);
         if (this.game.procurementSquadron.length === 0 && !editorRandomRoster) {
           this.showAlertModal('EMPTY SQUADRON', 'Add at least one aircraft to your squadron before launching the mission.');
           return;
@@ -183,18 +233,11 @@ class ProcurementManager {
           this.showAlertModal('OVER BUDGET', `Total cost exceeds available budget ($${this.game.budgetMax.toFixed(1)}M). Adjust aircraft or weapons.`);
           return;
         }
-
         const isEditorSortie = Boolean(this.game.pendingMissionEditorSettings);
         const confirmText = isEditorSortie
           ? 'Commence this custom editor sortie? It will not be ranked or saved to the leaderboard.'
           : `Commence sortie with ${this.game.procurementSquadron.length} aircraft?`;
-
-        this.showConfirmModal(
-          isEditorSortie ? 'COMMENCE UNRANKED SORTIE' : 'COMMENCE SORTIE',
-          confirmText,
-          () => this.game.scrambleFlight(),
-          { confirmText: 'COMMENCE SORTIE', isAlert: false }
-        );
+        this.showConfirmModal(isEditorSortie ? 'COMMENCE UNRANKED SORTIE' : 'COMMENCE SORTIE', confirmText, () => this.game.scrambleFlight(), { confirmText: 'COMMENCE SORTIE', isAlert: false });
       };
     }
 
@@ -216,46 +259,17 @@ class ProcurementManager {
     this.shelf.render(catalogEl, this.currentTab, this.currentAirframeCategory, this.searchQuery);
   }
 
-  equipItemDirectly(itemData) {
-    if (this.equipHandler) this.equipHandler.equipItemDirectly(itemData);
-  }
+  equipItemDirectly(itemData) { if (this.equipHandler) this.equipHandler.equipItemDirectly(itemData); }
+  addAirframe(specId) { if (this.equipHandler) this.equipHandler.addAirframe(specId); }
+  cloneAirframe(sIdx) { if (this.equipHandler) this.equipHandler.cloneAirframe(sIdx); }
+  equipItemDataToSquadron(sIdx, itemData, targetStation = null) { if (this.equipHandler) this.equipHandler.equipItemDataToSquadron(sIdx, itemData, targetStation); }
 
-  addAirframe(specId) {
-    if (this.equipHandler) this.equipHandler.addAirframe(specId);
-  }
-
-  cloneAirframe(sIdx) {
-    if (this.equipHandler) this.equipHandler.cloneAirframe(sIdx);
-  }
-
-  equipItemDataToSquadron(sIdx, itemData, targetStation = null) {
-    if (this.equipHandler) this.equipHandler.equipItemDataToSquadron(sIdx, itemData, targetStation);
-  }
-
-  applyBuiltinPreset(type) {
-    if (typeof ProcurementActionDispatcher !== 'undefined') {
-      ProcurementActionDispatcher.applyBuiltinPreset(this, type);
-    }
-  }
-
-  applyCustomPreset(name) {
-    if (typeof ProcurementActionDispatcher !== 'undefined') {
-      ProcurementActionDispatcher.applyCustomPreset(this, name);
-    }
-  }
-
-  clearSquadron() {
-    if (typeof ProcurementActionDispatcher !== 'undefined') {
-      ProcurementActionDispatcher.clearSquadron(this);
-    }
-  }
-
+  applyBuiltinPreset(type) { if (typeof ProcurementActionDispatcher !== 'undefined') ProcurementActionDispatcher.applyBuiltinPreset(this, type); }
+  applyCustomPreset(name) { if (typeof ProcurementActionDispatcher !== 'undefined') ProcurementActionDispatcher.applyCustomPreset(this, name); }
+  clearSquadron() { if (typeof ProcurementActionDispatcher !== 'undefined') ProcurementActionDispatcher.clearSquadron(this); }
   updateSquadronCard(sIdx) {
-    if (this.roster && typeof this.roster.updateCard === 'function') {
-      this.roster.updateCard(this, sIdx);
-    } else {
-      this.updateUI();
-    }
+    if (this.roster && typeof this.roster.updateCard === 'function') this.roster.updateCard(this, sIdx);
+    else this.updateUI();
   }
 
   updateUI() {
@@ -271,7 +285,7 @@ class ProcurementManager {
     const mobCount = document.getElementById('mob-roster-count');
     if (mobCount) mobCount.textContent = this.game.procurementSquadron.length;
 
-    let cleanName = this.game.squadronName || '7th Tactical Squadron';
+    const cleanName = this.game.squadronName || '7th Tactical Squadron';
     this.game.squadronName = cleanName;
 
     const dispSqName = document.getElementById('display-squadron-name');

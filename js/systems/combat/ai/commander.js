@@ -68,18 +68,8 @@ class AICommander {
     const tacticalRole = (unit && unit.tacticalRole) ? unit.tacticalRole : (unit && unit.spec && unit.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
 
     return {
-      isAce,
-      isFocused,
-      remainingFocus,
-      maxSlots,
-      activeFocusCount,
-      diffKey,
-      posture,
-      tacticalRole,
-      isHesitating,
-      successionTimer,
-      roleInFormation,
-      pairedUnit,
+      isAce, isFocused, remainingFocus, maxSlots, activeFocusCount, diffKey, posture,
+      tacticalRole, isHesitating, successionTimer, roleInFormation, pairedUnit,
       reactionCooldown: isAce ? aceProfile.reactionCooldown : baseProfile.reactionCooldown,
       notchChance: isAce ? aceProfile.notchChance : baseProfile.notchChance,
       decoyDiscrimination: isAce ? aceProfile.decoyDiscrimination : baseProfile.decoyDiscrimination,
@@ -94,40 +84,26 @@ class AICommander {
       if (!aliveIds.has(id)) this.focusTimers.delete(id);
     }
     for (const id of this.focusedUnitIds) {
-      const remaining = (this.focusTimers.get(id) || 0) - dt;
-      this.focusTimers.set(id, Math.max(0, remaining));
+      this.focusTimers.set(id, Math.max(0, (this.focusTimers.get(id) || 0) - dt));
     }
 
     const maxSlots = profile.attentionSlots || (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'FORWARD', 'ACE'].includes(diffKey) ? 2 : 1));
-
     const scoredUnits = aliveHostiles.map(h => {
       let score = 0;
       const inbound = allMissiles.filter(m => m.active && m.target && m.target.id === h.id);
-
       if (inbound.length > 0) {
         const nearestDist = inbound.reduce((min, m) => Math.min(min, m.distanceToTarget || 99), 99);
-        if (nearestDist < 12.0) score += 120;
-        else if (nearestDist < 25.0) score += 75;
-        else score += 35;
+        score += nearestDist < 12.0 ? 120 : (nearestDist < 25.0 ? 75 : 35);
       }
-
       if (h.hp <= 2) score += 30;
-      if (h.radarLockedTarget && h.radarLockedTarget.hp > 0.05) {
-        const d = Math.hypot(h.radarLockedTarget.x - h.x, h.radarLockedTarget.y - h.y);
-        if (d <= 45.0) score += 35;
-      }
-
+      if (h.radarLockedTarget && h.radarLockedTarget.hp > 0.05 && Math.hypot(h.radarLockedTarget.x - h.x, h.radarLockedTarget.y - h.y) <= 45.0) score += 35;
       if (h.isAce) score += 55;
       else if (h.isFlightLead) score += 20;
-
-      const remainingTimer = this.focusTimers.get(h.id) || 0;
-      if (this.focusedUnitIds.includes(h.id) && remainingTimer > 0) score += 40;
-
+      if (this.focusedUnitIds.includes(h.id) && (this.focusTimers.get(h.id) || 0) > 0) score += 40;
       return { unit: h, score };
     });
 
     scoredUnits.sort((a, b) => b.score - a.score);
-
     const newFocus = [];
     const span = profile.attentionSpanSec;
     for (let i = 0; i < Math.min(maxSlots, scoredUnits.length); i++) {
@@ -142,7 +118,6 @@ class AICommander {
 
   update(dt) {
     if (this.game.playerMode === '2P' || this.game.isGameOver) return;
-
     if (this.actionCooldown > 0) this.actionCooldown -= dt;
     if (this.aceSalvoTimer > 0) this.aceSalvoTimer -= dt;
 
@@ -150,7 +125,7 @@ class AICommander {
     const profile = window.AI_DIFFICULTIES[diffKey];
     if (!profile) throw new Error(`Unknown difficulty "${diffKey}" in AI update.`);
 
-    const aliveHostiles = (this.game.hostileAircraft || []).filter(a => a.hp > 0.05);
+    const aliveHostiles = (this.game.hostileAircraft || []).filter(a => a.hp > 0.05 && !a.groundPhase);
     if (aliveHostiles.length === 0) return;
 
     this.planning.update(dt, aliveHostiles, profile, diffKey);
@@ -165,7 +140,6 @@ class AICommander {
     const allMissiles = this.game.missiles || [];
 
     this.updateAttention(aliveHostiles, profile, diffKey, allMissiles, candidateAirTargets, dt);
-
     AIEvasionHandler.coordinateAceTactics(this, aliveHostiles.filter(h => h.isAce), candidateAirTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt);
 
     for (const h of aliveHostiles) {
@@ -182,14 +156,11 @@ class AICommander {
     if (this.actionCooldown <= 0 && this.game.tokenBucketRed >= tokenCost) {
       for (const focusedId of this.focusedUnitIds) {
         const shooter = aliveHostiles.find(h => h.id === focusedId && !h.isAce);
-        if (!shooter || shooter.hp <= 0.05 || shooter.isRTB) continue;
-        if (this.planning.isHesitating(shooter.id)) continue;
+        if (!shooter || shooter.hp <= 0.05 || shooter.isRTB || this.planning.isHesitating(shooter.id)) continue;
         if (this.game.tokenBucketRed < tokenCost) break;
 
-        const fired = AIMissileTactics.executeEngagements(this, shooter, candidateAirTargets, visibleBunkers, profile, clouds, diffKey, tokenCost, allMissiles);
-        if (fired) {
-          const interUnitDelay = Math.max(0.35, profile.reactionCooldown / (maxSlots * 1.5));
-          this.actionCooldown = interUnitDelay;
+        if (AIMissileTactics.executeEngagements(this, shooter, candidateAirTargets, visibleBunkers, profile, clouds, diffKey, tokenCost, allMissiles)) {
+          this.actionCooldown = Math.max(0.35, profile.reactionCooldown / (maxSlots * 1.5));
           break;
         }
       }

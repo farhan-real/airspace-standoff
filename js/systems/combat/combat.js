@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Tactical Combat Engine & Pylon Discharge Bus
- * Enforces verified ROE, boresight limits, multi-round gun pod bursts, and stores management.
+ * js/systems/combat/combat.js - Tactical combat engine, pylon discharge bus, and range validation.
  */
 
 class CombatSystem {
@@ -11,9 +10,9 @@ class CombatSystem {
 
   canFire(sourceUnit, item, targetEntity) {
     if (!sourceUnit || sourceUnit.hp <= 0.05) return false;
-    if (!item || item.ammo <= 0 || (item.cooldown && item.cooldown > 0)) return false;
+    if (!item || item.ammo <= 0 || item.cooldown > 0) return false;
     const w = item.weapon;
-    if (!w || w.isJammerPod) return false;
+    if (!w || w.isJammerPod || w.isTargetingPod) return false;
 
     const tokenCost = window.CONFIG.TOKEN_ACTION_COST;
     if (this.game.getCurrentCommanderTokenBucket() < tokenCost) return false;
@@ -25,14 +24,21 @@ class CombatSystem {
       throw new Error(`Target entity "${targetEntity.id}" has invalid coordinates.`);
     }
 
+    const isAcSource = (typeof Aircraft !== 'undefined' && sourceUnit instanceof Aircraft);
+    const rangeMult = isAcSource
+      ? (w.isAntiRadiation ? sourceUnit.armRangeMult : ((w.seeker === 'UNGUIDED' || w.isRocketPod) ? sourceUnit.bombRangeBonus : 1.0))
+      : 1.0;
+    const effectiveMaxRange = w.rangeKm * rangeMult;
+
     const dist = Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y);
-    if (isNaN(dist) || dist > w.rangeKm) return false;
+    if (isNaN(dist) || dist > effectiveMaxRange) return false;
     if (w.minRangeKm && dist < w.minRangeKm) return false;
 
     const isSurface = (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) || Boolean(targetEntity.type && !targetEntity.spec && !targetEntity.isCivilian);
-    if (isSurface) {
-      if (w.category === 'A2A') return false;
-      return w.category === 'A2G' || w.isBunkerCracker === true || w.category === 'GUN' || w.isLaser === true;
+    const isGroundedAircraft = Boolean(targetEntity && targetEntity.groundPhase);
+    if (isSurface || isGroundedAircraft) {
+      if (w.category === 'A2A' && !isGroundedAircraft) return false;
+      return w.category === 'A2G' || w.isBunkerCracker === true || w.isCluster === true || w.category === 'GUN' || w.isLaser === true || (isGroundedAircraft && w.category === 'A2A');
     }
 
     if (w.category === 'A2G' || w.isBunkerCracker) return false;
@@ -63,16 +69,16 @@ class CombatSystem {
     if (!this.game.consumeCurrentCommanderTokens(tokenCost)) return;
 
     const w = item.weapon;
-    const burstAmmo = (w.isGunpod || w.category === 'GUN') ? (w.ammoPerBurst || w.roundsPerBurst || 1) : 1;
+    const burstAmmo = (w.isGunpod || w.category === 'GUN') ? (w.ammoPerBurst || w.roundsPerBurst) : 1;
     item.ammo = Math.max(0, item.ammo - burstAmmo);
     sourceUnit.applyActionStress(0.08);
 
     if (w.isLaser || w.isGunpod || w.category === 'GUN') {
-      item.cooldown = w.cooldown || w.burstCooldown || 1.2;
+      item.cooldown = w.cooldown || w.burstCooldown;
     }
 
-    const commanderTeam = this.game.currentPvpCommander || 'friendly';
-    const is2P = Boolean(this.game && this.game.playerMode === '2P');
+    const commanderTeam = this.game.currentPvpCommander;
+    const is2P = (this.game.playerMode === '2P');
     const isTargetIdentified = is2P || Boolean(
       targetEntity && (
         targetEntity.type ||
@@ -83,26 +89,18 @@ class CombatSystem {
     if (targetEntity && targetEntity.isCivilian && !w.isDecoy && !w.isDecoyDrone) {
       const penalty = window.CONFIG.VP_CIVILIAN_FIRE_PENALTY;
       if (sourceUnit.team === 'friendly' && this.game.simulation) {
-        this.game.simulation.logScoreEvent('friendly', -penalty, `ROE VIOLATION: Fired weapon at civilian aircraft (${targetEntity.flightCode || targetEntity.name || 'Civilian'})`);
-        if (this.game.simulation.scoring) {
-          this.game.simulation.scoring.recordCivilianFirePenalty('friendly', sourceUnit, targetEntity, w, penalty);
-        }
+        this.game.simulation.logScoreEvent('friendly', -penalty, `ROE VIOLATION: Fired weapon at civilian aircraft (${targetEntity.flightCode || targetEntity.name})`);
+        if (this.game.simulation.scoring) this.game.simulation.scoring.recordCivilianFirePenalty('friendly', sourceUnit, targetEntity, w, penalty);
       }
-      if (this.game.radar) {
-        this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE VIOLATION: CIVILIAN TARGET (-${penalty} VP)`, '#f43f5e');
-      }
+      if (this.game.radar) this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE VIOLATION: CIVILIAN TARGET (-${penalty} VP)`, '#f43f5e');
       if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
     } else if (!isTargetIdentified && !w.isDecoy && !w.isDecoyDrone && !w.isGunpod && targetEntity) {
       const penalty = window.CONFIG.VP_UNIDENTIFIED_FIRE_PENALTY;
       if (sourceUnit.team === 'friendly' && this.game.simulation) {
         this.game.simulation.logScoreEvent('friendly', -penalty, 'ROE INFRACTION: Fired on unverified track [BOGEY ?]');
-        if (this.game.simulation.scoring) {
-          this.game.simulation.scoring.recordBogeyFirePenalty('friendly', sourceUnit, targetEntity, w, penalty);
-        }
+        if (this.game.simulation.scoring) this.game.simulation.scoring.recordBogeyFirePenalty('friendly', sourceUnit, targetEntity, w, penalty);
       }
-      if (this.game.radar) {
-        this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE INFRACTION: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
-      }
+      if (this.game.radar) this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `ROE INFRACTION: UNVERIFIED BOGEY (-${penalty} VP)`, '#f97316');
       if (typeof AudioSys !== 'undefined') AudioSys.playMissileLost();
     }
 
@@ -122,98 +120,9 @@ class CombatSystem {
       }
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     } else if (w.isGunpod || (w.category === 'GUN' && !w.isLaser)) {
-      const numRounds = w.roundsPerBurst || 4;
-      const totalBurstDmg = w.damagePerBurst || w.damage || 1.40;
-      const roundDmg = w.damagePerRound || (totalBurstDmg / numRounds);
-      let landedDmg = 0;
-
-      for (let r = 0; r < numRounds; r++) {
-        this.scheduleWeaponPulse(r * 50, () => {
-          if (!sourceUnit || sourceUnit.hp <= 0.05) return;
-          const heading = sourceUnit.heading;
-          const spread = (r - (numRounds - 1) / 2) * 0.012;
-          const tracerHdg = heading + spread;
-
-          if (targetEntity && targetEntity.hp > 0.05 && Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) <= (w.rangeKm || 4.8)) {
-            const wasAlive = targetEntity.hp > 0.05;
-            if (targetEntity.isGhost || targetEntity.isDecoyDrone) targetEntity.takeDamage(roundDmg);
-            else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(roundDmg, false);
-            else if (targetEntity.isCivilian) targetEntity.takeDamage(roundDmg, sourceUnit, w, r === numRounds - 1);
-            else {
-              targetEntity.hp = Math.max(0, targetEntity.hp - roundDmg);
-              if (targetEntity.hp <= 0.05) targetEntity.hp = 0;
-              if (typeof targetEntity.applyActionStress === 'function') targetEntity.applyActionStress(0.08);
-            }
-            landedDmg += roundDmg;
-
-            const jx = (Math.random() - 0.5) * 0.35;
-            const jy = (Math.random() - 0.5) * 0.35;
-            if (this.game.radar) {
-              this.game.radar.spawnGunTracer(sourceUnit.x, sourceUnit.y, targetEntity.x + jx, targetEntity.y + jy, w.tracerColor || '#fbbf24');
-            }
-            if (r === numRounds - 1 && this.game.radar) {
-              this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `POD BURST -${landedDmg.toFixed(1)}HP (${numRounds} RDS)`, '#fbbf24');
-            }
-            if (wasAlive && targetEntity.hp <= 0.05 && this.game.simulation && !targetEntity.isCivilian) {
-              targetEntity.hp = 0;
-              this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
-            }
-          } else {
-            if (this.game.radar) {
-              this.game.radar.spawnGunTracer(sourceUnit.x, sourceUnit.y, sourceUnit.x + Math.cos(tracerHdg) * (w.rangeKm || 4.8), sourceUnit.y + Math.sin(tracerHdg) * (w.rangeKm || 4.8), w.tracerColor || '#fbbf24');
-            }
-            if (r === numRounds - 1 && this.game.radar) {
-              this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `GUN POD BURST (${numRounds} RDS)`, '#fbbf24');
-            }
-          }
-          if (r === numRounds - 1 && landedDmg > 0 && targetEntity.hp > 0.05 && this.game.simulation && this.game.simulation.scoring) {
-            this.game.simulation.scoring.recordHitEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, damage: landedDmg });
-          }
-        });
-      }
-      if (typeof AudioSys !== 'undefined') AudioSys.playGunBurst();
+      this.executeGunpodBurst(sourceUnit, targetEntity, w);
     } else if (w.isLaser) {
-      if (typeof AudioSys !== 'undefined') AudioSys.playLaser();
-      const numPulses = w.roundsPerBurst || 3;
-      const totalLaserDmg = w.damagePerBurst || w.damage || 1.65;
-      const pulseDmg = w.damagePerRound || (totalLaserDmg / numPulses);
-      let landedDmg = 0;
-
-      const clouds = (this.game && this.game.simulation && this.game.simulation.weatherClouds) || [];
-      const cloudHits = (typeof Physics !== 'undefined' && targetEntity) ? Physics.countIntersectingClouds(sourceUnit.x, sourceUnit.y, targetEntity.x, targetEntity.y, clouds) : 0;
-      const cloudScatterFactor = cloudHits > 0 ? Math.max(0.15, Math.pow(0.55, cloudHits)) : 1.0;
-
-      for (let p = 0; p < numPulses; p++) {
-        this.scheduleWeaponPulse(p * 50, () => {
-          if (!sourceUnit || sourceUnit.hp <= 0.05) return;
-          if (targetEntity && targetEntity.hp > 0.05 && Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) <= (w.rangeKm || 9.0)) {
-            const wasAlive = targetEntity.hp > 0.05;
-            const effectivePulseDmg = pulseDmg * cloudScatterFactor;
-            if (targetEntity.isGhost || targetEntity.isDecoyDrone) targetEntity.takeDamage(effectivePulseDmg);
-            else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(effectivePulseDmg, false);
-            else if (targetEntity.isCivilian) targetEntity.takeDamage(effectivePulseDmg, sourceUnit, w, p === numPulses - 1);
-            else {
-              targetEntity.hp = Math.max(0, targetEntity.hp - effectivePulseDmg);
-              if (targetEntity.hp <= 0.05) targetEntity.hp = 0;
-              if (typeof targetEntity.applyActionStress === 'function') targetEntity.applyActionStress(0.12);
-            }
-            landedDmg += effectivePulseDmg;
-
-            if (this.game.radar) this.game.radar.spawnExplosionFX(targetEntity.x, targetEntity.y, false);
-            if (p === numPulses - 1 && this.game.radar) {
-              const scatterTag = cloudHits > 0 ? ` (SCATTERED -${Math.round((1 - cloudScatterFactor) * 100)}%)` : '';
-              this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `LASER -${landedDmg.toFixed(1)}HP${scatterTag}`, '#00f0ff');
-            }
-            if (wasAlive && targetEntity.hp <= 0.05 && this.game.simulation && !targetEntity.isCivilian) {
-              targetEntity.hp = 0;
-              this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
-            }
-          }
-          if (p === numPulses - 1 && landedDmg > 0 && targetEntity.hp > 0.05 && this.game.simulation && this.game.simulation.scoring) {
-            this.game.simulation.scoring.recordHitEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, damage: landedDmg });
-          }
-        });
-      }
+      this.executeLaserBurst(sourceUnit, targetEntity, w);
     } else {
       if (typeof MissileEntity === 'undefined') throw new Error('MissileEntity class is not loaded.');
       this.game.missiles.push(new MissileEntity(w, sourceUnit, targetEntity));
@@ -224,10 +133,98 @@ class CombatSystem {
     if (this.game.deckManager) this.game.deckManager.renderPylonBay(sourceUnit, this.game.selectedTarget);
   }
 
+  executeGunpodBurst(sourceUnit, targetEntity, w) {
+    const numRounds = w.roundsPerBurst;
+    const baseRoundDmg = w.damagePerRound;
+    let landedDmg = 0;
+
+    for (let r = 0; r < numRounds; r++) {
+      this.scheduleWeaponPulse(r * 50, () => {
+        if (!sourceUnit || sourceUnit.hp <= 0.05) return;
+        const heading = sourceUnit.heading;
+        const tracerHdg = heading + (r - (numRounds - 1) / 2) * 0.012;
+
+        if (targetEntity && targetEntity.hp > 0.05 && Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) <= w.rangeKm) {
+          const wasAlive = targetEntity.hp > 0.05;
+          const isSurf = (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit);
+          const roundDmg = isSurf && w.groundDamageMult ? (baseRoundDmg * w.groundDamageMult) : baseRoundDmg;
+
+          if (targetEntity.isGhost || targetEntity.isDecoyDrone) targetEntity.takeDamage(roundDmg);
+          else if (isSurf) targetEntity.takeDamage(roundDmg, Boolean(w.isBunkerCracker), w);
+          else if (targetEntity.isCivilian) targetEntity.takeDamage(roundDmg, sourceUnit, w, r === numRounds - 1);
+          else {
+            targetEntity.hp = Math.max(0, targetEntity.hp - roundDmg);
+            if (targetEntity.hp <= 0.05) targetEntity.hp = 0;
+            if (typeof targetEntity.applyActionStress === 'function') targetEntity.applyActionStress(0.08);
+          }
+          landedDmg += roundDmg;
+
+          if (this.game.radar) {
+            this.game.radar.spawnGunTracer(sourceUnit.x, sourceUnit.y, targetEntity.x + (Math.random() - 0.5) * 0.35, targetEntity.y + (Math.random() - 0.5) * 0.35, w.tracerColor);
+          }
+          if (r === numRounds - 1 && this.game.radar) {
+            this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `POD BURST -${landedDmg.toFixed(1)}HP (${numRounds} RDS)`, '#fbbf24');
+          }
+          if (wasAlive && targetEntity.hp <= 0.05 && this.game.simulation && !targetEntity.isCivilian) {
+            targetEntity.hp = 0;
+            this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
+          }
+        } else if (this.game.radar) {
+          this.game.radar.spawnGunTracer(sourceUnit.x, sourceUnit.y, sourceUnit.x + Math.cos(tracerHdg) * w.rangeKm, sourceUnit.y + Math.sin(tracerHdg) * w.rangeKm, w.tracerColor);
+          if (r === numRounds - 1) this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `GUN POD BURST (${numRounds} RDS)`, '#fbbf24');
+        }
+        if (r === numRounds - 1 && landedDmg > 0 && targetEntity.hp > 0.05 && this.game.simulation && this.game.simulation.scoring) {
+          this.game.simulation.scoring.recordHitEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, damage: landedDmg });
+        }
+      });
+    }
+    if (typeof AudioSys !== 'undefined') AudioSys.playGunBurst();
+  }
+
+  executeLaserBurst(sourceUnit, targetEntity, w) {
+    if (typeof AudioSys !== 'undefined') AudioSys.playLaser();
+    const numPulses = w.roundsPerBurst;
+    const pulseDmg = w.damagePerRound;
+    let landedDmg = 0;
+    const clouds = (this.game && this.game.simulation && this.game.simulation.weatherClouds) || [];
+    const cloudHits = targetEntity ? Physics.countIntersectingClouds(sourceUnit.x, sourceUnit.y, targetEntity.x, targetEntity.y, clouds) : 0;
+    const cloudScatterFactor = cloudHits > 0 ? Math.max(0.15, Math.pow(0.55, cloudHits)) : 1.0;
+
+    for (let p = 0; p < numPulses; p++) {
+      this.scheduleWeaponPulse(p * 50, () => {
+        if (!sourceUnit || sourceUnit.hp <= 0.05) return;
+        if (targetEntity && targetEntity.hp > 0.05 && Math.hypot(targetEntity.x - sourceUnit.x, targetEntity.y - sourceUnit.y) <= w.rangeKm) {
+          const wasAlive = targetEntity.hp > 0.05;
+          const effDmg = pulseDmg * cloudScatterFactor;
+          if (targetEntity.isGhost || targetEntity.isDecoyDrone) targetEntity.takeDamage(effDmg);
+          else if (typeof SurfaceUnit !== 'undefined' && targetEntity instanceof SurfaceUnit) targetEntity.takeDamage(effDmg, false, w);
+          else if (targetEntity.isCivilian) targetEntity.takeDamage(effDmg, sourceUnit, w, p === numPulses - 1);
+          else {
+            targetEntity.hp = Math.max(0, targetEntity.hp - effDmg);
+            if (targetEntity.hp <= 0.05) targetEntity.hp = 0;
+            if (typeof targetEntity.applyActionStress === 'function') targetEntity.applyActionStress(0.12);
+          }
+          landedDmg += effDmg;
+          if (this.game.radar) this.game.radar.spawnExplosionFX(targetEntity.x, targetEntity.y, false);
+          if (p === numPulses - 1 && this.game.radar) {
+            const scatterTag = cloudHits > 0 ? ` (SCATTERED -${Math.round((1 - cloudScatterFactor) * 100)}%)` : '';
+            this.game.radar.spawnCombatText(targetEntity.x, targetEntity.y, `LASER -${landedDmg.toFixed(1)}HP${scatterTag}`, '#00f0ff');
+          }
+          if (wasAlive && targetEntity.hp <= 0.05 && this.game.simulation && !targetEntity.isCivilian) {
+            targetEntity.hp = 0;
+            this.game.simulation.recordKillEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, isSalvo: false, salvoCount: 1 });
+          }
+        }
+        if (p === numPulses - 1 && landedDmg > 0 && targetEntity.hp > 0.05 && this.game.simulation && this.game.simulation.scoring) {
+          this.game.simulation.scoring.recordHitEvent(sourceUnit.team, targetEntity, sourceUnit, { weapon: w, damage: landedDmg });
+        }
+      });
+    }
+  }
+
   executeCard(card, unit) {
     if (!card) throw new Error('executeCard requires a valid maneuver card.');
     if (!unit) throw new Error('executeCard requires a valid aircraft unit.');
-
     const cost = card.cost || window.CONFIG.TOKEN_ACTION_COST;
     if (!this.game.consumeCurrentCommanderTokens(cost)) return;
     const before = { speed: unit.speed, altitudeFt: unit.altFt, energy: unit.energy, stress: unit.stress, heading: unit.heading };
@@ -235,7 +232,7 @@ class CombatSystem {
     unit.activeManeuverId = card.id;
     card.execute(unit);
     if (this.game.inspection && this.game.inspection.enabled) {
-      this.game.inspection.recordEvent('MANEUVER ORDER', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(unit) : unit.callsign} executed ${card.name || card.title || card.id}`, unit, this.game.selectedTarget, {
+      this.game.inspection.recordEvent('MANEUVER ORDER', `${window.formatAircraftDisplayName(unit)} executed ${card.name || card.id}`, unit, this.game.selectedTarget, {
         maneuver: card.id, tokenCost: cost, before,
         after: { speed: unit.speed, altitudeFt: unit.altFt, energy: unit.energy, stress: unit.stress, heading: unit.heading },
         activeDurationSec: unit.activeManeuverTimer, evasionBonus: unit.activeManeuverBonus

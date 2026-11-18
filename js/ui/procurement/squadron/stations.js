@@ -64,34 +64,32 @@ class RosterStationsRenderer {
       const dmg = w.damage !== undefined ? w.damage : 2;
       const itemSlotWord = data.slots === 1 ? 'SLOT' : 'SLOTS';
       let seekerTag = w.seeker || 'GUIDED';
-      if (w.isJammerPod) seekerTag = 'ECM';
+      if (w.isTargetingPod) seekerTag = 'TGP';
+      else if (w.isJammerPod) seekerTag = 'ECM';
       else if (w.isDecoyDrone) seekerTag = 'MALD';
       else if (w.isDecoy) seekerTag = 'DECOY';
       else if (w.isLaser) seekerTag = 'LASER';
       else if (seekerTag === 'PASSIVE_RADAR') seekerTag = 'ARM';
       else if (seekerTag === 'GPS_INS') seekerTag = 'GPS/INS';
+      else if (seekerTag === 'LASER') seekerTag = 'SALH';
+      else if (seekerTag === 'MMW_IIR') seekerTag = 'MMW/IR';
+      else if (seekerTag === 'UNGUIDED') seekerTag = w.isRocketPod ? 'ROCKET' : 'IRON';
       else if (seekerTag === 'INS' || seekerTag === 'INS_RADAR') seekerTag = 'INS';
       else if (seekerTag === 'DIRECT_FIRE') seekerTag = 'DIRECT';
+
+      const hpPart = w.isTargetingPod ? `<b class="iic-hp">${w.spotRangeKm || 40}km</b>` : `<b class="iic-hp">${dmg} HP</b>`;
 
       return `
         <div class="installed-item-card station-${data.station.toLowerCase()}" data-sidx="${sIdx}" data-widx="${wIdx}">
           <div class="iic-reorder-group">
-            <button type="button" class="btn-reorder-item btn-move-up" data-sidx="${sIdx}" data-widx="${wIdx}" ${canUp ? '' : 'disabled'} title="${canUp ? 'Move up / shift station' : 'Cannot move up'}">
-              <img src="icons/arrowup.svg" width="9" height="9" alt="Up">
-            </button>
-            <button type="button" class="btn-reorder-item btn-move-down" data-sidx="${sIdx}" data-widx="${wIdx}" ${canDown ? '' : 'disabled'} title="${canDown ? 'Move down / shift station' : 'Cannot move down'}">
-              <img src="icons/arrowdown.svg" width="9" height="9" alt="Down">
-            </button>
+            <button type="button" class="btn-reorder-item btn-move-up" data-sidx="${sIdx}" data-widx="${wIdx}" ${canUp ? '' : 'disabled'} title="${canUp ? 'Move up / shift station' : 'Cannot move up'}"><img src="icons/arrowup.svg" width="9" height="9" alt="Up"></button>
+            <button type="button" class="btn-reorder-item btn-move-down" data-sidx="${sIdx}" data-widx="${wIdx}" ${canDown ? '' : 'disabled'} title="${canDown ? 'Move down / shift station' : 'Cannot move down'}"><img src="icons/arrowdown.svg" width="9" height="9" alt="Down"></button>
           </div>
-          <div class="iic-title-group">
-            <span class="iic-title" title="${w.name}">${w.name}</span>
-          </div>
+          <div class="iic-title-group"><span class="iic-title" title="${w.name}">${w.name}</span></div>
           <div class="iic-right-group">
-            <span class="iic-details"><span class="iic-slots">${data.slots}<span class="iic-slots-word"> ${itemSlotWord}</span><span class="iic-slots-short">S</span></span> &bull; <b class="iic-hp">${dmg} HP</b> &bull; <span class="iic-seeker">${seekerTag}</span></span>
+            <span class="iic-details"><span class="iic-slots">${data.slots}<span class="iic-slots-word"> ${itemSlotWord}</span><span class="iic-slots-short">S</span></span> &bull; ${hpPart} &bull; <span class="iic-seeker">${seekerTag}</span></span>
             <button type="button" class="spec-inspect-btn small" data-inspect-type="weapon" data-inspect-id="${w.id}">SPECS</button>
-            <button type="button" class="btn-dismount-item" data-sidx="${sIdx}" data-widx="${wIdx}" title="Dismount weapon">
-              <img src="icons/close.svg" width="8" height="8" alt="Remove">
-            </button>
+            <button type="button" class="btn-dismount-item" data-sidx="${sIdx}" data-widx="${wIdx}" title="Dismount weapon"><img src="icons/close.svg" width="8" height="8" alt="Remove"></button>
           </div>
         </div>`;
     };
@@ -114,7 +112,7 @@ class RosterStationsRenderer {
       }).join('');
 
       const emptyPrompt = (remInternal > 0)
-        ? `<div class="empty-internal-slot" data-sidx="${sIdx}" data-station="INTERNAL" title="Equip internal missile">EQUIP INTERNAL WEAPON (${remInternal} SLOTS OPEN)</div>`
+        ? `<div class="empty-internal-slot" data-sidx="${sIdx}" data-station="INTERNAL" title="Equip internal weapon">EQUIP INTERNAL WEAPON (${remInternal} SLOTS OPEN)</div>`
         : '';
 
       internalBayHtml = `
@@ -123,10 +121,7 @@ class RosterStationsRenderer {
             <span class="station-title"><img src="icons/diamond.svg" width="10" height="10" alt="Internal" class="manual-inline-ico"> INTERNAL WEAPONS BAY: <b>${intUsed} / ${intCap} SLOTS</b></span>
             <span class="station-tag stealth-tag">VLO ZERO DRAG</span>
           </div>
-          <div class="station-items-container">
-            ${cardsHtml}
-            ${emptyPrompt}
-          </div>
+          <div class="station-items-container">${cardsHtml}${emptyPrompt}</div>
         </div>`;
     }
 
@@ -148,8 +143,7 @@ class RosterStationsRenderer {
       }).join('');
 
       const addExtBtn = (remExternal > 0)
-        ? `<button type="button" class="slot-action-btn btn-add-external-slot" data-sidx="${sIdx}" data-station="EXTERNAL">ADD EXTERNAL WEAPONS (${remExternal} SLOTS REMAINING)</button>`
-        : '';
+        ? `<button type="button" class="slot-action-btn btn-add-external-slot" data-sidx="${sIdx}" data-station="EXTERNAL">ADD EXTERNAL WEAPONS (${remExternal} SLOTS REMAINING)</button>` : '';
 
       externalPylonsHtml = `
         <div class="station-section external-pylons-group">
@@ -178,18 +172,11 @@ class RosterStationsRenderer {
             <span class="station-title" style="color:#f59e0b;">CENTERLINE FUSELAGE STATION: <b>${ctrUsed} / ${ctrCap} SLOTS</b></span>
             <span class="station-tag centerline-tag">HEAVY HYPERSONIC</span>
           </div>
-          <div class="station-items-container">
-            ${ctrCardsHtml || `<div class="empty-bay-indicator" data-sidx="${sIdx}" data-station="CENTERLINE">EMPTY CENTERLINE STATION (${ctrCap} SLOTS)</div>`}
-          </div>
+          <div class="station-items-container">${ctrCardsHtml || `<div class="empty-bay-indicator" data-sidx="${sIdx}" data-station="CENTERLINE">EMPTY CENTERLINE STATION (${ctrCap} SLOTS)</div>`}</div>
         </div>`;
     }
 
-    return `
-      <div class="stores-stations-wrapper">
-        ${internalBayHtml}
-        ${externalPylonsHtml}
-        ${centerlineHtml}
-      </div>`;
+    return `<div class="stores-stations-wrapper">${internalBayHtml}${externalPylonsHtml}${centerlineHtml}</div>`;
   }
 
   static shiftWeapon(pm, sIdx, wIdx, direction) {
@@ -219,90 +206,45 @@ class RosterStationsRenderer {
     if (direction < 0) {
       if (targetEntry.station === 'INTERNAL') {
         const i = internalItems.indexOf(targetEntry);
-        if (i > 0) {
-          const prev = internalItems[i - 1];
-          const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(prev)];
-          [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-        }
+        if (i > 0) { const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(internalItems[i - 1])]; [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]]; }
       } else if (targetEntry.station === 'EXTERNAL') {
         const j = externalItems.indexOf(targetEntry);
-        if (j > 0) {
-          const prev = externalItems[j - 1];
-          const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(prev)];
-          [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-        } else if (j === 0 && w.slotType === 'INTERNAL' && intCap > 0) {
-          if (remInternal >= (w.slots || 1)) {
-            targetEntry.station = 'INTERNAL';
-            const [removed] = item.weapons.splice(wIdx, 1);
-            const lastIntIdx = item.weapons.map(e => e.station).lastIndexOf('INTERNAL');
-            item.weapons.splice(lastIntIdx + 1, 0, removed);
-          } else if (internalItems.length > 0) {
-            const lastInt = internalItems[internalItems.length - 1];
-            const lastIntW = weaponsMap[lastInt.id];
-            if (lastIntW && intUsed - (lastIntW.slots || 1) + (w.slots || 1) <= intCap && extUsed - (w.slots || 1) + (lastIntW.slots || 1) <= extCap) {
-              targetEntry.station = 'INTERNAL';
-              lastInt.station = 'EXTERNAL';
-              const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(lastInt)];
-              [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-            }
-          }
+        if (j > 0) { const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(externalItems[j - 1])]; [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]]; }
+        else if (j === 0 && w.slotType === 'INTERNAL' && intCap > 0 && remInternal >= (w.slots || 1)) {
+          targetEntry.station = 'INTERNAL';
+          const [removed] = item.weapons.splice(wIdx, 1);
+          item.weapons.splice(item.weapons.map(e => e.station).lastIndexOf('INTERNAL') + 1, 0, removed);
         }
       } else if (targetEntry.station === 'CENTERLINE') {
         const k = centerlineItems.indexOf(targetEntry);
-        if (k > 0) {
-          const prev = centerlineItems[k - 1];
-          const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(prev)];
-          [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-        } else if (k === 0 && w.slotType !== 'CENTERLINE' && extCap > 0 && remExternal >= (w.slots || 1)) {
+        if (k > 0) { const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(centerlineItems[k - 1])]; [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]]; }
+        else if (k === 0 && w.slotType !== 'CENTERLINE' && extCap > 0 && remExternal >= (w.slots || 1)) {
           targetEntry.station = 'EXTERNAL';
           const [removed] = item.weapons.splice(wIdx, 1);
-          const lastExtIdx = item.weapons.map(e => e.station).lastIndexOf('EXTERNAL');
-          item.weapons.splice(lastExtIdx + 1, 0, removed);
+          item.weapons.splice(item.weapons.map(e => e.station).lastIndexOf('EXTERNAL') + 1, 0, removed);
         }
       }
     } else {
       if (targetEntry.station === 'INTERNAL') {
         const i = internalItems.indexOf(targetEntry);
-        if (i < internalItems.length - 1) {
-          const next = internalItems[i + 1];
-          const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(next)];
-          [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-        } else if (i === internalItems.length - 1 && extCap > 0) {
-          if (remExternal >= (w.slots || 1)) {
-            targetEntry.station = 'EXTERNAL';
-            const [removed] = item.weapons.splice(wIdx, 1);
-            const firstExtIdx = item.weapons.findIndex(e => e.station === 'EXTERNAL');
-            if (firstExtIdx === -1) item.weapons.push(removed);
-            else item.weapons.splice(firstExtIdx, 0, removed);
-          } else if (externalItems.length > 0) {
-            const firstExt = externalItems[0];
-            const firstExtW = weaponsMap[firstExt.id];
-            if (firstExtW && firstExtW.slotType === 'INTERNAL' && intUsed - (w.slots || 1) + (firstExtW.slots || 1) <= intCap && extUsed - (firstExtW.slots || 1) + (w.slots || 1) <= extCap) {
-              targetEntry.station = 'EXTERNAL';
-              firstExt.station = 'INTERNAL';
-              const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(firstExt)];
-              [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-            }
-          }
+        if (i < internalItems.length - 1) { const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(internalItems[i + 1])]; [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]]; }
+        else if (i === internalItems.length - 1 && extCap > 0 && remExternal >= (w.slots || 1)) {
+          targetEntry.station = 'EXTERNAL';
+          const [removed] = item.weapons.splice(wIdx, 1);
+          const firstExtIdx = item.weapons.findIndex(e => e.station === 'EXTERNAL');
+          if (firstExtIdx === -1) item.weapons.push(removed); else item.weapons.splice(firstExtIdx, 0, removed);
         }
       } else if (targetEntry.station === 'EXTERNAL') {
         const j = externalItems.indexOf(targetEntry);
-        if (j < externalItems.length - 1) {
-          const next = externalItems[j + 1];
-          const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(next)];
-          [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-        } else if (j === externalItems.length - 1 && spec.hasCenterline && (w.slotType === 'CENTERLINE' || w.slots <= ctrCap)) {
+        if (j < externalItems.length - 1) { const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(externalItems[j + 1])]; [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]]; }
+        else if (j === externalItems.length - 1 && spec.hasCenterline && (w.slotType === 'CENTERLINE' || w.slots <= ctrCap)) {
           targetEntry.station = 'CENTERLINE';
           const [removed] = item.weapons.splice(wIdx, 1);
           item.weapons.push(removed);
         }
       } else if (targetEntry.station === 'CENTERLINE') {
         const k = centerlineItems.indexOf(targetEntry);
-        if (k < centerlineItems.length - 1) {
-          const next = centerlineItems[k + 1];
-          const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(next)];
-          [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]];
-        }
+        if (k < centerlineItems.length - 1) { const [a, b] = [item.weapons.indexOf(targetEntry), item.weapons.indexOf(centerlineItems[k + 1])]; [item.weapons[a], item.weapons[b]] = [item.weapons[b], item.weapons[a]]; }
       }
     }
 

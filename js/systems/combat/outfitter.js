@@ -5,29 +5,40 @@
 
 class FleetOutfitter {
   static planAircraftLoadout(spec, isAce, doctrine, diff, rngInstance) {
-    const rng = (rngInstance && typeof rngInstance.next === 'function') ? rngInstance : window.PRNG;
+    if (!spec) throw new Error('FleetOutfitter.planAircraftLoadout requires a valid aircraft spec.');
+    if (!window.WEAPONS_CATALOG) throw new Error('WEAPONS_CATALOG is not loaded.');
+    if (!window.UPGRADES_CATALOG) throw new Error('UPGRADES_CATALOG is not loaded.');
+    if (!diff || !window.AI_DIFFICULTIES || !window.AI_DIFFICULTIES[diff]) {
+      throw new Error(`Invalid difficulty "${diff}" in FleetOutfitter.planAircraftLoadout.`);
+    }
+    const rng = rngInstance || window.PRNG;
+    if (!rng || typeof rng.next !== 'function') throw new Error('FleetOutfitter requires a valid PRNG instance.');
 
-    const wCatalog = window.WEAPONS_CATALOG || {};
-    const uCatalog = window.UPGRADES_CATALOG || {};
+    const wCatalog = window.WEAPONS_CATALOG;
+    const uCatalog = window.UPGRADES_CATALOG;
     const weapons = [];
     const upgrades = [];
-    let totalCost = spec.cost || 20.0;
-    let chosenGunId = spec.builtInGun || 'M61A2';
+    let totalCost = spec.cost;
+    let chosenGunId = spec.builtInGun;
+    if (typeof totalCost !== 'number' || !chosenGunId) {
+      throw new Error(`Airframe spec "${spec.id}" is missing cost or builtInGun.`);
+    }
 
     const isEW = (spec.category === 'EW' || spec.isEW);
     const isStrike = (spec.category === 'STRIKE');
     const isDrone = (spec.category === 'DRONES' || spec.isDrone);
     const isStealth = (spec.internalSlots > 0 && spec.category === 'STEALTH');
     const isHeavyTruck = ['F-15EX', 'MiG-31BM', 'J-16', 'Su-34', 'A-10C', 'B-1B', 'Tu-160M'].includes(spec.id);
-    const isAgileDogfighter = ['Rafale-C', 'Eurofighter', 'Su-35S', 'Mirage-2000', 'F-16V', 'Gripen', 'Tejas-MK2', 'Su-47', 'X-29A', 'Su-37'].includes(spec.id);
+    const isAgileDogfighter = ['Rafale-C', 'Eurofighter', 'Su-35S', 'Mirage-2000', 'F-16V', 'JAS-39E', 'Tejas-MK2', 'Su-47', 'X-29A', 'Su-37'].includes(spec.id);
     const isHighSpeed = (spec.S_0 >= 1.25 || ['MiG-31BM', 'DARKSTAR', 'F-15EX', 'YF-23', 'F-14D', 'Tu-160M'].includes(spec.id));
 
     const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
-    const specRatingIndex = ratings.indexOf(spec.maxPylonRating || 'Type M');
+    const specRatingIndex = ratings.indexOf(spec.maxPylonRating);
+    if (specRatingIndex === -1) throw new Error(`Invalid maxPylonRating "${spec.maxPylonRating}" on "${spec.id}".`);
 
     const isEligible = (w) => {
       if (!w) return false;
-      if (ratings.indexOf(w.minRating || 'Type S') > specRatingIndex) return false;
+      if (ratings.indexOf(w.minRating) > specRatingIndex) return false;
       if (w.allowedAirframes && !w.allowedAirframes.includes(spec.id)) return false;
       return true;
     };
@@ -41,7 +52,7 @@ class FleetOutfitter {
       const w = wCatalog[wId];
       if (!w || !isEligible(w)) return false;
       weapons.push({ id: wId, station });
-      totalCost += (w.cost || 0);
+      totalCost += w.cost;
       return true;
     };
 
@@ -50,7 +61,7 @@ class FleetOutfitter {
       if (!u || upgrades.includes(uId)) return;
       if (u.isAllowed && !u.isAllowed(spec)) return;
       upgrades.push(uId);
-      totalCost += (u.cost || 0);
+      totalCost += u.cost;
     };
 
     if ((isAce || ['FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)) && spec.allowedGuns) {
@@ -63,19 +74,14 @@ class FleetOutfitter {
 
     if (isAce) {
       let aceRole = 'SWEEP';
-      if (class1Ulr.length > 0 && (doctrine === 'STANDOFF' || rng.boolean(0.45))) {
-        aceRole = 'SNIPER';
-      } else if (spec.isCoffin || spec.category === 'EXPERIMENTAL') {
-        aceRole = 'FLAGSHIP';
-      } else if (isHighSpeed && rng.boolean(0.40)) {
-        aceRole = 'INTERCEPT';
-      } else if (isAgileDogfighter && rng.boolean(0.50)) {
-        aceRole = 'DOGFIGHT';
-      }
+      if (class1Ulr.length > 0 && (doctrine === 'STANDOFF' || rng.boolean(0.45))) aceRole = 'SNIPER';
+      else if (spec.isCoffin || spec.category === 'EXPERIMENTAL') aceRole = 'FLAGSHIP';
+      else if (isHighSpeed && rng.boolean(0.40)) aceRole = 'INTERCEPT';
+      else if (isAgileDogfighter && rng.boolean(0.50)) aceRole = 'DOGFIGHT';
 
-      const ulrChoice = rng.pick(class1Ulr) || (class2Lr[0] || 'METEOR');
-      const lrChoice = rng.pick(class2Lr) || 'METEOR';
-      const srChoice = ['PYTHON-5', 'IRIS-T'].filter(id => isEligible(wCatalog[id]))[0] || (class4Sr[0] || 'AIM-9X-2');
+      const ulrChoice = rng.pick(class1Ulr) || class2Lr[0];
+      const lrChoice = rng.pick(class2Lr);
+      const srChoice = ['PYTHON-5', 'IRIS-T'].filter(id => isEligible(wCatalog[id]))[0] || class4Sr[0];
 
       if (spec.internalSlots > 0) {
         addWpn(isEligible(wCatalog['AIM-260']) ? 'AIM-260' : ulrChoice, 'INTERNAL');
@@ -90,7 +96,7 @@ class FleetOutfitter {
         if (spec.externalSlots >= 8) addWpn(srChoice, 'EXTERNAL');
       }
 
-      const aceSockets = ['FORTIFIED', 'MASTER', 'LEGEND'].includes(diff) ? Math.min(spec.upgradeSockets || 4, 4) : 3;
+      const aceSockets = ['FORTIFIED', 'MASTER', 'LEGEND'].includes(diff) ? Math.min(spec.upgradeSockets, 4) : 3;
       const aceUpgPool = ['GAN_AESA_CORE', 'THRUST_VECTOR', 'SUPERCRUISE_VCE', 'RAM_NANO_COATING', 'ADAPTIVE_ECCM_SUITE', 'COFFIN_OPTICAL_BUS'];
       for (const uId of aceUpgPool) {
         if (upgrades.length >= aceSockets) break;
@@ -101,81 +107,33 @@ class FleetOutfitter {
 
     let enforceLightweight = false;
     if (isAgileDogfighter && !isHeavyTruck) {
-      const lightChances = {
-        CADET: 0.0,
-        BUFFER: 0.0,
-        VETERAN: 0.0,
-        ESCALATED: 0.15,
-        ELITE: 0.30,
-        FORWARD: 0.40,
-        ACE: 0.50,
-        FORTIFIED: 0.55,
-        MASTER: 0.60,
-        LEGEND: 0.65
-      };
-      enforceLightweight = rng.boolean(lightChances[diff] || 0.0);
+      const lightChances = { CADET: 0.0, BUFFER: 0.0, VETERAN: 0.0, ESCALATED: 0.15, ELITE: 0.30, FORWARD: 0.40, ACE: 0.50, FORTIFIED: 0.55, MASTER: 0.60, LEGEND: 0.65 };
+      enforceLightweight = rng.boolean(lightChances[diff]);
     }
 
     let enforceCleanStealth = false;
     if (isStealth && spec.id !== 'J-20') {
-      const cleanChances = {
-        CADET: 0.0,
-        BUFFER: 0.0,
-        VETERAN: 0.0,
-        ESCALATED: 0.18,
-        ELITE: 0.35,
-        FORWARD: 0.40,
-        ACE: 0.45,
-        FORTIFIED: 0.50,
-        MASTER: 0.55,
-        LEGEND: 0.60
-      };
-      enforceCleanStealth = rng.boolean(cleanChances[diff] || 0.0);
+      const cleanChances = { CADET: 0.0, BUFFER: 0.0, VETERAN: 0.0, ESCALATED: 0.18, ELITE: 0.35, FORWARD: 0.40, ACE: 0.45, FORTIFIED: 0.50, MASTER: 0.55, LEGEND: 0.60 };
+      enforceCleanStealth = rng.boolean(cleanChances[diff]);
     }
 
     let role = 'SWEEP';
-    if (isEW) {
-      role = 'SEAD';
-    } else if (isDrone) {
-      role = 'SWARM';
-    } else if (isStrike) {
-      role = 'STRIKE';
-    } else if (isStealth && (enforceCleanStealth || rng.boolean(0.45))) {
-      role = 'AMBUSH';
-    } else if (isHeavyTruck && class1Ulr.length > 0 && rng.boolean(0.60)) {
-      role = 'SNIPER';
-    } else if (isHighSpeed && (doctrine === 'AGGRESSIVE' || rng.boolean(0.45))) {
-      role = 'INTERCEPT';
-    } else if (isAgileDogfighter && (doctrine === 'AGGRESSIVE' || rng.boolean(0.45))) {
-      role = 'DOGFIGHT';
-    } else if (doctrine === 'STANDOFF' && class1Ulr.length > 0) {
-      role = 'SNIPER';
-    } else if (rng.boolean(0.22) && !['DARKSTAR', 'B-1B', 'Tu-160M', 'A-10C'].includes(spec.id)) {
-      role = 'ESCORT';
-    }
+    if (isEW) role = 'SEAD';
+    else if (isDrone) role = 'SWARM';
+    else if (isStrike) role = 'STRIKE';
+    else if (isStealth && (enforceCleanStealth || rng.boolean(0.45))) role = 'AMBUSH';
+    else if (isHeavyTruck && class1Ulr.length > 0 && rng.boolean(0.60)) role = 'SNIPER';
+    else if (isHighSpeed && (doctrine === 'AGGRESSIVE' || rng.boolean(0.45))) role = 'INTERCEPT';
+    else if (isAgileDogfighter && (doctrine === 'AGGRESSIVE' || rng.boolean(0.45))) role = 'DOGFIGHT';
+    else if (doctrine === 'STANDOFF' && class1Ulr.length > 0) role = 'SNIPER';
+    else if (rng.boolean(0.22) && !['DARKSTAR', 'B-1B', 'Tu-160M', 'A-10C'].includes(spec.id)) role = 'ESCORT';
 
-    const ulrWeights = {
-      CADET: 0.0,
-      BUFFER: 0.02,
-      VETERAN: 0.05,
-      ESCALATED: 0.10,
-      ELITE: 0.15,
-      FORWARD: 0.25,
-      ACE: 0.35,
-      FORTIFIED: 0.42,
-      MASTER: 0.50,
-      LEGEND: 0.65
-    };
+    const ulrWeights = { CADET: 0.0, BUFFER: 0.02, VETERAN: 0.05, ESCALATED: 0.10, ELITE: 0.15, FORWARD: 0.25, ACE: 0.35, FORTIFIED: 0.42, MASTER: 0.50, LEGEND: 0.65 };
     const rollBvr = (allowUlr = true) => {
       const ulrRoll = rng.next();
-      const ulrThresh = ulrWeights[diff] !== undefined ? ulrWeights[diff] : 0.05;
-      if (allowUlr && class1Ulr.length > 0 && (ulrRoll < ulrThresh || role === 'SNIPER' || role === 'AMBUSH')) {
-        return rng.pick(class1Ulr);
-      }
-      if (class2Lr.length > 0 && (rng.boolean(0.65) || ['ESCALATED', 'ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff))) {
-        return rng.pick(class2Lr);
-      }
-      return rng.pick(class3Mr) || 'AIM-120D';
+      if (allowUlr && class1Ulr.length > 0 && (ulrRoll < ulrWeights[diff] || role === 'SNIPER' || role === 'AMBUSH')) return rng.pick(class1Ulr);
+      if (class2Lr.length > 0 && (rng.boolean(0.65) || ['ESCALATED', 'ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff))) return rng.pick(class2Lr);
+      return rng.pick(class3Mr) || rng.pick(class4Sr);
     };
 
     const rollWvr = () => {
@@ -183,7 +141,7 @@ class FleetOutfitter {
         if (class4Sr.includes('PYTHON-5') && rng.boolean(0.45)) return 'PYTHON-5';
         if (class4Sr.includes('IRIS-T') && rng.boolean(0.35)) return 'IRIS-T';
       }
-      return rng.pick(class4Sr) || 'AIM-9X-2';
+      return rng.pick(class4Sr);
     };
 
     if (role === 'SEAD') {
@@ -205,20 +163,15 @@ class FleetOutfitter {
     }
 
     if (role === 'STRIKE') {
-      if (spec.hasCenterline && isEligible(wCatalog['KINZHAL']) && (diff === 'LEGEND' || rng.boolean(0.50))) {
-        addWpn('KINZHAL', 'CENTERLINE');
-      } else if (isEligible(wCatalog['AGM-158B'])) {
-        addWpn('AGM-158B', 'EXTERNAL');
-      } else {
-        addWpn('GBU-39', 'EXTERNAL');
-      }
+      if (spec.hasCenterline && isEligible(wCatalog['KINZHAL']) && (diff === 'LEGEND' || rng.boolean(0.50))) addWpn('KINZHAL', 'CENTERLINE');
+      else if (isEligible(wCatalog['AGM-158B'])) addWpn('AGM-158B', 'EXTERNAL');
+      else addWpn('GBU-39', 'EXTERNAL');
       if (isEligible(wCatalog['AGM-88G']) && rng.boolean(0.60)) addWpn('AGM-88G', 'EXTERNAL');
       addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
     } else if (role === 'SNIPER') {
       const primaryUlr = rng.pick(class1Ulr) || rollBvr(true);
       const secondaryLr = rng.pick(class2Lr) || rollBvr(false);
-
       if (spec.internalSlots > 0) {
         addWpn(primaryUlr, 'INTERNAL');
         addWpn(secondaryLr, 'INTERNAL');
@@ -236,8 +189,7 @@ class FleetOutfitter {
       addUpg('RAM_NANO_COATING');
       if (spec.upgradeSockets >= 2) addUpg('EOTS_DUAL_OPTICS');
     } else if (role === 'INTERCEPT') {
-      const fastBvr = rollBvr(true);
-      addWpn(fastBvr, spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      addWpn(rollBvr(true), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       addUpg('SUPERCRUISE_VCE');
@@ -261,7 +213,6 @@ class FleetOutfitter {
     } else {
       const primaryBvr = rollBvr(['FORTIFIED', 'MASTER', 'LEGEND'].includes(diff));
       const primaryWvr = rollWvr();
-
       if (spec.internalSlots > 0) {
         addWpn(primaryBvr, 'INTERNAL');
         addWpn(primaryWvr, 'INTERNAL');
@@ -274,14 +225,12 @@ class FleetOutfitter {
         addWpn(primaryWvr, 'EXTERNAL');
         if (spec.externalSlots >= 6 && !enforceLightweight) {
           addWpn(rollBvr(false), 'EXTERNAL');
-          if (spec.externalSlots >= 8 && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)) {
-            addWpn(rollWvr(), 'EXTERNAL');
-          }
+          if (spec.externalSlots >= 8 && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)) addWpn(rollWvr(), 'EXTERNAL');
         }
       }
     }
 
-    const maxSockets = spec.upgradeSockets || 3;
+    const maxSockets = spec.upgradeSockets;
     let targetSockets = 1;
     if (diff === 'CADET') targetSockets = rng.boolean(0.40) ? 0 : 1;
     else if (diff === 'BUFFER') targetSockets = rng.boolean(0.25) ? 0 : 1;

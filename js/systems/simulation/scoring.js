@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Simulation Scoring & Engagement Logging
- * Synchronized pilot scoring, exact math parity, mission time bonuses, and timeline tracking.
+ * Synchronized pilot scoring, Attack & Air difficulty multipliers, time bonuses, and timeline tracking.
  */
 
 class SimulationScoring {
@@ -28,7 +28,7 @@ class SimulationScoring {
 
   calcTimeBonus(durSec, blueWon) {
     if (!blueWon) return 0;
-    const parTimeSec = 360;
+    const parTimeSec = (this.game.scenarioMode === 'ATTACK') ? 540 : 360;
     if (durSec < parTimeSec) {
       return Math.max(0, Math.round((parTimeSec - durSec) * 2.5));
     }
@@ -36,10 +36,12 @@ class SimulationScoring {
   }
 
   getScoreMultipliers() {
-    const diffKey = this.game.aiDifficulty;
-    const diffData = window.AI_DIFFICULTIES[diffKey];
+    const isAttack = (this.game.scenarioMode === 'ATTACK');
+    const diffKey = isAttack ? this.game.attackDifficulty : this.game.aiDifficulty;
+    const diffTable = isAttack ? window.ATTACK_DIFFICULTIES : window.AI_DIFFICULTIES;
+    const diffData = diffTable && diffTable[diffKey];
     if (!diffData || typeof diffData.scoreMultiplier !== 'number') {
-      throw new Error(`AI difficulty "${diffKey}" is not defined in AI_DIFFICULTIES.`);
+      throw new Error(`Difficulty "${diffKey}" is not defined in ${isAttack ? 'ATTACK_DIFFICULTIES' : 'AI_DIFFICULTIES'}.`);
     }
     const diffMult = diffData.scoreMultiplier;
 
@@ -66,21 +68,11 @@ class SimulationScoring {
     if (typeof points !== 'number' || isNaN(points)) {
       throw new Error(`Invalid score points value: ${points}`);
     }
-    if (team === 'friendly') {
-      this.game.vpAlly += points;
-    } else if (team === 'hostile') {
-      this.game.vpHostile += points;
-    } else {
-      throw new Error(`Invalid team "${team}" in logScoreEvent.`);
-    }
+    if (team === 'friendly') this.game.vpAlly += points;
+    else if (team === 'hostile') this.game.vpHostile += points;
+    else throw new Error(`Invalid team "${team}" in logScoreEvent.`);
 
-    this.scoreLog.unshift({
-      time: this.getElapsedTimeString(),
-      team: team,
-      points: points,
-      reason: reason
-    });
-
+    this.scoreLog.unshift({ time: this.getElapsedTimeString(), team, points, reason });
     if (this.scoreLog.length > 20) this.scoreLog.pop();
     if (this.game.inspection && this.game.inspection.enabled) {
       this.game.inspection.recordEvent('SCORE CHANGE', reason, null, null, { team, points, blueScore: this.game.vpAlly, redScore: this.game.vpHostile });
@@ -109,26 +101,14 @@ class SimulationScoring {
   recordBogeyFirePenalty(team, sourceUnit, targetEntity, weapon, penalty) {
     const srcName = sourceUnit ? (sourceUnit.callsign || sourceUnit.id) : 'PILOT';
     const srcType = (sourceUnit && sourceUnit.spec) ? (sourceUnit.spec.id || sourceUnit.spec.name) : 'AIRCRAFT';
-    const rawWpn = weapon ? (weapon.name || weapon.id) : 'Missile';
-    const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
-    const rawTgt = targetEntity ? (targetEntity.callsign || targetEntity.flightCode || targetEntity.name || 'BOGEY [?]') : 'BOGEY [?]';
-    const tgtName = String(rawTgt).replace(/<[^>]*>/g, '');
+    const wpnName = String(weapon ? (weapon.name || weapon.id) : 'Missile').replace(/\s*\(\d+x\)/gi, '').trim();
+    const tgtName = String(targetEntity ? (targetEntity.callsign || targetEntity.flightCode || targetEntity.name || 'BOGEY [?]') : 'BOGEY [?]').replace(/<[^>]*>/g, '');
 
-    if (sourceUnit && sourceUnit.scorePoints !== undefined) {
-      sourceUnit.scorePoints -= penalty;
-    }
-
+    if (sourceUnit && sourceUnit.scorePoints !== undefined) sourceUnit.scorePoints -= penalty;
     this.timelineEvents.push({
-      time: this.getElapsedTimeString(),
-      timeSec: this.getCurrentExactTimeSec(),
-      type: 'roe_penalty',
-      team: team,
-      source: srcName,
-      sourceType: srcType,
-      target: tgtName,
-      targetType: 'UNVERIFIED',
-      weapon: wpnName,
-      points: -penalty,
+      time: this.getElapsedTimeString(), timeSec: this.getCurrentExactTimeSec(),
+      type: 'roe_penalty', team, source: srcName, sourceType: srcType,
+      target: tgtName, targetType: 'UNVERIFIED', weapon: wpnName, points: -penalty,
       reason: `ROE INFRACTION: Fired on unverified track [BOGEY ?] (${tgtName})`
     });
   }
@@ -136,70 +116,40 @@ class SimulationScoring {
   recordCivilianFirePenalty(team, sourceUnit, civilianFlight, weapon, penalty) {
     const srcName = sourceUnit ? (sourceUnit.callsign || sourceUnit.id) : 'PILOT';
     const srcType = (sourceUnit && sourceUnit.spec) ? (sourceUnit.spec.id || sourceUnit.spec.name) : 'AIRCRAFT';
-    const rawWpn = weapon ? (weapon.name || weapon.id) : 'Weapon';
-    const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
+    const wpnName = String(weapon ? (weapon.name || weapon.id) : 'Weapon').replace(/\s*\(\d+x\)/gi, '').trim();
     const tgtName = civilianFlight ? (civilianFlight.flightCode || civilianFlight.name) : 'Civilian Flight';
 
-    if (sourceUnit && sourceUnit.scorePoints !== undefined) {
-      sourceUnit.scorePoints -= penalty;
-    }
-
+    if (sourceUnit && sourceUnit.scorePoints !== undefined) sourceUnit.scorePoints -= penalty;
     this.timelineEvents.push({
-      time: this.getElapsedTimeString(),
-      timeSec: this.getCurrentExactTimeSec(),
-      type: 'roe_penalty',
-      team: team,
-      source: srcName,
-      sourceType: srcType,
-      target: tgtName,
-      targetType: 'CIVILIAN',
-      weapon: wpnName,
-      points: -penalty,
+      time: this.getElapsedTimeString(), timeSec: this.getCurrentExactTimeSec(),
+      type: 'roe_penalty', team, source: srcName, sourceType: srcType,
+      target: tgtName, targetType: 'CIVILIAN', weapon: wpnName, points: -penalty,
       reason: `ROE VIOLATION: Fired weapon at civilian airliner (${tgtName})`
     });
   }
 
   recordHitEvent(firingTeam, targetEntity, firingSource, details = {}) {
     if (!targetEntity || targetEntity.isGhost) return;
-
     const isDecoy = Boolean(targetEntity.isDecoyDrone);
-    const rawTgtName = targetEntity.callsign || (targetEntity.spec ? targetEntity.spec.name : targetEntity.name);
-    const tgtName = String(rawTgtName).replace(/<[^>]*>/g, '');
+    const tgtName = String(targetEntity.callsign || (targetEntity.spec ? targetEntity.spec.name : targetEntity.name)).replace(/<[^>]*>/g, '');
     const tgtType = isDecoy ? 'DECOY DRONE' : (targetEntity.spec ? (targetEntity.spec.id || targetEntity.spec.name) : targetEntity.type);
-
-    const rawSrcName = firingSource ? (firingSource.callsign || firingSource.name || firingSource.id) : 'BASE';
-    const srcName = String(rawSrcName).replace(/<[^>]*>/g, '');
+    const srcName = String(firingSource ? (firingSource.callsign || firingSource.name || firingSource.id) : 'BASE').replace(/<[^>]*>/g, '');
     const srcType = (firingSource && firingSource.spec) ? (firingSource.spec.id || firingSource.spec.name) : (firingSource && firingSource.name ? firingSource.name : 'AIRCRAFT');
-
-    const rawWpnName = details.weapon ? (details.weapon.name || details.weapon.id) : (details.weaponName || 'Missile');
-    const wpnName = String(rawWpnName).replace(/\s*\(\d+x\)/gi, '').replace(/\s*\(pack of \d+\)/gi, '').trim();
-
+    const wpnName = String(details.weapon ? (details.weapon.name || details.weapon.id) : (details.weaponName || 'Missile')).replace(/\s*\(\d+x\)/gi, '').trim();
     const isSalvo = Boolean(details.isSalvo || (details.salvoCount > 1));
     const salvoCount = details.salvoCount || (isSalvo ? 2 : 1);
     const salvoBreakdown = details.salvoBreakdown || (isSalvo ? `x${salvoCount}` : '');
-    const rawDamage = Number(details.damage);
-    if (isNaN(rawDamage)) throw new Error('recordHitEvent requires a valid numeric damage property in details.');
-    const dmg = Number(rawDamage.toFixed(1));
+    const dmg = Number(Number(details.damage || 0).toFixed(1));
 
     this.timelineEvents.push({
-      time: this.getElapsedTimeString(),
-      timeSec: this.getCurrentExactTimeSec(),
-      type: 'hit',
-      team: firingTeam,
-      source: srcName,
-      sourceType: srcType,
-      target: tgtName,
-      targetType: tgtType,
-      weapon: wpnName,
-      damage: dmg,
-      isSalvo: isSalvo,
-      salvoCount: salvoCount,
-      salvoBreakdown: salvoBreakdown
+      time: this.getElapsedTimeString(), timeSec: this.getCurrentExactTimeSec(),
+      type: 'hit', team: firingTeam, source: srcName, sourceType: srcType,
+      target: tgtName, targetType: tgtType, weapon: wpnName, damage: dmg,
+      isSalvo, salvoCount, salvoBreakdown
     });
     if (this.game.inspection && this.game.inspection.enabled) {
       this.game.inspection.recordEvent('DAMAGE', `${srcName} damaged ${tgtName}`, firingSource, targetEntity, {
-        weapon: wpnName, damage: dmg, isSalvo, salvoCount, salvoBreakdown,
-        remainingHp: targetEntity.hp, targetMaxHp: targetEntity.maxHp
+        weapon: wpnName, damage: dmg, isSalvo, salvoCount, salvoBreakdown, remainingHp: targetEntity.hp, targetMaxHp: targetEntity.maxHp
       });
     }
   }
@@ -212,16 +162,11 @@ class SimulationScoring {
     const isAce = Boolean(targetEntity.isAce);
     const isDrone = Boolean(targetEntity.spec && targetEntity.spec.isDrone);
 
-    const rawTgtName = targetEntity.callsign || (targetEntity.spec ? targetEntity.spec.name : targetEntity.name);
-    const tgtName = String(rawTgtName).replace(/<[^>]*>/g, '');
+    const tgtName = String(targetEntity.callsign || (targetEntity.spec ? targetEntity.spec.name : targetEntity.name)).replace(/<[^>]*>/g, '');
     const tgtType = isDecoy ? 'DECOY DRONE' : (targetEntity.spec ? (targetEntity.spec.id || targetEntity.spec.name) : targetEntity.type);
-
-    const rawSrcName = firingSource ? (firingSource.callsign || firingSource.name || firingSource.id) : 'BASE';
-    const srcName = String(rawSrcName).replace(/<[^>]*>/g, '');
+    const srcName = String(firingSource ? (firingSource.callsign || firingSource.name || firingSource.id) : 'BASE').replace(/<[^>]*>/g, '');
     const srcType = (firingSource && firingSource.spec) ? (firingSource.spec.id || firingSource.spec.name) : (firingSource && firingSource.name ? firingSource.name : 'AIRCRAFT');
-
-    const rawWpnName = details.weapon ? (details.weapon.name || details.weapon.id) : (details.weaponName || 'Missile');
-    const wpnName = String(rawWpnName).replace(/\s*\(\d+x\)/gi, '').replace(/\s*\(pack of \d+\)/gi, '').trim();
+    const wpnName = String(details.weapon ? (details.weapon.name || details.weapon.id) : (details.weaponName || 'Missile')).replace(/\s*\(\d+x\)/gi, '').replace(/\s*\(pack of \d+\)/gi, '').trim();
 
     const isSalvo = Boolean(details.isSalvo || (details.salvoCount > 1));
     const salvoCount = details.salvoCount || (isSalvo ? 2 : 1);
@@ -235,20 +180,10 @@ class SimulationScoring {
       pts = Math.round(window.CONFIG.VP_DRONE_KILL_BASE + (targetEntity.spec.cost * window.CONFIG.VP_DRONE_COST_MULT));
     } else if (isAircraft) {
       pts = Math.round(window.CONFIG.VP_AIRCRAFT_KILL_BASE + (targetEntity.spec.cost * window.CONFIG.VP_AIRCRAFT_COST_MULT));
-    } else if (targetEntity.type === 'BUNKER') {
-      pts = window.CONFIG.VP_BUNKER_DESTROYED;
-    } else if (targetEntity.type === 'S-400') {
-      pts = window.CONFIG.VP_SAM_DESTROYED;
-    } else if (targetEntity.type === 'RADAR_ARRAY' || targetEntity.type === 'EW_JAMMER') {
-      pts = window.CONFIG.VP_RADAR_DESTROYED;
-    } else if (targetEntity.type === 'PANTSIR') {
-      pts = 200;
-    } else if (targetEntity.type === 'FUEL_DEPOT') {
-      pts = window.CONFIG.VP_FUEL_DEPOT_DESTROYED;
-    } else if (targetEntity.type === 'RADAR_VAN') {
-      pts = window.CONFIG.VP_RADAR_VAN_DESTROYED;
+    } else if (typeof targetEntity.vpValue === 'number' && !isNaN(targetEntity.vpValue)) {
+      pts = targetEntity.vpValue;
     } else {
-      throw new Error(`Unrecognized target entity type for kill points calculation: ${targetEntity.type || targetEntity.id}`);
+      throw new Error(`Target "${tgtName}" (${tgtType}) has missing or invalid vpValue.`);
     }
 
     if (targetEntity.isFlightLead) pts = Math.round(pts * 1.5);
@@ -256,13 +191,10 @@ class SimulationScoring {
 
     if (firingSource) {
       if (firingSource.kills !== undefined && !isDecoy) firingSource.kills++;
-      if (firingSource.scorePoints !== undefined && !isDecoy) {
-        firingSource.scorePoints += pts;
-      }
+      if (firingSource.scorePoints !== undefined && !isDecoy && !targetEntity.isGroundDecoy) firingSource.scorePoints += pts;
     }
 
     const logDesc = `${srcName} (${srcType}) destroyed ${tgtName} (${tgtType}) using ${wpnName}${salvoTag}`.trim();
-
     if (firingTeam === 'friendly') {
       if (isAircraft && !isDecoy) this.game.stats.redLosses++;
       this.logScoreEvent('friendly', pts, logDesc);
@@ -272,19 +204,10 @@ class SimulationScoring {
     }
 
     this.timelineEvents.push({
-      time: this.getElapsedTimeString(),
-      timeSec: this.getCurrentExactTimeSec(),
-      type: isAce ? 'ace-kill' : 'kill',
-      team: firingTeam,
-      source: srcName,
-      sourceType: srcType,
-      target: tgtName,
-      targetType: tgtType,
-      weapon: wpnName,
-      isSalvo: isSalvo,
-      salvoCount: salvoCount,
-      salvoBreakdown: salvoBreakdown,
-      points: pts
+      time: this.getElapsedTimeString(), timeSec: this.getCurrentExactTimeSec(),
+      type: isAce ? 'ace-kill' : 'kill', team: firingTeam,
+      source: srcName, sourceType: srcType, target: tgtName, targetType: tgtType,
+      weapon: wpnName, isSalvo, salvoCount, salvoBreakdown, points: pts
     });
 
     if (this.game.simulation && typeof this.game.simulation.captureReplayFrame === 'function') {
@@ -297,32 +220,18 @@ class SimulationScoring {
     const srcName = firingSource && firingSource.spec && window.formatAircraftDisplayName
       ? window.formatAircraftDisplayName(firingSource)
       : (firingSource ? (firingSource.callsign || firingSource.name || firingSource.id) : 'PILOT');
-    const rawWpn = weapon ? (weapon.name || weapon.id) : 'Weapon';
-    const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
+    const wpnName = String(weapon ? (weapon.name || weapon.id) : 'Weapon').replace(/\s*\(\d+x\)/gi, '').trim();
 
-    if (firingSource && firingSource.scorePoints !== undefined) {
-      firingSource.scorePoints -= penalty;
-    }
-
+    if (firingSource && firingSource.scorePoints !== undefined) firingSource.scorePoints -= penalty;
     const logMsg = `ROE VIOLATION: Civilian flight struck (${civilianFlight.flightCode}) by ${srcName} [${wpnName}]`;
     this.logScoreEvent(firingTeam, -penalty, logMsg);
 
     this.timelineEvents.push({
-      time: this.getElapsedTimeString(),
-      timeSec: this.getCurrentExactTimeSec(),
-      type: 'roe_penalty',
-      team: firingTeam,
-      source: srcName,
-      target: civilianFlight.flightCode,
-      targetType: 'Airliner',
-      weapon: wpnName,
-      points: -penalty,
-      reason: logMsg
+      time: this.getElapsedTimeString(), timeSec: this.getCurrentExactTimeSec(),
+      type: 'roe_penalty', team: firingTeam, source: srcName,
+      target: civilianFlight.flightCode, targetType: 'Airliner', weapon: wpnName, points: -penalty, reason: logMsg
     });
-
-    if (window.Game && window.Game.radar) {
-      window.Game.radar.spawnCombatText(civilianFlight.x, civilianFlight.y, `ROE VIOLATION: CIVILIAN STRUCK (-${penalty} VP)`, '#f97316');
-    }
+    if (window.Game && window.Game.radar) window.Game.radar.spawnCombatText(civilianFlight.x, civilianFlight.y, `ROE VIOLATION: CIVILIAN STRUCK (-${penalty} VP)`, '#f97316');
   }
 
   recordCivilianShootdown(firingTeam, civilianFlight, firingSource, weapon) {
@@ -330,36 +239,19 @@ class SimulationScoring {
     const srcName = firingSource && firingSource.spec && window.formatAircraftDisplayName
       ? window.formatAircraftDisplayName(firingSource)
       : (firingSource ? (firingSource.callsign || firingSource.name || firingSource.id) : 'PILOT');
-    const rawWpn = weapon ? (weapon.name || weapon.id) : 'Weapon';
-    const wpnName = String(rawWpn).replace(/\s*\(\d+x\)/gi, '').trim();
+    const wpnName = String(weapon ? (weapon.name || weapon.id) : 'Weapon').replace(/\s*\(\d+x\)/gi, '').trim();
 
-    if (firingSource && firingSource.scorePoints !== undefined) {
-      firingSource.scorePoints -= penalty;
-    }
-
+    if (firingSource && firingSource.scorePoints !== undefined) firingSource.scorePoints -= penalty;
     const logMsg = `ROE VIOLATION: Civilian airliner destroyed (${civilianFlight.flightCode}) by ${srcName}`;
     this.logScoreEvent(firingTeam, -penalty, logMsg);
 
     this.timelineEvents.push({
-      time: this.getElapsedTimeString(),
-      timeSec: this.getCurrentExactTimeSec(),
-      type: 'roe_penalty',
-      team: firingTeam,
-      source: srcName,
-      target: civilianFlight.flightCode,
-      targetType: 'Airliner',
-      weapon: wpnName,
-      points: -penalty,
-      reason: logMsg
+      time: this.getElapsedTimeString(), timeSec: this.getCurrentExactTimeSec(),
+      type: 'roe_penalty', team: firingTeam, source: srcName,
+      target: civilianFlight.flightCode, targetType: 'Airliner', weapon: wpnName, points: -penalty, reason: logMsg
     });
-
-    if (window.Game && window.Game.radar) {
-      window.Game.radar.spawnCombatText(civilianFlight.x, civilianFlight.y, `ROE VIOLATION: AIRLINER DESTROYED (-${penalty} VP)`, '#ff3366');
-    }
-
-    if (this.game.simulation && typeof this.game.simulation.captureReplayFrame === 'function') {
-      this.game.simulation.captureReplayFrame(true);
-    }
+    if (window.Game && window.Game.radar) window.Game.radar.spawnCombatText(civilianFlight.x, civilianFlight.y, `ROE VIOLATION: AIRLINER DESTROYED (-${penalty} VP)`, '#ff3366');
+    if (this.game.simulation && typeof this.game.simulation.captureReplayFrame === 'function') this.game.simulation.captureReplayFrame(true);
   }
 }
 

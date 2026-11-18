@@ -4,6 +4,16 @@
  */
 
 class LeaderboardDossierRenderer {
+  static resolveDifficultyName(item) {
+    const diffKey = item.difficulty;
+    const aiEntry = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) ||
+                    (window.AI_DIFFICULTIES && Object.values(window.AI_DIFFICULTIES).find(d => d.name === diffKey));
+    const atkEntry = (window.ATTACK_DIFFICULTIES && window.ATTACK_DIFFICULTIES[diffKey]) ||
+                     (window.ATTACK_DIFFICULTIES && Object.values(window.ATTACK_DIFFICULTIES).find(d => d.name === diffKey));
+    const entry = aiEntry || atkEntry;
+    return item.difficultyName || (entry ? entry.name : (diffKey || 'Contested Airspace'));
+  }
+
   static renderDetail(item, itemIdx = 0, onRecordDeleted) {
     const detailContainer = document.getElementById('leaderboard-detail-view');
     if (!detailContainer || !item) return;
@@ -50,7 +60,7 @@ class LeaderboardDossierRenderer {
 
     const timelineEvents = item.timeline || [];
     const combatSummary = item.combatSummary || {};
-    const summaryValue = (key) => item.combatSummary ? (combatSummary[key] || 0) : '—';
+    const summaryValue = (key) => item.combatSummary ? (combatSummary[key] || 0) : '--';
     const timelineHtml = (timelineEvents.length > 0)
       ? timelineEvents.map(ev => LeaderboardDossierRenderer.renderTimelineEvent(ev)).join('')
       : `<div style="color:#8494ab;font-size:0.62rem;font-style:italic;padding:8px 0;">No chronological engagement events archived for this sortie.</div>`;
@@ -69,10 +79,7 @@ class LeaderboardDossierRenderer {
         </div>
       </div>`).join('');
 
-    const diffKey = item.difficulty;
-    const diffEntry = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) ||
-                      (window.AI_DIFFICULTIES && Object.values(window.AI_DIFFICULTIES).find(d => d.name === diffKey));
-    const difficultyDisplayName = item.difficultyName || (diffEntry ? diffEntry.name : (diffKey || 'Contested Airspace'));
+    const difficultyDisplayName = this.resolveDifficultyName(item);
 
     detailContainer.innerHTML = `
       <div class="dossier-header-box">
@@ -98,8 +105,8 @@ class LeaderboardDossierRenderer {
           <div class="dossier-row"><span>SORTIE DURATION:</span><b style="color:#38bdf8;">${item.timeStr || '00:00'}</b></div>
           <div class="dossier-row"><span>SPEED TIME BONUS:</span><b class="time-bonus-tag">+${timeBonusVal.toLocaleString()} VP</b></div>
           <div class="dossier-row"><span>BASE RAW SCORE:</span><b>${(item.rawScore || 0).toLocaleString()} VP</b></div>
-          <div class="dossier-row"><span>BLUE IMPACTS / KILLS:</span><b>${item.combatSummary ? `${summaryValue('blueImpacts')} / ${summaryValue('blueKills')}` : '—'}</b></div>
-          <div class="dossier-row"><span>RED IMPACTS / KILLS:</span><b>${item.combatSummary ? `${summaryValue('redImpacts')} / ${summaryValue('redKills')}` : '—'}</b></div>
+          <div class="dossier-row"><span>BLUE IMPACTS / KILLS:</span><b>${item.combatSummary ? `${summaryValue('blueImpacts')} / ${summaryValue('blueKills')}` : '--'}</b></div>
+          <div class="dossier-row"><span>RED IMPACTS / KILLS:</span><b>${item.combatSummary ? `${summaryValue('redImpacts')} / ${summaryValue('redKills')}` : '--'}</b></div>
           <div class="dossier-row"><span>BLUE MISSILES EVADED:</span><b>${summaryValue('blueMissilesEvaded')}</b></div>
           <div class="dossier-row"><span>DEFENSIVE INTERCEPTS:</span><b>${summaryValue('defensiveIntercepts')}</b></div>
           <div class="dossier-row"><span>ROE INCIDENTS:</span><b>${summaryValue('roeIncidents')}</b></div>
@@ -219,7 +226,7 @@ class LeaderboardDossierRenderer {
     } else if (isTimeBonus) {
       return `
         <div class="timeline-entry" style="background:rgba(0,245,160,0.08);border-left:2px solid #00f5a0;">
-          <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#00f5a0;">[SPEED BONUS]</b> <span>Rapid air neutralization speed bonus</span></div>
+          <div class="timeline-main-info"><span class="timeline-time">[${ev.time || '00:00'}]</span> <b style="color:#00f5a0;">[SPEED BONUS]</b> <span>Rapid objective completion speed bonus</span></div>
           <b style="color:#00f5a0;white-space:nowrap;">+${(ev.points || 0).toLocaleString()} VP</b>
         </div>`;
     } else if (isKill) {

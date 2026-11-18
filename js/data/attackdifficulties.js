@@ -1,0 +1,195 @@
+/**
+ * AIRSPACE STANDOFF: Attack Mode Difficulty Tiers & Ground IADS Doctrines
+ * Balanced target counts, layered SAM belts, finite airbase stocks, and scramble cadence aligned to player ordnance capacity.
+ */
+
+window.ATTACK_DOCTRINES = {
+  BALANCED: {
+    id: 'BALANCED',
+    name: 'BALANCED IADS',
+    desc: 'Standard layered SAM coverage paired with steady airfield QRA interceptor scrambles.'
+  },
+  AMBUSH_IADS: {
+    id: 'AMBUSH_IADS',
+    name: 'EMCON AMBUSH',
+    desc: 'Strict EMCON emission discipline, decoy emitter sites, and delayed SAM fire-control locks inside engagement envelopes.'
+  },
+  INTERCEPTOR_SCREEN: {
+    id: 'INTERCEPTOR_SCREEN',
+    name: 'QRA SCRAMBLE',
+    desc: 'Prioritizes rapid airfield QRA scrambles from hardened shelters and dispersal pads to intercept strike aircraft.'
+  }
+};
+
+window.ATTACK_DIFFICULTIES = {
+  RECON_STRIKE: {
+    id: 'RECON_STRIKE', name: 'Unprepared Garrison', scoreMultiplier: 0.50,
+    primaryObjectiveCount: 2,
+    ewRadarCount: 1, ewRadarPool: ['RADAR_ARRAY'],
+    lrSamCount: 0, lrSamPool: [],
+    mrSamCount: 0, mrSamPool: [],
+    srSamCount: 1, srSamPool: ['SAM_AVENGER'],
+    ciwsCount: 0, ciwsPool: [],
+    aaaCount: 1, aaaPool: ['AAA_SHILKA'],
+    jammerCount: 0, elintCount: 0, commsCount: 0, powerCount: 0, decoyCount: 0,
+    runwayCount: 1, hasCount: 0, hangarCount: 0, openFieldCount: 1,
+    fuelCount: 1, munitionCount: 0, infraCount: 0,
+    emconChance: 0.0, emconCooldownSec: 14.0, ambushHoldRatio: 0.96, networkCueing: 0.15,
+    ciwsInterceptRate: 0.25, samReactionDelaySec: 4.5, salvoSize: 1,
+    qraInitialCount: 0, airbaseAircraftCount: 1, takeoffIntervalSec: 60.0,
+    dispersalAlertKm: 36.0, scramblePairChance: 0.0, qraDifficulty: 'CADET'
+  },
+  BORDER_OUTPOST: {
+    id: 'BORDER_OUTPOST', name: 'Border Outpost', scoreMultiplier: 0.75,
+    primaryObjectiveCount: 2,
+    ewRadarCount: 1, ewRadarPool: ['RADAR_ARRAY', 'RADAR_VAN'],
+    lrSamCount: 0, lrSamPool: [],
+    mrSamCount: 1, mrSamPool: ['SAM_KUB', 'SAM_NASAMS'],
+    srSamCount: 1, srSamPool: ['SAM_AVENGER', 'SAM_RAPIER'],
+    ciwsCount: 0, ciwsPool: [],
+    aaaCount: 1, aaaPool: ['AAA_SHILKA', 'AAA_FLAK57'],
+    jammerCount: 0, elintCount: 0, commsCount: 1, powerCount: 0, decoyCount: 0,
+    runwayCount: 1, hasCount: 0, hangarCount: 1, openFieldCount: 1,
+    fuelCount: 1, munitionCount: 0, infraCount: 0,
+    emconChance: 0.06, emconCooldownSec: 13.5, ambushHoldRatio: 0.92, networkCueing: 0.25,
+    ciwsInterceptRate: 0.30, samReactionDelaySec: 3.9, salvoSize: 1,
+    qraInitialCount: 0, airbaseAircraftCount: 2, takeoffIntervalSec: 54.0,
+    dispersalAlertKm: 45.0, scramblePairChance: 0.10, qraDifficulty: 'BUFFER'
+  },
+  FORWARD_GARRISON: {
+    id: 'FORWARD_GARRISON', name: 'Forward Garrison', scoreMultiplier: 1.00,
+    primaryObjectiveCount: 3,
+    ewRadarCount: 1, ewRadarPool: ['EW_RADAR_AESA', 'RADAR_ARRAY'],
+    lrSamCount: 1, lrSamPool: ['S-400'],
+    mrSamCount: 1, mrSamPool: ['SAM_BUK', 'SAM_KUB'],
+    srSamCount: 1, srSamPool: ['SAM_TOR', 'SAM_AVENGER'],
+    ciwsCount: 1, ciwsPool: ['CIWS_SEARAM', 'PANTSIR'],
+    aaaCount: 1, aaaPool: ['AAA_SHILKA', 'AAA_GEPARD', 'AAA_FLAK57'],
+    jammerCount: 0, elintCount: 0, commsCount: 1, powerCount: 0, decoyCount: 1,
+    runwayCount: 1, hasCount: 1, hangarCount: 0, openFieldCount: 1,
+    fuelCount: 1, munitionCount: 1, infraCount: 0,
+    emconChance: 0.14, emconCooldownSec: 13.0, ambushHoldRatio: 0.86, networkCueing: 0.40,
+    ciwsInterceptRate: 0.35, samReactionDelaySec: 3.4, salvoSize: 1,
+    qraInitialCount: 1, airbaseAircraftCount: 2, takeoffIntervalSec: 48.0,
+    dispersalAlertKm: 52.0, scramblePairChance: 0.20, qraDifficulty: 'VETERAN'
+  },
+  FORTIFIED_BELT: {
+    id: 'FORTIFIED_BELT', name: 'Fortified Belt', scoreMultiplier: 1.25,
+    primaryObjectiveCount: 3,
+    ewRadarCount: 2, ewRadarPool: ['EW_RADAR_AESA', 'EW_RADAR_GAPFILLER'],
+    lrSamCount: 1, lrSamPool: ['S-400', 'SAM_PATRIOT'],
+    mrSamCount: 1, mrSamPool: ['SAM_BUK', 'SAM_NASAMS', 'SAM_KUB'],
+    srSamCount: 1, srSamPool: ['SAM_TOR', 'SAM_RAPIER'],
+    ciwsCount: 1, ciwsPool: ['CIWS_SEARAM', 'PANTSIR'],
+    aaaCount: 1, aaaPool: ['AAA_GEPARD', 'AAA_SHILKA', 'AAA_FLAK57'],
+    jammerCount: 1, elintCount: 0, commsCount: 1, powerCount: 1, decoyCount: 1,
+    runwayCount: 1, hasCount: 1, hangarCount: 1, openFieldCount: 1,
+    fuelCount: 1, munitionCount: 1, infraCount: 0,
+    emconChance: 0.22, emconCooldownSec: 12.0, ambushHoldRatio: 0.82, networkCueing: 0.50,
+    ciwsInterceptRate: 0.40, samReactionDelaySec: 3.0, salvoSize: 1,
+    qraInitialCount: 1, airbaseAircraftCount: 2, takeoffIntervalSec: 44.0,
+    dispersalAlertKm: 58.0, scramblePairChance: 0.30, qraDifficulty: 'ESCALATED'
+  },
+  INTEGRATED_ZONE: {
+    id: 'INTEGRATED_ZONE', name: 'Integrated Air Defense', scoreMultiplier: 1.50,
+    primaryObjectiveCount: 3,
+    ewRadarCount: 2, ewRadarPool: ['EW_RADAR_AESA', 'EW_RADAR_GAPFILLER', 'EW_RADAR_VHF'],
+    lrSamCount: 1, lrSamPool: ['S-400', 'SAM_PATRIOT'],
+    mrSamCount: 1, mrSamPool: ['SAM_BUK', 'SAM_NASAMS'],
+    srSamCount: 1, srSamPool: ['SAM_TOR', 'SAM_RAPIER', 'SAM_AVENGER'],
+    ciwsCount: 1, ciwsPool: ['PANTSIR', 'CIWS_SEARAM'],
+    aaaCount: 2, aaaPool: ['AAA_GEPARD', 'AAA_FLAK57', 'AAA_SHILKA'],
+    jammerCount: 1, elintCount: 1, commsCount: 1, powerCount: 1, decoyCount: 1,
+    runwayCount: 1, hasCount: 1, hangarCount: 1, openFieldCount: 1,
+    fuelCount: 1, munitionCount: 1, infraCount: 1,
+    emconChance: 0.30, emconCooldownSec: 11.5, ambushHoldRatio: 0.78, networkCueing: 0.60,
+    ciwsInterceptRate: 0.44, samReactionDelaySec: 2.6, salvoSize: 2,
+    qraInitialCount: 1, airbaseAircraftCount: 3, takeoffIntervalSec: 40.0,
+    dispersalAlertKm: 64.0, scramblePairChance: 0.35, qraDifficulty: 'ELITE'
+  },
+  DEEP_CITADEL: {
+    id: 'DEEP_CITADEL', name: 'Hardened Command Sector', scoreMultiplier: 1.75,
+    primaryObjectiveCount: 4,
+    ewRadarCount: 2, ewRadarPool: ['EW_RADAR_VHF', 'EW_RADAR_AESA', 'EW_RADAR_GAPFILLER'],
+    lrSamCount: 1, lrSamPool: ['S-400', 'SAM_PATRIOT', 'SAM_S300V'],
+    mrSamCount: 2, mrSamPool: ['SAM_BUK', 'SAM_NASAMS'],
+    srSamCount: 1, srSamPool: ['SAM_TOR', 'SAM_RAPIER'],
+    ciwsCount: 1, ciwsPool: ['PANTSIR', 'CIWS_SEARAM'],
+    aaaCount: 2, aaaPool: ['AAA_GEPARD', 'AAA_FLAK57', 'AAA_SHILKA'],
+    jammerCount: 1, elintCount: 1, commsCount: 1, powerCount: 1, decoyCount: 1,
+    runwayCount: 1, hasCount: 1, hangarCount: 1, openFieldCount: 1,
+    fuelCount: 1, munitionCount: 1, infraCount: 1,
+    emconChance: 0.36, emconCooldownSec: 11.0, ambushHoldRatio: 0.75, networkCueing: 0.68,
+    ciwsInterceptRate: 0.48, samReactionDelaySec: 2.4, salvoSize: 2,
+    qraInitialCount: 1, airbaseAircraftCount: 4, takeoffIntervalSec: 36.0,
+    dispersalAlertKm: 70.0, scramblePairChance: 0.40, qraDifficulty: 'FORWARD'
+  },
+  SECTOR_FORTRESS: {
+    id: 'SECTOR_FORTRESS', name: 'Dense Air Defense Sector', scoreMultiplier: 2.00,
+    primaryObjectiveCount: 4,
+    ewRadarCount: 2, ewRadarPool: ['EW_RADAR_VHF', 'EW_RADAR_AESA', 'EW_RADAR_GAPFILLER'],
+    lrSamCount: 2, lrSamPool: ['S-400', 'SAM_PATRIOT', 'SAM_S300V'],
+    mrSamCount: 2, mrSamPool: ['SAM_BUK', 'SAM_NASAMS'],
+    srSamCount: 2, srSamPool: ['SAM_TOR', 'SAM_RAPIER'],
+    ciwsCount: 2, ciwsPool: ['PANTSIR', 'CIWS_SEARAM'],
+    aaaCount: 2, aaaPool: ['AAA_GEPARD', 'AAA_FLAK57', 'AAA_SHILKA'],
+    jammerCount: 1, elintCount: 1, commsCount: 1, powerCount: 1, decoyCount: 2,
+    runwayCount: 1, hasCount: 2, hangarCount: 1, openFieldCount: 1,
+    fuelCount: 1, munitionCount: 1, infraCount: 1,
+    emconChance: 0.44, emconCooldownSec: 10.5, ambushHoldRatio: 0.72, networkCueing: 0.74,
+    ciwsInterceptRate: 0.52, samReactionDelaySec: 2.1, salvoSize: 2,
+    qraInitialCount: 1, airbaseAircraftCount: 5, takeoffIntervalSec: 32.0,
+    dispersalAlertKm: 75.0, scramblePairChance: 0.45, qraDifficulty: 'ACE'
+  },
+  KILLBOX_CORRIDOR: {
+    id: 'KILLBOX_CORRIDOR', name: 'Layered Defense Corridor', scoreMultiplier: 2.30,
+    primaryObjectiveCount: 4,
+    ewRadarCount: 2, ewRadarPool: ['EW_RADAR_VHF', 'EW_RADAR_AESA', 'EW_RADAR_GAPFILLER'],
+    lrSamCount: 2, lrSamPool: ['SAM_S300V', 'S-400', 'SAM_PATRIOT'],
+    mrSamCount: 2, mrSamPool: ['SAM_BUK', 'SAM_NASAMS'],
+    srSamCount: 2, srSamPool: ['SAM_TOR', 'SAM_RAPIER', 'SAM_AVENGER'],
+    ciwsCount: 2, ciwsPool: ['PANTSIR', 'CIWS_SEARAM'],
+    aaaCount: 2, aaaPool: ['AAA_GEPARD', 'AAA_FLAK57', 'AAA_SHILKA'],
+    jammerCount: 2, elintCount: 1, commsCount: 2, powerCount: 1, decoyCount: 2,
+    runwayCount: 1, hasCount: 2, hangarCount: 1, openFieldCount: 1,
+    fuelCount: 2, munitionCount: 1, infraCount: 1,
+    emconChance: 0.50, emconCooldownSec: 9.8, ambushHoldRatio: 0.68, networkCueing: 0.80,
+    ciwsInterceptRate: 0.56, samReactionDelaySec: 1.9, salvoSize: 2,
+    qraInitialCount: 2, airbaseAircraftCount: 5, takeoffIntervalSec: 28.0,
+    dispersalAlertKm: 80.0, scramblePairChance: 0.55, qraDifficulty: 'FORTIFIED'
+  },
+  IRON_BASTION: {
+    id: 'IRON_BASTION', name: 'Heavy Integrated Defense', scoreMultiplier: 2.60,
+    primaryObjectiveCount: 5,
+    ewRadarCount: 2, ewRadarPool: ['EW_RADAR_VHF', 'EW_RADAR_AESA', 'EW_RADAR_GAPFILLER'],
+    lrSamCount: 2, lrSamPool: ['SAM_S300V', 'S-400', 'SAM_PATRIOT'],
+    mrSamCount: 2, mrSamPool: ['SAM_BUK', 'SAM_NASAMS'],
+    srSamCount: 2, srSamPool: ['SAM_TOR', 'SAM_RAPIER'],
+    ciwsCount: 2, ciwsPool: ['PANTSIR', 'CIWS_SEARAM'],
+    aaaCount: 2, aaaPool: ['AAA_GEPARD', 'AAA_FLAK57'],
+    jammerCount: 2, elintCount: 1, commsCount: 2, powerCount: 1, decoyCount: 2,
+    runwayCount: 2, hasCount: 2, hangarCount: 1, openFieldCount: 1,
+    fuelCount: 2, munitionCount: 1, infraCount: 1,
+    emconChance: 0.58, emconCooldownSec: 9.0, ambushHoldRatio: 0.65, networkCueing: 0.85,
+    ciwsInterceptRate: 0.60, samReactionDelaySec: 1.7, salvoSize: 2,
+    qraInitialCount: 2, airbaseAircraftCount: 6, takeoffIntervalSec: 26.0,
+    dispersalAlertKm: 85.0, scramblePairChance: 0.65, qraDifficulty: 'MASTER'
+  },
+  TOTAL_DENIAL: {
+    id: 'TOTAL_DENIAL', name: 'Strategic Air Denial', scoreMultiplier: 3.20,
+    primaryObjectiveCount: 5,
+    ewRadarCount: 3, ewRadarPool: ['EW_RADAR_VHF', 'EW_RADAR_AESA', 'EW_RADAR_GAPFILLER'],
+    lrSamCount: 2, lrSamPool: ['SAM_S300V', 'S-400', 'SAM_PATRIOT'],
+    mrSamCount: 3, mrSamPool: ['SAM_BUK', 'SAM_NASAMS'],
+    srSamCount: 2, srSamPool: ['SAM_TOR', 'SAM_RAPIER', 'SAM_AVENGER'],
+    ciwsCount: 2, ciwsPool: ['PANTSIR', 'CIWS_SEARAM'],
+    aaaCount: 3, aaaPool: ['AAA_GEPARD', 'AAA_FLAK57'],
+    jammerCount: 2, elintCount: 1, commsCount: 2, powerCount: 1, decoyCount: 2,
+    runwayCount: 2, hasCount: 2, hangarCount: 2, openFieldCount: 2,
+    fuelCount: 2, munitionCount: 2, infraCount: 1,
+    emconChance: 0.66, emconCooldownSec: 8.2, ambushHoldRatio: 0.62, networkCueing: 0.90,
+    ciwsInterceptRate: 0.65, samReactionDelaySec: 1.5, salvoSize: 2,
+    qraInitialCount: 2, airbaseAircraftCount: 6, takeoffIntervalSec: 22.0,
+    dispersalAlertKm: 92.0, scramblePairChance: 0.75, qraDifficulty: 'LEGEND'
+  }
+};

@@ -1,7 +1,23 @@
 /**
- * AIRSPACE STANDOFF: Aircraft Combat Actions, Stores Management & Live Dynamics
- * Supports slot differentiation, real-time drag/RCS shedding, and trimmed cruise initialization.
+ * js/systems/entities/aircraftcombat.js - Aircraft combat actions, stores management, and live kinematics updates.
  */
+
+function formatAircraftDisplayName(aircraft) {
+  if (!aircraft) throw new Error('formatAircraftDisplayName received undefined aircraft.');
+  const callsign = String(aircraft.callsign || 'PILOT').trim();
+  if (!aircraft.spec) throw new Error(`Aircraft "${aircraft.id}" has no specification object.`);
+  const model = aircraft.spec.name || aircraft.spec.id;
+  return `${callsign} - ${model}`;
+}
+
+function formatCombatantDisplayName(entity) {
+  if (!entity) throw new Error('formatCombatantDisplayName received undefined entity.');
+  if (entity.spec && (entity.callsign || entity.model)) return formatAircraftDisplayName(entity);
+  return entity.callsign || entity.flightCode || entity.name || entity.id;
+}
+
+window.formatAircraftDisplayName = formatAircraftDisplayName;
+window.formatCombatantDisplayName = formatCombatantDisplayName;
 
 Aircraft.prototype.deployDecoyDrone = function() {
   if (!this.hasMaldDecoy || this.maldDecoyCharges <= 0) return null;
@@ -17,20 +33,22 @@ Aircraft.prototype.deployDecoyDrone = function() {
 };
 
 Aircraft.prototype.setGun = function(gunId) {
-  const gunCatalog = window.AUTOCANNONS_CATALOG || {};
-  const gun = gunCatalog[gunId];
-  if (!gun) return false;
+  if (!window.AUTOCANNONS_CATALOG) throw new Error('AUTOCANNONS_CATALOG is not loaded.');
+  const gun = window.AUTOCANNONS_CATALOG[gunId];
+  if (!gun) throw new Error(`Gun "${gunId}" does not exist in AUTOCANNONS_CATALOG.`);
   if (!window.AircraftRegistry.isGunCompatible(this.spec, gun)) return false;
   this.gun = gun;
-  this.gunAmmo = this.gun.defaultAmmo || 500;
+  this.gunAmmo = this.gun.defaultAmmo;
   this.recalculateWeight();
   return true;
 };
 
 Aircraft.prototype.installUpgrade = function(upgradeId) {
   if (this.equippedUpgrades.length >= this.upgradeSockets || this.equippedUpgrades.includes(upgradeId)) return false;
-  const upg = (window.UPGRADES_CATALOG || {})[upgradeId];
-  if (!upg || (upg.isAllowed && !upg.isAllowed(this.spec))) return false;
+  if (!window.UPGRADES_CATALOG) throw new Error('UPGRADES_CATALOG is not loaded.');
+  const upg = window.UPGRADES_CATALOG[upgradeId];
+  if (!upg) throw new Error(`Upgrade "${upgradeId}" does not exist in UPGRADES_CATALOG.`);
+  if (upg.isAllowed && !upg.isAllowed(this.spec)) return false;
   this.equippedUpgrades.push(upgradeId);
   upg.apply(this);
   if (upgradeId === 'DAS_360_OPTIC') this.hasDAS = true;
@@ -39,20 +57,21 @@ Aircraft.prototype.installUpgrade = function(upgradeId) {
   return true;
 };
 
-Aircraft.prototype.getUsedInternalSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'INTERNAL' && item.weapon ? item.weapon.slots : 0), 0); };
-Aircraft.prototype.getUsedExternalSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'EXTERNAL' && item.weapon ? item.weapon.slots : 0), 0); };
-Aircraft.prototype.getUsedCenterlineSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'CENTERLINE' && item.weapon ? item.weapon.slots : 0), 0); };
-Aircraft.prototype.getUsedSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.weapon ? item.weapon.slots : 0), 0); };
+Aircraft.prototype.getUsedInternalSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'INTERNAL' ? item.weapon.slots : 0), 0); };
+Aircraft.prototype.getUsedExternalSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'EXTERNAL' ? item.weapon.slots : 0), 0); };
+Aircraft.prototype.getUsedCenterlineSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + (item.station === 'CENTERLINE' ? item.weapon.slots : 0), 0); };
+Aircraft.prototype.getUsedSlots = function() { return this.equippedWeapons.reduce((sum, item) => sum + item.weapon.slots, 0); };
 
 Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
-  const wpn = (window.WEAPONS_CATALOG || {})[weaponId];
-  if (!wpn) return false;
+  if (!window.WEAPONS_CATALOG) throw new Error('WEAPONS_CATALOG is not loaded.');
+  const wpn = window.WEAPONS_CATALOG[weaponId];
+  if (!wpn) throw new Error(`Weapon "${weaponId}" does not exist in WEAPONS_CATALOG.`);
 
   const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
   if (ratings.indexOf(wpn.minRating) > ratings.indexOf(this.maxPylonRating)) return false;
   if (wpn.allowedAirframes && !wpn.allowedAirframes.includes(this.spec.id)) return false;
 
-  const wpnSlotType = wpn.slotType || 'EXTERNAL';
+  const wpnSlotType = wpn.slotType;
   let assignedStation = targetStation;
 
   if (wpnSlotType === 'CENTERLINE') {
@@ -70,29 +89,39 @@ Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
     }
   } else {
     if (assignedStation === 'INTERNAL') {
-      if (wpnSlotType !== 'INTERNAL') return false;
-      if (this.getUsedInternalSlots() + wpn.slots > this.internalSlots) return false;
+      if (wpnSlotType !== 'INTERNAL' || (this.getUsedInternalSlots() + wpn.slots > this.internalSlots)) return false;
     } else if (assignedStation === 'EXTERNAL') {
-      if (wpnSlotType === 'CENTERLINE') return false;
-      if (this.getUsedExternalSlots() + wpn.slots > this.externalSlots) return false;
+      if (wpnSlotType === 'CENTERLINE' || (this.getUsedExternalSlots() + wpn.slots > this.externalSlots)) return false;
     } else if (assignedStation === 'CENTERLINE') {
       if (!this.hasCenterline || (this.getUsedCenterlineSlots() + wpn.slots > this.centerlineSlots)) return false;
     }
+  }
+
+  const isPassivePod = Boolean(wpn.isJammerPod || wpn.isTargetingPod);
+  const initialAmmo = isPassivePod ? 1 : wpn.ammoCount;
+  if (!isPassivePod && typeof initialAmmo !== 'number') {
+    throw new Error(`Weapon "${weaponId}" is missing numeric ammoCount.`);
   }
 
   this.equippedWeapons.push({
     id: wpn.id,
     weapon: wpn,
     station: assignedStation,
-    ammo: wpn.ammoCount || 4,
-    maxAmmo: wpn.ammoCount || 4,
+    ammo: initialAmmo,
+    maxAmmo: initialAmmo,
     cooldown: 0.0
   });
 
-  if (wpn.isJammerPod) this.jamEfficiency = Math.max(this.jamEfficiency, wpn.jamEfficiency || 0.45);
+  if (wpn.isJammerPod) this.jamEfficiency = Math.max(this.jamEfficiency, wpn.jamEfficiency);
+  if (wpn.isTargetingPod) {
+    this.targetingPodBonus = Math.max(this.targetingPodBonus, wpn.a2gPkBonus);
+    this.targetingSpotRangeKm = Math.max(this.targetingSpotRangeKm, wpn.spotRangeKm);
+    this.cloudMitigation = Math.max(this.cloudMitigation, wpn.cloudMitigation);
+    if (wpn.grantsIRST) this.hasIRST = true;
+  }
   if (wpn.isDecoyDrone) {
     this.hasMaldDecoy = true;
-    this.maldDecoyCharges = (this.maldDecoyCharges || 0) + (wpn.ammoCount || 2);
+    this.maldDecoyCharges += initialAmmo;
   }
 
   this.recalculateWeight();
@@ -100,60 +129,53 @@ Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
 };
 
 Aircraft.prototype.recalculateWeight = function() {
-  let mass = this.gun ? Number(this.gun.mass || 100) : 100;
+  if (!window.UPGRADES_CATALOG) throw new Error('UPGRADES_CATALOG is not loaded.');
+  let mass = this.gun.mass;
   let externalDragPenalty = 0;
   let extraRcs = 0;
   let weaponsCost = 0;
-  const upgCatalog = window.UPGRADES_CATALOG || {};
 
   for (const item of this.equippedWeapons) {
-    if (!item || !item.weapon) continue;
     const w = item.weapon;
-    const isMounted = item.ammo > 0;
-    const ammoFraction = item.maxAmmo > 0 ? (item.ammo / item.maxAmmo) : (isMounted ? 1 : 0);
-    mass += Number(w.mass || 0) * ammoFraction;
-    weaponsCost += Number(w.cost || 0);
+    const isPassivePod = Boolean(w.isJammerPod || w.isTargetingPod);
+    const isMounted = item.ammo > 0 || isPassivePod;
+    const ammoFraction = isPassivePod ? 1 : (item.maxAmmo > 0 ? (item.ammo / item.maxAmmo) : 0);
+    mass += w.mass * ammoFraction;
+    weaponsCost += w.cost;
 
-    const station = item.station || (w.slotType === 'CENTERLINE' ? 'CENTERLINE' : (w.slotType === 'INTERNAL' && this.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL'));
-    if (station === 'CENTERLINE') {
-      if (isMounted) {
-        extraRcs += Number(w.sigmaPylon || 0.50);
-        externalDragPenalty += 0.05 * ammoFraction;
-      }
-    } else if (station !== 'INTERNAL' && isMounted) {
-      extraRcs += Number(w.sigmaPylon || 0.05);
-      externalDragPenalty += 0.02 * (w.slots || 1) * ammoFraction;
+    if (item.station === 'CENTERLINE' && isMounted) {
+      extraRcs += w.sigmaPylon;
+      externalDragPenalty += 0.05 * ammoFraction;
+    } else if (item.station !== 'INTERNAL' && isMounted) {
+      extraRcs += w.sigmaPylon;
+      externalDragPenalty += 0.02 * w.slots * ammoFraction;
     }
   }
 
   let upgradesCost = 0;
   for (const upgId of this.equippedUpgrades) {
-    const upg = upgCatalog[upgId];
-    if (upg) {
-      mass += Number(upg.mass || 0);
-      upgradesCost += Number(upg.cost || 0);
-    }
+    const upg = window.UPGRADES_CATALOG[upgId];
+    if (!upg) throw new Error(`Equipped upgrade "${upgId}" does not exist in UPGRADES_CATALOG.`);
+    mass += upg.mass;
+    upgradesCost += upg.cost;
   }
 
-  const specCost = this.spec ? Number(this.spec.cost || 0) : 0;
-  this.totalProcurementCost = specCost + weaponsCost + upgradesCost;
+  externalDragPenalty *= (1.0 - this.pylonDragRelief);
+  this.totalProcurementCost = this.spec.cost + weaponsCost + upgradesCost;
 
-  const maxMass = (this.spec && this.spec.M_max > 0) ? this.spec.M_max : 5000;
-  let effectiveWr = Math.min(1.0, mass / maxMass);
-  if (this.heavyLeadDragMitigation) effectiveWr = Math.max(0, effectiveWr - this.heavyLeadDragMitigation);
+  let effectiveWr = Math.min(1.0, mass / this.spec.M_max);
+  effectiveWr = Math.max(0, effectiveWr * (1.0 - this.pylonDragRelief * 0.50) - this.heavyLeadDragMitigation);
   this.Wr = effectiveWr;
 
-  let baseRcs = Number(this.spec ? (this.spec.sigma_0 || 1.0) : 1.0);
-  if (this.isFlightLead && this.spec && this.spec.category === 'STEALTH') baseRcs *= 0.65;
+  let baseRcs = this.spec.sigma_0;
+  if (this.isFlightLead && this.spec.category === 'STEALTH') baseRcs *= 0.65;
   if (this.equippedUpgrades.includes('RAM_NANO_COATING')) baseRcs *= 0.55;
   this.effectiveRcs = Math.max(0.00005, baseRcs + extraRcs);
 
-  const baseSpeed = Number(this.spec ? (this.spec.S_0 || 0.95) : 0.95);
-  this.effectiveMaxSpeed = Math.max(0.35, baseSpeed * (1.0 - 0.22 * this.Wr) - externalDragPenalty);
-  const baseAccel = 0.24 + (this.accelBonus || 0);
-  this.effectiveAcceleration = baseAccel / (1.0 + 0.70 * this.Wr);
+  this.effectiveMaxSpeed = Math.max(0.35, this.spec.S_0 * (1.0 - 0.22 * this.Wr) - externalDragPenalty);
+  this.effectiveAcceleration = (0.24 + this.accelBonus) / (1.0 + 0.70 * this.Wr);
 
-  if (!this.distanceTraveled || this.distanceTraveled === 0) {
+  if (this.distanceTraveled === 0) {
     this.speed = this.getTargetMach();
     this.prevSpeed = this.speed;
     this.speedTrend = '--';
@@ -161,19 +183,18 @@ Aircraft.prototype.recalculateWeight = function() {
 };
 
 Aircraft.prototype.deployCountermeasures = function() {
-  const count = (this.chaff !== undefined) ? this.chaff : (this.countermeasures || 0);
-  if (count > 0 && this.cmTimer <= 0) {
-    this.chaff = count - 1;
-    this.countermeasures = count - 1;
-    this.chaffFlares = count - 1;
+  if (this.chaff > 0 && this.cmTimer <= 0) {
+    this.chaff -= 1;
+    this.countermeasures = this.chaff;
+    this.chaffFlares = this.chaff;
     this.cmTimer = 3.0;
     this.applyActionStress(0.08);
     const inspection = window.Game && window.Game.inspection;
     if (inspection && inspection.enabled) {
-      inspection.recordEvent('COUNTERMEASURE', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(this) : this.callsign} deployed chaff`, this, null, {
+      inspection.recordEvent('COUNTERMEASURE', `${formatAircraftDisplayName(this)} deployed chaff`, this, null, {
         remainingChaff: this.chaff, activeWindowSec: this.cmTimer, stressAfterDeployment: this.stress,
-        incomingMissiles: (window.Game.missiles || []).filter(missile => missile.active && missile.target && missile.target.id === this.id).map(missile => ({
-          weapon: missile.weapon && missile.weapon.name, seeker: missile.weapon && missile.weapon.seeker, distanceKm: missile.distanceToTarget
+        incomingMissiles: window.Game.missiles.filter(m => m.active && m.target && m.target.id === this.id).map(m => ({
+          weapon: m.weapon.name, seeker: m.weapon.seeker, distanceKm: m.distanceToTarget
         }))
       });
     }
@@ -184,8 +205,8 @@ Aircraft.prototype.deployCountermeasures = function() {
 };
 
 Aircraft.prototype.processRTB = function(dt) {
-  const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
-  const corridorX = (window.CONFIG && window.CONFIG.RTB_CORRIDOR_X_KM) || 32.0;
+  const mapW = window.CONFIG.THEATER_WIDTH_KM;
+  const corridorX = window.CONFIG.RTB_CORRIDOR_X_KM;
   const isBlue = (this.team === 'friendly');
   const targetX = isBlue ? corridorX : (mapW - corridorX);
   const inSanctuary = isBlue ? (this.x <= targetX) : (this.x >= targetX);
@@ -200,7 +221,7 @@ Aircraft.prototype.processRTB = function(dt) {
     this.speed = Math.min(this.effectiveMaxSpeed * 1.35, this.speed + 0.20 * dt);
   } else {
     this.rtbTimer += dt;
-    const dur = this.hasFastRTB ? 1.8 : ((window.CONFIG && window.CONFIG.RTB_REARM_DURATION_SEC) || 3.5);
+    const dur = this.hasFastRTB ? 1.8 : window.CONFIG.RTB_REARM_DURATION_SEC;
     if (this.rtbTimer >= dur) {
       this.rearmStandardPackage();
       this.isRTB = false;
@@ -217,32 +238,31 @@ Aircraft.prototype.processRTB = function(dt) {
 Aircraft.prototype.rearmStandardPackage = function() {
   this.hp = this.maxHp;
   this.energy = 1.0;
-  const baseCm = this.isAce ? 6 : (this.isFlightLead ? (4 + (this.leadExtraCm || 0)) : 4);
+  const baseCm = this.isAce ? 6 : (this.isFlightLead ? (4 + this.leadExtraCm) : 4);
   this.chaff = baseCm;
   this.countermeasures = baseCm;
   this.chaffFlares = baseCm;
-  this.gunAmmo = (this.gun && this.gun.defaultAmmo) ? this.gun.defaultAmmo : 500;
+  this.gunAmmo = this.gun.defaultAmmo;
 
   const isHumanControlled = (this.team === 'friendly') || (window.Game && window.Game.playerMode === '2P');
   if (isHumanControlled) {
     for (const item of this.equippedWeapons) {
-      item.ammo = item.maxAmmo || item.ammo;
+      item.ammo = item.maxAmmo;
       item.cooldown = 0.0;
     }
     if (this.hasMaldDecoy) this.maldDecoyCharges = 2;
   } else {
     for (const item of this.equippedWeapons) {
       item.cooldown = 0.0;
-      if (item.weapon && (item.weapon.isLaser || item.weapon.category === 'GUN')) {
-        item.ammo = item.maxAmmo || item.ammo;
+      if (item.weapon.isLaser || item.weapon.category === 'GUN') {
+        item.ammo = item.maxAmmo;
       }
     }
   }
   this.recalculateWeight();
 };
 
-Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer) {
-  if (typeof CombatGunsSystem !== 'undefined') {
-    CombatGunsSystem.updateAutomaticGun(this, dt, enemiesList, radarRenderer);
-  }
+Aircraft.prototype.updateAutomaticGun = function(dt, enemiesList, radarRenderer, surfaceTargets = null) {
+  if (typeof CombatGunsSystem === 'undefined') throw new Error('CombatGunsSystem is not loaded.');
+  CombatGunsSystem.updateAutomaticGun(this, dt, enemiesList, radarRenderer, surfaceTargets);
 };

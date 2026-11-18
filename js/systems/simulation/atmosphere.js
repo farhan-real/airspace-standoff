@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Theater Atmosphere, Weather Clouds & Traffic Generation
- * Procedural clouds, civilian flights, radar reflections, and dynamic wave reinforcements.
+ * Procedural clouds scaled to active theater dimensions, civilian flights, and radar reflections.
  */
 
 class SimulationAtmosphereSystem {
@@ -14,10 +14,18 @@ class SimulationAtmosphereSystem {
           shuffle: (arr) => arr.slice().sort(() => Math.random() - 0.5)
         };
 
+    const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
+    const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
+    const sx = mapW / 150.0;
+    const sy = mapH / 100.0;
+    const sizeMult = Math.min(1.35, Math.max(1.0, sx * 0.85));
+
     const coverageCounts = { CLEAR: 0, LIGHT: 2, SCATTERED: 4, DENSE: 5 };
     const configuredCount = coverageCounts[cloudCoverage];
     const roll = rng.next();
-    const count = Number.isFinite(configuredCount) ? configuredCount : (roll < 0.15 ? 2 : (roll < 0.70 ? 3 : (roll < 0.92 ? 4 : 5)));
+    const baseCount = Number.isFinite(configuredCount) ? configuredCount : (roll < 0.15 ? 2 : (roll < 0.70 ? 3 : (roll < 0.92 ? 4 : 5)));
+    const count = (sx > 1.2 && baseCount > 0) ? baseCount + 1 : baseCount;
+
     const sizeProfiles = [
       { rxMin: 25, rxMax: 32, ryMin: 16, ryMax: 22 },
       { rxMin: 24, rxMax: 32, ryMin: 12, ryMax: 16 },
@@ -28,17 +36,18 @@ class SimulationAtmosphereSystem {
       { minX: 85, maxX: 125, minY: 18, maxY: 45 },
       { minX: 55, maxX: 95, minY: 35, maxY: 65 },
       { minX: 25, maxX: 65, minY: 55, maxY: 82 },
-      { minX: 85, maxX: 125, minY: 55, maxY: 82 }
+      { minX: 85, maxX: 125, minY: 55, maxY: 82 },
+      { minX: 65, maxX: 110, minY: 22, maxY: 78 }
     ];
     const sectors = rng.shuffle([...rawSectors]);
 
     for (let i = 0; i < count; i++) {
       const sec = sectors[i % sectors.length];
       const p = sizeProfiles[i % sizeProfiles.length];
-      const cx = rng.range(sec.minX, sec.maxX);
-      const cy = rng.range(sec.minY, sec.maxY);
-      const rx = rng.range(p.rxMin, p.rxMax);
-      const ry = rng.range(p.ryMin, p.ryMax);
+      const cx = rng.range(sec.minX * sx, sec.maxX * sx);
+      const cy = rng.range(sec.minY * sy, sec.maxY * sy);
+      const rx = rng.range(p.rxMin * sizeMult, p.rxMax * sizeMult);
+      const ry = rng.range(p.ryMin * sizeMult, p.ryMax * sizeMult);
       const angle = rng.range(0, Math.PI * 2);
       const spd = rng.range(0.15, 0.40);
       if (typeof WeatherCloud !== 'undefined') {

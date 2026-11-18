@@ -18,6 +18,15 @@ class ProcurementPresets {
         { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] },
         { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] }
       ],
+      strike: [
+        { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['GBU-28', 'GBU-39', 'AGM-88G', 'AN-AAQ-33', 'AIM-120D', 'AIM-9X-2'], upgrades: ['GAN_AESA_CORE', 'MADL_BATTLE_LINK'] },
+        { specId: 'A-10C', chosenGunId: 'GAU-8', weapons: ['BK-37-POD', 'AGM-65G', 'CBU-105', 'HYDRA-70', 'AN-AAQ-28', 'AIM-9X-2'], upgrades: ['TITANIUM_COCKPIT'] },
+        { specId: 'F-35A', chosenGunId: 'GAU-22', weapons: ['AGM-154C', 'GBU-53', 'AGM-88G', 'AIM-260'], upgrades: ['RAM_NANO_COATING', 'EOTS_DUAL_OPTICS'] },
+        { specId: 'EA-18G', chosenGunId: 'M61A2', weapons: ['AN-ALQ-99', 'AGM-88G', 'AN-AAQ-28', 'AIM-120D', 'AIM-9X-2'], upgrades: ['ESM_PASSIVE_SUITE', 'ADAPTIVE_ECCM_SUITE'] },
+        { specId: 'Su-34', chosenGunId: 'GAU-8', weapons: ['KAB-1500L', 'KH-58USHKE', 'RBK-500', 'SAPSAN-E', 'R-73'], upgrades: ['TITANIUM_COCKPIT'] },
+        { specId: 'B-1B', chosenGunId: 'M61A2', weapons: ['STORM-SHADOW', 'GBU-31', 'AGM-154A'], upgrades: ['EXTENDED_RANGE_TURBO'] },
+        { specId: 'F-22A', chosenGunId: 'M61A2', weapons: ['AIM-260', 'AIM-120D', 'METEOR', 'AIM-9X-2'], upgrades: ['RAM_NANO_COATING'] }
+      ],
       sead: [
         { specId: 'EA-18G', chosenGunId: 'M61A2', weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-120D', 'ADM-160B'], upgrades: ['GAN_AESA_CORE', 'ESM_PASSIVE_SUITE'] },
         { specId: 'Su-34', chosenGunId: 'GAU-8', weapons: ['AGM-158B', 'AGM-88G', 'GBU-39', 'AN-ALQ-99', 'R-73'], upgrades: ['TITANIUM_COCKPIT'] },
@@ -57,6 +66,7 @@ class ProcurementPresets {
 
     const builtins = [
       { id: 'stealth', name: 'STEALTH SWEEP' },
+      { id: 'strike', name: 'GROUND STRIKE' },
       { id: 'sead', name: 'SEAD ESCORT' },
       { id: 'swarm', name: 'UAV FLIGHT' },
       { id: 'interceptor', name: 'BVR INTERCEPT' }
@@ -83,9 +93,7 @@ class ProcurementPresets {
       chip.className = `custom-preset-chip ${isAct ? 'active' : ''}`;
 
       chip.innerHTML = `
-        <button class="preset-btn custom-load-btn ${isAct ? 'active' : ''}" title="Load ${name}">
-          ${name}
-        </button>
+        <button class="preset-btn custom-load-btn ${isAct ? 'active' : ''}" title="Load ${name}">${name}</button>
         <button class="preset-icon-btn btn-rename" title="Rename preset"><img src="icons/edit.svg" width="11" height="11" alt="Rename"></button>
         <button class="preset-icon-btn btn-delete alert" title="Delete preset"><img src="icons/trash.svg" width="11" height="11" alt="Delete"></button>
       `;
@@ -97,38 +105,27 @@ class ProcurementPresets {
 
       chip.querySelector('.btn-rename').onclick = (e) => {
         e.stopPropagation();
-        procurementManager.showPromptModal(
-          'RENAME PRESET',
-          `Enter a new name for "${name}":`,
-          name,
-          (newName) => {
-            if (newName && newName.trim() && newName.trim() !== name) {
-              if (customManager.rename(name, newName.trim())) {
-                if (ProcurementPresets.activePreset === `custom:${name}`) {
-                  ProcurementPresets.activePreset = `custom:${newName.trim()}`;
-                }
-                procurementManager.updateUI();
-              }
+        procurementManager.showPromptModal('RENAME PRESET', `Enter a new name for "${name}":`, name, (newName) => {
+          if (newName && newName.trim() && newName.trim() !== name) {
+            if (customManager.rename(name, newName.trim())) {
+              if (ProcurementPresets.activePreset === `custom:${name}`) ProcurementPresets.activePreset = `custom:${newName.trim()}`;
+              procurementManager.updateUI();
             }
           }
-        );
+        });
       };
 
       chip.querySelector('.btn-delete').onclick = (e) => {
         e.stopPropagation();
-        procurementManager.showConfirmModal(
-          'DELETE PRESET',
-          `Delete preset configuration "${name}"?`,
-          () => {
-            customManager.delete(name);
-            if (ProcurementPresets.activePreset === `custom:${name}`) {
-              ProcurementPresets.activePreset = 'stealth';
-              procurementManager.applyBuiltinPreset('stealth');
-            } else {
-              procurementManager.updateUI();
-            }
+        procurementManager.showConfirmModal('DELETE PRESET', `Delete preset configuration "${name}"?`, () => {
+          customManager.delete(name);
+          if (ProcurementPresets.activePreset === `custom:${name}`) {
+            ProcurementPresets.activePreset = 'stealth';
+            procurementManager.applyBuiltinPreset('stealth');
+          } else {
+            procurementManager.updateUI();
           }
-        );
+        });
       };
 
       container.appendChild(chip);
@@ -137,9 +134,7 @@ class ProcurementPresets {
     const templateBtn = document.createElement('button');
     templateBtn.className = 'preset-btn highlight';
     templateBtn.textContent = 'AIRCRAFT PRESETS';
-    templateBtn.onclick = () => {
-      procurementManager.openPreconfiguredAircraftModal();
-    };
+    templateBtn.onclick = () => procurementManager.openPreconfiguredAircraftModal();
     container.appendChild(templateBtn);
 
     const saveBtn = document.createElement('button');
@@ -151,21 +146,14 @@ class ProcurementPresets {
         return;
       }
       const count = Object.keys(customMap).length + 1;
-      const defName = `Squadron ${count}`;
-
-      procurementManager.showPromptModal(
-        'SAVE SQUADRON PRESET',
-        'Enter a name for this squadron configuration:',
-        defName,
-        (name) => {
-          if (name && name.trim()) {
-            if (customManager.save(name.trim(), procurementManager.game.procurementSquadron)) {
-              ProcurementPresets.activePreset = `custom:${name.trim()}`;
-              procurementManager.updateUI();
-            }
+      procurementManager.showPromptModal('SAVE SQUADRON PRESET', 'Enter a name for this squadron configuration:', `Squadron ${count}`, (name) => {
+        if (name && name.trim()) {
+          if (customManager.save(name.trim(), procurementManager.game.procurementSquadron)) {
+            ProcurementPresets.activePreset = `custom:${name.trim()}`;
+            procurementManager.updateUI();
           }
         }
-      );
+      });
     };
     container.appendChild(saveBtn);
 
@@ -173,14 +161,10 @@ class ProcurementPresets {
     clearBtn.className = 'preset-btn alert';
     clearBtn.textContent = 'CLEAR ALL';
     clearBtn.onclick = () => {
-      procurementManager.showConfirmModal(
-        'CLEAR SQUADRON',
-        'Remove all aircraft from the current squadron?',
-        () => {
-          ProcurementPresets.activePreset = '';
-          procurementManager.clearSquadron();
-        }
-      );
+      procurementManager.showConfirmModal('CLEAR SQUADRON', 'Remove all aircraft from the current squadron?', () => {
+        ProcurementPresets.activePreset = '';
+        procurementManager.clearSquadron();
+      });
     };
     container.appendChild(clearBtn);
   }

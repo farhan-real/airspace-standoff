@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Master Aircraft Catalog Aggregator & Query Engine
+ * js/data/aircraft.js - Master Aircraft Catalog aggregator and query registry.
  */
 
 const requiredAircraftCategories = [
@@ -7,6 +7,7 @@ const requiredAircraftCategories = [
   ['AIRCRAFT_SUPERIORITY', window.AIRCRAFT_SUPERIORITY],
   ['AIRCRAFT_MULTIROLE', window.AIRCRAFT_MULTIROLE],
   ['AIRCRAFT_STRIKE', window.AIRCRAFT_STRIKE],
+  ['AIRCRAFT_INTERDICTORS', window.AIRCRAFT_INTERDICTORS],
   ['AIRCRAFT_EW', window.AIRCRAFT_EW],
   ['AIRCRAFT_DRONES', window.AIRCRAFT_DRONES],
   ['AIRCRAFT_EXPERIMENTAL', window.AIRCRAFT_EXPERIMENTAL],
@@ -26,6 +27,7 @@ window.AIRCRAFT_CATALOG = Object.assign(
   window.AIRCRAFT_SUPERIORITY,
   window.AIRCRAFT_MULTIROLE,
   window.AIRCRAFT_STRIKE,
+  window.AIRCRAFT_INTERDICTORS,
   window.AIRCRAFT_EW,
   window.AIRCRAFT_DRONES,
   window.AIRCRAFT_EXPERIMENTAL,

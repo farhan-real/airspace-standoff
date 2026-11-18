@@ -116,7 +116,7 @@ class RadarCombatRenderer {
     ctx.restore();
   }
 
-  static drawMissiles(ctx, cam, missiles, team, detectedSet, declutterMode, cleanFn) {
+  static drawMissiles(ctx, cam, missiles, team, detectedSet, declutterMode) {
     if (!missiles || missiles.length === 0) return;
     const visPool = this._visibleMissilesPool;
     let visibleCount = 0;
@@ -235,17 +235,17 @@ class RadarCombatRenderer {
       for (let c = 0; c < clusterCount; c++) {
         const cl = clPool[c];
         const countTag = cl.count > 1 ? ` x${cl.count}` : '';
-        const mslLabel = cl.isIdentified ? cleanFn(cl.weaponName) : 'RADAR TRACK [?]';
+        const mslLabel = cl.isIdentified ? RadarRenderer.cleanText(cl.weaponName) : 'RADAR TRACK [?]';
         const distTag = declutterMode ? '' : ` [${cl.minDist}km]`;
         const speedTag = `M ${cl.speed.toFixed(1)} [${cl.stage}]`;
 
         ctx.font = '700 10.5px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = cl.isBlue ? '#38bdf8' : (cl.isIdentified ? '#fb7185' : '#f97316');
-        ctx.fillText(cleanFn(`${mslLabel}${countTag}`), cl.px + 9, cl.py - 5);
+        ctx.fillText(RadarRenderer.cleanText(`${mslLabel}${countTag}`), cl.px + 9, cl.py - 5);
 
         ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
         ctx.fillStyle = cl.isBlue ? '#7dd3fc' : (cl.isIdentified ? '#fca5a5' : '#fed7aa');
-        ctx.fillText(cleanFn(`${speedTag}${distTag}`), cl.px + 9, cl.py + 7);
+        ctx.fillText(RadarRenderer.cleanText(`${speedTag}${distTag}`), cl.px + 9, cl.py + 7);
       }
       ctx.restore();
 

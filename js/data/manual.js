@@ -7,6 +7,7 @@ const requiredManualModules = [
   ['MANUAL_SENSORS', window.MANUAL_SENSORS],
   ['MANUAL_COMBAT', window.MANUAL_COMBAT],
   ['MANUAL_THEATER', window.MANUAL_THEATER],
+  ['MANUAL_ATTACK', window.MANUAL_ATTACK],
   ['MANUAL_OPERATIONS', window.MANUAL_OPERATIONS],
   ['MANUAL_CONTROLS', window.MANUAL_CONTROLS]
 ];
@@ -22,11 +23,10 @@ window.FLIGHT_MANUAL = [
   ...window.MANUAL_SENSORS,
   ...window.MANUAL_COMBAT,
   ...window.MANUAL_THEATER,
+  ...window.MANUAL_ATTACK,
   ...window.MANUAL_OPERATIONS,
   ...window.MANUAL_CONTROLS
 ];
-
-window.FLIGHT_MANUAL = window.FLIGHT_MANUAL;
 
 window.initFlightManual = function() {
   const chapters = [
@@ -38,7 +38,7 @@ window.initFlightManual = function() {
     { id: 'ch6_weapons_salvos', label: '06: MISSILES & SALVOS' },
     { id: 'ch7_defense_ew', label: '07: DEFENSES & EW' },
     { id: 'ch8_aces_difficulties', label: '08: ACES & THREAT TIERS' },
-    { id: 'ch9_logistics_scoring', label: '09: THEATER IADS & SCORING' },
+    { id: 'ch9b_attack_iads', label: '09B: GROUND ATTACK & IADS' },
     { id: 'ch10_mission_editor', label: '10: MISSION EDITOR' },
     { id: 'ch11_inspection', label: '11: INSPECTION MODE' },
     { id: 'ch12_debrief_replay', label: '12: DEBRIEF & REPLAY' },
@@ -177,7 +177,7 @@ window.initFlightManual = function() {
       c.innerHTML = `
         <div style="text-align:center;padding:40px;color:#8494ab;font-family:var(--font-mono);font-size:0.80rem;">
           <b style="color:var(--theme-accent);">NO PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
-          <p style="margin-top:6px;font-size:0.72rem;">Try "Mission Editor", "Inspection", "ProNav", "Salvo", "Uplink", "Notch", or "Controls".</p>
+          <p style="margin-top:6px;font-size:0.72rem;">Try "Attack", "IADS", "Targeting Pod", "EMCON", "Notch", or "Controls".</p>
         </div>`;
       return;
     }
@@ -226,11 +226,8 @@ window.initFlightManual = function() {
       let debounceTimer = null;
       searchInput.oninput = (e) => {
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-          renderChapters(e.target.value || '', false);
-        }, 150);
+        debounceTimer = setTimeout(() => renderChapters(e.target.value || '', false), 150);
       };
-
       searchInput.onkeydown = (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();

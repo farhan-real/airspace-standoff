@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Simulation System Orchestrator (150km x 100km Theater)
- * Real-time time warp, weather cloud generation, combat physics loop, victory evaluations.
+ * AIRSPACE STANDOFF: Simulation System Orchestrator
+ * Real-time time warp, weather cloud generation, combat physics loop, Attack mode objectives, and victory evaluations.
  */
 
 class SimulationSystem {
@@ -96,31 +96,24 @@ class SimulationSystem {
   }
 
   getAtmosphereSystem() {
-    return window.SimulationAtmosphereSystem || window.SimulationTrafficSystem ||
-      (typeof SimulationAtmosphereSystem !== 'undefined' ? SimulationAtmosphereSystem :
-      (typeof SimulationTrafficSystem !== 'undefined' ? SimulationTrafficSystem : null));
+    const sys = window.SimulationAtmosphereSystem;
+    if (!sys) throw new Error('SimulationAtmosphereSystem is not loaded.');
+    return sys;
   }
 
   initWeatherClouds() {
-    const sys = this.getAtmosphereSystem();
-    if (sys && typeof sys.createClouds === 'function') {
-      this.weatherClouds = sys.createClouds(this.cloudCoverage);
-    } else {
-      this.weatherClouds = [];
-    }
+    this.weatherClouds = this.getAtmosphereSystem().createClouds(this.cloudCoverage);
   }
 
   initGhostContacts() {
     this.ghostContacts = [];
-    const sys = this.getAtmosphereSystem();
-    const g = (sys && typeof sys.createGhostContact === 'function') ? sys.createGhostContact(this.weatherClouds) : null;
+    const g = this.getAtmosphereSystem().createGhostContact(this.weatherClouds);
     if (g) this.ghostContacts.push(g);
   }
 
   spawnCivilianFlight() {
     if (!this.civilianTrafficEnabled) return;
-    const sys = this.getAtmosphereSystem();
-    const flight = (sys && typeof sys.createCivilianFlight === 'function') ? sys.createCivilianFlight() : null;
+    const flight = this.getAtmosphereSystem().createCivilianFlight();
     if (flight) this.civilianTraffic.push(flight);
   }
 
@@ -175,20 +168,28 @@ class SimulationSystem {
       }
     }
 
+    if (this.game.scenarioMode === 'ATTACK') {
+      if (typeof AttackDirector === 'undefined') throw new Error('AttackDirector is not loaded.');
+      AttackDirector.update(this.game, dt);
+    }
+
     this.updateCommandTokens(dt);
     this.detection.update(dt);
 
+    const isAttackMode = (this.game.scenarioMode === 'ATTACK');
+    const hostileSurfaceTargets = isAttackMode ? this.game.surfaceUnits.filter(s => s.team === 'hostile' && s.hp > 0.05) : null;
+
     for (const ally of this.game.alliedAircraft) {
       ally.update(dt, this.game.missiles.filter(m => m.active && m.target && m.target.id === ally.id));
-      ally.updateAutomaticGun(dt, this.game.hostileAircraft, this.game.radar);
+      ally.updateAutomaticGun(dt, this.game.hostileAircraft, this.game.radar, hostileSurfaceTargets);
     }
     for (const hostile of this.game.hostileAircraft) {
       hostile.update(dt, this.game.missiles.filter(m => m.active && m.target && m.target.id === hostile.id));
       hostile.updateAutomaticGun(dt, this.game.alliedAircraft, this.game.radar);
     }
 
-    const hostileRadarAlive = this.game.surfaceUnits.some(s => s.type === 'RADAR_ARRAY' && s.team === 'hostile' && s.hp > 0.05);
-    const friendlyRadarAlive = this.game.surfaceUnits.some(s => s.type === 'RADAR_ARRAY' && s.team === 'friendly' && s.hp > 0.05);
+    const hostileRadarAlive = this.game.surfaceUnits.some(s => (s.category === 'EW_RADAR' || s.type === 'RADAR_ARRAY') && s.team === 'hostile' && s.hp > 0.05 && s.emconTimer <= 0);
+    const friendlyRadarAlive = this.game.surfaceUnits.some(s => (s.category === 'EW_RADAR' || s.type === 'RADAR_ARRAY') && s.team === 'friendly' && s.hp > 0.05 && s.emconTimer <= 0);
     for (const surf of this.game.surfaceUnits) {
       const isRed = (surf.team === 'hostile');
       surf.update(dt, isRed ? this.game.alliedAircraft : this.game.hostileAircraft, this.game.missiles, this.game.missiles, isRed ? hostileRadarAlive : friendlyRadarAlive);
@@ -268,21 +269,11 @@ class SimulationSystem {
   checkWinConditions(dt = 0.016) {
     const vpAllyEl = document.getElementById('vp-ally');
     const vpHostileEl = document.getElementById('vp-hostile');
-    if (vpAllyEl) {
-      vpAllyEl.textContent = this.game.vpAlly;
-      vpAllyEl.style.color = (this.game.vpAlly < 0) ? '#f43f5e' : '';
-    }
-    if (vpHostileEl) {
-      vpHostileEl.textContent = this.game.vpHostile;
-      vpHostileEl.style.color = (this.game.vpHostile < 0) ? '#f43f5e' : '';
-    }
+    if (vpAllyEl) { vpAllyEl.textContent = this.game.vpAlly; vpAllyEl.style.color = (this.game.vpAlly < 0) ? '#f43f5e' : ''; }
+    if (vpHostileEl) { vpHostileEl.textContent = this.game.vpHostile; vpHostileEl.style.color = (this.game.vpHostile < 0) ? '#f43f5e' : ''; }
 
-    for (const h of this.game.hostileAircraft) {
-      if (h && h.hp <= 0.05) h.hp = 0;
-    }
-    for (const a of this.game.alliedAircraft) {
-      if (a && a.hp <= 0.05) a.hp = 0;
-    }
+    for (const h of this.game.hostileAircraft) { if (h && h.hp <= 0.05) h.hp = 0; }
+    for (const a of this.game.alliedAircraft) { if (a && a.hp <= 0.05) a.hp = 0; }
 
     if (this.victoryDelayTimer > 0) {
       this.victoryDelayTimer -= dt;
@@ -294,6 +285,27 @@ class SimulationSystem {
     }
 
     const allAlliesDead = this.game.alliedAircraft.length > 0 && this.game.alliedAircraft.every(a => a.hp <= 0.05);
+    if (allAlliesDead) {
+      this.victoryDelayTimer = 2.8;
+      this.pendingGameOver = { blueWon: false, reason: 'ALL ALLIED AIR ASSETS NEUTRALIZED' };
+      this.captureReplayFrame(true);
+      return;
+    }
+
+    if (this.game.scenarioMode === 'ATTACK') {
+      if (typeof AttackDirector === 'undefined') throw new Error('AttackDirector is not loaded.');
+      const obj = AttackDirector.getObjectiveSummary(this.game);
+      if (obj.total > 0 && obj.remaining === 0) {
+        this.victoryDelayTimer = 2.8;
+        this.pendingGameOver = { blueWon: true, reason: `ALL ${obj.total} PRIMARY STRIKE OBJECTIVES DESTROYED` };
+        this.captureReplayFrame(true);
+        if (this.game.radar) {
+          this.game.radar.spawnCombatText(window.CONFIG.THEATER_WIDTH_KM * 0.75, window.CONFIG.THEATER_HEIGHT_KM * 0.5, 'ALL OBJECTIVES DESTROYED', '#00f5a0');
+        }
+      }
+      return;
+    }
+
     const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0.05);
     const hasUpcomingWaves = this.game.scenarioMode === 'DYNAMIC_THEATER' && this.game.playerMode !== '2P' && this.currentWave <= 3;
 
@@ -306,21 +318,13 @@ class SimulationSystem {
       this.victoryDelayTimer = 2.8;
       this.pendingGameOver = { blueWon: true, reason: winReason };
       this.captureReplayFrame(true);
-
-      const mapW = window.CONFIG.THEATER_WIDTH_KM || 150.0;
-      const mapH = window.CONFIG.THEATER_HEIGHT_KM || 100.0;
-      const lastEnemy = this.game.hostileAircraft[this.game.hostileAircraft.length - 1];
-      const cx = (lastEnemy && Number.isFinite(lastEnemy.x)) ? lastEnemy.x : (mapW / 2);
-      const cy = (lastEnemy && Number.isFinite(lastEnemy.y)) ? lastEnemy.y : (mapH / 2);
-
       if (this.game.radar) {
+        const lastEnemy = this.game.hostileAircraft[this.game.hostileAircraft.length - 1];
+        const cx = (lastEnemy && Number.isFinite(lastEnemy.x)) ? lastEnemy.x : (window.CONFIG.THEATER_WIDTH_KM / 2);
+        const cy = (lastEnemy && Number.isFinite(lastEnemy.y)) ? lastEnemy.y : (window.CONFIG.THEATER_HEIGHT_KM / 2);
         this.game.radar.spawnCombatText(cx, cy, 'AIR SUPERIORITY SECURED', '#00f0ff');
         this.game.radar.spawnShockwave(cx, cy, '#00f0ff', 48);
       }
-    } else if (allAlliesDead) {
-      this.victoryDelayTimer = 2.8;
-      this.pendingGameOver = { blueWon: false, reason: 'ALL ALLIED AIR ASSETS NEUTRALIZED' };
-      this.captureReplayFrame(true);
     }
   }
 }

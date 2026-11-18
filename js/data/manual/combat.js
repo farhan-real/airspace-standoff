@@ -1,15 +1,15 @@
 /**
  * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 6 to 7
- * Covers: Guided Munitions, ProNav Guidance, Salvos & Multi-Layer Defenses
+ * Covers: Guided Munitions, A2G Ordnance Classes, Targeting Pods, ProNav & Multi-Layer Defenses
  */
 
 window.MANUAL_COMBAT = [
   {
     id: 'ch6_weapons_salvos',
-    title: 'SECTION 06: GUIDED MISSILES, PRONAV GUIDANCE & SALVO SYNERGIES',
+    title: 'SECTION 06: GUIDED MISSILES, A2G ORDNANCE, PRONAV & SALVO SYNERGIES',
     desc: `
       <div class="ge-desc">
-        Modern air-to-air missiles utilize specialized seeker heads and proportional navigation guidance to achieve terminal intercepts across visual and beyond-visual-range baskets.
+        Modern air-to-air and air-to-ground munitions utilize specialized seeker heads, kinetic staging, and precision guidance to neutralize aerial threats and fortified IADS infrastructure.
       </div>
 
       <div class="ge-subhead">1. MISSILE SEEKER CLASSES &amp; COUNTERMEASURE MATRIX</div>
@@ -28,53 +28,88 @@ window.MANUAL_COMBAT = [
             <tr>
               <td style="color:#00f5a0;font-weight:800;">IIR / EO</td>
               <td>Imaging Infrared / Optical</td>
-              <td>AIM-9X-2, R-73, Python-5, IRIS-T, MAM</td>
-              <td><b>Throttle to Idle / Dive into Clouds.</b> Moisture slightly scatters imaging contrast (-12% P_k); Idle cuts engine exhaust thermal bloom.</td>
+              <td>AIM-9X-2, R-73, Python-5, IRIS-T, AGM-158B, Storm Shadow</td>
+              <td><b>Throttle to Idle / Dive into Clouds.</b> Moisture softens imaging contrast; Idle cuts engine exhaust thermal bloom.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">INS / RADAR</td>
               <td>Inertial Guidance with Terminal Radar</td>
-              <td>Kh-47M2 Kinzhal</td>
-              <td><b>90&deg; Break Turn / CIWS Intercept.</b> High turning radius at Mach 6+ creates extreme lag displacement.</td>
+              <td>Kh-47M2 Kinzhal, BrahMos-A</td>
+              <td><b>90&deg; Break Turn / CIWS Intercept.</b> High turning radius at Mach 3 to 6 creates lag displacement; CIWS blocks slower variants.</td>
             </tr>
             <tr>
               <td style="color:#ffb830;font-weight:800;">PASSIVE RF</td>
               <td>Anti-Radiation Homing (ARM)</td>
-              <td>AGM-88G AARGM-ER</td>
-              <td><b>Emitter Shutdown / ECM Deactivation.</b> Deactivate jamming pods and radar arrays to starve the seeker of emissions.</td>
+              <td>AGM-45B, AGM-88C, Kh-31P, ALARM-II, Kh-58UShKE, AGM-88G</td>
+              <td><b>EMCON Emitter Shutdown.</b> Cuts lock on legacy ARMs; advanced memory ARMs (AGM-88G, Kh-58UShKE, ALARM-II) retain coordinates.</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">LASER / MMW</td>
+              <td>Semi-Active Laser &amp; Millimeter-Wave</td>
+              <td>GBU-12/24/28, APKWS-II, Hellfire, JAGM, Brimstone II, GBU-53</td>
+              <td><b>Weather Clouds vs Targeting Pods.</b> Clouds attenuate laser designation; Targeting Pods mitigate scatter and boost accuracy up to +26%.</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="ge-subhead">2. PROPORTIONAL NAVIGATION (PRONAV) GUIDANCE KINEMATICS</div>
+      <div class="ge-subhead">2. AIR-TO-GROUND ORDNANCE FAMILIES &amp; ARMOR PENETRATION</div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>ORDNANCE CLASS</th><th>ROLE &amp; STRENGTHS</th><th>LIMITATIONS &amp; COUNTERS</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#f97316;font-weight:800;">Dumb Bombs &amp; Rockets</td>
+              <td>Low-cost, immune to ECM/chaff, high blast per dollar (Mk-82/84, FAB-500/1500, Hydra-70, Zuni, S-13OF).</td>
+              <td>Short release range; low-alt exposure to AAA/SHORAD. High-altitude drops suffer dispersion without Targeting Pod CCIP.</td>
+            </tr>
+            <tr>
+              <td style="color:#fbbf24;font-weight:800;">Cluster Munitions</td>
+              <td>Wide area-of-effect (5.5 to 7.0 km splash) wiping out clustered AAA, SAMs, radars, and depots (CBU-87/105, RBK-500, JSOW-A).</td>
+              <td>Deflected by fortified concrete roofs (0.25x vs C2 Bunkers and Hardened Shelters).</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">Glide Bombs &amp; SDBs</td>
+              <td>All-weather GPS/INS standoff saturation (26 to 78 km) and compact internal carriage (JDAM, UMPK, GBU-39, StormBreaker, JSOW-C).</td>
+              <td>Subsonic glide velocity allows SeaRAM and Pantsir CIWS turrets to intercept single releases. Fire in coordinated salvos.</td>
+            </tr>
+            <tr>
+              <td style="color:#00f5a0;font-weight:800;">Laser Bombs &amp; Bunker Busters</td>
+              <td>Pinpoint concrete penetration against Fortified C2 Bunkers, Runways, and Shelters (GBU-10/24/28, KAB-1500L, GBU-57 MOP, TAURUS).</td>
+              <td>Weather clouds degrade laser guidance unless paired with a Sniper XR or ATFLIR Targeting Pod.</td>
+            </tr>
+            <tr>
+              <td style="color:#c084fc;font-weight:800;">ATGMs &amp; Strafe Cannons</td>
+              <td>Rapid supersonic/MMW strikes (Hellfire, JAGM, Maverick, Brimstone, Kh-38ML) and 30mm/37mm AP pods (BK-37, GSh-30-2K).</td>
+              <td>Require medium-to-close ingress inside MR/SR SAM rings; best paired with SEAD suppression or low-deck approaches.</td>
+            </tr>
+            <tr>
+              <td style="color:#00f0ff;font-weight:800;">Targeting Pods (TGP)</td>
+              <td>Passive external pods (LITENING, Sniper XR, ATFLIR, Sapsan-E, Legion). Grant +18% to +26% A2G Pk and expose Ground Radar Decoys out to 58 km.</td>
+              <td>Occupies 1 external hardpoint and adds slight external pylon signature; worth mounting on strike leads.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ge-subhead">3. PROPORTIONAL NAVIGATION (PRONAV) &amp; SALVO SYNERGIES</div>
       <div class="ge-formula-card">
         <span style="color:#94a3b8;font-size:0.62rem;">PRONAV COMMAND ACCELERATION FORMULATION:</span>
         <div class="ge-formula-code">a_n = N &times; V_c &times; &lambda;_dot</div>
       </div>
-      <div class="ge-desc">
-        Proportional Navigation guides the interceptor by commanding acceleration normal to the velocity vector ($a_n$) proportional to the Line of Sight (LOS) rotation rate ($\lambda_{dot}$) and closing velocity ($V_c$). Key flight mechanics:
-        <br><br>
-        <ul style="list-style:none;padding-left:0;">
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Predictive Lead Pursuit:</b> Rather than chasing the target's current position, ProNav flies toward the predicted future collision point, minimizing steering effort.</li>
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Navigation Ratio (N = 3 to 5):</b> Higher navigation gain ensures rapid convergence onto the collision triangle during the midcourse phase.</li>
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>High-G Wave Drag Bleed:</b> Rocket motors burn for only 1.0 to 3.2 seconds. After burnout, missiles coast ballistically. Forcing high LOS rotation rates ($\lambda_{dot}$) with sharp defensive breaks demands high lateral Gs, rapidly bleeding kinetic energy and causing the weapon to fall short.</li>
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Aerodynamic Energy Retention (Lambda &amp; p):</b> Ballistic speed decays over distance according to: <code>V = V_peak &times; max(0.20, 1.0 - &lambda; &times; (D / D_max)^p)</code>. Shots taken at maximum range lose up to 60% of their kinetic energy before impact.</li>
-        </ul>
-      </div>
-
-      <div class="ge-subhead">3. MULTI-MISSILE SALVOS &amp; THE MIXED-SEEKER DILEMMA</div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid var(--theme-accent);">
           <b style="color:var(--color-ice-highlight);">SALVO SATURATION DYNAMICS</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Launching multiple missiles against a single target increases single-shot kill probability ($P_k$) by <b>+12% per extra missile</b> (up to +30% maximum salvo bonus). Each consecutive inbound missile forces sustained defensive turning, degrading target evasion probability by <b>25% per weapon</b>.
+            Coordinating multiple missiles against one target boosts Pk by <b>+12% per extra missile</b> (up to +30%) and overwhelms CIWS point-defense reload cycles against glide bombs and cruise missiles.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #00f5a0;">
-          <b style="color:#00f5a0;">MIXED-SEEKER SYNERGY BONUS (+25%)</b>
+          <b style="color:#00f5a0;">MIXED-SEEKER SYNERGY (+25%)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Coordinating an Active Radar Homing missile (e.g. AIM-120D, Meteor) with an Imaging Infrared missile (e.g. AIM-9X-2, Python-5) triggers a <b>+25% synergy bonus</b>. The defender cannot satisfy conflicting defensive requirements simultaneously: beaming 90&deg; exposes engine exhaust, while throttling to idle destroys corner speed.
+            Combining Active Radar Homing (ARH) with Imaging Infrared (IIR) missiles triggers a <b>+25% synergy bonus</b>, forcing conflicting evasive responses.
           </div>
         </div>
       </div>
@@ -86,7 +121,7 @@ window.MANUAL_COMBAT = [
     desc: `
       <div class="ge-subhead">1. HOW TO EXECUTE A DOPPLER NOTCH (BEAMING 90&deg;)</div>
       <div class="ge-desc">
-        Turn your aircraft exactly <b>90&deg; perpendicular</b> to the threat's radar vector (beam aspect). Pulse-Doppler radars filter out stationary ground returns by ignoring zero radial velocity echoes. Turning 90&deg; drops your closure rate into the Doppler filter, breaking lock. Dispensing chaff while in the notch creates an artificial zero-Doppler clutter bloom that seduces the missile's seeker gate away from your airframe.
+        Turn your aircraft exactly <b>90&deg; perpendicular</b> to the threat radar vector. Pulse-Doppler radars filter out zero radial velocity echoes; beaming cuts your closure rate into the filter and breaks radar lock.
       </div>
 
       <div class="ge-subhead">2. DEFENSIVE MANEUVERS</div>
@@ -98,67 +133,45 @@ window.MANUAL_COMBAT = [
           <tbody>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">Doppler Notch &amp; Chaff</td>
-              <td>0.7 TOK</td>
-              <td style="color:#00f5a0;font-weight:700;">8.0s</td>
-              <td>+48%</td>
-              <td>Trigger on active radar (ARH) lock. Beams threat 90&deg;, zeros radial closure rate, and deploys chaff bloom.</td>
+              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">8.0s</td><td>+48%</td>
+              <td>Trigger on active radar (ARH) lock. Beams threat 90&deg; and deploys chaff bloom.</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">High-G Barrel Roll</td>
-              <td>0.7 TOK</td>
-              <td style="color:#00f5a0;font-weight:700;">7.0s</td>
-              <td>+45%</td>
-              <td>Trigger on inbound missile within 25 km. Continuous spiral displacement forces extreme ProNav lead pursuit drag.</td>
+              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">7.0s</td><td>+45%</td>
+              <td>Trigger on inbound missile within 25 km. Spiral displacement forces ProNav lead lag.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">Pugachev's Cobra</td>
-              <td>0.8 TOK</td>
-              <td style="color:#00f5a0;font-weight:700;">6.0s</td>
-              <td>+55%</td>
-              <td>Requires TVC nozzles. Snaps pitch to 110&deg;+ to create an immediate closure mismatch, forcing missile overshoot.</td>
+              <td>0.8 TOK</td><td style="color:#00f5a0;font-weight:700;">6.0s</td><td>+55%</td>
+              <td>Requires TVC nozzles. Rapid deceleration creates closure mismatch, forcing overshoot.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Split-S Dive</td>
-              <td>0.7 TOK</td>
-              <td style="color:#00f5a0;font-weight:700;">7.5s</td>
-              <td>+45%</td>
-              <td>Requires altitude &gt; FL150. Inverts aircraft and dives to recover +0.32 Mach escape speed out of weapon basket.</td>
+              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">7.5s</td><td>+45%</td>
+              <td>Requires altitude &gt; FL150. Dives into low-altitude horizon beneath LR SAM floors.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">Zoom Climb</td>
-              <td>0.7 TOK</td>
-              <td style="color:#00f5a0;font-weight:700;">8.0s</td>
-              <td>+38%</td>
-              <td>Trades -0.28 Mach of kinetic speed for +8,500 ft altitude perch, forcing incoming missiles to climb against gravity.</td>
+              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">8.0s</td><td>+38%</td>
+              <td>Climbs above low-altitude AAA and SHORAD ceilings while extending bomb glide range.</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="ge-subhead">3. ELECTRONIC WARFARE, DECOYS &amp; THERMAL SUPPRESSION</div>
+      <div class="ge-subhead">3. ELECTRONIC WARFARE, TARGETING PODS &amp; DECOYS</div>
       <div class="ge-grid-2">
         <div class="ge-card">
           <b style="color:var(--theme-accent);">AIRBORNE JAMMING PODS (ECM)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            AN/ALQ-184 (30%), AN/ALQ-99 (45%), and AN/ALQ-249 GaN AESA (60%) emit high-power microwave noise that blinds incoming active radar seekers and degrades enemy search radars across 70 to 125 km.
+            AN/ALQ-184 (30%), AN/ALQ-99 (45%), and AN/ALQ-249 GaN AESA (60%) blind enemy aircraft radars and SAM fire-control locks across 70 to 125 km.
           </div>
         </div>
         <div class="ge-card">
-          <b style="color:#c084fc;">DECOYS: TOWED FOTD &amp; MALD DRONES</b>
+          <b style="color:#00f5a0;">OPTICAL TARGETING PODS (TGP)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            AN/ALE-55 fiber-optic towed decoys trail behind the host airframe to draw active radar missiles. ADM-160B MALD decoy drones fly autonomous profiles matching host speed and radar cross-section.
-          </div>
-        </div>
-        <div class="ge-card">
-          <b style="color:#00f5a0;">WEATHER CLOUD CONCEALMENT</b>
-          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Diving inside meteorological cloud cells scatters directed-energy laser beams (up to 85% damage reduction) and applies a moderate 12% tracking penalty to optical and infrared missiles.
-          </div>
-        </div>
-        <div class="ge-card">
-          <b style="color:#fbbf24;">THERMAL THROTTLE MANAGEMENT</b>
-          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Afterburners generate a 1.45x thermal exhaust plume. Cutting engine power to IDLE or CRUISE cools the turbine core to 0.70x, frustrating infrared missiles and extending defensive separation.
+            LITENING, ATFLIR, Sapsan-E, Sniper XR, and Legion Pods expose ground Radar Decoys and silent Optical SHORAD traps from 36 to 58 km away while boosting A2G precision.
           </div>
         </div>
       </div>

@@ -36,9 +36,7 @@ class SpecsFacilitiesViews {
       </div>
 
       <div class="inspect-sec-head">SPECIALIZED LEAD MODIFICATIONS</div>
-      <div class="inspect-stat-grid">
-        ${buffsListHtml}
-      </div>
+      <div class="inspect-stat-grid">${buffsListHtml}</div>
 
       <div class="inspect-desc-box" style="border-left-color:var(--theme-accent);">
         <div class="inspect-sec-head" style="color:var(--theme-accent);margin-top:0;">OPERATIONAL SUMMARY:</div>
@@ -69,7 +67,7 @@ class SpecsFacilitiesViews {
       </div>
       <div class="inspect-desc-box" style="border-left-color:#f97316;">
         <div class="inspect-sec-head" style="color:#f97316;margin-top:0;">RULES OF ENGAGEMENT (ROE) DIRECTIVE:</div>
-        <div style="color:#f8fafc;margin-top:2px;">${c.desc || 'Scheduled commercial airliner transiting civilian flight corridor. Strictly protected under international aerospace law. Firing upon an unverified bogey incurs -600 VP; striking this aircraft incurs -500 VP; destroying it incurs a severe -2000 Victory Point penalty.'}</div>
+        <div style="color:#f8fafc;margin-top:2px;">${c.desc || 'Scheduled commercial airliner transiting civilian flight corridor. Protected under international aerospace law.'}</div>
       </div>
       <div class="inspect-action-bar">
         <button type="button" class="inspect-action-btn close-btn" onclick="const m=document.getElementById('system-inspect-modal');if(m)m.classList.remove('active');if(window.Game&&window.Game.controls)window.Game.controls.autoUnpauseOnDialogClose();">CLOSE</button>
@@ -80,17 +78,25 @@ class SpecsFacilitiesViews {
   static renderSurfaceUnit(s) {
     if (!s) return '<div class="inspect-desc-box">NO INSTALLATION DATA AVAILABLE</div>';
     const hpTag = s.isIndestructible ? 'INDESTRUCTIBLE (UNLIMITED CAPACITY)' : `${s.hp} / ${s.maxHp || s.hp} HP`;
+    const armorCol = s.armorClass === 'FORTIFIED' ? '#f43f5e' : (s.armorClass === 'ARMORED' ? '#fbbf24' : '#00f5a0');
+    const floorText = (s.minAltFt && s.minAltFt > 1000)
+      ? `${s.minAltFt.toLocaleString()} ft (${s.cuedMinAltFt ? s.cuedMinAltFt.toLocaleString() + ' ft cued' : 'fixed'})`
+      : '1,000 ft (All Low Altitude)';
+
     return `
       <div class="inspect-type-banner">
         <span class="inspect-badge">${s.team === 'friendly' ? 'BLUE COALITION' : 'RED HOSTILE'}</span>
-        <span class="inspect-cost-tag">${s.isIndestructible ? 'STRATEGIC LOGISTICS FACILITY' : 'SURFACE INSTALLATION'}</span>
+        <span class="inspect-badge" style="color:${armorCol};border-color:${armorCol};">${s.armorClass || 'SOFT'} ARMOR</span>
+        <span class="inspect-cost-tag">${s.vpValue ? `+${s.vpValue} VP` : 'SURFACE INSTALLATION'}</span>
       </div>
-      <div class="inspect-sec-head">FACILITY SPECIFICATIONS</div>
+      <div class="inspect-sec-head">FACILITY &amp; IADS SPECIFICATIONS</div>
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>DESIGNATION:</span><b style="color:#00f0ff;">${s.name || s.type}</b></div>
         <div class="inspect-stat-item"><span>ARMOR INTEGRITY:</span><b style="color:${s.isIndestructible ? '#00f5a0' : '#f8fafc'};">${hpTag}</b></div>
-        <div class="inspect-stat-item"><span>ENGAGEMENT RANGE:</span><b>${s.rangeKm ? s.rangeKm + ' km' : 'Passive Facility'}</b></div>
-        <div class="inspect-stat-item"><span>FACILITY TYPE:</span><b>${s.type}</b></div>
+        <div class="inspect-stat-item"><span>ENGAGEMENT / COVERAGE:</span><b>${s.rangeKm ? s.rangeKm + ' km' : 'Static Facility'}</b></div>
+        <div class="inspect-stat-item"><span>MIN ENGAGEMENT FLOOR:</span><b>${s.canAttack ? floorText : 'N/A'}</b></div>
+        <div class="inspect-stat-item"><span>EMISSIONS PROFILE:</span><b style="color:${s.isEmitter ? '#f97316' : '#00f5a0'};">${s.isEmitter ? 'ACTIVE RADAR / RF EMITTER (ARM TARGETABLE)' : 'PASSIVE / SILENT (IMMUNE TO ARM)'}</b></div>
+        ${s.secondaryBlastRadiusKm ? `<div class="inspect-stat-item"><span>SECONDARY DETONATION:</span><b style="color:#f97316;">${s.secondaryBlastRadiusKm} km Splash (${s.secondaryBlastDamage} HP)</b></div>` : ''}
       </div>
       <div class="inspect-desc-box">
         <div class="inspect-sec-head" style="margin-top:0;">STRATEGIC ANALYSIS:</div>

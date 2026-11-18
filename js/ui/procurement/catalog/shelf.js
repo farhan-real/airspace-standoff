@@ -1,11 +1,15 @@
 /**
- * AIRSPACE STANDOFF: Armory Catalog Shelf
- * Real-time active aircraft synchronization, gun pod hardpoint mounting and dynamic equip actions.
+ * js/ui/procurement/catalog/shelf.js - Armory catalog shelf with separated category pills across all tabs.
  */
 
 class ProcurementShelf {
   constructor(procurementManager) {
     this.pm = procurementManager;
+    this.pm.currentA2ACategory = 'ALL';
+    this.pm.currentGunCategory = 'ALL';
+    this.pm.currentPodCategory = 'ALL';
+    this.pm.currentUpgradeCategory = 'ALL';
+    this.pm.currentA2GCategory = 'ALL';
   }
 
   render(catalogEl, tab, category, query) {
@@ -17,38 +21,42 @@ class ProcurementShelf {
       ShelfAirframesRenderer.renderAirframesTab(this, catalogEl, category, query);
       return;
     }
-    if (tab === 'guns') {
-      this.renderGunsTab(catalogEl);
-      return;
-    }
-    if (tab === 'upgrades') {
-      this.renderUpgradesTab(catalogEl);
-      return;
-    }
+    if (tab === 'guns') { this.renderGunsTab(catalogEl); return; }
+    if (tab === 'upgrades') { this.renderUpgradesTab(catalogEl); return; }
 
     const catFilterMap = { a2a: 'A2A', a2g: 'A2G', utility: 'UTILITY' };
     this.renderWeaponsTab(catalogEl, catFilterMap[tab] || 'ALL');
   }
 
+  renderFilterPills(container, groups, activeId, onSelect) {
+    const bar = document.createElement('div');
+    bar.className = 'airframe-filter-bar';
+    groups.forEach(g => {
+      const btn = document.createElement('button');
+      btn.className = `cat-pill-btn ${activeId === g.id ? 'active' : ''}`;
+      btn.textContent = g.label;
+      btn.onclick = () => onSelect(g.id);
+      bar.appendChild(btn);
+    });
+    container.appendChild(bar);
+  }
+
   getActiveBaySummary() {
     const squadron = this.pm.game.procurementSquadron || [];
     if (squadron.length === 0) return null;
-    const sIdx = (this.pm.activeBayIndex !== undefined && this.pm.activeBayIndex < squadron.length)
-      ? this.pm.activeBayIndex : 0;
+    const sIdx = (this.pm.activeBayIndex !== undefined && this.pm.activeBayIndex < squadron.length) ? this.pm.activeBayIndex : 0;
     const item = squadron[sIdx] || squadron[0];
-    const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
+    const spec = window.AIRCRAFT_CATALOG[item.specId];
+    if (!spec) throw new Error(`Squadron aircraft spec "${item.specId}" not found in AIRCRAFT_CATALOG.`);
     const metrics = LoadoutMetrics.calculate(spec, item.weapons, item.upgrades, item.chosenGunId, item.isLead);
 
     return {
-      index: sIdx + 1, sIdx: sIdx,
-      callsign: item.callsign || 'Pilot', model: spec.name || item.specId, specId: item.specId,
-      internalCapacity: metrics ? Number(metrics.internalCapacity !== undefined ? metrics.internalCapacity : 0) : Number(spec.internalSlots || 0),
-      remainingInternal: metrics ? Number(metrics.remainingInternal !== undefined ? metrics.remainingInternal : 0) : 0,
-      externalCapacity: metrics ? Number(metrics.externalCapacity !== undefined ? metrics.externalCapacity : 0) : Number(spec.externalSlots !== undefined ? spec.externalSlots : 0),
-      remainingExternal: metrics ? Number(metrics.remainingExternal !== undefined ? metrics.remainingExternal : 0) : Number(spec.externalSlots !== undefined ? spec.externalSlots : 0),
-      hasCenterline: metrics ? metrics.hasCenterline : Boolean(spec.hasCenterline),
-      centerlineUsed: metrics ? metrics.centerlineUsed : 0,
-      totalSockets: spec.upgradeSockets || 3, usedSockets: (item.upgrades || []).length
+      index: sIdx + 1, sIdx,
+      callsign: item.callsign || 'Pilot', model: spec.name, specId: item.specId,
+      internalCapacity: metrics.internalCapacity, remainingInternal: metrics.remainingInternal,
+      externalCapacity: metrics.externalCapacity, remainingExternal: metrics.remainingExternal,
+      hasCenterline: metrics.hasCenterline, centerlineUsed: metrics.centerlineUsed,
+      totalSockets: spec.upgradeSockets, usedSockets: (item.upgrades || []).length
     };
   }
 
@@ -67,237 +75,175 @@ class ProcurementShelf {
     }
     if (tab === 'upgrades') {
       const remSockets = Math.max(0, active.totalSockets - active.usedSockets);
-      const sockText = remSockets === 1 ? 'SOCKET' : 'SOCKETS';
-      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSockets} ${sockText} AVAILABLE &bull; DRAG OR CLICK TO EQUIP</span>`;
+      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${remSockets} ${remSockets === 1 ? 'SOCKET' : 'SOCKETS'} AVAILABLE &bull; DRAG OR CLICK TO EQUIP</span>`;
+    } else if (this.pm.targetEquipStation === 'EXTERNAL' && active.externalCapacity > 0) {
+      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">EQUIPPING TO EXTERNAL PYLONS (${active.remainingExternal}/${active.externalCapacity} SLOTS)</span>`;
+    } else if (this.pm.targetEquipStation === 'INTERNAL' && active.internalCapacity > 0) {
+      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">EQUIPPING TO INTERNAL BAY (${active.remainingInternal}/${active.internalCapacity} SLOTS)</span>`;
     } else {
-      if (this.pm.targetEquipStation === 'EXTERNAL' && active.externalCapacity > 0) {
-        el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">EQUIPPING TO EXTERNAL PYLONS (${active.remainingExternal}/${active.externalCapacity} SLOTS)</span>`;
-      } else if (this.pm.targetEquipStation === 'INTERNAL' && active.internalCapacity > 0) {
-        el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">EQUIPPING TO INTERNAL BAY (${active.remainingInternal}/${active.internalCapacity} SLOTS)</span>`;
-      } else {
-        const intMsg = active.internalCapacity > 0 ? `INT BAY: ${active.remainingInternal}/${active.internalCapacity}` : '';
-        const extMsg = active.externalCapacity > 0 ? `EXT PYLONS: ${active.remainingExternal}/${active.externalCapacity}` : '';
-        const parts = [intMsg, extMsg].filter(Boolean).join(' &bull; ');
-        el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${parts ? `${parts} AVAILABLE` : 'NO WEAPON STATIONS'}</span>`;
-      }
+      const intMsg = active.internalCapacity > 0 ? `INT BAY: ${active.remainingInternal}/${active.internalCapacity}` : '';
+      const extMsg = active.externalCapacity > 0 ? `EXT PYLONS: ${active.remainingExternal}/${active.externalCapacity}` : '';
+      const parts = [intMsg, extMsg].filter(Boolean).join(' &bull; ');
+      el.innerHTML = `OUTFITTING AIRCRAFT #${active.index} [${active.callsign} &bull; ${active.model}] &bull; <span class="shelf-active-bay-notice">${parts ? `${parts} AVAILABLE` : 'NO WEAPON STATIONS'}</span>`;
     }
   }
 
   syncActiveAircraft() {
     const active = this.getActiveBaySummary();
     this.updateInstructionHeader(this.pm.currentTab);
-
     const catalogEl = document.getElementById('armory-catalog');
     if (!catalogEl) return;
-    const activeSpec = active ? (window.AIRCRAFT_CATALOG || {})[active.specId] : null;
+    const activeSpec = active ? window.AIRCRAFT_CATALOG[active.specId] : null;
 
     catalogEl.querySelectorAll('.btn-equip-gun').forEach(btn => {
-      const gunId = btn.getAttribute('data-gun-id');
-      const gun = (window.AUTOCANNONS_CATALOG || {})[gunId];
-      if (!gun) {
-        btn.textContent = active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP';
-        return;
-      }
+      const gun = window.AUTOCANNONS_CATALOG[btn.getAttribute('data-gun-id')];
+      if (!gun) return;
       const isComp = activeSpec ? window.AircraftRegistry.isGunCompatible(activeSpec, gun) : false;
       btn.disabled = !isComp;
       btn.textContent = !isComp ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP');
     });
 
     catalogEl.querySelectorAll('.btn-equip-upgrade').forEach(btn => {
-      const upgId = btn.getAttribute('data-upg-id');
-      const upg = (window.UPGRADES_CATALOG || {})[upgId];
+      const upg = window.UPGRADES_CATALOG[btn.getAttribute('data-upg-id')];
       const isDisallowed = Boolean(upg && upg.isAllowed && activeSpec && !upg.isAllowed(activeSpec));
       btn.disabled = isDisallowed;
       btn.textContent = isDisallowed ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP');
     });
 
     catalogEl.querySelectorAll('.btn-equip-wpn').forEach(btn => {
-      const wpnId = btn.getAttribute('data-wpn-id');
-      const wpn = (window.WEAPONS_CATALOG || {})[wpnId];
+      const wpn = window.WEAPONS_CATALOG[btn.getAttribute('data-wpn-id')];
       if (!wpn) return;
       const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
-      const pylonRatingMismatch = activeSpec && (ratings.indexOf(wpn.minRating || 'Type S') > ratings.indexOf(activeSpec.maxPylonRating || 'Type M'));
-      const isRestricted = Boolean((wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId)) || pylonRatingMismatch);
+      const mismatch = activeSpec && (ratings.indexOf(wpn.minRating) > ratings.indexOf(activeSpec.maxPylonRating));
+      const isRestricted = Boolean((wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId)) || mismatch);
       btn.disabled = isRestricted;
       btn.textContent = isRestricted ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP');
     });
   }
 
   renderGunsTab(container) {
+    const gunGroups = [
+      { id: 'ALL', label: 'ALL GUNS' },
+      { id: 'INTERNAL', label: 'INTERNAL CANNONS' },
+      { id: 'A2A_POD', label: 'A2A GUNPODS' },
+      { id: 'A2G_POD', label: 'A2G STRAFE PODS' },
+      { id: 'ENERGY', label: 'DIRECTED ENERGY' }
+    ];
+    this.renderFilterPills(container, gunGroups, this.pm.currentGunCategory, (id) => {
+      this.pm.currentGunCategory = id;
+      this.pm.renderCatalog();
+    });
+
     const grid = document.createElement('div');
     grid.className = 'dense-sub-grid';
-    const guns = Object.values(window.AUTOCANNONS_CATALOG || {});
     const active = this.getActiveBaySummary();
-    const activeSpec = active ? (window.AIRCRAFT_CATALOG || {})[active.specId] : null;
+    const activeSpec = active ? window.AIRCRAFT_CATALOG[active.specId] : null;
+    const curGroup = this.pm.currentGunCategory;
 
-    guns.forEach(g => {
-      const card = document.createElement('div');
-      card.className = 'catalog-item-card';
+    Object.values(window.AUTOCANNONS_CATALOG).forEach(g => {
+      if (curGroup !== 'ALL' && g.gunGroup !== curGroup) return;
+      grid.appendChild(ShelfCardBuilders.buildGunCard(this.pm, g, active, activeSpec));
+    });
 
-      const isComp = activeSpec ? window.AircraftRegistry.isGunCompatible(activeSpec, g) : false;
-      const isLocked = !isComp;
-
-      card.setAttribute('draggable', isLocked ? 'false' : 'true');
-      card.dataset.dragType = 'gun';
-      card.dataset.dragId = g.id;
-      card.dataset.dragName = g.name;
-
-      const burstDmg = (g.damagePerBurst || g.damagePerPulse || 1.40).toFixed(2);
-      const roundsCount = g.roundsPerBurst || 4;
-      const reloadTime = (g.burstCooldown || 1.6).toFixed(1);
-
-      card.innerHTML = `
-        <div class="cic-top"><span class="cic-title">${g.name}</span><span class="cic-cost" style="color:#7dd3fc;">${g.caliber}</span></div>
-        <div class="cic-type-bar">
-          <span class="badge-category" data-tag-title="CYCLIC FIRE RATE" data-tag-tooltip="${g.rpm} Rounds Per Minute deliver instantaneous snapshot burst density.">${g.rpm} RPM</span>
-          <span class="badge-mass" data-tag-title="MECHANISM WEIGHT" data-tag-tooltip="+${g.mass} kg deadweight added to forward airframe.">+${g.mass} kg</span>
-          <span class="badge-category" style="color:#00f5a0;" data-tag-title="BURST DAMAGE" data-tag-tooltip="Inflicts ${burstDmg} HP across a ${roundsCount}-round burst with ${reloadTime}s reload.">${burstDmg} HP (${roundsCount} rds, ${reloadTime}s)</span>
-        </div>
-        <div class="cic-desc">${g.desc}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
-          <button type="button" class="spec-inspect-btn" data-inspect-type="gun" data-inspect-id="${g.id}">SPECS</button>
-          <button type="button" class="btn-quick-equip btn-equip-gun" data-gun-id="${g.id}" style="flex:1;" ${isLocked ? 'disabled' : ''}>
-            ${isLocked ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP')}
-          </button>
-        </div>`;
-
-      card.querySelector('.btn-equip-gun').onclick = (e) => {
-        e.stopPropagation();
-        if (isLocked) return;
-        this.pm.equipItemDirectly({ type: 'gun', id: g.id, name: g.name });
-      };
-      grid.appendChild(card);
+    Object.values(window.WEAPONS_CATALOG).filter(w => w.category === 'GUN').forEach(wpn => {
+      if (curGroup !== 'ALL' && wpn.gunGroup !== curGroup) return;
+      grid.appendChild(ShelfCardBuilders.buildWeaponCard(this.pm, wpn, active, activeSpec));
     });
     container.appendChild(grid);
   }
 
   renderUpgradesTab(container) {
+    const upgGroups = [
+      { id: 'ALL', label: 'ALL SYSTEMS' },
+      { id: 'STRIKE', label: 'STRIKE' },
+      { id: 'SEAD', label: 'SEAD' },
+      { id: 'AVIONICS', label: 'AVIONICS' },
+      { id: 'ENGINE', label: 'ENGINE' },
+      { id: 'ARMOR', label: 'ARMOR' },
+      { id: 'STEALTH', label: 'STEALTH' },
+      { id: 'DATALINK', label: 'DATALINK' }
+    ];
+    this.renderFilterPills(container, upgGroups, this.pm.currentUpgradeCategory, (id) => {
+      this.pm.currentUpgradeCategory = id;
+      this.pm.renderCatalog();
+    });
+
     const grid = document.createElement('div');
     grid.className = 'dense-sub-grid';
     const active = this.getActiveBaySummary();
-    const activeSpec = active ? (window.AIRCRAFT_CATALOG || {})[active.specId] : null;
+    const activeSpec = active ? window.AIRCRAFT_CATALOG[active.specId] : null;
+    const curCat = this.pm.currentUpgradeCategory;
 
-    Object.values(window.UPGRADES_CATALOG || {}).forEach(upg => {
-      const card = document.createElement('div');
-      card.className = 'catalog-item-card';
-
-      const isDisallowed = Boolean(upg && upg.isAllowed && activeSpec && !upg.isAllowed(activeSpec));
-
-      card.setAttribute('draggable', isDisallowed ? 'false' : 'true');
-      card.dataset.dragType = 'upgrade';
-      card.dataset.dragId = upg.id;
-      card.dataset.dragName = upg.name;
-
-      let compBadge = 'UNIVERSAL';
-      let compTip = 'Compatible: universal across all airframes.';
-      if (upg.id === 'THRUST_VECTOR' || upg.id === 'TITANIUM_COCKPIT') {
-        compBadge = 'EXCEPT DRONES & COFFIN';
-        compTip = 'Compatible: universal except drones and COFFIN capsules.';
-      } else if (upg.id === 'ZOE_NEURAL_PROCESSOR') {
-        compBadge = 'DRONES & COFFIN ONLY';
-        compTip = 'Compatible: autonomous drones and COFFIN airframes only.';
-      } else if (upg.id === 'COFFIN_OPTICAL_BUS') {
-        compBadge = 'EXP, COFFIN & DRONES';
-        compTip = 'Compatible: experimental, COFFIN, and drone airframes.';
-      } else if (upg.id === 'SWARM_AI_COPROCESSOR') {
-        compBadge = 'DRONES ONLY';
-        compTip = 'Compatible: autonomous swarm drones (UCAVs) only.';
-      }
-      const isUniv = (compBadge === 'UNIVERSAL');
-      const badgeColor = isUniv ? '#00f5a0' : '#fbbf24';
-
-      card.innerHTML = `
-        <div class="cic-top"><span class="cic-title">${upg.name}</span><span class="cic-cost">$${Number(upg.cost || 0).toFixed(1)}M</span></div>
-        <div class="cic-type-bar">
-          <span class="badge-category" data-tag-title="${upg.category} SUBSYSTEM" data-tag-tooltip="${upg.desc}">${upg.category}</span>
-          <span class="badge-mass" data-tag-title="COMPONENT WEIGHT" data-tag-tooltip="+${upg.mass} kg payload weight added to airframe.">+${upg.mass} kg</span>
-          <span class="badge-slots" data-tag-title="SOCKET REQ" data-tag-tooltip="Requires 1 open modular component socket.">1 SOCKET</span>
-          <span class="badge-category" style="color:${badgeColor};" data-tag-title="AIRFRAME COMPATIBILITY" data-tag-tooltip="${compTip}">${compBadge}</span>
-        </div>
-        <div class="cic-desc">${upg.desc}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
-          <button type="button" class="spec-inspect-btn" data-inspect-type="upgrade" data-inspect-id="${upg.id}">SPECS</button>
-          <button type="button" class="btn-quick-equip btn-equip-upgrade" data-upg-id="${upg.id}" style="flex:1;" ${isDisallowed ? 'disabled' : ''}>
-            ${isDisallowed ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP')}
-          </button>
-        </div>`;
-
-      card.querySelector('.btn-equip-upgrade').onclick = (e) => {
-        e.stopPropagation();
-        if (isDisallowed) return;
-        this.pm.equipItemDirectly({ type: 'upgrade', id: upg.id, name: upg.name });
-      };
-      grid.appendChild(card);
+    Object.values(window.UPGRADES_CATALOG).forEach(upg => {
+      if (curCat !== 'ALL' && upg.category !== curCat) return;
+      grid.appendChild(ShelfCardBuilders.buildUpgradeCard(this.pm, upg, active, activeSpec));
     });
     container.appendChild(grid);
   }
 
   renderWeaponsTab(container, filterCat) {
+    if (filterCat === 'A2A') {
+      const a2aGroups = [
+        { id: 'ALL', label: 'ALL A2A' },
+        { id: 'WVR', label: 'WVR / DOGFIGHT' },
+        { id: 'MR_BVR', label: 'MEDIUM BVR' },
+        { id: 'LR_BVR', label: 'LONG-RANGE BVR' },
+        { id: 'ULR_BVR', label: 'ULTRA-LONG & AOE' },
+        { id: 'SWARM_MICRO', label: 'MICRO & SWARM' }
+      ];
+      this.renderFilterPills(container, a2aGroups, this.pm.currentA2ACategory, (id) => {
+        this.pm.currentA2ACategory = id;
+        this.pm.renderCatalog();
+      });
+    } else if (filterCat === 'A2G') {
+      const a2gGroups = [
+        { id: 'ALL', label: 'ALL A2G' },
+        { id: 'DUMB_BOMBS', label: 'DUMB BOMBS' },
+        { id: 'CLUSTER', label: 'CLUSTER' },
+        { id: 'GLIDE_SDB', label: 'GLIDE & SDB' },
+        { id: 'LASER_BOMBS', label: 'LASER BOMBS' },
+        { id: 'BUNKER_RUNWAY', label: 'BUNKER & RUNWAY' },
+        { id: 'ROCKETS', label: 'ROCKETS' },
+        { id: 'ATGM', label: 'ATGMS' },
+        { id: 'ARM', label: 'ARM (SEAD)' },
+        { id: 'CRUISE', label: 'CRUISE' },
+        { id: 'LOITERING', label: 'LOITERING' }
+      ];
+      this.renderFilterPills(container, a2gGroups, this.pm.currentA2GCategory, (id) => {
+        this.pm.currentA2GCategory = id;
+        this.pm.renderCatalog();
+      });
+    } else if (filterCat === 'UTILITY') {
+      const podGroups = [
+        { id: 'ALL', label: 'ALL PODS' },
+        { id: 'ECM', label: 'ECM JAMMERS' },
+        { id: 'TARGETING', label: 'TARGETING PODS' },
+        { id: 'DECOY', label: 'DECOY SYSTEMS' }
+      ];
+      this.renderFilterPills(container, podGroups, this.pm.currentPodCategory, (id) => {
+        this.pm.currentPodCategory = id;
+        this.pm.renderCatalog();
+      });
+    }
+
     const grid = document.createElement('div');
     grid.className = 'dense-sub-grid';
     const active = this.getActiveBaySummary();
-    const activeSpec = active ? (window.AIRCRAFT_CATALOG || {})[active.specId] : null;
+    const activeSpec = active ? window.AIRCRAFT_CATALOG[active.specId] : null;
 
-    Object.values(window.WEAPONS_CATALOG || {}).forEach(wpn => {
+    Object.values(window.WEAPONS_CATALOG).forEach(wpn => {
       if (filterCat === 'UTILITY') {
-        if (wpn.category !== 'POD' && wpn.category !== 'GUN' && !wpn.isJammerPod && !wpn.isDecoy && !wpn.isLaser && !wpn.isGunpod) return;
+        if (wpn.category !== 'POD') return;
+        if (this.pm.currentPodCategory !== 'ALL' && wpn.podGroup !== this.pm.currentPodCategory) return;
       } else if (filterCat === 'A2A') {
         if (wpn.category !== 'A2A') return;
+        if (this.pm.currentA2ACategory !== 'ALL' && wpn.a2aGroup !== this.pm.currentA2ACategory) return;
       } else if (filterCat === 'A2G') {
-        if (wpn.category !== 'A2G' && !wpn.isBunkerCracker) return;
+        if (wpn.category !== 'A2G') return;
+        if (this.pm.currentA2GCategory !== 'ALL' && wpn.a2gGroup !== this.pm.currentA2GCategory) return;
       } else if (filterCat && filterCat !== 'ALL' && wpn.category !== filterCat) return;
 
-      const card = document.createElement('div');
-      card.className = 'catalog-item-card';
-
-      const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
-      const pylonRatingMismatch = activeSpec && (ratings.indexOf(wpn.minRating || 'Type S') > ratings.indexOf(activeSpec.maxPylonRating || 'Type M'));
-      const isRestricted = Boolean((wpn.allowedAirframes && active && !wpn.allowedAirframes.includes(active.specId)) || pylonRatingMismatch);
-      const wpnSlotWord = wpn.slots === 1 ? 'SLOT' : 'SLOTS';
-      const typeBadge = wpn.isGunpod ? '<span class="badge-category" style="color:#fde047;border-color:#ca8a04;">GUN POD</span>' : '';
-
-      const slotType = wpn.slotType || 'EXTERNAL';
-      let stationBadge = '';
-      if (slotType === 'INTERNAL') {
-        stationBadge = '<span class="badge-slots" style="background:#042f2e;border-color:#0d9488;color:#2dd4bf;" data-tag-title="INTERNAL / EXTERNAL" data-tag-tooltip="Sized for stealth internal bays (zero parasite drag, zero extra RCS). Can also be mounted on external pylons.">INT / EXT</span>';
-      } else if (slotType === 'CENTERLINE') {
-        stationBadge = '<span class="badge-slots" style="background:#451a03;border-color:#d97706;color:#fbbf24;" data-tag-title="CENTERLINE ONLY" data-tag-tooltip="Requires reinforced centerline fuselage station.">CENTERLINE</span>';
-      } else {
-        stationBadge = '<span class="badge-slots" style="background:#082f49;border-color:#0284c7;color:#38bdf8;" data-tag-title="EXTERNAL ONLY" data-tag-tooltip="Mounts externally on wing or fuselage pylons (adds weapon mass and pylon drag).">EXT ONLY</span>';
-      }
-
-      card.setAttribute('draggable', isRestricted ? 'false' : 'true');
-      card.dataset.dragType = 'weapon';
-      card.dataset.dragId = wpn.id;
-      card.dataset.dragName = wpn.name;
-
-      card.innerHTML = `
-        <div class="cic-top"><span class="cic-title">${wpn.name}</span><span class="cic-cost">$${Number(wpn.cost || 0).toFixed(1)}M</span></div>
-        <div class="cic-type-bar">
-          <span class="badge-slots" data-tag-title="HARDPOINT REQUIREMENT" data-tag-tooltip="Requires ${wpn.slots} open station${wpn.slots === 1 ? '' : 's'} (${wpn.minRating || 'Type S'} minimum).">${wpn.slots} ${wpnSlotWord}</span>
-          ${stationBadge}
-          <span class="badge-mass" data-tag-title="ORDNANCE WEIGHT" data-tag-tooltip="+${wpn.mass} kg total carriage weight.">+${wpn.mass} kg</span>
-          ${typeBadge}
-          <span class="badge-category" style="color:#00f0ff;" data-tag-title="SEEKER HOMING" data-tag-tooltip="Guidance: ${wpn.seeker || 'GUIDED'} &bull; ${wpn.behaviorDesc || wpn.desc || ''}">${wpn.seeker || 'GUIDED'}</span>
-        </div>
-        <div class="cic-specs">
-          <div data-tag-title="EFFECTIVE RANGE" data-tag-tooltip="Maximum engagement basket: ${wpn.rangeKm || 0} km.">RNG: <b>${wpn.rangeKm || 0}km</b></div>
-          <div data-tag-title="SPEED & WARHEAD" data-tag-tooltip="Speed: Mach ${wpn.speedMach || '1.0'}, Warhead Damage: ${wpn.damagePerBurst || wpn.damage || 0} HP.">SPD: <b>M ${wpn.speedMach || '1.0'}</b> &bull; DMG: <b>${wpn.damagePerBurst || wpn.damage || 0} HP</b></div>
-        </div>
-        <div class="cic-desc">${wpn.behaviorDesc || wpn.desc || ''}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
-          <button type="button" class="spec-inspect-btn" data-inspect-type="weapon" data-inspect-id="${wpn.id}">SPECS</button>
-          <button type="button" class="btn-quick-equip btn-equip-wpn" data-wpn-id="${wpn.id}" style="flex:1;" ${isRestricted ? 'disabled' : ''}>
-            ${isRestricted ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP')}
-          </button>
-        </div>`;
-
-      card.querySelector('.btn-equip-wpn').onclick = (e) => {
-        e.stopPropagation();
-        if (isRestricted) return;
-        this.pm.equipItemDirectly({ type: 'weapon', id: wpn.id, name: wpn.name });
-      };
-      grid.appendChild(card);
+      grid.appendChild(ShelfCardBuilders.buildWeaponCard(this.pm, wpn, active, activeSpec));
     });
     container.appendChild(grid);
   }

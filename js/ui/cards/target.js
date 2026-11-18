@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Target Solution Display
- * Displays verified target telemetry, ground/civilian classification, and boresight-aligned firing indicators.
+ * Displays verified target telemetry, concealed radar emitters, ground armor classes, and boresight indicators.
  */
 
 class PylonTargetSolution {
@@ -29,9 +29,15 @@ class PylonTargetSolution {
       let armorText = 'UNKNOWN';
 
       if (!isKnown) {
-        rawTgtName = 'BOGEY [?]';
-        classification = 'UNIDENTIFIED RADAR TRACK';
-        armorText = 'UNKNOWN';
+        if (validTarget.type) {
+          rawTgtName = 'EMITTER [?]';
+          classification = 'UNIDENTIFIED RF EMISSION (RECON OR ARM)';
+          armorText = 'UNKNOWN';
+        } else {
+          rawTgtName = 'BOGEY [?]';
+          classification = 'UNIDENTIFIED RADAR TRACK';
+          armorText = 'UNKNOWN';
+        }
       } else if (validTarget.isGhost) {
         rawTgtName = `FALSE ECHO [${validTarget.ghostType || 'CLUTTER'}]`;
         classification = 'RADAR CLUTTER';
@@ -45,8 +51,10 @@ class PylonTargetSolution {
         classification = `CIVILIAN: ${validTarget.model || 'AIRLINER'}`;
         armorText = `${Math.max(1, Math.round(validTarget.hp))}/${validTarget.maxHp} HP`;
       } else if (validTarget.type) {
-        rawTgtName = validTarget.name || validTarget.type;
-        classification = `GROUND INSTALLATION: ${validTarget.type}`;
+        const objPrefix = validTarget.isPrimaryObjective ? '[PRIMARY OBJ] ' : '';
+        const emconTag = validTarget.emconTimer > 0 ? ' [EMCON]' : '';
+        rawTgtName = objPrefix + (validTarget.name || validTarget.type) + emconTag;
+        classification = `${validTarget.armorClass || 'SOFT'} GROUND (${validTarget.category || validTarget.type})`;
         armorText = validTarget.isIndestructible ? 'INDESTRUCTIBLE' : `${Math.max(1, Math.round(validTarget.hp))}/${validTarget.maxHp} HP`;
       } else {
         rawTgtName = window.formatAircraftDisplayName
@@ -64,19 +72,17 @@ class PylonTargetSolution {
       const isHostile = validTarget.team === 'hostile';
       const showAceColor = Boolean(validTarget.isAce && isKnown);
 
-      let inBoresight = false;
       const angleToTarget = Math.atan2(validTarget.y - ay, validTarget.x - ax);
       let offBoresight = Math.abs((activeUnit.heading || 0) - angleToTarget);
       while (offBoresight > Math.PI) offBoresight = Math.abs(offBoresight - Math.PI * 2);
       const maxConeRad = ((activeUnit.gun && activeUnit.gun.coneAngleDeg ? activeUnit.gun.coneAngleDeg : 45) / 2.0) * (Math.PI / 180.0);
-      inBoresight = (offBoresight <= maxConeRad);
-
+      const inBoresight = (offBoresight <= maxConeRad);
       const inGunRange = (activeUnit && activeUnit.gun && dist <= (activeUnit.gun.rangeKm || 4.6));
 
       targetBox.className = 'target-solution-box active-target';
       if (nameSpan) {
         nameSpan.textContent = `TARGET: ${tgtName}`;
-        nameSpan.style.color = !isKnown ? '#f97316' : (showAceColor ? '#ffd700' : (validTarget.isGhost ? '#94a3b8' : (isHostile ? '#ff3366' : (isCiv ? '#7dd3fc' : '#00f0ff'))));
+        nameSpan.style.color = !isKnown ? '#f97316' : (validTarget.isPrimaryObjective ? '#ffd700' : (showAceColor ? '#ffd700' : (validTarget.isGhost ? '#94a3b8' : (isHostile ? '#ff3366' : (isCiv ? '#7dd3fc' : '#00f0ff')))));
       }
       if (distSpan) {
         if (inGunRange && inBoresight) {
@@ -86,8 +92,8 @@ class PylonTargetSolution {
           distSpan.textContent = `${dist.toFixed(1)} km [OFF BORESIGHT]`;
           distSpan.style.color = '#f97316';
         } else {
-          distSpan.textContent = `${dist.toFixed(1)} km [OUT OF RANGE]`;
-          distSpan.style.color = '#ef4444';
+          distSpan.textContent = `${dist.toFixed(1)} km`;
+          distSpan.style.color = '#38bdf8';
         }
       }
       if (altB) altB.textContent = tgtAlt;
@@ -100,9 +106,8 @@ class PylonTargetSolution {
       }
 
       if (specsBtn) {
-        if (!isKnown) {
-          specsBtn.classList.add('hidden');
-        } else if (validTarget.isCivilian) {
+        if (!isKnown) specsBtn.classList.add('hidden');
+        else if (validTarget.isCivilian) {
           specsBtn.classList.remove('hidden');
           specsBtn.setAttribute('data-inspect-type', 'civilian');
           specsBtn.setAttribute('data-inspect-id', validTarget.flightCode || 'PACIFIC-412');

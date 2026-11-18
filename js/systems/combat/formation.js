@@ -5,6 +5,7 @@
 
 class FormationPlanner {
   static getFormationRank(spec, isLead, isAce) {
+    if (!spec) throw new Error('FormationPlanner.getFormationRank requires a valid aircraft spec.');
     if (isLead || isAce) return 0;
     if (spec.isDrone || spec.category === 'DRONES') return 4;
     const cheaperOlder = ['Mirage-2000', 'Tejas-MK2', 'F-16V', 'MiG-29K', 'Tornado-ECR', 'X-29A', 'EF-111A', 'F-14D'];
@@ -15,7 +16,14 @@ class FormationPlanner {
   }
 
   static calculateFormationSpawns(fleetItems, team, theaterWidth, theaterHeight, rngInstance) {
-    const rng = (rngInstance && typeof rngInstance.range === 'function') ? rngInstance : window.PRNG;
+    if (!Array.isArray(fleetItems)) throw new Error('FormationPlanner.calculateFormationSpawns requires fleetItems array.');
+    if (!window.AIRCRAFT_CATALOG) throw new Error('AIRCRAFT_CATALOG is not loaded.');
+    const rng = rngInstance || window.PRNG;
+    if (!rng || typeof rng.range !== 'function') throw new Error('FormationPlanner requires a valid PRNG instance.');
+    if (typeof theaterWidth !== 'number' || typeof theaterHeight !== 'number') {
+      throw new Error(`Invalid theater dimensions (${theaterWidth}, ${theaterHeight}) in FormationPlanner.`);
+    }
+
     const isBlue = (team === 'friendly');
     const total = fleetItems.length;
     if (total === 0) return [];

@@ -49,7 +49,7 @@ class InspectionRadarView {
           </div>
           <div class="inspection-factor-row ${isOptical && cloudHits > 0 ? 'warning' : 'positive'}">
             <span class="factor-name">Weather Cloud Moisture<span class="factor-desc">Liquid droplets soften imaging infrared contrast.</span></span>
-            <span class="factor-delta ${isOptical && cloudHits > 0 ? 'warning' : 'positive'}">${isOptical && cloudHits > 0 ? `Minor Scatter (-12% P_k)` : 'Clear Penetration'}</span>
+            <span class="factor-delta ${isOptical && cloudHits > 0 ? 'warning' : 'positive'}">${isOptical && cloudHits > 0 ? 'Minor Scatter (-12% Pk)' : 'Clear Penetration'}</span>
           </div>
         </div>
       </section>
@@ -60,7 +60,6 @@ class InspectionRadarView {
     if (!selectedEntity || typeof selectedEntity.x !== 'number') {
       return '<div class="inspection-empty"><b>NO SENSOR TARGET</b><span>Select an aircraft or contact to evaluate sensor envelopes.</span></div>';
     }
-
     if (selectedEntity.weapon && selectedEntity.target) {
       return this.renderMissileSeekerDashboard(controller, selectedEntity);
     }
@@ -68,6 +67,7 @@ class InspectionRadarView {
     const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
     const sDot = window.INSP_SVG ? window.INSP_SVG.dot : '';
     const sPm = window.INSP_SVG ? window.INSP_SVG.pm : '';
+    const theaterW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
 
     const game = controller.game;
     const commanderTeam = game.currentPvpCommander || 'friendly';
@@ -84,21 +84,21 @@ class InspectionRadarView {
       const enemyPool = [...(game.hostileAircraft || []), ...(game.surfaceUnits.filter(s => s.team === 'hostile'))].filter(u => u && u.hp > 0);
       records = enemyPool.map(target => InspectionTelemetry.getSensorRecord(selectedEntity, target, game)).sort((a, b) => Number(b.detects) - Number(a.detects) || a.distanceKm - b.distanceKm);
     } else {
-      const scannerPool = [...(game.alliedAircraft || []), ...(game.surfaceUnits.filter(s => s.team === 'friendly' && (s.type === 'RADAR_ARRAY' || s.type === 'S-400')))].filter(u => u && u.hp > 0);
+      const scannerPool = [...(game.alliedAircraft || []), ...(game.surfaceUnits.filter(s => s.team === 'friendly' && (s.category === 'EW_RADAR' || s.type === 'RADAR_ARRAY' || s.type === 'S-400')))].filter(u => u && u.hp > 0);
       records = scannerPool.map(scanner => InspectionTelemetry.getSensorRecord(scanner, selectedEntity, game)).sort((a, b) => Number(b.detects) - Number(a.detects) || a.distanceKm - b.distanceKm);
     }
 
-    const radarName = selectedEntity.spec ? selectedEntity.spec.radarType : (selectedEntity.name || 'Pulse-Doppler Radar');
-    const radarRange = selectedEntity.spec ? selectedEntity.spec.R_0 : (selectedEntity.rangeKm || 75);
-    const scanCone = selectedEntity.spec ? selectedEntity.spec.radarConeDeg : (selectedEntity.type ? 360 : 120);
+    const radarName = selectedEntity.spec ? (selectedEntity.spec.radarType || selectedEntity.spec.name) : (selectedEntity.name || 'Pulse-Doppler Radar');
+    const radarRange = selectedEntity.spec ? (selectedEntity.spec.R_0 || selectedEntity.rangeKm || 75) : (selectedEntity.rangeKm || 75);
+    const scanCone = selectedEntity.spec ? (selectedEntity.spec.radarConeDeg || 360) : (selectedEntity.type ? 360 : 120);
     const lookDown = Math.round((selectedEntity.spec ? (selectedEntity.spec.lookDownBonus || 0.2) : 0.2) * 100);
 
     const contactRowsHtml = records.map((rec) => {
       const otherUnit = isFriendly ? rec.target : rec.scanner;
       const accordionId = `sensor-${otherUnit.id}`;
       const otherName = controller.escape(controller.getName(otherUnit));
-      const rangePercent = Math.min(100, ((rec.inCone ? rec.rangeKm : rec.forwardRangeKm) / 150) * 100);
-      const distPercent = Math.min(100, (rec.distanceKm / 150) * 100);
+      const rangePercent = Math.min(100, ((rec.inCone ? rec.rangeKm : rec.forwardRangeKm) / theaterW) * 100);
+      const distPercent = Math.min(100, (rec.distanceKm / theaterW) * 100);
 
       const isLocked = isFriendly
         ? Boolean(rec.detects && activeLock && activeLock.id === rec.target.id)
@@ -107,50 +107,27 @@ class InspectionRadarView {
       let statusClass = 'negative';
       let statusText = `OFF-BORESIGHT (${rec.offBoresightDeg}${sDeg})`;
       if (rec.inCone) {
-        if (isLocked) {
-          statusClass = 'positive';
-          statusText = 'PRIMARY LOCK';
-        } else if (rec.detects) {
-          statusClass = rec.marginKm < 15 ? 'warning' : 'positive';
-          statusText = rec.marginKm < 15 ? 'MARGINAL TRACK' : 'IN BEAM (TRACKED)';
-        } else {
-          statusClass = 'negative';
-          statusText = 'IN CONE (OUT OF RANGE)';
-        }
+        if (isLocked) { statusClass = 'positive'; statusText = 'PRIMARY LOCK'; }
+        else if (rec.detects) { statusClass = rec.marginKm < 15 ? 'warning' : 'positive'; statusText = rec.marginKm < 15 ? 'MARGINAL TRACK' : 'IN BEAM (TRACKED)'; }
+        else { statusClass = 'negative'; statusText = 'IN CONE (OUT OF RANGE)'; }
       }
 
       let beamClass = 'negative';
       let beamText = `Outside Radar Cone (${rec.offBoresightDeg}${sDeg} > ${sPm}${rec.halfConeDeg}${sDeg})`;
       if (rec.inCone) {
         beamClass = (rec.offBoresightDeg <= rec.halfConeDeg * 0.65) ? 'positive' : 'warning';
-        beamText = (rec.offBoresightDeg <= rec.halfConeDeg * 0.65)
-          ? `Boresight Aligned (${rec.offBoresightDeg}${sDeg} off nose)`
-          : `Outer Gimbal Arc (${rec.offBoresightDeg}${sDeg} off nose)`;
+        beamText = (rec.offBoresightDeg <= rec.halfConeDeg * 0.65) ? `Boresight Aligned (${rec.offBoresightDeg}${sDeg} off nose)` : `Outer Gimbal Arc (${rec.offBoresightDeg}${sDeg} off nose)`;
       }
 
-      let rcsClass = 'warning';
-      let rcsText = `${rec.rcsRatio.toFixed(2)}x detection multiplier`;
-      if (rec.rcsRatio >= 1.15) rcsClass = 'positive';
-      else if (rec.rcsRatio < 0.70) rcsClass = 'negative';
+      const rcsClass = rec.rcsRatio >= 1.15 ? 'positive' : (rec.rcsRatio < 0.70 ? 'negative' : 'warning');
+      const rcsText = `${rec.rcsRatio.toFixed(2)}x detection multiplier`;
 
       const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.04;
       const totalAttenPct = Math.round((1 - Math.pow(1.0 - atten, rec.cloudHits)) * 100);
-      let cloudClass = 'neutral';
-      let cloudText = 'Clear Line of Sight';
-      let cloudDesc = 'Clear air: unobstructed atmospheric radar line of sight.';
-      if (rec.cloudHits === 1) {
-        cloudClass = 'warning';
-        cloudText = `-${totalAttenPct}% Attenuation (1 Cloud Cell)`;
-        cloudDesc = 'Single cloud cell in sensor path: gentle microwave RF attenuation.';
-      } else if (rec.cloudHits >= 2) {
-        cloudClass = 'warning';
-        cloudText = `-${totalAttenPct}% Attenuation (${rec.cloudHits} Clouds)`;
-        cloudDesc = `${rec.cloudHits} cloud cells in path: minor microwave radar attenuation.`;
-      } else if (!rec.inCone) {
-        cloudClass = 'negative';
-        cloudText = `NO RADAR SIGHT (${rec.offBoresightDeg}${sDeg})`;
-        cloudDesc = `Target is ${rec.offBoresightDeg}${sDeg} off nose in rear blind zone; no forward radar line of sight.`;
-      }
+      let cloudClass = 'neutral', cloudText = 'Clear Line of Sight', cloudDesc = 'Clear air: unobstructed atmospheric radar line of sight.';
+      if (rec.cloudHits === 1) { cloudClass = 'warning'; cloudText = `-${totalAttenPct}% Attenuation (1 Cloud Cell)`; cloudDesc = 'Single cloud cell in sensor path: gentle microwave RF attenuation.'; }
+      else if (rec.cloudHits >= 2) { cloudClass = 'warning'; cloudText = `-${totalAttenPct}% Attenuation (${rec.cloudHits} Clouds)`; cloudDesc = `${rec.cloudHits} cloud cells in path: minor microwave radar attenuation.`; }
+      else if (!rec.inCone) { cloudClass = 'negative'; cloudText = `NO RADAR SIGHT (${rec.offBoresightDeg}${sDeg})`; cloudDesc = `Target is ${rec.offBoresightDeg}${sDeg} off nose in rear blind zone; no forward radar line of sight.`; }
 
       return `
         <details class="inspection-accordion" data-accordion-id="${accordionId}">
@@ -176,7 +153,6 @@ class InspectionRadarView {
                 ${!rec.inCone ? `BLIND SECTOR (${rec.offBoresightDeg}${sDeg})` : (rec.marginKm >= 0 ? `+${rec.marginKm.toFixed(1)} km margin` : `${rec.marginKm.toFixed(1)} km shortfall`)}
               </span>
             </div>
-
             <div class="inspection-factors-table" style="margin-top:6px;">
               <div class="inspection-factor-row ${beamClass} sensor-beam-row">
                 <span class="factor-name">Radar Beam Alignment<span class="factor-desc">Target angle relative to forward gimbal limits (${sPm}${rec.halfConeDeg}${sDeg}).</span></span>
@@ -191,9 +167,8 @@ class InspectionRadarView {
                 <span class="factor-delta ${cloudClass}">${cloudText}</span>
               </div>
             </div>
-
             <div class="inspection-reason-box ${rec.detects ? (rec.marginKm < 15 ? 'warning' : '') : 'warning'}" style="margin-top:4px;">
-              <b>RADAR ASSESSMENT:</b> ${!rec.inCone ? `NO RADAR SIGHT: Target is in rear blind sector (${rec.offBoresightDeg}${sDeg} off nose, outside ${sPm}${rec.halfConeDeg}${sDeg} radar cone). Turn towards target to acquire radar track.` : (rec.detects ? (rec.marginKm < 15 ? `Marginal radar track: target is near horizon boundary (${rec.marginKm.toFixed(1)} km margin). Maneuvering may drop track.` : `Solid radar track established. Target is ${Math.abs(rec.marginKm).toFixed(1)} km inside reliable firing and detection envelope.`) : `Target is beyond radar detection horizon by ${Math.abs(rec.marginKm).toFixed(1)} km.`)}
+              <b>RADAR ASSESSMENT:</b> ${!rec.inCone ? `NO RADAR SIGHT: Target is in rear blind sector (${rec.offBoresightDeg}${sDeg} off nose). Turn towards target to acquire radar track.` : (rec.detects ? (rec.marginKm < 15 ? `Marginal radar track: target is near horizon boundary (${rec.marginKm.toFixed(1)} km margin).` : `Solid radar track established. Target is ${Math.abs(rec.marginKm).toFixed(1)} km inside reliable envelope.`) : `Target is beyond radar detection horizon by ${Math.abs(rec.marginKm).toFixed(1)} km.`)}
             </div>
           </div>
         </details>

@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Category: Dedicated Strike, Close Air Support & Strategic Bombers
+ * js/data/aircraft/strike.js - Dedicated Close Air Support and Heavy Strategic Bomber airframes.
  */
 
 window.AIRCRAFT_STRIKE = {
@@ -35,7 +35,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'Titanium bathtub armored CAS aircraft (7 HP). High-bypass TF34 non-afterburning turbofans are masked from below by the horizontal stabilizer, reducing lower-hemisphere IR bloom to 0.80x. 10 external hardpoints.'
+    desc: 'Titanium bathtub armored CAS aircraft (7 HP). High-bypass TF34 turbofans are masked from below by the tailplane, cutting lower-hemisphere IR bloom to 0.80x. 10 external hardpoints.'
   },
   'Su-25SM3': {
     id: 'Su-25SM3',
@@ -69,7 +69,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Titanium ground attacker ($15.0M, 7 HP). Twin non-afterburning R-195 turbojets without bypass cooling yield a 1.10x thermal signature. 10 external stations for ordnance.'
+    desc: 'Titanium ground attacker ($15.0M, 7 HP). Twin non-afterburning R-195 turbojets yield a 1.10x thermal signature. 10 external stations for close-support ordnance.'
   },
   'Su-34': {
     id: 'Su-34',
@@ -103,7 +103,41 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 12,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Armored strike bomber. Heavy afterburning AL-31F engines produce a 1.25x thermal signature. 12 external stations and centerline carriage certified for Kh-47M2 Kinzhal.'
+    desc: 'Armored strike bomber ($25.0M). Twin afterburning AL-31F engines produce 1.25x thermal bloom. 12 external stations plus centerline station certified for Kh-47M2 Kinzhal.'
+  },
+  'B-52H': {
+    id: 'B-52H',
+    name: 'B-52H Stratofortress',
+    category: 'STRIKE',
+    badge: 'HEAVY CRUISE ARSENAL',
+    role: 'Strategic Heavy Standoff Bomber',
+    cost: 36.0,
+    hp: 10,
+    AGI_0: 0.18,
+    S_0: 0.76,
+    sOpt: 0.52,
+    R_0: 74.0,
+    radarType: 'APQ-166 & Sniper Strike Bus',
+    radarConeDeg: 100,
+    lookDownBonus: 0.66,
+    sigma_0: 24.0,
+    beamSpike: 4.8,
+    thermalBloom: 1.65,
+    M_max: 31750,
+    G_limit: 3.0,
+    isDrone: false,
+    thrustVector: false,
+    builtInGun: 'M61A2',
+    allowedGuns: ['M61A2'],
+    gunRounds: 600,
+    internalSlots: 8,
+    externalSlots: 8,
+    hasCenterline: true,
+    centerlineSlots: 12,
+    totalSlots: 16,
+    maxPylonRating: 'Type X',
+    upgradeSockets: 4,
+    desc: 'Heavy standoff arsenal bomber (10 HP, 31,750 kg payload). Eight TF33 turbofans generate 1.65x thermal plume; 8 internal bays, 8 external racks, and heavy centerline carriage.'
   },
   'B-1B': {
     id: 'B-1B',
@@ -137,7 +171,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 14,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Variable-sweep supersonic bomber. Four F101-GE-102 afterburning engines in paired nacelles generate a heavy 1.45x thermal exhaust signature. 6 internal slots and 8 external pylons.'
+    desc: 'Variable-sweep supersonic bomber. Four F101-GE-102 afterburning engines generate 1.45x thermal exhaust signature. 6 internal slots and 8 external pylons.'
   },
   'Tu-160M': {
     id: 'Tu-160M',
@@ -171,41 +205,7 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 16,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Heavy supersonic strategic bomber (9 HP). Four massive NK-32 afterburning turbofans generate a colossal 1.60x thermal bloom visible from deep standoff. 8 internal slots and dual centerline mounts.'
-  },
-  'B-21': {
-    id: 'B-21',
-    name: 'B-21 Raider',
-    category: 'STRIKE',
-    badge: 'FLYING WING STEALTH',
-    role: 'Strategic Stealth Penetrator',
-    cost: 60.0,
-    hp: 8,
-    AGI_0: 0.28,
-    S_0: 0.60,
-    sOpt: 0.45,
-    R_0: 80.0,
-    radarType: 'Broadband AESA',
-    radarConeDeg: 120,
-    lookDownBonus: 0.84,
-    sigma_0: 0.0002,
-    beamSpike: 1.4,
-    thermalBloom: 0.35,
-    M_max: 15000,
-    G_limit: 4.5,
-    isDrone: false,
-    thrustVector: false,
-    builtInGun: 'GAU-22',
-    allowedGuns: ['GAU-22', 'DE-PULSE', 'PLSL_LIGHT'],
-    gunRounds: 200,
-    internalSlots: 16,
-    externalSlots: 0,
-    hasCenterline: false,
-    centerlineSlots: 0,
-    totalSlots: 16,
-    maxPylonRating: 'Type X',
-    upgradeSockets: 4,
-    desc: 'Very low observable flying wing. Top-surface flush conformal exhaust troughs with extreme cold-air diffusion drop thermal signature to 0.35x. 16 internal bay slots with zero external drag.'
+    desc: 'Heavy supersonic strategic bomber (9 HP). Four massive NK-32 afterburning turbofans generate 1.60x thermal bloom. 8 internal slots and dual centerline mounts.'
   },
   'B-2A': {
     id: 'B-2A',
@@ -239,6 +239,74 @@ window.AIRCRAFT_STRIKE = {
     totalSlots: 16,
     maxPylonRating: 'Type X',
     upgradeSockets: 4,
-    desc: 'Strategic stealth flying wing. Upper-surface slotted exhaust troughs blend bypass ambient air before discharge, suppressing IR signature to 0.38x. 16 internal rotary slots.'
+    desc: 'Strategic stealth flying wing. Slotted upper-surface exhaust troughs suppress IR signature to 0.38x. 16 internal rotary bay slots.'
+  },
+  'FB-22': {
+    id: 'FB-22',
+    name: 'FB-22 Strike Raptor',
+    category: 'STRIKE',
+    badge: 'STEALTH SUPERSONIC BOMBER',
+    role: 'Regional Stealth Supersonic Strike',
+    cost: 54.0,
+    hp: 7,
+    AGI_0: 0.68,
+    S_0: 1.46,
+    sOpt: 0.94,
+    R_0: 88.0,
+    radarType: 'APG-77 Strike SAR AESA',
+    radarConeDeg: 120,
+    lookDownBonus: 0.84,
+    sigma_0: 0.0004,
+    beamSpike: 1.8,
+    thermalBloom: 0.50,
+    M_max: 13600,
+    G_limit: 7.5,
+    isDrone: false,
+    thrustVector: false,
+    builtInGun: 'M61A2',
+    allowedGuns: ['M61A2', 'GAU-22'],
+    gunRounds: 480,
+    internalSlots: 10,
+    externalSlots: 4,
+    hasCenterline: false,
+    centerlineSlots: 0,
+    totalSlots: 14,
+    maxPylonRating: 'Type X',
+    upgradeSockets: 4,
+    desc: 'Delta-wing stealth strike derivative ($54.0M). Supersonic Mach 1.46 supercruise with enlarged 10-slot internal Type X bays and 4 external wing pylons.'
+  },
+  'B-21': {
+    id: 'B-21',
+    name: 'B-21 Raider',
+    category: 'STRIKE',
+    badge: 'FLYING WING STEALTH',
+    role: 'Strategic Stealth Penetrator',
+    cost: 60.0,
+    hp: 8,
+    AGI_0: 0.28,
+    S_0: 0.60,
+    sOpt: 0.45,
+    R_0: 80.0,
+    radarType: 'Broadband AESA',
+    radarConeDeg: 120,
+    lookDownBonus: 0.84,
+    sigma_0: 0.0002,
+    beamSpike: 1.4,
+    thermalBloom: 0.35,
+    M_max: 15000,
+    G_limit: 4.5,
+    isDrone: false,
+    thrustVector: false,
+    builtInGun: 'GAU-22',
+    allowedGuns: ['GAU-22', 'DE-PULSE', 'PLSL_LIGHT'],
+    gunRounds: 200,
+    internalSlots: 16,
+    externalSlots: 0,
+    hasCenterline: false,
+    centerlineSlots: 0,
+    totalSlots: 16,
+    maxPylonRating: 'Type X',
+    upgradeSockets: 4,
+    desc: 'Very low observable flying wing. Top-surface flush exhaust troughs drop thermal signature to 0.35x. 16 internal bay slots with zero external drag.'
   }
 };
