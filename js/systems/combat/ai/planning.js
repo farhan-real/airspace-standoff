@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: AI Mission Planning Subsystem
- * Flight paths, formation element pairing, role-based tasking, and difficulty-tiered flight vectors.
+ * Flight paths, formation element pairing, doctrine posture thresholds, and role-based altitudes.
  */
 
 class AIPlanningSystem {
@@ -22,9 +22,9 @@ class AIPlanningSystem {
     this.postureTimer = 0.0;
   }
 
-  update(dt, aliveHostiles, profile, diffKey) {
+  update(dt, aliveHostiles, profile, diffKey, airDoctrine) {
     this.updateSuccession(dt);
-    this.updateSquadronPosture(dt, aliveHostiles, profile, diffKey);
+    this.updateSquadronPosture(dt, aliveHostiles, profile, diffKey, airDoctrine);
     this.updateElementPairs(aliveHostiles, profile);
   }
 
@@ -42,22 +42,17 @@ class AIPlanningSystem {
       CADET: 6.0, BUFFER: 5.5, VETERAN: 5.0, ESCALATED: 4.5, ELITE: 4.0,
       FORWARD: 3.8, ACE: 3.5, FORTIFIED: 3.0, MASTER: 2.5, LEGEND: 1.8
     };
-    const hesitationSec = pauseTiers[diffKey] || 4.0;
-    aliveHostiles.forEach(h => {
-      this.successionTimers.set(h.id, hesitationSec);
-    });
-
+    const hesitationSec = pauseTiers[diffKey];
+    aliveHostiles.forEach(h => { this.successionTimers.set(h.id, hesitationSec); });
     const nextLead = aliveHostiles.find(h => !h.isAce) || aliveHostiles[0];
-    if (nextLead) {
-      nextLead.isFlightLead = true;
-    }
+    if (nextLead) nextLead.isFlightLead = true;
   }
 
   isHesitating(unitId) {
     return (this.successionTimers.get(unitId) || 0) > 0;
   }
 
-  updateSquadronPosture(dt, aliveHostiles, profile, diffKey) {
+  updateSquadronPosture(dt, aliveHostiles, profile, diffKey, airDoctrine) {
     this.postureTimer += dt;
     if (this.postureTimer < 4.0) return;
     this.postureTimer = 0.0;
@@ -65,14 +60,10 @@ class AIPlanningSystem {
     const initialCount = (this.game.hostileAircraft || []).length;
     if (initialCount === 0) return;
     const survivalRate = aliveHostiles.length / initialCount;
+    const baseThreshold = ['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 0.40 : 0.25;
+    const threshold = Math.max(0.10, Math.min(0.70, baseThreshold + (airDoctrine ? airDoctrine.retreatThresholdBonus : 0)));
 
-    if (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) && survivalRate <= 0.40) {
-      this.posture = 'DEFENSIVE_HOLD';
-    } else if (survivalRate <= 0.25) {
-      this.posture = 'DEFENSIVE_HOLD';
-    } else {
-      this.posture = 'OFFENSIVE_SWEEP';
-    }
+    this.posture = (survivalRate <= threshold) ? 'DEFENSIVE_HOLD' : 'OFFENSIVE_SWEEP';
   }
 
   updateElementPairs(aliveHostiles, profile) {
@@ -82,9 +73,7 @@ class AIPlanningSystem {
     }
     const currentAlive = new Set(aliveHostiles.map(h => h.id));
     for (const [leadId, wingId] of this.elementPairs.entries()) {
-      if (!currentAlive.has(leadId) || !currentAlive.has(wingId)) {
-        this.elementPairs.delete(leadId);
-      }
+      if (!currentAlive.has(leadId) || !currentAlive.has(wingId)) this.elementPairs.delete(leadId);
     }
     if (this.elementPairs.size * 2 >= aliveHostiles.length - 1) return;
 
@@ -96,16 +85,14 @@ class AIPlanningSystem {
 
   getWingmanOffset(unit, profile) {
     if (!unit) return null;
-    let isWingman = false;
     let lead = null;
     for (const [leadId, wingId] of this.elementPairs.entries()) {
       if (wingId === unit.id) {
-        isWingman = true;
-        lead = (this.game.hostileAircraft || []).find(h => h.id === leadId && h.hp > 0.05);
+        lead = (this.game.hostileAircraft || []).find(h => h.id === leadId && h.hp > 0.05) || null;
         break;
       }
     }
-    if (!isWingman || !lead) return null;
+    if (!lead) return null;
 
     const spacingKm = (profile.formationDoctrine === 'HIGH_LOW_BRACKET' || profile.formationDoctrine === 'CROSSFIRE_PAIRS' || profile.formationDoctrine === 'PINCER_BRACKET') ? 7.0 : 4.5;
     const perpAngle = (lead.heading || 0) + Math.PI / 2;
@@ -116,93 +103,87 @@ class AIPlanningSystem {
     };
   }
 
-  getPlannedAltitude(unit, profile, diffKey) {
+  getPlannedAltitude(unit, profile, diffKey, airDoctrine) {
     if (!profile.verticalCombat) return unit.altFt || 28000;
     const role = unit.tacticalRole || (unit.spec && unit.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
+    const altBias = airDoctrine ? airDoctrine.altitudeBiasFt : 0;
 
+    let baseAlt = 28000;
     if (role === 'SNIPER') {
-      if (diffKey === 'LEGEND') return unit.spec && unit.spec.id === 'DARKSTAR' ? 58000 : 50000;
-      if (diffKey === 'MASTER') return 46000;
-      if (diffKey === 'FORTIFIED') return 44000;
-      if (diffKey === 'ACE') return 42000;
-      if (diffKey === 'FORWARD') return 40000;
-      if (diffKey === 'ELITE') return 38000;
-      return 36000;
-    }
-    if (role === 'INTERCEPT') {
-      if (diffKey === 'LEGEND' || diffKey === 'MASTER') return 42000;
-      if (diffKey === 'FORTIFIED') return 40000;
-      if (diffKey === 'ACE') return 38000;
-      if (diffKey === 'FORWARD') return 36000;
-      if (diffKey === 'ELITE') return 34000;
-      return 32000;
-    }
-    if (role === 'DOGFIGHT') return 20000;
-    if (role === 'SWARM') return 18000;
-    if (role === 'ESCORT') return 28000;
-    if (role === 'STRIKE') {
-      if (diffKey === 'LEGEND') return 5500;
-      if (diffKey === 'MASTER') return 8000;
-      if (diffKey === 'FORTIFIED') return 9500;
-      if (diffKey === 'ACE') return 11000;
-      if (diffKey === 'FORWARD') return 12000;
-      if (diffKey === 'ELITE') return 13000;
-      return 15000;
-    }
-    if (role === 'SEAD') {
-      if (diffKey === 'LEGEND') return 36000;
-      if (diffKey === 'MASTER') return 34000;
-      if (diffKey === 'FORTIFIED') return 33000;
-      if (diffKey === 'ACE') return 32000;
-      if (diffKey === 'FORWARD') return 31000;
-      return 30000;
-    }
-    if (role === 'AMBUSH') {
-      if (diffKey === 'LEGEND') return 42000;
-      if (diffKey === 'MASTER') return 40000;
-      if (diffKey === 'FORTIFIED') return 38000;
-      if (diffKey === 'ACE') return 36000;
-      if (diffKey === 'FORWARD') return 34000;
-      return 32000;
-    }
-    if (profile.formationDoctrine === 'HIGH_LOW_BRACKET' || profile.formationDoctrine === 'PINCER_BRACKET') {
+      if (diffKey === 'LEGEND') baseAlt = unit.spec && unit.spec.id === 'DARKSTAR' ? 58000 : 50000;
+      else if (diffKey === 'MASTER') baseAlt = 46000;
+      else if (diffKey === 'FORTIFIED') baseAlt = 44000;
+      else if (diffKey === 'ACE') baseAlt = 42000;
+      else if (diffKey === 'FORWARD') baseAlt = 40000;
+      else if (diffKey === 'ELITE') baseAlt = 38000;
+      else baseAlt = 36000;
+    } else if (role === 'INTERCEPT') {
+      if (diffKey === 'LEGEND' || diffKey === 'MASTER') baseAlt = 42000;
+      else if (diffKey === 'FORTIFIED') baseAlt = 40000;
+      else if (diffKey === 'ACE') baseAlt = 38000;
+      else if (diffKey === 'FORWARD') baseAlt = 36000;
+      else if (diffKey === 'ELITE') baseAlt = 34000;
+      else baseAlt = 32000;
+    } else if (role === 'DOGFIGHT') baseAlt = 20000;
+    else if (role === 'SWARM') baseAlt = 18000;
+    else if (role === 'ESCORT') baseAlt = 28000;
+    else if (role === 'STRIKE') {
+      if (diffKey === 'LEGEND') baseAlt = 5500;
+      else if (diffKey === 'MASTER') baseAlt = 8000;
+      else if (diffKey === 'FORTIFIED') baseAlt = 9500;
+      else if (diffKey === 'ACE') baseAlt = 11000;
+      else if (diffKey === 'FORWARD') baseAlt = 12000;
+      else if (diffKey === 'ELITE') baseAlt = 13000;
+      else baseAlt = 15000;
+    } else if (role === 'SEAD') {
+      if (diffKey === 'LEGEND') baseAlt = 36000;
+      else if (diffKey === 'MASTER') baseAlt = 34000;
+      else if (diffKey === 'FORTIFIED') baseAlt = 33000;
+      else if (diffKey === 'ACE') baseAlt = 32000;
+      else if (diffKey === 'FORWARD') baseAlt = 31000;
+      else baseAlt = 30000;
+    } else if (role === 'AMBUSH') {
+      if (diffKey === 'LEGEND') baseAlt = 42000;
+      else if (diffKey === 'MASTER') baseAlt = 40000;
+      else if (diffKey === 'FORTIFIED') baseAlt = 38000;
+      else if (diffKey === 'ACE') baseAlt = 36000;
+      else if (diffKey === 'FORWARD') baseAlt = 34000;
+      else baseAlt = 32000;
+    } else if (profile.formationDoctrine === 'HIGH_LOW_BRACKET' || profile.formationDoctrine === 'PINCER_BRACKET') {
       const isWingman = [...this.elementPairs.values()].includes(unit.id);
-      return isWingman ? 20000 : 34000;
+      baseAlt = isWingman ? 20000 : 34000;
     }
-    return 28000;
+
+    return Math.max(5000, Math.min(58000, baseAlt + altBias));
   }
 
   getSniperVector(unit, target, dist, diffKey) {
     const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
     if (diffKey === 'LEGEND') {
-      if (dist < 46.0) return { heading: directAngle + Math.PI, throttle: 1.0, isCrank: false };
-      if (dist > 90.0) return { heading: directAngle, throttle: 0.90, isCrank: false };
-      const crankAngle = directAngle + (Math.sin(unit.age || 0) > 0 ? 1.15 : -1.15);
-      return { heading: crankAngle, throttle: 0.65, isCrank: true };
+      if (dist < 46.0) return { heading: directAngle + Math.PI, throttle: 1.0 };
+      if (dist > 90.0) return { heading: directAngle, throttle: 0.90 };
+      return { heading: directAngle + (Math.sin(unit.age || 0) > 0 ? 1.15 : -1.15), throttle: 0.65 };
     }
     if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') {
-      if (dist < 44.0) return { heading: directAngle + (Math.PI * 0.85), throttle: 0.85, isCrank: false };
-      if (dist > 85.0) return { heading: directAngle, throttle: 0.85, isCrank: false };
-      const crankAngle = directAngle + (Math.sin(unit.age || 0) > 0 ? 1.0 : -1.0);
-      return { heading: crankAngle, throttle: 0.60, isCrank: true };
+      if (dist < 44.0) return { heading: directAngle + (Math.PI * 0.85), throttle: 0.85 };
+      if (dist > 85.0) return { heading: directAngle, throttle: 0.85 };
+      return { heading: directAngle + (Math.sin(unit.age || 0) > 0 ? 1.0 : -1.0), throttle: 0.60 };
     }
     if (diffKey === 'ACE' || diffKey === 'FORWARD') {
-      if (dist < 42.0) return { heading: directAngle + (Math.PI * 0.75), throttle: 0.50, isCrank: false };
-      if (dist > 80.0) return { heading: directAngle, throttle: 0.80, isCrank: false };
-      return { heading: directAngle, throttle: 0.60, isCrank: false };
+      if (dist < 42.0) return { heading: directAngle + (Math.PI * 0.75), throttle: 0.50 };
+      if (dist > 80.0) return { heading: directAngle, throttle: 0.80 };
+      return { heading: directAngle, throttle: 0.60 };
     }
-    if (dist < 38.0) return { heading: directAngle + (Math.PI / 2), throttle: 0.50, isCrank: false };
-    return { heading: directAngle, throttle: 0.65, isCrank: false };
+    if (dist < 38.0) return { heading: directAngle + (Math.PI / 2), throttle: 0.50 };
+    return { heading: directAngle, throttle: 0.65 };
   }
 
   getInterceptVector(unit, target, dist) {
-    const interceptAngle = Physics.calcLeadInterceptAngle(
-      unit.x, unit.y, unit.speed, target.x, target.y, target.heading || 0, target.speed || 0.8
-    );
+    const interceptAngle = Physics.calcLeadInterceptAngle(unit.x, unit.y, unit.speed, target.x, target.y, target.heading || 0, target.speed || 0.8);
     return { heading: interceptAngle, throttle: dist > 30.0 ? 1.0 : 0.85 };
   }
 
-  getDogfightVector(unit, target, dist) {
+  getDogfightVector(unit, target) {
     const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
     const sOpt = unit.getOptimalCornerSpeed();
     let targetThrottle = 0.65;
@@ -213,7 +194,8 @@ class AIPlanningSystem {
 
   getAmbushVector(unit, target, dist, diffKey) {
     const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
-    const corridorY = unit.y < 50 ? 14.0 : 86.0;
+    const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
+    const corridorY = unit.y < mapH * 0.5 ? 14.0 : (mapH - 14.0);
     if (diffKey === 'LEGEND') {
       if (dist <= 30.0) return { heading: directAngle, throttle: 0.85 };
       return { heading: Math.atan2(corridorY - unit.y, target.x + 8.0 - unit.x), throttle: 0.80 };
@@ -238,7 +220,7 @@ class AIPlanningSystem {
     const homeY = mapH / 2.0;
 
     const teamUnits = (this.game.surfaceUnits || []).filter(s => s && s.team === unit.team && s.hp > 0.05);
-    const airDefenses = teamUnits.filter(s => s.type === 'S-400' || s.type === 'PANTSIR');
+    const airDefenses = teamUnits.filter(s => s.category === 'LR_SAM' || s.category === 'MR_SAM' || s.type === 'S-400' || s.type === 'PANTSIR');
     if (airDefenses.length > 0) {
       const nearest = airDefenses.reduce((best, s) => {
         const d = Math.hypot(s.x - unit.x, s.y - unit.y);
@@ -246,7 +228,6 @@ class AIPlanningSystem {
       }, { s: airDefenses[0], d: 9999 }).s;
       return Math.atan2(nearest.y - unit.y, nearest.x - unit.x);
     }
-
     const bases = teamUnits.filter(s => s.type === 'BUNKER' || s.type === 'AMMO_DUMP' || s.type === 'EW_JAMMER');
     if (bases.length > 0) {
       const nearest = bases.reduce((best, s) => {

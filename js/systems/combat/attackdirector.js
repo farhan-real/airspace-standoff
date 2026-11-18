@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Attack Mode IADS AI Director & Airbase Scramble Coordinator
- * Coordinates EMCON radar shutdowns, airbase taxi/takeoff operations, and objective tracking.
+ * Applies ATTACK_DOCTRINES modifiers to initial CAP, EMCON radar discipline, and airbase dispatch.
  */
 
 class AttackDirector {
@@ -8,16 +8,15 @@ class AttackDirector {
     if (!game) throw new Error('AttackDirector requires a valid game instance.');
     if (!window.ATTACK_DIFFICULTIES) throw new Error('ATTACK_DIFFICULTIES table is not loaded.');
     if (!window.ATTACK_DOCTRINES) throw new Error('ATTACK_DOCTRINES table is not loaded.');
-    const diffKey = game.attackDifficulty;
-    const profile = window.ATTACK_DIFFICULTIES[diffKey];
-    if (!profile) throw new Error(`Invalid attackDifficulty "${diffKey}" in AttackDirector.`);
-    const doctrine = game.attackDoctrine;
-    if (!window.ATTACK_DOCTRINES[doctrine]) throw new Error(`Invalid attackDoctrine "${doctrine}" in AttackDirector.`);
-    return { profile, doctrine };
+    const profile = window.ATTACK_DIFFICULTIES[game.attackDifficulty];
+    if (!profile) throw new Error(`Invalid attackDifficulty "${game.attackDifficulty}" in AttackDirector.`);
+    const docProfile = window.ATTACK_DOCTRINES[game.attackDoctrine];
+    if (!docProfile) throw new Error(`Invalid attackDoctrine "${game.attackDoctrine}" in AttackDirector.`);
+    return { profile, doctrine: game.attackDoctrine, docProfile };
   }
 
   static initMission(game) {
-    const { profile, doctrine } = this.getValidatedProfile(game);
+    const { profile, docProfile } = this.getValidatedProfile(game);
     if (!window.AI_DIFFICULTIES || !window.AI_DIFFICULTIES[profile.qraDifficulty]) {
       throw new Error(`Invalid QRA difficulty "${profile.qraDifficulty}" on attack profile "${profile.id}".`);
     }
@@ -30,11 +29,7 @@ class AttackDirector {
       neutralizedBases: new Set()
     };
 
-    let initialCount = profile.qraInitialCount;
-    if (typeof initialCount !== 'number') throw new Error(`Missing qraInitialCount on "${profile.id}".`);
-    if (doctrine === 'INTERCEPTOR_SCREEN') initialCount += 1;
-
-    game.aiDifficulty = profile.qraDifficulty;
+    const initialCount = profile.qraInitialCount + docProfile.extraInitialCap;
     const runways = game.surfaceUnits.filter(s => s.team === 'hostile' && s.isAirbaseRunway);
     const mapW = window.CONFIG.ATTACK_WIDTH_KM;
     const mapH = window.CONFIG.ATTACK_HEIGHT_KM;
@@ -65,8 +60,8 @@ class AttackDirector {
     if (game.scenarioMode !== 'ATTACK' || game.isGameOver) return;
     if (!game.attackState) this.initMission(game);
 
-    const { profile, doctrine } = this.getValidatedProfile(game);
-    this.evaluateEmconResponses(game, profile, doctrine);
+    const { profile, doctrine, docProfile } = this.getValidatedProfile(game);
+    this.evaluateEmconResponses(game, profile, docProfile);
     if (typeof AirbaseSystem === 'undefined') throw new Error('AirbaseSystem is not loaded.');
     AirbaseSystem.updateAirbases(game, dt, profile, doctrine);
     this.checkAirbaseNeutralizations(game);
@@ -87,12 +82,8 @@ class AttackDirector {
     }
   }
 
-  static evaluateEmconResponses(game, profile, doctrine) {
-    if (typeof profile.emconChance !== 'number' || typeof profile.emconCooldownSec !== 'number') {
-      throw new Error(`Missing EMCON parameters on attack profile "${profile.id}".`);
-    }
-    let emconChance = profile.emconChance;
-    if (doctrine === 'AMBUSH_IADS') emconChance = Math.min(0.82, emconChance + 0.16);
+  static evaluateEmconResponses(game, profile, docProfile) {
+    let emconChance = Math.max(0, Math.min(0.85, profile.emconChance + docProfile.emconBonus));
     if (emconChance <= 0) return;
 
     const c2Alive = game.surfaceUnits.some(s => s.team === 'hostile' && s.isCommandNode && s.hp > 0.05);
@@ -102,14 +93,14 @@ class AttackDirector {
     for (const m of incomingArms) {
       const tgt = m.target;
       if (!tgt || tgt.hp <= 0.05 || !tgt.isEmitter || tgt.emconTimer > 0) continue;
-      if (m.distanceToTarget > 28.0) continue;
+      if (m.distanceToTarget > docProfile.armTriggerKm) continue;
 
       const evalKey = `${m.id}:${tgt.id}`;
       if (game.attackState.emconEvaluatedMissiles.has(evalKey)) continue;
       game.attackState.emconEvaluatedMissiles.add(evalKey);
 
       if (Math.random() < emconChance) {
-        tgt.emconTimer = profile.emconCooldownSec;
+        tgt.emconTimer = profile.emconCooldownSec * docProfile.emconDurationMult;
         if (game.radar) game.radar.spawnCombatText(tgt.x, tgt.y, `${tgt.name} EMCON SHUTDOWN`, '#fbbf24');
       }
     }

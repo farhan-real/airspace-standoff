@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Tactical AI Commander
- * Attention allocation, cognitive bandwidth slots, mission planning, and difficulty-tiered tactical execution.
+ * Attention allocation, cognitive bandwidth slots, and separated Air vs. Attack doctrine routing.
  */
 
 window.AI_ACE_PROFILES = {
@@ -18,7 +18,7 @@ window.AI_ACE_PROFILES = {
 
 class AICommander {
   constructor(gameEngine) {
-    if (!gameEngine) throw new Error('TacticalAICommander requires gameEngine instance.');
+    if (!gameEngine) throw new Error('AICommander requires gameEngine instance.');
     this.game = gameEngine;
     this.focusedUnitIds = [];
     this.focusTimers = new Map();
@@ -27,9 +27,27 @@ class AICommander {
     this.planning = new AIPlanningSystem(this);
   }
 
-  isUnitFocused(unitId) {
-    return this.focusedUnitIds.includes(unitId);
+  getEffectiveDiffKey() {
+    if (this.game.scenarioMode === 'ATTACK') {
+      const atkProf = window.ATTACK_DIFFICULTIES[this.game.attackDifficulty];
+      if (!atkProf) throw new Error(`Invalid attackDifficulty "${this.game.attackDifficulty}" in AICommander.`);
+      return atkProf.qraDifficulty;
+    }
+    return this.game.aiDifficulty;
   }
+
+  getActiveDoctrines() {
+    if (!window.AIR_DOCTRINES || !window.ATTACK_DOCTRINES) throw new Error('Doctrine tables are not loaded.');
+    const isAttack = (this.game.scenarioMode === 'ATTACK');
+    const airDocKey = isAttack ? 'BALANCED' : this.game.aiDoctrine;
+    const airDoctrine = window.AIR_DOCTRINES[airDocKey];
+    if (!airDoctrine) throw new Error(`Invalid aiDoctrine "${airDocKey}" in AICommander.`);
+    const atkDoctrine = isAttack ? window.ATTACK_DOCTRINES[this.game.attackDoctrine] : null;
+    if (isAttack && !atkDoctrine) throw new Error(`Invalid attackDoctrine "${this.game.attackDoctrine}" in AICommander.`);
+    return { isAttack, airDoctrine, atkDoctrine };
+  }
+
+  isUnitFocused(unitId) { return this.focusedUnitIds.includes(unitId); }
 
   getCognitiveProfile(unitId) {
     const unit = (this.game.hostileAircraft || []).find(h => h.id === unitId) ||
@@ -37,12 +55,13 @@ class AICommander {
     const isAce = Boolean(unit && unit.isAce);
     const isFocused = this.isUnitFocused(unitId);
     const remainingFocus = this.focusTimers.get(unitId) || 0;
-    const diffKey = this.game.aiDifficulty;
+    const diffKey = this.getEffectiveDiffKey();
     const baseProfile = window.AI_DIFFICULTIES[diffKey];
     if (!baseProfile) throw new Error(`Unknown difficulty "${diffKey}" in getCognitiveProfile.`);
     const aceProfile = window.AI_ACE_PROFILES[diffKey];
+    const { isAttack, airDoctrine, atkDoctrine } = this.getActiveDoctrines();
 
-    const maxSlots = baseProfile.attentionSlots || (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'FORWARD', 'ACE'].includes(diffKey) ? 2 : 1));
+    const maxSlots = baseProfile.attentionSlots;
     const activeFocusCount = this.focusedUnitIds.length;
     const isHesitating = this.planning.isHesitating(unitId);
     const successionTimer = this.planning.successionTimers.get(unitId) || 0;
@@ -50,7 +69,6 @@ class AICommander {
 
     let roleInFormation = isAce ? (unit && unit.isFlightLead ? 'Ace Flight Lead' : 'Ace Interceptor') : 'Independent Element';
     let pairedUnit = null;
-
     if (this.planning.elementPairs) {
       for (const [leadId, wingId] of this.planning.elementPairs.entries()) {
         if (leadId === unitId) {
@@ -66,18 +84,19 @@ class AICommander {
     }
 
     const tacticalRole = (unit && unit.tacticalRole) ? unit.tacticalRole : (unit && unit.spec && unit.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
-
     return {
       isAce, isFocused, remainingFocus, maxSlots, activeFocusCount, diffKey, posture,
       tacticalRole, isHesitating, successionTimer, roleInFormation, pairedUnit,
+      doctrine: isAttack ? atkDoctrine.id : airDoctrine.id,
+      doctrineName: isAttack ? atkDoctrine.name : airDoctrine.name,
       reactionCooldown: isAce ? aceProfile.reactionCooldown : baseProfile.reactionCooldown,
-      notchChance: isAce ? aceProfile.notchChance : baseProfile.notchChance,
+      notchChance: Math.max(0, Math.min(0.85, (isAce ? aceProfile.notchChance : baseProfile.notchChance) + airDoctrine.notchBias)),
       decoyDiscrimination: isAce ? aceProfile.decoyDiscrimination : baseProfile.decoyDiscrimination,
       blunderChance: isAce ? aceProfile.blunderChance : baseProfile.blunderChance
     };
   }
 
-  updateAttention(aliveHostiles, profile, diffKey, allMissiles, candidateAirTargets, dt) {
+  updateAttention(aliveHostiles, profile, diffKey, allMissiles, dt) {
     const aliveIds = new Set(aliveHostiles.map(h => h.id));
     this.focusedUnitIds = this.focusedUnitIds.filter(id => aliveIds.has(id));
     for (const id of this.focusTimers.keys()) {
@@ -87,7 +106,7 @@ class AICommander {
       this.focusTimers.set(id, Math.max(0, (this.focusTimers.get(id) || 0) - dt));
     }
 
-    const maxSlots = profile.attentionSlots || (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'FORWARD', 'ACE'].includes(diffKey) ? 2 : 1));
+    const maxSlots = profile.attentionSlots;
     const scoredUnits = aliveHostiles.map(h => {
       let score = 0;
       const inbound = allMissiles.filter(m => m.active && m.target && m.target.id === h.id);
@@ -121,14 +140,15 @@ class AICommander {
     if (this.actionCooldown > 0) this.actionCooldown -= dt;
     if (this.aceSalvoTimer > 0) this.aceSalvoTimer -= dt;
 
-    const diffKey = this.game.aiDifficulty;
+    const diffKey = this.getEffectiveDiffKey();
     const profile = window.AI_DIFFICULTIES[diffKey];
     if (!profile) throw new Error(`Unknown difficulty "${diffKey}" in AI update.`);
+    const { airDoctrine, atkDoctrine } = this.getActiveDoctrines();
 
     const aliveHostiles = (this.game.hostileAircraft || []).filter(a => a.hp > 0.05 && !a.groundPhase);
     if (aliveHostiles.length === 0) return;
 
-    this.planning.update(dt, aliveHostiles, profile, diffKey);
+    this.planning.update(dt, aliveHostiles, profile, diffKey, airDoctrine);
 
     const redDetected = this.game.detectedByRed || new Set();
     const visibleAllies = (this.game.alliedAircraft || []).filter(a => a.hp > 0.05 && redDetected.has(a.id) && (a.identifiedByRed || a.isIdentifiedBy('hostile')));
@@ -139,19 +159,19 @@ class AICommander {
     const clouds = (this.game.simulation && this.game.simulation.weatherClouds) || [];
     const allMissiles = this.game.missiles || [];
 
-    this.updateAttention(aliveHostiles, profile, diffKey, allMissiles, candidateAirTargets, dt);
-    AIEvasionHandler.coordinateAceTactics(this, aliveHostiles.filter(h => h.isAce), candidateAirTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt);
+    this.updateAttention(aliveHostiles, profile, diffKey, allMissiles, dt);
+    AIEvasionHandler.coordinateAceTactics(this, aliveHostiles.filter(h => h.isAce), candidateAirTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt, airDoctrine, atkDoctrine);
 
     for (const h of aliveHostiles) {
       if (!h.isAce) {
         const isFocused = this.isUnitFocused(h.id);
-        AIEvasionHandler.handleDefensiveBehavior(h, profile, diffKey, dt, allMissiles, isFocused);
-        AINavigationHandler.handleNavigation(this, h, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused);
+        AIEvasionHandler.handleDefensiveBehavior(h, profile, diffKey, dt, allMissiles, isFocused, airDoctrine);
+        AINavigationHandler.handleNavigation(this, h, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused, airDoctrine, atkDoctrine);
       }
     }
 
     const tokenCost = window.CONFIG.TOKEN_ACTION_COST;
-    const maxSlots = profile.attentionSlots || (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 3 : (['ESCALATED', 'ELITE', 'FORWARD', 'ACE'].includes(diffKey) ? 2 : 1));
+    const maxSlots = profile.attentionSlots;
 
     if (this.actionCooldown <= 0 && this.game.tokenBucketRed >= tokenCost) {
       for (const focusedId of this.focusedUnitIds) {
@@ -159,7 +179,7 @@ class AICommander {
         if (!shooter || shooter.hp <= 0.05 || shooter.isRTB || this.planning.isHesitating(shooter.id)) continue;
         if (this.game.tokenBucketRed < tokenCost) break;
 
-        if (AIMissileTactics.executeEngagements(this, shooter, candidateAirTargets, visibleBunkers, profile, clouds, diffKey, tokenCost, allMissiles)) {
+        if (AIMissileTactics.executeEngagements(this, shooter, candidateAirTargets, visibleBunkers, profile, clouds, diffKey, tokenCost, allMissiles, airDoctrine)) {
           this.actionCooldown = Math.max(0.35, profile.reactionCooldown / (maxSlots * 1.5));
           break;
         }

@@ -1,5 +1,5 @@
 /**
- * js/systems/entities/surfacecombat.js - Ground IADS SAM firing envelopes, TFR masking, AAA flak, and CIWS defense.
+ * js/systems/entities/surfacecombat.js - Ground IADS SAM firing, TFR masking, AAA flak, CIWS & ATTACK_DOCTRINES modifiers.
  */
 
 class SurfaceCombatSystem {
@@ -7,7 +7,11 @@ class SurfaceCombatSystem {
     const game = window.Game;
     if (!game) throw new Error('window.Game is required by SurfaceCombatSystem.getAttackModifiers.');
     if (game.scenarioMode !== 'ATTACK') {
-      return { hasEwCue: false, hasLowAltCue: false, isPowerActive: true, cooldownMult: 1.0, ambushRatio: 1.0, ciwsAccuracy: unit.interceptAccuracy };
+      return {
+        hasEwCue: false, hasLowAltCue: false, isPowerActive: true,
+        samCooldownMult: 1.0, ciwsCooldownMult: 1.0, aaaCooldownMult: 1.0,
+        aaaHitBonus: 0.0, jamEfficiencyMult: 1.0, ambushRatio: 1.0, ciwsAccuracy: unit.interceptAccuracy
+      };
     }
 
     if (!window.ATTACK_DIFFICULTIES || !window.ATTACK_DIFFICULTIES[game.attackDifficulty]) {
@@ -19,6 +23,7 @@ class SurfaceCombatSystem {
     if (!Array.isArray(game.surfaceUnits)) throw new Error('game.surfaceUnits must be an array.');
 
     const diff = window.ATTACK_DIFFICULTIES[game.attackDifficulty];
+    const doc = window.ATTACK_DOCTRINES[game.attackDoctrine];
     const allSurf = game.surfaceUnits;
 
     const hasPowerSub = allSurf.some(s => s.team === unit.team && s.isPowerNode);
@@ -27,14 +32,13 @@ class SurfaceCombatSystem {
 
     const hasMunitionNearby = allSurf.some(s => s.team === unit.team && s.isMunitionDepot && Math.hypot(s.x - unit.x, s.y - unit.y) <= 65.0);
     const aliveMunition = allSurf.some(s => s.team === unit.team && s.isMunitionDepot && s.hp > 0.05 && Math.hypot(s.x - unit.x, s.y - unit.y) <= 65.0);
-    const cooldownMult = (hasMunitionNearby && !aliveMunition) ? 1.80 : 1.0;
+    const munitionMult = (hasMunitionNearby && !aliveMunition) ? 1.80 : 1.0;
 
     const hasComms = allSurf.some(s => s.team === unit.team && s.isCommsRelay && s.hp > 0.05 && Math.hypot(s.x - unit.x, s.y - unit.y) <= 65.0);
     const hasC2 = allSurf.some(s => s.team === unit.team && s.isCommandNode && s.hp > 0.05 && Math.hypot(s.x - unit.x, s.y - unit.y) <= 75.0);
     const ewRadars = allSurf.filter(s => s.team === unit.team && s.category === 'EW_RADAR' && s.hp > 0.05 && s.emconTimer <= 0);
 
-    let hasEwCue = false;
-    let hasLowAltCue = false;
+    let hasEwCue = false, hasLowAltCue = false;
     for (const ew of ewRadars) {
       const dist = Math.hypot(ew.x - unit.x, ew.y - unit.y);
       if (dist <= 90.0 || (hasComms && dist <= 135.0)) {
@@ -43,42 +47,36 @@ class SurfaceCombatSystem {
       }
     }
 
-    const reactionMult = hasC2 ? 1.0 : 1.40;
-    let ambushRatio = diff.ambushHoldRatio;
-    if (game.attackDoctrine === 'AMBUSH_IADS') ambushRatio = Math.max(0.55, ambushRatio - 0.12);
+    const baseMult = munitionMult * (hasC2 ? 1.0 : 1.40);
+    const ambushRatio = Math.max(0.52, Math.min(1.0, diff.ambushHoldRatio + doc.ambushHoldOffset));
+    const baseCiws = unit.isAaaGun ? unit.interceptAccuracy : diff.ciwsInterceptRate;
 
     return {
-      hasEwCue,
-      hasLowAltCue,
-      isPowerActive,
-      cooldownMult: cooldownMult * reactionMult,
+      hasEwCue, hasLowAltCue, isPowerActive,
+      samCooldownMult: baseMult * doc.samCooldownMult,
+      ciwsCooldownMult: baseMult * doc.ciwsCooldownMult,
+      aaaCooldownMult: baseMult * doc.aaaCooldownMult,
+      aaaHitBonus: doc.aaaHitBonus,
+      jamEfficiencyMult: doc.jamEfficiencyMult,
       ambushRatio,
-      ciwsAccuracy: unit.isAaaGun ? unit.interceptAccuracy : diff.ciwsInterceptRate
+      ciwsAccuracy: Math.max(0.15, Math.min(0.88, baseCiws + doc.ciwsAccuracyOffset))
     };
   }
 
   static updateUnit(unit, dt, enemyAircraftList, enemyMissilesList, spawnedMissiles, radarArrayActive) {
-    if (unit.hp <= 0.05) {
-      unit.hp = 0;
-      return;
-    }
+    if (unit.hp <= 0.05) { unit.hp = 0; return; }
     if (unit.emconTimer > 0) unit.emconTimer = Math.max(0, unit.emconTimer - dt);
     if (unit.fireCooldown > 0) unit.fireCooldown -= dt;
 
     const mods = this.getAttackModifiers(unit);
     if (unit.isJammerStation) {
-      unit.jamEfficiency = (unit.emconTimer > 0) ? 0.0 : (unit.requiresPower && !mods.isPowerActive ? unit.baseJamEfficiency * 0.45 : unit.baseJamEfficiency);
+      const rawEff = (unit.requiresPower && !mods.isPowerActive) ? unit.baseJamEfficiency * 0.45 : unit.baseJamEfficiency;
+      unit.jamEfficiency = (unit.emconTimer > 0) ? 0.0 : Math.min(0.85, rawEff * mods.jamEfficiencyMult);
     }
     if (unit.emconTimer > 0) return;
 
-    if (unit.canInterceptMissiles && unit.fireCooldown <= 0) {
-      this.handlePointDefense(unit, enemyMissilesList, mods);
-    }
-
-    if ((unit.isAaaGun || unit.type === 'PANTSIR') && unit.fireCooldown <= 0) {
-      this.handleAaaFire(unit, enemyAircraftList, mods);
-    }
-
+    if (unit.canInterceptMissiles && unit.fireCooldown <= 0) this.handlePointDefense(unit, enemyMissilesList, mods);
+    if ((unit.isAaaGun || unit.type === 'PANTSIR') && unit.fireCooldown <= 0) this.handleAaaFire(unit, enemyAircraftList, mods);
     if (unit.canAttack && !unit.isAaaGun && unit.missileSpec && unit.fireCooldown <= 0) {
       this.handleSamFire(unit, enemyAircraftList, spawnedMissiles, radarArrayActive, mods);
     }
@@ -91,11 +89,8 @@ class SurfaceCombatSystem {
 
     let effectiveRange = unit.rangeKm;
     if (unit.requiresEwCue) {
-      if (isAttackMode) {
-        if (!mods.hasEwCue) effectiveRange *= 0.48;
-      } else if (!radarArrayActive) {
-        return;
-      }
+      if (isAttackMode) { if (!mods.hasEwCue) effectiveRange *= 0.48; }
+      else if (!radarArrayActive) return;
     }
 
     const activeFloorFt = mods.hasLowAltCue ? unit.cuedMinAltFt : unit.minAltFt;
@@ -103,8 +98,7 @@ class SurfaceCombatSystem {
 
     for (const plane of enemyAircraftList) {
       if (!plane || plane.hp <= 0.05 || plane.isCivilian || plane.groundPhase) continue;
-      const isDetected = is2P || isAttackMode || plane.isIdentifiedBy(unit.team);
-      if (!isDetected) continue;
+      if (!is2P && !isAttackMode && !plane.isIdentifiedBy(unit.team)) continue;
 
       const dist = Math.hypot(plane.x - unit.x, plane.y - unit.y);
       const planeAlt = plane.altFt;
@@ -113,13 +107,9 @@ class SurfaceCombatSystem {
 
       const rcsFactor = Math.max(0.45, Math.min(1.15, Math.pow(Math.max(0.0005, plane.effectiveRcs), 0.16)));
       if (dist <= engageLimit * rcsFactor) {
-        const wpn = Object.assign({}, unit.missileSpec);
-        spawnedMissiles.push(new MissileEntity(wpn, unit, plane));
-        unit.fireCooldown = unit.cooldownMax * mods.cooldownMult;
-        if (unit.isEmitter) {
-          unit.hasEmitted = true;
-          unit.isRevealedToBlue = true;
-        }
+        spawnedMissiles.push(new MissileEntity(Object.assign({}, unit.missileSpec), unit, plane));
+        unit.fireCooldown = unit.cooldownMax * mods.samCooldownMult;
+        if (unit.isEmitter) { unit.hasEmitted = true; unit.isRevealedToBlue = true; }
         if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
         break;
       }
@@ -134,17 +124,15 @@ class SurfaceCombatSystem {
       if (!plane || plane.hp <= 0.05 || plane.isCivilian || plane.groundPhase) continue;
       if (plane.altFt > unit.aaaMaxAltFt) continue;
 
-      const dist = Math.hypot(plane.x - unit.x, plane.y - unit.y);
-      if (dist <= range) {
+      if (Math.hypot(plane.x - unit.x, plane.y - unit.y) <= range) {
         const altPenalty = plane.altFt > 10000 ? 0.72 : 1.0;
         const speedEvade = Math.max(0.35, Math.min(1.0, 0.85 / Math.max(0.45, plane.speed)));
-        const hitChance = 0.65 * altPenalty * speedEvade;
+        const hitChance = Math.min(0.92, (0.65 * altPenalty * speedEvade) + mods.aaaHitBonus);
         if (Math.random() <= hitChance) {
           const dmg = unit.aaaDamage * (plane.spec.category === 'STRIKE' ? 0.65 : 1.0) * (1.0 - plane.aaaResistance);
           const wasAlive = plane.hp > 0.05;
           plane.takeDamage(dmg);
           plane.applyActionStress(0.10);
-
           if (window.Game.radar) {
             window.Game.radar.spawnGunTracer(unit.x, unit.y, plane.x, plane.y, '#ef4444');
             window.Game.radar.spawnCombatText(plane.x, plane.y, `AAA FLAK -${dmg.toFixed(1)}HP`, '#f97316');
@@ -155,10 +143,9 @@ class SurfaceCombatSystem {
         } else if (window.Game.radar) {
           window.Game.radar.spawnGunTracer(unit.x, unit.y, plane.x + (Math.random() - 0.5), plane.y + (Math.random() - 0.5), '#f97316');
         }
-
         unit.isRevealedToBlue = true;
         unit.identifiedByBlue = true;
-        unit.fireCooldown = Math.max(2.6, unit.cooldownMax * 1.2) * mods.cooldownMult;
+        unit.fireCooldown = Math.max(2.2, unit.cooldownMax * 1.2) * mods.aaaCooldownMult;
         if (typeof AudioSys !== 'undefined') AudioSys.playGunBurst();
         break;
       }
@@ -184,16 +171,13 @@ class SurfaceCombatSystem {
     if (targetMsl.speed >= 2.6) interceptProb *= 0.45;
     if (targetMsl.isStealthMissile) interceptProb *= 0.55;
 
-    unit.fireCooldown = unit.cooldownMax * mods.cooldownMult;
+    unit.fireCooldown = unit.cooldownMax * mods.ciwsCooldownMult;
     unit.isRevealedToBlue = true;
 
     if (Math.random() <= interceptProb) {
-      targetMsl.active = false;
-      targetMsl.isDead = true;
+      targetMsl.active = false; targetMsl.isDead = true;
       if (window.Game.stats) window.Game.stats.defensiveIntercepts += 1;
-      if (window.Game.simulation) {
-        window.Game.simulation.logScoreEvent(unit.team, window.CONFIG.VP_MISSILE_INTERCEPT, `${unit.name} intercepted ${targetMsl.weapon.name}`);
-      }
+      if (window.Game.simulation) window.Game.simulation.logScoreEvent(unit.team, window.CONFIG.VP_MISSILE_INTERCEPT, `${unit.name} intercepted ${targetMsl.weapon.name}`);
       if (typeof AudioSys !== 'undefined') AudioSys.playExplosion(false);
       if (window.Game.radar) {
         window.Game.radar.spawnExplosionFX(targetMsl.x, targetMsl.y, false);
@@ -208,24 +192,19 @@ class SurfaceCombatSystem {
   static triggerSecondaryExplosion(sourceUnit) {
     const game = window.Game;
     if (!game || !sourceUnit.secondaryBlastRadiusKm) return;
-    const radius = sourceUnit.secondaryBlastRadiusKm;
-    const dmg = sourceUnit.secondaryBlastDamage;
-
+    const radius = sourceUnit.secondaryBlastRadiusKm, dmg = sourceUnit.secondaryBlastDamage;
     if (game.radar) {
       game.radar.spawnExplosionFX(sourceUnit.x, sourceUnit.y, true);
       game.radar.spawnShockwave(sourceUnit.x, sourceUnit.y, '#f97316', 55);
       game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, 'SECONDARY DETONATION!', '#f97316');
     }
-
     for (const other of game.surfaceUnits) {
       if (!other || other.id === sourceUnit.id || other.hp <= 0.05 || other.isIndestructible) continue;
       if (Math.hypot(other.x - sourceUnit.x, other.y - sourceUnit.y) <= radius) {
         const wasAlive = other.hp > 0.05;
         other.hp = Math.max(0, other.hp - dmg);
         if (other.hp <= 0.05) other.hp = 0;
-        if (wasAlive && other.hp <= 0 && game.simulation) {
-          game.simulation.recordKillEvent('friendly', other, sourceUnit, { weapon: { name: 'Secondary Blast' } });
-        }
+        if (wasAlive && other.hp <= 0 && game.simulation) game.simulation.recordKillEvent('friendly', other, sourceUnit, { weapon: { name: 'Secondary Blast' } });
       }
     }
   }

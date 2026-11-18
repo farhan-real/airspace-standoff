@@ -33,115 +33,14 @@ class ProcurementManager {
   openCallsignPickerModal(sIdx) { this.dialogModal.openCallsignPicker(sIdx); }
   openPreconfiguredAircraftModal() { this.preconfigModal.open(); }
 
-  getAirDifficultyOptions() {
-    return Object.entries(window.AI_DIFFICULTIES || {}).map(([key, d]) => ({
-      value: key,
-      text: `${d.name.toUpperCase()} (${d.scoreMultiplier.toFixed(2)}x)`
-    }));
-  }
-
-  getAttackDifficultyOptions() {
-    return Object.entries(window.ATTACK_DIFFICULTIES || {}).map(([key, d]) => ({
-      value: key,
-      text: `${d.name.toUpperCase()} (${d.scoreMultiplier.toFixed(2)}x)`
-    }));
-  }
-
-  getAirDoctrineOptions() {
-    return [
-      { value: 'BALANCED', text: 'BALANCED' },
-      { value: 'AGGRESSIVE', text: 'AGGRESSIVE' },
-      { value: 'STANDOFF', text: 'STAND-OFF' }
-    ];
-  }
-
-  getAttackDoctrineOptions() {
-    return Object.entries(window.ATTACK_DOCTRINES || {}).map(([key, d]) => ({
-      value: key,
-      text: d.name
-    }));
-  }
-
   initHangarCustomDropdowns() {
-    if (typeof CustomDropdown === 'undefined') return;
-
-    CustomDropdown.setup('cdd-gamemode', {
-      label: 'MODE',
-      value: this.game.gameMode || 'SP_SKIRMISH',
-      options: [
-        { value: 'SP_SKIRMISH', text: 'SINGLE PLAYER SKIRMISH' },
-        { value: 'TP_SKIRMISH', text: 'TWO PLAYER SKIRMISH' },
-        { value: 'SP_DYNAMIC', text: 'SINGLE PLAYER DYNAMIC' },
-        { value: 'SP_ATTACK', text: 'SINGLE PLAYER ATTACK' }
-      ],
-      onChange: (val) => this.game.setGameMode(val)
-    });
-
-    CustomDropdown.setup('cdd-budget', {
-      label: 'BUDGET',
-      value: this.game.playerBudgetId || 'BUDGET_400',
-      options: [
-        { value: 'BUDGET_200', text: '200M (1.75x)' },
-        { value: 'BUDGET_300', text: '300M (1.30x)' },
-        { value: 'BUDGET_400', text: '400M (1.00x)' },
-        { value: 'BUDGET_500', text: '500M (0.80x)' },
-        { value: 'BUDGET_650', text: '650M (0.60x)' },
-        { value: 'BUDGET_750', text: '750M (0.55x)' },
-        { value: 'BUDGET_800', text: '800M (0.50x)' },
-        { value: 'BUDGET_900', text: '900M (0.45x)' },
-        { value: 'BUDGET_1000', text: '1000M (0.40x)' }
-      ],
-      onChange: (val) => this.game.setPlayerBudgetTier(val)
-    });
-
-    const isAttack = (this.game.scenarioMode === 'ATTACK');
-    CustomDropdown.setup('cdd-difficulty', {
-      label: 'DIFFICULTY',
-      value: isAttack ? (this.game.attackDifficulty || 'FORWARD_GARRISON') : (this.game.aiDifficulty || 'VETERAN'),
-      options: isAttack ? this.getAttackDifficultyOptions() : this.getAirDifficultyOptions(),
-      onChange: (val) => {
-        if (this.game.scenarioMode === 'ATTACK') this.game.attackDifficulty = val;
-        else this.game.aiDifficulty = val;
-        this.game.updateModeIndicator();
-        this.game.saveGameplaySettings();
-      }
-    });
-
-    CustomDropdown.setup('cdd-doctrine', {
-      label: 'DOCTRINE',
-      value: isAttack ? (this.game.attackDoctrine || 'BALANCED') : (this.game.aiDoctrine || 'BALANCED'),
-      options: isAttack ? this.getAttackDoctrineOptions() : this.getAirDoctrineOptions(),
-      onChange: (val) => {
-        if (this.game.scenarioMode === 'ATTACK') this.game.attackDoctrine = val;
-        else this.game.aiDoctrine = val;
-        this.game.saveGameplaySettings();
-      }
-    });
+    if (typeof ProcurementHeaderDropdowns === 'undefined') throw new Error('ProcurementHeaderDropdowns is not loaded.');
+    ProcurementHeaderDropdowns.init(this);
   }
 
   syncModeDropdowns() {
-    if (typeof CustomDropdown === 'undefined') return;
-    const modeCdd = CustomDropdown.get('cdd-gamemode');
-    if (modeCdd && modeCdd.getValue() !== this.game.gameMode) {
-      modeCdd.setValue(this.game.gameMode, false);
-    }
-
-    const isAttack = (this.game.scenarioMode === 'ATTACK');
-    const diffCdd = CustomDropdown.get('cdd-difficulty');
-    if (diffCdd) {
-      diffCdd.setOptions(
-        isAttack ? this.getAttackDifficultyOptions() : this.getAirDifficultyOptions(),
-        isAttack ? (this.game.attackDifficulty || 'FORWARD_GARRISON') : (this.game.aiDifficulty || 'VETERAN')
-      );
-    }
-
-    const docCdd = CustomDropdown.get('cdd-doctrine');
-    if (docCdd) {
-      docCdd.setOptions(
-        isAttack ? this.getAttackDoctrineOptions() : this.getAirDoctrineOptions(),
-        isAttack ? (this.game.attackDoctrine || 'BALANCED') : (this.game.aiDoctrine || 'BALANCED')
-      );
-    }
+    if (typeof ProcurementHeaderDropdowns === 'undefined') throw new Error('ProcurementHeaderDropdowns is not loaded.');
+    ProcurementHeaderDropdowns.syncModeDropdowns(this);
   }
 
   setLeadAirframe(sIdx) {

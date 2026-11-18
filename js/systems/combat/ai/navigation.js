@@ -1,13 +1,97 @@
 /**
  * AIRSPACE STANDOFF: AI Unit Navigation & Spatial Steering Handler
+ * Executes separated Air Combat Doctrines and Attack CAP postures cleanly over spatial positioning.
  */
 
 class AINavigationHandler {
-  static handleNavigation(aiCommander, hostile, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused) {
+  static getDoctrineSteering(game, unit, target, dist, airDoctrine, atkDoctrine) {
+    const mapW = window.CONFIG.THEATER_WIDTH_KM;
+    const mapH = window.CONFIG.THEATER_HEIGHT_KM;
+    const isHostile = (unit.team === 'hostile');
+
+    if (atkDoctrine) {
+      if (atkDoctrine.capPosture === 'GUARD_OBJECTIVES' && (!target || dist > 62.0)) {
+        const objs = (game.surfaceUnits || []).filter(s => s.team === unit.team && s.isPrimaryObjective && s.hp > 0.05);
+        if (objs.length > 0) {
+          const anchor = objs[0];
+          const orbitAng = Math.atan2(anchor.y - unit.y, anchor.x - unit.x) + (Math.hypot(anchor.x - unit.x, anchor.y - unit.y) < 18.0 ? 1.4 : 0.0);
+          return { heading: orbitAng, throttle: 0.60 };
+        }
+      } else if (atkDoctrine.capPosture === 'INTERCEPT_FORWARD') {
+        const aimX = target ? target.x : mapW * 0.42;
+        const aimY = target ? target.y : mapH * 0.50;
+        return { heading: Math.atan2(aimY - unit.y, aimX - unit.x), throttle: 0.90 };
+      } else if (atkDoctrine.capPosture === 'AMBUSH' && target && target.x < mapW * 0.48) {
+        const edgeY = unit.y < mapH * 0.5 ? 20.0 : (mapH - 20.0);
+        return { heading: Math.atan2(edgeY - unit.y, (mapW * 0.65) - unit.x), throttle: 0.52 };
+      }
+      return null;
+    }
+
+    if (!airDoctrine || airDoctrine.id === 'BALANCED') return null;
+
+    if (airDoctrine.id === 'RADAR_JAMMING') {
+      const isEwCraft = Boolean((unit.spec && unit.spec.category === 'EW') || unit.isEW || (unit.jamEfficiency && unit.jamEfficiency >= 0.25));
+      if (isEwCraft && target) {
+        const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+        if (dist < 36.0) return { heading: directAngle + Math.PI * 0.78, throttle: 0.70 };
+        if (dist <= 54.0) return { heading: directAngle + (Math.PI / 2), throttle: 0.58 };
+        return { heading: directAngle, throttle: 0.65 };
+      }
+      return null;
+    }
+
+    if (airDoctrine.id === 'STEALTH_AMBUSH' && target && dist > 38.0) {
+      const corridorY = unit.y < mapH * 0.5 ? 12.0 : (mapH - 12.0);
+      return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.50 };
+    }
+
+    if (airDoctrine.id === 'STANDOFF' && target) {
+      const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+      if (dist < 44.0) return { heading: directAngle + Math.PI * 0.80, throttle: 0.86 };
+      if (dist <= 68.0) {
+        const crankSign = (unit.id.charCodeAt(unit.id.length - 1) % 2 === 0) ? 1 : -1;
+        return { heading: directAngle + crankSign * 1.05, throttle: 0.65 };
+      }
+      return { heading: directAngle, throttle: 0.82 };
+    }
+
+    if (airDoctrine.id === 'AGGRESSIVE' && target) {
+      const leadAng = Physics.calcLeadInterceptAngle(unit.x, unit.y, unit.speed, target.x, target.y, target.heading || 0, target.speed || 0.8);
+      return { heading: leadAng, throttle: dist > 22.0 ? 0.96 : 0.82 };
+    }
+
+    if (airDoctrine.id === 'DRONE_SWARM' && target) {
+      const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+      if (unit.spec && unit.spec.isDrone) {
+        const spreadSign = (unit.id.charCodeAt(unit.id.length - 1) % 2 === 0) ? 1 : -1;
+        const offset = dist > 24.0 ? (spreadSign * 0.28) : 0.0;
+        return { heading: directAngle + offset, throttle: 0.92 };
+      }
+      if (dist < 40.0) return { heading: directAngle + Math.PI * 0.70, throttle: 0.68 };
+      return { heading: directAngle, throttle: 0.65 };
+    }
+
+    if (airDoctrine.id === 'DEFENSIVE_HOLD') {
+      const defensiveAnchorX = isHostile ? (mapW * 0.76) : (mapW * 0.24);
+      const enemyCrossedLine = target && (isHostile ? (target.x >= mapW * 0.56) : (target.x <= mapW * 0.44));
+      if (!target || (!enemyCrossedLine && dist > 52.0)) {
+        const homeDist = Math.hypot(defensiveAnchorX - unit.x, (mapH * 0.5) - unit.y);
+        const patrolAngle = homeDist > 18.0
+          ? Math.atan2((mapH * 0.5) - unit.y, defensiveAnchorX - unit.x)
+          : ((unit.age || 0) * 0.22 + (isHostile ? Math.PI : 0));
+        return { heading: patrolAngle, throttle: 0.52 };
+      }
+    }
+
+    return null;
+  }
+
+  static handleNavigation(aiCommander, hostile, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused, airDoctrine, atkDoctrine) {
     if (!hostile || hostile.activeManeuverTimer > 0 || hostile.hp <= 0.05) return;
 
     if (hostile.isRTB) {
-      if (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
+      if (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) || (airDoctrine && airDoctrine.id === 'DEFENSIVE_HOLD')) {
         const egressHeading = aiCommander.planning.getCoveredEgressHeading(hostile);
         let diff = egressHeading - hostile.heading;
         while (diff < -Math.PI) diff += Math.PI * 2;
@@ -27,25 +111,17 @@ class AINavigationHandler {
     let target = null;
     if (role === 'SEAD') {
       const hostileRadars = (aiCommander.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0.05 && (s.type === 'RADAR_ARRAY' || s.type === 'EW_JAMMER' || s.type === 'S-400' || s.type === 'PANTSIR' || s.type === 'RADAR_VAN'));
-      if (hostileRadars.length > 0) {
-        target = hostileRadars[0];
-      } else if (candidateAirTargets.length > 0) {
-        target = candidateAirTargets[0];
-      }
+      if (hostileRadars.length > 0) target = hostileRadars[0];
+      else if (candidateAirTargets.length > 0) target = candidateAirTargets[0];
     } else if (role === 'STRIKE') {
       const strikeTargets = (aiCommander.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0.05 && (s.type === 'BUNKER' || s.type === 'FUEL_DEPOT' || !s.isIndestructible));
-      if (strikeTargets.length > 0) {
-        target = strikeTargets[0];
-      } else if (candidateAirTargets.length > 0) {
-        target = candidateAirTargets[0];
-      }
+      if (strikeTargets.length > 0) target = strikeTargets[0];
+      else if (candidateAirTargets.length > 0) target = candidateAirTargets[0];
     } else if (candidateAirTargets.length > 0) {
       if (role === 'SNIPER') {
         const priorityTargets = candidateAirTargets.filter(t => t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
         const pool = priorityTargets.length > 0 ? priorityTargets : candidateAirTargets;
         target = pool.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), pool[0]);
-      } else if (role === 'DOGFIGHT') {
-        target = candidateAirTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), candidateAirTargets[0]);
       } else {
         target = candidateAirTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), candidateAirTargets[0]);
       }
@@ -64,53 +140,51 @@ class AINavigationHandler {
       MASTER:    { turnMult: 0.82, throttle: 0.75, overshootDist: 4.0, overshootChance: 0.14 },
       LEGEND:    { turnMult: 0.88, throttle: 0.80, overshootDist: 3.6, overshootChance: 0.08 }
     };
-    const tier = navTiers[diffKey] || navTiers.VETERAN;
+    const tier = navTiers[diffKey];
 
     if (profile.verticalCombat) {
-      const targetAlt = aiCommander.planning.getPlannedAltitude(hostile, profile, diffKey);
-      if (Math.abs(hostile.altFt - targetAlt) > 3500) {
-        hostile.targetAltFt = targetAlt;
-      }
+      const targetAlt = aiCommander.planning.getPlannedAltitude(hostile, profile, diffKey, airDoctrine);
+      if (Math.abs(hostile.altFt - targetAlt) > 3500) hostile.targetAltFt = targetAlt;
     }
 
+    const dist = target ? Math.hypot(target.x - hostile.x, target.y - hostile.y) : 999.0;
+    const docMove = this.getDoctrineSteering(aiCommander.game, hostile, target, dist, airDoctrine, atkDoctrine);
+    const throttleBias = airDoctrine ? airDoctrine.throttleBias : 0.0;
+
     if (!target) {
-      if (wingmanOffset) {
-        const offsetHeading = Math.atan2(wingmanOffset.y - hostile.y, wingmanOffset.x - hostile.x);
-        let diff = offsetHeading - hostile.heading;
-        while (diff < -Math.PI) diff += Math.PI * 2;
-        while (diff > Math.PI) diff -= Math.PI * 2;
-        hostile.heading += Math.max(-0.8 * dt, Math.min(0.8 * dt, diff));
-      } else {
-        hostile.heading = Math.PI;
-      }
-      hostile.engineAlpha = tier.throttle;
+      let idleHeading = Math.PI;
+      if (docMove) idleHeading = docMove.heading;
+      else if (wingmanOffset) idleHeading = Math.atan2(wingmanOffset.y - hostile.y, wingmanOffset.x - hostile.x);
+      let diff = idleHeading - hostile.heading;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      hostile.heading += Math.max(-0.8 * dt, Math.min(0.8 * dt, diff));
+      hostile.engineAlpha = Math.max(0.25, Math.min(1.0, (docMove ? docMove.throttle : tier.throttle) + throttleBias));
       return;
     }
 
     hostile.radarLockedTarget = target;
-    const dist = Math.hypot(target.x - hostile.x, target.y - hostile.y);
     let desiredHeading = Math.atan2(target.y - hostile.y, target.x - hostile.x);
+    let desiredThrottle = tier.throttle;
 
-    if (role === 'SNIPER' && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
+    if (docMove) {
+      desiredHeading = docMove.heading;
+      desiredThrottle = docMove.throttle;
+    } else if (role === 'SNIPER' && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
       const sniperMove = aiCommander.planning.getSniperVector(hostile, target, dist, diffKey);
-      desiredHeading = sniperMove.heading;
-      hostile.engineAlpha = sniperMove.throttle;
+      desiredHeading = sniperMove.heading; desiredThrottle = sniperMove.throttle;
     } else if (role === 'INTERCEPT') {
       const interceptMove = aiCommander.planning.getInterceptVector(hostile, target, dist);
-      desiredHeading = interceptMove.heading;
-      hostile.engineAlpha = interceptMove.throttle;
+      desiredHeading = interceptMove.heading; desiredThrottle = interceptMove.throttle;
     } else if (role === 'DOGFIGHT') {
-      const dogfightMove = aiCommander.planning.getDogfightVector(hostile, target, dist);
-      desiredHeading = dogfightMove.heading;
-      hostile.engineAlpha = dogfightMove.throttle;
+      const dogfightMove = aiCommander.planning.getDogfightVector(hostile, target);
+      desiredHeading = dogfightMove.heading; desiredThrottle = dogfightMove.throttle;
     } else if (role === 'AMBUSH' && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
       const ambushMove = aiCommander.planning.getAmbushVector(hostile, target, dist, diffKey);
-      desiredHeading = ambushMove.heading;
-      hostile.engineAlpha = ambushMove.throttle;
+      desiredHeading = ambushMove.heading; desiredThrottle = ambushMove.throttle;
     } else if (dist < tier.overshootDist) {
-      const closingDiff = Math.abs(hostile.heading - target.heading);
-      if (closingDiff > 1.8 && Math.random() < tier.overshootChance) {
-        hostile.engineAlpha = tier.throttle;
+      if (Math.abs(hostile.heading - target.heading) > 1.8 && Math.random() < tier.overshootChance) {
+        hostile.engineAlpha = Math.max(0.25, Math.min(1.0, tier.throttle + throttleBias));
         return;
       }
     } else if (wingmanOffset && dist > 20.0) {
@@ -122,20 +196,14 @@ class AINavigationHandler {
     while (diff > Math.PI) diff -= Math.PI * 2;
 
     const effAgi = hostile.getEffectiveAgility();
-    const focusAgiScale = isFocused ? 1.0 : 0.55;
-    const turnCap = effAgi * tier.turnMult * focusAgiScale;
+    const turnCap = effAgi * tier.turnMult * (isFocused ? 1.0 : 0.55);
     hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
 
     const sOpt = hostile.getOptimalCornerSpeed();
-    if (role !== 'SNIPER' && role !== 'INTERCEPT') {
-      if (['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) && Math.abs(diff) > 0.40) {
-        if (hostile.speed > sOpt * 1.15) hostile.engineAlpha = 0.40;
-        else if (hostile.speed < sOpt * 0.85) hostile.engineAlpha = 0.85;
-        else hostile.engineAlpha = 0.65;
-      } else {
-        hostile.engineAlpha = isFocused ? tier.throttle : 0.50;
-      }
+    if (!docMove && role !== 'SNIPER' && role !== 'INTERCEPT' && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) && Math.abs(diff) > 0.40) {
+      desiredThrottle = hostile.speed > sOpt * 1.15 ? 0.40 : (hostile.speed < sOpt * 0.85 ? 0.85 : 0.65);
     }
+    hostile.engineAlpha = Math.max(0.25, Math.min(1.0, (isFocused ? desiredThrottle : 0.50) + throttleBias));
   }
 }
 

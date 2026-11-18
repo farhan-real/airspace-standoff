@@ -1,18 +1,36 @@
 /**
  * AIRSPACE STANDOFF: Flight Manual Submodule: Section 09B
- * Covers: Ground Attack Gamemode, 240x160 IADS Theater, Multi-Segment Runways & Attack Difficulties
+ * Covers: Ground Attack Gamemode, 240x160 IADS Theater, Multi-Segment Runways, Attack Doctrines & Tiers
  */
 
 window.MANUAL_ATTACK = [
   {
     id: 'ch9b_attack_iads',
-    title: 'SECTION 09B: GROUND ATTACK MODE &amp; INTEGRATED AIR DEFENSE (IADS)',
+    title: 'SECTION 09B: GROUND ATTACK MODE, DEFENSE DOCTRINES & IADS',
     desc: `
       <div class="ge-desc">
         <b>SINGLE PLAYER ATTACK</b> shifts focus to deep air-to-ground operations across an expanded <b>240 km &times; 160 km</b> tactical theater defended by interconnected radar networks, layered SAM belts, AAA, and active multi-segment airbases.
       </div>
 
-      <div class="ge-subhead">1. VICTORY OBJECTIVES &amp; GROUND ARMOR CLASSES</div>
+      <div class="ge-subhead">1. ATTACK DEFENSE DOCTRINES (GROUND &amp; AIRBASE STRATEGY)</div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>ATTACK DOCTRINE</th><th>DEFENSE FOCUS</th><th>OPERATIONAL IMPACT ON THEATER</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b style="color:#38bdf8;">Balanced Defense</b></td><td>Mixed IADS &amp; QRA</td><td>Standard layered SAM belts paired with steady airfield interceptor launches.</td></tr>
+            <tr><td><b style="color:#a855f7;">Silent Radar Ambush</b></td><td>EMCON &amp; Decoys</td><td>Holds SAM fire deeper inside envelope, shuts radars off fast against ARMs (+20% EMCON), adds passive SHORAD and decoy sites.</td></tr>
+            <tr><td><b style="color:#f43f5e;">Fast Air Scramble</b></td><td>QRA Interceptors</td><td>Starts with +1 airborne CAP fighter, cuts runway takeoff timers by 35%, launches in pairs, and pushes fighters forward.</td></tr>
+            <tr><td><b style="color:#00f0ff;">Heavy SAM Wall</b></td><td>Long &amp; Medium SAMs</td><td>Adds extra LR and MR SAMs plus an EW radar, reduces SAM reload times by 22%, and engages at full range.</td></tr>
+            <tr><td><b style="color:#c084fc;">Heavy Jamming Shield</b></td><td>Electronic Warfare</td><td>Adds extra ground broadband jammer, substation, and decoy while boosting jammer strength by 25%.</td></tr>
+            <tr><td><b style="color:#00f5a0;">Tight Base Defense</b></td><td>CIWS &amp; Point Defense</td><td>Adds extra CIWS turrets and Tor SHORAD around objectives (+14% bomb and missile intercept rate) with CAP orbiting targets.</td></tr>
+            <tr><td><b style="color:#fbbf24;">Low-Altitude Flak Belt</b></td><td>AAA &amp; Gap-Fillers</td><td>Adds +2 AAA flak guns and a gap-filler radar, firing 28% faster with higher flak hit accuracy against low flyers.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ge-subhead">2. VICTORY OBJECTIVES &amp; GROUND ARMOR CLASSES</div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #ffd700;">
           <b style="color:#ffd700;">PRIMARY OBJECTIVES [OBJ]</b>
@@ -25,12 +43,12 @@ window.MANUAL_ATTACK = [
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
             <b>SOFT</b> (Radars, AAA, Fuel Depots, Open Fields): full damage from all ordnance.<br>
             <b>ARMORED</b> (SAMs, Hangars, Munition Dumps): full damage from ATGMs, PGMs, AP cannons, and clusters.<br>
-            <b>FORTIFIED</b> (C2 Bunkers, Runways, HAS, Bridges): deflect 80% of light rockets/frag; use <b>Bunker Penetrators</b> or heavy cruise missiles!
+            <b>FORTIFIED</b> (C2 Bunkers, Runways, HAS, Bridges): deflect 80% of light rockets and frag; use <b>Bunker Penetrators</b> or heavy cruise missiles!
           </div>
         </div>
       </div>
 
-      <div class="ge-subhead">2. MULTI-SEGMENT RUNWAYS, TAKEOFF LENGTHS &amp; PARKED AIRCRAFT</div>
+      <div class="ge-subhead">3. MULTI-SEGMENT RUNWAYS, TAKEOFF LENGTHS &amp; PARKED AIRCRAFT</div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
           <b style="color:#00f0ff;">5-SEGMENT LONG RUNWAYS (3,500M STRIP)</b>
@@ -51,7 +69,7 @@ window.MANUAL_ATTACK = [
         </div>
       </div>
 
-      <div class="ge-subhead">3. IADS NETWORK ARCHITECTURE &amp; SUPPORT NODES</div>
+      <div class="ge-subhead">4. IADS NETWORK ARCHITECTURE &amp; SUPPORT NODES</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
@@ -70,7 +88,7 @@ window.MANUAL_ATTACK = [
             </tr>
             <tr>
               <td style="color:#f97316;font-weight:800;">Medium &amp; Short SAMs</td>
-              <td>Buk-M3, NASAMS-3, Kub, Tor-M2, Rapier Optical, Strela/Avenger IR</td>
+              <td>Buk-M3, NASAMS-3, Kub, Tor-M2, Rapier Optical, Strela and Avenger IR</td>
               <td>Buk operates independently; Rapier &amp; Avenger emit zero radar warning (immune to ARMs; spot via Targeting Pod!).</td>
             </tr>
             <tr>
@@ -92,14 +110,11 @@ window.MANUAL_ATTACK = [
         </table>
       </div>
 
-      <div class="ge-subhead">4. EMCON SHUTDOWNS &amp; THE 10 GROUND ATTACK DIFFICULTY TIERS</div>
-      <div class="ge-desc">
-        Target count, airbase stockpiles, SAM overlap, and EMCON shutdown discipline scale smoothly with player squadron ammunition capacity across all 10 tiers.
-      </div>
+      <div class="ge-subhead">5. THE 10 GROUND ATTACK DIFFICULTY TIERS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>TIER</th><th>SCORE</th><th>OBJ / QRA JETS</th><th>KEY IADS &amp; BEHAVIOR PROFILE</th></tr>
+            <tr><th>TIER</th><th>SCORE</th><th>OBJ AND QRA JETS</th><th>KEY IADS &amp; BEHAVIOR PROFILE</th></tr>
           </thead>
           <tbody>
             <tr><td><b>Unprepared Garrison</b></td><td>0.50x</td><td>2 Obj / 1 Jet</td><td>1 Runway (5 seg), 1 EW, 1 Strela, 1 Shilka, 1 Fuel, 60s scramble, 0% EMCON.</td></tr>

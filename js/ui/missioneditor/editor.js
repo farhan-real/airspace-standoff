@@ -1,18 +1,6 @@
-/* AIRSPACE STANDOFF: Custom Mission Editor Logic */
-
-const DIFFICULTY_DEFAULT_BUDGETS = {
-  CADET: 150, BUFFER: 205, VETERAN: 265, ESCALATED: 315, ELITE: 360,
-  FORWARD: 400, ACE: 445, FORTIFIED: 490, MASTER: 540, LEGEND: 600
-};
-
-const STANDARD_BUDGET_TIERS = [150, 200, 205, 250, 265, 300, 315, 360, 400, 445, 490, 500, 540, 600, 650, 750, 800, 900, 1000];
-
-const FLEET_DIFFICULTY_NAMES = {
-  CADET: 'PERMISSIVE SECTOR FLEET', BUFFER: 'BUFFER ZONE FLEET', VETERAN: 'CONTESTED AIRSPACE FLEET',
-  ESCALATED: 'ESCALATED AIRSPACE FLEET', ELITE: 'HOSTILE AIRSPACE FLEET', FORWARD: 'FORWARD COMBAT ZONE FLEET',
-  ACE: 'HIGH-THREAT SECTOR FLEET', FORTIFIED: 'FORTIFIED AIRSPACE FLEET', MASTER: 'AIR DENIAL ZONE FLEET',
-  LEGEND: 'EXTREME THREAT SECTOR FLEET'
-};
+/**
+ * AIRSPACE STANDOFF: Custom Mission Editor Logic
+ */
 
 class MissionEditor {
   static customBudgets = { blue: null, red: null };
@@ -90,45 +78,17 @@ class MissionEditor {
     });
   }
 
-  static getFieldConfigs() {
-    return {
-      scenario: {
-        default: 'SKIRMISH',
-        options: [
-          { value: 'SKIRMISH', text: 'SKIRMISH (STANDARD BATTLE)' },
-          { value: 'DYNAMIC_THEATER', text: 'DYNAMIC THEATER (WAVE WINGS)' },
-          { value: 'ATTACK', text: 'GROUND ATTACK (240x160 IADS)' }
-        ]
-      },
-      difficulty: {
-        default: 'VETERAN',
-        options: [
-          { value: 'CADET', text: 'PERMISSIVE SECTOR (0.50x)' }, { value: 'BUFFER', text: 'BUFFER ZONE (0.75x)' },
-          { value: 'VETERAN', text: 'CONTESTED AIRSPACE (1.00x)' }, { value: 'ESCALATED', text: 'ESCALATED AIRSPACE (1.25x)' },
-          { value: 'ELITE', text: 'HOSTILE AIRSPACE (1.50x)' }, { value: 'FORWARD', text: 'FORWARD COMBAT ZONE (1.75x)' },
-          { value: 'ACE', text: 'HIGH-THREAT SECTOR (2.00x)' }, { value: 'FORTIFIED', text: 'FORTIFIED AIRSPACE (2.30x)' },
-          { value: 'MASTER', text: 'AIR DENIAL ZONE (2.60x)' }, { value: 'LEGEND', text: 'EXTREME THREAT SECTOR (3.20x)' }
-        ]
-      },
-      doctrine: { default: 'BALANCED', options: [{ value: 'BALANCED', text: 'BALANCED' }, { value: 'AGGRESSIVE', text: 'AGGRESSIVE' }, { value: 'STANDOFF', text: 'STANDOFF' }] },
-      'blue-fleet': { default: 'HANGAR', options: [{ value: 'HANGAR', text: 'HANGAR FLEET' }, ...Object.entries(FLEET_DIFFICULTY_NAMES).map(([k, v]) => ({ value: k, text: v }))] },
-      'blue-budget': { default: '400', options: STANDARD_BUDGET_TIERS.map(b => ({ value: String(b), text: `${b}M` })) },
-      'red-fleet': { default: 'VETERAN', options: [...Object.entries(FLEET_DIFFICULTY_NAMES).map(([k, v]) => ({ value: k, text: v })), { value: 'HANGAR', text: 'HANGAR FLEET (MIRROR)' }] },
-      'red-budget': { default: '265', options: STANDARD_BUDGET_TIERS.map(b => ({ value: String(b), text: `${b}M` })) },
-      clouds: { default: 'SCATTERED', options: [{ value: 'CLEAR', text: 'CLEAR SKIES (0% RADAR ATTENUATION)' }, { value: 'LIGHT', text: 'LIGHT COVER (2 CLOUD CELLS)' }, { value: 'SCATTERED', text: 'SCATTERED (4 CLOUD CELLS)' }, { value: 'DENSE', text: 'DENSE OVERCAST (5 CLOUD CELLS)' }] },
-      defenses: { default: 'FULL', options: [{ value: 'FULL', text: 'FULL IADS (SAMS + CIWS + EW)' }, { value: 'LIGHT', text: 'LIGHT DEFENSE (CIWS ONLY)' }, { value: 'OFF', text: 'NO GROUND DEFENSES' }] },
-      civilians: { default: 'ON', options: [{ value: 'ON', text: 'ACTIVE (STRICT ROE)' }, { value: 'OFF', text: 'DISABLED (NO CIVILIAN FLIGHTS)' }] }
-    };
-  }
-
   static initDropdowns() {
-    if (typeof CustomDropdown === 'undefined') return;
-    const configs = this.getFieldConfigs();
+    if (typeof CustomDropdown === 'undefined' || typeof MissionEditorConfig === 'undefined') return;
+    const initialScenario = this.game ? this.game.scenarioMode : 'SKIRMISH';
+    const configs = MissionEditorConfig.getFieldConfigs(initialScenario);
+
     Object.entries(configs).forEach(([key, cfg]) => {
       CustomDropdown.setup(`cdd-me-${key}`, {
         value: cfg.default,
         options: cfg.options,
         onChange: (val) => {
+          if (key === 'scenario') MissionEditorConfig.syncScenarioDropdowns(val, this.game);
           if (key === 'blue-fleet') this.updateBudgetDropdown('blue-fleet', 'blue-budget');
           if (key === 'red-fleet') this.updateBudgetDropdown('red-fleet', 'red-budget');
           if (key === 'blue-budget' && val === 'CUSTOM') this.promptCustomBudget('blue');
@@ -165,8 +125,8 @@ class MissionEditor {
     const budgetCdd = CustomDropdown.get(`cdd-me-${isBlue ? 'blue-budget' : 'red-budget'}`);
     const fleetCdd = CustomDropdown.get(`cdd-me-${isBlue ? 'blue-fleet' : 'red-fleet'}`);
     if (!budgetCdd || !fleetCdd) return;
-    const defaultBudget = DIFFICULTY_DEFAULT_BUDGETS[fleetCdd.getValue()] || (isBlue ? 400 : 265);
-    const options = STANDARD_BUDGET_TIERS.map(b => ({ value: String(b), text: b === defaultBudget ? `${b}M (Default)` : `${b}M` }));
+    const defaultBudget = MissionEditorConfig.DIFFICULTY_DEFAULT_BUDGETS[fleetCdd.getValue()] || (isBlue ? 400 : 265);
+    const options = MissionEditorConfig.STANDARD_BUDGET_TIERS.map(b => ({ value: String(b), text: b === defaultBudget ? `${b}M (Default)` : `${b}M` }));
     const customStr = String(amount);
     if (!options.some(opt => opt.value === customStr)) options.push({ value: customStr, text: `${customStr}M (Custom)` });
     options.push({ value: 'CUSTOM', text: 'ENTER CUSTOM BUDGET...' });
@@ -189,8 +149,8 @@ class MissionEditor {
       budgetCdd.setOptions([{ value: String(hangarBudget), text: `${hangarBudget}M (Hangar)` }], String(hangarBudget));
       budgetCdd.setDisabled(true);
     } else {
-      const defaultBudget = DIFFICULTY_DEFAULT_BUDGETS[fleetCdd.getValue()] || (isBlue ? 400 : 265);
-      const options = STANDARD_BUDGET_TIERS.map(b => ({ value: String(b), text: b === defaultBudget ? `${b}M (Default)` : `${b}M` }));
+      const defaultBudget = MissionEditorConfig.DIFFICULTY_DEFAULT_BUDGETS[fleetCdd.getValue()] || (isBlue ? 400 : 265);
+      const options = MissionEditorConfig.STANDARD_BUDGET_TIERS.map(b => ({ value: String(b), text: b === defaultBudget ? `${b}M (Default)` : `${b}M` }));
       const activeCustom = this.customBudgets[isBlue ? 'blue' : 'red'];
       if (activeCustom && !options.some(o => o.value === String(activeCustom))) options.push({ value: String(activeCustom), text: `${activeCustom}M (Custom)` });
       options.push({ value: 'CUSTOM', text: 'ENTER CUSTOM BUDGET...' });
@@ -202,10 +162,13 @@ class MissionEditor {
   static syncStandardValues() {
     if (!this.game) return;
     this.ensureModal();
+    const isAttack = (this.game.scenarioMode === 'ATTACK');
+    MissionEditorConfig.syncScenarioDropdowns(this.game.scenarioMode, this.game);
+
     const values = {
       scenario: this.game.scenarioMode,
-      difficulty: this.game.aiDifficulty,
-      doctrine: this.game.aiDoctrine,
+      difficulty: isAttack ? this.game.attackDifficulty : this.game.aiDifficulty,
+      doctrine: isAttack ? this.game.attackDoctrine : this.game.aiDoctrine,
       'blue-fleet': 'HANGAR',
       'red-fleet': this.game.aiDifficulty
     };
@@ -220,7 +183,8 @@ class MissionEditor {
   static resetDraft() {
     this.ensureModal();
     this.customBudgets = { blue: null, red: null };
-    const configs = this.getFieldConfigs();
+    const configs = MissionEditorConfig.getFieldConfigs('SKIRMISH');
+    MissionEditorConfig.syncScenarioDropdowns('SKIRMISH', this.game);
     Object.entries(configs).forEach(([key, cfg]) => {
       const cdd = CustomDropdown.get(`cdd-me-${key}`);
       if (cdd) { cdd.setValue(cfg.default); cdd.setDisabled(false); }
@@ -245,7 +209,7 @@ class MissionEditor {
 
   static readDraft() {
     this.ensureModal();
-    const configs = this.getFieldConfigs();
+    const configs = MissionEditorConfig.getFieldConfigs(this.game ? this.game.scenarioMode : 'SKIRMISH');
     const values = {}, randomize = {};
     Object.keys(configs).forEach(key => {
       const cdd = CustomDropdown.get(`cdd-me-${key}`);
@@ -269,10 +233,12 @@ class MissionEditor {
 
   static updatePreview() {
     const draft = this.readDraft();
+    const isFixedAttack = !draft.randomize.scenario && draft.values.scenario === 'ATTACK';
     Object.entries(draft.randomize).forEach(([key, randomize]) => {
       const cdd = CustomDropdown.get(`cdd-me-${key}`);
       if (cdd) {
         if (randomize) cdd.setDisabled(true);
+        else if (isFixedAttack && (key === 'red-fleet' || key === 'red-budget')) cdd.setDisabled(true);
         else if (key === 'blue-budget' && draft.values['blue-fleet'] === 'HANGAR') cdd.setDisabled(true);
         else if (key === 'red-budget' && draft.values['red-fleet'] === 'HANGAR') cdd.setDisabled(true);
         else cdd.setDisabled(false);
@@ -292,13 +258,16 @@ class MissionEditor {
     const statusEl = document.getElementById('me-preview-status');
     if (!preview) return;
     const draft = this.readDraft();
-    const val = key => draft.randomize[key] ? 'RANDOM' : (draft.values[key] || 'STANDARD');
-    const formatFleetTag = (f, b, isRed) => f === 'RANDOM' ? `RANDOM FLEET [${b}M]` : (f === 'HANGAR' ? (isRed ? 'HANGAR FLEET (MIRROR)' : 'HANGAR FLEET') : `${FLEET_DIFFICULTY_NAMES[f] || f} [${b}M]`);
+    const val = key => draft.randomize[key] ? 'RANDOM' : draft.values[key];
+    const scenarioVal = val('scenario');
+    const formatFleetTag = (f, b, isRed) => (isRed && scenarioVal === 'ATTACK')
+      ? 'IADS + QRA DEFENSE'
+      : (f === 'RANDOM' ? `RANDOM FLEET [${b}M]` : (f === 'HANGAR' ? (isRed ? 'HANGAR FLEET (MIRROR)' : 'HANGAR FLEET') : `${MissionEditorConfig.FLEET_DIFFICULTY_NAMES[f] || f} [${b}M]`));
 
     preview.innerHTML = [
-      `<span class="me-preview-chip"><b>SCENARIO:</b> ${val('scenario')}</span>`,
+      `<span class="me-preview-chip"><b>SCENARIO:</b> ${scenarioVal}</span>`,
       `<span class="me-preview-chip"><b>DIFFICULTY:</b> ${val('difficulty')}</span>`,
-      `<span class="me-preview-chip"><b>DOCTRINE:</b> ${val('doctrine')}</span>`,
+      `<span class="me-preview-chip"><b>DOCTRINE:</b> ${MissionEditorConfig.formatDoctrineLabel(scenarioVal, val('doctrine'))}</span>`,
       `<span class="me-preview-chip"><b>BLUE FORCE:</b> ${formatFleetTag(val('blue-fleet'), val('blue-budget'), false)}</span>`,
       `<span class="me-preview-chip"><b>RED FORCE:</b> ${formatFleetTag(val('red-fleet'), val('red-budget'), true)}</span>`,
       `<span class="me-preview-chip"><b>WEATHER:</b> ${val('clouds')}</span>`,
@@ -331,6 +300,8 @@ class MissionEditor {
     game.scenarioMode = base.scenarioMode;
     game.aiDifficulty = base.aiDifficulty;
     game.aiDoctrine = base.aiDoctrine;
+    game.attackDifficulty = base.attackDifficulty;
+    game.attackDoctrine = base.attackDoctrine;
     const modeId = (base.scenarioMode === 'ATTACK') ? 'SP_ATTACK' : (base.scenarioMode === 'DYNAMIC_THEATER' ? 'SP_DYNAMIC' : (game.playerMode === '2P' ? 'TP_SKIRMISH' : 'SP_SKIRMISH'));
     game.setGameMode(modeId);
     const bTierData = window.BUDGET_TIERS[game.playerBudgetId];
@@ -358,28 +329,45 @@ class MissionEditor {
     const choose = (key, candidates) => (!randomize[key] ? values[key] : candidates[Math.floor(Math.random() * candidates.length)]);
 
     const scenarioMode = choose('scenario', ['SKIRMISH', 'DYNAMIC_THEATER', 'ATTACK']);
-    const difficulty = choose('difficulty', Object.keys(DIFFICULTY_DEFAULT_BUDGETS));
-    const doctrine = choose('doctrine', ['BALANCED', 'AGGRESSIVE', 'STANDOFF']);
-    const blueFleet = choose('blue-fleet', ['HANGAR', ...Object.keys(DIFFICULTY_DEFAULT_BUDGETS)]);
-    const blueBudgetRaw = choose('blue-budget', STANDARD_BUDGET_TIERS.map(String));
-    const blueBudget = blueFleet === 'HANGAR' ? game.budgetMax : Number(blueBudgetRaw);
-    const redFleet = choose('red-fleet', [...Object.keys(DIFFICULTY_DEFAULT_BUDGETS), 'HANGAR']);
-    const redBudgetRaw = choose('red-budget', STANDARD_BUDGET_TIERS.map(String));
-    const redBudget = redFleet === 'HANGAR' ? game.budgetMax : Number(redBudgetRaw);
+    const airDiffKeys = Object.keys(window.AI_DIFFICULTIES);
+    const atkDiffKeys = Object.keys(window.ATTACK_DIFFICULTIES);
+    const airDocKeys = Object.keys(window.AIR_DOCTRINES);
+    const atkDocKeys = Object.keys(window.ATTACK_DOCTRINES);
 
+    let difficulty;
     if (scenarioMode === 'ATTACK') {
-      const attackKeys = Object.keys(window.ATTACK_DIFFICULTIES);
-      const diffIdx = Object.keys(DIFFICULTY_DEFAULT_BUDGETS).indexOf(difficulty);
-      if (diffIdx >= 0 && attackKeys[diffIdx]) game.attackDifficulty = attackKeys[diffIdx];
+      if (randomize.difficulty) difficulty = atkDiffKeys[Math.floor(Math.random() * atkDiffKeys.length)];
+      else if (window.ATTACK_DIFFICULTIES[values.difficulty]) difficulty = values.difficulty;
+      else difficulty = atkDiffKeys[Math.max(0, airDiffKeys.indexOf(values.difficulty))];
+    } else {
+      if (randomize.difficulty) difficulty = airDiffKeys[Math.floor(Math.random() * airDiffKeys.length)];
+      else if (window.AI_DIFFICULTIES[values.difficulty]) difficulty = values.difficulty;
+      else difficulty = airDiffKeys[Math.max(0, atkDiffKeys.indexOf(values.difficulty))];
     }
 
+    let doctrine;
+    if (scenarioMode === 'ATTACK') {
+      if (randomize.doctrine) doctrine = atkDocKeys[Math.floor(Math.random() * atkDocKeys.length)];
+      else if (window.ATTACK_DOCTRINES[values.doctrine]) doctrine = values.doctrine;
+      else doctrine = MissionEditorConfig.AIR_TO_ATTACK_DOCTRINE_MAP[values.doctrine] || 'BALANCED';
+    } else {
+      if (randomize.doctrine) doctrine = airDocKeys[Math.floor(Math.random() * airDocKeys.length)];
+      else if (window.AIR_DOCTRINES[values.doctrine]) doctrine = values.doctrine;
+      else doctrine = 'BALANCED';
+    }
+
+    const airDoctrine = (scenarioMode === 'ATTACK') ? 'BALANCED' : doctrine;
+    const blueFleet = choose('blue-fleet', ['HANGAR', ...airDiffKeys]);
+    const blueBudget = blueFleet === 'HANGAR' ? game.budgetMax : Number(choose('blue-budget', MissionEditorConfig.STANDARD_BUDGET_TIERS.map(String)));
+    const redFleet = choose('red-fleet', [...airDiffKeys, 'HANGAR']);
+    const redBudget = redFleet === 'HANGAR' ? game.budgetMax : Number(choose('red-budget', MissionEditorConfig.STANDARD_BUDGET_TIERS.map(String)));
     const clouds = choose('clouds', ['CLEAR', 'LIGHT', 'SCATTERED', 'DENSE']);
     const defenses = choose('defenses', ['FULL', 'LIGHT', 'OFF']);
     const civilians = choose('civilians', ['ON', 'OFF']);
     const inspectionMode = Boolean(settings.inspectionMode);
 
     this.updateStateLabel('EDITOR SORTIE - UNRANKED', true);
-    return { scenarioMode, difficulty, doctrine, blueFleet, blueBudget, redFleet, redBudget, clouds, defenses, civilians, inspectionMode, unranked: true };
+    return { scenarioMode, difficulty, doctrine, airDoctrine, blueFleet, blueBudget, redFleet, redBudget, clouds, defenses, civilians, inspectionMode, unranked: true };
   }
 
   static createRandomSquadron(g, m) { return MissionBuilder.createRandomSquadron(g, m); }

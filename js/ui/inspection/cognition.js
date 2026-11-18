@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Inspection Cognition & AI Attention Submodule
- * Displays live AI cognitive focus slots, difficulty-tiered tactical roles, and succession states for enemy aircraft.
+ * Displays live AI cognitive focus slots, active theater doctrine, tactical roles, and succession states.
  */
 
 window.INSP_SVG = window.INSP_SVG || {
@@ -37,21 +37,10 @@ class InspectionCognitionRenderer {
       return 'Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.';
     }
 
-    if (rawRole === 'INTERCEPT') {
-      return 'High-Speed Intercept: Pushing afterburner thrust to achieve maximum supersonic closure against high-priority aerial targets.';
-    }
-
-    if (rawRole === 'DOGFIGHT') {
-      return 'Close-Range Dogfight: Seeking visual-range merge (< 20 km), modulating throttle into optimal corner speed for high-G snapshots and autocannon bursts.';
-    }
-
-    if (rawRole === 'SWARM') {
-      return 'Unmanned Swarm Screen: Flanking formation edges to draw enemy missile fire and deploy saturation micro-missile volleys.';
-    }
-
-    if (rawRole === 'ESCORT') {
-      return 'Close Formation Escort: Maintaining tight perimeter coverage around the flight lead and engaging incoming interceptors.';
-    }
+    if (rawRole === 'INTERCEPT') return 'High-Speed Intercept: Pushing afterburner thrust to achieve maximum supersonic closure against high-priority aerial targets.';
+    if (rawRole === 'DOGFIGHT') return 'Close-Range Dogfight: Seeking visual-range merge (< 20 km), modulating throttle into optimal corner speed for high-G snapshots and autocannon bursts.';
+    if (rawRole === 'SWARM') return 'Unmanned Swarm Screen: Flanking formation edges to draw enemy missile fire and deploy saturation micro-missile volleys.';
+    if (rawRole === 'ESCORT') return 'Close Formation Escort: Maintaining tight perimeter coverage around the flight lead and engaging incoming interceptors.';
 
     if (rawRole === 'SNIPER') {
       if (diffKey === 'LEGEND') return 'Standoff F-Pole Skate: Stratospheric FL500 cruise, maintaining 46 to 90 km standoff and cranking 65 deg off boresight to deny return fire.';
@@ -102,13 +91,13 @@ class InspectionCognitionRenderer {
     const isActivelyControlled = Boolean(prof.isFocused);
     const isAce = Boolean(prof.isAce);
     const focusTimerSec = Math.max(0, prof.remainingFocus || 0);
-    const diffKey = controller.game && controller.game.aiDifficulty ? controller.game.aiDifficulty : 'VETERAN';
+    const diffKey = prof.diffKey;
 
     const postureText = String(prof.posture || 'OFFENSIVE_SWEEP').replace(/_/g, ' ');
     const roleText = prof.roleInFormation || (isAce ? 'Ace Interceptor' : 'Independent Element');
     const pairDetail = prof.pairedUnit ? ` ${window.INSP_SVG.dot} Pair: ${prof.pairedUnit.callsign || 'Wingman'}` : '';
-
     const tacticalRoleLabel = this.getTacticalRoleLabel(prof.tacticalRole);
+    const doctrineLabel = String(prof.doctrineName || 'Balanced').toUpperCase();
 
     let successionHtml = '<b>Normal decision cycle</b>';
     if (prof.isHesitating) {
@@ -124,78 +113,30 @@ class InspectionCognitionRenderer {
       ? (isActivelyControlled ? `LOCKED (ACE CADRE ${focusTimerSec.toFixed(1)}s)` : `ACE STANDBY (${focusTimerSec.toFixed(1)}s)`)
       : (isActivelyControlled ? `LOCKED (${focusTimerSec.toFixed(1)}s)` : 'WAITING FOR SLOT');
     const focusValColor = isAce ? '#ffd700' : (isActivelyControlled ? 'var(--color-red)' : 'var(--color-moon-mist)');
-
     const assessmentText = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots, diffKey);
 
     return `
       <section class="inspection-card insp-cognition-card ${cardClass}" data-insp-enemy-cognition="${aircraft.id}">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="margin:0; color:${headerColor};">
-            ${isAce ? 'ACE PILOT COGNITION' : 'AI COGNITIVE PROFILE'}
-          </h3>
-          <span class="factor-chip ${statusChipClass} cog-status-chip">
-            ${statusChipText}
-          </span>
+          <h3 style="margin:0; color:${headerColor};">${isAce ? 'ACE PILOT COGNITION' : 'AI COGNITIVE PROFILE'}</h3>
+          <span class="factor-chip ${statusChipClass} cog-status-chip">${statusChipText}</span>
         </div>
 
         <div class="insp-cognition-grid">
-          <div class="insp-cognition-field">
-            <span>TACTICAL ROLE:</span>
-            <b class="cog-tactical-role-val" style="color:var(--stat-tier-1);">${tacticalRoleLabel}</b>
-          </div>
-
-          <div class="insp-cognition-field">
-            <span>COMMANDER FOCUS:</span>
-            <b class="cog-focus-val" style="color:${focusValColor};">
-              ${focusValText}
-            </b>
-          </div>
-
-          <div class="insp-cognition-field">
-            <span>ACTIVE FOCUS SLOTS:</span>
-            <b class="cog-slots-val">${prof.activeFocusCount} / ${prof.maxSlots} SLOTS</b>
-          </div>
-
-          <div class="insp-cognition-field">
-            <span>SQUADRON POSTURE:</span>
-            <b class="cog-posture-val" style="color:var(--stat-tier-2);">${postureText}</b>
-          </div>
-
-          <div class="insp-cognition-field">
-            <span>FORMATION ROLE:</span>
-            <b class="cog-role-val" style="color:${isAce ? '#ffd700' : 'var(--color-pure-white)'};">${roleText}${pairDetail}</b>
-          </div>
-
-          <div class="insp-cognition-field">
-            <span>CHAIN OF COMMAND:</span>
-            <span class="cog-succession-val">${successionHtml}</span>
-          </div>
-
-          <div class="insp-cognition-field">
-            <span>REACTION LATENCY:</span>
-            <b class="cog-reaction-val" style="color:${isAce ? 'var(--stat-tier-1)' : 'var(--color-pure-white)'};">
-              ${prof.reactionCooldown.toFixed(1)}s ${isAce ? '(Ace Reflex)' : 'delay'}
-            </b>
-          </div>
-
-          <div class="insp-cognition-field">
-            <span>DOPPLER NOTCH:</span>
-            <b class="cog-notch-val" style="color:${isAce ? 'var(--stat-tier-2)' : 'var(--color-pure-white)'};">
-              ${Math.round(prof.notchChance * 100)}% ${isAce ? '(High-G)' : 'discipline'}
-            </b>
-          </div>
-
-          <div class="insp-cognition-field">
-            <span>DECOY DISCRIMINATION:</span>
-            <b class="cog-decoy-val" style="color:${isAce ? 'var(--stat-tier-1)' : 'var(--color-pure-white)'};">
-              ${Math.round(prof.decoyDiscrimination * 100)}% ${isAce ? '(Signal Filter)' : 'filter rate'}
-            </b>
-          </div>
+          <div class="insp-cognition-field"><span>AI DOCTRINE:</span><b class="cog-doctrine-val" style="color:var(--stat-tier-3);">${doctrineLabel}</b></div>
+          <div class="insp-cognition-field"><span>TACTICAL ROLE:</span><b class="cog-tactical-role-val" style="color:var(--stat-tier-1);">${tacticalRoleLabel}</b></div>
+          <div class="insp-cognition-field"><span>COMMANDER FOCUS:</span><b class="cog-focus-val" style="color:${focusValColor};">${focusValText}</b></div>
+          <div class="insp-cognition-field"><span>ACTIVE FOCUS SLOTS:</span><b class="cog-slots-val">${prof.activeFocusCount} / ${prof.maxSlots} SLOTS</b></div>
+          <div class="insp-cognition-field"><span>SQUADRON POSTURE:</span><b class="cog-posture-val" style="color:var(--stat-tier-2);">${postureText}</b></div>
+          <div class="insp-cognition-field"><span>FORMATION ROLE:</span><b class="cog-role-val" style="color:${isAce ? '#ffd700' : 'var(--color-pure-white)'};">${roleText}${pairDetail}</b></div>
+          <div class="insp-cognition-field"><span>CHAIN OF COMMAND:</span><span class="cog-succession-val">${successionHtml}</span></div>
+          <div class="insp-cognition-field"><span>REACTION LATENCY:</span><b class="cog-reaction-val" style="color:${isAce ? 'var(--stat-tier-1)' : 'var(--color-pure-white)'};">${prof.reactionCooldown.toFixed(1)}s ${isAce ? '(Ace Reflex)' : 'delay'}</b></div>
+          <div class="insp-cognition-field"><span>DOPPLER NOTCH:</span><b class="cog-notch-val" style="color:${isAce ? 'var(--stat-tier-2)' : 'var(--color-pure-white)'};">${Math.round(prof.notchChance * 100)}% ${isAce ? '(High-G)' : 'discipline'}</b></div>
+          <div class="insp-cognition-field"><span>DECOY DISCRIMINATION:</span><b class="cog-decoy-val" style="color:${isAce ? 'var(--stat-tier-1)' : 'var(--color-pure-white)'};">${Math.round(prof.decoyDiscrimination * 100)}% ${isAce ? '(Signal Filter)' : 'filter rate'}</b></div>
         </div>
 
         <div class="inspection-reason-box ${isActivelyControlled || isAce ? 'warning' : ''}" style="margin-top:6px;">
-          <b>COGNITIVE ASSESSMENT:</b>
-          <span class="cog-summary-text">${assessmentText}</span>
+          <b>COGNITIVE ASSESSMENT:</b> <span class="cog-summary-text">${assessmentText}</span>
         </div>
       </section>
     `;
@@ -213,20 +154,18 @@ class InspectionCognitionRenderer {
     const isActivelyControlled = Boolean(prof.isFocused);
     const isAce = Boolean(prof.isAce);
     const focusTimerSec = Math.max(0, prof.remainingFocus || 0);
-    const diffKey = controller.game && controller.game.aiDifficulty ? controller.game.aiDifficulty : 'VETERAN';
 
     card.classList.toggle('active-focus', isActivelyControlled || isAce);
-
     const chip = card.querySelector('.cog-status-chip');
     if (chip) {
       chip.className = `factor-chip ${isAce ? 'warning' : (isActivelyControlled ? 'negative' : 'neutral')} cog-status-chip`;
       chip.textContent = isAce ? 'ELITE ACE CADRE' : (isActivelyControlled ? 'ACTIVELY CONTROLLED' : 'AUTONOMOUS PATROL');
     }
 
-    const tacticalRoleVal = card.querySelector('.cog-tactical-role-val');
-    if (tacticalRoleVal) {
-      tacticalRoleVal.textContent = this.getTacticalRoleLabel(prof.tacticalRole);
-    }
+    const docVal = card.querySelector('.cog-doctrine-val');
+    if (docVal) docVal.textContent = String(prof.doctrineName || 'Balanced').toUpperCase();
+    const roleLabel = card.querySelector('.cog-tactical-role-val');
+    if (roleLabel) roleLabel.textContent = this.getTacticalRoleLabel(prof.tacticalRole);
 
     const focusVal = card.querySelector('.cog-focus-val');
     if (focusVal) {
@@ -238,7 +177,6 @@ class InspectionCognitionRenderer {
 
     const slotsVal = card.querySelector('.cog-slots-val');
     if (slotsVal) slotsVal.textContent = `${prof.activeFocusCount} / ${prof.maxSlots} SLOTS`;
-
     const postureVal = card.querySelector('.cog-posture-val');
     if (postureVal) postureVal.textContent = String(prof.posture || 'OFFENSIVE_SWEEP').replace(/_/g, ' ');
 
@@ -256,25 +194,8 @@ class InspectionCognitionRenderer {
         : '<b>Normal decision cycle</b>';
     }
 
-    const reactionVal = card.querySelector('.cog-reaction-val');
-    if (reactionVal) {
-      reactionVal.textContent = `${prof.reactionCooldown.toFixed(1)}s ${isAce ? '(Ace Reflex)' : 'delay'}`;
-    }
-
-    const notchVal = card.querySelector('.cog-notch-val');
-    if (notchVal) {
-      notchVal.textContent = `${Math.round(prof.notchChance * 100)}% ${isAce ? '(High-G)' : 'discipline'}`;
-    }
-
-    const decoyVal = card.querySelector('.cog-decoy-val');
-    if (decoyVal) {
-      decoyVal.textContent = `${Math.round(prof.decoyDiscrimination * 100)}% ${isAce ? '(Signal Filter)' : 'filter rate'}`;
-    }
-
     const summaryText = card.querySelector('.cog-summary-text');
-    if (summaryText) {
-      summaryText.textContent = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots, diffKey);
-    }
+    if (summaryText) summaryText.textContent = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots, prof.diffKey);
   }
 }
 

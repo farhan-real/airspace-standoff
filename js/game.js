@@ -17,30 +17,25 @@ class AirspaceStandoffGame {
     if (!window.BUDGET_TIERS) throw new Error('BUDGET_TIERS table is not loaded.');
     if (!window.AI_DIFFICULTIES) throw new Error('AI_DIFFICULTIES table is not loaded.');
     if (!window.ATTACK_DIFFICULTIES) throw new Error('ATTACK_DIFFICULTIES table is not loaded.');
+    if (!window.AIR_DOCTRINES) throw new Error('AIR_DOCTRINES table is not loaded.');
     if (!window.ATTACK_DOCTRINES) throw new Error('ATTACK_DOCTRINES table is not loaded.');
 
-    const savedSettings = (window.Persistence && typeof window.Persistence.getGameplaySettings === 'function')
+    const saved = (window.Persistence && typeof window.Persistence.getGameplaySettings === 'function')
       ? window.Persistence.getGameplaySettings() : null;
 
-    this.gameMode = (savedSettings && savedSettings.gameMode && window.GAME_MODES[savedSettings.gameMode])
-      ? savedSettings.gameMode : 'SP_SKIRMISH';
+    this.gameMode = (saved && saved.gameMode && window.GAME_MODES[saved.gameMode]) ? saved.gameMode : 'SP_SKIRMISH';
     const modeDef = window.GAME_MODES[this.gameMode];
     if (!modeDef) throw new Error(`Invalid initial gameMode "${this.gameMode}".`);
 
     this.playerMode = modeDef.playerMode;
     this.scenarioMode = modeDef.scenarioMode;
-    this.aiDifficulty = (savedSettings && savedSettings.aiDifficulty && window.AI_DIFFICULTIES[savedSettings.aiDifficulty])
-      ? savedSettings.aiDifficulty : 'VETERAN';
-    this.aiDoctrine = (savedSettings && savedSettings.aiDoctrine) ? savedSettings.aiDoctrine : 'BALANCED';
-    this.attackDifficulty = (savedSettings && savedSettings.attackDifficulty && window.ATTACK_DIFFICULTIES[savedSettings.attackDifficulty])
-      ? savedSettings.attackDifficulty : 'FORWARD_GARRISON';
-    this.attackDoctrine = (savedSettings && savedSettings.attackDoctrine && window.ATTACK_DOCTRINES[savedSettings.attackDoctrine])
-      ? savedSettings.attackDoctrine : 'BALANCED';
-    this.playerBudgetId = (savedSettings && savedSettings.playerBudgetId && window.BUDGET_TIERS[savedSettings.playerBudgetId])
-      ? savedSettings.playerBudgetId : 'BUDGET_400';
+    this.aiDifficulty = (saved && saved.aiDifficulty && window.AI_DIFFICULTIES[saved.aiDifficulty]) ? saved.aiDifficulty : 'VETERAN';
+    this.aiDoctrine = (saved && saved.aiDoctrine && window.AIR_DOCTRINES[saved.aiDoctrine]) ? saved.aiDoctrine : 'BALANCED';
+    this.attackDifficulty = (saved && saved.attackDifficulty && window.ATTACK_DIFFICULTIES[saved.attackDifficulty]) ? saved.attackDifficulty : 'FORWARD_GARRISON';
+    this.attackDoctrine = (saved && saved.attackDoctrine && window.ATTACK_DOCTRINES[saved.attackDoctrine]) ? saved.attackDoctrine : 'BALANCED';
+    this.playerBudgetId = (saved && saved.playerBudgetId && window.BUDGET_TIERS[saved.playerBudgetId]) ? saved.playerBudgetId : 'BUDGET_400';
 
-    const bTierData = window.BUDGET_TIERS[this.playerBudgetId];
-    this.budgetMax = bTierData.budget;
+    this.budgetMax = window.BUDGET_TIERS[this.playerBudgetId].budget;
     this.budgetRemaining = this.budgetMax;
 
     this.pendingMissionEditorSettings = null;
@@ -50,7 +45,7 @@ class AirspaceStandoffGame {
     this.inspectionModeEnabled = false;
     this.currentPvpCommander = 'friendly';
 
-    let initialSquadronName = (window.Persistence && window.Persistence.getSquadronName()) || '7th Tactical Squadron';
+    const initialSquadronName = (window.Persistence && window.Persistence.getSquadronName()) || '7th Tactical Squadron';
     if (!initialSquadronName.trim()) throw new Error('Initial squadron name cannot be empty.');
     this.squadronName = initialSquadronName.trim();
     if (window.Persistence) window.Persistence.saveSquadronName(this.squadronName);
@@ -93,9 +88,9 @@ class AirspaceStandoffGame {
     this.controls.init();
     this.procurement.init();
 
-    const saved = window.Persistence ? window.Persistence.getLastSquadron() : null;
-    if (saved && saved.length > 0) {
-      this.procurementSquadron = saved;
+    const lastSquadron = window.Persistence ? window.Persistence.getLastSquadron() : null;
+    if (lastSquadron && lastSquadron.length > 0) {
+      this.procurementSquadron = lastSquadron;
       this.procurement.updateUI();
     } else {
       this.procurement.applyBuiltinPreset('stealth');
@@ -106,10 +101,8 @@ class AirspaceStandoffGame {
   }
 
   setGameMode(modeId) {
-    if (!window.GAME_MODES || !window.GAME_MODES[modeId]) {
-      throw new Error(`Game mode "${modeId}" does not exist in GAME_MODES.`);
-    }
     const modeDef = window.GAME_MODES[modeId];
+    if (!modeDef) throw new Error(`Game mode "${modeId}" does not exist in GAME_MODES.`);
     this.gameMode = modeDef.id;
     this.playerMode = modeDef.playerMode;
     this.scenarioMode = modeDef.scenarioMode;
@@ -191,19 +184,15 @@ class AirspaceStandoffGame {
     const ind = document.getElementById('theater-mode-indicator');
     if (!ind) return;
     const isAttack = (this.scenarioMode === 'ATTACK');
-    const diffData = isAttack
-      ? window.ATTACK_DIFFICULTIES[this.attackDifficulty]
-      : window.AI_DIFFICULTIES[this.aiDifficulty];
-    if (!diffData) {
-      throw new Error(`Invalid difficulty "${isAttack ? this.attackDifficulty : this.aiDifficulty}" in updateModeIndicator.`);
-    }
+    const diffData = isAttack ? window.ATTACK_DIFFICULTIES[this.attackDifficulty] : window.AI_DIFFICULTIES[this.aiDifficulty];
+    const docData = isAttack ? window.ATTACK_DOCTRINES[this.attackDoctrine] : window.AIR_DOCTRINES[this.aiDoctrine];
+    if (!diffData) throw new Error(`Invalid difficulty "${isAttack ? this.attackDifficulty : this.aiDifficulty}" in updateModeIndicator.`);
+    if (!docData) throw new Error(`Invalid doctrine "${isAttack ? this.attackDoctrine : this.aiDoctrine}" in updateModeIndicator.`);
     const bTierData = window.BUDGET_TIERS[this.playerBudgetId];
-    if (!bTierData) {
-      throw new Error(`Invalid playerBudgetId "${this.playerBudgetId}" in updateModeIndicator.`);
-    }
+    if (!bTierData) throw new Error(`Invalid playerBudgetId "${this.playerBudgetId}" in updateModeIndicator.`);
     const diffTag = `${diffData.name} (${diffData.scoreMultiplier.toFixed(2)}x)`;
     const bTag = `${bTierData.budget.toFixed(0)}M (${bTierData.multiplier.toFixed(2)}x)`;
-    const modeTag = this.playerMode === '2P' ? '2P VERSUS' : (isAttack ? `ATTACK [${diffTag}] [${bTag}]` : `1P VS AI [${diffTag}] [${bTag}]`);
+    const modeTag = this.playerMode === '2P' ? '2P VERSUS' : (isAttack ? `ATTACK [${diffTag}] [${docData.name}] [${bTag}]` : `1P VS AI [${diffTag}] [${docData.name}] [${bTag}]`);
     const scenarioTag = isAttack ? '240x160 IADS' : (this.scenarioMode === 'DYNAMIC_THEATER' ? 'DYNAMIC THEATER' : 'SKIRMISH');
     ind.textContent = `${modeTag} ${scenarioTag}`;
   }
@@ -223,10 +212,7 @@ class AirspaceStandoffGame {
     const hudContainer = document.getElementById('hud-container');
     const procModal = document.getElementById('procurement-modal');
     if (hudContainer) hudContainer.classList.add('hidden');
-    if (procModal) {
-      procModal.classList.remove('hidden');
-      procModal.classList.add('active');
-    }
+    if (procModal) { procModal.classList.remove('hidden'); procModal.classList.add('active'); }
     if (this.procurement) this.procurement.updateUI();
   }
 
@@ -241,25 +227,12 @@ class AirspaceStandoffGame {
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
     this.isGameOver = false;
     this.simulation.captureReplayFrame(true);
-    let lastTime = performance.now();
-    let mfdThrottle = 0;
-    let rosterThrottle = 0;
-
-    const renderPayload = {
-      alliedAircraft: this.alliedAircraft,
-      hostileAircraft: this.hostileAircraft,
-      surfaceUnits: this.surfaceUnits,
-      missiles: this.missiles,
-      activeUnit: null,
-      selectedTarget: null,
-      inspectionEntity: null,
-      inspectionMode: false
-    };
+    let lastTime = performance.now(), mfdThrottle = 0, rosterThrottle = 0;
+    const renderPayload = { alliedAircraft: this.alliedAircraft, hostileAircraft: this.hostileAircraft, surfaceUnits: this.surfaceUnits, missiles: this.missiles, activeUnit: null, selectedTarget: null, inspectionEntity: null, inspectionMode: false };
 
     const loop = (currTime) => {
       const dt = Math.min(0.08, (currTime - lastTime) / 1000.0);
       lastTime = currTime;
-
       if (!this.isGameOver) this.simulation.step(dt);
 
       renderPayload.alliedAircraft = this.alliedAircraft;
@@ -270,7 +243,6 @@ class AirspaceStandoffGame {
       renderPayload.selectedTarget = this.selectedTarget;
       renderPayload.inspectionEntity = this.inspection && this.inspection.isOpen ? this.inspection.selectedEntity : null;
       renderPayload.inspectionMode = Boolean(this.inspection && this.inspection.isOpen);
-
       this.radar.render(renderPayload);
 
       mfdThrottle += dt;
@@ -279,13 +251,11 @@ class AirspaceStandoffGame {
         this.avionics.updateActiveUnitMFD();
         if (this.inspection && this.inspection.isOpen) this.inspection.update();
       }
-
       rosterThrottle += dt;
       if (rosterThrottle >= 0.25) {
         rosterThrottle = 0;
         this.avionics.renderFlightRoster();
       }
-
       if (!this.isGameOver) this.animFrameId = requestAnimationFrame(loop);
     };
     this.animFrameId = requestAnimationFrame(loop);
@@ -293,9 +263,7 @@ class AirspaceStandoffGame {
 
   triggerGameOver(blueWon, msg) {
     this.isGameOver = true;
-    if (this.inspection) {
-      this.inspection.recordEvent('MISSION END', msg || (blueWon ? 'Victory' : 'Defeat'), null, null, { result: blueWon ? 'VICTORY' : 'DEFEAT' });
-    }
+    if (this.inspection) this.inspection.recordEvent('MISSION END', msg || (blueWon ? 'Victory' : 'Defeat'), null, null, { result: blueWon ? 'VICTORY' : 'DEFEAT' });
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
     this.simulation.captureReplayFrame(true);
     if (typeof DebriefReportSystem === 'undefined') throw new Error('DebriefReportSystem is not loaded.');

@@ -1,12 +1,12 @@
 /**
  * AIRSPACE STANDOFF: Sortie Spawner Submodule
- * Prepares squadrons, surface defenses, Attack IADS theaters, and transitions cleanly between Hangar and Battle modes.
+ * Prepares squadrons, surface defenses, Attack IADS theaters, and transitions between Hangar and Battle modes.
  */
 
 class SortieSpawner {
   static setupMission(game) {
     if (!game) throw new Error('SortieSpawner.setupMission requires game instance.');
-    if (!window.CONFIG || !window.AIRCRAFT_CATALOG || !window.AI_DIFFICULTIES || !window.ATTACK_DIFFICULTIES) {
+    if (!window.CONFIG || !window.AIRCRAFT_CATALOG || !window.AI_DIFFICULTIES || !window.ATTACK_DIFFICULTIES || !window.AIR_DOCTRINES || !window.ATTACK_DOCTRINES) {
       throw new Error('Core data tables must be loaded before SortieSpawner.setupMission.');
     }
     if (!Array.isArray(window.CALLSIGN_POOL)) throw new Error('CALLSIGN_POOL is not loaded.');
@@ -17,7 +17,9 @@ class SortieSpawner {
       game.missionEditorBaseSettings = {
         scenarioMode: game.scenarioMode,
         aiDifficulty: game.aiDifficulty,
-        aiDoctrine: game.aiDoctrine
+        aiDoctrine: game.aiDoctrine,
+        attackDifficulty: game.attackDifficulty,
+        attackDoctrine: game.attackDoctrine
       };
     }
     const editorMission = window.MissionEditor ? window.MissionEditor.consumeNextMission(game) : null;
@@ -27,8 +29,13 @@ class SortieSpawner {
 
     if (editorMission) {
       game.scenarioMode = editorMission.scenarioMode;
-      game.aiDifficulty = editorMission.difficulty;
-      game.aiDoctrine = editorMission.doctrine;
+      if (editorMission.scenarioMode === 'ATTACK') {
+        game.attackDifficulty = editorMission.difficulty;
+        game.attackDoctrine = editorMission.doctrine;
+      } else {
+        game.aiDifficulty = editorMission.difficulty;
+        game.aiDoctrine = editorMission.doctrine;
+      }
       game.updateModeIndicator();
     }
 
@@ -40,10 +47,7 @@ class SortieSpawner {
 
     const procModal = document.getElementById('procurement-modal');
     const hudContainer = document.getElementById('hud-container');
-    if (procModal) {
-      procModal.classList.remove('active');
-      procModal.classList.add('hidden');
-    }
+    if (procModal) { procModal.classList.remove('active'); procModal.classList.add('hidden'); }
     if (hudContainer) hudContainer.classList.remove('hidden');
 
     ['system-inspect-modal', 'glossary-modal', 'settings-modal', 'rwr-briefing-modal', 'abort-confirm-modal', 'game-over-modal', 'pause-modal', 'dialog-modal', 'tactical-dialog-modal'].forEach(id => {
@@ -94,15 +98,13 @@ class SortieSpawner {
     const isBlueProcedural = !is2P && editorMission && editorMission.blueFleet && editorMission.blueFleet !== 'HANGAR';
 
     if (isBlueProcedural) {
-      game.alliedAircraft = FleetGenerator.generateFleet('friendly', editorMission.blueFleet, editorMission.doctrine, mapW, mapH, {
+      game.alliedAircraft = FleetGenerator.generateFleet('friendly', editorMission.blueFleet, editorMission.airDoctrine, mapW, mapH, {
         budget: editorMission.blueBudget,
         squadronName: game.squadronName
       });
     } else {
       const launchSquadron = game.procurementSquadron;
-      if (!Array.isArray(launchSquadron) || launchSquadron.length === 0) {
-        throw new Error('Cannot launch sortie with an empty squadron.');
-      }
+      if (!Array.isArray(launchSquadron) || launchSquadron.length === 0) throw new Error('Cannot launch sortie with an empty squadron.');
       let chosenLeadIdx = launchSquadron.findIndex(it => it && it.isLead);
       if (chosenLeadIdx === -1) chosenLeadIdx = 0;
       launchSquadron.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
@@ -115,17 +117,9 @@ class SortieSpawner {
         const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + prng.int(0, 17) * 1000);
         const spawnY = plan.isLead ? midY : plan.y;
 
-        const ac = new Aircraft(
-          item.specId, 'friendly', plan.x, spawnY, heading, item.chosenGunId,
-          item.callsign || takeCallsign(), game.squadronName,
-          plan.isLead, false, initialAltFt
-        );
+        const ac = new Aircraft(item.specId, 'friendly', plan.x, spawnY, heading, item.chosenGunId, item.callsign || takeCallsign(), game.squadronName, plan.isLead, false, initialAltFt);
         (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
-        (item.weapons || []).forEach(w => {
-          const wId = (typeof w === 'object' && w !== null) ? (w.id || w.specId) : w;
-          const targetStation = (typeof w === 'object' && w !== null) ? w.station : null;
-          ac.installWeapon(wId, targetStation);
-        });
+        (item.weapons || []).forEach(w => ac.installWeapon((typeof w === 'object' && w !== null) ? (w.id || w.specId) : w, (typeof w === 'object' && w !== null) ? w.station : null));
         ac.recalculateWeight();
         ac.speed = ac.getTargetMach();
         ac.prevSpeed = ac.speed;
@@ -142,6 +136,8 @@ class SortieSpawner {
       AttackDirector.initMission(game);
       if (editorMission && editorMission.defenses === 'OFF') {
         game.surfaceUnits = game.surfaceUnits.filter(unit => unit.isPrimaryObjective || unit.type === 'AMMO_DUMP');
+      } else if (editorMission && editorMission.defenses === 'LIGHT') {
+        game.surfaceUnits = game.surfaceUnits.filter(unit => unit.isPrimaryObjective || unit.type === 'AMMO_DUMP' || unit.category === 'CIWS' || unit.category === 'AAA' || unit.category === 'SR_SAM');
       }
     } else if (is2P) {
       const redRosterSource = game.procurementSquadron;
@@ -150,31 +146,21 @@ class SortieSpawner {
       redRosterSource.forEach((it, idx) => { if (it) it.isLead = (idx === chosenLeadIdx); });
 
       const clonedRedRoster = redRosterSource.map((item, originalIdx) => ({
-        specId: item.specId,
-        chosenGunId: item.chosenGunId,
+        specId: item.specId, chosenGunId: item.chosenGunId,
         weapons: Array.isArray(item.weapons) ? item.weapons.map(w => (typeof w === 'object' && w !== null ? { ...w } : w)) : [],
         upgrades: Array.isArray(item.upgrades) ? [...item.upgrades] : [],
         callsign: item.callsign ? (item.callsign.startsWith('Red ') ? item.callsign : `Red ${item.callsign}`) : `Red Viper ${originalIdx + 1}`,
-        isLead: Boolean(item.isLead),
-        isAce: false
+        isLead: Boolean(item.isLead), isAce: false
       }));
 
-      const randomizedRedRoster = prng.shuffle([...clonedRedRoster]);
-      const redSpawnPlans = FormationPlanner.calculateFormationSpawns(randomizedRedRoster, 'hostile', mapW, mapH, prng);
+      const redSpawnPlans = FormationPlanner.calculateFormationSpawns(prng.shuffle([...clonedRedRoster]), 'hostile', mapW, mapH, prng);
       redSpawnPlans.forEach(plan => {
         const item = plan.item;
         if (!item) return;
-        const heading = Math.PI + prng.range(-0.08, 0.08);
         const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + prng.int(0, 17) * 1000);
-        const spawnY = plan.isLead ? midY : plan.y;
-
-        const ac = new Aircraft(item.specId, 'hostile', plan.x, spawnY, heading, item.chosenGunId, item.callsign, 'Red Squadron', item.isLead, false, initialAltFt);
+        const ac = new Aircraft(item.specId, 'hostile', plan.x, plan.isLead ? midY : plan.y, Math.PI + prng.range(-0.08, 0.08), item.chosenGunId, item.callsign, 'Red Squadron', item.isLead, false, initialAltFt);
         (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
-        (item.weapons || []).forEach(w => {
-          const wId = (typeof w === 'object' && w !== null) ? (w.id || w.specId) : w;
-          const targetStation = (typeof w === 'object' && w !== null) ? w.station : null;
-          ac.installWeapon(wId, targetStation);
-        });
+        (item.weapons || []).forEach(w => ac.installWeapon((typeof w === 'object' && w !== null) ? (w.id || w.specId) : w, (typeof w === 'object' && w !== null) ? w.station : null));
         ac.recalculateWeight();
         ac.speed = ac.getTargetMach();
         ac.prevSpeed = ac.speed;
@@ -185,25 +171,16 @@ class SortieSpawner {
     } else if (editorMission && editorMission.redFleet === 'HANGAR') {
       const mirrorSquadron = game.procurementSquadron;
       if (mirrorSquadron.length === 0) {
-        const redDiff = editorMission.difficulty;
-        const redBudget = Number(editorMission.redBudget);
-        game.hostileAircraft = FleetGenerator.generateHostileFleet(redDiff, game.aiDoctrine, mapW, mapH, { budget: redBudget });
+        game.hostileAircraft = FleetGenerator.generateHostileFleet(editorMission.difficulty, editorMission.airDoctrine, mapW, mapH, { budget: Number(editorMission.redBudget) });
       } else {
         const spawnPlans = FormationPlanner.calculateFormationSpawns(mirrorSquadron, 'hostile', mapW, mapH, prng);
         spawnPlans.forEach(plan => {
           const item = plan.item;
           if (!item) return;
-          const heading = Math.PI + prng.range(-0.08, 0.08);
           const initialAltFt = (item.specId === 'DARKSTAR') ? 58000 : (20000 + prng.int(0, 17) * 1000);
-          const spawnY = plan.isLead ? midY : plan.y;
-
-          const ac = new Aircraft(item.specId, 'hostile', plan.x, spawnY, heading, item.chosenGunId, `Red ${item.callsign || 'Bandit'}`, 'Red Aggressor Wing', plan.isLead, false, initialAltFt);
+          const ac = new Aircraft(item.specId, 'hostile', plan.x, plan.isLead ? midY : plan.y, Math.PI + prng.range(-0.08, 0.08), item.chosenGunId, `Red ${item.callsign || 'Bandit'}`, 'Red Aggressor Wing', plan.isLead, false, initialAltFt);
           (item.upgrades || []).forEach(u => ac.installUpgrade((typeof u === 'object' && u !== null) ? (u.id || u.specId) : u));
-          (item.weapons || []).forEach(w => {
-            const wId = (typeof w === 'object' && w !== null) ? (w.id || w.specId) : w;
-            const targetStation = (typeof w === 'object' && w !== null) ? w.station : null;
-            ac.installWeapon(wId, targetStation);
-          });
+          (item.weapons || []).forEach(w => ac.installWeapon((typeof w === 'object' && w !== null) ? (w.id || w.specId) : w, (typeof w === 'object' && w !== null) ? w.station : null));
           ac.recalculateWeight();
           ac.speed = ac.getTargetMach();
           ac.prevSpeed = ac.speed;
@@ -221,6 +198,8 @@ class SortieSpawner {
 
     if (!isAttackMode && editorMission && editorMission.defenses === 'OFF') {
       game.surfaceUnits = game.surfaceUnits.filter(unit => unit.type === 'BUNKER' || unit.type === 'AMMO_DUMP');
+    } else if (!isAttackMode && editorMission && editorMission.defenses === 'LIGHT') {
+      game.surfaceUnits = game.surfaceUnits.filter(unit => unit.type === 'BUNKER' || unit.type === 'AMMO_DUMP' || unit.type === 'RADAR_VAN');
     }
 
     game.hostileAircraft.forEach(h => {
@@ -251,13 +230,8 @@ class SortieSpawner {
 
     const pvpSwitcher = document.getElementById('pvp-switcher-bar');
     if (pvpSwitcher) pvpSwitcher.classList.toggle('hidden', !is2P);
-
-    const btnBlue = document.getElementById('btn-switch-blue');
-    const btnRed = document.getElementById('btn-switch-red');
-    if (btnBlue && btnRed) {
-      btnBlue.classList.add('active');
-      btnRed.classList.remove('active');
-    }
+    const btnBlue = document.getElementById('btn-switch-blue'), btnRed = document.getElementById('btn-switch-red');
+    if (btnBlue && btnRed) { btnBlue.classList.add('active'); btnRed.classList.remove('active'); }
 
     if (game.radar) {
       game.radar.cam.showGroundTargets = isAttackMode;
@@ -272,12 +246,10 @@ class SortieSpawner {
 
   static ensureUniqueAircraftCallsigns(game) {
     const used = new Set();
-    const aircraft = [...game.alliedAircraft, ...game.hostileAircraft];
-    aircraft.forEach((unit, index) => {
+    [...game.alliedAircraft, ...game.hostileAircraft].forEach((unit, index) => {
       if (!unit) return;
       const base = String(unit.callsign || `Pilot ${index + 1}`).trim();
-      let callsign = base;
-      let suffix = 2;
+      let callsign = base, suffix = 2;
       while (used.has(callsign.toLowerCase())) callsign = `${base} ${suffix++}`;
       unit.callsign = callsign;
       used.add(callsign.toLowerCase());

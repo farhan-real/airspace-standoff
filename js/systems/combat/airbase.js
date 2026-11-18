@@ -1,5 +1,5 @@
 /**
- * js/systems/combat/airbase.js - Multi-segment runway, takeoff roll, and parking dispatch system.
+ * AIRSPACE STANDOFF: Multi-segment runway, takeoff roll, and parking dispatch system.
  */
 
 class AirbaseSystem {
@@ -19,9 +19,7 @@ class AirbaseSystem {
   };
 
   static getTakeoffSegments(specId) {
-    if (!specId || !(specId in this.TAKEOFF_SEGMENTS)) {
-      throw new Error(`No takeoff segment requirement defined for airframe "${specId}".`);
-    }
+    if (!specId || !(specId in this.TAKEOFF_SEGMENTS)) throw new Error(`No takeoff segment requirement for "${specId}".`);
     return this.TAKEOFF_SEGMENTS[specId];
   }
 
@@ -38,42 +36,29 @@ class AirbaseSystem {
       MASTER: ['Rafale-C', 'Su-57', 'F-22A', 'J-20', 'MiG-31BM', 'MQ-101'],
       LEGEND: ['F-35A', 'Su-57', 'F-22A', 'X-02S', 'MiG-31BM', 'MQ-101']
     };
-    if (!qraDiff || !pools[qraDiff]) {
-      throw new Error(`Invalid QRA roster difficulty "${qraDiff}" in AirbaseSystem.getAirbaseRosterPool.`);
-    }
+    if (!qraDiff || !pools[qraDiff]) throw new Error(`Invalid QRA roster difficulty "${qraDiff}".`);
     return pools[qraDiff];
   }
 
   static assignAirbaseAssets(game, airbaseIds, profile, rng) {
-    if (!game || !profile || typeof profile.airbaseAircraftCount !== 'number') {
-      throw new Error('Invalid game or profile passed to AirbaseSystem.assignAirbaseAssets.');
-    }
-    if (!rng || typeof rng.pick !== 'function') {
-      throw new Error('AirbaseSystem.assignAirbaseAssets requires a valid PRNG instance.');
-    }
+    if (!game || !profile || typeof profile.airbaseAircraftCount !== 'number') throw new Error('Invalid game or profile in assignAirbaseAssets.');
+    if (!rng || typeof rng.pick !== 'function') throw new Error('assignAirbaseAssets requires a valid PRNG instance.');
     const allUnits = game.surfaceUnits;
     if (!Array.isArray(allUnits)) throw new Error('game.surfaceUnits must be an array.');
     const pool = this.getAirbaseRosterPool(profile.qraDifficulty);
     const totalCount = profile.airbaseAircraftCount;
     const parkingNodes = allUnits.filter(u => u.team === 'hostile' && u.isAircraftParking);
-    if (totalCount > 0 && parkingNodes.length === 0) {
-      throw new Error('AirbaseSystem.assignAirbaseAssets cannot assign aircraft without parking structures.');
-    }
+    if (totalCount > 0 && parkingNodes.length === 0) throw new Error('Cannot assign aircraft without parking structures.');
+
     game.airbaseTimers = {};
-    airbaseIds.forEach((id, idx) => {
-      game.airbaseTimers[id] = 10.0 + idx * 9.0;
-    });
+    airbaseIds.forEach((id, idx) => { game.airbaseTimers[id] = 10.0 + idx * 9.0; });
     if (totalCount <= 0) return;
 
     parkingNodes.sort((a, b) => (b.isAircraftShelter ? 2 : (b.isHangar ? 1 : 0)) - (a.isAircraftShelter ? 2 : (a.isHangar ? 1 : 0)));
     for (let i = 0; i < totalCount; i++) {
       const node = parkingNodes[i % parkingNodes.length];
       const specId = rng.pick(pool);
-      node.parkedAircraft.push({
-        specId,
-        takeoffSegments: this.getTakeoffSegments(specId),
-        isLead: (i === 0)
-      });
+      node.parkedAircraft.push({ specId, takeoffSegments: this.getTakeoffSegments(specId), isLead: (i === 0) });
     }
   }
 
@@ -82,18 +67,14 @@ class AirbaseSystem {
     const runs = [];
     let cur = [];
     for (const seg of sorted) {
-      if (seg.hp > 0.05) {
-        cur.push(seg);
-      } else if (cur.length > 0) {
+      if (seg.hp > 0.05) cur.push(seg);
+      else if (cur.length > 0) {
         runs.push({ startIdx: cur[0].segmentIndex, endIdx: cur[cur.length - 1].segmentIndex, length: cur.length, segments: cur });
         cur = [];
       }
     }
-    if (cur.length > 0) {
-      runs.push({ startIdx: cur[0].segmentIndex, endIdx: cur[cur.length - 1].segmentIndex, length: cur.length, segments: cur });
-    }
-    const maxLength = runs.reduce((m, r) => Math.max(m, r.length), 0);
-    return { runs, maxLength, totalIntact: sorted.filter(s => s.hp > 0.05).length };
+    if (cur.length > 0) runs.push({ startIdx: cur[0].segmentIndex, endIdx: cur[cur.length - 1].segmentIndex, length: cur.length, segments: cur });
+    return { runs, maxLength: runs.reduce((m, r) => Math.max(m, r.length), 0), totalIntact: sorted.filter(s => s.hp > 0.05).length };
   }
 
   static getAirbaseIds(game) {
@@ -123,9 +104,7 @@ class AirbaseSystem {
     const destroyedCount = unit.parkedAircraft.length;
     unit.parkedAircraft = [];
     const bonusVp = destroyedCount * 140;
-    if (game.simulation) {
-      game.simulation.logScoreEvent('friendly', bonusVp, `Destroyed ${destroyedCount} parked aircraft on ${unit.name}`);
-    }
+    if (game.simulation) game.simulation.logScoreEvent('friendly', bonusVp, `Destroyed ${destroyedCount} parked aircraft on ${unit.name}`);
     if (game.radar) {
       game.radar.spawnCombatText(unit.x, unit.y, `${destroyedCount} PARKED JETS DESTROYED (+${bonusVp} VP)`, '#00f5a0');
       game.radar.spawnExplosionFX(unit.x, unit.y, true);
@@ -134,27 +113,16 @@ class AirbaseSystem {
 
   static equipQraLoadout(ac, qraDifficulty, fullAmmo) {
     if (ac.maxPylonRating === 'Type S' || ac.spec.isDrone) {
-      if (!ac.installWeapon('MAM', ac.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL')) {
-        throw new Error(`Failed to install MAM on QRA aircraft "${ac.spec.id}".`);
-      }
-      if (fullAmmo && !ac.installWeapon('AIM-9X-2', ac.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL')) {
-        throw new Error(`Failed to install AIM-9X-2 on QRA aircraft "${ac.spec.id}".`);
-      }
+      if (!ac.installWeapon('MAM', ac.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL')) throw new Error(`Failed to install MAM on "${ac.spec.id}".`);
+      if (fullAmmo && !ac.installWeapon('AIM-9X-2', ac.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL')) throw new Error(`Failed to install AIM-9X-2 on "${ac.spec.id}".`);
       return;
     }
-
-    if (!ac.installWeapon('AIM-120D', ac.internalSlots >= 2 ? 'INTERNAL' : 'EXTERNAL')) {
-      throw new Error(`Failed to install AIM-120D on QRA aircraft "${ac.spec.id}".`);
-    }
+    if (!ac.installWeapon('AIM-120D', ac.internalSlots >= 2 ? 'INTERNAL' : 'EXTERNAL')) throw new Error(`Failed to install AIM-120D on "${ac.spec.id}".`);
     if (fullAmmo) {
       const wvrStation = (ac.internalSlots - ac.getUsedInternalSlots() >= 1) ? 'INTERNAL' : 'EXTERNAL';
-      if (!ac.installWeapon('AIM-9X-2', wvrStation)) {
-        throw new Error(`Failed to install AIM-9X-2 on QRA aircraft "${ac.spec.id}".`);
-      }
+      if (!ac.installWeapon('AIM-9X-2', wvrStation)) throw new Error(`Failed to install AIM-9X-2 on "${ac.spec.id}".`);
       if (ac.externalSlots >= 4 && !['CADET', 'BUFFER'].includes(qraDifficulty)) {
-        if (!ac.installWeapon('METEOR', 'EXTERNAL')) {
-          throw new Error(`Failed to install METEOR on QRA aircraft "${ac.spec.id}".`);
-        }
+        if (!ac.installWeapon('METEOR', 'EXTERNAL')) throw new Error(`Failed to install METEOR on "${ac.spec.id}".`);
       }
     }
   }
@@ -163,19 +131,18 @@ class AirbaseSystem {
     if (!profile || typeof profile.dispersalAlertKm !== 'number' || typeof profile.takeoffIntervalSec !== 'number') {
       throw new Error('Invalid profile in AirbaseSystem.updateAirbases.');
     }
+    const docProfile = window.ATTACK_DOCTRINES && window.ATTACK_DOCTRINES[doctrine];
+    if (!docProfile) throw new Error(`Invalid attack doctrine "${doctrine}" in AirbaseSystem.updateAirbases.`);
+
     this.updateGroundOperations(game, dt);
-    if (!game.airbaseTimers) {
-      throw new Error('game.airbaseTimers must be initialized prior to updateAirbases.');
-    }
+    if (!game.airbaseTimers) throw new Error('game.airbaseTimers must be initialized prior to updateAirbases.');
 
     const airbaseIds = this.getAirbaseIds(game);
     const c2Alive = game.surfaceUnits.some(s => s.team === 'hostile' && s.isCommandNode && s.hp > 0.05);
     const liveAllies = game.alliedAircraft.filter(a => a.hp > 0.05);
 
     for (const abId of airbaseIds) {
-      if (typeof game.airbaseTimers[abId] !== 'number') {
-        throw new Error(`Missing airbase timer for "${abId}" in AirbaseSystem.updateAirbases.`);
-      }
+      if (typeof game.airbaseTimers[abId] !== 'number') throw new Error(`Missing airbase timer for "${abId}".`);
       const segs = game.surfaceUnits.filter(s => s.team === 'hostile' && s.isRunwaySegment && s.airbaseId === abId);
       const runInfo = this.getContiguousRuns(segs);
       if (runInfo.maxLength <= 0) continue;
@@ -192,11 +159,12 @@ class AirbaseSystem {
       const openFieldsReady = parking.some(p => p.isOpenField && p.parkedAircraft.some(ac => ac.takeoffSegments <= runInfo.maxLength));
       const dispersalSpeedup = (threatClose && openFieldsReady) ? 0.50 : 1.0;
 
-      const docMult = (doctrine === 'INTERCEPTOR_SCREEN') ? 0.72 : (c2Alive ? 1.0 : 1.40);
+      const docMult = docProfile.takeoffIntervalMult * (c2Alive ? 1.0 : 1.40);
       game.airbaseTimers[abId] -= (dt / (fuelMult * docMult * dispersalSpeedup));
       if (game.airbaseTimers[abId] > 0) continue;
 
-      const launchCount = (Math.random() < profile.scramblePairChance) ? 2 : 1;
+      const pairChance = Math.min(0.95, Math.max(0, profile.scramblePairChance + docProfile.scramblePairBonus));
+      const launchCount = (Math.random() < pairChance) ? 2 : 1;
       let launched = 0;
       for (let k = 0; k < launchCount; k++) {
         if (this.dispatchNextAircraft(game, abId, parking, runInfo.runs, profile)) launched++;
@@ -213,8 +181,7 @@ class AirbaseSystem {
     for (const node of parkingNodes) {
       const acIdx = node.parkedAircraft.findIndex(ac => ac.takeoffSegments <= maxLen);
       if (acIdx !== -1) {
-        chosenNode = node;
-        chosenIdx = acIdx;
+        chosenNode = node; chosenIdx = acIdx;
         chosenRun = runs.find(r => r.length >= node.parkedAircraft[acIdx].takeoffSegments);
         break;
       }
@@ -222,34 +189,22 @@ class AirbaseSystem {
     if (!chosenNode || !chosenRun) return false;
 
     const acDef = chosenNode.parkedAircraft.splice(chosenIdx, 1)[0];
-    const startSeg = chosenRun.segments[0];
-    const endSeg = chosenRun.segments[acDef.takeoffSegments - 1];
+    const startSeg = chosenRun.segments[0], endSeg = chosenRun.segments[acDef.takeoffSegments - 1];
     const rollRefSeg = chosenRun.segments.find(s => s !== startSeg);
     const rollHdg = rollRefSeg ? Math.atan2(rollRefSeg.y - startSeg.y, rollRefSeg.x - startSeg.x) : startSeg.heading;
-    if (!Number.isFinite(rollHdg)) throw new Error(`Invalid runway roll heading computed for airbase "${abId}".`);
+    if (!Number.isFinite(rollHdg)) throw new Error(`Invalid runway roll heading computed for "${abId}".`);
 
-    const callsign = `QRA-${window.PRNG.int(10, 99)}`;
-    const ac = new Aircraft(acDef.specId, 'hostile', chosenNode.x, chosenNode.y, Math.atan2(startSeg.y - chosenNode.y, startSeg.x - chosenNode.x), null, callsign, 'Airbase QRA Wing', acDef.isLead, false, 1000);
-    ac.altFt = 0;
-    ac.alt = 0;
-    ac.speed = 0.14;
-    ac.groundPhase = 'TAXI';
-    ac.airbaseId = abId;
-    ac.takeoffSegmentsReq = acDef.takeoffSegments;
-    ac.taxiTargetSeg = startSeg;
-    ac.rollEndSeg = endSeg;
-    ac.rollHeading = rollHdg;
-    ac.rollSegs = chosenRun.segments.slice(0, acDef.takeoffSegments);
+    const ac = new Aircraft(acDef.specId, 'hostile', chosenNode.x, chosenNode.y, Math.atan2(startSeg.y - chosenNode.y, startSeg.x - chosenNode.x), null, `QRA-${window.PRNG.int(10, 99)}`, 'Airbase QRA Wing', acDef.isLead, false, 1000);
+    ac.altFt = 0; ac.alt = 0; ac.speed = 0.14; ac.groundPhase = 'TAXI'; ac.airbaseId = abId;
+    ac.takeoffSegmentsReq = acDef.takeoffSegments; ac.taxiTargetSeg = startSeg; ac.rollEndSeg = endSeg;
+    ac.rollHeading = rollHdg; ac.rollSegs = chosenRun.segments.slice(0, acDef.takeoffSegments);
 
     const hasMunitionNearby = game.surfaceUnits.some(s => s.team === 'hostile' && s.isMunitionDepot && Math.hypot(s.x - startSeg.x, s.y - startSeg.y) <= 65.0);
     const munitionAlive = game.surfaceUnits.some(s => s.team === 'hostile' && s.isMunitionDepot && s.hp > 0.05 && Math.hypot(s.x - startSeg.x, s.y - startSeg.y) <= 65.0);
-    const fullAmmo = !hasMunitionNearby || munitionAlive;
-
-    this.equipQraLoadout(ac, profile.qraDifficulty, fullAmmo);
+    this.equipQraLoadout(ac, profile.qraDifficulty, !hasMunitionNearby || munitionAlive);
     ac.tacticalRole = 'INTERCEPT';
     ac.recalculateWeight();
     game.hostileAircraft.push(ac);
-
     if (game.radar) game.radar.spawnCombatText(chosenNode.x, chosenNode.y, `TAXIING: ${ac.spec.id} (${acDef.takeoffSegments} SEG)`, '#fbbf24');
     return true;
   }
@@ -259,45 +214,21 @@ class AirbaseSystem {
       if (!ac || ac.hp <= 0.05 || !ac.groundPhase) continue;
       if (ac.groundPhase === 'TAXI') {
         const tgt = ac.taxiTargetSeg;
-        if (!tgt || tgt.hp <= 0.05) {
-          ac.hp = 0;
-          if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, 'RUNWAY CRATERED - TAXI ABORT', '#f43f5e');
-          continue;
-        }
+        if (!tgt || tgt.hp <= 0.05) { ac.hp = 0; if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, 'RUNWAY CRATERED - TAXI ABORT', '#f43f5e'); continue; }
         const dx = tgt.x - ac.x, dy = tgt.y - ac.y;
-        const dist = Math.hypot(dx, dy);
-        ac.heading = Math.atan2(dy, dx);
-        ac.speed = 0.14;
-        ac.altFt = 0;
-        if (dist <= 0.8) {
-          ac.groundPhase = 'TAKEOFF';
-          ac.heading = ac.rollHeading;
-          ac.speed = 0.25;
-          if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, `TAKEOFF ROLL: ${ac.spec.id}`, '#f43f5e');
-        }
+        ac.heading = Math.atan2(dy, dx); ac.speed = 0.14; ac.altFt = 0;
+        if (Math.hypot(dx, dy) <= 0.8) { ac.groundPhase = 'TAKEOFF'; ac.heading = ac.rollHeading; ac.speed = 0.25; if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, `TAKEOFF ROLL: ${ac.spec.id}`, '#f43f5e'); }
       } else if (ac.groundPhase === 'TAKEOFF') {
         if (ac.rollSegs.some(s => !s || s.hp <= 0.05)) {
           ac.hp = 0;
-          if (game.radar) {
-            game.radar.spawnExplosionFX(ac.x, ac.y, false);
-            game.radar.spawnCombatText(ac.x, ac.y, 'TAKEOFF CRASH (CRATERED)', '#00f5a0');
-          }
+          if (game.radar) { game.radar.spawnExplosionFX(ac.x, ac.y, false); game.radar.spawnCombatText(ac.x, ac.y, 'TAKEOFF CRASH (CRATERED)', '#00f5a0'); }
           if (game.simulation) game.simulation.recordKillEvent('friendly', ac, null, { weapon: { name: 'Runway Denial' } });
           continue;
         }
-        ac.heading = ac.rollHeading;
-        ac.speed = Math.min(0.75, ac.speed + 0.25 * dt);
-        ac.altFt = 0;
+        ac.heading = ac.rollHeading; ac.speed = Math.min(0.75, ac.speed + 0.25 * dt); ac.altFt = 0;
         const end = ac.rollEndSeg;
-        const passedEnd = !end || Math.hypot(end.x - ac.x, end.y - ac.y) <= 1.5 ||
-          ((end.x - ac.x) * Math.cos(ac.rollHeading) + (end.y - ac.y) * Math.sin(ac.rollHeading) <= 0);
-        if (ac.speed >= 0.58 && passedEnd) {
-          ac.groundPhase = null;
-          ac.altFt = 2500;
-          ac.targetAltFt = 24000;
-          ac.speed = Math.max(0.68, ac.getTargetMach());
-          if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, `AIRBORNE: ${ac.spec.id}`, '#f43f5e');
-        }
+        const passedEnd = !end || Math.hypot(end.x - ac.x, end.y - ac.y) <= 1.5 || ((end.x - ac.x) * Math.cos(ac.rollHeading) + (end.y - ac.y) * Math.sin(ac.rollHeading) <= 0);
+        if (ac.speed >= 0.58 && passedEnd) { ac.groundPhase = null; ac.altFt = 2500; ac.targetAltFt = 24000; ac.speed = Math.max(0.68, ac.getTargetMach()); if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, `AIRBORNE: ${ac.spec.id}`, '#f43f5e'); }
       }
     }
   }

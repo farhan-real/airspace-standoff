@@ -1,25 +1,7 @@
 /**
- * AIRSPACE STANDOFF: Attack Mode Difficulty Tiers & Ground IADS Doctrines
+ * AIRSPACE STANDOFF: Attack Mode Difficulty Tiers
  * Balanced target counts, layered SAM belts, finite airbase stocks, and scramble cadence aligned to player ordnance capacity.
  */
-
-window.ATTACK_DOCTRINES = {
-  BALANCED: {
-    id: 'BALANCED',
-    name: 'BALANCED IADS',
-    desc: 'Standard layered SAM coverage paired with steady airfield QRA interceptor scrambles.'
-  },
-  AMBUSH_IADS: {
-    id: 'AMBUSH_IADS',
-    name: 'EMCON AMBUSH',
-    desc: 'Strict EMCON emission discipline, decoy emitter sites, and delayed SAM fire-control locks inside engagement envelopes.'
-  },
-  INTERCEPTOR_SCREEN: {
-    id: 'INTERCEPTOR_SCREEN',
-    name: 'QRA SCRAMBLE',
-    desc: 'Prioritizes rapid airfield QRA scrambles from hardened shelters and dispersal pads to intercept strike aircraft.'
-  }
-};
 
 window.ATTACK_DIFFICULTIES = {
   RECON_STRIKE: {

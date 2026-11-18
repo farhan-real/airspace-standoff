@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Simulation System Orchestrator
- * Real-time time warp, weather cloud generation, combat physics loop, Attack mode objectives, and victory evaluations.
+ * Real-time time warp, weather cloud generation, combat physics loop, and Attack mode updates.
  */
 
 class SimulationSystem {
@@ -101,9 +101,7 @@ class SimulationSystem {
     return sys;
   }
 
-  initWeatherClouds() {
-    this.weatherClouds = this.getAtmosphereSystem().createClouds(this.cloudCoverage);
-  }
+  initWeatherClouds() { this.weatherClouds = this.getAtmosphereSystem().createClouds(this.cloudCoverage); }
 
   initGhostContacts() {
     this.ghostContacts = [];
@@ -153,8 +151,8 @@ class SimulationSystem {
         this.currentWave++;
         const mapW = window.CONFIG.THEATER_WIDTH_KM;
         const mapH = window.CONFIG.THEATER_HEIGHT_KM;
-        const redReinforcements = FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'hostile', mapW, mapH, this.game.aiDifficulty);
-        const blueReinforcements = FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'friendly', mapW, mapH, this.game.aiDifficulty);
+        const redReinforcements = FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'hostile', mapW, mapH, this.game.aiDifficulty, this.game.aiDoctrine);
+        const blueReinforcements = FleetGenerator.generateDynamicSquadronWave(this.currentWave, 'friendly', mapW, mapH, this.game.aiDifficulty, this.game.aiDoctrine);
         const mission = this.game.activeMissionEditorConfig;
         if (mission && window.MissionEditor) {
           if (mission.redWeapons === 'RANDOM') window.MissionEditor.randomizeWeaponsForFleet(redReinforcements);
@@ -173,7 +171,8 @@ class SimulationSystem {
       AttackDirector.update(this.game, dt);
     }
 
-    this.updateCommandTokens(dt);
+    if (typeof SimulationRules === 'undefined') throw new Error('SimulationRules is not loaded.');
+    SimulationRules.updateCommandTokens(this, dt);
     this.detection.update(dt);
 
     const isAttackMode = (this.game.scenarioMode === 'ATTACK');
@@ -198,7 +197,7 @@ class SimulationSystem {
     for (const m of this.game.missiles) m.update(dt, this.weatherClouds);
     this.game.missiles = this.game.missiles.filter(m => !m.isDead);
 
-    this.resolveUnitFocus();
+    SimulationRules.resolveUnitFocus(this);
     this.game.ai.update(dt);
     this.game.avionics.updateRWRState();
 
@@ -214,118 +213,7 @@ class SimulationSystem {
       this.sampleFleetStrength();
     }
 
-    this.checkWinConditions(dt);
-  }
-
-  updateCommandTokens(dt) {
-    const baseRegen = window.CONFIG.TOKEN_BASE_REGEN;
-    const perAcRegen = window.CONFIG.TOKEN_PER_AIRCRAFT_REGEN;
-    const maxToken = window.CONFIG.TOKEN_MAX;
-
-    const liveAllies = this.game.alliedAircraft.filter(a => a.hp > 0.05);
-    const allyDatalinkTotal = liveAllies.reduce((sum, a) => sum + (a.datalinkBonus || 0), 0);
-    const regenBlue = baseRegen + perAcRegen * liveAllies.length + allyDatalinkTotal;
-    this.game.tokenBucketBlue = Math.min(maxToken, this.game.tokenBucketBlue + regenBlue * dt);
-
-    const liveHostiles = this.game.hostileAircraft.filter(h => h.hp > 0.05);
-    const hostileDatalinkTotal = liveHostiles.reduce((sum, h) => sum + (h.datalinkBonus || 0), 0);
-    const regenRed = baseRegen + perAcRegen * liveHostiles.length + hostileDatalinkTotal;
-    this.game.tokenBucketRed = Math.min(maxToken, this.game.tokenBucketRed + regenRed * dt);
-
-    const currentTokens = this.game.getCurrentCommanderTokenBucket();
-    const currentRegen = (this.game.currentPvpCommander === 'friendly') ? regenBlue : regenRed;
-
-    const tokenBar = document.getElementById('token-bar');
-    const tokenVal = document.getElementById('token-value');
-    const tokenRate = document.getElementById('token-regen-rate');
-    if (tokenBar) tokenBar.style.width = Math.min(100, (currentTokens / maxToken) * 100) + '%';
-    if (tokenVal) tokenVal.textContent = currentTokens.toFixed(1) + ' / ' + maxToken.toFixed(1);
-    if (tokenRate) tokenRate.textContent = '+' + currentRegen.toFixed(1) + '/s';
-  }
-
-  resolveUnitFocus() {
-    if (this.game.activeUnit && this.game.activeUnit.hp <= 0.05) {
-      const roster = (this.game.currentPvpCommander === 'friendly') ? this.game.alliedAircraft : this.game.hostileAircraft;
-      const nextLive = roster.find(a => a.hp > 0.05);
-      if (nextLive) {
-        this.game.activeUnit = nextLive;
-        if (this.game.radar && this.game.radar.cam && this.game.radar.cam.trackingUnit) {
-          this.game.radar.cam.trackActiveCraft(nextLive);
-        }
-      }
-    }
-    const tgt = this.game.selectedTarget;
-    const isMsl = Boolean(tgt && tgt.weapon && tgt.target);
-    const isGnd = Boolean(tgt && tgt.type && !tgt.spec && !tgt.isCivilian);
-    const gndShown = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
-    const inspOpen = Boolean(this.game.inspection && this.game.inspection.isOpen);
-    if (tgt && ((typeof tgt.hp === 'number' && tgt.hp <= 0.05) || tgt.isDissolved || tgt.isDead || (isMsl && !inspOpen) || (isGnd && !gndShown))) {
-      this.game.selectedTarget = null;
-      const targetInfo = document.getElementById('selected-target-info');
-      if (targetInfo) targetInfo.textContent = 'TARGET: NONE';
-    }
-  }
-
-  checkWinConditions(dt = 0.016) {
-    const vpAllyEl = document.getElementById('vp-ally');
-    const vpHostileEl = document.getElementById('vp-hostile');
-    if (vpAllyEl) { vpAllyEl.textContent = this.game.vpAlly; vpAllyEl.style.color = (this.game.vpAlly < 0) ? '#f43f5e' : ''; }
-    if (vpHostileEl) { vpHostileEl.textContent = this.game.vpHostile; vpHostileEl.style.color = (this.game.vpHostile < 0) ? '#f43f5e' : ''; }
-
-    for (const h of this.game.hostileAircraft) { if (h && h.hp <= 0.05) h.hp = 0; }
-    for (const a of this.game.alliedAircraft) { if (a && a.hp <= 0.05) a.hp = 0; }
-
-    if (this.victoryDelayTimer > 0) {
-      this.victoryDelayTimer -= dt;
-      if (this.victoryDelayTimer <= 0 && this.pendingGameOver) {
-        this.game.triggerGameOver(this.pendingGameOver.blueWon, this.pendingGameOver.reason);
-        this.pendingGameOver = null;
-      }
-      return;
-    }
-
-    const allAlliesDead = this.game.alliedAircraft.length > 0 && this.game.alliedAircraft.every(a => a.hp <= 0.05);
-    if (allAlliesDead) {
-      this.victoryDelayTimer = 2.8;
-      this.pendingGameOver = { blueWon: false, reason: 'ALL ALLIED AIR ASSETS NEUTRALIZED' };
-      this.captureReplayFrame(true);
-      return;
-    }
-
-    if (this.game.scenarioMode === 'ATTACK') {
-      if (typeof AttackDirector === 'undefined') throw new Error('AttackDirector is not loaded.');
-      const obj = AttackDirector.getObjectiveSummary(this.game);
-      if (obj.total > 0 && obj.remaining === 0) {
-        this.victoryDelayTimer = 2.8;
-        this.pendingGameOver = { blueWon: true, reason: `ALL ${obj.total} PRIMARY STRIKE OBJECTIVES DESTROYED` };
-        this.captureReplayFrame(true);
-        if (this.game.radar) {
-          this.game.radar.spawnCombatText(window.CONFIG.THEATER_WIDTH_KM * 0.75, window.CONFIG.THEATER_HEIGHT_KM * 0.5, 'ALL OBJECTIVES DESTROYED', '#00f5a0');
-        }
-      }
-      return;
-    }
-
-    const allHostilesDead = this.game.hostileAircraft.length > 0 && this.game.hostileAircraft.every(h => h.hp <= 0.05);
-    const hasUpcomingWaves = this.game.scenarioMode === 'DYNAMIC_THEATER' && this.game.playerMode !== '2P' && this.currentWave <= 3;
-
-    if (allHostilesDead && !hasUpcomingWaves) {
-      const hostileBunkerDestroyed = this.game.surfaceUnits.some(s => s.type === 'BUNKER' && s.team === 'hostile' && s.hp <= 0.05);
-      const winReason = hostileBunkerDestroyed
-        ? 'ALL HOSTILE AIR ASSETS NEUTRALIZED & COMMAND BUNKER DESTROYED'
-        : 'ALL HOSTILE AIR ASSETS NEUTRALIZED: AIR SUPERIORITY SECURED';
-
-      this.victoryDelayTimer = 2.8;
-      this.pendingGameOver = { blueWon: true, reason: winReason };
-      this.captureReplayFrame(true);
-      if (this.game.radar) {
-        const lastEnemy = this.game.hostileAircraft[this.game.hostileAircraft.length - 1];
-        const cx = (lastEnemy && Number.isFinite(lastEnemy.x)) ? lastEnemy.x : (window.CONFIG.THEATER_WIDTH_KM / 2);
-        const cy = (lastEnemy && Number.isFinite(lastEnemy.y)) ? lastEnemy.y : (window.CONFIG.THEATER_HEIGHT_KM / 2);
-        this.game.radar.spawnCombatText(cx, cy, 'AIR SUPERIORITY SECURED', '#00f0ff');
-        this.game.radar.spawnShockwave(cx, cy, '#00f0ff', 48);
-      }
-    }
+    SimulationRules.checkWinConditions(this, dt);
   }
 }
 

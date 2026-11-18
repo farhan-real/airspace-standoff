@@ -17,7 +17,7 @@ class MissionBuilder {
       const affordable = catalog.filter(spec => Number(spec.cost) <= remaining);
       if (affordable.length === 0) break;
       const spec = window.PRNG.pick(affordable);
-      const planned = FleetGenerator.planAircraftLoadout(spec, false, mission.doctrine, mission.difficulty, window.PRNG);
+      const planned = FleetGenerator.planAircraftLoadout(spec, false, mission.airDoctrine, mission.difficulty, window.PRNG);
       const loadoutCost = Number(planned.totalCost) || Number(spec.cost) || 20;
       if (loadoutCost > remaining) {
         const light = affordable.filter(candidate => Number(candidate.cost) <= remaining)
@@ -43,7 +43,7 @@ class MissionBuilder {
     if (!aircraft || typeof FleetGenerator === 'undefined') return;
     const spec = aircraft.spec || (window.AIRCRAFT_CATALOG || {})[aircraft.specId];
     if (!spec) return;
-    const plan = FleetGenerator.planAircraftLoadout(spec, aircraft.isAce, mission.doctrine, mission.difficulty, window.PRNG);
+    const plan = FleetGenerator.planAircraftLoadout(spec, aircraft.isAce, mission.airDoctrine, mission.difficulty, window.PRNG);
     this.replaceAircraftWeapons(aircraft, plan.weapons || []);
   }
 
