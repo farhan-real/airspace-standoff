@@ -147,6 +147,23 @@ window.GROUND_BASES = {
     vpValue: 300,
     desc: 'Regional missile depot (10 HP). Destroying it triggers a 7.5 km secondary detonation, doubles nearby SAM reload times, and restricts missile payloads on launching fighters.'
   },
+  'LOGISTICS_HUB': {
+    id: 'LOGISTICS_HUB',
+    name: 'Airbase Readiness Logistics Hub',
+    role: 'Runway Support & Rearmament Depot',
+    category: 'LOGISTICS',
+    armorClass: 'ARMORED',
+    hp: 8,
+    rangeKm: 55.0,
+    secondaryBlastRadiusKm: 4.5,
+    secondaryBlastDamage: 4,
+    isLogisticsHub: true,
+    isPrimaryCandidate: false,
+    canAttack: false,
+    concealedUntilActive: false,
+    vpValue: 260,
+    desc: 'Airfield rearming and runway engineering hub (8 HP, Armored). Accelerates QRA interceptor launches by 18% while intact and triggers a 4.5 km secondary blast when hit.'
+  },
   'AMMO_DUMP': {
     id: 'AMMO_DUMP',
     name: 'Allied Munitions Center (Indestructible)',

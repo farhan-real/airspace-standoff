@@ -1,5 +1,5 @@
 /**
- * js/systems/entities/surfacecombat.js - Ground IADS SAM firing, TFR masking, AAA flak, CIWS & ATTACK_DOCTRINES modifiers.
+ * js/systems/entities/surfacecombat.js - Ground IADS SAM firing, hybrid AAA+SAM, TFR masking & ATTACK_DOCTRINES modifiers.
  */
 
 class SurfaceCombatSystem {
@@ -77,7 +77,7 @@ class SurfaceCombatSystem {
 
     if (unit.canInterceptMissiles && unit.fireCooldown <= 0) this.handlePointDefense(unit, enemyMissilesList, mods);
     if ((unit.isAaaGun || unit.type === 'PANTSIR') && unit.fireCooldown <= 0) this.handleAaaFire(unit, enemyAircraftList, mods);
-    if (unit.canAttack && !unit.isAaaGun && unit.missileSpec && unit.fireCooldown <= 0) {
+    if (unit.canAttack && unit.missileSpec && unit.fireCooldown <= 0) {
       this.handleSamFire(unit, enemyAircraftList, spawnedMissiles, radarArrayActive, mods);
     }
   }

@@ -155,12 +155,15 @@ class AirbaseSystem {
       const hasFuelNearby = game.surfaceUnits.some(s => s.team === 'hostile' && s.isFuelDepot && Math.hypot(s.x - centerSeg.x, s.y - centerSeg.y) <= 55.0);
       const fuelMult = (hasFuelNearby && !fuelAlive) ? 1.35 : 1.0;
 
+      const logisticsAlive = game.surfaceUnits.some(s => s.team === 'hostile' && s.isLogisticsHub && s.hp > 0.05 && Math.hypot(s.x - centerSeg.x, s.y - centerSeg.y) <= 65.0);
+      const logisticsMult = logisticsAlive ? 0.82 : 1.0;
+
       const threatClose = liveAllies.some(a => Math.hypot(a.x - centerSeg.x, a.y - centerSeg.y) <= profile.dispersalAlertKm);
       const openFieldsReady = parking.some(p => p.isOpenField && p.parkedAircraft.some(ac => ac.takeoffSegments <= runInfo.maxLength));
       const dispersalSpeedup = (threatClose && openFieldsReady) ? 0.50 : 1.0;
 
       const docMult = docProfile.takeoffIntervalMult * (c2Alive ? 1.0 : 1.40);
-      game.airbaseTimers[abId] -= (dt / (fuelMult * docMult * dispersalSpeedup));
+      game.airbaseTimers[abId] -= (dt / (fuelMult * logisticsMult * docMult * dispersalSpeedup));
       if (game.airbaseTimers[abId] > 0) continue;
 
       const pairChance = Math.min(0.95, Math.max(0, profile.scramblePairChance + docProfile.scramblePairBonus));

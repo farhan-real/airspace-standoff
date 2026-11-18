@@ -6,8 +6,12 @@ const requiredManualModules = [
   ['MANUAL_BASICS', window.MANUAL_BASICS],
   ['MANUAL_SENSORS', window.MANUAL_SENSORS],
   ['MANUAL_COMBAT', window.MANUAL_COMBAT],
+  ['MANUAL_SYSTEMS', window.MANUAL_SYSTEMS],
+  ['MANUAL_DOCTRINES', window.MANUAL_DOCTRINES],
   ['MANUAL_THEATER', window.MANUAL_THEATER],
   ['MANUAL_ATTACK', window.MANUAL_ATTACK],
+  ['MANUAL_GROUND', window.MANUAL_GROUND],
+  ['MANUAL_GROUND_TACTICS', window.MANUAL_GROUND_TACTICS],
   ['MANUAL_OPERATIONS', window.MANUAL_OPERATIONS],
   ['MANUAL_CONTROLS', window.MANUAL_CONTROLS]
 ];
@@ -22,26 +26,34 @@ window.FLIGHT_MANUAL = [
   ...window.MANUAL_BASICS,
   ...window.MANUAL_SENSORS,
   ...window.MANUAL_COMBAT,
+  ...window.MANUAL_SYSTEMS,
+  ...window.MANUAL_DOCTRINES,
   ...window.MANUAL_THEATER,
   ...window.MANUAL_ATTACK,
+  ...window.MANUAL_GROUND,
+  ...window.MANUAL_GROUND_TACTICS,
   ...window.MANUAL_OPERATIONS,
   ...window.MANUAL_CONTROLS
 ];
 
 window.initFlightManual = function() {
   const chapters = [
-    { id: 'ch1_quickstart', label: '01: DOCTRINE & ROE' },
+    { id: 'ch1_quickstart', label: '01: BASICS & FLIGHT LEAD' },
     { id: 'ch2_kinematics', label: '02: KINEMATICS & POWER' },
     { id: 'ch3_stress_coffin', label: '03: G-STRESS & COFFIN' },
     { id: 'ch4_radar_physics', label: '04: RADAR & STEALTH RCS' },
     { id: 'ch5_classification_uplink', label: '05: SENSORS & UPLINK' },
     { id: 'ch6_weapons_salvos', label: '06: MISSILES & SALVOS' },
     { id: 'ch7_defense_ew', label: '07: DEFENSES & EW' },
-    { id: 'ch8_aces_difficulties', label: '08: ACES & THREAT TIERS' },
-    { id: 'ch9b_attack_iads', label: '09B: GROUND ATTACK & IADS' },
-    { id: 'ch10_mission_editor', label: '10: MISSION EDITOR' },
-    { id: 'ch11_inspection', label: '11: INSPECTION MODE' },
-    { id: 'ch12_debrief_replay', label: '12: DEBRIEF & REPLAY' },
+    { id: 'ch8_pods_systems', label: '08: PODS & SYSTEMS' },
+    { id: 'ch9_doctrines', label: '09: AIR & ATTACK DOCTRINES' },
+    { id: 'ch10_aces_difficulties', label: '10: ACES & AIR TIERS' },
+    { id: 'ch11_ground_objectives', label: '11: GROUND ARMOR & ORDNANCE' },
+    { id: 'ch12_ground_iads', label: '12: RUNWAYS & IADS UNITS' },
+    { id: 'ch13_ground_tactics', label: '13: SEAD & GROUND TACTICS' },
+    { id: 'ch14_mission_editor', label: '14: MISSION EDITOR' },
+    { id: 'ch15_inspection', label: '15: INSPECTION MODE' },
+    { id: 'ch16_debrief_replay', label: '16: DEBRIEF & REPLAY' },
     { id: 'ref_controls', label: 'CONTROLS & KEYBINDS', isSpecial: true }
   ];
 
@@ -103,7 +115,7 @@ window.initFlightManual = function() {
       scrollToTarget(targetMatch);
     }
     const cnt = document.getElementById('manual-search-count');
-    if (cnt) cnt.textContent = `${currentMatchIndex + 1}/${currentMatches.length}`;
+    if (cnt) cnt.textContent = `${currentMatchIndex + 1} of ${currentMatches.length}`;
   };
 
   const highlightMatches = (query, shouldScroll = false) => {
@@ -141,7 +153,7 @@ window.initFlightManual = function() {
       if (shouldScroll) jumpToMatch(0);
       else {
         currentMatches[0].classList.add('current');
-        if (cnt) cnt.textContent = `1/${currentMatches.length}`;
+        if (cnt) cnt.textContent = `1 of ${currentMatches.length}`;
       }
     } else if (act) {
       act.classList.add('active');
@@ -177,7 +189,7 @@ window.initFlightManual = function() {
       c.innerHTML = `
         <div style="text-align:center;padding:40px;color:#8494ab;font-family:var(--font-mono);font-size:0.80rem;">
           <b style="color:var(--theme-accent);">NO PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
-          <p style="margin-top:6px;font-size:0.72rem;">Try "Attack", "IADS", "Targeting Pod", "EMCON", "Notch", or "Controls".</p>
+          <p style="margin-top:6px;font-size:0.72rem;">Try "Doctrine", "Pods", "Runways", "Tunguska", "Targeting Pod", "EMCON", or "Controls".</p>
         </div>`;
       return;
     }
@@ -200,9 +212,8 @@ window.initFlightManual = function() {
         </div>`;
     }).join('');
 
-    if (q.length >= 2) {
-      highlightMatches(q, shouldScrollToMatch);
-    } else {
+    if (q.length >= 2) highlightMatches(q, shouldScrollToMatch);
+    else {
       if (act) act.classList.remove('active');
       if (cnt) cnt.textContent = '';
       currentMatches = [];
@@ -245,14 +256,9 @@ window.initFlightManual = function() {
     if (nextBtn) nextBtn.onclick = () => jumpToMatch(currentMatchIndex + 1);
     if (clearBtn) {
       clearBtn.onclick = () => {
-        if (searchInput) {
-          searchInput.value = '';
-          renderChapters('', false);
-          searchInput.focus();
-        }
+        if (searchInput) { searchInput.value = ''; renderChapters('', false); searchInput.focus(); }
       };
     }
-
     if (navPrevBtn) {
       const nav = document.getElementById('manual-quick-nav-bar');
       if (nav) navPrevBtn.onclick = () => nav.scrollBy({ left: -180, behavior: 'smooth' });
@@ -290,8 +296,5 @@ window.initFlightManual = function() {
   if (openHudBtn) openHudBtn.onclick = openModal;
 };
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', window.initFlightManual);
-} else {
-  window.initFlightManual();
-}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.initFlightManual);
+else window.initFlightManual();

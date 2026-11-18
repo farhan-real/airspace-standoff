@@ -1,6 +1,6 @@
 /**
  * AIRSPACE STANDOFF: Procedural Attack Theater Generator (240km x 160km)
- * Deploys layered IADS defenses, multi-segment 5-point Runways, and ATTACK_DOCTRINES force compositions.
+ * Deploys layered IADS defenses, multi-segment 5-point Runways, logistics hubs, and ATTACK_DOCTRINES units.
  */
 
 class AttackTheaterGenerator {
@@ -87,6 +87,10 @@ class AttackTheaterGenerator {
         const a = runwayAnchors[hs % runwayAnchors.length];
         addUnit('HARDENED_SHELTER', a.centerX - 5 + Math.floor(hs / runwayAnchors.length) * 6, a.centerY - 6.5, { airbaseId: a.abId, customName: `Airbase ${a.baseNum} Shelter ${hs + 1}`, isPrimaryObjective: primaryObjectives.length < objCount });
       }
+      for (let lh = 0; lh < profile.logisticsHubCount; lh++) {
+        const a = runwayAnchors[lh % runwayAnchors.length];
+        addUnit('LOGISTICS_HUB', a.centerX + 10, a.centerY + (lh % 2 === 0 ? 11.0 : -11.0), { airbaseId: a.abId });
+      }
     }
 
     const infraTypes = ['FACTORY_SAM', 'BRIDGE_LOGISTICS'];
@@ -140,8 +144,7 @@ class AttackTheaterGenerator {
     for (let md = 0; md < profile.munitionCount; md++) { const pt = placeFree(118, rearMaxX - 16, 22, mapH - 22, 10.0); addUnit('MUNITION_DUMP', pt.x, pt.y); }
 
     const baseSr = this.requirePool(profile.srSamPool, profile.srSamCount, 'srSamPool', diffKey);
-    const srTotal = baseSr + docProfile.extraSrSam;
-    for (let s = 0; s < srTotal; s++) {
+    for (let s = 0; s < baseSr + docProfile.extraSrSam; s++) {
       const anchor = primaryObjectives[s % primaryObjectives.length];
       const pt = placeFree(Math.max(76, anchor.x - 14), Math.min(mapW - 12, anchor.x + 10), Math.max(14, anchor.y - 12), Math.min(mapH - 14, anchor.y + 12), 7.0);
       const srType = (doctrineKey === 'AMBUSH_IADS' && s >= baseSr) ? (diffKey === 'RECON_STRIKE' ? 'SAM_AVENGER' : 'SAM_RAPIER')
@@ -166,7 +169,7 @@ class AttackTheaterGenerator {
 
     for (let d = 0; d < profile.decoyCount + docProfile.extraDecoy; d++) {
       const pt = placeFree(78, 175, 20, mapH - 20, 9.0);
-      addUnit('RADAR_DECOY', pt.x, pt.y);
+      addUnit((d % 2 === 1 || doctrineKey === 'AMBUSH_IADS') ? 'DECOY_THERMAL' : 'RADAR_DECOY', pt.x, pt.y);
     }
 
     if (profile.lrSamCount >= 2 || profile.ewRadarCount >= 3) {

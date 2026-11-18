@@ -1,12 +1,12 @@
 /**
- * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 10 to 12
+ * AIRSPACE STANDOFF: Flight Manual Submodule: Sections 14 to 16
  * Covers: Mission Editor, Visual Inspection Analysis & Debriefing Replay
  */
 
 window.MANUAL_OPERATIONS = [
   {
-    id: 'ch10_mission_editor',
-    title: 'SECTION 10: MISSION EDITOR & CUSTOM SORTIE GENERATOR',
+    id: 'ch14_mission_editor',
+    title: 'SECTION 14: MISSION EDITOR & CUSTOM SORTIE GENERATOR',
     desc: `
       <div class="ge-desc">
         Access the <b>MISSION EDITOR</b> from the Hangar header bar to construct tailored combat engagements. Test airframe doctrines, force ratios, and weapon configurations in an unranked combat laboratory.
@@ -91,8 +91,8 @@ window.MANUAL_OPERATIONS = [
     `
   },
   {
-    id: 'ch11_inspection',
-    title: 'SECTION 11: INSPECTION MODE, LIVE C4ISR &amp; AI COGNITION ANALYSIS',
+    id: 'ch15_inspection',
+    title: 'SECTION 15: INSPECTION MODE, LIVE C4ISR & AI COGNITION ANALYSIS',
     desc: `
       <div class="ge-desc">
         Enable <b>INSPECTION MODE</b> inside the Mission Editor to unlock an advanced real-time C4ISR telemetry workspace while keeping cockpit flight controls, banking, and missile releases fully functional.
@@ -109,109 +109,42 @@ window.MANUAL_OPERATIONS = [
       </div>
 
       <div class="ge-subhead">2. ACTIVE AI CONTROL ARROWS (RADAR VIEWPORT SYMBOLOGY)</div>
-      <div class="ge-desc">
-        In Inspection Mode, the radar viewport renders a small, dedicated downward-pointing arrow directly above every enemy aircraft currently under active AI commander control:
-      </div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid var(--color-red);">
           <b style="color:var(--color-red);">ACTIVE AI CONTROL ARROW</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            An inverted chevron arrow rendered at the top of the contact pointing straight down indicates that the AI Commander is currently dedicating an active cognitive attention slot to that airframe. The unit is actively executing aggressive steering, energy optimization, or computing firing solutions.
+            An inverted chevron arrow rendered at the top of the contact pointing straight down indicates that the AI Commander is currently dedicating an active cognitive attention slot to that airframe.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid var(--color-moon-mist);">
           <b style="color:var(--color-moon-mist);">STANDBY &amp; AUTONOMOUS PATROL</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Enemy aircraft without an arrow are flying on autonomous standby patrol awaiting a free attention slot. They adhere to basic navigation guidelines but lack real-time tactical commander guidance until prioritized.
+            Enemy aircraft without an arrow are flying on autonomous standby patrol awaiting a free attention slot.
           </div>
         </div>
       </div>
 
-      <div class="ge-subhead">3. AI COGNITIVE PROFILE &amp; ATTENTION TELEMETRY</div>
-      <div class="ge-desc">
-        When an enemy aircraft is selected during inspection, the <b>OVERVIEW</b> tab displays the <b>AI COGNITIVE PROFILE</b> dossier, revealing the active fleet doctrine, cognitive state, command hierarchy, and difficulty-scaled role execution:
-      </div>
-      <div class="table-scroll-wrapper">
-        <table class="ge-table">
-          <thead>
-            <tr><th>COGNITIVE PARAMETER</th><th>OPERATIONAL FUNCTION &amp; TACTICAL SIGNIFICANCE</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="color:#fbbf24;font-weight:800;">AI Doctrine</td>
-              <td>Displays the active Air Combat Doctrine or Ground Attack Defense Doctrine governing the adversary's fleet-wide strategy.</td>
-            </tr>
-            <tr>
-              <td style="color:#00f0ff;font-weight:800;">Tactical Role</td>
-              <td>Displays active combat mission: <code>STANDOFF SNIPER</code>, <code>HIGH-SPEED INTERCEPTOR</code>, <code>WVR DOGFIGHTER</code>, <code>SWARM FLIGHT SCREEN</code>, <code>FORMATION ESCORT</code>, <code>SEAD ESCORT</code>, <code>STRIKE INTERDICTION</code>, <code>STEALTH AMBUSH</code>, <code>AIR DOMINANCE SWEEP</code>, or <code>COMMAND FLAGSHIP</code>.</td>
-            </tr>
-            <tr>
-              <td style="color:#00f5a0;font-weight:800;">Commander Focus</td>
-              <td>Displays whether the airframe is currently locked into an active attention slot and shows the countdown timer (in seconds) before focus is re-evaluated.</td>
-            </tr>
-            <tr>
-              <td style="color:#38bdf8;font-weight:800;">Active Focus Slots</td>
-              <td>Shows current bandwidth utilization against total cognitive capacity (1 slot on early tiers, 2 on mid tiers, up to 3 on top tiers).</td>
-            </tr>
-            <tr>
-              <td style="color:#ffd700;font-weight:800;">Squadron Posture</td>
-              <td>Indicates high-level doctrine: <code>OFFENSIVE SWEEP</code> vs <code>DEFENSIVE HOLD</code>.</td>
-            </tr>
-            <tr>
-              <td style="color:#f43f5e;font-weight:800;">Formation Role</td>
-              <td>Reveals formation placement: Flight Lead, Wingman (with designated element partner callsign), or Independent Element.</td>
-            </tr>
-            <tr>
-              <td style="color:#c084fc;font-weight:800;">Chain of Command</td>
-              <td>Reports command health and hesitation timers if the Flight Lead is eliminated.</td>
-            </tr>
-            <tr>
-              <td style="color:#fbbf24;font-weight:800;">Behavioral Discipline</td>
-              <td>Displays probability ratings for executing Doppler notching break turns and filtering MALD decoy drones under current combat stress.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="ge-subhead">4. THE 6 DIAGNOSTIC WORKSPACE TABS</div>
+      <div class="ge-subhead">3. AI COGNITIVE PROFILE &amp; THE 6 WORKSPACE TABS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
             <tr><th>WORKSPACE TAB</th><th>DIAGNOSTIC DISPLAY &amp; TACTICAL TELEMETRY</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td style="color:#00f0ff;font-weight:800;">OVERVIEW</td>
-              <td>Segmented armor integrity pips, Mach corner velocity turn efficiency gauge, flight level altitude and VSI rate, kinetic energy recovery meter, AI cognition dossier (with active doctrine, tactical role, and behavioral assessment for enemies), and complete stores inventory.</td>
-            </tr>
-            <tr>
-              <td style="color:#00f5a0;font-weight:800;">SENSORS</td>
-              <td>Onboard radar specifications, active target locks, stealth RCS spectrum bar, aspect spike factors (nose-on, beam 90 deg, tail), and horizontal range-versus-distance comparison tracks for all contacts in beam.</td>
-            </tr>
-            <tr>
-              <td style="color:#ffd700;font-weight:800;">WEAPONS</td>
-              <td>Dynamic hit probability (P_k percentage gauge), factor-by-factor breakdown (proportional navigation, energy deficit, cloud scattering), and inbound threat alerts with step-by-step countermeasure protocols.</td>
-            </tr>
-            <tr>
-              <td style="color:#38bdf8;font-weight:800;">GRAPHS</td>
-              <td>Dynamic Launch Zone (DLZ), 360-degree RCS polar radiation diagram, turn speed gauge, rolling 60s speed and altitude history, and live fleet combat value curve.</td>
-            </tr>
-            <tr>
-              <td style="color:#c084fc;font-weight:800;">EVENTS</td>
-              <td>Chronological Causal Log recording weapon launches, missile intercepts, chaff deployments, and kill events. Tap any event to inspect detailed launch range, speed, and probability factors.</td>
-            </tr>
-            <tr>
-              <td style="color:#38bdf8;font-weight:800;">DATA</td>
-              <td>Complete raw telemetry registry: exact spatial coordinates (km), flight level, Mach airspeed, heading in degrees and radians, G-load stress, hardware components, and raw AI cognitive variables.</td>
-            </tr>
+            <tr><td style="color:#00f0ff;font-weight:800;">OVERVIEW</td><td>Armor pips, corner turn gauge, VSI rate, active AI Doctrine &amp; Cognition dossier (Role, Focus Slots, Posture, Succession), and stores inventory.</td></tr>
+            <tr><td style="color:#00f5a0;font-weight:800;">SENSORS</td><td>Radar specs, active locks, stealth RCS spectrum, aspect spike factors, and range comparison tracks.</td></tr>
+            <tr><td style="color:#ffd700;font-weight:800;">WEAPONS</td><td>Dynamic hit probability (Pk), factor breakdown (ProNav, energy, clouds), and inbound missile defense steps.</td></tr>
+            <tr><td style="color:#38bdf8;font-weight:800;">GRAPHS</td><td>Dynamic Launch Zone (DLZ), 360&deg; RCS polar diagram, turn speed gauge, 60s flight history, and fleet combat power curve.</td></tr>
+            <tr><td style="color:#c084fc;font-weight:800;">EVENTS</td><td>Chronological Causal Log recording launches, intercepts, chaff deployments, and kills.</td></tr>
+            <tr><td style="color:#38bdf8;font-weight:800;">DATA</td><td>Complete raw telemetry registry: coordinates, FL, Mach, heading, stress, upgrades, and AI state variables.</td></tr>
           </tbody>
         </table>
       </div>
     `
   },
   {
-    id: 'ch12_debrief_replay',
-    title: 'SECTION 12: MISSION DEBRIEFS, REPLAYS & SQUADRON ARCHIVE',
+    id: 'ch16_debrief_replay',
+    title: 'SECTION 16: MISSION DEBRIEFS, REPLAYS & SQUADRON ARCHIVE',
     desc: `
       <div class="ge-desc">
         Upon sortie completion or mission abort, the After Action Report provides complete performance metrics, pilot podium rankings, chronological engagement timelines, and interactive sortie replays.

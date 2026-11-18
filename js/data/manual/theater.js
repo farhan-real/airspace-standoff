@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 8 to 9
- * Threat tiers, separated Air Combat Doctrines, tactical roles, IADS & scoring formulas.
+ * AIRSPACE STANDOFF: Flight Manual Submodule: Section 10
+ * Covers: Adversary Cadre, 6 Behavioral Dimensions, Difficulty Tiers, Tactical Roles & Scoring
  */
 
 if (!window.MANUAL_THEATER_TABLES) {
@@ -9,31 +9,14 @@ if (!window.MANUAL_THEATER_TABLES) {
 
 window.MANUAL_THEATER = [
   {
-    id: 'ch8_aces_difficulties',
-    title: 'SECTION 08: ADVERSARY COMBAT DOCTRINE, DIFFICULTY TIERS & PLANNING',
+    id: 'ch10_aces_difficulties',
+    title: 'SECTION 10: ADVERSARY CADRE, AIR DIFFICULTY TIERS & PLANNING',
     desc: `
-      <div class="ge-subhead">1. AIR COMBAT FLEET DOCTRINES (SQUADRON-WIDE STRATEGY)</div>
       <div class="ge-desc">
-        Distinct from individual aircraft roles, your selected <b>Air Combat Doctrine</b> shapes the entire enemy squadron's aircraft drafting, weapon choices, positioning, firing discipline, and evasive habits:
-      </div>
-      <div class="table-scroll-wrapper">
-        <table class="ge-table">
-          <thead>
-            <tr><th>AIR DOCTRINE</th><th>FLEET COMPOSITION</th><th>BATTLEFIELD BEHAVIOR</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><b style="color:#38bdf8;">Balanced</b></td><td>Standard difficulty mix</td><td>Normal BVR spacing, standard energy control, and balanced defensive pacing.</td></tr>
-            <tr><td><b style="color:#f43f5e;">Aggressive Rush</b></td><td>Fast interceptors &amp; agile fighters</td><td>Pushes straight ahead on high throttle, fires early, and forces close-range dogfights.</td></tr>
-            <tr><td><b style="color:#00f0ff;">Long-Range Standoff</b></td><td>BVR missile carriers &amp; ramjets</td><td>Climbs high (+6,000 ft), fires long-range missiles early, and cranks or drags away from merges.</td></tr>
-            <tr><td><b style="color:#a855f7;">Stealth Ambush</b></td><td>Stealth airframes with internal bays</td><td>Flanks along north and south edges at low throttle and holds fire for high-Pk broadside shots.</td></tr>
-            <tr><td><b style="color:#fbbf24;">Drone Swarm</b></td><td>Massed unmanned UCAVs &amp; MALD decoys</td><td>Sends wide drone waves ahead of manned leads to soak missiles and saturate radar locks.</td></tr>
-            <tr><td><b style="color:#c084fc;">Electronic Jamming</b></td><td>Multiple EW escorts &amp; AESA fighters</td><td>Holds jammers in a central umbrella behind forward fighters while focusing fire on enemy sensors.</td></tr>
-            <tr><td><b style="color:#00f5a0;">Defensive Hold</b></td><td>Durable multirole &amp; long-range fighters</td><td>Patrols inside friendly base cover, saves missiles for high-odds shots, and RTBs early to rearm.</td></tr>
-          </tbody>
-        </table>
+        See <b>Section 09</b> for full breakdowns of all 7 Air Combat Doctrines and 7 Ground Attack Doctrines. Below are the 6 pilot behavioral dimensions, difficulty scaling across all 10 Air Combat tiers, and individual tactical roles.
       </div>
 
-      <div class="ge-subhead">2. THE 6 BEHAVIORAL DIMENSIONS</div>
+      <div class="ge-subhead">1. THE 6 BEHAVIORAL DIMENSIONS</div>
       <div class="ge-grid-2">
         <div class="ge-card">
           <b style="color:#38bdf8;">1. TARGET FOCUS &amp; DECOY IDENTIFICATION</b>
@@ -73,7 +56,7 @@ window.MANUAL_THEATER = [
         </div>
       </div>
 
-      <div class="ge-subhead">3. EXPLOITING ENEMY WEAKNESSES</div>
+      <div class="ge-subhead">2. EXPLOITING ENEMY WEAKNESSES</div>
       <div class="ge-card" style="border-left:3px solid #00f5a0;">
         <ul style="list-style:none;padding-left:0;font-size:0.72rem;line-height:1.55;color:#cbd5e1;">
           <li style="margin-bottom:5px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Exploit Approach Routes:</b> High-difficulty and Stealth Ambush flights sweep around outer edges. Fly stealth jets along the sides to hit them while their radars face inward.</li>
@@ -83,13 +66,13 @@ window.MANUAL_THEATER = [
         </ul>
       </div>
 
-      <div class="ge-subhead">4. THE 10 COMBAT DIFFICULTY TIERS</div>
+      <div class="ge-subhead">3. THE 10 COMBAT DIFFICULTY TIERS</div>
       <div class="ge-desc">
         Adversary forces scale across pilot discipline, tactical decision-making, and package coordination rather than mathematical cheating. Below is the operational comparison across all theater difficulty tiers:
       </div>
       ${window.MANUAL_THEATER_TABLES.difficultyComparisonTable}
 
-      <div class="ge-subhead">5. AIRFRAME WEIGHT &amp; STEALTH RULES</div>
+      <div class="ge-subhead">4. AIRFRAME WEIGHT &amp; STEALTH RULES</div>
       <div class="ge-desc">
         Aerodynamic weight tuning and stealth cleanliness are applied selectively based on airframe design and combat mission:
         <ul style="list-style:none;padding-left:0;margin-top:6px;">
@@ -100,13 +83,13 @@ window.MANUAL_THEATER = [
         </ul>
       </div>
 
-      <div class="ge-subhead">6. TACTICAL COMBAT ROLES &amp; DIFFICULTY INTELLIGENCE</div>
+      <div class="ge-subhead">5. TACTICAL COMBAT ROLES &amp; DIFFICULTY INTELLIGENCE</div>
       <div class="ge-desc">
         Adversary aircraft operate under ten distinct combat roles within the chosen Air Combat Doctrine:
       </div>
       ${window.MANUAL_THEATER_TABLES.tacticalRolesGrid}
 
-      <div class="ge-subhead">7. WEAPON RANGE CLASSES &amp; ORDNANCE PROFILES</div>
+      <div class="ge-subhead">6. WEAPON RANGE CLASSES &amp; ORDNANCE PROFILES</div>
       <div class="ge-grid-2">
         <div class="ge-card">
           <b style="color:var(--stat-tier-1);">THE 4 WEAPON RANGE CLASSES</b>
@@ -131,12 +114,12 @@ window.MANUAL_THEATER = [
         </div>
       </div>
 
-      <div class="ge-subhead">8. THEATER LOGISTICS, DEPOTS &amp; COMBAT SCORING FORMULAS</div>
+      <div class="ge-subhead">7. THEATER LOGISTICS, DEPOTS &amp; COMBAT SCORING FORMULAS</div>
       <div class="ge-grid-2">
         <div class="ge-card">
           <b style="color:var(--stat-tier-2);">STRATEGIC GROUND TARGETS &amp; VP VALUES</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Command Bunker (18 HP, +800 VP) &bull; SAM Battery (+220 to +400 VP) &bull; Radar Array (+250 to +320 VP) &bull; EW Jammer (+250 to +280 VP) &bull; CIWS (+220 VP) &bull; Fuel Depot (+200 VP) &bull; Mobile Radar (+150 VP). Munitions Centers are hardened indestructible safe zones.
+            Command Bunker (18 HP, +800 VP) &bull; SAM Battery (+220 to +400 VP) &bull; Radar Array (+250 to +420 VP) &bull; EW Jammer (+250 to +280 VP) &bull; CIWS (+220 VP) &bull; Fuel Depot (+200 VP) &bull; Logistics Hub (+260 VP) &bull; Mobile Radar (+150 VP). Munitions Centers are hardened indestructible safe zones.
           </div>
         </div>
         <div class="ge-card">

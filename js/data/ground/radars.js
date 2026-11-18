@@ -37,6 +37,24 @@ window.GROUND_RADARS = {
     vpValue: 320,
     desc: 'High-power 3D phased-array search radar (110 km reach). Rapidly classifies tracks and cues S-400 and Patriot batteries.'
   },
+  'RADAR_BUNKER': {
+    id: 'RADAR_BUNKER',
+    name: 'Hardened Strategic Radome',
+    role: 'Fortified Concrete Sector EW Radar',
+    category: 'EW_RADAR',
+    armorClass: 'FORTIFIED',
+    hp: 13,
+    rangeKm: 122.0,
+    lookDownBonus: 0.72,
+    counterStealthMult: 1.5,
+    minDetectAltFt: 2400,
+    isEmitter: true,
+    isPrimaryCandidate: true,
+    canAttack: false,
+    concealedUntilActive: false,
+    vpValue: 420,
+    desc: 'Concrete-shielded sector early warning radome (122 km reach, 13 HP Fortified). Resists light fragments; requires Bunker Penetrators or heavy ARMs.'
+  },
   'EW_RADAR_GAPFILLER': {
     id: 'EW_RADAR_GAPFILLER',
     name: '96L6-1 Mast Gap-Filler Radar',
@@ -54,6 +72,24 @@ window.GROUND_RADARS = {
     concealedUntilActive: true,
     vpValue: 260,
     desc: 'Elevated mast-mounted all-altitude radar (78 km reach). Strips low-altitude horizon masking, lowering nearby LR SAM engagement floors.'
+  },
+  'EW_RADAR_MOBILE_3D': {
+    id: 'EW_RADAR_MOBILE_3D',
+    name: 'Giraffe AMB Mobile Gap-Filler',
+    role: 'Agile Low-Altitude Surveillance Radar',
+    category: 'EW_RADAR',
+    armorClass: 'SOFT',
+    hp: 4,
+    rangeKm: 64.0,
+    lookDownBonus: 0.82,
+    counterStealthMult: 1.3,
+    minDetectAltFt: 850,
+    lowAltCueBonus: true,
+    isEmitter: true,
+    canAttack: false,
+    concealedUntilActive: true,
+    vpValue: 220,
+    desc: 'Mobile 3D low-altitude surveillance mast (64 km reach). Tracks terrain-skimming aircraft down to 850 ft to feed nearby SAM sites.'
   },
   'RADAR_ARRAY': {
     id: 'RADAR_ARRAY',
@@ -165,5 +201,22 @@ window.GROUND_RADARS = {
     concealedUntilActive: true,
     vpValue: 0,
     desc: 'Inflatable SAM mockup with active RF transponder broadcasting false S-400 radar sweeps to draw anti-radiation ordnance. Exposed by Targeting Pods or close flyby.'
+  },
+  'DECOY_THERMAL': {
+    id: 'DECOY_THERMAL',
+    name: 'Thermal & Visual SAM Mockup',
+    role: 'Heated False Signature Bait Site',
+    category: 'DECOY',
+    armorClass: 'SOFT',
+    hp: 2,
+    rangeKm: 42.0,
+    isGroundDecoy: true,
+    requiresHighGradeTgp: true,
+    spoofsType: 'SAM_BUK',
+    isEmitter: true,
+    canAttack: false,
+    concealedUntilActive: true,
+    vpValue: 0,
+    desc: 'Realistic decoy SAM with diesel heat generators and RF spoofing. Resists basic visual scans; requires advanced Targeting Pods (45 km+) or close flyby to expose.'
   }
 };

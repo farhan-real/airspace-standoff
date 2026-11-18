@@ -10,6 +10,13 @@ window.GROUND_SAMS = {
     missileSpec: { id: '48N6DM_SAM', name: '48N6DM Long-Range SAM', rangeKm: 82.0, speedMach: 5.4, seeker: 'ARH', category: 'SAM', trait: 'SURFACE_SAM', rcs: 0.14, lambda: 0.24, p: 1.0, damage: 4, T_0: 0.74 },
     desc: 'Strategic area-denial SAM (82 km range, Mach 5.4). Effective above 6,500 ft; low-altitude attackers can terrain-mask unless cued by a Gap-Filler radar.'
   },
+  'SAM_HQ9': {
+    id: 'SAM_HQ9', name: 'HQ-9B Long-Range SAM', role: 'Track-Via-Missile Area Denial SAM',
+    category: 'LR_SAM', armorClass: 'ARMORED', hp: 8, rangeKm: 76.0, cooldownMax: 6.0,
+    minAltFt: 5500, cuedMinAltFt: 3000, requiresEwCue: true, canAttack: true, isEmitter: true, concealedUntilActive: true, vpValue: 370,
+    missileSpec: { id: 'HQ9B_SAM', name: 'HQ-9B Active AESA SAM', rangeKm: 76.0, speedMach: 4.8, seeker: 'ARH', category: 'SAM', trait: 'SURFACE_SAM', antiNotchBonus: 0.20, rcs: 0.12, lambda: 0.22, p: 1.1, damage: 4, T_0: 0.76 },
+    desc: 'AESA track-via-missile long-range SAM (76 km range, Mach 4.8). Higher mid-course guidance resistance makes Doppler notching harder.'
+  },
   'SAM_PATRIOT': {
     id: 'SAM_PATRIOT', name: 'MIM-104F Patriot PAC-3', role: 'High-Agility Long-Range SAM',
     category: 'LR_SAM', armorClass: 'ARMORED', hp: 7, rangeKm: 68.0, cooldownMax: 5.8,
@@ -37,6 +44,13 @@ window.GROUND_SAMS = {
     minAltFt: 2200, cuedMinAltFt: 1500, requiresEwCue: false, canAttack: true, isEmitter: true, concealedUntilActive: true, vpValue: 260,
     missileSpec: { id: 'AMRAAM_ER_SAM', name: 'Surface-Launched AMRAAM-ER', rangeKm: 40.0, speedMach: 3.5, seeker: 'ARH', category: 'SAM', trait: 'NETWORKED_LOAL', rcs: 0.05, lambda: 0.26, p: 1.0, damage: 3, T_0: 0.77 },
     desc: 'Rapid-firing medium SAM launcher (40 km). Fires low-RCS AMRAAM-ER interceptors with short reload cycles.'
+  },
+  'SAM_HAWK': {
+    id: 'SAM_HAWK', name: 'MIM-23 Hawk Phase III', role: 'Upgraded Medium-Range SAM',
+    category: 'MR_SAM', armorClass: 'SOFT', hp: 4, rangeKm: 36.0, cooldownMax: 5.8,
+    minAltFt: 2400, cuedMinAltFt: 1600, requiresEwCue: false, canAttack: true, isEmitter: true, concealedUntilActive: true, vpValue: 230,
+    missileSpec: { id: 'MIM23K_SAM', name: 'MIM-23K Upgraded SAM', rangeKm: 36.0, speedMach: 2.9, seeker: 'ARH', category: 'SAM', trait: 'SURFACE_SAM', rcs: 0.12, lambda: 0.30, p: 1.0, damage: 3, T_0: 0.70 },
+    desc: 'Modernized medium-range SAM battery (36 km, Mach 2.9). Guards border sectors and forward airbases.'
   },
   'SAM_KUB': {
     id: 'SAM_KUB', name: '2K12 Kub (SA-6 Gainful)', role: 'Legacy Semi-Active Medium SAM',
@@ -79,6 +93,14 @@ window.GROUND_SAMS = {
     minAltFt: 1000, cuedMinAltFt: 1000, canAttack: false, canInterceptMissiles: true, interceptAccuracy: 0.72,
     isEmitter: true, concealedUntilActive: true, vpValue: 220,
     desc: 'Rapid-cycling SeaRAM point-defense turret (7.5 km intercept perimeter). Dedicated counter-PGM defense targeting SDBs, glide bombs, and subsonic cruise missiles.'
+  },
+  'AAA_TUNGUSKA': {
+    id: 'AAA_TUNGUSKA', name: '2K22M Tunguska Hybrid AAA', role: 'Twin 30mm SPAAG & 9M311 SHORAD',
+    category: 'AAA', armorClass: 'ARMORED', hp: 5, rangeKm: 11.5, cooldownMax: 2.2,
+    minAltFt: 1000, cuedMinAltFt: 1000, requiresEwCue: false, aaaRangeKm: 6.5, aaaMaxAltFt: 14500, aaaDamage: 1.1,
+    isAaaGun: true, canAttack: true, canInterceptMissiles: true, interceptAccuracy: 0.45, isEmitter: true, concealedUntilActive: true, vpValue: 185,
+    missileSpec: { id: '9M311_SAM', name: '9M311 Optical Command SAM', rangeKm: 11.5, speedMach: 2.8, seeker: 'EO', category: 'SAM', trait: 'HOBS_VANE', rcs: 0.03, lambda: 0.28, p: 1.0, damage: 2, T_0: 0.74 },
+    desc: 'Armored hybrid anti-aircraft system pairing twin 30mm flak cannons (6.5 km) with optical 9M311 missiles (11.5 km) and 45% glide-bomb interception.'
   },
   'AAA_SHILKA': {
     id: 'AAA_SHILKA', name: 'ZSU-23-4M4 Shilka AAA', role: 'Low-Altitude Quad 23mm Autocannon',

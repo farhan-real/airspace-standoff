@@ -82,6 +82,7 @@ class SpecsFacilitiesViews {
     const floorText = (s.minAltFt && s.minAltFt > 1000)
       ? `${s.minAltFt.toLocaleString()} ft (${s.cuedMinAltFt ? s.cuedMinAltFt.toLocaleString() + ' ft cued' : 'fixed'})`
       : '1,000 ft (All Low Altitude)';
+    const hybridText = (s.isAaaGun && s.missileSpec) ? `Twin Flak (${s.aaaRangeKm} km) &amp; ${s.missileSpec.name} (${s.rangeKm} km)` : null;
 
     return `
       <div class="inspect-type-banner">
@@ -93,9 +94,12 @@ class SpecsFacilitiesViews {
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>DESIGNATION:</span><b style="color:#00f0ff;">${s.name || s.type}</b></div>
         <div class="inspect-stat-item"><span>ARMOR INTEGRITY:</span><b style="color:${s.isIndestructible ? '#00f5a0' : '#f8fafc'};">${hpTag}</b></div>
-        <div class="inspect-stat-item"><span>ENGAGEMENT / COVERAGE:</span><b>${s.rangeKm ? s.rangeKm + ' km' : 'Static Facility'}</b></div>
+        <div class="inspect-stat-item"><span>ENGAGEMENT &amp; COVERAGE:</span><b>${s.rangeKm ? s.rangeKm + ' km' : 'Static Facility'}</b></div>
         <div class="inspect-stat-item"><span>MIN ENGAGEMENT FLOOR:</span><b>${s.canAttack ? floorText : 'N/A'}</b></div>
         <div class="inspect-stat-item"><span>EMISSIONS PROFILE:</span><b style="color:${s.isEmitter ? '#f97316' : '#00f5a0'};">${s.isEmitter ? 'ACTIVE RADAR / RF EMITTER (ARM TARGETABLE)' : 'PASSIVE / SILENT (IMMUNE TO ARM)'}</b></div>
+        ${hybridText ? `<div class="inspect-stat-item"><span>HYBRID BATTERY:</span><b style="color:#38bdf8;">${hybridText}</b></div>` : ''}
+        ${s.isLogisticsHub ? `<div class="inspect-stat-item"><span>AIRBASE SUPPORT:</span><b style="color:#fbbf24;">Accelerates QRA Launches by 18% While Intact</b></div>` : ''}
+        ${s.isGroundDecoy ? `<div class="inspect-stat-item"><span>DECOY EXPOSURE:</span><b style="color:#fbbf24;">${s.spec && s.spec.requiresHighGradeTgp ? 'Requires 45+ km Targeting Pod or 15 km Flyby' : 'Exposed by Any Targeting Pod or 22 km Flyby'}</b></div>` : ''}
         ${s.secondaryBlastRadiusKm ? `<div class="inspect-stat-item"><span>SECONDARY DETONATION:</span><b style="color:#f97316;">${s.secondaryBlastRadiusKm} km Splash (${s.secondaryBlastDamage} HP)</b></div>` : ''}
       </div>
       <div class="inspect-desc-box">

@@ -1,132 +1,118 @@
 /**
- * AIRSPACE STANDOFF: Flight Manual Submodule: Section 09B
- * Covers: Ground Attack Gamemode, 240x160 IADS Theater, Multi-Segment Runways, Attack Doctrines & Tiers
+ * AIRSPACE STANDOFF: Flight Manual Submodule: Section 11
+ * Covers: Ground Attack Theater Rules, Objectives, Armor Classes, Secondary Blasts & A2G Ordnance
  */
 
 window.MANUAL_ATTACK = [
   {
-    id: 'ch9b_attack_iads',
-    title: 'SECTION 09B: GROUND ATTACK MODE, DEFENSE DOCTRINES & IADS',
+    id: 'ch11_ground_objectives',
+    title: 'SECTION 11: GROUND OBJECTIVES, ARMOR CLASSES & A2G ORDNANCE',
     desc: `
       <div class="ge-desc">
-        <b>SINGLE PLAYER ATTACK</b> shifts focus to deep air-to-ground operations across an expanded <b>240 km &times; 160 km</b> tactical theater defended by interconnected radar networks, layered SAM belts, AAA, and active multi-segment airbases.
+        <b>SINGLE PLAYER ATTACK</b> shifts operations to an expanded <b>240 km &times; 160 km</b> ground combat theater defended by interconnected surface radar networks, layered SAM belts, CIWS point defense, low-altitude AAA flak, and active multi-segment airbases.
       </div>
 
-      <div class="ge-subhead">1. ATTACK DEFENSE DOCTRINES (GROUND &amp; AIRBASE STRATEGY)</div>
-      <div class="table-scroll-wrapper">
-        <table class="ge-table">
-          <thead>
-            <tr><th>ATTACK DOCTRINE</th><th>DEFENSE FOCUS</th><th>OPERATIONAL IMPACT ON THEATER</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><b style="color:#38bdf8;">Balanced Defense</b></td><td>Mixed IADS &amp; QRA</td><td>Standard layered SAM belts paired with steady airfield interceptor launches.</td></tr>
-            <tr><td><b style="color:#a855f7;">Silent Radar Ambush</b></td><td>EMCON &amp; Decoys</td><td>Holds SAM fire deeper inside envelope, shuts radars off fast against ARMs (+20% EMCON), adds passive SHORAD and decoy sites.</td></tr>
-            <tr><td><b style="color:#f43f5e;">Fast Air Scramble</b></td><td>QRA Interceptors</td><td>Starts with +1 airborne CAP fighter, cuts runway takeoff timers by 35%, launches in pairs, and pushes fighters forward.</td></tr>
-            <tr><td><b style="color:#00f0ff;">Heavy SAM Wall</b></td><td>Long &amp; Medium SAMs</td><td>Adds extra LR and MR SAMs plus an EW radar, reduces SAM reload times by 22%, and engages at full range.</td></tr>
-            <tr><td><b style="color:#c084fc;">Heavy Jamming Shield</b></td><td>Electronic Warfare</td><td>Adds extra ground broadband jammer, substation, and decoy while boosting jammer strength by 25%.</td></tr>
-            <tr><td><b style="color:#00f5a0;">Tight Base Defense</b></td><td>CIWS &amp; Point Defense</td><td>Adds extra CIWS turrets and Tor SHORAD around objectives (+14% bomb and missile intercept rate) with CAP orbiting targets.</td></tr>
-            <tr><td><b style="color:#fbbf24;">Low-Altitude Flak Belt</b></td><td>AAA &amp; Gap-Fillers</td><td>Adds +2 AAA flak guns and a gap-filler radar, firing 28% faster with higher flak hit accuracy against low flyers.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="ge-subhead">2. VICTORY OBJECTIVES &amp; GROUND ARMOR CLASSES</div>
+      <div class="ge-subhead">1. VICTORY OBJECTIVES &amp; STRATEGIC VALUE</div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #ffd700;">
           <b style="color:#ffd700;">PRIMARY OBJECTIVES [OBJ]</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Strategic targets marked with gold <b>[OBJ]</b> brackets (C2 Bunkers, Military Runways, Hardened Shelters, Logistics Bridges, SAM Assembly Plants) must be neutralized to win the sortie.
+            Strategic targets marked with gold <b>[OBJ]</b> brackets (C2 Bunkers, Multi-Segment Runways, Hardened Aircraft Shelters, Supply Bridges, SAM Assembly Plants) must all be destroyed or neutralized to win the sortie.
           </div>
         </div>
-        <div class="ge-card" style="border-left:3px solid #f43f5e;">
-          <b style="color:#f43f5e;">SOFT, ARMORED &amp; FORTIFIED ARMOR</b>
+        <div class="ge-card" style="border-left:3px solid #38bdf8;">
+          <b style="color:#38bdf8;">SUPPORTING IADS &amp; LOGISTICS NODES</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            <b>SOFT</b> (Radars, AAA, Fuel Depots, Open Fields): full damage from all ordnance.<br>
-            <b>ARMORED</b> (SAMs, Hangars, Munition Dumps): full damage from ATGMs, PGMs, AP cannons, and clusters.<br>
-            <b>FORTIFIED</b> (C2 Bunkers, Runways, HAS, Bridges): deflect 80% of light rockets and frag; use <b>Bunker Penetrators</b> or heavy cruise missiles!
+            Secondary sites (EW Radars, Power Substations, Comms Towers, Fuel Depots, Munition Dumps, Logistics Hubs) are optional to win, but knocking them out cripples enemy SAM accuracy, cuts jamming power, slows scrambles, and triggers secondary explosions!
           </div>
         </div>
       </div>
 
-      <div class="ge-subhead">3. MULTI-SEGMENT RUNWAYS, TAKEOFF LENGTHS &amp; PARKED AIRCRAFT</div>
-      <div class="ge-grid-2">
-        <div class="ge-card" style="border-left:3px solid #00f0ff;">
-          <b style="color:#00f0ff;">5-SEGMENT LONG RUNWAYS (3,500M STRIP)</b>
-          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Every airbase operates a 5-segment runway (700m per section). Different aircraft require different contiguous intact runway lengths:<br>
-            &bull; <b>4 Segments:</b> Heavy Interceptors &amp; Bombers (MiG-31BM, Su-34)<br>
-            &bull; <b>3 Segments:</b> Standard Fighters (Su-35S, F-15EX, J-20, Su-57)<br>
-            &bull; <b>2 Segments:</b> STOL &amp; Light Jets (JAS-39E, F-16V, MiG-29K, F-35A)<br>
-            &bull; <b>1 Segment:</b> Swarm UCAVs (MQ-101)<br>
-            Bombing the <b>middle segment</b> grounds 3-to-4-segment jets immediately while 2-segment jets can still launch from either remaining half. Cutting both quarters (segments 2 and 4) leaves only 1-segment fragments and neutralizes manned flight operations.
-          </div>
-        </div>
-        <div class="ge-card" style="border-left:3px solid #fbbf24;">
-          <b style="color:#fbbf24;">OPEN FIELDS, HANGARS &amp; TAXIING JETS</b>
-          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Airbases hold finite stationed aircraft inside <b>Open Fields</b> (3 HP Soft), <b>Hangars</b> (8 HP Armored), and <b>Hardened Shelters</b> (10 HP Fortified). Destroying a storage structure destroys every jet parked inside. Before taking off, jets visibly <b>taxi</b> to an intact runway slice and perform a <b>takeoff roll</b> where they can be bombed or strafed on the ground.
-          </div>
-        </div>
-      </div>
-
-      <div class="ge-subhead">4. IADS NETWORK ARCHITECTURE &amp; SUPPORT NODES</div>
+      <div class="ge-subhead">2. GROUND ARMOR CLASSES &amp; EXACT DAMAGE MULTIPLIERS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>INSTALLATION TYPE</th><th>SYSTEM MODELS</th><th>TACTICAL FUNCTION &amp; WEAKNESS</th></tr>
+            <tr><th>ARMOR CLASS</th><th>TYPICAL INSTALLATIONS</th><th>WEAPON PENETRATION &amp; DAMAGE MULTIPLIERS</th></tr>
           </thead>
           <tbody>
             <tr>
-              <td style="color:#00f0ff;font-weight:800;">EW Radars</td>
-              <td>Nebo-M VHF (135km), Big Bird AESA (110km), 96L6 Gap-Filler (78km)</td>
-              <td>VHF degrades stealth RCS; Gap-Filler drops LR SAM altitude floors down to 2,500 to 4,500 ft. Prime ARM targets.</td>
+              <td style="color:#00f5a0;font-weight:800;">SOFT</td>
+              <td>EW Radars, Mobile Vans, Strela/Rapier/Kub, Shilka, 57mm Flak, Fuel Depots, Open Pads, Comms, Power Nodes, Decoys</td>
+              <td>Takes <b>100% full damage</b> from every A2G weapon, unguided rocket, cluster submunition, and autocannon burst.</td>
             </tr>
             <tr>
-              <td style="color:#f43f5e;font-weight:800;">Long-Range SAMs</td>
-              <td>S-400 (82km), Patriot PAC-3 (68km), S-300V4 (92km)</td>
-              <td>High-altitude area denial (Mach 4.9 to 6.0). Dive below 6,500 ft (or neutralize Gap-Fillers) to mask beneath their horizon.</td>
+              <td style="color:#fbbf24;font-weight:800;">ARMORED</td>
+              <td>S-400, Patriot, S-300V4, HQ-9B, Buk-M3, NASAMS, Tor-M2, CIWS, Gepard, Tunguska, Hangars, Munition Dumps, Logistics Hubs</td>
+              <td><b>100% damage</b> from ATGMs, Precision Bombs, Cruise Missiles, ARMs, or AP &ge; 0.70 weapons. Takes <b>65% damage</b> from light unguided rockets and basic cluster fragments.</td>
             </tr>
             <tr>
-              <td style="color:#f97316;font-weight:800;">Medium &amp; Short SAMs</td>
-              <td>Buk-M3, NASAMS-3, Kub, Tor-M2, Rapier Optical, Strela and Avenger IR</td>
-              <td>Buk operates independently; Rapier &amp; Avenger emit zero radar warning (immune to ARMs; spot via Targeting Pod!).</td>
-            </tr>
-            <tr>
-              <td style="color:#38bdf8;font-weight:800;">CIWS &amp; Low-Alt AAA</td>
-              <td>SeaRAM (7.5km PD), Pantsir-S1 (7.5km PD), Shilka 23mm, Gepard 35mm, 57mm Flak</td>
-              <td>CIWS intercepts slow glide bombs and subsonic cruise missiles within 7.5 km (saturate with salvos). Fast Mach 1+ passes cut AAA hit rates.</td>
-            </tr>
-            <tr>
-              <td style="color:#c084fc;font-weight:800;">Jammers, ELINT &amp; Comms</td>
-              <td>Krasukha-4 Jammer, Avtobaza ELINT, C4I Comms Towers, Power Substations</td>
-              <td>Neutralizing Power Substations cuts jammer strength by 55%; destroying Comms breaks long-range EW-to-SAM handoff; ELINT is silent.</td>
-            </tr>
-            <tr>
-              <td style="color:#fbbf24;font-weight:800;">Depots &amp; Decoys</td>
-              <td>Fuel Depots, Munition Depots, SAM Radar Decoys</td>
-              <td>Fuel &amp; Munition dumps detonate in secondary blasts, slow scrambles, and double SAM reload delays. Targeting Pods expose Decoys.</td>
+              <td style="color:#f43f5e;font-weight:800;">FORTIFIED</td>
+              <td>Command Bunkers (18 HP), Runways (7 HP/seg), Hardened Shelters (10 HP), Radomes (13 HP), Supply Bridges (9 HP)</td>
+              <td>Deflects <b>80%</b> of light rockets and fragments (0.20x damage), or <b>50%</b> for mid-AP weapons. Use <b>Bunker Penetrators</b> (1.0x full damage) or <b>Anti-Runway</b> bombs (<b>2.0x vs Runways</b>)!</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="ge-subhead">5. THE 10 GROUND ATTACK DIFFICULTY TIERS</div>
+      <div class="ge-subhead">3. SECONDARY EXPLOSIONS &amp; NETWORK SABOTAGE EFFECTS</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>TIER</th><th>SCORE</th><th>OBJ AND QRA JETS</th><th>KEY IADS &amp; BEHAVIOR PROFILE</th></tr>
+            <tr><th>SUPPORT FACILITY</th><th>BLAST RADIUS &amp; DAMAGE</th><th>NETWORK SABOTAGE ON DESTRUCTION</th></tr>
           </thead>
           <tbody>
-            <tr><td><b>Unprepared Garrison</b></td><td>0.50x</td><td>2 Obj / 1 Jet</td><td>1 Runway (5 seg), 1 EW, 1 Strela, 1 Shilka, 1 Fuel, 60s scramble, 0% EMCON.</td></tr>
-            <tr><td><b>Border Outpost</b></td><td>0.75x</td><td>2 Obj / 2 Jets</td><td>1 Runway, 1 EW, 1 MR SAM, 1 SR SAM, 1 AAA, 1 Comms, 54s scramble, 6% EMCON.</td></tr>
-            <tr><td><b>Forward Garrison</b></td><td>1.00x</td><td>3 Obj / 3 Jets</td><td>1 Runway + 1 HAS, 1 EW, 1 LR SAM, 1 MR SAM, 1 SR SAM, 1 CIWS, 1 Decoy, 48s scramble, 14% EMCON.</td></tr>
-            <tr><td><b>Fortified Belt</b></td><td>1.25x</td><td>3 Obj / 3 Jets</td><td>2 EW + Gap-Filler, 1 LR SAM, 1 MR SAM, 1 SR SAM, 1 CIWS, 1 Jammer, 44s scramble, 22% EMCON.</td></tr>
-            <tr><td><b>Integrated Air Defense</b></td><td>1.50x</td><td>3 Obj / 4 Jets</td><td>VHF counter-stealth + 1 LR SAM, 1 MR SAM, 2 AAA, ELINT + Jammer, 40s scramble, 30% EMCON.</td></tr>
-            <tr><td><b>Hardened Command Sector</b></td><td>1.75x</td><td>4 Obj / 5 Jets</td><td>2 EW, 1 LR SAM, 2 MR SAM, 1 SR SAM, 1 CIWS, 1 Infra obj, 36s scramble, 36% EMCON.</td></tr>
-            <tr><td><b>Dense Air Defense Sector</b></td><td>2.00x</td><td>4 Obj / 6 Jets</td><td>2 EW, 2 LR SAM, 2 MR SAM, 2 SR SAM, 2 CIWS, 2 HAS, 2 Decoys, 32s scramble, 44% EMCON.</td></tr>
-            <tr><td><b>Layered Defense Corridor</b></td><td>2.30x</td><td>4 Obj / 7 Jets</td><td>2 EW, 2 LR SAM, 2 MR SAM, 2 SR SAM, 2 CIWS, 2 Jammers, 55% pair scramble, 50% EMCON.</td></tr>
-            <tr><td><b>Heavy Integrated Defense</b></td><td>2.60x</td><td>5 Obj / 8 Jets</td><td>2 Runways, 2 Bunkers, 2 LR SAM, 2 MR SAM, 2 SR SAM, 2 CIWS, 65% pair scramble, 58% EMCON.</td></tr>
-            <tr><td><b>Strategic Air Denial</b></td><td>3.20x</td><td>5 Obj / 8 Jets</td><td>2 Runways, 2 Bunkers, 3 EW, 2 LR SAM, 3 MR SAM, 2 SR SAM, 2 CIWS, 3 AAA, 22s scramble, 66% EMCON.</td></tr>
+            <tr><td><b>Strategic Fuel Depot</b></td><td>6.0 km Blast (-5 HP nearby)</td><td>Slows nearby airbase QRA launch cadence by <b>+35%</b> delay.</td></tr>
+            <tr><td><b>Forward Munition Depot</b></td><td>7.5 km Blast (-6 HP nearby)</td><td>Increases nearby SAM reload times by <b>+80%</b> and cuts new QRA missile loadouts!</td></tr>
+            <tr><td><b>Airbase Logistics Hub</b></td><td>4.5 km Blast (-4 HP nearby)</td><td>Eliminates the 18% airfield QRA launch speedup bonus.</td></tr>
+            <tr><td><b>Grid Power Substation</b></td><td>None</td><td>Cuts nearby Krasukha-4 ground jammer strength by <b>55%</b>.</td></tr>
+            <tr><td><b>C4I Comms Relay &amp; C2 Bunker</b></td><td>None</td><td>Breaks long-range EW radar cueing to SAMs (135 km to 90 km) and slows SAM reactions by <b>+40%</b>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ge-subhead">4. AIR-TO-GROUND ORDNANCE CLASSES &amp; DELIVERY RULES</div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>ORDNANCE CLASS</th><th>EXAMPLES</th><th>RANGE &amp; STRENGTHS</th><th>TACTICAL LIMITATIONS &amp; COUNTERS</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b style="color:#f97316;">Unguided Iron &amp; Rockets</b></td>
+              <td>OFAB-250, Mk-82/83/84, FAB-500/1500/3000, Hydra-70, S-8, Zuni, S-13/24</td>
+              <td>8.5 - 14 km reach. Immune to ECM jamming and chaff; huge blast per credit.</td>
+              <td>Dropping unguided bombs above <b>26,000 ft</b> without a CCIP computer or TGP lowers hit accuracy by <b>-18%</b>. Exposed to AAA/SHORAD.</td>
+            </tr>
+            <tr>
+              <td><b style="color:#fbbf24;">Cluster Dispensers</b></td>
+              <td>CBU-87, CBU-97, CBU-105, RBK-500, PTAB, JSOW-A</td>
+              <td>15 - 74 km reach. <b>5.5 - 7.0 km splash radius</b> wipes out clustered SAMs, AAA, and jets taxiing on ground!</td>
+              <td>Submunitions deal reduced 25% damage against Fortified concrete bunker roofs.</td>
+            </tr>
+            <tr>
+              <td><b style="color:#38bdf8;">Glide Bombs &amp; SDBs</b></td>
+              <td>UMPK, JDAM (GBU-31/32/38), GBU-39, StormBreaker, SPEAR-3, JSOW-C</td>
+              <td>26 - 78 km standoff. Compact internal bay saturation (up to 8x per pylon) and all-weather GPS/MMW precision.</td>
+              <td>Subsonic glide speed (Mach 0.78 - 0.90) allows <b>SeaRAM, Pantsir &amp; Tor-M2</b> to intercept single drops; launch in multi-bomb salvos!</td>
+            </tr>
+            <tr>
+              <td><b style="color:#00f5a0;">Laser, Runway &amp; Bunker Bombs</b></td>
+              <td>GBU-10/12/16/24/28, KAB-250/500/1500L, Paveway IV, GBU-54/57, Durandal, JP233, TAURUS</td>
+              <td>13 - 115 km. Pinpoint concrete penetration (up to 28 HP) and <b>2.0x damage to Runways</b> on Durandal, BetAB, and JP233.</td>
+              <td>Pure laser bombs lose <b>-20% Pk per cloud cell</b> unless mitigated by a Targeting Pod or dual-mode GPS (Paveway IV, GBU-54).</td>
+            </tr>
+            <tr>
+              <td><b style="color:#c084fc;">ATGMs &amp; Strafe Gunpods</b></td>
+              <td>Hellfire, JAGM, Maverick, Spike-NLOS, Brimstone II, Kh-25/29/38ML, BK-37, GSh-30-2K</td>
+              <td>14 - 42 km ATGMs and 4.0 - 5.8 km AP cannons. High armor piercing and fast supersonic closure (Mach 2.2 - 2.4 on Kh-29/38).</td>
+              <td>Requires medium or close ingress inside SAM coverage; pair with Kevlar Belly Armor and TFR masking.</td>
+            </tr>
+            <tr>
+              <td><b style="color:#00f0ff;">ARMs, Cruise &amp; Loitering</b></td>
+              <td>Shrike, MAR-1, Martel, Kh-31P, HARM, AARGM-ER, ALARM-II, Kh-58UShKE, JASSM-ER, LRASM, BrahMos, Kinzhal, Harop</td>
+              <td>34 - 145 km reach. ARMs deal <b>3x damage</b> to active radars; Mach 3 - 6.2 cruise strikes outrun CIWS; Anti-EMCON ARMs kill shut-down radars.</td>
+              <td>Legacy ARMs lose track on EMCON shutdowns. Subsonic stealth cruise missiles can still be intercepted by CIWS if fired solo.</td>
+            </tr>
           </tbody>
         </table>
       </div>

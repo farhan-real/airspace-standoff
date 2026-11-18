@@ -4,26 +4,24 @@
 
 class RadarSurfaceRenderer {
   static MINIMAL_GROUND_LABELS = {
-    EW_RADAR_VHF: 'VHF', EW_RADAR_AESA: 'EW', EW_RADAR_GAPFILLER: 'GAP',
-    RADAR_ARRAY: 'RADAR', RADAR_VAN: 'RDR',
+    EW_RADAR_VHF: 'VHF', EW_RADAR_AESA: 'EW', RADAR_BUNKER: 'RADOME',
+    EW_RADAR_GAPFILLER: 'GAP', EW_RADAR_MOBILE_3D: 'GIRAFFE', RADAR_ARRAY: 'RADAR', RADAR_VAN: 'RDR',
     EW_JAMMER: 'JAM', EW_JAMMER_GROUND: 'KRASUKHA', EW_STATION_ELINT: 'ELINT',
-    COMMS_TOWER: 'COMMS', RADAR_DECOY: 'DECOY',
-    'S-400': 'S-400', SAM_PATRIOT: 'PATRIOT', SAM_S300V: 'S-300V',
-    SAM_BUK: 'BUK', SAM_NASAMS: 'NASAMS', SAM_KUB: 'KUB',
+    COMMS_TOWER: 'COMMS', RADAR_DECOY: 'DECOY', DECOY_THERMAL: 'DECOY-IR',
+    'S-400': 'S-400', SAM_HQ9: 'HQ-9B', SAM_PATRIOT: 'PATRIOT', SAM_S300V: 'S-300V',
+    SAM_BUK: 'BUK', SAM_NASAMS: 'NASAMS', SAM_HAWK: 'HAWK', SAM_KUB: 'KUB',
     SAM_TOR: 'TOR', SAM_RAPIER: 'RAPIER', SAM_AVENGER: 'STRELA',
     PANTSIR: 'PANTSIR', CIWS_SEARAM: 'SEARAM',
-    AAA_SHILKA: 'SHILKA', AAA_GEPARD: 'GEPARD', AAA_FLAK57: 'AAA-57',
+    AAA_TUNGUSKA: 'TUNGUSKA', AAA_SHILKA: 'SHILKA', AAA_GEPARD: 'GEPARD', AAA_FLAK57: 'AAA-57',
     BUNKER: 'HQ', C2_MOBILE: 'C2', RUNWAY_SEG: 'RWY', RUNWAY: 'RWY',
     HARDENED_SHELTER: 'HAS', HANGAR: 'HGR', OPEN_FIELD: 'PAD',
-    FUEL_DEPOT: 'FUEL', MUNITION_DUMP: 'AMMO', AMMO_DUMP: 'DEPOT',
+    FUEL_DEPOT: 'FUEL', MUNITION_DUMP: 'AMMO', LOGISTICS_HUB: 'LOGHUB', AMMO_DUMP: 'DEPOT',
     POWER_SUBSTATION: 'PWR', BRIDGE_LOGISTICS: 'BRIDGE', FACTORY_SAM: 'PLANT'
   };
 
   static getMinimalGroundLabel(s, units) {
     const short = this.MINIMAL_GROUND_LABELS[s.type];
-    if (!short) {
-      throw new Error(`Missing declutter label mapping for ground unit type "${s.type}".`);
-    }
+    if (!short) throw new Error(`Missing declutter label mapping for ground unit type "${s.type}".`);
     if (s.isRunwaySegment) {
       const baseSegs = units.filter(u => u.isRunwaySegment && u.airbaseId === s.airbaseId);
       const runInfo = AirbaseSystem.getContiguousRuns(baseSegs);
@@ -52,18 +50,12 @@ class RadarSurfaceRenderer {
       ctx.save();
       ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
       ctx.lineWidth = Math.max(5, 7 * cam.zoom);
-      ctx.beginPath();
-      ctx.moveTo(p0.x, p0.y);
-      ctx.lineTo(pN.x, pN.y);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(pN.x, pN.y); ctx.stroke();
 
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
       ctx.lineWidth = 1.1;
       ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(p0.x, p0.y);
-      ctx.lineTo(pN.x, pN.y);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(pN.x, pN.y); ctx.stroke();
       ctx.restore();
     }
   }
@@ -112,43 +104,33 @@ class RadarSurfaceRenderer {
       ctx.lineWidth = isSelectedSurface ? 2.2 : 1.5;
 
       if (!isKnown) {
-        ctx.beginPath();
-        ctx.moveTo(px, py - 7); ctx.lineTo(px + 7, py); ctx.lineTo(px, py + 7); ctx.lineTo(px - 7, py);
-        ctx.closePath(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px, py - 7); ctx.lineTo(px + 7, py); ctx.lineTo(px, py + 7); ctx.lineTo(px - 7, py); ctx.closePath(); ctx.stroke();
       } else if (s.isRunwaySegment) {
-        ctx.save();
-        ctx.translate(px, py);
-        ctx.rotate(s.heading || 0);
+        ctx.save(); ctx.translate(px, py); ctx.rotate(s.heading || 0);
         if (s.hp <= 0.05) {
           ctx.strokeStyle = '#ef4444';
           ctx.beginPath(); ctx.moveTo(-5, -4); ctx.lineTo(5, 4); ctx.moveTo(5, -4); ctx.lineTo(-5, 4); ctx.stroke();
         } else {
-          ctx.strokeRect(-7, -3, 14, 6);
-          ctx.fillRect(-5, -1, 10, 2);
+          ctx.strokeRect(-7, -3, 14, 6); ctx.fillRect(-5, -1, 10, 2);
         }
         ctx.restore();
       } else if (s.isOpenField) {
-        ctx.setLineDash([2, 2]);
-        ctx.strokeRect(px - 7, py - 5, 14, 10);
-        ctx.setLineDash([]);
-        if (s.parkedAircraft && s.parkedAircraft.length > 0) {
-          ctx.fillStyle = '#fbbf24';
-          ctx.fillRect(px - 2, py - 2, 4, 4);
-        }
-      } else if (s.type === 'BUNKER' || s.isAircraftShelter || s.type === 'C2_MOBILE') {
+        ctx.setLineDash([2, 2]); ctx.strokeRect(px - 7, py - 5, 14, 10); ctx.setLineDash([]);
+        if (s.parkedAircraft && s.parkedAircraft.length > 0) { ctx.fillStyle = '#fbbf24'; ctx.fillRect(px - 2, py - 2, 4, 4); }
+      } else if (s.type === 'RADAR_BUNKER') {
+        ctx.strokeRect(px - 7, py - 7, 14, 14);
+        ctx.beginPath(); ctx.arc(px, py + 1, 4.5, Math.PI, Math.PI * 2); ctx.stroke();
+      } else if (s.type === 'BUNKER' || s.isAircraftShelter || s.type === 'C2_MOBILE' || s.isLogisticsHub) {
         ctx.strokeRect(px - 7, py - 7, 14, 14);
         ctx.fillRect(px - 3, py - 3, 6, 6);
       } else if (s.category === 'LR_SAM' || s.category === 'MR_SAM' || s.category === 'SR_SAM' || s.type === 'S-400') {
-        ctx.beginPath();
-        ctx.moveTo(px, py - 8); ctx.lineTo(px + 8, py); ctx.lineTo(px, py + 8); ctx.lineTo(px - 8, py);
-        ctx.closePath(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px, py - 8); ctx.lineTo(px + 8, py); ctx.lineTo(px, py + 8); ctx.lineTo(px - 8, py); ctx.closePath(); ctx.stroke();
       } else if (s.isAaaGun || s.category === 'CIWS') {
         ctx.beginPath(); ctx.arc(px, py, 5.5, 0, Math.PI * 2); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(px - 7, py); ctx.lineTo(px + 7, py); ctx.moveTo(px, py - 7); ctx.lineTo(px, py + 7); ctx.stroke();
       } else if (s.isJammerStation) {
         ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(px - 4, py); ctx.lineTo(px, py - 4); ctx.lineTo(px + 4, py); ctx.lineTo(px, py + 4);
-        ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(px - 4, py); ctx.lineTo(px, py - 4); ctx.lineTo(px + 4, py); ctx.lineTo(px, py + 4); ctx.closePath(); ctx.fill();
       } else if (s.category === 'EW_RADAR' || s.isPassiveElint || s.isCommsRelay) {
         ctx.beginPath(); ctx.arc(px, py, 6, Math.PI, Math.PI * 2); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(px - 4, py + 2); ctx.lineTo(px + 4, py + 2); ctx.stroke();
@@ -160,9 +142,7 @@ class RadarSurfaceRenderer {
       }
 
       if (isKnown && s.isPrimaryObjective && (!s.isRunwaySegment || (s.hp > 0.05 && !s.isAirbaseNeutralized))) {
-        ctx.strokeStyle = '#ffd700';
-        ctx.lineWidth = 1.4;
-        ctx.strokeRect(px - 12, py - 12, 24, 24);
+        ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 1.4; ctx.strokeRect(px - 12, py - 12, 24, 24);
       }
 
       const showSegmentLabel = !s.isRunwaySegment || s.segmentIndex === 2 || isSelectedSurface;
@@ -177,9 +157,8 @@ class RadarSurfaceRenderer {
           const distKm = (activeUnit && activeUnit.hp > 0) ? Math.round(Math.hypot(s.x - activeUnit.x, s.y - activeUnit.y)) : null;
           const distTag = distKm !== null ? (' R:' + distKm + 'km') : '';
 
-          if (!isKnown) {
-            ctx.fillText(RadarRenderer.cleanText(`EMITTER [?]${distTag}`), px + 11, py + 3);
-          } else if (s.isRunwaySegment && s.segmentIndex === 2 && !isSelectedSurface) {
+          if (!isKnown) ctx.fillText(RadarRenderer.cleanText(`EMITTER [?]${distTag}`), px + 11, py + 3);
+          else if (s.isRunwaySegment && s.segmentIndex === 2 && !isSelectedSurface) {
             const baseSegs = units.filter(u => u.isRunwaySegment && u.airbaseId === s.airbaseId);
             const runInfo = AirbaseSystem.getContiguousRuns(baseSegs);
             const objTag = s.isPrimaryObjective ? (s.isAirbaseNeutralized ? '[DISABLED] ' : '[OBJ] ') : '';
@@ -198,7 +177,7 @@ class RadarSurfaceRenderer {
     ctx.restore();
   }
 
-  static drawCivilianTraffic(ctx, cam, civilians, detectedSet, activeUnit, declutterMode, cssWidth) {
+  static drawCivilianTraffic(ctx, cam, civilians, detectedSet, activeUnit, declutterMode) {
     if (!civilians || civilians.length === 0) return;
     ctx.save();
     for (let i = 0; i < civilians.length; i++) {
@@ -207,9 +186,7 @@ class RadarSurfaceRenderer {
       const pos = cam.toScreen(civ.x, civ.y);
       const px = pos.x, py = pos.y, isIdentified = civ.isIdentified;
 
-      ctx.save();
-      ctx.translate(px, py);
-      ctx.rotate(civ.heading || 0);
+      ctx.save(); ctx.translate(px, py); ctx.rotate(civ.heading || 0);
       if (!isIdentified) {
         ctx.strokeStyle = '#f97316'; ctx.fillStyle = 'rgba(20, 25, 35, 0.90)'; ctx.lineWidth = 1.6;
         ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(8, 0); ctx.lineTo(0, 8); ctx.lineTo(-8, 0); ctx.closePath(); ctx.fill(); ctx.stroke();

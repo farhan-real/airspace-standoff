@@ -166,9 +166,11 @@ class SimulationDetectionSystem {
         }
 
         const tgpRange = ally.targetingSpotRangeKm || (ally.hasIRST ? 30.0 : 0.0);
-        const opticalCloseRange = 22.0;
+        const needsAdvancedTgp = Boolean(s.spec && s.spec.requiresHighGradeTgp);
+        const opticalCloseRange = needsAdvancedTgp ? 15.0 : 22.0;
+        const effectiveTgpRange = (needsAdvancedTgp && tgpRange < 44.0) ? 0.0 : tgpRange;
 
-        if (d <= Math.max(opticalCloseRange, tgpRange)) {
+        if (d <= Math.max(opticalCloseRange, effectiveTgpRange)) {
           s.isRevealedToBlue = true;
           s.identifiedByBlue = true;
           this.game.detectedByBlue.add(s.id);

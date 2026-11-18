@@ -94,6 +94,7 @@ class SurfaceUnit {
 
     this.isFuelDepot = Boolean(spec.isFuelDepot);
     this.isMunitionDepot = Boolean(spec.isMunitionDepot);
+    this.isLogisticsHub = Boolean(spec.isLogisticsHub);
     this.isPowerNode = Boolean(spec.isPowerNode);
     this.secondaryBlastRadiusKm = spec.secondaryBlastRadiusKm !== undefined ? spec.secondaryBlastRadiusKm : 0.0;
     this.secondaryBlastDamage = spec.secondaryBlastDamage !== undefined ? spec.secondaryBlastDamage : 0.0;
