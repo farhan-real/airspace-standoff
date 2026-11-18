@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 4 to 5
- * Covers: Radar Physics, Observability (RCS), Target Identification & Satellite Uplink
+ * js/data/manual/sensors.js - Flight Manual Sections 04 to 05: Radar, RCS, Identification & Satellite Uplink.
  */
 
 window.MANUAL_SENSORS = [
@@ -77,21 +76,21 @@ window.MANUAL_SENSORS = [
     title: 'SECTION 05: SENSORS, TARGET IDENTIFICATION & SATELLITE RADAR UPLINK',
     desc: `
       <div class="ge-desc">
-        To prevent friendly fire and protect commercial air traffic, all contacts detected on your radar screen start as unverified tracks before continuous scanning confirms their identity.
+        To prevent friendly fire and protect commercial air traffic, airborne contacts detected on your radar screen start as unverified tracks before continuous scanning confirms their identity.
       </div>
 
       <div class="ge-subhead">1. HOW TARGET IDENTIFICATION WORKS</div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #f97316;">
-          <b style="color:#f97316;">PHASE 1: BOGEY [?] (UNVERIFIED CONTACT)</b>
+          <b style="color:#f97316;">PHASE 1: BOGEY [?] &amp; EMITTER [?]</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            When your radar first picks up a target, it appears as an orange diamond labeled <b>BOGEY [?]</b>. You can see its position, altitude, speed, and heading, but you cannot tell if it is friendly, hostile, or a civilian airliner. Firing a weapon at an unverified bogey violates Rules of Engagement and penalizes you <b>-600 VP</b> upon launch.
+            When your radar first picks up an unknown plane, it appears as an orange diamond labeled <b>BOGEY [?]</b>. Firing a weapon at an unverified bogey violates Rules of Engagement and penalizes you <b>-600 VP</b> upon launch. In Ground Attack mode, unverified radiating SAMs and decoys appear as <b>EMITTER [?]</b> until mapped by HTS, SAR radar, or a Targeting Pod.
           </div>
         </div>
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
           <b style="color:#00f0ff;">PHASE 2: POSITIVELY IDENTIFIED</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Keep the target inside your radar scan cone. After a few seconds of continuous scanning, your avionics will recognize the aircraft type, callsign, and weapons. The blip turns Blue for friendly, Red for hostile, or Light Blue for civilian. Once identified as hostile, you are cleared to fire with no penalty.
+            Keep the target inside your radar scan cone. After continuous scanning, your avionics recognize the aircraft type, callsign, and weapons. The contact turns Red for hostile or Light Blue for civilian. Once identified as hostile, you are cleared to fire with no penalty.
           </div>
         </div>
       </div>
@@ -100,15 +99,15 @@ window.MANUAL_SENSORS = [
       <div class="ge-card">
         <ul style="list-style:none;padding-left:0;font-size:0.72rem;line-height:1.6;color:#cbd5e1;">
           <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Standard Identification Time:</b> Standard fighters take about <b>5.5 seconds</b> of steady radar tracking to identify. Stealth aircraft take about <b>11.0 seconds</b> because their shape deflects radar signals.</li>
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Close-Range Identification:</b> Closing within <b>18.0 km</b> burns through enemy radar jammers and identifies targets in under 2 seconds.</li>
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Optical IRST Cameras:</b> Aircraft equipped with nose-mounted optical cameras (like the Su-35S, Rafale, and Eurofighter) can visually identify targets from <b>28.0 km</b> away in clear skies, completely ignoring radar jammers.</li>
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Two-Player Mode:</b> In Two-Player mode, both commanders engage with identical cloned rosters (same airframes, guns, weapons, and upgrades) deployed in randomized formation orders for competitive parity, and all aircraft are identified from the start.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Close-Range Identification:</b> Closing within <b>18.0 km</b> burns through enemy radar jammers and identifies targets rapidly.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Optical IRST Cameras:</b> Aircraft equipped with optical IRST sensors (or IRST pods) can silently identify stealth targets from <b>28.0 km</b> away, completely ignoring RF radar jammers.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Two-Player Mode:</b> In Two-Player Skirmish, both commanders engage with identical cloned rosters (same airframes, guns, weapons, and upgrades) deployed in randomized formation orders for competitive parity, and all aircraft are identified from the start.</li>
         </ul>
       </div>
 
       <div class="ge-subhead">3. SATELLITE RADAR UPLINK PROTOCOL</div>
       <div class="ge-desc">
-        When only <b>3 or fewer enemy aircraft</b> remain in the theater, defense command locks orbital satellites to help you locate and finish off the remaining hostiles:
+        In <b>Skirmish</b> and <b>Dynamic Theater</b> modes, when only <b>3 or fewer enemy aircraft</b> remain in the theater, defense command links orbital satellites to locate and finish off the remaining hostiles:
       </div>
       <div class="ge-grid-2">
         <div class="ge-card" style="border-left:3px solid #00f0ff;">
@@ -120,7 +119,7 @@ window.MANUAL_SENSORS = [
         <div class="ge-card" style="border-left:3px solid #ffd700;">
           <b style="color:#ffd700;">RADAR &amp; HUD NOTIFICATIONS</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Pinpointed enemies are highlighted on radar with an electric blue pulse circle and labeled [PINPOINTED]. A banner appears across the top of your cockpit workspace: <code>SATELLITE RADAR UPLINK: X HOSTILE(S) REMAINING (PINPOINTED)</code>.
+            Pinpointed enemies are highlighted on radar and labeled PINPOINTED. A banner appears across your cockpit viewport: <code>SATELLITE RADAR UPLINK: X HOSTILE(S) REMAINING (PINPOINTED)</code>.
           </div>
         </div>
       </div>
@@ -130,13 +129,13 @@ window.MANUAL_SENSORS = [
         <div class="ge-card">
           <b style="color:#f97316;">GHOST BLIPS &amp; WEATHER CLUTTER</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Heavy weather, clouds, and old chaff can create temporary fake radar echoes (Ghost Contacts). If you keep scanning them for 8 to 12 seconds, your radar will confirm they are just atmospheric clutter and the echo will fade away.
+            Heavy weather, clouds, and chaff remnants can create temporary fake radar echoes (Ghost Contacts). Continuous scanning for ~8 to 12 seconds confirms they are atmospheric clutter and dissolves the echo automatically.
           </div>
         </div>
         <div class="ge-card">
           <b style="color:#38bdf8;">PROTECTED CIVILIAN FLIGHTS</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Commercial passenger flights cross the airspace in designated transit lanes. They transmit civilian transponder codes. Damaging a civilian plane costs you <b>-500 VP</b>, and destroying one penalizes you <b>-2,000 VP</b>.
+            Commercial passenger flights cross the airspace in designated transit lanes. Firing at a civilian flight costs <b>-500 VP</b> on launch, striking it costs <b>-500 VP</b>, and destroying it penalizes you <b>-2,000 VP</b>.
           </div>
         </div>
       </div>

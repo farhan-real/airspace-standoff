@@ -1,8 +1,9 @@
 /**
- * AIRSPACE STANDOFF: Master Flight Manual Orchestrator
+ * js/data/manual.js - Master Flight Manual Orchestrator.
  */
 
 const requiredManualModules = [
+  ['MANUAL_MILITARY_BASICS', window.MANUAL_MILITARY_BASICS],
   ['MANUAL_BASICS', window.MANUAL_BASICS],
   ['MANUAL_SENSORS', window.MANUAL_SENSORS],
   ['MANUAL_COMBAT', window.MANUAL_COMBAT],
@@ -23,6 +24,7 @@ for (const [name, moduleData] of requiredManualModules) {
 }
 
 window.FLIGHT_MANUAL = [
+  ...window.MANUAL_MILITARY_BASICS,
   ...window.MANUAL_BASICS,
   ...window.MANUAL_SENSORS,
   ...window.MANUAL_COMBAT,
@@ -38,6 +40,7 @@ window.FLIGHT_MANUAL = [
 
 window.initFlightManual = function() {
   const chapters = [
+    { id: 'ch0_military_basics', label: '00: MILITARY BASICS & GLOSSARY' },
     { id: 'ch1_quickstart', label: '01: BASICS & FLIGHT LEAD' },
     { id: 'ch2_kinematics', label: '02: KINEMATICS & POWER' },
     { id: 'ch3_stress_coffin', label: '03: G-STRESS & COFFIN' },
@@ -189,7 +192,7 @@ window.initFlightManual = function() {
       c.innerHTML = `
         <div style="text-align:center;padding:40px;color:#8494ab;font-family:var(--font-mono);font-size:0.80rem;">
           <b style="color:var(--theme-accent);">NO PROCEDURES MATCH "${filterQuery.toUpperCase()}"</b>
-          <p style="margin-top:6px;font-size:0.72rem;">Try "Doctrine", "Pods", "Runways", "Tunguska", "Targeting Pod", "EMCON", or "Controls".</p>
+          <p style="margin-top:6px;font-size:0.72rem;">Try "EMCON", "Clutter", "Doctrine", "Pods", "Runways", "Tunguska", "Targeting Pod", or "Controls".</p>
         </div>`;
       return;
     }

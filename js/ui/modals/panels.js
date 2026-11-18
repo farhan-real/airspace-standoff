@@ -1,4 +1,6 @@
-/* AIRSPACE STANDOFF: Modal Templates - Presets, Leaderboard, Manual & Settings */
+/**
+ * js/ui/modals/panels.js - Modal Templates: Presets, Leaderboard, Manual & Settings.
+ */
 
 class ModalPanelsTemplates {
   static ensure(panelId) {
@@ -73,7 +75,7 @@ class ModalPanelsTemplates {
             </div>
             <div class="manual-toolbar">
               <div class="manual-search-row">
-                <input type="text" id="manual-search-filter" class="manual-search-input" placeholder="Search manual (e.g. Mission Editor, Inspection, Replay, Notch, RCS)...">
+                <input type="text" id="manual-search-filter" class="manual-search-input" placeholder="Search manual (e.g. EMCON, Clutter, RCS, Notch, Mission Editor, Inspection)...">
                 <div id="manual-search-actions" class="manual-search-actions">
                   <span id="manual-search-count" class="manual-search-count"></span>
                   <button type="button" id="btn-manual-search-prev" class="manual-search-nav-btn" title="Previous Match">&lt;</button>

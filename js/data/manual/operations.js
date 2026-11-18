@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Flight Manual Submodule: Sections 14 to 16
- * Covers: Mission Editor, Visual Inspection Analysis & Debriefing Replay
+ * js/data/manual/operations.js - Flight Manual Sections 14 to 16: Mission Editor, Inspection & Replay.
  */
 
 window.MANUAL_OPERATIONS = [
@@ -95,7 +94,7 @@ window.MANUAL_OPERATIONS = [
     title: 'SECTION 15: INSPECTION MODE, LIVE C4ISR & AI COGNITION ANALYSIS',
     desc: `
       <div class="ge-desc">
-        Enable <b>INSPECTION MODE</b> inside the Mission Editor to unlock an advanced real-time C4ISR telemetry workspace while keeping cockpit flight controls, banking, and missile releases fully functional across Skirmish, Dynamic Theater, and Ground Attack operations.
+        Enable <b>INSPECTION MODE</b> inside the Mission Editor to unlock an advanced real-time C4ISR telemetry workspace while keeping cockpit flight controls, banking, and missile releases fully functional across Skirmish, Dynamic Theater, and Ground Attack operations. Press <b>[I]</b> or click <b>INSPECTION</b> in the top bar to toggle the pane.
       </div>
 
       <div class="ge-subhead">1. WORKSPACE CONTROLS &amp; SIMULATION TIME-STOP</div>

@@ -1,12 +1,11 @@
 /**
- * AIRSPACE STANDOFF: Standalone Flight Systems & Controls Reference
- * Non-chapter operational manual reference table with live keybind bindings.
+ * js/data/manual/controls.js - Standalone Flight Systems & Controls Reference.
  */
 
 function getManualAssignedKey(action) {
   const binds = (window.Settings && window.Settings.keybinds)
     ? window.Settings.keybinds
-    : (window.DEFAULT_KEYBINDS || {});
+    : window.DEFAULT_KEYBINDS;
   const raw = binds[action] || (window.DEFAULT_KEYBINDS ? window.DEFAULT_KEYBINDS[action] : '');
   if (typeof window.formatKeyLabel === 'function') {
     return window.formatKeyLabel(raw);
@@ -91,8 +90,8 @@ function getManualControlsContent() {
         <tbody>
           <tr>
             <td><b>Cycle Detected Targets</b></td>
-            <td><span class="manual-key-badge">${kTarget}</span></td>
-            <td>Cycles through all detected radar contacts, hostiles, and civilian tracks.</td>
+            <td><span class="manual-key-badge">${kTarget}</span> / <span class="manual-key-badge">TAB</span></td>
+            <td>Cycles through all detected radar contacts, hostiles, ground sites, and civilian tracks.</td>
           </tr>
           <tr>
             <td><b>Instant Auto-Lock</b></td>
@@ -143,7 +142,7 @@ function getManualControlsContent() {
           <tr>
             <td><b>Stores Management System (SMS)</b></td>
             <td><span class="manual-key-badge">MFD RACK</span></td>
-            <td>Displays station tags: <b style="color:#2dd4bf;">[INTERNAL]</b> (doors closed, 0 drag/RCS), <b style="color:#38bdf8;">[EXTERNAL]</b>, or <b style="color:#fbbf24;">[CENTERLINE]</b>. Marks depleted racks as jettisoned in real time.</td>
+            <td>Displays station tags: <b style="color:#2dd4bf;">[INT]</b> (doors closed, 0 drag/RCS), <b style="color:#38bdf8;">[EXT]</b>, or <b style="color:#fbbf24;">[CTR]</b>. Marks depleted racks cleanly.</td>
           </tr>
         </tbody>
       </table>
@@ -164,7 +163,7 @@ function getManualControlsContent() {
           <tr>
             <td><b>Reset Panoramic View</b></td>
             <td><span class="manual-key-badge">${kCamRst}</span></td>
-            <td>Restores default panoramic 150 km &times; 100 km theater view.</td>
+            <td>Restores default panoramic 150 km &times; 100 km theater view (240 km &times; 160 km in Ground Attack).</td>
           </tr>
           <tr>
             <td><b>Pause / Resume</b></td>
@@ -177,6 +176,11 @@ function getManualControlsContent() {
             <td>Sets simulation speed to 1X Realtime, 2X Fast-Forward, or 4X Ultra-Speed.</td>
           </tr>
           <tr>
+            <td><b>Toggle Inspection Workspace</b></td>
+            <td><span class="manual-key-badge">I</span></td>
+            <td>Opens or closes live C4ISR Inspection Mode (when enabled in Mission Editor).</td>
+          </tr>
+          <tr>
             <td><b>Open Settings</b></td>
             <td><span class="manual-key-badge"><img src="icons/settings.svg" width="11" height="11" alt="Settings" class="manual-inline-ico"> ${kSettings}</span></td>
             <td>Opens volume configuration, safe-zone padding, and key rebinding modal.</td>
@@ -184,7 +188,7 @@ function getManualControlsContent() {
           <tr>
             <td><b>Open Flight Manual</b></td>
             <td><span class="manual-key-badge"><img src="icons/manual.svg" width="11" height="11" alt="Manual" class="manual-inline-ico"> ${kManual}</span></td>
-            <td>Opens classified flight operations manual and combat codex.</td>
+            <td>Opens classified flight operations manual and combat glossary.</td>
           </tr>
         </tbody>
       </table>
@@ -193,7 +197,7 @@ function getManualControlsContent() {
     <div class="ge-subhead">5. MOUSE, TRACKPAD &amp; TOUCH GESTURES</div>
     <div class="ge-card">
       <ul style="list-style:none;padding-left:0;font-size:0.74rem;line-height:1.65;">
-        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Direct Pan:</b> Click/touch and drag across the radar scope to freely pan across the 150 km theater grid.</li>
+        <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Direct Pan:</b> Click/touch and drag across the radar scope to freely pan across the theater grid.</li>
         <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Zoom:</b> Scroll mouse wheel or pinch with two fingers on touchscreen devices to smoothly zoom between 0.65&times; and 4.0&times; magnification.</li>
         <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Target Selection:</b> Tap any aircraft or surface installation directly on the radar scope to acquire a target solution.</li>
         <li style="margin-bottom:6px;"><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Mobile Steering Overlay:</b> In portrait or touch mode, large on-screen steering buttons appear at the lower right corner for continuous high-G banking.</li>

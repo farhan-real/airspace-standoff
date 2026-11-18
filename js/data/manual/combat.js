@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Flight Manual Submodule: Chapters 6 to 7
- * Covers: Guided Munitions, A2G Ordnance Classes, Targeting Pods, ProNav & Multi-Layer Defenses
+ * js/data/manual/combat.js - Flight Manual Sections 06 to 07: Guided Missiles, Ordnance, ProNav & Defenses.
  */
 
 window.MANUAL_COMBAT = [
@@ -29,7 +28,7 @@ window.MANUAL_COMBAT = [
               <td style="color:#00f5a0;font-weight:800;">IIR / EO</td>
               <td>Imaging Infrared / Optical</td>
               <td>AIM-9X-2, R-73, Python-5, IRIS-T, AGM-158B, Storm Shadow</td>
-              <td><b>Throttle to Idle / Dive into Clouds.</b> Moisture softens imaging contrast; Idle cuts engine exhaust thermal bloom.</td>
+              <td><b>Throttle to Idle / Dive into Clouds / DIRCM.</b> Moisture softens imaging contrast; Idle cuts engine exhaust thermal bloom.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">INS / RADAR</td>
@@ -62,7 +61,7 @@ window.MANUAL_COMBAT = [
           <tbody>
             <tr>
               <td style="color:#f97316;font-weight:800;">Dumb Bombs &amp; Rockets</td>
-              <td>Low-cost, immune to ECM/chaff, high blast per dollar (Mk-82/84, FAB-500/1500, Hydra-70, Zuni, S-13OF).</td>
+              <td>Low-cost, immune to ECM/chaff, high blast per credit (Mk-82/84, FAB-500/1500, Hydra-70, Zuni, S-13OF).</td>
               <td>Short release range; low-alt exposure to AAA/SHORAD. High-altitude drops suffer dispersion without Targeting Pod CCIP.</td>
             </tr>
             <tr>
@@ -149,7 +148,12 @@ window.MANUAL_COMBAT = [
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Split-S Dive</td>
               <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">7.5s</td><td>+45%</td>
-              <td>Requires altitude &gt; FL150. Dives into low-altitude horizon beneath LR SAM floors.</td>
+              <td>Requires altitude &ge; FL117 (alt &ge; 0.18). Inverts 180&deg; and dives beneath LR SAM floors.</td>
+            </tr>
+            <tr>
+              <td style="color:#f59e0b;font-weight:800;">Emergency Chaff Salvo</td>
+              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">8.0s</td><td>+42%</td>
+              <td>Trigger on active radar lock. Releases dense chaff screen to disrupt tracking.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">Zoom Climb</td>

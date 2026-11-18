@@ -1,6 +1,5 @@
 /**
- * js/data/manual/ground.js - Flight Manual Submodule: Section 12
- * Covers: 5-Segment Runways, Airfield Parking, Complete Ground Units Catalog & Attack Difficulty Tiers
+ * js/data/manual/ground.js - Flight Manual Section 12: Runways, Airbases & Ground Units Reference.
  */
 
 window.MANUAL_GROUND = [
@@ -87,19 +86,19 @@ window.MANUAL_GROUND = [
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>
-            <tr><th>TIER</th><th>SCORE</th><th>OBJ AND QRA JETS</th><th>KEY IADS &amp; BEHAVIOR PROFILE</th></tr>
+            <tr><th>TIER</th><th>SCORE</th><th>OBJ &amp; CAP/QRA JETS</th><th>KEY IADS &amp; BEHAVIOR PROFILE</th></tr>
           </thead>
           <tbody>
-            <tr><td><b>Unprepared Garrison</b></td><td>0.50x</td><td>2 Obj / 1 Jet</td><td>1 Runway (5 seg), 1 EW, 1 Strela, 1 Shilka, 1 Fuel, 60s scramble, 4.5s SAM acq, 0% EMCON.</td></tr>
-            <tr><td><b>Border Outpost</b></td><td>0.75x</td><td>2 Obj / 2 Jets</td><td>1 Runway, 1 EW, 1 MR SAM, 1 SR SAM, 1 AAA, 1 Comms, 54s scramble, 3.9s SAM acq, 6% EMCON.</td></tr>
-            <tr><td><b>Forward Garrison</b></td><td>1.00x</td><td>3 Obj / 3 Jets</td><td>1 Runway + 1 HAS, 1 EW, 1 LR SAM, 1 MR SAM, 1 SR SAM, 1 CIWS, 1 Decoy, 3.4s SAM acq, 14% EMCON.</td></tr>
-            <tr><td><b>Fortified Belt</b></td><td>1.25x</td><td>3 Obj / 3 Jets</td><td>2 EW + Gap-Filler, 1 LR SAM, 1 MR SAM, 1 SR SAM, 1 CIWS, 1 Jammer, 3.0s SAM acq, 22% EMCON.</td></tr>
-            <tr><td><b>Integrated Air Defense</b></td><td>1.50x</td><td>3 Obj / 4 Jets</td><td>VHF counter-stealth + 1 LR SAM, 1 MR SAM, 2 AAA, ELINT + Jammer, 2.6s SAM acq, 30% EMCON.</td></tr>
-            <tr><td><b>Hardened Command Sector</b></td><td>1.75x</td><td>4 Obj / 5 Jets</td><td>2 EW, 1 LR SAM, 2 MR SAM, 1 SR SAM, 1 CIWS, 1 Infra obj, 2.4s SAM acq, 36% EMCON.</td></tr>
-            <tr><td><b>Dense Air Defense Sector</b></td><td>2.00x</td><td>4 Obj / 6 Jets</td><td>2 EW, 2 LR SAM, 2 MR SAM, 2 SR SAM, 2 CIWS, 2 HAS, 2 Decoys, 2.1s SAM acq, 44% EMCON.</td></tr>
-            <tr><td><b>Layered Defense Corridor</b></td><td>2.30x</td><td>4 Obj / 7 Jets</td><td>2 EW, 2 LR SAM, 2 MR SAM, 2 SR SAM, 2 CIWS, 2 Jammers, 1.9s SAM acq, 50% EMCON.</td></tr>
-            <tr><td><b>Heavy Integrated Defense</b></td><td>2.60x</td><td>5 Obj / 8 Jets</td><td>2 Runways, 2 Bunkers, 2 LR SAM, 2 MR SAM, 2 SR SAM, 2 CIWS, 1.7s SAM acq, 58% EMCON.</td></tr>
-            <tr><td><b>Strategic Air Denial</b></td><td>3.20x</td><td>5 Obj / 8 Jets</td><td>2 Runways, 2 Bunkers, 3 EW, 2 LR SAM, 3 MR SAM, 2 SR SAM, 2 CIWS, 3 AAA, 1.5s SAM acq, 66% EMCON.</td></tr>
+            <tr><td><b>Unprepared Garrison</b></td><td>0.50x</td><td>2 Obj / 1 Jet (0 CAP + 1 QRA)</td><td>1 Runway (5 seg), 1 EW, 1 Strela, 1 Shilka, 1 Fuel, 60s scramble, 4.5s SAM acq, 0% EMCON.</td></tr>
+            <tr><td><b>Border Outpost</b></td><td>0.75x</td><td>2 Obj / 2 Jets (0 CAP + 2 QRA)</td><td>1 Runway, 1 EW, 1 MR SAM, 1 SR SAM, 1 AAA, 1 Comms, 54s scramble, 3.9s SAM acq, 6% EMCON.</td></tr>
+            <tr><td><b>Forward Garrison</b></td><td>1.00x</td><td>3 Obj / 3 Jets (1 CAP + 2 QRA)</td><td>1 Runway + 1 HAS, 1 EW, 1 LR SAM, 1 MR SAM, 1 SR SAM, 1 CIWS, 1 Decoy, 3.4s SAM acq, 14% EMCON.</td></tr>
+            <tr><td><b>Fortified Belt</b></td><td>1.25x</td><td>3 Obj / 3 Jets (1 CAP + 2 QRA)</td><td>2 EW + Gap-Filler, 1 LR SAM, 1 MR SAM, 1 SR SAM, 1 CIWS, 1 Jammer, 3.0s SAM acq, 22% EMCON.</td></tr>
+            <tr><td><b>Integrated Air Defense</b></td><td>1.50x</td><td>3 Obj / 4 Jets (1 CAP + 3 QRA)</td><td>VHF counter-stealth + 1 LR SAM, 1 MR SAM, 2 AAA, ELINT + Jammer, 2.6s SAM acq, 30% EMCON.</td></tr>
+            <tr><td><b>Hardened Command Sector</b></td><td>1.75x</td><td>4 Obj / 5 Jets (1 CAP + 4 QRA)</td><td>2 EW, 1 LR SAM, 2 MR SAM, 1 SR SAM, 1 CIWS, 1 Infra obj, 2.4s SAM acq, 36% EMCON.</td></tr>
+            <tr><td><b>Dense Air Defense Sector</b></td><td>2.00x</td><td>4 Obj / 6 Jets (1 CAP + 5 QRA)</td><td>2 EW, 2 LR SAM, 2 MR SAM, 2 SR SAM, 2 CIWS, 2 HAS, 2 Decoys, 2.1s SAM acq, 44% EMCON.</td></tr>
+            <tr><td><b>Layered Defense Corridor</b></td><td>2.30x</td><td>4 Obj / 7 Jets (2 CAP + 5 QRA)</td><td>2 EW, 2 LR SAM, 2 MR SAM, 2 SR SAM, 2 CIWS, 2 Jammers, 1.9s SAM acq, 50% EMCON.</td></tr>
+            <tr><td><b>Heavy Integrated Defense</b></td><td>2.60x</td><td>5 Obj / 8 Jets (2 CAP + 6 QRA)</td><td>2 Runways, 2 Bunkers, 2 LR SAM, 2 MR SAM, 2 SR SAM, 2 CIWS, 1.7s SAM acq, 58% EMCON.</td></tr>
+            <tr><td><b>Strategic Air Denial</b></td><td>3.20x</td><td>5 Obj / 8 Jets (2 CAP + 6 QRA)</td><td>2 Runways, 2 Bunkers, 3 EW, 2 LR SAM, 3 MR SAM, 2 SR SAM, 2 CIWS, 3 AAA, 1.5s SAM acq, 66% EMCON.</td></tr>
           </tbody>
         </table>
       </div>
