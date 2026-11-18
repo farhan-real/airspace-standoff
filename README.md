@@ -35,16 +35,19 @@ Play online at [airspace-standoff.pages.dev](https://airspace-standoff.pages.dev
    * [Runways, Armor Classes & Airbase Mechanics](#runways-armor-classes--airbase-mechanics)
    * [Complete Ground Units Catalog (44 Installation Types)](#complete-ground-units-catalog-44-installation-types)
 7. [Difficulty Scaling & Scoring](#difficulty-scaling--scoring)
-8. [Hangar Procurement, Airframes, Pods & Subsystems](#hangar-procurement-airframes-pods--subsystems)
-   * [73 Airframes Across 8 Disciplines](#73-airframes-across-8-disciplines)
-   * [Hardpoints, External Pods & Modular Systems](#hardpoints-external-pods--modular-systems)
-9. [Mission Editor, Live Inspection Suite & Post-Sortie Analytics](#mission-editor-live-inspection-suite--post-sortie-analytics)
-10. [Controls & Platform Support](#controls--platform-support)
+8. [Aircraft Roster (113 Airframes Across 7 Disciplines)](#aircraft-roster-113-airframes-across-7-disciplines)
+9. [Weapons, Cannons, Pods & Modular Systems (209 Ordnance & 25 Upgrades)](#weapons-cannons-pods--modular-systems-209-ordnance--25-upgrades)
+   * [Air-to-Air Missiles (77 Missiles)](#air-to-air-missiles-77-missiles)
+   * [Air-to-Ground Ordnance (78 Weapons)](#air-to-ground-ordnance-78-weapons)
+   * [Built-in Cannons, Directed Energy, Gunpods & Utility Pods (54 Systems)](#built-in-cannons-directed-energy-gunpods--utility-pods-54-systems)
+   * [Hardpoint Stations, Flight Lead Suites & 25 Modular Upgrades](#hardpoint-stations-flight-lead-suites--25-modular-upgrades)
+10. [Mission Editor, Live Inspection Suite & Post-Sortie Analytics](#mission-editor-live-inspection-suite--post-sortie-analytics)
+11. [Controls & Platform Support](#controls--platform-support)
     * [Desktop Keybinds (Fully Rebindable in Settings)](#desktop-keybinds-fully-rebindable-in-settings)
     * [Mobile, Tablet & Android Support](#mobile-tablet--android-support)
-11. [Technology Stack](#technology-stack)
-12. [How to Run](#how-to-run)
-13. [License](#license)
+12. [Technology Stack](#technology-stack)
+13. [How to Run](#how-to-run)
+14. [License](#license)
 
 ---
 
@@ -54,12 +57,13 @@ Play online at [airspace-standoff.pages.dev](https://airspace-standoff.pages.dev
 | :--- | :--- | :--- |
 | **Game Modes** | 4 Distinct Modes | 1P Skirmish, 2P Versus, 1P Dynamic Theater Waves, 1P Ground Attack |
 | **Theater Grid** | 150×100 km & 240×160 km | Altitude flight levels from FL010 (1,000 ft) to FL650 (65,000 ft) |
-| **Aircraft Roster** | 73 Airframes + 80+ Presets | Stealth, Superiority, Multirole, Strike, EW, UCAV Drones, Experimental & COFFIN |
-| **Ordnance & Pods** | 95+ Weapons, Guns & Pods | ProNav missiles, A2G bombs, rockets, ARMs, cruise, DEW lasers, railguns & TGPs |
-| **Ground IADS** | 44 Surface Installation Types | VHF & gap-filler radars, LR/MR/SR SAMs, CIWS, hybrid AAA, decoys & 5-seg runways |
+| **Aircraft Roster** | 113 Airframes + 147 Presets | Stealth/6th-Gen, Superiority, Multirole, Strike/CAS, EW, UCAVs, Experimental & COFFIN |
+| **Ordnance & Pods** | 209 Weapons, Guns & Pods | 77 A2A missiles, 78 A2G weapons, 16 built-in guns/DEW, 13 gun/laser pods, 25 ECM/TGP/decoy pods |
+| **Systems & Upgrades** | 25 Modular Subsystems | TFR terrain masking, HTS, CCIP, MITL datalink, DIRCM, Kevlar armor, GaN AESA & COFFIN |
+| **Ground IADS** | 44 Surface Installation Types | VHF & gap-filler radars, finite-rack LR/MR/SR SAMs, CIWS, hybrid AAA, decoys & 5-seg runways |
 | **Doctrines & Tiers** | 14 Doctrines & 20 Difficulty Tiers | 7 Air Combat + 7 Attack Defense Doctrines across 10 Air & 10 Attack threat tiers |
 | **Budget Flexibility** | 9 Defense Budget Tiers | $200M Austerity (1.75× VP) to $1,000M Maximum Surge (0.40× VP), up to 16 units |
-| **Analysis & Archive** | Inspection, Replay & Manual | Live 6-tab C4ISR inspector with 5 telemetry graphs, sortie replay & 17-chapter manual |
+| **Analysis & Archive** | Inspection, Replay & Manual | Live 6-tab C4ISR inspector with 5 telemetry graphs, sortie replay & 18-section manual |
 
 ---
 
@@ -74,35 +78,38 @@ Play online at [airspace-standoff.pages.dev](https://airspace-standoff.pages.dev
 
 ## Special & Unique Behaviors (Beyond Raw Stats)
 
-Equipment, aircraft, and ground sites in *Airspace Standoff* do not just shift spreadsheet numbers—they execute distinct mechanical behaviors inside the physics and AI engines:
+Equipment, aircraft, and ground sites in *Airspace Standoff* execute distinct mechanical behaviors inside the physics and AI engines:
 
 ### Ground Unit Behaviors
 * **VHF Counter-Stealth (`Nebo-M`):** Long-wave radar uses separate fourth-root stealth scaling (`pow(rcs, 0.45) × 2.8`), stripping away VLO stealth invisibility across the sector until neutralized.
-* **Gap-Filler Altitude Cueing (`96L6-1` & `Giraffe AMB`):** While alive, low-altitude gap-fillers automatically lower neighboring LR SAM engagement floors (`S-400` drops from `6,500 ft` to `3,500 ft`; `Patriot` drops to `2,500 ft`), defeating terrain-masking approaches until destroyed.
-* **Independent Fire Control (`Buk-M3` vs. `S-400` / `S-300V4` / `Patriot`):** Long-range strategic SAMs lose **52% range** if sector EW radars and Comms Relays go down; `Buk-M3` carries an organic TELAR radar and keeps firing at full `46 km` reach completely un-cued.
+* **Gap-Filler Altitude Cueing (`96L6-1` & `Giraffe AMB`):** While alive, low-altitude gap-fillers automatically lower neighboring LR SAM engagement floors (`S-400` drops from `8,000 ft` to `4,800 ft`; `Patriot` drops to `3,600 ft`), defeating terrain-masking approaches until destroyed.
+* **Finite SAM Magazines, Ready Racks & Guidance Channels:** Surface SAM batteries hold finite magazines (`6–12` missiles), ready racks (`3–6` cells), acquisition timers (`1.5s–4.5s`), and active channel limits (`1–2` simultaneous missiles). Emptying a ready rack forces a **20s–32s reload cycle** that can be baited with `ITALD` or `MALD` decoys.
+* **Independent Fire Control (`Buk-M3` vs. `S-400` / `S-300V4` / `Patriot`):** Long-range strategic SAMs lose **52% range** if sector EW radars and Comms Relays go down; `Buk-M3` carries an organic TELAR radar and keeps firing at full `38 km` reach completely un-cued.
 * **True Passive Emitters (`Rapier Optical`, `Strela-10M`, `Avtobaza ELINT`):** Emit zero RF radiation, trigger zero RWR alerts in your cockpit, and cannot be locked by Anti-Radiation Missiles.
-* **EMCON Shutdown Traps:** Active emitting SAMs and EW radars detect incoming ARMs at `24–34 km` and shut down emissions for 8–14 seconds. Legacy ARMs (`Shrike`, `AGM-88C`, `Kh-31P`) immediately lose lock (`RADAR EMCON SHUTDOWN`), while Anti-EMCON ARMs (`AGM-88E/G`, `Kh-58UShKE`, `ALARM-II`, `HAROP-AL`) remember coordinates and strike anyway.
-* **Multi-Role Hybrid Turrets (`Pantsir-S1` & `2K22M Tunguska`):** `Pantsir-S1` intercepts incoming SDBs/cruise missiles while firing twin 30mm guns at low aircraft; `Tunguska` combines `11.5 km` optical SHORAD missiles, `6.5 km` twin 30mm flak, and `45%` glide-bomb interception.
+* **EMCON Shutdown Traps:** Active emitting SAMs and EW radars detect incoming ARMs at `24–34 km` and shut down emissions for 8–14 seconds. Legacy ARMs (`Shrike`, `AGM-88C`, `Kh-31P`) immediately lose lock (`RADAR EMCON SHUTDOWN`), while Anti-EMCON ARMs (`AGM-88E/G`, `Kh-58UShKE`, `ALARM-II`, `HAROP-AL`, `SPEAR-EW`) remember coordinates and strike anyway.
+* **Multi-Role Hybrid Turrets (`Pantsir-S1` & `2K22M Tunguska`):** `Pantsir-S1` intercepts incoming SDBs/cruise missiles while firing twin 30mm guns at low aircraft; `Tunguska` combines `10.5 km` optical SHORAD missiles (`8` total / `4` ready rack), `6.0 km` twin 30mm flak, and `38%` glide-bomb interception.
 * **Power & Logistics Dependencies:** Knocking out `Grid Power Substations` drops nearby `Krasukha-4` jammer output by **55%**. Destroying `Fuel Depots` (`6 km` secondary blast) slows QRA launches by `+35%`; destroying `Munition Dumps` (`7.5 km` blast) increases SAM reload times by `+80%` and restricts QRA missile loads; `Logistics Hubs` (`4.5 km` blast) boost QRA launch speed by `18%` while intact.
-* **Active Runway Taxi, Takeoff Rolls & Decoy Tiers:** QRA fighters physically **taxi** out of shelters/hangars/open pads and accelerate down contiguous runway slices—cratering their active roll segments destroys launching jets on the ground! Meanwhile, `DECOY_THERMAL` sites emit heat and RF spoofs that fool standard Targeting Pods (`LITENING`/`LANTIRN`), requiring `45 km+` pods (`ATFLIR`, `Damocles`, `Sniper XR`, `Legion`, `TARPS`) or `<15 km` flybys to expose.
+* **Active Runway Taxi, Takeoff Rolls & Decoy Tiers:** QRA fighters physically **taxi** out of shelters/hangars/open pads and accelerate down contiguous runway slices—cratering their active roll segments destroys launching jets on the ground. Meanwhile, `DECOY_THERMAL` sites emit heat and RF spoofs that fool basic Targeting Pods (`LANTIRN`/`LITENING`), requiring `45 km+` pods (`ATFLIR`, `Damocles`, `Sniper XR`, `Legion`, `TARPS`) or `<15 km` flybys to expose.
 
 ### Aircraft Behaviors
 * **COFFIN Synthetic Vision (`F-15 S/MT`, `Su-37 [COFFIN]`, `F-22C`, `ADF-11F`):** Bypass aerodynamic corner-speed penalties (**100% turn authority locked at any speed**), accumulate **zero G-stress** (immune to Tunnel Vision and G-LOC blackouts), and apply passive `+24% to +30%` evasive dodge.
 * **Unmanned UCAVs & Swarm Immunity:** Immune to biological G-LOC up to **20G**, launch off single **1-segment** runway fragments, and gain total immunity to EW radar jamming when fitted with the `Swarm AI Coprocessor`.
-* **3D Thrust-Vectoring (`Su-35S`, `Su-37`, `Su-57`, `F-22A`, `X-02S`, `CFA-44`):** Physically unlock the `Pugachev's Cobra` (`+55%` evasion brake) maneuver card—locked out on conventional aircraft—and multiply base turn agility by `1.20×`.
-* **Thermal Exhaust Suppression vs. Afterburner Plumes:** Trough-shielded airframes (`B-21` `0.35×`, `B-2A` `0.38×`, `F-117A` `0.42×`, `YF-23` `0.45×`) actively mask infrared emissions against IIR/EO missiles, whereas twin-reheat interceptors (`MiG-31BM` `1.50×`, `Tu-160M` `1.60×`) amplify enemy IR lock probabilities.
-* **Armor & Cannon Deflection (`Strike` & `Flight Lead`):** Dedicated `Strike` aircraft (`A-10C`, `Su-25SM3`, `Su-34`) deflect `40%–50%` of autocannon fire and `35%` of AAA flak damage; `Flight Leads` unlock category-tailored suites (e.g., Stealth `-50%` beam spike, Multirole rapid RTB, Strike `-1` missile damage).
+* **Built-In EW & DIRCM Airframes (`TYPHOON-T4`, `J-20S`, `Su-24MP`, `J-15D`, `EA-36`, `Su-39`):** Electronic-attack fighters (`TYPHOON-T4`, `J-20S`, `Su-24MP`, `J-15D`, `EA-36`) project **25%–60% innate broadband jamming** plus passive ESM without sacrificing a weapon pylon; `Su-39` integrates a built-in Sukhogruz IR jammer (`+18%` evasion vs IR seekers, stacking up to `42%` with `DIRCM`).
+* **3D Thrust-Vectoring (`Su-35S`, `Su-37`, `Su-57`, `F-22A`, `J-20B`, `X-02S`, `CFA-44`):** Physically unlock the `Pugachev's Cobra` (`+55%` evasion brake) maneuver card—locked out on conventional aircraft—and multiply base turn agility by `1.20×`.
+* **Thermal Exhaust Suppression vs. Afterburner Plumes:** Trough-shielded airframes (`B-21` `0.32×`, `RQ-180` `0.35×`, `B-2A` `0.40×`, `F-117A` `0.42×`, `YF-23` `0.45×`) actively mask infrared emissions against IIR/EO missiles, whereas heavy reheat interceptors (`MiG-25PD` `1.55×`, `MiG-31BM` `1.50×`, `Tu-160M` `1.60×`, `B-52H` `1.65×`) amplify enemy IR lock probabilities.
+* **Armored CAS Flak Mitigation & STOVL Short-Field:** Heavy CAS platforms (`A-10C`, `Su-25SM3`, `Su-39`) carry **7 HP** hulls with innate **-35% AAA flak damage** (`-20%` to `-25%` on `AV-8B+`, `Jaguar`, `MiG-27K`, `A-16`, `F-16XL`, `Su-34`), stacking up to `-75%` with `Kevlar Belly Armor`. `AV-8B+`, `F-35B`, and `A-29B` operate off single **1-segment (700 m)** runway strips.
 * **Hypersonic High-Altitude Cruise (`DARKSTAR`):** Deploys at **58,000 ft** and cruises at **Mach 2.40+**, overflying medium SAM envelopes while demanding wide 5.0G turns.
 * **Dynamic Rack Jettison:** External weapons physically contribute parasite speed drag and RCS bloom until expended (`ammoFraction`), restoring clean flight speed as missiles leave the rails.
 
 ### Missile, Cannon & Pod Behaviors
-* **Dual-Pulse Terminal Surge (`PL-15E`, `Astra Mk2`, `R-77M`, `I-Derby ER`):** Coast after Stage 1 burnout, then fire a **Stage 2 pulse inside 22 km** (`+0.90 Mach` surge and `+18%` kinetic retention) to defeat late notch/break maneuvers.
-* **Zero-Decay Ramjets (`Meteor`, `Astra Mk3`, `AIM-152`, `BrahMos-A`):** Sustain peak Mach across maximum reach without aerodynamic drag bleed (`lambda ~ 0.04`), denying range-bleed escapes.
-* **Hypersonic Stratospheric Lofting (`Kinzhal`, `R-37M`, `Kh-32`):** Climb toward `alt = 0.95` during midcourse before diving terminally at **Mach 4.6–6.2**, outrunning CIWS interception (`Mach 5.0+` cannot be intercepted by CIWS).
-* **180° Rearward & Sphere Launches (`Python-5`, `ADMM`):** Full-sphere optical seekers fire backwards over your shoulder at pursuing bandits without requiring you to turn your nose.
-* **Area Shockwaves & Runway Heavers (`MPBM`, `CBU`, `JP233`, `Durandal`):** `MPBM` triggers an **8.5 km thermobaric AOE** hitting nearby aircraft; Cluster dispensers splash **4.5–7.0 km** to kill grouped defenses AND taxiing jets; `BLU-107`, `BetAB-500ShP`, and `JP233` inflict **2.0× structural damage on runways**.
-* **Concealed Stealth & Passive RF Trajectories:** Low-RCS missiles (`AIM-260`, `JASSM-ER`, `LRASM`, `JSOW-C`) halve AI defensive reaction distances and reduce CIWS intercept rates by 45%; Passive ARMs remain stealth-concealed on radar for their first **3.2 seconds**.
-* **Directed Energy vs. Ballistic Cannons:** `PLSL`, `DE-Pulse`, and `TLS` fire hitscan speed-of-light beams that spike host thermal bloom (`1.4×–1.7×`) and lose power in clouds (`-45%` to `-80%`), while ballistic cannons apply kinetic pilot concussion stress and punch through overcast.
+* **Dual-Pulse Terminal Surge (`PL-15E`, `PL-15`, `Astra Mk2`, `R-77M`, `K-77ME`, `I-Derby ER`):** Coast after Stage 1 burnout, then fire a **Stage 2 pulse inside 22 km** (`+0.90 Mach` surge and `+16% to +18%` kinetic retention) to defeat late notch/break maneuvers.
+* **Zero-Decay Ramjets (`Meteor`, `Gokhan`, `FMRAAM`, `RVV-AE-PD`, `JNAAM`, `Astra Mk3`, `AIM-152`, `PL-21`, `BrahMos-A`):** Sustain peak Mach across maximum reach without aerodynamic drag bleed (`lambda ~ 0.04–0.06`), denying range-bleed escapes.
+* **Home-On-Jam A2A (`R-27P`, `R-27EP`, `AIM-120D-HOJ`, `PL-15B HOJ`, `AIM-260B HOJ`):** Lock directly onto enemy EW jammers and high-power radars for `+15% to +18% Pk` and `+30% to +40%` anti-notch resistance.
+* **Silent Long-Range IR BVR (`R-27T/ET`, `PL-10E-ER`, `AIM-9X-B3`, `R-77T`, `IRIS-T SLX`, `MICA-IR`):** Deliver 38–64 km passive thermal ambushes with zero RWR alert, total chaff immunity, and immunity to 90° Doppler notching.
+* **Hypersonic Stratospheric Lofting (`Kinzhal`, `R-37M`, `K-100`, `Kh-32`):** Climb into the stratosphere during midcourse before diving terminally at **Mach 4.6–6.2**, outrunning CIWS interception (`Mach 5.0+` is 100% CIWS-immune).
+* **180° Rearward & Sphere Launches (`Python-5`, `ADMM`, `ADMM-S`):** Full-sphere optical seekers fire backwards over your shoulder at pursuing bandits without requiring you to turn your nose.
+* **Area Shockwaves & Runway Heavers (`MPBM`, `MPBM-II`, `CBU`, `RBK-500`, `JP233`, `BLU-107`, `BetAB-500ShP`):** `MPBM` triggers an **8.5 km** (`10.5 km` on `MPBM-II`) thermobaric AOE hitting nearby aircraft; Cluster dispensers splash **4.5–7.0 km** to kill grouped defenses and taxiing jets; `BLU-107 Durandal`, `BetAB-500ShP`, and `JP233` inflict **2.0× structural damage on runways**.
+* **Directed Energy vs. Ballistic & CAS Cannons:** `PLSL`, `DE-Pulse`, and `TLS` fire hitscan speed-of-light beams that spike host thermal bloom (`1.3×–1.7×`) and scatter in clouds (`-45%` to `-80%`), while heavy CAS rotary cannons (`GAU-8`, `GSh-6-30`, `GSh-30-2`, `GAU-13`, `GAU-12`) and `BK-37` 37mm tungsten pods deal **1.55×–2.0× ground damage** at **85%–100% armor piercing**.
 
 ---
 
@@ -111,7 +118,7 @@ Equipment, aircraft, and ground sites in *Airspace Standoff* do not just shift s
 ### 1. Radar Physics, Classification & Rules of Engagement (RoE)
 
 * **Fourth-Root Radar Range Equation:** Detection envelopes update every simulation tick using `R_detect = R_0 × (RCS / 1.0)^0.25 × K_aspect × K_clutter × K_weather × K_jamming`. Cutting RCS by 10,000× shrinks detection reach by 90%.
-* **Aspect & Beam Exposure Spikes:** Nose-on silhouettes stay minimal. Banking 90° broadside multiplies radar return by `1.8× to 4.8×`, exposing stealth fighters during careless perpendicular turns.
+* **Aspect & Beam Exposure Spikes:** Nose-on silhouettes stay minimal. Banking 90° broadside multiplies radar return by `1.3× to 4.8×`, exposing stealth fighters during careless perpendicular turns.
 * **Weather Clouds & False Ghost Echoes:** Drifting cloud cells attenuate radar by **-4% per cell**, scatter unmitigated laser bombs (`-20% Pk` per cell) and optical seekers (`-12% Pk`), and create temporary **Ghost Contacts** (`BOGEY [?]`) that dissolve under scanning.
 * **Two-Phase Identification & Strict RoE:** Contacts appear as unverified `BOGEY [?]` tracks until scanned for **5.5s** (**11.0s** for stealth) or burned through inside **18 km** (**28 km** with IRST). Firing on an unverified bogey costs **-600 VP**; hitting a civilian airliner costs **-500 VP**, and destroying one costs **-2,000 VP**.
 * **Orbital Satellite Radar Uplink:** In air-combat modes, when 3 or fewer hostile aircraft survive, orbital tracking pinpoints remaining targets directly onto radar regardless of stealth or clouds.
@@ -178,8 +185,8 @@ Doctrines are separated between **Air Combat** and **Ground Attack** and govern 
 
 ### Runways, Armor Classes & Airbase Mechanics
 
-* **5-Segment Runways (3,500 m):** Every airbase operates five `700 m` concrete segments (`7 HP Fortified` each). Contiguous intact length requirements: **4 segments** (Heavy bombers & `MiG-31BM`), **3 segments** (Standard fighters), **2 segments** (STOL/light jets), **1 segment** (`UCAV` drones). Cutting Segment 3 halts 3–4 segment jets; cutting Segments 2 and 4 grounds all manned flight.
-* **Ground Armor Classes:** `SOFT` takes **100%** damage from all weapons; `ARMORED` takes **100%** from ATGMs, PGMs, cruise missiles, ARMs, or AP `≥ 0.70` (**65%** from light rockets/clusters); `FORTIFIED` deflects **80%** of light rockets/fragments (`0.20×`) and **50%** of mid-AP, requiring **Bunker Penetrators** (`1.0×`) or **Anti-Runway** bombs (`2.0× vs Runways`).
+* **5-Segment Runways (3,500 m):** Every airbase operates five `700 m` concrete segments (`7 HP Fortified` each). Contiguous intact length requirements: **4 segments** (Heavy bombers & `MiG-31BM`/`MiG-25PD`/`J-36`/`DARKSTAR`), **3 segments** (Standard fighters), **2 segments** (Light/CAS/STOL jets), **1 segment** (`AV-8B+`, `F-35B`, `A-29B` & `UCAV` drones). Cutting Segment 3 halts 3–4 segment jets; cutting Segments 2 and 4 grounds all manned flight.
+* **Ground Armor Classes:** `SOFT` takes **100%** damage from all weapons; `ARMORED` takes **100%** from ATGMs, PGMs, cruise missiles, ARMs, or AP `≥ 0.70` (**65%** from light rockets/clusters); `FORTIFIED` deflects **80%** of light rockets/fragments (`0.20×`) and **50%** of mid-AP (`AP ≥ 0.65`), requiring **Bunker Penetrators** (`1.0×`) or **Anti-Runway** bombs (`2.0× vs Runways`).
 * **Unguided Dispersion & Cloud Scatter:** Dropping unguided iron bombs above `26,000 ft` without a `CCIP` computer or Targeting Pod lowers accuracy by `-18%`. Pure laser bombs lose `-20% Pk` per cloud cell without Targeting Pod mitigation.
 
 ### Complete Ground Units Catalog (44 Installation Types)
@@ -202,30 +209,30 @@ Doctrines are separated between **Air Combat** and **Ground Attack** and govern 
 
 #### 2. Long, Medium & Short-Range SAM Batteries
 
-| Battery | Class | Armor & HP | Reach & Mach | Floor (Uncued / Cued) | Behavior & Countermeasure Profile | VP |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **S-300V4 Antey-2500** | LR SAM | ARMORED (9) | 92 km (M 6.0) | 8,000 / 4,500 ft | Heavy 5 HP warhead, wide turn radius vulnerable to 90° Doppler notching. | +400 |
-| **S-400 Triumf Battery** | LR SAM | ARMORED (8) | 82 km (M 5.4) | 6,500 / 3,500 ft | Area-denial 4 HP SAM; requires EW cueing for full range (-52% un-cued). | +380 |
-| **HQ-9B Long-Range SAM** | LR SAM | ARMORED (8) | 76 km (M 4.8) | 5,500 / 3,000 ft | AESA track-via-missile SAM with **+20% anti-notch** guidance resistance. | +370 |
-| **MIM-104F Patriot PAC-3** | LR SAM | ARMORED (7) | 68 km (M 4.9) | 4,500 / 2,500 ft | Agile hit-to-kill Dual-Pulse SAM (**+25% anti-notch**) dangerous inside 28 km. | +360 |
-| **9K37M3 Buk-M3 TELAR** | MR SAM | ARMORED (6) | 46 km (M 3.6) | 2,500 / 1,500 ft | Self-contained fire-control radar; fires independently after EW radars fall. | +280 |
-| **NASAMS-3 AMRAAM-ER** | MR SAM | ARMORED (5) | 40 km (M 3.5) | 2,200 / 1,500 ft | Rapid-reloading networked launcher firing low-RCS AMRAAM-ER missiles. | +260 |
-| **MIM-23 Hawk Phase III** | MR SAM | SOFT (4) | 36 km (M 2.9) | 2,400 / 1,600 ft | Upgraded medium SAM defending border outposts and forward airbases. | +230 |
-| **2K12 Kub (SA-6 Gainful)** | MR SAM | SOFT (4) | 32 km (M 2.8) | 2,800 / 2,000 ft | Legacy semi-active medium SAM vulnerable to chaff clouds and ECM jamming. | +220 |
-| **9K332 Tor-M2 SHORAD** | SR SAM | ARMORED (5) | 18 km (M 2.8) | 1,000 ft | Point-defense SAM engaging low aircraft and intercepting incoming PGMs (**55%**). | +200 |
-| **Rapier Optical SHORAD** | SR SAM | SOFT (4) | 15 km (M 2.5 EO) | 1,000 ft | **Passive optical** tracker: zero radar emissions, zero RWR alert, immune to ARMs. | +190 |
-| **Strela-10M / Avenger IR** | SR SAM | SOFT (3) | 11 km (M 2.3 IIR) | 1,000 ft | **Passive IR** seeker: zero RWR warning; countered by Idle throttle & DIRCM. | +160 |
+| Battery | Class | Armor & HP | Magazine / Rack | Reach & Mach | Floor (Uncued / Cued) | Behavior & Countermeasure Profile | VP |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **S-300V4 Antey-2500** | LR SAM | ARMORED (9) | 8 / 4 Rack (1 Active) | 74 km (M 5.2) | 9,500 / 6,000 ft | Heavy 4 HP warhead, wide turn radius vulnerable to 90° Doppler notching. | +400 |
+| **S-400 Triumf Battery** | LR SAM | ARMORED (8) | 12 / 4 Rack (2 Active) | 66 km (M 4.8) | 8,000 / 4,800 ft | Area-denial 3.5 HP SAM; requires EW cueing for full range (-52% un-cued). | +380 |
+| **HQ-9B Long-Range SAM** | LR SAM | ARMORED (8) | 12 / 4 Rack (2 Active) | 60 km (M 4.4) | 7,000 / 4,200 ft | AESA track-via-missile SAM with **+14% anti-notch** guidance resistance. | +370 |
+| **MIM-104F Patriot PAC-3** | LR SAM | ARMORED (7) | 12 / 4 Rack (2 Active) | 56 km (M 4.5) | 6,000 / 3,600 ft | Agile hit-to-kill SAM (**+16% anti-notch**) entering 26s reload per 4 shots. | +360 |
+| **9K37M3 Buk-M3 TELAR** | MR SAM | ARMORED (6) | 8 / 4 Rack (1 Active) | 38 km (M 3.3) | 3,500 / 2,400 ft | Self-contained fire-control radar; fires independently after EW radars fall. | +280 |
+| **NASAMS-3 AMRAAM-ER** | MR SAM | ARMORED (5) | 12 / 6 Rack (2 Active) | 34 km (M 3.2) | 3,200 / 2,200 ft | Rapid-reloading networked launcher firing low-RCS AMRAAM-ER missiles. | +260 |
+| **MIM-23 Hawk Phase III** | MR SAM | SOFT (4) | 6 / 3 Rack (1 Active) | 30 km (M 2.7) | 3,400 / 2,400 ft | Upgraded medium SAM defending border outposts and forward airbases. | +230 |
+| **2K12 Kub (SA-6 Gainful)** | MR SAM | SOFT (4) | 6 / 3 Rack (1 Active) | 26 km (M 2.6) | 3,600 / 2,600 ft | Legacy semi-active medium SAM vulnerable to chaff clouds and ECM jamming. | +220 |
+| **9K332 Tor-M2 SHORAD** | SR SAM | ARMORED (5) | 8 / 4 Rack (1 Active) | 16 km (M 2.6) | 1,000 ft | Point-defense SAM engaging low aircraft and intercepting slow glide bombs (**45%**). | +200 |
+| **Rapier Optical SHORAD** | SR SAM | SOFT (4) | 8 / 4 Rack (1 Active) | 14 km (M 2.4 EO) | 1,000 ft | **Passive optical** tracker: zero radar emissions, zero RWR alert, immune to ARMs. | +190 |
+| **Strela-10M / Avenger IR** | SR SAM | SOFT (3) | 8 / 4 Rack (1 Active) | 10.5 km (M 2.2 IIR) | 1,000 ft | **Passive IR** seeker: zero RWR warning; countered by Idle throttle & DIRCM. | +160 |
 
 #### 3. Point-Defense CIWS & Low-Altitude AAA Flak
 
 | Battery | Class | Armor & HP | Reach & Ceiling | Intercept & Behavior | VP |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **SeaRAM / Land Phalanx** | CIWS | ARMORED (5) | 7.5 km PD (14 km) | Rapid-cycling (`1.5s`) **72% base PGM intercept** against SDBs, glide bombs & subsonic cruise. | +220 |
-| **Pantsir-S1 Hybrid CIWS** | CIWS | ARMORED (6) | 7.5 km PD / 7 km Gun | **65% PGM intercept** plus twin 30mm autocannons below 12,000 ft (`1.0 HP` hit). | +220 |
-| **2K22M Tunguska Hybrid** | AAA / SAM | ARMORED (5) | 11.5 km SAM / 6.5 km Gun | Hybrid turret: fires **9M311 EO missiles** out to 11.5 km, 30mm flak inside 6.5 km (`14,500 ft`), and intercepts PGMs (**45%**). | +185 |
-| **Gepard Twin 35mm SPAAG** | AAA | ARMORED (5) | 9.5 km / 16,500 ft | Twin 35mm armored flak (`1.2 HP` hit) plus **40% slow glide-bomb interception**. | +150 |
-| **S-60 / 57mm Proximity Flak** | AAA | SOFT (4) | 12.0 km / 22,000 ft | Heavy medium-ceiling airburst flak (`1.4 HP` hit) threatening medium-alt LGB drops. | +140 |
-| **ZSU-23-4M4 Shilka AAA** | AAA | SOFT (4) | 7.5 km / 14,000 ft | Optical quad 23mm gun (`0.9 HP` hit); passive emitter (no ARM lock). | +120 |
+| **SeaRAM / Land Phalanx** | CIWS | ARMORED (5) | 7.5 km PD (14 km) | Rapid-cycling (`2.4s`) **62% base PGM intercept** against SDBs, glide bombs & subsonic cruise. | +220 |
+| **Pantsir-S1 Hybrid CIWS** | CIWS | ARMORED (6) | 7.5 km PD / 6.5 km Gun | **55% PGM intercept** plus twin 30mm autocannons below 11,000 ft (`0.8 HP` hit). | +220 |
+| **2K22M Tunguska Hybrid** | AAA / SAM | ARMORED (5) | 10.5 km SAM / 6.0 km Gun | Hybrid turret: fires **9M311 EO missiles** out to 10.5 km (`8/4` rack), 30mm flak inside 6.0 km (`13,500 ft`), and intercepts PGMs (**38%**). | +185 |
+| **Gepard Twin 35mm SPAAG** | AAA | ARMORED (5) | 8.5 km / 15,000 ft | Twin 35mm armored flak (`0.95 HP` hit) plus **32% slow glide-bomb interception**. | +150 |
+| **S-60 / 57mm Proximity Flak** | AAA | SOFT (4) | 11.0 km / 20,000 ft | Heavy medium-ceiling airburst flak (`1.1 HP` hit) threatening medium-alt LGB drops. | +140 |
+| **ZSU-23-4M4 Shilka AAA** | AAA | SOFT (4) | 7.0 km / 12,500 ft | Optical quad 23mm gun (`0.7 HP` hit); passive emitter (no ARM lock). | +120 |
 
 #### 4. Electronic Warfare, C4I Relays, Decoys, Airbases & Logistics
 
@@ -259,39 +266,96 @@ Doctrines are separated between **Air Combat** and **Ground Attack** and govern 
 ## Difficulty Scaling & Scoring
 
 * **10 Air Combat Tiers:** `Permissive Sector` (`0.50×`, $150M, 7.0s reaction, 0% notch, 0 aces) → `Buffer Zone` (`0.75×`) → `Contested Airspace` (`1.00×`) → `Escalated Airspace` (`1.25×`) → `Hostile Airspace` (`1.50×`) → `Forward Combat Zone` (`1.75×`) → `High-Threat Sector` (`2.00×`) → `Fortified Airspace` (`2.30×`) → `Air Denial Zone` (`2.60×`) → `Extreme Threat Sector` (`3.20×`, $600M, 1.7s reaction, 55% notch, 3 aces).
-* **10 Ground Attack Tiers:** `Unprepared Garrison` (`0.50×`, 2 Obj, 1 QRA jet, 60s scramble, 0% EMCON) → `Border Outpost` (`0.75×`) → `Forward Garrison` (`1.00×`) → `Fortified Belt` (`1.25×`) → `Integrated Air Defense` (`1.50×`) → `Hardened Command Sector` (`1.75×`) → `Dense Air Defense Sector` (`2.00×`) → `Layered Defense Corridor` (`2.30×`) → `Heavy Integrated Defense` (`2.60×`) → `Strategic Air Denial` (`3.20×`, 5 Obj, 8 QRA jets, 22s scramble, 66% EMCON).
+* **10 Ground Attack Tiers:** `Unprepared Garrison` (`0.50×`, 2 Obj, 1 QRA jet, 60s scramble, 4.5s SAM lock, 0% EMCON) → `Border Outpost` (`0.75×`) → `Forward Garrison` (`1.00×`) → `Fortified Belt` (`1.25×`) → `Integrated Air Defense` (`1.50×`) → `Hardened Command Sector` (`1.75×`) → `Dense Air Defense Sector` (`2.00×`) → `Layered Defense Corridor` (`2.30×`) → `Heavy Integrated Defense` (`2.60×`) → `Strategic Air Denial` (`3.20×`, 5 Obj, 8 QRA jets, 22s scramble, 1.5s SAM lock, 66% EMCON).
 * **Scoring & Speed Multiplier:** Aerial kills award `150 + 10 × airframe cost` (drones `80 + 12 × cost`), `1.5×` for Flight Leads, and `+850 VP` Ace bounties. Completing missions under Par Time (`6 min` Air Combat, `9 min` Attack) grants `+2.5 VP` per saved second. Final score multiplies `(Base Combat VP + Time Bonus) × Difficulty Multiplier (0.50×–3.20×) × Budget Multiplier (0.40×–1.75×)`.
 
 ---
 
-## Hangar Procurement, Airframes, Pods & Subsystems
+## Aircraft Roster (113 Airframes Across 7 Disciplines)
 
-### 73 Airframes Across 8 Disciplines
+Every airframe in the Hangar includes distinct radar apertures, clutter filters, RCS values, thermal bloom coefficients, hardpoint station capacities (`Type S / M / H / X`), and **147 preconfigured combat presets** (plus custom user-saved loadouts).
 
 <details>
-<summary><b>Click to expand the Full Airframe Roster (73 Aircraft)</b></summary>
+<summary><b>Click to expand the Full Airframe Roster (113 Aircraft Across 7 Categories)</b></summary>
 <br>
 
-| Discipline | Included Airframes | Key Characteristics |
+| Discipline | Sub-Groups & Included Airframes | Key Characteristics & Notable Capabilities |
 | :--- | :--- | :--- |
-| **Stealth (8)** | F-22A, YF-23, F-35A, Su-57, J-20, Su-75, FC-31, J-35 | Sub-0.01 m² RCS, internal VLO bays with zero drag/RCS penalty, supercruise & sensor fusion. |
-| **Air Superiority (8)** | MiG-31BM, F-15EX, Su-35S, Su-30SM, Eurofighter, Rafale C, J-16, F-14D | High-altitude Mach 1.88+ sprint, 3D TVC dogfighting, and 10 to 14 heavy weapon stations. |
-| **Multirole (8)** | Mirage 2000-5, Tejas Mk2, F-16V, MiG-29K, JAS-39E Gripen, F/A-18E, F-2A, KF-21 | Agile 9G turn rates, compact AESA arrays, and carrier/networked versatility. |
-| **Strike & Interdictors (17)** | A-10C, Su-25SM3, Su-34, B-52H, B-1B, Tu-160M, B-2A, FB-22, B-21, A-29B, Mirage 2000D, Su-24M2, Tornado GR.4, JH-7A, F-111F, F-117A, F-15E | Titanium armor, up to 31,750 kg payload capacity, Type X centerline rails, and VLO deep penetration. |
-| **Electronic Warfare (7)** | Su-24MP, Tornado ECR, EF-111A, EA-18G Growler, J-15D, J-16D, EA-36 Barricader | High-power microwave jamming umbrellas (up to 125 km), passive ESM, and heavy SEAD rails. |
-| **Swarm & UCAV Drones (9)** | MQ-99, MQ-101, XQ-58A Valkyrie, Bayraktar Akinci, MQ-28 Ghost Bat, MQ-20 Avenger, Kizilelma, S-70 Okhotnik, RQ-180 White Bat | High-G structural limits (up to 20G), zero pilot blackout risk, and ultra-low acquisition cost. |
-| **Experimental & Superfighters (10)** | F-15 S/MTD, Su-47 Berkut, Su-37, X-29A, X-02S Strike Wyvern, ADFX-01 Morgan, CFA-44 Nosferatu, Darkstar, X-40 Nightmare, XFA-36B Game | Forward-swept wings, Mach 2.4+ scramjet cruise, pulse lasers, chemical lasers, and EML railguns. |
-| **COFFIN Conversions (4)** | F-15 S/MT, Su-37, F-22C Raptor II, ADF-11F Raven | Enclosed armored optical cockpits locking turn efficiency at 100%, zero G-stress, and +24%–30% dodge. |
+| **Stealth & 6th-Gen (20)** | **5th-Gen Core (8):** F-22A Raptor, YF-23 Black Widow II, F-35A Lightning II, Su-57 Felon, J-20 Mighty Dragon, Su-75 Checkmate, FC-31 Gyrfalcon, J-35 Carrier Stealth<br>**5th-Gen Variants & 6th-Gen (12):** F-35B (STOVL), F-35C (Carrier), F-22A+ Super Raptor, J-20B (WS-15 TVC), J-20S Twin-Seat (EW/C2), TAI TF Kaan, KAI KF-21EX Block III, HAL AMCA Mk1, BAE / GCAP Tempest, FCAS NGF, Chengdu J-36 Heavy 6th-Gen, Shenyang J-50 Tailless | Sub-0.01 m² VLO/LO RCS (`0.0001–0.007 m²`), internal weapon bays (up to 8 internal slots on `J-36`), up to `105 km` 140° broadband GaN AESA radars, supercruise (`M 1.50–1.65`), and `F-35B` 1-segment STOVL launch capability. `J-20S` includes built-in 25% jamming + passive ESM. |
+| **Air Superiority & Interceptors (20)** | **Heavy Fleet & TVC Core (8):** MiG-31BM Foxhound, F-15EX Eagle II, Su-35S Flanker-E, Su-30SM Flanker-H, Eurofighter Typhoon, Dassault Rafale C, J-16 Red Eagle, F-14D Super Tomcat<br>**Expanded Air Dominance (12):** F-15C Golden Eagle, F-15JSI Super Interceptor, Su-27SM3 Flanker-B Mod, Su-30MKI Flanker-H+, Shenyang J-11BG Flanker, Shenyang J-15T Flying Shark, MiG-25PD Foxbat-E, MiG-35S Fulcrum-F, F-4E Terminator 2020, Super Mirage 4000, F-14B Bombcat, Eurofighter Tranche 4 (ECRS Mk2) | High-altitude `Mach 1.88–2.05` stratospheric sprint (`MiG-31BM`, `MiG-25PD`), 3D TVC post-stall agility (`Su-35S`, `Su-30MKI`, `MiG-35S`), up to 14 Type X pylons (`F-15EX`), centerline `BrahMos-A` (`Su-30MKI`), and built-in 25% ECRS Mk2 EW on `Typhoon T4`. |
+| **Multirole Fighters (20)** | **Core Workhorses (8):** Mirage 2000-5, HAL Tejas Mk2 MWF, F-16V Viper, MiG-29K Fulcrum-D, JAS-39E Gripen, F/A-18E Super Hornet, Mitsubishi F-2A Viper Zero, KAI KF-21 Boramae<br>**Expanded Light, Carrier & Modern (12):** JF-17 Block III Thunder, KAI FA-50 Block 20, HAL Tejas Mk1A, JAS-39C Gripen, F-16C Block 52+ Viper, F/A-18C+ Legacy Hornet, F/A-18F Block III Rhino, Chengdu J-10C Vigorous Dragon, Dassault Rafale M (F4), MiG-29SMT Fulcrum-E, Mirage F1EQ, F-5EM Tiger II (AESA) | Agile `9G–9.5G` turn rates, economical `$9.5M–$15M` light fighters (`F-5EM`, `FA-50`, `Tejas Mk1A`, `JF-17 B3`, `Mirage F1EQ`), carrier airframes (`F/A-18F`, `Rafale M`), and semi-stealth conformal bays (`KF-21`). |
+| **Close Air Support, Interdictors & Strike (23)** | **Armored & Fast CAS (6):** A-10C Warthog, Su-25SM3 Frogfoot, Su-39 Frogfoot-T, AV-8B+ Harrier II Plus, MiG-27K Flogger-J2, A-16A Viper CAS Tankbuster<br>**Tactical Interdictors (10):** A-29B Super Tucano, SEPECAT Jaguar GR.3A, Mirage 2000D Strike, JH-7A Flying Leopard, Su-24M2 Fencer-D, Tornado GR.4, F-111F Aardvark, F-16XL Strike Falcon, F-117A Nighthawk, F-15E Strike Eagle<br>**Heavy Bombers (7):** Su-34 Fullback, B-52H Stratofortress, B-1B Lancer, Tu-160M White Swan, B-2A Spirit, FB-22 Strike Raptor, B-21 Raider | `A-10C`, `Su-25SM3`, and `Su-39` carry `7 HP` titanium armor (`-35%` AAA flak); `MiG-27K`, `A-16`, and `F-16XL` bring `Mach 1.32–1.48` 30mm rotary/Gatling CAS speed; `B-52H` hauls `31,750 kg` across 16 stations; `B-21` reaches `0.00008 m²` VLO RCS. |
+| **Electronic Warfare & SEAD (7)** | Su-24MP Fencer-F, Tornado ECR, EF-111A Raven, EA-18G Growler, J-15D Carrier Growler, J-16D EW Striker, EA-36 Barricader | Broadband jamming umbrellas (up to `125 km`), passive ESM emitter mapping, built-in `40%–60%` EA (`Su-24MP`, `J-15D`, `EA-36`), and heavy Type H SEAD stations. |
+| **Swarm & Strike UCAV Drones (9)** | MQ-99 Swarm Drone, MQ-101 Agile Swarm Drone, XQ-58A Valkyrie, Bayraktar Akinci UCAV, MQ-28 Ghost Bat, MQ-20 Avenger, Bayraktar Kizilelma, Sukhoi S-70 Okhotnik, RQ-180 White Bat | High-G limits (`15G–20G`), zero pilot G-LOC risk, 1-segment runway capability, `$4.0M` swarm expendables (`MQ-99`) up to `98 km` stealth sensor hubs (`RQ-180`, `0.0001 m²` RCS) and `2,950 kg` strike UCAVs (`MQ-20`, `S-70`). |
+| **Experimental, Superfighters & COFFIN (14)** | **Demonstrators (4):** F-15 S/MTD ACTIVE, Su-47 Berkut, Su-37 Terminator, Grumman X-29A<br>**Superfighters (6):** X-02S Strike Wyvern, ADFX-01 Morgan, CFA-44 Nosferatu, Darkstar Hypersonic Penetrator, X-40 Nightmare, XFA-36B Game<br>**COFFIN Conversions (4):** F-15 S/MT [COFFIN], Su-37 Super Flanker [COFFIN], F-22C Raptor II [COFFIN], ADF-11F Raven [COFFIN] | Forward-swept wings, `Mach 2.40` scramjet cruise (`DARKSTAR`), pulse lasers & EML railguns, and COFFIN enclosed cockpits (`16G–20G` envelope, locked 100% turn efficiency, zero G-LOC, `+24%–30%` passive dodge). |
 
 </details>
 
-### Hardpoints, External Pods & Modular Systems
+---
+
+## Weapons, Cannons, Pods & Modular Systems (209 Ordnance & 25 Upgrades)
+
+### Air-to-Air Missiles (77 Missiles)
+
+<details>
+<summary><b>Click to expand All 77 Air-to-Air Missiles Across 6 Functional Families</b></summary>
+<br>
+
+| A2A Category | Count | Included Missiles | Key Performance & Special Behaviors |
+| :--- | :--- | :--- | :--- |
+| **Medium & Long-Range Active BVR** | 18 | `MICA-EM`, `R-77`, `Astra Mk1`, `PL-12`, `AIM-120C-7`, `Gokdogan`, `R-77-1`, `AAM-4`, `I-Derby ER`, `AIM-120D`, `PL-15E`, `TC-2C`, `AAM-4B`, `Astra Mk2`, `AIM-120D-3`, `R-77M`, `PL-15`, `K-77ME` | `56–104 km` active radar (`ARH`) missiles (`Mach 3.3–4.5`). Includes compact 1-slot rails (`MICA-EM`, `Astra Mk1`, `I-Derby ER`), dual-pulse `PL-15E`/`Astra Mk2`/`R-77M`/`K-77ME` (`+0.9M` surge inside 22 km), and anti-notch micro-AESA seekers (`AAM-4B`, `AIM-120D-3`). |
+| **Legacy BVR & Silent IR BVR** | 14 | **Legacy (8):** `Aspide Mk1`, `AIM-7M`, `Skyflash`, `AIM-7P`, `Super 530D`, `R-27R`, `R-27ER`, `AIM-54C Phoenix`<br>**Silent IR BVR (6):** `R-27T`, `R-27ET`, `PL-10E-ER`, `AIM-9X Block III`, `R-77T`, `IRIS-T SLX` | Budget `48–80 km` legacy interceptors (`AIM-54C` `108 km` heavy bomber hunter on Tomcats), plus `44–64 km` passive infrared BVR seekers that emit **zero RWR radar warning** and ignore chaff and 90° Doppler notching. |
+| **Ramjets & Home-On-Jam** | 13 | **Ramjets (8):** `Gokhan`, `Meteor`, `FMRAAM`, `RVV-AE-PD`, `JNAAM`, `Astra Mk3 Gandiva`, `AIM-152 AAAM`, `PL-21`<br>**Home-On-Jam (5):** `R-27P`, `R-27EP`, `AIM-120D-HOJ`, `PL-15B HOJ`, `AIM-260B HOJ` | Variable-flow ramjets (`80–130 km`, `Mach 4.0–5.0`) sustain cruise speed with zero drag bleed; HOJ seekers gain **+15% to +18% Pk** against EW jammers and high-power radars (`AIM-260B HOJ` combines `0.0005 m²` stealth + HOJ). |
+| **Ultra-Long-Range & Hypersonic** | 7 | `R-33S`, `AIM-260 JATM`, `R-37M Axehead`, `AIM-174B (SM-6)`, `PL-17`, `KS-172`, `K-100` | `112–145 km` theater denial interceptors (`Mach 4.2–5.8`). `AIM-260` fits internal stealth bays with `0.0005 m²` RCS; `R-37M` and `K-100` loft into the stratosphere for `5–6 HP` hypersonic bomber kills. |
+| **WVR Dogfight (IR & Optical)** | 15 | `R-60M`, `AIM-9M`, `Magic 2`, `Python-4`, `AAM-3`, `R-73`, `Bozdogan`, `PL-10`, `Python-5`, `AIM-9X-2`, `R-74M2`, `AAM-5B`, `IRIS-T`, `ASRAAM`, `MICA-IR` | `14–38 km` snap-turn and `90°` HOBS seekers (`Mach 2.5–3.2`). Includes `Python-5` **180° rearward** launch capability and `IRIS-T`/`AAM-5B`/`MICA-IR` silhouette decoy filtering (`75%–80%`). |
+| **Swarm Micro & Area Burst** | 10 | **Swarm/Micro (6):** `MAM`, `ATASK Starstreak`, `CACM-6`, `AIM-260X Peregrine`, `SADM-8`, `CUDA Hit-to-Kill`<br>**Area Burst (4):** `ADMM-S`, `ADMM`, `MPBM`, `MPBM-II` | High-density `6x–12x` racks (`Starstreak` Mach 3.8 optical darts, `CUDA` 8x half-length hit-to-kill, `ADMM` 360° sphere volleys) and `MPBM`/`MPBM-II` **8.5–10.5 km thermobaric shockwaves**. |
+
+</details>
+
+### Air-to-Ground Ordnance (78 Weapons)
+
+<details>
+<summary><b>Click to expand All 78 Air-to-Ground Weapons Across 10 Functional Families</b></summary>
+<br>
+
+| A2G Category | Count | Included Weapons | Key Performance & Special Behaviors |
+| :--- | :--- | :--- | :--- |
+| **Unguided Iron Bombs** | 7 | `OFAB-250`, `Mk-82 Snakeye`, `Mk-83`, `FAB-500`, `Mk-84`, `FAB-1500`, `FAB-3000` | `8.5–12.5 km` low-cost ECM-immune blast bombs (`2–22 HP`). `FAB-1500` and centerline `FAB-3000` penetrate Fortified concrete bunkers in direct passes. |
+| **Cluster Dispensers** | 6 | `CBU-87 CEM`, `RBK-500 SPBE-D`, `RBK-500U PTAB-1M`, `CBU-97 SFW`, `CBU-105 WCMD`, `AGM-154A JSOW-A` | `15–74 km` area-saturation dispensers (`5.5–7.0 km` splash radius) neutralizing clustered SAMs, AAA, fuel farms, and aircraft taxiing on airfields. |
+| **Glide Bombs & SDBs** | 9 | `FAB-500 UMPK`, `GBU-38 JDAM`, `KAB-500S`, `GBU-32 JDAM`, `GBU-39 SDB`, `SPEAR-3`, `GBU-53 StormBreaker`, `GBU-31 BLU-109`, `AGM-154C JSOW-C` | `26–78 km` all-weather GPS/INS and tri-mode MMW/IIR glide munitions (`8x` SDB internal density, `SPEAR-3` 1-slot mini-cruise, `JSOW-C` stealth BROACH penetrator). |
+| **Laser & Dual-Mode Bombs** | 7 | `KAB-250L`, `GBU-12`, `KAB-500L`, `Paveway IV`, `GBU-16`, `GBU-54 LJDAM`, `GBU-10` | `18–30 km` precision bombs (`3.5–10 HP`). `Paveway IV` and `GBU-54` combine GPS/INS + laser to defeat heavy overcast cloud decks. |
+| **Bunker Penetrators & Anti-Runway** | 8 | `BLU-107 Durandal`, `BetAB-500ShP`, `JP233`, `GBU-24 Paveway III`, `KAB-1500L-Pr`, `GBU-28`, `GBU-57 MOP`, `TAURUS KEPD-350` | `Durandal`, `BetAB-500ShP`, and `JP233` inflict **2.0× structural damage on runways**; `GBU-28` (`18 HP`), `GBU-57 MOP` (`28 HP`), and `TAURUS` (`115 km` stealth cruise) crack subterranean C2 bunkers. |
+| **Saturation & Laser Rockets** | 9 | `Hydra-70` (16x), `S-8KOM` (10x), `Zuni 127mm` (8x), `CRV7-MPSM` (12x), `S-13OF` (8x), `S-24B` (4x), `S-25L/OFM` (4x), `APKWS-II` (12x), `CRV7-PG` (10x) | `11–19 km` high-velocity (`Mach 2.0–2.6`) salvo pods immune to radar jamming. `S-25L/OFM` 340mm laser rockets deal `8.5 HP` bunker-cracking damage. |
+| **Tactical ATGMs** | 9 | `AGM-114L Longbow Hellfire`, `AGM-179A JAGM`, `Kh-25ML`, `AGM-65E2`, `AGM-65G`, `Spike-NLOS`, `Brimstone II`, `Kh-29TE`, `Kh-38ML` | `14–42 km` anti-armor and shelter killers (`3.5–8.0 HP`). `Longbow`, `JAGM`, and `Brimstone II` cut through smoke/clouds with MMW seekers; `Kh-38ML` strikes at `Mach 2.4`. |
+| **Anti-Radiation Missiles (SEAD)** | 9 | **Legacy (5):** `AGM-45B Shrike`, `MAR-1`, `AS.37 Martel`, `Kh-31P`, `AGM-88C HARM`<br>**Anti-EMCON (4):** `AGM-88E AARGM`, `ALARM Mk2`, `Kh-58UShKE`, `AGM-88G AARGM-ER` | `34–95 km` (`Mach 2.0–3.6`) radar killers dealing **3× damage to active emitters**. Anti-EMCON variants retain coordinates through SAM radar shutdowns. |
+| **Cruise & Hypersonic Standoff** | 10 | `SOM-J`, `AGM-84H SLAM-ER`, `Kh-59MK2`, `Storm Shadow`, `AGM-158B JASSM-ER`, `AGM-158C LRASM`, `Kh-101`, `BrahMos-A`, `Kh-32`, `Kh-47M2 Kinzhal` | `85–145 km` strategic deep-strike missiles (`6–18 HP`). `SOM-J` packs 4x stealth cruise missiles per bay; `BrahMos-A` (`M 3.0`), `Kh-32` (`M 4.6`), and `Kinzhal` (`M 6.2`) punch past CIWS. |
+| **Loitering Munitions** | 4 | `Switchblade 600`, `SPEAR-EW`, `Delilah-AL`, `IAI Harop` | `45–95 km` autonomous loitering hunters (`89%–92%` base accuracy), including internal stealth `SPEAR-EW` and `Harop` anti-EMCON SEAD drones. |
+
+</details>
+
+### Built-in Cannons, Directed Energy, Gunpods & Utility Pods (54 Systems)
+
+<details>
+<summary><b>Click to expand All 16 Built-in Cannons, 13 Gun/Laser Pods & 25 Utility/ECM/TGP Pods</b></summary>
+<br>
+
+| System Class | Count | Included Hardware | Operational Capabilities |
+| :--- | :--- | :--- | :--- |
+| **Built-in Ballistic & CAS Cannons** | 11 | `M61A2 Vulcan` (20mm), `GSh-30-1` (30mm), `BK-27` (27mm), `GAU-12/U` (25mm CAS), `GAU-13/A` (30mm CAS), `GSh-30-2` (twin 30mm CAS), `GAU-8/A Avenger` (30mm), `GSh-6-30` (6-barrel 30mm CAS), `GAU-22/A` (25mm stealth), `GSh-23L` (23mm), `UCAV Micro-Gun` (12.7mm) | `3.6–6.0 km` automatic and manual strafe guns (`0.88–2.50 HP/burst`). Dedicated CAS guns carry `36–40` rounds with `1.55×–1.70×` ground damage and `85%–92%` AP. |
+| **Built-in Directed Energy & Railguns** | 5 | `PLSL-10`, `PLSL-20`, `PLSL-30`, `Solid-State Laser (80 kW)`, `EML Railgun` | `7.5–18.0 km` instant hitscan beams (`PLSL`/`DE-Pulse`) and `9.5 km` all-weather `EML` kinetic railgun slugs (`1.90 HP/burst`, `90% AP`, `0.40` target energy drain). |
+| **External A2A & Energy Pods** | 8 | `CC422 DEFA 30mm`, `SUU-23/A 20mm`, `SPPU-22 Twin 23mm`, `SPPU-6 6-Barrel 23mm`, `GPU-5/A 30mm`, `PLSL Pulse Laser Pod`, `HEL Solid-State Laser Pod`, `TLS High-Energy Laser Pod` | Augment built-in bursts every salvo with extra cannons or hitscan laser fire (`TLS` fires `3.0 HP` 3-pulse thermal beams). |
+| **External A2G Strafe Pods** | 5 | `M230LF 30mm`, `UPK-23-250 Twin 23mm`, `GAU-12/U 25mm Pod`, `GSh-30-2K Twin 30mm`, `BK-37 37mm Tungsten AP` | Dedicated anti-armor strafing pods (`1.5×–2.0×` ground damage, `70%–100%` AP; `BK-37` penetrates Fortified bunker roofs). |
+| **Targeting, IRST & ELINT Pods** | 11 | `LANTIRN` (32 km), `LITENING` (38 km), `Sapsan-E` (44 km), `ATFLIR` (48 km), `Damocles` (53 km), `Sniper XR` (58 km), `Legion (IRST + Laser, 56 km)`, `Skyward-G IRST` (40 km), `IRST21` (50 km), `AN/ALQ-218 ELINT` (135 km), `RAPTOR / ATARS` (68 km) | Grant `+14% to +28% A2G Pk`, cut cloud laser scatter by up to `55%`, expose RF/Thermal ground decoys, add silent `28 km` anti-stealth IRST tracking, or boost ARM reach `+15%`. |
+| **ECM Jammers & Decoy Pods** | 14 | **ECM Jammers (8):** `ALQ-184` (28%), `ALQ-131` (36%), `ALQ-165 Internal` (32%), `Khibiny L175V` (38%), `Sorbtsiya L005` (44%), `ALQ-99` (48%), `SAP-14 Tarantul` (55%), `ALQ-249 NGJ-MB` (60%)<br>**Decoys (6):** `ADM-160B MALD` (2x), `ADM-141C ITALD` (4x), `BOL-518` (6x), `BriteCloud DRFM` (4x INT), `AN/ALE-50` (8x), `AN/ALE-55 FOTD` (10x INT) | Project `65–125 km` broadband radar suppression against fighters and SAMs (`ALQ-165` fits inside VLO bays), launch decoy gliders to drain SAM racks, or deploy up to `10x` RF repeaters. |
+
+</details>
+
+### Hardpoint Stations, Flight Lead Suites & 25 Modular Upgrades
 
 * **3 Hardpoint Stations:** **Internal Weapons Bays** (zero drag, zero extra RCS), **External Wing Pylons** (`Type S / M / H / X` structural ratings), and **Centerline Stations** (`Kinzhal`, `BrahMos-A`, `Kh-32`, `FAB-3000`), with drag-and-drop equipping and station reordering.
 * **Flight Lead Suites:** Assigning a Flight Lead unlocks category-tailored hardware buffs (Stealth `-50%` beam spike & `+15 km` radar; Superiority `+2 HP` & `-50%` G-stress; Multirole `+20%` turn & fast RTB; Strike `+3 HP`, `-1` missile dmg, `60%` gun deflection & `-40%` ordnance drag; EW `+25%` jamming; Drones `2x MALD`; Experimental `-40%` thermal bloom & `+0.30/s` tokens).
-* **Targeting & Recon Pods:** `LANTIRN` (34 km), `LITENING` (36 km), `Sapsan-E` (42 km), `ATFLIR` (45 km), `Damocles` (52 km), `Sniper XR` (55 km), `Legion` (58 km + IRST), and `RAPTOR/ATARS` (65 km) deliver **+14% to +26% A2G Pk**, cut cloud laser scatter by up to **50%**, and expose ground decoys and passive SHORAD.
-* **Passive IRST, ELINT, ECM & Decoy Pods:** `Skyward-G` & `IRST21` break stealth and Doppler notches; `AN/ALQ-218` maps ground radars at `135 km` (`+15%` ARM reach); `ALQ-165/184/131/99/249`, `Khibiny`, `Sorbtsiya`, and `SAP-14` suppress enemy radar by **30% to 60%**; `ADM-160B MALD`, `ADM-141C ITALD`, `BriteCloud`, `ALE-55`, `ALE-50`, and `BOL-518` decoy missiles and SAMs.
-* **Strike & Airframe Upgrades:** `TFR Terrain-Following Radar` (`+2,500 ft` SAM floor below 10,000 ft), `HTS` (`+20%` ARM reach, `+14%` Pk, `130 km` emitter ID), `CCIP Strike Computer` (`+16%` unguided accuracy), `MITL Datalink` (`+14%` glide/cruise accuracy, `-50%` jamming), `DIRCM Turret` (`+24%` vs IR), `Kevlar Belly Armor` (`-45%` flak dmg), `Conformal Fairings` (`-40%` drag), `GaN AESA`, `Adaptive ECCM`, `RAM Coating`, `3D TVC`, `Supercruise VCE`, `DAS 360°`, `MADL`, `ZOE Flight Computer`, and `TACAN RTB`.
+* **17 Core Avionics, Armor, Engine & Datalink Upgrades:** `ADM-160 MALD Deployer (2x)`, `Adaptive Digital ECCM (-60% Jam)`, `3D Thrust-Vectoring Nozzles`, `Variable-Cycle Supercruise Core`, `High-Bypass Fuel-Conservation Core`, `GaN AESA Radar Core (+20% Reach)`, `Dual-Band Optical IRST`, `Wide-Band ESM Receiver`, `DAS 360° Optical Suite`, `Titanium-Kevlar Cockpit Tub`, `RAM Nano-Coating (-45% RCS)`, `Expanded Countermeasure Dispenser`, `Digital Autonomous Flight Computer`, `COFFIN Synthetic Vision Bus`, `Autonomous Swarm Datalink`, `MADL Battle Link (+0.10 TOK/s)`, and `TACAN Egress Beacon (50% faster RTB)`.
+* **8 Strike, SEAD & Survivability Subsystems:** `AN/APQ-174 Terrain-Following Radar` (`+2,500 ft` SAM floor & `-25%` look-down below 10,000 ft), `Digital CCIP / CCRP Strike Computer` (`+16%` bomb/rocket Pk & `+15%` range), `AN/ASQ-213 HARM Targeting System` (`+20%` ARM range, `+14%` ARM Pk, `130 km` emitter ID), `Conformal Ordnance Fairings` (`-40%` external drag & `-20%` weight), `Titanium-Kevlar Belly Flak Shielding` (`+1 HP` & `-45%` AAA/CIWS dmg), `Integrated Gimbaled Laser Designator` (`+15%` A2G Pk & `-35%` cloud scatter), `Two-Way MITL Weapons Datalink` (`+14%` GPS/cruise accuracy & `-50%` jamming), and `DIRCM Infrared Jammer Turret` (`+24%` vs IR seekers + 2 chaff).
 
 ---
 
@@ -303,7 +367,7 @@ Doctrines are separated between **Air Combat** and **Ground Attack** and govern 
   * **SENSORS & WEAPONS:** Radar beam alignment, RCS aspect multipliers, cloud attenuation, real-time Pk gauges, factor breakdowns, and step-by-step inbound defense protocols.
   * **GRAPHS:** Five live telemetry charts—**Dynamic Launch Zone (DLZ & Pk vs Range)**, **360° RCS Polar Radiation Diagram**, **Dynamic Turn Speed Gauge**, **Rolling 60s Speed & Altitude History**, and **Fleet Combat Power Advantage Curve**.
   * **EVENTS & DATA:** Clickable chronological causal log and full raw entity kinematics/AI variables.
-* **Sortie Replay, Debrief & Top 10 Leaderboard:** Delta-compressed interactive replay (`0.5×`, `1×`, `2×` speed, timeline scrubbing, key engagement jump chips), Ace Podium Rankings, Fleet Strength Over Time graph, full scoreboard, persistent Top 10 historical dossier archive, and a searchable **17-Chapter Flight Manual**.
+* **Sortie Replay, Debrief & Top 10 Leaderboard:** Delta-compressed interactive replay (`0.5×`, `1×`, `2×` speed, timeline scrubbing, key engagement jump chips), Ace Podium Rankings, Fleet Strength Over Time graph, full scoreboard, persistent Top 10 historical dossier archive, and a searchable **18-Section Flight Manual**.
 
 ---
 
