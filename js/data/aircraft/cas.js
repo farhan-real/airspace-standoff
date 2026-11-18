@@ -42,13 +42,13 @@ window.AIRCRAFT_CAS = {
     id: 'Su-25SM3',
     name: 'Su-25SM3 Frogfoot',
     category: 'STRIKE',
-    badge: 'ARMORED CAS',
+    badge: 'FAST ARMORED CAS',
     role: 'Armored Close Air Support',
-    cost: 15.5,
+    cost: 14.5,
     hp: 7,
-    AGI_0: 0.64,
-    S_0: 0.84,
-    sOpt: 0.58,
+    AGI_0: 0.68,
+    S_0: 0.88,
+    sOpt: 0.60,
     R_0: 56.0,
     radarType: 'Solntsepek Optical & Strike Radar (+78% Ground)',
     radarConeDeg: 100,
@@ -71,7 +71,7 @@ window.AIRCRAFT_CAS = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Armored twin-jet CAS attacker (7 HP, Mach 0.84, -35% innate AAA flak damage). Carries twin 30mm tank-buster cannons and 10 external stations for rockets and close-support ordnance.'
+    desc: 'Faster armored twin-jet CAS attacker (7 HP, Mach 0.88, -35% AAA flak damage). Trades A-10C payload (7,800 kg) and 4th socket for higher ingress speed and twin 30mm guns.'
   },
   'Su-39': {
     id: 'Su-39',
@@ -115,7 +115,7 @@ window.AIRCRAFT_CAS = {
     category: 'STRIKE',
     badge: 'STOL TRANSONIC CAS',
     role: 'Rapid-Response Multirole CAS Attacker',
-    cost: 18.0,
+    cost: 15.5,
     hp: 5,
     AGI_0: 0.84,
     S_0: 0.98,
@@ -142,7 +142,7 @@ window.AIRCRAFT_CAS = {
     totalSlots: 8,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Transonic STOL CAS platform (Mach 0.98, 1-segment runway capable). Combines APG-65 radar with the 25mm GAU-12 5-barrel Equalizer cannon and 8 external stations for rockets, LGBs, and gunpods.'
+    desc: 'Agile transonic STOL CAS platform ($15.5M, Mach 0.98, 0.84 agility). Combines APG-65 radar with the 25mm GAU-12 5-barrel Equalizer cannon and 8 external stations.'
   },
   'MiG-27K': {
     id: 'MiG-27K',
@@ -150,7 +150,7 @@ window.AIRCRAFT_CAS = {
     category: 'STRIKE',
     badge: 'MACH 1.42 30MM ROTARY CAS',
     role: 'Supersonic Armored Gun & Rocket Attacker',
-    cost: 20.0,
+    cost: 18.5,
     hp: 5,
     AGI_0: 0.74,
     S_0: 1.42,
@@ -177,7 +177,7 @@ window.AIRCRAFT_CAS = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 3,
-    desc: 'Supersonic variable-sweep gun-and-rocket attacker (Mach 1.42, 5 HP, -25% AAA flak damage). Built around the 6-barrel 30mm GSh-6-30 rotary cannon and 10 heavy external stations.'
+    desc: 'Economical supersonic swing-wing gunship ($18.5M, Mach 1.42, -25% AAA flak damage). Built around the 6-barrel 30mm GSh-6-30 rotary cannon and 10 heavy external stations.'
   },
   'A-16': {
     id: 'A-16',
@@ -185,7 +185,7 @@ window.AIRCRAFT_CAS = {
     category: 'STRIKE',
     badge: 'MACH 1.32 30MM GATLING CAS',
     role: 'High-Speed Agile CAS & SEAD Gunship',
-    cost: 21.0,
+    cost: 21.5,
     hp: 5,
     AGI_0: 0.92,
     S_0: 1.32,
@@ -212,6 +212,6 @@ window.AIRCRAFT_CAS = {
     totalSlots: 10,
     maxPylonRating: 'Type H',
     upgradeSockets: 4,
-    desc: 'High-speed agile CAS strike fighter (Mach 1.32, 0.92 agility, 9G, -25% AAA flak damage). Integrates the 30mm GAU-13/A 4-barrel Gatling cannon with 10 pylons for rockets, cluster bombs, and SEAD.'
+    desc: 'High-speed agile CAS fighter ($21.5M, 0.92 agility, 9G, 1.3m2 RCS, 4 sockets). Integrates APG-83 AESA and 30mm GAU-13/A Gatling across 10 pylons.'
   }
 };

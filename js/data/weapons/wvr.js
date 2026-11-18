@@ -59,12 +59,12 @@ window.WEAPONS_A2A_WVR = {
   },
   'BOZDOGAN': {
     id: 'BOZDOGAN', name: 'Goktug Bozdogan HOBS (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
-    mass: 440, cost: 0.6, rangeKm: 32.0, speedMach: 3.0, seeker: 'IIR', rcs: 0.025,
-    trait: 'HOBS_VANE', traitBadge: '90 DEG TVC HOBS IIR',
-    behaviorDesc: 'Thrust-vectoring imaging-infrared dogfighter (4x, 2 HP, 32 km, Mach 3.0) with high flare rejection.',
-    damage: 2, ammoCount: 4, minRangeKm: 0.6, sweetSpotMin: 1.5, sweetSpotMax: 26.0,
-    lambda: 0.66, p: 1.0, T_0: 0.89, decoyResistance: 0.70, sigmaPylon: 0.02, category: 'A2A', a2aGroup: 'WVR',
-    desc: 'Mach 3.0 thrust-vectored IIR dogfight missiles (4x, 32 km) certified for internal bays.'
+    mass: 400, cost: 0.5, rangeKm: 28.0, speedMach: 2.9, seeker: 'IIR', rcs: 0.025,
+    trait: 'HOBS_VANE', traitBadge: 'LIGHT 90 DEG HOBS IR',
+    behaviorDesc: 'Compact 400 kg thrust-vectoring HOBS dogfighter (4x, 2 HP, 28 km, Mach 2.9). Cheaper, lighter internal-bay HOBS option vs PL-10 and AIM-9X.',
+    damage: 2, ammoCount: 4, minRangeKm: 0.6, sweetSpotMin: 1.4, sweetSpotMax: 23.0,
+    lambda: 0.68, p: 1.0, T_0: 0.87, decoyResistance: 0.64, sigmaPylon: 0.02, category: 'A2A', a2aGroup: 'WVR',
+    desc: 'Economical 400 kg Mach 2.9 internal-bay HOBS IIR missiles (4x, 28 km).'
   },
   'PL-10': {
     id: 'PL-10', name: 'PL-10 HOBS Imaging IR (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',

@@ -27,29 +27,29 @@ window.WEAPONS_A2G_GLIDE = {
     sigmaPylon: 0.08, category: 'A2G', a2gGroup: 'GLIDE_SDB',
     desc: 'Compact all-weather 500lb precision JDAM (4x). Fits internal stealth bays and Type S light wing stations.'
   },
+  'KAB-500S': {
+    id: 'KAB-500S',
+    name: 'KAB-500S GLONASS Bomb (4x)',
+    slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 2000, cost: 0.7,
+    rangeKm: 26.0, speedMach: 0.84, seeker: 'GPS_INS', rcs: 0.03,
+    trait: 'ALL_WEATHER_PRECISION', traitBadge: '500KG SATELLITE PRECISION',
+    behaviorDesc: 'Satellite-guided 500kg high-explosive bomb (4x, 5 HP). Economical external all-weather punch against armored SAM sites and depots.',
+    damage: 5, ammoCount: 4, minRangeKm: 2.5, sweetSpotMin: 6.0, sweetSpotMax: 22.0,
+    lambda: 0.10, p: 1.0, T_0: 0.86,
+    sigmaPylon: 0.14, category: 'A2G', a2gGroup: 'GLIDE_SDB',
+    desc: 'Budget 500kg satellite-guided bombs (4x, $0.7M) delivering reliable all-weather tactical strikes.'
+  },
   'GBU-32': {
     id: 'GBU-32',
     name: 'GBU-32 JDAM 1000lb (4x)',
-    slots: 2, slotType: 'INTERNAL', minRating: 'Type M', mass: 1860, cost: 0.9,
+    slots: 2, slotType: 'INTERNAL', minRating: 'Type M', mass: 1860, cost: 1.1,
     rangeKm: 30.0, speedMach: 0.85, seeker: 'GPS_INS', rcs: 0.018,
-    trait: 'ALL_WEATHER_JDAM', traitBadge: '1000LB ALL-WEATHER JDAM',
-    behaviorDesc: 'Medium 1,000lb satellite-guided JDAM (4x, 6.5 HP, 30 km). Reliable all-weather demolition against armored SAMs, hangars, and fuel depots.',
+    trait: 'ALL_WEATHER_JDAM', traitBadge: '1000LB INTERNAL JDAM',
+    behaviorDesc: 'Medium 1,000lb satellite-guided JDAM (4x, 6.5 HP, 30 km). Internal stealth bay compatible with 75% armor piercing against hardened targets.',
     damage: 6.5, ammoCount: 4, minRangeKm: 2.8, sweetSpotMin: 6.5, sweetSpotMax: 26.0,
     lambda: 0.09, p: 1.0, T_0: 0.88, armorPiercing: 0.75,
     sigmaPylon: 0.12, category: 'A2G', a2gGroup: 'GLIDE_SDB',
     desc: 'Medium 1,000lb GPS/INS JDAM bombs (4x, 30 km) sized for stealth bomber bays and Type M hardpoints.'
-  },
-  'KAB-500S': {
-    id: 'KAB-500S',
-    name: 'KAB-500S GLONASS Bomb (4x)',
-    slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 2000, cost: 0.8,
-    rangeKm: 26.0, speedMach: 0.84, seeker: 'GPS_INS', rcs: 0.03,
-    trait: 'ALL_WEATHER_PRECISION', traitBadge: '500KG SATELLITE PRECISION',
-    behaviorDesc: 'Satellite-guided 500kg high-explosive bomb (4x, 5 HP). Reliable all-weather punch against armored SAM sites and bridges.',
-    damage: 5, ammoCount: 4, minRangeKm: 2.5, sweetSpotMin: 6.0, sweetSpotMax: 22.0,
-    lambda: 0.10, p: 1.0, T_0: 0.86,
-    sigmaPylon: 0.14, category: 'A2G', a2gGroup: 'GLIDE_SDB',
-    desc: 'Heavy 500kg satellite-guided bomb (4x) delivering reliable all-weather tactical strikes.'
   },
   'GBU-39': {
     id: 'GBU-39',
@@ -90,7 +90,7 @@ window.WEAPONS_A2G_GLIDE = {
   'GBU-31': {
     id: 'GBU-31',
     name: 'GBU-31 JDAM Penetrator (2x)',
-    slots: 3, slotType: 'INTERNAL', minRating: 'Type H', mass: 1820, cost: 1.1,
+    slots: 3, slotType: 'INTERNAL', minRating: 'Type H', mass: 1820, cost: 1.3,
     rangeKm: 32.0, speedMach: 0.86, seeker: 'GPS_INS', rcs: 0.02,
     trait: 'HARDENED_BLU109', traitBadge: '2000LB BLU-109 PENETRATOR',
     behaviorDesc: 'Hardened BLU-109 2,000lb steel-cased JDAM (2x, 9 HP). All-weather concrete penetrator for C2 bunkers, runways, and hardened shelters.',

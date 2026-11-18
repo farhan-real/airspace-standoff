@@ -14,12 +14,12 @@ window.WEAPONS_A2A = {
   },
   'R-77': {
     id: 'R-77', name: 'R-77 Base Adder (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 700, cost: 0.8, rangeKm: 58.0, speedMach: 3.4, seeker: 'ARH', rcs: 0.045,
+    mass: 700, cost: 0.7, rangeKm: 56.0, speedMach: 3.4, seeker: 'ARH', rcs: 0.045,
     trait: 'NETWORKED_LOAL', traitBadge: 'BUDGET ADDER BVR',
-    behaviorDesc: 'Baseline lattice-fin active radar missile (4x, 3 HP, 58 km, Mach 3.4). Economical fire-and-forget BVR option.',
-    damage: 3, ammoCount: 4, minRangeKm: 3.0, sweetSpotMin: 11.0, sweetSpotMax: 45.0,
-    lambda: 0.43, p: 1.0, T_0: 0.73, sigmaPylon: 0.06, category: 'A2A', a2aGroup: 'MR_BVR',
-    desc: 'Cost-effective baseline active radar Adder missiles (4x, 58 km).'
+    behaviorDesc: 'Baseline lattice-fin active radar missile (4x, 3 HP, 56 km, Mach 3.4). Lowest-cost fire-and-forget active BVR option.',
+    damage: 3, ammoCount: 4, minRangeKm: 3.0, sweetSpotMin: 11.0, sweetSpotMax: 43.0,
+    lambda: 0.44, p: 1.0, T_0: 0.72, sigmaPylon: 0.06, category: 'A2A', a2aGroup: 'MR_BVR',
+    desc: 'Cost-effective baseline active radar Adder missiles (4x, 56 km).'
   },
   'ASTRA-MK1': {
     id: 'ASTRA-MK1', name: 'Astra Mk1 Active BVR (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
@@ -30,23 +30,23 @@ window.WEAPONS_A2A = {
     lambda: 0.36, p: 1.1, T_0: 0.77, sigmaPylon: 0.05, category: 'A2A', a2aGroup: 'MR_BVR',
     desc: 'Compact high-velocity Mach 4.5 medium BVR missile (4x, 62 km) fitted for Tejas, Flankers, and light multirole fighters.'
   },
-  'AIM-120C-7': {
-    id: 'AIM-120C-7', name: 'AIM-120C-7 AMRAAM (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 640, cost: 0.9, rangeKm: 64.0, speedMach: 3.3, seeker: 'ARH', rcs: 0.035,
-    trait: 'NETWORKED_LOAL', traitBadge: 'ECONOMICAL AMRAAM',
-    behaviorDesc: 'Clipped-fin stealth-bay AMRAAM (4x, 3 HP, 64 km, Mach 3.3). Affordable BVR standard for budget squadrons.',
-    damage: 3, ammoCount: 4, minRangeKm: 3.5, sweetSpotMin: 12.0, sweetSpotMax: 50.0,
-    lambda: 0.42, p: 1.0, T_0: 0.74, sigmaPylon: 0.05, category: 'A2A', a2aGroup: 'MR_BVR',
-    desc: 'Economical clipped-fin medium BVR AMRAAM (4x, 64 km) for internal stealth bays and wing rails.'
-  },
   'PL-12': {
     id: 'PL-12', name: 'PL-12 / SD-10A Active BVR (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 790, cost: 0.8, rangeKm: 64.0, speedMach: 3.6, seeker: 'ARH', rcs: 0.04,
+    mass: 790, cost: 0.9, rangeKm: 64.0, speedMach: 3.6, seeker: 'ARH', rcs: 0.04,
     trait: 'NETWORKED_LOAL', traitBadge: '64KM BUDGET ACTIVE BVR',
-    behaviorDesc: 'Fast active-radar medium BVR missile (4x, 3 HP, 64 km, Mach 3.6). High value per credit for JF-17, J-10C, and J-11BG.',
+    behaviorDesc: 'Fast active-radar medium BVR missile (4x, 3 HP, 64 km, Mach 3.6). Heavier than AIM-120C-7 (790 kg) for slightly lower cost.',
     damage: 3, ammoCount: 4, minRangeKm: 3.0, sweetSpotMin: 12.0, sweetSpotMax: 50.0,
-    lambda: 0.41, p: 1.0, T_0: 0.74, sigmaPylon: 0.06, category: 'A2A', a2aGroup: 'MR_BVR',
+    lambda: 0.42, p: 1.0, T_0: 0.74, sigmaPylon: 0.06, category: 'A2A', a2aGroup: 'MR_BVR',
     desc: 'Economical Mach 3.6 active-radar BVR missiles (4x, 64 km) certified for internal bays and multirole pylons.'
+  },
+  'AIM-120C-7': {
+    id: 'AIM-120C-7', name: 'AIM-120C-7 AMRAAM (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
+    mass: 640, cost: 1.0, rangeKm: 66.0, speedMach: 3.4, seeker: 'ARH', rcs: 0.03,
+    trait: 'NETWORKED_LOAL', traitBadge: 'LIGHTWEIGHT AMRAAM',
+    behaviorDesc: 'Clipped-fin lightweight AMRAAM (4x, 3 HP, 66 km, 640 kg). Lighter carriage mass and lower 0.03m2 RCS than PL-12 or R-77-1.',
+    damage: 3, ammoCount: 4, minRangeKm: 3.5, sweetSpotMin: 12.0, sweetSpotMax: 52.0,
+    lambda: 0.41, p: 1.0, T_0: 0.75, sigmaPylon: 0.05, category: 'A2A', a2aGroup: 'MR_BVR',
+    desc: 'Lightweight clipped-fin medium BVR AMRAAM (4x, 66 km) saving $0.2M and 120 kg over AIM-120D.'
   },
   'GOKDOGAN': {
     id: 'GOKDOGAN', name: 'Goktug Gokdogan BVR (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
@@ -106,7 +106,7 @@ window.WEAPONS_A2A = {
     id: 'TC-2C', name: 'Sky Sword II-C Extended (4x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
     mass: 740, cost: 1.4, rangeKm: 80.0, speedMach: 4.0, seeker: 'ARH', rcs: 0.04,
     trait: 'HIGH_MACH_SPRINT', traitBadge: '80KM MACH 4.0 BVR',
-    behaviorDesc: 'Extended-burn Mach 4.0 active radar missile (4x, 3 HP, 80 km) offering economical long-range interception.',
+    behaviorDesc: 'Extended-burn Mach 4.0 active radar missile (4x, 3 HP, 80 km) offering economical external-pylon long-range interception.',
     damage: 3, ammoCount: 4, minRangeKm: 4.0, sweetSpotMin: 15.0, sweetSpotMax: 64.0,
     lambda: 0.26, p: 1.3, T_0: 0.78, sigmaPylon: 0.07, category: 'A2A', a2aGroup: 'LR_BVR',
     desc: 'Long-range Mach 4.0 active radar interceptor missiles (4x, 80 km).'
@@ -149,20 +149,20 @@ window.WEAPONS_A2A = {
   },
   'PL-15': {
     id: 'PL-15', name: 'PL-15 Domestic Long-BVR (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 890, cost: 1.9, rangeKm: 96.0, speedMach: 4.2, seeker: 'ARH', rcs: 0.03,
-    trait: 'DUAL_PULSE_SURGE', traitBadge: '96KM AESA DUAL-PULSE',
-    behaviorDesc: 'Full-length domestic AESA dual-pulse missile (4x, 3.5 HP, 96 km, Mach 4.2). Terminal pulse surge and AESA seeker defeat distant targets.',
-    damage: 3.5, ammoCount: 4, minRangeKm: 5.5, sweetSpotMin: 20.0, sweetSpotMax: 80.0,
+    mass: 890, cost: 2.1, rangeKm: 98.0, speedMach: 4.2, seeker: 'ARH', rcs: 0.03,
+    trait: 'DUAL_PULSE_SURGE', traitBadge: '98KM 3.5HP DUAL-PULSE',
+    behaviorDesc: 'Full-length domestic AESA dual-pulse missile (4x, 3.5 HP, 98 km, Mach 4.2). Heavier 890 kg mass adds +0.5 HP warhead punch vs PL-15E.',
+    damage: 3.5, ammoCount: 4, minRangeKm: 5.5, sweetSpotMin: 20.0, sweetSpotMax: 82.0,
     lambda: 0.16, p: 1.5, T_0: 0.82, antiNotchBonus: 0.25, sigmaPylon: 0.07, category: 'A2A', a2aGroup: 'LR_BVR',
-    desc: 'Long-range AESA dual-pulse BVR missile (4x, 96 km, 3.5 HP) fitted for J-20, J-35, and J-16.'
+    desc: 'Long-range AESA dual-pulse BVR missile (4x, 98 km, 3.5 HP) fitted for J-20, J-35, and J-16.'
   },
   'K-77ME': {
     id: 'K-77ME', name: 'K-77ME Extended Dual-Pulse (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 820, cost: 2.0, rangeKm: 98.0, speedMach: 4.4, seeker: 'ARH', rcs: 0.02,
-    trait: 'DUAL_PULSE_SURGE', traitBadge: '98KM MACH 4.4 DUAL-PULSE',
-    behaviorDesc: 'Extended-reach Mach 4.4 AESA dual-pulse missile (4x, 3.5 HP, 98 km). Sustains blistering terminal velocity into the end-game.',
-    damage: 3.5, ammoCount: 4, minRangeKm: 5.5, sweetSpotMin: 20.0, sweetSpotMax: 82.0,
-    lambda: 0.15, p: 1.5, T_0: 0.83, antiNotchBonus: 0.28, sigmaPylon: 0.06, category: 'A2A', a2aGroup: 'LR_BVR',
-    desc: 'Extended Mach 4.4 dual-pulse stealth-bay BVR missile (4x, 98 km) for 5th-Gen interceptors.'
+    mass: 860, cost: 2.4, rangeKm: 104.0, speedMach: 4.5, seeker: 'ARH', rcs: 0.02,
+    trait: 'DUAL_PULSE_SURGE', traitBadge: '104KM MACH 4.5 DUAL-PULSE',
+    behaviorDesc: 'Premium extended-reach Mach 4.5 AESA dual-pulse missile (4x, 3.5 HP, 104 km). Major standoff and terminal speed jump over R-77M ($1.8M -> $2.4M).',
+    damage: 3.5, ammoCount: 4, minRangeKm: 6.0, sweetSpotMin: 22.0, sweetSpotMax: 88.0,
+    lambda: 0.14, p: 1.5, T_0: 0.84, antiNotchBonus: 0.30, sigmaPylon: 0.06, category: 'A2A', a2aGroup: 'LR_BVR',
+    desc: 'Extended Mach 4.5 dual-pulse stealth-bay BVR missile (4x, 104 km, 3.5 HP) for 5th-Gen interceptors.'
   }
 };

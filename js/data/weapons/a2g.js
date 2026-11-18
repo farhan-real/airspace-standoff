@@ -21,7 +21,7 @@ window.WEAPONS_A2G = {
     slots: 2, slotType: 'EXTERNAL', minRating: 'Type S', mass: 1840, cost: 0.3,
     rangeKm: 9.0, speedMach: 0.80, seeker: 'UNGUIDED', rcs: 0.04,
     trait: 'HIGH_DRAG_IRON', traitBadge: 'LOW-ALT IRON BOMB',
-    behaviorDesc: 'Retarded-fin general-purpose 500lb dumb bombs (8x). Immune to ECM and chaff, requiring close low-level ingress; boosted by Targeting Pod CCIP.',
+    behaviorDesc: 'Retarded-fin general-purpose 500lb dumb bombs (8x). Immune to ECM and chaff, requiring close low-level ingress; lighter than OFAB-250.',
     damage: 2, ammoCount: 8, minRangeKm: 1.2, sweetSpotMin: 2.5, sweetSpotMax: 7.5,
     lambda: 0.35, p: 1.4, T_0: 0.72,
     sigmaPylon: 0.14, category: 'A2G', a2gGroup: 'DUMB_BOMBS',
@@ -32,24 +32,24 @@ window.WEAPONS_A2G = {
     name: 'Mk-83 1000lb Iron Bomb (6x)',
     slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 2700, cost: 0.4,
     rangeKm: 10.0, speedMach: 0.82, seeker: 'UNGUIDED', rcs: 0.05,
-    trait: 'HEAVY_BLAST_IRON', traitBadge: '1000LB GENERAL PURPOSE',
-    behaviorDesc: 'Medium 1,000lb unguided iron bombs (6x, 3.5 HP). Balances carriage mass against armored SAMs, hangars, and fuel farms.',
+    trait: 'HEAVY_BLAST_IRON', traitBadge: '1000LB 65% AP IRON',
+    behaviorDesc: 'Medium 1,000lb unguided iron bombs (6x, 3.5 HP, 65% AP). Lighter than FAB-500 with 50% concrete penetration against fortified sites.',
     damage: 3.5, ammoCount: 6, minRangeKm: 1.4, sweetSpotMin: 2.8, sweetSpotMax: 8.2,
-    lambda: 0.34, p: 1.4, T_0: 0.73, armorPiercing: 0.60,
+    lambda: 0.34, p: 1.4, T_0: 0.73, armorPiercing: 0.65,
     sigmaPylon: 0.16, category: 'A2G', a2gGroup: 'DUMB_BOMBS',
-    desc: 'Medium 1,000lb general-purpose demolition bombs (6x) for multirole and naval strike fighters.'
+    desc: 'Medium 1,000lb general-purpose demolition bombs (6x) with semi-piercing casings.'
   },
   'FAB-500': {
     id: 'FAB-500',
     name: 'FAB-500M-62 Heavy Iron (6x)',
-    slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 3000, cost: 0.4,
+    slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 3000, cost: 0.5,
     rangeKm: 10.5, speedMach: 0.80, seeker: 'UNGUIDED', rcs: 0.05,
     trait: 'HEAVY_BLAST_IRON', traitBadge: '500KG HIGH-EXPLOSIVE',
-    behaviorDesc: 'Heavy 500kg high-explosive iron bombs (6x). High explosive yield per credit against soft and armored ground sites; unaffected by jamming.',
+    behaviorDesc: 'Heavy 500kg high-explosive iron bombs (6x, 4 HP = 24 HP total). High blast yield per drop against armored SAMs and depots.',
     damage: 4, ammoCount: 6, minRangeKm: 1.5, sweetSpotMin: 3.0, sweetSpotMax: 8.5,
     lambda: 0.35, p: 1.4, T_0: 0.72,
     sigmaPylon: 0.18, category: 'A2G', a2gGroup: 'DUMB_BOMBS',
-    desc: 'Rugged 500kg unguided blast bombs (6x). Economical heavy demolition payload for frontline strike fighters.'
+    desc: 'Rugged 500kg unguided blast bombs (6x, 4 HP each). Heavy demolition payload for frontline strike fighters.'
   },
   'MK-84': {
     id: 'MK-84',

@@ -31,7 +31,7 @@ window.AIRCRAFT_MULTIROLE_PLUS = {
     builtInGun: 'GSH-23L', allowedGuns: ['GSH-23L'], gunRounds: 220,
     internalSlots: 0, externalSlots: 6, hasCenterline: true, centerlineSlots: 2, totalSlots: 6,
     maxPylonRating: 'Type M', upgradeSockets: 3,
-    desc: 'Carbon-composite light tailless delta ($12.0M, 0.80m2 RCS). Pairs EL/M-2052 AESA tracking with Astra, I-Derby ER, and ASRAAM missiles.'
+    desc: 'Carbon-composite light tailless delta ($12.0M, -$3M vs Tejas Mk2). Smaller payload and 2-slot centerline keep costs low for Astra and ASRAAM.'
   },
   'JAS-39C': {
     id: 'JAS-39C', name: 'JAS-39C Gripen', category: 'MULTIROLE', badge: 'EXPEDITIONARY CANARD',
@@ -41,17 +41,17 @@ window.AIRCRAFT_MULTIROLE_PLUS = {
     builtInGun: 'BK-27', allowedGuns: ['BK-27'], gunRounds: 120,
     internalSlots: 0, externalSlots: 6, hasCenterline: true, centerlineSlots: 2, totalSlots: 6,
     maxPylonRating: 'Type M', upgradeSockets: 3,
-    desc: 'Cost-effective Gripen C ($13.5M, 0.94 agility, 9G). Compact RM12 engine yields low 0.88x thermal bloom with 6 external stations and centerline mount.'
+    desc: 'Cost-effective Gripen C ($13.5M, -$8.5M vs Gripen E). Retains 0.94 dogfight agility and 9G limits while using mechanical radar.'
   },
   'F-16C-B52': {
     id: 'F-16C-B52', name: 'F-16C Block 52+ Viper', category: 'MULTIROLE', badge: 'SEAD & MULTIROlE VIPER',
-    role: 'Tactical Wild Weasel & Multirole', cost: 14.5, hp: 3, AGI_0: 0.92, S_0: 1.16, sOpt: 0.78, R_0: 60.0,
-    radarType: 'APG-68v9 Pulse-Doppler', radarConeDeg: 110, lookDownBonus: 0.34, sigma_0: 1.25,
+    role: 'Tactical Wild Weasel & Multirole', cost: 14.0, hp: 3, AGI_0: 0.90, S_0: 1.16, sOpt: 0.78, R_0: 58.0,
+    radarType: 'APG-68v9 Pulse-Doppler', radarConeDeg: 110, lookDownBonus: 0.30, sigma_0: 1.25,
     beamSpike: 3.2, thermalBloom: 1.02, M_max: 4800, G_limit: 9.0, isDrone: false, thrustVector: false,
     builtInGun: 'M61A2', allowedGuns: ['M61A2'], gunRounds: 510,
     internalSlots: 0, externalSlots: 6, hasCenterline: true, centerlineSlots: 4, totalSlots: 6,
     maxPylonRating: 'Type M', upgradeSockets: 3,
-    desc: 'Classic Block 52+ Fighting Falcon ($14.5M, 9G). Cheaper workhorse than the F-16V, widely flown with HTS pods and HARM SEAD loadouts.'
+    desc: 'Classic Block 52+ Viper ($14.0M, -$2M vs F-16V). Slightly heavier payload haul (4,800 kg) with legacy radar for budget SEAD and patrol wings.'
   },
   'F-18C-PLUS': {
     id: 'F-18C-PLUS', name: 'F/A-18C+ Legacy Hornet', category: 'MULTIROLE', badge: 'AGILE LEGACY HORNET',
@@ -61,17 +61,17 @@ window.AIRCRAFT_MULTIROLE_PLUS = {
     builtInGun: 'M61A2', allowedGuns: ['M61A2'], gunRounds: 578,
     internalSlots: 0, externalSlots: 8, hasCenterline: true, centerlineSlots: 4, totalSlots: 8,
     maxPylonRating: 'Type H', upgradeSockets: 3,
-    desc: 'Lighter, snappier Legacy Hornet ($15.0M, 0.84 agility, 4 HP). Retains Type H external wing stations for heavy bombs and Maverick/ATFLIR strike roles.'
+    desc: 'Lighter, snappier Legacy Hornet ($15.0M, -$9M vs F-18E). High 0.84 nose-pointing agility and Type H wing stations at multirole bargain cost.'
   },
   'F-18F': {
-    id: 'F-18F', name: 'F/A-18F Block III Rhino', category: 'MULTIROLE', badge: 'BLOCK III DUAL-SEAT CFT',
-    role: 'Twin-Seat Heavy Carrier Multirole', cost: 26.5, hp: 5, AGI_0: 0.74, S_0: 1.02, sOpt: 0.72, R_0: 76.0,
-    radarType: 'APG-79v4 GaN AESA', radarConeDeg: 125, lookDownBonus: 0.58, sigma_0: 0.85,
-    beamSpike: 2.9, thermalBloom: 1.02, M_max: 8000, G_limit: 7.5, isDrone: false, thrustVector: false,
+    id: 'F-18F', name: 'F/A-18F Block III Rhino', category: 'MULTIROLE', badge: 'HEAVY CFT BLOCK III',
+    role: 'Twin-Seat Heavy Carrier Multirole', cost: 28.5, hp: 5, AGI_0: 0.68, S_0: 0.96, sOpt: 0.70, R_0: 78.0,
+    radarType: 'APG-79v4 GaN AESA', radarConeDeg: 125, lookDownBonus: 0.60, sigma_0: 0.85,
+    beamSpike: 2.9, thermalBloom: 1.02, M_max: 8200, G_limit: 7.5, isDrone: false, thrustVector: false,
     builtInGun: 'M61A2', allowedGuns: ['M61A2', 'GAU-22'], gunRounds: 412,
     internalSlots: 0, externalSlots: 8, hasCenterline: true, centerlineSlots: 6, totalSlots: 8,
     maxPylonRating: 'Type H', upgradeSockets: 4,
-    desc: 'Block III Super Hornet ($26.5M, 5 HP, 8,000 kg payload). Upgraded GaN APG-79v4 radar and 4 upgrade sockets handle AIM-174B fleet defense and deep strike.'
+    desc: 'Conformal-tank Block III Rhino ($28.5M, +$4.5M over F-18E). Trades agility (0.68) and sprint (0.96) for 5 HP armor, 78 km GaN radar, 8,200 kg haul, and 4 sockets.'
   },
   'J-10C': {
     id: 'J-10C', name: 'Chengdu J-10C Vigorous Dragon', category: 'MULTIROLE', badge: 'DSI CANARD AESA',
@@ -81,27 +81,27 @@ window.AIRCRAFT_MULTIROLE_PLUS = {
     builtInGun: 'GSH-23L', allowedGuns: ['GSH-23L', 'GSH-30-1'], gunRounds: 200,
     internalSlots: 0, externalSlots: 8, hasCenterline: true, centerlineSlots: 4, totalSlots: 8,
     maxPylonRating: 'Type H', upgradeSockets: 3,
-    desc: '4.5-gen diverterless-inlet canard delta ($18.5M, 1.02 agility, 72 km AESA). Excels in nimble BVR/WVR merges with PL-15E, PL-10, and Khibiny pods.'
+    desc: '4.5-gen diverterless-inlet canard delta ($18.5M, 1.02 agility, 72 km AESA). Nimble mid-price bridge between F-16V ($16M) and Rafale-C ($28M).'
   },
   'Rafale-M': {
-    id: 'Rafale-M', name: 'Dassault Rafale M (F4)', category: 'MULTIROLE', badge: 'CARRIER F4 OMNIROLE',
-    role: 'Navalized F4 Omnirole Strike Fighter', cost: 29.0, hp: 5, AGI_0: 1.12, S_0: 1.32, sOpt: 0.88, R_0: 82.0,
+    id: 'Rafale-M', name: 'Dassault Rafale M (F4)', category: 'MULTIROLE', badge: 'HEAVY CARRIER F4',
+    role: 'Navalized F4 Omnirole Strike Fighter', cost: 31.5, hp: 5, AGI_0: 1.06, S_0: 1.28, sOpt: 0.86, R_0: 84.0,
     radarType: 'RBE2-AA F4 AESA (+70% Clutter)', radarConeDeg: 125, lookDownBonus: 0.70, sigma_0: 0.35,
-    beamSpike: 2.6, thermalBloom: 0.84, M_max: 7600, G_limit: 9.5, isDrone: false, thrustVector: false,
+    beamSpike: 2.6, thermalBloom: 0.84, M_max: 7800, G_limit: 9.5, isDrone: false, thrustVector: false,
     builtInGun: 'BK-27', allowedGuns: ['BK-27', 'M61A2'], gunRounds: 125,
     internalSlots: 0, externalSlots: 8, hasCenterline: true, centerlineSlots: 4, totalSlots: 8,
     maxPylonRating: 'Type H', upgradeSockets: 4,
-    desc: 'Reinforced F4-standard carrier Rafale ($29.0M, 5 HP, 1.12 agility). Blends 0.35m2 RCS shaping, SPECTRA EW integration, and 2-segment carrier deck launches.'
+    desc: 'Reinforced F4 naval Rafale ($31.5M, +$3.5M over Rafale C). Carrier undercarriage trades speed (1.28) and agility (1.06) for 5 HP armor and 84 km RBE2-AA radar.'
   },
   'MiG-29SMT': {
-    id: 'MiG-29SMT', name: 'MiG-29SMT Fulcrum-E', category: 'MULTIROLE', badge: 'EXTENDED-RANGE FULCRUM',
-    role: 'Modernized Tactical Strike Fulcrum', cost: 15.5, hp: 4, AGI_0: 0.92, S_0: 1.22, sOpt: 0.82, R_0: 62.0,
-    radarType: 'Zhuk-ME Slotted Array', radarConeDeg: 110, lookDownBonus: 0.30, sigma_0: 2.40,
-    beamSpike: 3.5, thermalBloom: 1.20, M_max: 5000, G_limit: 9.0, isDrone: false, thrustVector: false,
+    id: 'MiG-29SMT', name: 'MiG-29SMT Fulcrum-E', category: 'MULTIROLE', badge: 'STRIKE-TANK FULCRUM',
+    role: 'Modernized Tactical Strike Fulcrum', cost: 15.5, hp: 4, AGI_0: 0.86, S_0: 1.16, sOpt: 0.78, R_0: 60.0,
+    radarType: 'Zhuk-ME Slotted Array', radarConeDeg: 110, lookDownBonus: 0.30, sigma_0: 2.60,
+    beamSpike: 3.5, thermalBloom: 1.20, M_max: 5600, G_limit: 8.5, isDrone: false, thrustVector: false,
     builtInGun: 'GSH-30-1', allowedGuns: ['GSH-30-1', 'GSH-23L'], gunRounds: 150,
     internalSlots: 0, externalSlots: 8, hasCenterline: true, centerlineSlots: 4, totalSlots: 8,
     maxPylonRating: 'Type M', upgradeSockets: 3,
-    desc: 'Upgraded spine-tank Fulcrum ($15.5M, 4 HP, 0.92 agility). Expands air-to-ground precision weapon compatibility while keeping agile dogfight energy.'
+    desc: 'Dorsal-fuel-tank Fulcrum ($15.5M, -$2.5M vs MiG-29K). Sacrifices MiG-29K agility (0.86 vs 0.95) for lower cost and solid 4 HP strike carriage.'
   },
   'Mirage-F1EQ': {
     id: 'Mirage-F1EQ', name: 'Dassault Mirage F1EQ', category: 'MULTIROLE', badge: 'BUDGET SWEPT-WING FIGHTER',
@@ -111,7 +111,7 @@ window.AIRCRAFT_MULTIROLE_PLUS = {
     builtInGun: 'BK-27', allowedGuns: ['BK-27'], gunRounds: 135,
     internalSlots: 0, externalSlots: 6, hasCenterline: true, centerlineSlots: 2, totalSlots: 6,
     maxPylonRating: 'Type M', upgradeSockets: 3,
-    desc: 'Economical supersonic swept-wing multirole ($10.5M, Mach 1.18). Cheap fleet filler suited for light patrols, Exocet/Armat SEAD, and rocket passes.'
+    desc: 'Economical supersonic swept-wing multirole ($10.5M, Mach 1.18). Cheap fleet filler suited for light patrols, SEAD, and rocket passes.'
   },
   'F-5E-TIGER': {
     id: 'F-5E-TIGER', name: 'F-5EM Tiger II (AESA)', category: 'MULTIROLE', badge: 'ULTRA-LIGHT TINY RCS',
@@ -121,6 +121,6 @@ window.AIRCRAFT_MULTIROLE_PLUS = {
     builtInGun: 'M61A2', allowedGuns: ['M61A2', 'MICRO_GUN'], gunRounds: 280,
     internalSlots: 0, externalSlots: 6, hasCenterline: false, centerlineSlots: 0, totalSlots: 6,
     maxPylonRating: 'Type S', upgradeSockets: 3,
-    desc: 'Ultra-cheap agile micro-fighter ($9.5M, 0.96 agility, 0.65m2 RCS). Tiny airframe and cool twin J85 engines let light swarm wings punch above their cost.'
+    desc: 'Ultra-cheap agile micro-fighter ($9.5M, 0.96 agility, 0.65m2 RCS). Tiny airframe and Type S pylons let light swarm wings punch above their cost.'
   }
 };

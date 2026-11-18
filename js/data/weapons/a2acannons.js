@@ -22,9 +22,9 @@ window.WEAPONS_A2A_CANNONS = {
     id: 'SUU-23A', name: 'SUU-23/A 20mm Vulcan Gunpod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
     mass: 780, cost: 0.6, rangeKm: 4.8, speedMach: 3.2, seeker: 'DIRECT_FIRE',
     trait: 'EXTRA_GUN_BATTERY', traitBadge: '20MM ROTARY BATTERY',
-    behaviorDesc: '20mm 6-barrel Vulcan rotary cannon pod firing 4-round bursts (1.40 HP total, 2.8 HP/s, 1.6s reload). Mounts on Western hardpoints.',
+    behaviorDesc: '20mm 6-barrel Vulcan rotary cannon pod firing 4-round bursts (1.40 HP total, 2.8 HP/s, 1.6s reload, 24 rds / 6 bursts). Mounts on Western hardpoints.',
     damage: 2, roundsPerBurst: 4, damagePerRound: 0.35, damagePerBurst: 1.40, damagePerSec: 2.8,
-    burstCooldown: 1.6, ammoCount: 20, ammoPerBurst: 4, isGunpod: true, sigmaPylon: 0.10,
+    burstCooldown: 1.6, ammoCount: 24, ammoPerBurst: 4, isGunpod: true, sigmaPylon: 0.10,
     category: 'GUN', gunGroup: 'A2A_POD', tracerColor: '#fbbf24',
     allowedAirframes: [
       'F-16V', 'F-16C-B52', 'F-18E', 'F-18C-PLUS', 'F-18F', 'F-2A', 'F-4E-2020', 'F-5E-TIGER', 'FA-50-B20',
@@ -33,7 +33,7 @@ window.WEAPONS_A2A_CANNONS = {
       'Tornado-GR4', 'X-29A', 'ADFX-01', 'X-02S', 'KF-21', 'KF-21EX', 'XFA-36B', 'EA-36',
       'A-16', 'F-16XL', 'AV-8B-PLUS', 'JAGUAR-GR3'
     ],
-    desc: 'Self-contained 20mm Vulcan Gatling pod (20 rounds, 5 bursts). Mounts on external wing or fuselage stations.'
+    desc: 'Self-contained 20mm Vulcan Gatling pod (24 rounds, 6 bursts). Mounts on external wing or fuselage stations.'
   },
   'SPPU-22': {
     id: 'SPPU-22', name: 'SPPU-22-01 Twin 23mm Gunpod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',

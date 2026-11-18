@@ -118,14 +118,14 @@ class CombatSystem {
       }
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     } else if (w.isDecoy) {
-      sourceUnit.deployCountermeasures();
+      sourceUnit.cmTimer = Math.max(sourceUnit.cmTimer || 0, 4.5);
       if (this.game.inspection && this.game.inspection.enabled) {
         this.game.inspection.recordEvent('DECOY DEPLOYED', `${window.formatCombatantDisplayName(sourceUnit)} deployed ${w.name}`, sourceUnit, null, {
-          weapon: w.name, remainingAmmo: item.ammo
+          weapon: w.name, activeWindowSec: sourceUnit.cmTimer, remainingAmmo: item.ammo
         });
       }
       if (this.game.radar) {
-        this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, 'TOWED DECOY DEPLOYED', '#38bdf8');
+        this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, `${w.id === 'BOL-CHAFF-RAIL' ? 'BOL CHAFF' : 'TOWED DECOY'} ACTIVE (4.5s)`, '#38bdf8');
         this.game.radar.spawnShockwave(sourceUnit.x, sourceUnit.y, '#38bdf8', 25);
       }
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();

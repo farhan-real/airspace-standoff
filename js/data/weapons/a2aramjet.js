@@ -3,6 +3,15 @@
  */
 
 window.WEAPONS_A2A_RAMJET = {
+  'GOKHAN': {
+    id: 'GOKHAN', name: 'Gokhan Light Ramjet BVR (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
+    mass: 790, cost: 1.7, rangeKm: 80.0, speedMach: 4.0, seeker: 'ARH', rcs: 0.03,
+    trait: 'RAMJET_SUSTAINED', traitBadge: '80KM LIGHT RAMJET',
+    behaviorDesc: 'Compact throttleable ramjet BVR missile (4x, 3 HP, 80 km, Mach 4.0). Lighter (790 kg) and $0.2M cheaper entry ramjet than Meteor.',
+    damage: 3, ammoCount: 4, minRangeKm: 4.5, sweetSpotMin: 16.0, sweetSpotMax: 68.0,
+    lambda: 0.05, p: 2.8, T_0: 0.82, sigmaPylon: 0.06, category: 'A2A', a2aGroup: 'RAMJET_BVR',
+    desc: 'Economical sustained-thrust ramjet BVR missiles (4x, 80 km) compatible with internal bays.'
+  },
   'METEOR': {
     id: 'METEOR', name: 'MBDA Meteor (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
     mass: 860, cost: 1.9, rangeKm: 85.0, speedMach: 4.2, seeker: 'ARH', rcs: 0.04,
@@ -14,43 +23,34 @@ window.WEAPONS_A2A_RAMJET = {
   },
   'FMRAAM': {
     id: 'FMRAAM', name: 'BAe FMRAAM Ducted Ramjet (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 840, cost: 2.1, rangeKm: 92.0, speedMach: 4.3, seeker: 'ARH', rcs: 0.035,
-    trait: 'RAMJET_SUSTAINED', traitBadge: '92KM RAMJET BVR',
-    behaviorDesc: 'AMRAAM-sized solid-fuel ducted ramjet (4x, 3 HP, 92 km, Mach 4.3) sustaining terminal energy across wide BVR envelopes.',
-    damage: 3, ammoCount: 4, minRangeKm: 5.0, sweetSpotMin: 18.0, sweetSpotMax: 80.0,
+    mass: 880, cost: 2.2, rangeKm: 94.0, speedMach: 4.3, seeker: 'ARH', rcs: 0.035,
+    trait: 'RAMJET_SUSTAINED', traitBadge: '94KM RAMJET BVR',
+    behaviorDesc: 'Extended solid-fuel ducted ramjet (4x, 3 HP, 94 km, Mach 4.3) sustaining terminal energy across wider BVR envelopes (+9 km over Meteor).',
+    damage: 3, ammoCount: 4, minRangeKm: 5.0, sweetSpotMin: 20.0, sweetSpotMax: 82.0,
     lambda: 0.04, p: 3.0, T_0: 0.84, sigmaPylon: 0.07, category: 'A2A', a2aGroup: 'RAMJET_BVR',
-    desc: 'Sustained-thrust Future Medium-Range Air-to-Air Ramjet (4x, 92 km) fitting internal stealth bays.'
+    desc: 'Extended-range Future Medium-Range Air-to-Air Ramjet (4x, 94 km) fitting internal stealth bays.'
   },
-  'GOKHAN': {
-    id: 'GOKHAN', name: 'Gokhan Ramjet BVR (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 850, cost: 2.0, rangeKm: 90.0, speedMach: 4.2, seeker: 'ARH', rcs: 0.035,
-    trait: 'RAMJET_SUSTAINED', traitBadge: '90KM RAMJET BVR',
-    behaviorDesc: 'Liquid/solid throttleable ramjet BVR missile (4x, 3 HP, 90 km, Mach 4.2) maintaining high late-stage energy for TF Kaan and F-16V.',
-    damage: 3, ammoCount: 4, minRangeKm: 5.0, sweetSpotMin: 18.0, sweetSpotMax: 78.0,
-    lambda: 0.04, p: 3.0, T_0: 0.83, sigmaPylon: 0.07, category: 'A2A', a2aGroup: 'RAMJET_BVR',
-    desc: 'Throttleable ramjet long-range air-to-air missiles (4x, 90 km) compatible with internal bays.'
+  'RVV-AE-PD': {
+    id: 'RVV-AE-PD', name: 'RVV-AE-PD Heavy Ramjet (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
+    mass: 940, cost: 2.4, rangeKm: 96.0, speedMach: 4.3, seeker: 'ARH', rcs: 0.04,
+    trait: 'RAMJET_SUSTAINED', traitBadge: '96KM 3.5HP RAMJET',
+    behaviorDesc: 'Four-intake ducted ramjet Adder derivative (4x, 3.5 HP, 96 km, Mach 4.3). Heavier 940 kg mass delivers extra 3.5 HP warhead punch.',
+    damage: 3.5, ammoCount: 4, minRangeKm: 5.5, sweetSpotMin: 20.0, sweetSpotMax: 84.0,
+    lambda: 0.04, p: 3.0, T_0: 0.83, sigmaPylon: 0.08, category: 'A2A', a2aGroup: 'RAMJET_BVR',
+    desc: 'Heavy 3.5 HP ramjet-powered R-77 variant (4x, 96 km) engineered for Su-57, Su-35S, and MiG-35S.'
   },
   'JNAAM': {
     id: 'JNAAM', name: 'JNAAM Meteor-AESA (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 870, cost: 2.4, rangeKm: 96.0, speedMach: 4.4, seeker: 'ARH', rcs: 0.03,
+    mass: 870, cost: 2.6, rangeKm: 98.0, speedMach: 4.4, seeker: 'ARH', rcs: 0.03,
     trait: 'RAMJET_SUSTAINED', traitBadge: 'RAMJET + AESA ANTI-NOTCH',
-    behaviorDesc: 'Joint New Air-to-Air Missile pairing Meteor ramjet propulsion with an AAM-4B micro-AESA seeker (4x, 3 HP, 96 km, +30% anti-notch).',
-    damage: 3, ammoCount: 4, minRangeKm: 5.0, sweetSpotMin: 20.0, sweetSpotMax: 84.0,
+    behaviorDesc: 'Joint New Air-to-Air Missile pairing Meteor ramjet propulsion with an AAM-4B micro-AESA seeker (4x, 3 HP, 98 km, +30% anti-notch, 50% chaff res).',
+    damage: 3, ammoCount: 4, minRangeKm: 5.5, sweetSpotMin: 20.0, sweetSpotMax: 86.0,
     lambda: 0.04, p: 3.0, T_0: 0.86, antiNotchBonus: 0.30, decoyResistance: 0.50, sigmaPylon: 0.07, category: 'A2A', a2aGroup: 'RAMJET_BVR',
-    desc: 'AESA-guided ramjet BVR interceptor (4x, 96 km) resisting both speed decay and Doppler notching.'
-  },
-  'RVV-AE-PD': {
-    id: 'RVV-AE-PD', name: 'RVV-AE-PD Ramjet Adder (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 890, cost: 2.2, rangeKm: 95.0, speedMach: 4.3, seeker: 'ARH', rcs: 0.035,
-    trait: 'RAMJET_SUSTAINED', traitBadge: '95KM RAMJET ADDER',
-    behaviorDesc: 'Four-intake ducted ramjet Adder derivative (4x, 3.5 HP, 95 km, Mach 4.3) sustaining terminal energy against agile fighters.',
-    damage: 3.5, ammoCount: 4, minRangeKm: 5.0, sweetSpotMin: 20.0, sweetSpotMax: 82.0,
-    lambda: 0.04, p: 3.0, T_0: 0.84, sigmaPylon: 0.08, category: 'A2A', a2aGroup: 'RAMJET_BVR',
-    desc: 'Ramjet-powered R-77 variant (4x, 95 km, 3.5 HP) engineered for Su-57, Su-35S, and MiG-35S.'
+    desc: 'Premium AESA-guided ramjet BVR interceptor (4x, 98 km) resisting both speed decay and Doppler notching.'
   },
   'ASTRA-MK3': {
     id: 'ASTRA-MK3', name: 'Astra Mk3 Gandiva SFDR (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 860, cost: 2.7, rangeKm: 115.0, speedMach: 4.5, seeker: 'ARH', rcs: 0.015,
+    mass: 860, cost: 2.8, rangeKm: 115.0, speedMach: 4.5, seeker: 'ARH', rcs: 0.015,
     trait: 'RAMJET_SUSTAINED', traitBadge: '115KM SFDR RAMJET',
     behaviorDesc: 'Solid-Fuel Ducted Ramjet BVR missile (4x, 3.5 HP, 115 km, Mach 4.5). Zero cruise drag decay sustains high terminal energy across the entire theater.',
     damage: 3.5, ammoCount: 4, minRangeKm: 6.0, sweetSpotMin: 22.0, sweetSpotMax: 100.0,
@@ -104,7 +104,7 @@ window.WEAPONS_A2A_RAMJET = {
   },
   'PL-15-HOJ': {
     id: 'PL-15-HOJ', name: 'PL-15B Home-On-Jam (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 890, cost: 2.0, rangeKm: 88.0, speedMach: 4.0, seeker: 'ARH', rcs: 0.035,
+    mass: 890, cost: 2.1, rangeKm: 88.0, speedMach: 4.0, seeker: 'ARH', rcs: 0.035,
     trait: 'HOME_ON_JAM', traitBadge: '88KM HOJ DUAL-PULSE',
     behaviorDesc: 'Broadband HOJ AESA seeker on a dual-pulse body (4x, 3 HP, 88 km, Mach 4.0). Turns enemy jamming emissions into a homing beacon (+16% Pk vs EW).',
     damage: 3, ammoCount: 4, minRangeKm: 5.0, sweetSpotMin: 18.0, sweetSpotMax: 74.0,
@@ -113,9 +113,9 @@ window.WEAPONS_A2A_RAMJET = {
   },
   'AIM-260B-HOJ': {
     id: 'AIM-260B-HOJ', name: 'AIM-260B Broad-Band HOJ (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 830, cost: 3.6, rangeKm: 118.0, speedMach: 4.4, seeker: 'ARH', rcs: 0.0005, isStealthMissile: true,
+    mass: 840, cost: 3.8, rangeKm: 118.0, speedMach: 4.4, seeker: 'ARH', rcs: 0.0005, isStealthMissile: true,
     trait: 'STEALTH_SEEKER', traitBadge: 'STEALTH + 118KM HOJ',
-    behaviorDesc: 'VLO stealth BVR missile with passive/active broadband HOJ seeker (4x, 3.5 HP, 118 km). Combines 0.0005m2 stealth with +16% Pk against EW jammers.',
+    behaviorDesc: 'Premium VLO stealth BVR missile with broadband HOJ seeker (4x, 3.5 HP, 118 km). Costs +$0.4M over AIM-260 to add +16% Pk vs EW jammers.',
     damage: 3.5, ammoCount: 4, minRangeKm: 7.0, sweetSpotMin: 22.0, sweetSpotMax: 100.0,
     lambda: 0.14, p: 1.8, T_0: 0.86, hojBonus: 0.16, antiNotchBonus: 0.40, sigmaPylon: 0.04, category: 'A2A', a2aGroup: 'HOJ_A2A',
     desc: 'Next-gen stealth Home-On-Jam interceptor (4x, 118 km) sized for 5th/6th-gen internal bays.'

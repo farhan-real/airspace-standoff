@@ -3,59 +3,59 @@
  */
 
 window.WEAPONS_A2A_LEGACY = {
+  'ASPIDE-MK1': {
+    id: 'ASPIDE-MK1', name: 'Selenia Aspide Mk1 (4x)', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
+    mass: 660, cost: 0.5, rangeKm: 48.0, speedMach: 3.6, seeker: 'ARH', rcs: 0.06,
+    trait: 'LEGACY_BVR', traitBadge: '1-SLOT 48KM LIGHT BVR',
+    behaviorDesc: 'Compact 1-slot legacy BVR missile (4x, 2.5 HP, 48 km, Mach 3.6). Allows light Type S fighters to carry cheap 4-shot BVR capability.',
+    damage: 2.5, ammoCount: 4, minRangeKm: 2.5, sweetSpotMin: 9.0, sweetSpotMax: 38.0,
+    lambda: 0.45, p: 1.0, T_0: 0.69, sigmaPylon: 0.07, category: 'A2A', a2aGroup: 'LEGACY_SARH',
+    desc: 'Compact 1-slot low-cost BVR interceptor missiles (4x, 48 km) for light multirole aircraft.'
+  },
   'AIM-7M': {
     id: 'AIM-7M', name: 'AIM-7M Sparrow (4x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
     mass: 920, cost: 0.5, rangeKm: 52.0, speedMach: 3.5, seeker: 'ARH', rcs: 0.08,
-    trait: 'LEGACY_BVR', traitBadge: 'BUDGET 52KM BVR',
+    trait: 'LEGACY_BVR', traitBadge: 'BUDGET 3HP SPARROW',
     behaviorDesc: 'Economical medium BVR missile (4x, 3 HP, 52 km, Mach 3.5). Vulnerable to Doppler notching and chaff, ideal for budget 4th-gen wings.',
     damage: 3, ammoCount: 4, minRangeKm: 3.0, sweetSpotMin: 10.0, sweetSpotMax: 40.0,
     lambda: 0.46, p: 1.0, T_0: 0.68, sigmaPylon: 0.10, category: 'A2A', a2aGroup: 'LEGACY_SARH',
     desc: 'Classic budget Sparrow BVR missiles (4x, 52 km) for F-16C, F-18C+, F-14B, and F-4E.'
   },
-  'AIM-7P': {
-    id: 'AIM-7P', name: 'AIM-7P Sparrow Block II (4x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
-    mass: 925, cost: 0.7, rangeKm: 62.0, speedMach: 3.8, seeker: 'ARH', rcs: 0.07,
-    trait: 'NETWORKED_LOAL', traitBadge: '62KM UPGRADED SPARROW',
-    behaviorDesc: 'Upgraded datalink Sparrow (4x, 3 HP, 62 km, Mach 3.8). Improved computer guidance and low-altitude clutter filtering.',
-    damage: 3, ammoCount: 4, minRangeKm: 3.0, sweetSpotMin: 12.0, sweetSpotMax: 48.0,
-    lambda: 0.42, p: 1.0, T_0: 0.72, sigmaPylon: 0.09, category: 'A2A', a2aGroup: 'LEGACY_SARH',
-    desc: 'Block II datalink-upgraded Sparrow missiles (4x, 62 km) delivering low-cost BVR coverage.'
-  },
   'SKYFLASH': {
     id: 'SKYFLASH', name: 'BAe Skyflash SuperTEMP (4x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
     mass: 830, cost: 0.6, rangeKm: 56.0, speedMach: 3.7, seeker: 'ARH', rcs: 0.07,
     trait: 'LEGACY_BVR', traitBadge: 'MONOPULSE CLUTTER FILTER',
-    behaviorDesc: 'Inverse-monopulse BVR missile (4x, 3 HP, 56 km, Mach 3.7). Resists ground clutter better than early Sparrows.',
+    behaviorDesc: 'Inverse-monopulse BVR missile (4x, 3 HP, 56 km, Mach 3.7). Resists ground clutter and notching slightly better than AIM-7M.',
     damage: 3, ammoCount: 4, minRangeKm: 2.8, sweetSpotMin: 10.0, sweetSpotMax: 44.0,
     lambda: 0.43, p: 1.0, T_0: 0.71, antiNotchBonus: 0.10, sigmaPylon: 0.09, category: 'A2A', a2aGroup: 'LEGACY_SARH',
     desc: 'British inverse-monopulse medium BVR missiles (4x, 56 km) suited for Tornado and Eurofighter wings.'
   },
-  'ASPIDE-MK1': {
-    id: 'ASPIDE-MK1', name: 'Selenia Aspide Mk1 (4x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
-    mass: 880, cost: 0.5, rangeKm: 50.0, speedMach: 3.6, seeker: 'ARH', rcs: 0.07,
-    trait: 'LEGACY_BVR', traitBadge: '50KM LIGHT BVR',
-    behaviorDesc: 'Economical European monopulse BVR missile (4x, 3 HP, 50 km, Mach 3.6) for budget interceptors.',
-    damage: 3, ammoCount: 4, minRangeKm: 2.5, sweetSpotMin: 9.0, sweetSpotMax: 39.0,
-    lambda: 0.45, p: 1.0, T_0: 0.69, sigmaPylon: 0.09, category: 'A2A', a2aGroup: 'LEGACY_SARH',
-    desc: 'Low-cost medium-range BVR interceptor missiles (4x, 50 km).'
+  'AIM-7P': {
+    id: 'AIM-7P', name: 'AIM-7P Sparrow Block II (4x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
+    mass: 925, cost: 0.8, rangeKm: 64.0, speedMach: 3.8, seeker: 'ARH', rcs: 0.07,
+    trait: 'NETWORKED_LOAL', traitBadge: '64KM UPGRADED SPARROW',
+    behaviorDesc: 'Upgraded datalink Sparrow (4x, 3 HP, 64 km, Mach 3.8). Noticeably longer reach and accuracy than AIM-7M.',
+    damage: 3, ammoCount: 4, minRangeKm: 3.0, sweetSpotMin: 12.0, sweetSpotMax: 50.0,
+    lambda: 0.40, p: 1.0, T_0: 0.73, sigmaPylon: 0.09, category: 'A2A', a2aGroup: 'LEGACY_SARH',
+    desc: 'Block II datalink-upgraded Sparrow missiles (4x, 64 km) delivering low-cost extended BVR coverage.'
   },
   'SUPER-530D': {
     id: 'SUPER-530D', name: 'Matra Super 530D (2x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
-    mass: 540, cost: 0.6, rangeKm: 55.0, speedMach: 4.5, seeker: 'ARH', rcs: 0.06,
+    mass: 540, cost: 0.6, rangeKm: 50.0, speedMach: 4.5, seeker: 'ARH', rcs: 0.06,
     trait: 'HIGH_MACH_SPRINT', traitBadge: 'MACH 4.5 LEGACY SPRINT',
-    behaviorDesc: 'High-speed French interceptor missile (2x, 3.5 HP, 55 km, Mach 4.5). Out-sprints fast bombers at high altitude.',
-    damage: 3.5, ammoCount: 2, minRangeKm: 3.0, sweetSpotMin: 11.0, sweetSpotMax: 44.0,
+    behaviorDesc: 'High-speed French interceptor missile (2x, 3 HP, 50 km, Mach 4.5). Shorter reach than R-27R, trading warhead size for rapid Mach 4.5 snap speed.',
+    damage: 3, ammoCount: 2, minRangeKm: 3.0, sweetSpotMin: 10.0, sweetSpotMax: 40.0,
     lambda: 0.38, p: 1.1, T_0: 0.72, sigmaPylon: 0.08, category: 'A2A', a2aGroup: 'LEGACY_SARH',
-    desc: 'Mach 4.5 heavy-warhead interceptor missiles (2x, 55 km) paired with Mirage 2000 and F1 wings.'
+    desc: 'Mach 4.5 fast-closing interceptor missiles (2x, 50 km) paired with Mirage 2000 and F1 wings.'
   },
   'R-27R': {
     id: 'R-27R', name: 'R-27R Alamo-A (2x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
-    mass: 510, cost: 0.6, rangeKm: 56.0, speedMach: 3.8, seeker: 'ARH', rcs: 0.08,
+    mass: 510, cost: 0.6, rangeKm: 60.0, speedMach: 3.8, seeker: 'ARH', rcs: 0.08,
     trait: 'LEGACY_BVR', traitBadge: '3.5 HP BUDGET ALAMO',
-    behaviorDesc: 'Heavy-warhead Eastern BVR missile (2x, 3.5 HP, 56 km, Mach 3.8) delivering strong damage per hit.',
-    damage: 3.5, ammoCount: 2, minRangeKm: 3.0, sweetSpotMin: 10.0, sweetSpotMax: 44.0,
-    lambda: 0.44, p: 1.0, T_0: 0.70, sigmaPylon: 0.09, category: 'A2A', a2aGroup: 'LEGACY_SARH',
-    desc: 'Standard heavy-warhead Alamo-A BVR missiles (2x, 56 km) for MiG-29 and Flanker pylons.'
+    behaviorDesc: 'Heavy-warhead Eastern BVR missile (2x, 3.5 HP, 60 km, Mach 3.8) delivering strong damage and longer reach than Super 530D.',
+    damage: 3.5, ammoCount: 2, minRangeKm: 3.0, sweetSpotMin: 12.0, sweetSpotMax: 48.0,
+    lambda: 0.43, p: 1.0, T_0: 0.70, sigmaPylon: 0.09, category: 'A2A', a2aGroup: 'LEGACY_SARH',
+    desc: 'Standard heavy-warhead Alamo-A BVR missiles (2x, 60 km) for MiG-29 and Flanker pylons.'
   },
   'R-27ER': {
     id: 'R-27ER', name: 'R-27ER Alamo-C Extended (2x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type H',
@@ -94,40 +94,40 @@ window.WEAPONS_A2A_LEGACY = {
     lambda: 0.28, p: 1.1, T_0: 0.82, decoyResistance: 0.65, sigmaPylon: 0.10, category: 'A2A', a2aGroup: 'PASSIVE_IR',
     desc: 'Long-range Mach 4.2 silent thermal ambush missile (2x, 64 km, 4 HP) immune to radar jamming.'
   },
-  'R-77T': {
-    id: 'R-77T', name: 'RVV-AE-T Thermal Adder (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 750, cost: 1.4, rangeKm: 58.0, speedMach: 3.8, seeker: 'IIR', rcs: 0.035,
-    trait: 'SILENT_IR_BVR', traitBadge: '58KM INTERNAL IR BVR',
-    behaviorDesc: 'Imaging-infrared seeker fitted to an R-77 airframe (4x, 3 HP, 58 km, Mach 3.8). Fires silently from internal stealth bays with zero RWR alert.',
-    damage: 3, ammoCount: 4, minRangeKm: 2.5, sweetSpotMin: 10.0, sweetSpotMax: 48.0,
-    lambda: 0.30, p: 1.0, T_0: 0.83, decoyResistance: 0.72, sigmaPylon: 0.06, category: 'A2A', a2aGroup: 'PASSIVE_IR',
-    desc: 'Internal-bay compatible silent infrared BVR missiles (4x, 58 km) immune to chaff and Doppler notch.'
+  'PL-10E-ER': {
+    id: 'PL-10E-ER', name: 'PL-10E Extended IIR (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
+    mass: 430, cost: 1.0, rangeKm: 44.0, speedMach: 3.0, seeker: 'IIR', rcs: 0.025,
+    trait: 'HOBS_VANE', traitBadge: '1-SLOT 44KM IIR',
+    behaviorDesc: 'Booster-stretched PL-10 (4x, 2 HP, 44 km, Mach 3.0). Cheaper 1-slot silent IR missile trading 0.5 HP warhead vs AIM-9X-B3.',
+    damage: 2, ammoCount: 4, minRangeKm: 0.8, sweetSpotMin: 3.0, sweetSpotMax: 36.0,
+    lambda: 0.44, p: 1.0, T_0: 0.85, decoyResistance: 0.72, sigmaPylon: 0.02, category: 'A2A', a2aGroup: 'PASSIVE_IR',
+    desc: 'Economical 1-slot extended-reach Mach 3.0 imaging infrared missile (4x, 44 km).'
   },
   'AIM-9X-B3': {
     id: 'AIM-9X-B3', name: 'AIM-9X Block III Long-IR (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
-    mass: 470, cost: 1.2, rangeKm: 48.0, speedMach: 2.9, seeker: 'IIR', rcs: 0.025,
-    trait: 'HOBS_VANE', traitBadge: '1-SLOT 48KM HOBS IR',
-    behaviorDesc: 'Extended-range 1-slot Sidewinder (4x, 2.5 HP, 48 km, Mach 2.9). Combines 90-degree HOBS turns with silent BVR infrared reach.',
-    damage: 2.5, ammoCount: 4, minRangeKm: 0.8, sweetSpotMin: 3.0, sweetSpotMax: 40.0,
-    lambda: 0.42, p: 1.0, T_0: 0.86, decoyResistance: 0.78, sigmaPylon: 0.02, category: 'A2A', a2aGroup: 'PASSIVE_IR',
-    desc: '1-slot extended-range silent IIR missile (4x, 48 km) fitting compact internal stealth wing bays.'
+    mass: 480, cost: 1.3, rangeKm: 50.0, speedMach: 2.8, seeker: 'IIR', rcs: 0.025,
+    trait: 'HOBS_VANE', traitBadge: '1-SLOT 50KM HOBS IR',
+    behaviorDesc: 'Extended-range 1-slot Sidewinder (4x, 2.5 HP, 50 km, Mach 2.8). Heavier warhead, longer reach, and higher flare resistance than PL-10E-ER.',
+    damage: 2.5, ammoCount: 4, minRangeKm: 0.8, sweetSpotMin: 3.0, sweetSpotMax: 42.0,
+    lambda: 0.40, p: 1.0, T_0: 0.87, decoyResistance: 0.78, sigmaPylon: 0.02, category: 'A2A', a2aGroup: 'PASSIVE_IR',
+    desc: '1-slot extended-range silent IIR missile (4x, 50 km, 2.5 HP) fitting compact internal stealth wing bays.'
   },
-  'PL-10E-ER': {
-    id: 'PL-10E-ER', name: 'PL-10E Extended IIR (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
-    mass: 450, cost: 1.1, rangeKm: 46.0, speedMach: 3.1, seeker: 'IIR', rcs: 0.025,
-    trait: 'HOBS_VANE', traitBadge: '1-SLOT 46KM IIR',
-    behaviorDesc: 'Booster-stretched PL-10 (4x, 2.5 HP, 46 km, Mach 3.1). Gives light fighters silent mid-range IR ambush capability in 1 slot.',
-    damage: 2.5, ammoCount: 4, minRangeKm: 0.8, sweetSpotMin: 3.0, sweetSpotMax: 38.0,
-    lambda: 0.44, p: 1.0, T_0: 0.85, decoyResistance: 0.75, sigmaPylon: 0.02, category: 'A2A', a2aGroup: 'PASSIVE_IR',
-    desc: '1-slot extended-reach Mach 3.1 imaging infrared missile (4x, 46 km) for stealth and multirole wings.'
+  'R-77T': {
+    id: 'R-77T', name: 'RVV-AE-T Thermal Adder (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
+    mass: 750, cost: 1.3, rangeKm: 56.0, speedMach: 4.0, seeker: 'IIR', rcs: 0.035,
+    trait: 'SILENT_IR_BVR', traitBadge: '56KM MACH 4.0 IR BVR',
+    behaviorDesc: 'Fast Mach 4.0 imaging-infrared Adder (4x, 3 HP, 56 km). Faster closure speed than IRIS-T-LR and $0.4M cheaper per rack.',
+    damage: 3, ammoCount: 4, minRangeKm: 2.5, sweetSpotMin: 10.0, sweetSpotMax: 46.0,
+    lambda: 0.32, p: 1.0, T_0: 0.83, decoyResistance: 0.70, sigmaPylon: 0.06, category: 'A2A', a2aGroup: 'PASSIVE_IR',
+    desc: 'Internal-bay compatible Mach 4.0 silent infrared BVR missiles (4x, 56 km) immune to chaff and Doppler notch.'
   },
   'IRIS-T-LR': {
     id: 'IRIS-T-LR', name: 'IRIS-T SLX Long-IR (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
-    mass: 680, cost: 1.5, rangeKm: 62.0, speedMach: 3.4, seeker: 'IIR', rcs: 0.03,
+    mass: 680, cost: 1.7, rangeKm: 62.0, speedMach: 3.4, seeker: 'IIR', rcs: 0.03,
     trait: 'IMAGE_RECOGNITION', traitBadge: '62KM SILHOUETTE IIR',
     behaviorDesc: 'Dual-stage boosted IRIS-T (4x, 3 HP, 62 km, Mach 3.4) with 3D silhouette recognition rejecting 82% of countermeasures.',
     damage: 3, ammoCount: 4, minRangeKm: 2.0, sweetSpotMin: 8.0, sweetSpotMax: 52.0,
-    lambda: 0.30, p: 1.0, T_0: 0.86, decoyResistance: 0.82, sigmaPylon: 0.05, category: 'A2A', a2aGroup: 'PASSIVE_IR',
-    desc: 'Long-range European silent imaging-infrared BVR missile (4x, 62 km) immune to radar jamming.'
+    lambda: 0.28, p: 1.0, T_0: 0.86, decoyResistance: 0.82, sigmaPylon: 0.05, category: 'A2A', a2aGroup: 'PASSIVE_IR',
+    desc: 'Premium long-range European silent imaging-infrared BVR missile (4x, 62 km) immune to radar jamming.'
   }
 };

@@ -27,10 +27,22 @@ window.WEAPONS_A2G_CLUSTER = {
     sigmaPylon: 0.15, category: 'A2G', a2gGroup: 'CLUSTER',
     desc: 'Anti-armor cluster bombs (4x) designed to neutralize armored SAM batteries and vehicle columns.'
   },
+  'RBK-500-PTAB': {
+    id: 'RBK-500-PTAB',
+    name: 'RBK-500U PTAB-1M Multi-Pack (6x)',
+    slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 2100, cost: 0.9,
+    rangeKm: 16.5, speedMach: 0.84, seeker: 'UNGUIDED', rcs: 0.04,
+    trait: 'ANTI_ARMOR_CLUSTER', traitBadge: '6x SHAPED-CHARGE AOE',
+    behaviorDesc: 'Six-drop shaped-charge dispenser rack (6x, 3.5 HP, 5.8 km zone). Higher drop volume than CBU-97 for sustained airfield and SAM sweeps.',
+    damage: 3.5, ammoCount: 6, minRangeKm: 2.0, sweetSpotMin: 4.0, sweetSpotMax: 14.0,
+    lambda: 0.24, p: 1.2, T_0: 0.85, isCluster: true, clusterRadiusKm: 5.8, clusterDamage: 3.5, armorPiercing: 0.85,
+    sigmaPylon: 0.15, category: 'A2G', a2gGroup: 'CLUSTER',
+    desc: 'High-volume 6-drop shaped-charge anti-armor cluster bombs (5.8 km AOE).'
+  },
   'CBU-97': {
     id: 'CBU-97',
     name: 'CBU-97 Sensor Fuzed SFW (4x)',
-    slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 1680, cost: 1.0,
+    slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 1680, cost: 1.1,
     rangeKm: 18.0, speedMach: 0.84, seeker: 'UNGUIDED', rcs: 0.04,
     trait: 'SENSOR_FUZED_CLUSTER', traitBadge: '6.2KM SKEET ANTI-ARMOR',
     behaviorDesc: 'Unpowered dispenser releasing 40 IR-guided Skeet warheads (6.2 km splash). High armor penetration against clustered SAM batteries and parked jets.',
@@ -39,25 +51,13 @@ window.WEAPONS_A2G_CLUSTER = {
     sigmaPylon: 0.14, category: 'A2G', a2gGroup: 'CLUSTER',
     desc: 'Smart anti-armor cluster bombs (4x) deploying dual-band infrared Skeet projectiles over fortified air-defense belts.'
   },
-  'RBK-500-PTAB': {
-    id: 'RBK-500-PTAB',
-    name: 'RBK-500U PTAB-1M Anti-Tank (4x)',
-    slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 2040, cost: 0.9,
-    rangeKm: 16.5, speedMach: 0.84, seeker: 'UNGUIDED', rcs: 0.04,
-    trait: 'ANTI_ARMOR_CLUSTER', traitBadge: '5.8KM SHAPED-CHARGE AOE',
-    behaviorDesc: 'High-density dispenser scattering 268 shaped-charge bomblets across a 5.8 km zone. Strips AAA guns, open airfield pads, and armored SAM launchers.',
-    damage: 4, ammoCount: 4, minRangeKm: 2.0, sweetSpotMin: 4.0, sweetSpotMax: 14.0,
-    lambda: 0.24, p: 1.2, T_0: 0.85, isCluster: true, clusterRadiusKm: 5.8, clusterDamage: 3.8, armorPiercing: 0.85,
-    sigmaPylon: 0.15, category: 'A2G', a2gGroup: 'CLUSTER',
-    desc: 'Shaped-charge anti-armor cluster bombs (4x) saturated for multi-target airfield and air-defense sweeps.'
-  },
   'CBU-105': {
     id: 'CBU-105',
     name: 'CBU-105 WCMD SFW (4x)',
-    slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 1800, cost: 1.3,
+    slots: 2, slotType: 'EXTERNAL', minRating: 'Type M', mass: 1800, cost: 1.4,
     rangeKm: 28.0, speedMach: 0.85, seeker: 'GPS_INS', rcs: 0.04,
     trait: 'SENSOR_FUZED_CLUSTER', traitBadge: '7.0KM SMART SFW AOE',
-    behaviorDesc: 'Wind-Corrected Munitions Dispenser with IR/Laser sensor-fuzed submunitions (7.0 km radius). Seeks armored vehicles and radars across dense defense clusters.',
+    behaviorDesc: 'Wind-Corrected Munitions Dispenser with IR/Laser sensor-fuzed submunitions (7.0 km radius). Seeks armored vehicles and radars from medium standoff.',
     damage: 5, ammoCount: 4, minRangeKm: 3.0, sweetSpotMin: 6.0, sweetSpotMax: 24.0,
     lambda: 0.12, p: 1.1, T_0: 0.88, isCluster: true, clusterRadiusKm: 7.0, clusterDamage: 4.5, armorPiercing: 0.90,
     sigmaPylon: 0.14, category: 'A2G', a2gGroup: 'CLUSTER',
