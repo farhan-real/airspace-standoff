@@ -35,7 +35,6 @@ class InspectionRadarView {
           <b style="color:var(--color-red);">${controller.escape(controller.getName(tgt))} [${dist.toFixed(1)} km]</b>
         </div>
       </section>
-
       <section class="inspection-card" style="margin-top:4px;">
         <h3>GUIDANCE COUNTERMEASURE SENSITIVITY</h3>
         <div class="inspection-factors-table" style="margin-top:6px;">
@@ -43,26 +42,20 @@ class InspectionRadarView {
             <span class="factor-name">Doppler Notch Break<span class="factor-desc">Radial closure zeroing breaks radar doppler gate.</span></span>
             <span class="factor-delta ${w.seeker === 'ARH' ? 'negative' : 'positive'}">${w.seeker === 'ARH' ? 'Vulnerable (-38% Gate Break)' : 'Immune'}</span>
           </div>
-          <div class="inspection-factor-row ${w.seeker === 'ARH' ? 'negative' : (isOptical ? 'warning' : 'neutral')}">
-            <span class="factor-name">Countermeasures (Chaff / Flares)<span class="factor-desc">Pyrotechnic decoy bloom tracking interference.</span></span>
-            <span class="factor-delta ${w.seeker === 'ARH' ? 'negative' : 'warning'}">${w.seeker === 'ARH' ? 'Chaff Diversion (-34%)' : 'Partial Evasion (-18%)'}</span>
-          </div>
-          <div class="inspection-factor-row ${isOptical && cloudHits > 0 ? 'warning' : 'positive'}">
-            <span class="factor-name">Weather Cloud Moisture<span class="factor-desc">Liquid droplets soften imaging infrared contrast.</span></span>
-            <span class="factor-delta ${isOptical && cloudHits > 0 ? 'warning' : 'positive'}">${isOptical && cloudHits > 0 ? 'Minor Scatter (-12% Pk)' : 'Clear Penetration'}</span>
+          <div class="inspection-factor-row ${w.seeker === 'PASSIVE_RADAR' ? (w.antiEmcon ? 'positive' : 'negative') : 'neutral'}">
+            <span class="factor-name">EMCON Radar Shutdown<span class="factor-desc">Anti-EMCON MMW retains lock if emitter goes silent.</span></span>
+            <span class="factor-delta ${w.seeker === 'PASSIVE_RADAR' ? (w.antiEmcon ? 'positive' : 'negative') : 'neutral'}">${w.seeker === 'PASSIVE_RADAR' ? (w.antiEmcon ? 'Anti-EMCON Memory' : 'Breaks on EMCON') : 'N/A'}</span>
           </div>
         </div>
-      </section>
-    `;
+      </section>`;
   }
 
   static renderRadarDashboard(controller, selectedEntity) {
     if (!selectedEntity || typeof selectedEntity.x !== 'number') {
-      return '<div class="inspection-empty"><b>NO SENSOR TARGET</b><span>Select an aircraft or contact to evaluate sensor envelopes.</span></div>';
+      return '<div class="inspection-empty"><b>NO SENSOR TARGET</b><span>Select an aircraft, surface installation, or missile.</span></div>';
     }
-    if (selectedEntity.weapon && selectedEntity.target) {
-      return this.renderMissileSeekerDashboard(controller, selectedEntity);
-    }
+    if (controller.isMissile(selectedEntity)) return this.renderMissileSeekerDashboard(controller, selectedEntity);
+    if (controller.isSurface(selectedEntity)) return InspectionSurfaceRadarRenderer.renderSurfaceSensors(controller, selectedEntity);
 
     const sDeg = window.INSP_SVG ? window.INSP_SVG.deg : '';
     const sDot = window.INSP_SVG ? window.INSP_SVG.dot : '';
@@ -76,22 +69,28 @@ class InspectionRadarView {
 
     const headerTitle = isFriendly ? 'ONBOARD SENSORS & RADAR TRACKS' : 'ALLIED SENSOR COVERAGE & FRIENDLY LOCKS';
     const headerSub = isFriendly
-      ? `Forward radar sweep, target locks, and scan beam tracking from ${controller.getName(selectedEntity)}`
+      ? `Forward radar sweep, ground recon, and scan beam tracking from ${controller.getName(selectedEntity)}`
       : `Allied fighters and radar stations tracking ${controller.getName(selectedEntity)}`;
 
     let records = [];
     if (isFriendly) {
-      const enemyPool = [...(game.hostileAircraft || []), ...(game.surfaceUnits.filter(s => s.team === 'hostile'))].filter(u => u && u.hp > 0);
-      records = enemyPool.map(target => InspectionTelemetry.getSensorRecord(selectedEntity, target, game)).sort((a, b) => Number(b.detects) - Number(a.detects) || a.distanceKm - b.distanceKm);
+      const airPool = (game.hostileAircraft || []).filter(u => u && u.hp > 0.05);
+      records = airPool.map(target => InspectionTelemetry.getSensorRecord(selectedEntity, target, game))
+        .sort((a, b) => Number(b.detects) - Number(a.detects) || a.distanceKm - b.distanceKm);
     } else {
-      const scannerPool = [...(game.alliedAircraft || []), ...(game.surfaceUnits.filter(s => s.team === 'friendly' && (s.category === 'EW_RADAR' || s.type === 'RADAR_ARRAY' || s.type === 'S-400')))].filter(u => u && u.hp > 0);
-      records = scannerPool.map(scanner => InspectionTelemetry.getSensorRecord(scanner, selectedEntity, game)).sort((a, b) => Number(b.detects) - Number(a.detects) || a.distanceKm - b.distanceKm);
+      const scannerPool = [
+        ...(game.alliedAircraft || []),
+        ...(game.surfaceUnits.filter(s => s.team === 'friendly' && (s.category === 'EW_RADAR' || s.type === 'RADAR_ARRAY' || s.type === 'S-400')))
+      ].filter(u => u && u.hp > 0.05);
+      records = scannerPool.map(scanner => InspectionTelemetry.getSensorRecord(scanner, selectedEntity, game))
+        .sort((a, b) => Number(b.detects) - Number(a.detects) || a.distanceKm - b.distanceKm);
     }
 
-    const radarName = selectedEntity.spec ? (selectedEntity.spec.radarType || selectedEntity.spec.name) : (selectedEntity.name || 'Pulse-Doppler Radar');
-    const radarRange = selectedEntity.spec ? (selectedEntity.spec.R_0 || selectedEntity.rangeKm || 75) : (selectedEntity.rangeKm || 75);
-    const scanCone = selectedEntity.spec ? (selectedEntity.spec.radarConeDeg || 360) : (selectedEntity.type ? 360 : 120);
-    const lookDown = Math.round((selectedEntity.spec ? (selectedEntity.spec.lookDownBonus || 0.2) : 0.2) * 100);
+    const spec = selectedEntity.spec || {};
+    const radarName = spec.radarType || selectedEntity.model || 'Transit Transponder';
+    const radarRange = spec.R_0 !== undefined ? spec.R_0 : 0;
+    const scanCone = spec.radarConeDeg || 120;
+    const lookDown = Math.round((spec.lookDownBonus || 0) * 100);
 
     const contactRowsHtml = records.map((rec) => {
       const otherUnit = isFriendly ? rec.target : rec.scanner;
@@ -104,30 +103,17 @@ class InspectionRadarView {
         ? Boolean(rec.detects && activeLock && activeLock.id === rec.target.id)
         : Boolean(rec.detects && rec.scanner.radarLockedTarget && rec.scanner.radarLockedTarget.id === selectedEntity.id);
 
-      let statusClass = 'negative';
-      let statusText = `OFF-BORESIGHT (${rec.offBoresightDeg}${sDeg})`;
-      if (rec.inCone) {
+      let statusClass = 'negative', statusText = `OFF-BORESIGHT (${rec.offBoresightDeg}${sDeg})`;
+      if (rec.isEmcon) { statusClass = 'neutral'; statusText = 'EMCON SILENT'; }
+      else if (rec.belowFloor) { statusClass = 'positive'; statusText = 'BELOW FLOOR'; }
+      else if (rec.inCone) {
         if (isLocked) { statusClass = 'positive'; statusText = 'PRIMARY LOCK'; }
         else if (rec.detects) { statusClass = rec.marginKm < 15 ? 'warning' : 'positive'; statusText = rec.marginKm < 15 ? 'MARGINAL TRACK' : 'IN BEAM (TRACKED)'; }
-        else { statusClass = 'negative'; statusText = 'IN CONE (OUT OF RANGE)'; }
+        else statusText = 'IN CONE (OUT OF RANGE)';
       }
 
-      let beamClass = 'negative';
-      let beamText = `Outside Radar Cone (${rec.offBoresightDeg}${sDeg} > ${sPm}${rec.halfConeDeg}${sDeg})`;
-      if (rec.inCone) {
-        beamClass = (rec.offBoresightDeg <= rec.halfConeDeg * 0.65) ? 'positive' : 'warning';
-        beamText = (rec.offBoresightDeg <= rec.halfConeDeg * 0.65) ? `Boresight Aligned (${rec.offBoresightDeg}${sDeg} off nose)` : `Outer Gimbal Arc (${rec.offBoresightDeg}${sDeg} off nose)`;
-      }
-
-      const rcsClass = rec.rcsRatio >= 1.15 ? 'positive' : (rec.rcsRatio < 0.70 ? 'negative' : 'warning');
-      const rcsText = `${rec.rcsRatio.toFixed(2)}x detection multiplier`;
-
-      const atten = (window.CONFIG && window.CONFIG.CLOUD_RADAR_ATTENUATION) || 0.04;
-      const totalAttenPct = Math.round((1 - Math.pow(1.0 - atten, rec.cloudHits)) * 100);
-      let cloudClass = 'neutral', cloudText = 'Clear Line of Sight', cloudDesc = 'Clear air: unobstructed atmospheric radar line of sight.';
-      if (rec.cloudHits === 1) { cloudClass = 'warning'; cloudText = `-${totalAttenPct}% Attenuation (1 Cloud Cell)`; cloudDesc = 'Single cloud cell in sensor path: gentle microwave RF attenuation.'; }
-      else if (rec.cloudHits >= 2) { cloudClass = 'warning'; cloudText = `-${totalAttenPct}% Attenuation (${rec.cloudHits} Clouds)`; cloudDesc = `${rec.cloudHits} cloud cells in path: minor microwave radar attenuation.`; }
-      else if (!rec.inCone) { cloudClass = 'negative'; cloudText = `NO RADAR SIGHT (${rec.offBoresightDeg}${sDeg})`; cloudDesc = `Target is ${rec.offBoresightDeg}${sDeg} off nose in rear blind zone; no forward radar line of sight.`; }
+      const beamClass = !rec.inCone ? 'negative' : (rec.offBoresightDeg <= rec.halfConeDeg * 0.65 ? 'positive' : 'warning');
+      const beamText = !rec.inCone ? `Outside Cone (${rec.offBoresightDeg}${sDeg} > ${sPm}${rec.halfConeDeg}${sDeg})` : `Aligned (${rec.offBoresightDeg}${sDeg} off nose)`;
 
       return `
         <details class="inspection-accordion" data-accordion-id="${accordionId}">
@@ -144,42 +130,58 @@ class InspectionRadarView {
           <div class="inspection-accordion-body">
             <div class="inspection-range-track">
               <span class="inspection-range-fill ${rec.detects ? 'detecting' : ''}" style="width:${rangePercent}%;"></span>
-              <i class="inspection-distance-marker" style="left:${distPercent}%;" title="Distance: ${rec.distanceKm.toFixed(1)} km"></i>
+              <i class="inspection-distance-marker" style="left:${distPercent}%;"></i>
             </div>
             <div class="inspection-range-reading" style="display:flex; justify-content:space-between;">
               <span class="sensor-dist-val">Distance: <b>${rec.distanceKm.toFixed(1)} km</b></span>
               <span class="sensor-reach-val">${rec.inCone ? `Radar Reach: <b>${rec.rangeKm.toFixed(1)} km</b>` : `Forward Reach: <b>${rec.forwardRangeKm.toFixed(1)} km (Blind)</b>`}</span>
-              <span class="sensor-margin-val" style="color:${rec.detects ? (rec.marginKm < 15 ? 'var(--stat-tier-3)' : 'var(--stat-tier-2)') : 'var(--stat-tier-5)'}; font-weight:700;">
+              <span class="sensor-margin-val" style="color:${rec.detects ? 'var(--stat-tier-2)' : 'var(--stat-tier-5)'}; font-weight:700;">
                 ${!rec.inCone ? `BLIND SECTOR (${rec.offBoresightDeg}${sDeg})` : (rec.marginKm >= 0 ? `+${rec.marginKm.toFixed(1)} km margin` : `${rec.marginKm.toFixed(1)} km shortfall`)}
               </span>
             </div>
             <div class="inspection-factors-table" style="margin-top:6px;">
               <div class="inspection-factor-row ${beamClass} sensor-beam-row">
-                <span class="factor-name">Radar Beam Alignment<span class="factor-desc">Target angle relative to forward gimbal limits (${sPm}${rec.halfConeDeg}${sDeg}).</span></span>
+                <span class="factor-name">Radar Beam Alignment<span class="factor-desc">Target bearing relative to gimbal limits (${sPm}${rec.halfConeDeg}${sDeg}).</span></span>
                 <span class="factor-delta ${beamClass}">${beamText}</span>
               </div>
-              <div class="inspection-factor-row ${rcsClass}">
-                <span class="factor-name">Target Radar Signature<span class="factor-desc">Effective RCS: ${rec.effectiveRcs.toFixed(rec.effectiveRcs < 0.01 ? 5 : 2)} sq m</span></span>
-                <span class="factor-delta ${rcsClass}">${rcsText}</span>
+              <div class="inspection-factor-row ${rec.rcsRatio >= 1.15 ? 'positive' : 'warning'}">
+                <span class="factor-name">Target Signature &amp; Aspect<span class="factor-desc">Effective RCS: ${rec.effectiveRcs.toFixed(rec.effectiveRcs < 0.01 ? 5 : 2)} m2${rec.vhfMult > 1 ? ` | VHF ${rec.vhfMult.toFixed(1)}x` : ''}</span></span>
+                <span class="factor-delta ${rec.rcsRatio >= 1.15 ? 'positive' : 'warning'}">${rec.rcsRatio.toFixed(2)}x detect factor</span>
               </div>
-              <div class="inspection-factor-row ${cloudClass} sensor-cloud-row">
-                <span class="factor-name">Atmospheric Clouds<span class="factor-desc">${cloudDesc}</span></span>
-                <span class="factor-delta ${cloudClass}">${cloudText}</span>
-              </div>
-            </div>
-            <div class="inspection-reason-box ${rec.detects ? (rec.marginKm < 15 ? 'warning' : '') : 'warning'}" style="margin-top:4px;">
-              <b>RADAR ASSESSMENT:</b> ${!rec.inCone ? `NO RADAR SIGHT: Target is in rear blind sector (${rec.offBoresightDeg}${sDeg} off nose). Turn towards target to acquire radar track.` : (rec.detects ? (rec.marginKm < 15 ? `Marginal radar track: target is near horizon boundary (${rec.marginKm.toFixed(1)} km margin).` : `Solid radar track established. Target is ${Math.abs(rec.marginKm).toFixed(1)} km inside reliable envelope.`) : `Target is beyond radar detection horizon by ${Math.abs(rec.marginKm).toFixed(1)} km.`)}
+              ${rec.totalJamming > 0 ? `
+              <div class="inspection-factor-row warning">
+                <span class="factor-name">Electronic Jamming<span class="factor-desc">Active air/ground ECM suppression on sensor link.</span></span>
+                <span class="factor-delta warning">${Math.round(rec.totalJamming * 100)}% Jam${rec.eccmMitigation > 0 ? ` (-${Math.round(rec.eccmMitigation * 100)}% ECCM)` : ''}</span>
+              </div>` : ''}
+              ${rec.tfrMasked ? `
+              <div class="inspection-factor-row negative">
+                <span class="factor-name">TFR Low-Altitude Masking<span class="factor-desc">Target flying below 10,000 ft with terrain-following radar.</span></span>
+                <span class="factor-delta negative">-25% Look-Down Reach</span>
+              </div>` : ''}
+              ${rec.irstBurnThrough ? `
+              <div class="inspection-factor-row positive">
+                <span class="factor-name">Optical IRST Burn-Through<span class="factor-desc">Target within 28 km passive infrared acquisition range.</span></span>
+                <span class="factor-delta positive">INSTANT TRACK</span>
+              </div>` : ''}
             </div>
           </div>
-        </details>
-      `;
+        </details>`;
     }).join('');
+
+    const showGround = Boolean(game.radar && game.radar.cam && game.radar.cam.showGroundTargets);
+    let groundReconHtml = '';
+    if (showGround && controller.isAircraft(selectedEntity)) {
+      const oppGround = (game.surfaceUnits || []).filter(s => s && s.team !== selectedEntity.team && s.hp > 0.05 && !s.isIndestructible);
+      if (oppGround.length > 0) {
+        groundReconHtml = InspectionSurfaceRadarRenderer.renderGroundReconSection(controller, selectedEntity, oppGround);
+      }
+    }
 
     return `
       <section class="inspection-card">
         <h3>${headerTitle}</h3>
         <p class="inspection-muted">${headerSub}</p>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font:600 0.64rem var(--font-dotdigital);">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font:600 0.62rem var(--font-dotdigital);">
           <div>RADAR: <b style="color:var(--color-ice-highlight);">${radarName}</b></div>
           <div>BASE RANGE: <b style="color:var(--stat-tier-2);">${radarRange} km</b></div>
           <div>SCAN CONE: <b style="color:var(--theme-accent);">${scanCone >= 360 ? `360${sDeg} (OMNI)` : `${sPm}${Math.round(scanCone / 2)}${sDeg}`}</b></div>
@@ -194,12 +196,12 @@ class InspectionRadarView {
       </section>
       <section style="margin-top:4px;">
         <div class="inspection-subhead" style="padding:0 2px 4px 2px;">
-          <span class="sensor-in-reach-count">${isFriendly ? 'CONTACTS IN THEATER AND RADAR ENVELOPES' : 'ALLIED SENSORS TRACKING TARGET'} (${records.filter(r => r.detects).length}/${records.length} IN REACH)</span>
+          <span class="sensor-in-reach-count">${isFriendly ? 'AIR CONTACTS &amp; RADAR ENVELOPES' : 'ALLIED SENSORS TRACKING TARGET'} (${records.filter(r => r.detects).length}/${records.length} IN REACH)</span>
           <span>EXPAND FOR DETAILS</span>
         </div>
-        ${contactRowsHtml || '<p class="inspection-muted" style="padding:8px;">No contacts detected in radar search sector.</p>'}
+        ${contactRowsHtml || '<p class="inspection-muted" style="padding:8px;">No aircraft contacts in sector.</p>'}
       </section>
-    `;
+      ${groundReconHtml}`;
   }
 }
 

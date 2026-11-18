@@ -107,6 +107,11 @@ class CombatSystem {
     if (w.isDecoyDrone) {
       const drone = new DecoyDrone(sourceUnit, sourceUnit.heading);
       if (this.game.simulation) this.game.simulation.decoyDrones.push(drone);
+      if (this.game.inspection && this.game.inspection.enabled) {
+        this.game.inspection.recordEvent('DECOY DEPLOYED', `${window.formatCombatantDisplayName(sourceUnit)} launched ${w.name}`, sourceUnit, drone, {
+          weapon: w.name, mirroredRcs: drone.effectiveRcs, remainingAmmo: item.ammo
+        });
+      }
       if (this.game.radar) {
         this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, 'MALD DECOY DEPLOYED', '#c084fc');
         this.game.radar.spawnShockwave(sourceUnit.x, sourceUnit.y, '#c084fc', 26);
@@ -114,6 +119,11 @@ class CombatSystem {
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     } else if (w.isDecoy) {
       sourceUnit.deployCountermeasures();
+      if (this.game.inspection && this.game.inspection.enabled) {
+        this.game.inspection.recordEvent('DECOY DEPLOYED', `${window.formatCombatantDisplayName(sourceUnit)} deployed ${w.name}`, sourceUnit, null, {
+          weapon: w.name, remainingAmmo: item.ammo
+        });
+      }
       if (this.game.radar) {
         this.game.radar.spawnCombatText(sourceUnit.x, sourceUnit.y, 'TOWED DECOY DEPLOYED', '#38bdf8');
         this.game.radar.spawnShockwave(sourceUnit.x, sourceUnit.y, '#38bdf8', 25);

@@ -105,6 +105,9 @@ class AirbaseSystem {
     unit.parkedAircraft = [];
     const bonusVp = destroyedCount * 140;
     if (game.simulation) game.simulation.logScoreEvent('friendly', bonusVp, `Destroyed ${destroyedCount} parked aircraft on ${unit.name}`);
+    if (game.inspection && game.inspection.enabled) {
+      game.inspection.recordEvent('PARKED JET DESTROYED', `${destroyedCount} stored QRA jet(s) destroyed on ${unit.name}`, null, unit, { destroyedCount, bonusVp, airbaseId: unit.airbaseId });
+    }
     if (game.radar) {
       game.radar.spawnCombatText(unit.x, unit.y, `${destroyedCount} PARKED JETS DESTROYED (+${bonusVp} VP)`, '#00f5a0');
       game.radar.spawnExplosionFX(unit.x, unit.y, true);
@@ -208,6 +211,9 @@ class AirbaseSystem {
     ac.tacticalRole = 'INTERCEPT';
     ac.recalculateWeight();
     game.hostileAircraft.push(ac);
+    if (game.inspection && game.inspection.enabled) {
+      game.inspection.recordEvent('QRA TAXI', `${window.formatAircraftDisplayName(ac)} taxiing from ${chosenNode.name}`, ac, chosenNode, { airbaseId: abId, takeoffSegmentsRequired: acDef.takeoffSegments, fullAmmo: !hasMunitionNearby || munitionAlive });
+    }
     if (game.radar) game.radar.spawnCombatText(chosenNode.x, chosenNode.y, `TAXIING: ${ac.spec.id} (${acDef.takeoffSegments} SEG)`, '#fbbf24');
     return true;
   }
@@ -217,10 +223,23 @@ class AirbaseSystem {
       if (!ac || ac.hp <= 0.05 || !ac.groundPhase) continue;
       if (ac.groundPhase === 'TAXI') {
         const tgt = ac.taxiTargetSeg;
-        if (!tgt || tgt.hp <= 0.05) { ac.hp = 0; if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, 'RUNWAY CRATERED - TAXI ABORT', '#f43f5e'); continue; }
+        if (!tgt || tgt.hp <= 0.05) {
+          ac.hp = 0;
+          if (game.inspection && game.inspection.enabled) {
+            game.inspection.recordEvent('RUNWAY CRASH', `${window.formatAircraftDisplayName(ac)} aborted taxi on cratered runway`, ac, tgt || null, { airbaseId: ac.airbaseId, phase: 'TAXI' });
+          }
+          if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, 'RUNWAY CRATERED - TAXI ABORT', '#f43f5e');
+          continue;
+        }
         const dx = tgt.x - ac.x, dy = tgt.y - ac.y;
         ac.heading = Math.atan2(dy, dx); ac.speed = 0.14; ac.altFt = 0;
-        if (Math.hypot(dx, dy) <= 0.8) { ac.groundPhase = 'TAKEOFF'; ac.heading = ac.rollHeading; ac.speed = 0.25; if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, `TAKEOFF ROLL: ${ac.spec.id}`, '#f43f5e'); }
+        if (Math.hypot(dx, dy) <= 0.8) {
+          ac.groundPhase = 'TAKEOFF'; ac.heading = ac.rollHeading; ac.speed = 0.25;
+          if (game.inspection && game.inspection.enabled) {
+            game.inspection.recordEvent('QRA TAKEOFF ROLL', `${window.formatAircraftDisplayName(ac)} began takeoff roll on ${ac.airbaseId}`, ac, tgt, { airbaseId: ac.airbaseId, takeoffSegmentsRequired: ac.takeoffSegmentsReq });
+          }
+          if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, `TAKEOFF ROLL: ${ac.spec.id}`, '#f43f5e');
+        }
       } else if (ac.groundPhase === 'TAKEOFF') {
         if (ac.rollSegs.some(s => !s || s.hp <= 0.05)) {
           ac.hp = 0;
@@ -231,7 +250,13 @@ class AirbaseSystem {
         ac.heading = ac.rollHeading; ac.speed = Math.min(0.75, ac.speed + 0.25 * dt); ac.altFt = 0;
         const end = ac.rollEndSeg;
         const passedEnd = !end || Math.hypot(end.x - ac.x, end.y - ac.y) <= 1.5 || ((end.x - ac.x) * Math.cos(ac.rollHeading) + (end.y - ac.y) * Math.sin(ac.rollHeading) <= 0);
-        if (ac.speed >= 0.58 && passedEnd) { ac.groundPhase = null; ac.altFt = 2500; ac.targetAltFt = 24000; ac.speed = Math.max(0.68, ac.getTargetMach()); if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, `AIRBORNE: ${ac.spec.id}`, '#f43f5e'); }
+        if (ac.speed >= 0.58 && passedEnd) {
+          ac.groundPhase = null; ac.altFt = 2500; ac.targetAltFt = 24000; ac.speed = Math.max(0.68, ac.getTargetMach());
+          if (game.inspection && game.inspection.enabled) {
+            game.inspection.recordEvent('QRA AIRBORNE', `${window.formatAircraftDisplayName(ac)} airborne from ${ac.airbaseId}`, ac, null, { airbaseId: ac.airbaseId, speedMach: ac.speed, altitudeFt: ac.altFt });
+          }
+          if (game.radar) game.radar.spawnCombatText(ac.x, ac.y, `AIRBORNE: ${ac.spec.id}`, '#f43f5e');
+        }
       }
     }
   }

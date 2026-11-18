@@ -45,7 +45,7 @@ class SimulationRules {
     }
     const tgt = game.selectedTarget;
     const isMsl = Boolean(tgt && tgt.weapon && tgt.target);
-    const isGnd = Boolean(tgt && tgt.type && !tgt.spec && !tgt.isCivilian);
+    const isGnd = Boolean(tgt && ((typeof SurfaceUnit !== 'undefined' && tgt instanceof SurfaceUnit) || (tgt.type && !tgt.isCivilian && !tgt.weapon)));
     const gndShown = Boolean(game.radar && game.radar.cam && game.radar.cam.showGroundTargets);
     const inspOpen = Boolean(game.inspection && game.inspection.isOpen);
     if (tgt && ((typeof tgt.hp === 'number' && tgt.hp <= 0.05) || tgt.isDissolved || tgt.isDead || (isMsl && !inspOpen) || (isGnd && !gndShown))) {

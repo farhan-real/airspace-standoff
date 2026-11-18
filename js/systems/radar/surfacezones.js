@@ -65,7 +65,7 @@ class RadarSurfaceRenderer {
     const cfg = window.CONFIG;
     if (!cfg || !cfg.THEATER_WIDTH_KM) throw new Error('CONFIG.THEATER_WIDTH_KM is not configured.');
     const isAttack = Boolean(window.Game && window.Game.scenarioMode === 'ATTACK');
-    const isInspection = Boolean(window.Game && window.Game.inspection && window.Game.inspection.isOpen);
+    const isInspection = Boolean(window.Game && window.Game.inspection && window.Game.inspection.isOpen && window.Game.inspection.showEnemyDetails);
 
     this.drawRunwayStrips(ctx, cam, units);
     ctx.save();

@@ -59,6 +59,7 @@ class AICommander {
     const baseProfile = window.AI_DIFFICULTIES[diffKey];
     if (!baseProfile) throw new Error(`Unknown difficulty "${diffKey}" in getCognitiveProfile.`);
     const aceProfile = window.AI_ACE_PROFILES[diffKey];
+    if (!aceProfile) throw new Error(`Unknown ace profile "${diffKey}" in getCognitiveProfile.`);
     const { isAttack, airDoctrine, atkDoctrine } = this.getActiveDoctrines();
 
     const maxSlots = baseProfile.attentionSlots;
@@ -84,9 +85,30 @@ class AICommander {
     }
 
     const tacticalRole = (unit && unit.tacticalRole) ? unit.tacticalRole : (unit && unit.spec && unit.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
+    const engagedTargetName = (unit && unit.radarLockedTarget && unit.radarLockedTarget.hp > 0.05)
+      ? window.formatCombatantDisplayName(unit.radarLockedTarget) : null;
+    const ammoRemaining = (unit && unit.equippedWeapons)
+      ? unit.equippedWeapons.reduce((s, it) => s + (it && it.weapon && !it.weapon.isJammerPod && !it.weapon.isTargetingPod ? (it.ammo || 0) : 0), 0)
+      : 0;
+
     return {
       isAce, isFocused, remainingFocus, maxSlots, activeFocusCount, diffKey, posture,
       tacticalRole, isHesitating, successionTimer, roleInFormation, pairedUnit,
+      isAttackMode: isAttack,
+      airDoctrineId: airDoctrine.id,
+      airDoctrineName: airDoctrine.name,
+      atkDoctrineId: atkDoctrine ? atkDoctrine.id : null,
+      atkDoctrineName: atkDoctrine ? atkDoctrine.name : null,
+      atkCapPosture: atkDoctrine ? atkDoctrine.capPosture : null,
+      groundPhase: unit ? unit.groundPhase : null,
+      airbaseId: unit ? unit.airbaseId : null,
+      takeoffSegmentsReq: unit ? unit.takeoffSegmentsReq : null,
+      isRTB: Boolean(unit && unit.isRTB),
+      engagedTargetName,
+      ammoRemaining,
+      salvoMaxMissiles: isAce ? aceProfile.salvoMaxMissiles : Math.max(1, Math.min(3, baseProfile.salvoMaxMissiles + airDoctrine.salvoBias)),
+      mixedSeekerChance: isAce ? aceProfile.mixedSeekerChance : baseProfile.mixedSeekerChance,
+      desiredHoldKm: airDoctrine.desiredHoldKm,
       doctrine: isAttack ? atkDoctrine.id : airDoctrine.id,
       doctrineName: isAttack ? atkDoctrine.name : airDoctrine.name,
       reactionCooldown: isAce ? aceProfile.reactionCooldown : baseProfile.reactionCooldown,

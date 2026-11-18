@@ -95,15 +95,15 @@ window.MANUAL_OPERATIONS = [
     title: 'SECTION 15: INSPECTION MODE, LIVE C4ISR & AI COGNITION ANALYSIS',
     desc: `
       <div class="ge-desc">
-        Enable <b>INSPECTION MODE</b> inside the Mission Editor to unlock an advanced real-time C4ISR telemetry workspace while keeping cockpit flight controls, banking, and missile releases fully functional.
+        Enable <b>INSPECTION MODE</b> inside the Mission Editor to unlock an advanced real-time C4ISR telemetry workspace while keeping cockpit flight controls, banking, and missile releases fully functional across Skirmish, Dynamic Theater, and Ground Attack operations.
       </div>
 
       <div class="ge-subhead">1. WORKSPACE CONTROLS &amp; SIMULATION TIME-STOP</div>
       <div class="ge-card">
         <ul style="list-style:none;padding-left:0;font-size:0.72rem;line-height:1.6;color:#cbd5e1;">
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Contact Selection:</b> Tap any aircraft, surface site, or in-flight missile on the radar display or choose from the HUD dropdown to immediately focus telemetry.</li>
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Enemy Filter Switch (ENEMY: ON or OFF):</b> Toggles hostile telemetry analysis on or off. With Enemy Off, tapping an enemy blip locks them as your weapon target while keeping friendly aircraft telemetry active.</li>
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Simulation Time-Stop (STOP TIME or RESUME TIME):</b> Freezes combat simulation physics in place. Allows deep analysis of radar envelopes, aspect angles, and missile kill probability before resuming.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Contact Selection:</b> Tap any aircraft, surface IADS installation, or in-flight missile on the radar display or choose from the HUD dropdown to immediately focus telemetry.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Enemy Filter Switch (ENEMY: ON or OFF):</b> Toggles hostile air and concealed IADS telemetry analysis on or off. With Enemy Off, concealed enemy SAMs and decoys stay hidden while tapping visible threats locks them as weapon targets.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Simulation Time-Stop (STOP TIME or RESUME TIME):</b> Freezes combat simulation physics in place. Allows deep analysis of radar envelopes, EMCON timers, aspect angles, and missile kill probability before resuming.</li>
           <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Concurrent Combat Controls:</b> Flight steering keys, throttle adjustment, and weapon triggers remain fully active during inspection analysis.</li>
         </ul>
       </div>
@@ -131,12 +131,12 @@ window.MANUAL_OPERATIONS = [
             <tr><th>WORKSPACE TAB</th><th>DIAGNOSTIC DISPLAY &amp; TACTICAL TELEMETRY</th></tr>
           </thead>
           <tbody>
-            <tr><td style="color:#00f0ff;font-weight:800;">OVERVIEW</td><td>Armor pips, corner turn gauge, VSI rate, active AI Doctrine &amp; Cognition dossier (Role, Focus Slots, Posture, Succession), and stores inventory.</td></tr>
-            <tr><td style="color:#00f5a0;font-weight:800;">SENSORS</td><td>Radar specs, active locks, stealth RCS spectrum, aspect spike factors, and range comparison tracks.</td></tr>
-            <tr><td style="color:#ffd700;font-weight:800;">WEAPONS</td><td>Dynamic hit probability (Pk), factor breakdown (ProNav, energy, clouds), and inbound missile defense steps.</td></tr>
-            <tr><td style="color:#38bdf8;font-weight:800;">GRAPHS</td><td>Dynamic Launch Zone (DLZ), 360&deg; RCS polar diagram, turn speed gauge, 60s flight history, and fleet combat power curve.</td></tr>
-            <tr><td style="color:#c084fc;font-weight:800;">EVENTS</td><td>Chronological Causal Log recording launches, intercepts, chaff deployments, and kills.</td></tr>
-            <tr><td style="color:#38bdf8;font-weight:800;">DATA</td><td>Complete raw telemetry registry: coordinates, FL, Mach, heading, stress, upgrades, and AI state variables.</td></tr>
+            <tr><td style="color:#00f0ff;font-weight:800;">OVERVIEW</td><td>Armor pips, corner turn gauge, installed subsystems (TFR, CCIP, HTS, MITL, DIRCM, Kevlar), Air &amp; Attack Doctrine cognition dossiers, 5-segment runway status, parked QRA queues, and IADS network links.</td></tr>
+            <tr><td style="color:#00f5a0;font-weight:800;">SENSORS</td><td>Radar specs, active locks, stealth RCS spectrum, jamming/ECCM, TFR low-alt masking, VHF counter-stealth, passive ELINT, and ground recon (ESM, TGP, SAR) tracks.</td></tr>
+            <tr><td style="color:#ffd700;font-weight:800;">WEAPONS</td><td>Dynamic A2A &amp; A2G hit probability (Pk), primary gun solutions, armor class deflection, CIWS interception risk, EMCON vulnerability, SAM/AAA defense envelopes, and inbound missile protocols.</td></tr>
+            <tr><td style="color:#38bdf8;font-weight:800;">GRAPHS</td><td>Dynamic Launch Zone (A2A, A2G &amp; SAM DLZ), 360&deg; RCS/SAM polar coverage diagrams, turn speed &amp; battery readiness gauges, 60s flight/IADS status panels, and Attack-integrated fleet power curves.</td></tr>
+            <tr><td style="color:#c084fc;font-weight:800;">EVENTS</td><td>Chronological Causal Log recording launches, EMCON shutdowns, QRA scrambles, AAA/CIWS intercepts, ground recon exposures, decoys, chaff, secondary blasts, and kills.</td></tr>
+            <tr><td style="color:#38bdf8;font-weight:800;">DATA</td><td>Complete raw telemetry registry: coordinates, FL, Mach, ground ops, strike/SEAD upgrades, surface IADS network modifiers, missile release buffs, and AI state variables.</td></tr>
           </tbody>
         </table>
       </div>

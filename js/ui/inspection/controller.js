@@ -22,6 +22,18 @@ class InspectionModeController {
     this.init();
   }
 
+  isAircraft(e) {
+    return Boolean(e && ((typeof Aircraft !== 'undefined' && e instanceof Aircraft) || (e.spec && !e.type && !e.isCivilian && !e.isDecoyDrone && !e.isGhost)));
+  }
+
+  isSurface(e) {
+    return Boolean(e && ((typeof SurfaceUnit !== 'undefined' && e instanceof SurfaceUnit) || (e.type && !e.isCivilian && !e.weapon)));
+  }
+
+  isMissile(e) {
+    return Boolean(e && e.weapon && e.target);
+  }
+
   init() {
     const toggle = document.getElementById('btn-inspection-mode');
     const close = document.getElementById('inspection-close');
@@ -109,8 +121,10 @@ class InspectionModeController {
     const pane = document.getElementById('inspection-pane');
     const hud = document.getElementById('hud-container');
     if (pane) pane.classList.remove('hidden');
-    if (hud) hud.classList.remove('inspection-layout');
-    hud.classList.add('inspection-layout');
+    if (hud) {
+      hud.classList.remove('inspection-layout');
+      hud.classList.add('inspection-layout');
+    }
     this.resizeRadar();
     const toggle = document.getElementById('btn-inspection-mode');
     if (toggle) toggle.textContent = 'CLOSE ANALYSIS';
@@ -133,10 +147,10 @@ class InspectionModeController {
     if (timeStop) timeStop.classList.toggle('hidden', !this.enabled);
     this.updateTimeStopButton();
 
-    if (this.selectedEntity && this.selectedEntity.weapon && this.selectedEntity.target) {
+    if (this.isMissile(this.selectedEntity)) {
       this.selectedEntity = this.game.activeUnit || null;
     }
-    if (this.game && this.game.selectedTarget && this.game.selectedTarget.weapon && this.game.selectedTarget.target) {
+    if (this.game && this.isMissile(this.game.selectedTarget)) {
       this.game.selectedTarget = null;
       const targetInfo = document.getElementById('selected-target-info');
       if (targetInfo) targetInfo.textContent = 'TARGET: NONE';
@@ -193,12 +207,12 @@ class InspectionModeController {
   selectMapEntity(entity) {
     if (!entity) return;
     const gnd = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
-    if (entity.type && !entity.spec && !entity.isCivilian && !gnd) return;
+    if (this.isSurface(entity) && !gnd) return;
     if (this.selectedEntity && this.selectedEntity.id === entity.id) return;
 
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
     const isEnemy = entity.team && entity.team !== commanderTeam;
-    const isMissile = Boolean(entity.weapon && entity.target);
+    const isMissile = this.isMissile(entity);
 
     if (isEnemy && !this.showEnemyDetails) {
       if (!isMissile) {
@@ -211,7 +225,7 @@ class InspectionModeController {
       return;
     }
 
-    if (entity.team === commanderTeam && entity.hp > 0 && typeof Aircraft !== 'undefined' && entity instanceof Aircraft) {
+    if (this.isAircraft(entity) && entity.team === commanderTeam && entity.hp > 0) {
       this.game.activeUnit = entity;
       if (this.game.avionics) {
         this.game.avionics.renderFlightRoster();
@@ -233,8 +247,11 @@ class InspectionModeController {
 
   getName(e) {
     if (!e) return 'Unknown Object';
-    if (e.spec && e.callsign && window.formatAircraftDisplayName) return window.formatAircraftDisplayName(e);
-    if (e.weapon && e.target) return `${e.weapon.name || 'Missile'} (${e.id})`;
+    if (this.isAircraft(e)) return window.formatAircraftDisplayName(e);
+    if (this.isMissile(e)) return `${e.weapon.name || 'Missile'} (${e.id})`;
+    if (this.isSurface(e)) return `${e.isPrimaryObjective ? '[OBJ] ' : ''}${e.name || e.type}`;
+    if (e.isGhost) return `BOGEY [?] (${e.ghostType || 'CLUTTER'})`;
+    if (e.isDecoyDrone) return `DECOY ${e.mirroredModel || 'DRONE'} (${e.id})`;
     if (e.callsign) return e.callsign;
     if (e.flightCode) return `${e.name || 'Airliner'} ${e.flightCode}`;
     if (e.name) return e.name;
@@ -244,15 +261,20 @@ class InspectionModeController {
   getAllEntities() {
     const sim = this.game && this.game.simulation;
     const gnd = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
+    const isAttack = (this.game.scenarioMode === 'ATTACK');
+    const surfaces = gnd ? (this.game.surfaceUnits || []).filter(s =>
+      s && (s.hp > 0.05 || s.isIndestructible) && !(isAttack && s.team === 'hostile' && !s.isRevealedToBlue && !this.showEnemyDetails)
+    ) : [];
+
     return [
       ...(this.game.alliedAircraft || []),
       ...(this.game.hostileAircraft || []),
-      ...(gnd ? (this.game.surfaceUnits || []) : []),
+      ...surfaces,
       ...(this.game.missiles || []),
       ...((sim && sim.civilianTraffic) || []),
       ...((sim && sim.ghostContacts) || []),
       ...((sim && sim.decoyDrones) || [])
-    ].filter(e => e && (e.hp === undefined || e.hp > 0 || (e.active && !e.isDead)));
+    ].filter(e => e && (e.hp === undefined || e.hp > 0.05 || e.isIndestructible || (e.active && !e.isDead)));
   }
 
   recordEvent(type, title, source, target, details = {}) {
@@ -267,7 +289,7 @@ class InspectionModeController {
     if (!this.isOpen) return;
 
     const gnd = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
-    if (this.selectedEntity && this.selectedEntity.type && !this.selectedEntity.spec && !this.selectedEntity.isCivilian && !gnd) {
+    if (this.isSurface(this.selectedEntity) && !gnd) {
       this.selectedEntity = this.game.activeUnit || null;
       this.render(true);
       return;
@@ -316,14 +338,14 @@ class InspectionModeController {
     if (hintEl) {
       hintEl.textContent = this.selectionNotice || (this.selectedEntity
         ? `Analyzing ${this.getName(this.selectedEntity)}. Tap contacts on radar to switch target.`
-        : 'Select any aircraft or missile contact on the radar display.');
+        : 'Select any aircraft, ground installation, or missile contact on radar.');
     }
 
     if (typeof CustomDropdown !== 'undefined') {
       const cdd = CustomDropdown.get('cdd-inspection-entity');
       if (cdd && !cdd.isOpen()) {
         const all = this.getAllEntities();
-        const idsKey = all.map(e => e.id).join(',');
+        const idsKey = all.map(e => `${e.id}:${e.isRevealedToBlue ? 1 : 0}`).join(',');
         const curId = this.getEntityId(this.selectedEntity);
 
         if (idsKey !== this._lastEntityIdsKey) {

@@ -157,10 +157,14 @@ class SimulationDetectionSystem {
         const ally = liveAllies[j];
         const d = Math.hypot(s.x - ally.x, s.y - ally.y);
         const esmRange = ally.hasHtsPod ? 155.0 : (ally.hasESM ? 135.0 : 105.0);
+        const wasRevealed = Boolean(s.isRevealedToBlue);
+        const wasId = Boolean(s.identifiedByBlue);
+        let method = null;
 
         if (s.isEmitter && s.emconTimer <= 0 && d <= esmRange) {
           s.hasEmitted = true;
           s.isRevealedToBlue = true;
+          method = ally.hasHtsPod ? 'HTS ELINT' : (ally.hasESM ? 'ESM Receiver' : 'RWR');
           if (ally.hasHtsPod && d <= 130.0) s.identifiedByBlue = true;
           this.game.detectedByBlue.add(s.id);
         }
@@ -173,11 +177,20 @@ class SimulationDetectionSystem {
         if (d <= Math.max(opticalCloseRange, effectiveTgpRange)) {
           s.isRevealedToBlue = true;
           s.identifiedByBlue = true;
+          method = ally.targetingSpotRangeKm > 0 ? 'Targeting Pod' : (ally.hasIRST ? 'IRST Optical' : 'Visual Flyby');
           this.game.detectedByBlue.add(s.id);
         } else if (!s.isGroundDecoy && d <= (ally.spec.R_0 * 0.72)) {
           s.isRevealedToBlue = true;
           s.identifiedByBlue = true;
+          method = 'SAR Ground Radar';
           this.game.detectedByBlue.add(s.id);
+        }
+
+        if (method && ((s.isRevealedToBlue && !wasRevealed) || (s.identifiedByBlue && !wasId)) && this.game.inspection && this.game.inspection.enabled) {
+          const verb = s.identifiedByBlue ? (s.isGroundDecoy ? 'exposed decoy' : 'identified') : 'detected emitter';
+          this.game.inspection.recordEvent('GROUND RECON', `${window.formatAircraftDisplayName(ally)} ${verb}: ${s.name}`, ally, s, {
+            distanceKm: d, method, identified: s.identifiedByBlue, isDecoy: s.isGroundDecoy
+          });
         }
       }
     }

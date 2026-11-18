@@ -124,12 +124,16 @@ class SurfaceCombatSystem {
       if (!plane || plane.hp <= 0.05 || plane.isCivilian || plane.groundPhase) continue;
       if (plane.altFt > unit.aaaMaxAltFt) continue;
 
-      if (Math.hypot(plane.x - unit.x, plane.y - unit.y) <= range) {
+      const dist = Math.hypot(plane.x - unit.x, plane.y - unit.y);
+      if (dist <= range) {
         const altPenalty = plane.altFt > 10000 ? 0.72 : 1.0;
         const speedEvade = Math.max(0.35, Math.min(1.0, 0.85 / Math.max(0.45, plane.speed)));
         const hitChance = Math.min(0.92, (0.65 * altPenalty * speedEvade) + mods.aaaHitBonus);
-        if (Math.random() <= hitChance) {
-          const dmg = unit.aaaDamage * (plane.spec.category === 'STRIKE' ? 0.65 : 1.0) * (1.0 - plane.aaaResistance);
+        const didHit = Math.random() <= hitChance;
+        let dmg = 0;
+
+        if (didHit) {
+          dmg = unit.aaaDamage * (plane.spec.category === 'STRIKE' ? 0.65 : 1.0) * (1.0 - plane.aaaResistance);
           const wasAlive = plane.hp > 0.05;
           plane.takeDamage(dmg);
           plane.applyActionStress(0.10);
@@ -142,6 +146,12 @@ class SurfaceCombatSystem {
           }
         } else if (window.Game.radar) {
           window.Game.radar.spawnGunTracer(unit.x, unit.y, plane.x + (Math.random() - 0.5), plane.y + (Math.random() - 0.5), '#f97316');
+        }
+
+        if (window.Game.inspection && window.Game.inspection.enabled) {
+          window.Game.inspection.recordEvent('AAA FLAK FIRE', `${unit.name} ${didHit ? 'hit' : 'fired at'} ${window.formatAircraftDisplayName(plane)}`, unit, plane, {
+            distanceKm: dist, targetAltitudeFt: plane.altFt, hitProbability: hitChance, result: didHit ? `HIT (-${dmg.toFixed(1)} HP)` : 'MISSED', kevlarMitigation: plane.aaaResistance
+          });
         }
         unit.isRevealedToBlue = true;
         unit.identifiedByBlue = true;
@@ -174,7 +184,14 @@ class SurfaceCombatSystem {
     unit.fireCooldown = unit.cooldownMax * mods.ciwsCooldownMult;
     unit.isRevealedToBlue = true;
 
-    if (Math.random() <= interceptProb) {
+    const intercepted = Math.random() <= interceptProb;
+    if (window.Game.inspection && window.Game.inspection.enabled) {
+      window.Game.inspection.recordEvent('POINT DEFENSE', `${unit.name} ${intercepted ? 'intercepted' : 'failed to intercept'} ${targetMsl.weapon.name}`, unit, targetMsl.target || null, {
+        weapon: targetMsl.weapon.name, weaponSpeedMach: targetMsl.speed, stealthMunition: Boolean(targetMsl.isStealthMissile), interceptProbability: interceptProb, intercepted
+      });
+    }
+
+    if (intercepted) {
       targetMsl.active = false; targetMsl.isDead = true;
       if (window.Game.stats) window.Game.stats.defensiveIntercepts += 1;
       if (window.Game.simulation) window.Game.simulation.logScoreEvent(unit.team, window.CONFIG.VP_MISSILE_INTERCEPT, `${unit.name} intercepted ${targetMsl.weapon.name}`);
@@ -193,6 +210,9 @@ class SurfaceCombatSystem {
     const game = window.Game;
     if (!game || !sourceUnit.secondaryBlastRadiusKm) return;
     const radius = sourceUnit.secondaryBlastRadiusKm, dmg = sourceUnit.secondaryBlastDamage;
+    if (game.inspection && game.inspection.enabled) {
+      game.inspection.recordEvent('SECONDARY BLAST', `${sourceUnit.name} detonated (${radius} km blast, ${dmg} HP)`, sourceUnit, null, { radiusKm: radius, damageHp: dmg });
+    }
     if (game.radar) {
       game.radar.spawnExplosionFX(sourceUnit.x, sourceUnit.y, true);
       game.radar.spawnShockwave(sourceUnit.x, sourceUnit.y, '#f97316', 55);

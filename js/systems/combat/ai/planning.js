@@ -46,6 +46,13 @@ class AIPlanningSystem {
     aliveHostiles.forEach(h => { this.successionTimers.set(h.id, hesitationSec); });
     const nextLead = aliveHostiles.find(h => !h.isAce) || aliveHostiles[0];
     if (nextLead) nextLead.isFlightLead = true;
+
+    const insp = this.game && this.game.inspection;
+    if (insp && insp.enabled) {
+      insp.recordEvent('COMMAND DISRUPTION', `Hostile lead ${window.formatCombatantDisplayName(downedUnit)} lost (${hesitationSec.toFixed(1)}s hesitation)`, downedUnit, nextLead || null, {
+        hesitationSec, survivingHostiles: aliveHostiles.length, successorLead: nextLead ? window.formatCombatantDisplayName(nextLead) : 'None'
+      });
+    }
   }
 
   isHesitating(unitId) {
@@ -63,7 +70,13 @@ class AIPlanningSystem {
     const baseThreshold = ['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) ? 0.40 : 0.25;
     const threshold = Math.max(0.10, Math.min(0.70, baseThreshold + (airDoctrine ? airDoctrine.retreatThresholdBonus : 0)));
 
+    const prevPosture = this.posture;
     this.posture = (survivalRate <= threshold) ? 'DEFENSIVE_HOLD' : 'OFFENSIVE_SWEEP';
+    if (this.posture !== prevPosture && this.game && this.game.inspection && this.game.inspection.enabled) {
+      this.game.inspection.recordEvent('POSTURE SHIFT', `Hostile squadron posture shifted from ${prevPosture} to ${this.posture}`, null, null, {
+        previousPosture: prevPosture, newPosture: this.posture, survivalRatePct: Math.round(survivalRate * 100), thresholdPct: Math.round(threshold * 100)
+      });
+    }
   }
 
   updateElementPairs(aliveHostiles, profile) {

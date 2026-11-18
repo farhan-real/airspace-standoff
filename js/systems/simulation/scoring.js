@@ -54,13 +54,8 @@ class SimulationScoring {
     const totalMult = Number((diffMult * budgetMult).toFixed(2));
 
     return {
-      diffKey,
-      diffName: diffData.name,
-      diffMult,
-      budgetTierKey: bTierKey,
-      budgetCap: bTierData.budget,
-      budgetMult,
-      totalMult
+      diffKey, diffName: diffData.name, diffMult,
+      budgetTierKey: bTierKey, budgetCap: bTierData.budget, budgetMult, totalMult
     };
   }
 
@@ -111,6 +106,9 @@ class SimulationScoring {
       target: tgtName, targetType: 'UNVERIFIED', weapon: wpnName, points: -penalty,
       reason: `ROE INFRACTION: Fired on unverified track [BOGEY ?] (${tgtName})`
     });
+    if (this.game.inspection && this.game.inspection.enabled) {
+      this.game.inspection.recordEvent('ROE VIOLATION', `${srcName} fired on unverified contact ${tgtName}`, sourceUnit, targetEntity, { weapon: wpnName, penaltyVp: -penalty });
+    }
   }
 
   recordCivilianFirePenalty(team, sourceUnit, civilianFlight, weapon, penalty) {
@@ -126,6 +124,9 @@ class SimulationScoring {
       target: tgtName, targetType: 'CIVILIAN', weapon: wpnName, points: -penalty,
       reason: `ROE VIOLATION: Fired weapon at civilian airliner (${tgtName})`
     });
+    if (this.game.inspection && this.game.inspection.enabled) {
+      this.game.inspection.recordEvent('ROE VIOLATION', `${srcName} fired at civilian airliner ${tgtName}`, sourceUnit, civilianFlight, { weapon: wpnName, penaltyVp: -penalty });
+    }
   }
 
   recordHitEvent(firingTeam, targetEntity, firingSource, details = {}) {
@@ -174,17 +175,11 @@ class SimulationScoring {
     const salvoTag = isSalvo ? ` [Salvo: ${salvoBreakdown}]` : '';
 
     let pts;
-    if (isDecoy) {
-      pts = 40;
-    } else if (isDrone) {
-      pts = Math.round(window.CONFIG.VP_DRONE_KILL_BASE + (targetEntity.spec.cost * window.CONFIG.VP_DRONE_COST_MULT));
-    } else if (isAircraft) {
-      pts = Math.round(window.CONFIG.VP_AIRCRAFT_KILL_BASE + (targetEntity.spec.cost * window.CONFIG.VP_AIRCRAFT_COST_MULT));
-    } else if (typeof targetEntity.vpValue === 'number' && !isNaN(targetEntity.vpValue)) {
-      pts = targetEntity.vpValue;
-    } else {
-      throw new Error(`Target "${tgtName}" (${tgtType}) has missing or invalid vpValue.`);
-    }
+    if (isDecoy) pts = 40;
+    else if (isDrone) pts = Math.round(window.CONFIG.VP_DRONE_KILL_BASE + (targetEntity.spec.cost * window.CONFIG.VP_DRONE_COST_MULT));
+    else if (isAircraft) pts = Math.round(window.CONFIG.VP_AIRCRAFT_KILL_BASE + (targetEntity.spec.cost * window.CONFIG.VP_AIRCRAFT_COST_MULT));
+    else if (typeof targetEntity.vpValue === 'number' && !isNaN(targetEntity.vpValue)) pts = targetEntity.vpValue;
+    else throw new Error(`Target "${tgtName}" (${tgtType}) has missing or invalid vpValue.`);
 
     if (targetEntity.isFlightLead) pts = Math.round(pts * 1.5);
     if (isAce) pts += window.CONFIG.VP_ACE_FIGHTER_BOUNTY;
@@ -201,6 +196,12 @@ class SimulationScoring {
     } else {
       if (isAircraft && !isDecoy) this.game.stats.blueLosses++;
       this.logScoreEvent('hostile', pts, logDesc);
+    }
+
+    if (this.game.inspection && this.game.inspection.enabled) {
+      this.game.inspection.recordEvent('KILL', logDesc, firingSource, targetEntity, {
+        weapon: wpnName, points: pts, isSalvo, salvoCount, salvoBreakdown, isAce, isPrimaryObjective: Boolean(targetEntity.isPrimaryObjective)
+      });
     }
 
     this.timelineEvents.push({
@@ -225,6 +226,9 @@ class SimulationScoring {
     if (firingSource && firingSource.scorePoints !== undefined) firingSource.scorePoints -= penalty;
     const logMsg = `ROE VIOLATION: Civilian flight struck (${civilianFlight.flightCode}) by ${srcName} [${wpnName}]`;
     this.logScoreEvent(firingTeam, -penalty, logMsg);
+    if (this.game.inspection && this.game.inspection.enabled) {
+      this.game.inspection.recordEvent('ROE VIOLATION', logMsg, firingSource, civilianFlight, { weapon: wpnName, penaltyVp: -penalty });
+    }
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(), timeSec: this.getCurrentExactTimeSec(),
@@ -244,6 +248,9 @@ class SimulationScoring {
     if (firingSource && firingSource.scorePoints !== undefined) firingSource.scorePoints -= penalty;
     const logMsg = `ROE VIOLATION: Civilian airliner destroyed (${civilianFlight.flightCode}) by ${srcName}`;
     this.logScoreEvent(firingTeam, -penalty, logMsg);
+    if (this.game.inspection && this.game.inspection.enabled) {
+      this.game.inspection.recordEvent('ROE VIOLATION', logMsg, firingSource, civilianFlight, { weapon: wpnName, penaltyVp: -penalty });
+    }
 
     this.timelineEvents.push({
       time: this.getElapsedTimeString(), timeSec: this.getCurrentExactTimeSec(),

@@ -122,7 +122,7 @@ class PointerControlsHandler {
           }
 
           if (entity.weapon && entity.target) return;
-          const isGround = Boolean(entity.type && !entity.spec && !entity.isCivilian);
+          const isGround = Boolean((typeof SurfaceUnit !== 'undefined' && entity instanceof SurfaceUnit) || (entity.type && !entity.isCivilian && !entity.weapon));
           const showGround = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
           if (isGround && !showGround) return;
 
@@ -158,6 +158,7 @@ class PointerControlsHandler {
   findClosestContactInScreenSpace(screenX, screenY, maxRadiusPx) {
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
     const inspectionOpen = Boolean(this.game.inspection && this.game.inspection.isOpen);
+    const showHiddenEnemy = Boolean(inspectionOpen && this.game.inspection && this.game.inspection.showEnemyDetails);
     const detectedSet = (commanderTeam === 'friendly')
       ? (this.game.detectedByBlue || new Set())
       : (this.game.detectedByRed || new Set());
@@ -202,7 +203,7 @@ class PointerControlsHandler {
     const showGround = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
     if (showGround) {
       for (const s of this.game.surfaceUnits) {
-        if (s.hp > 0 && (inspectionOpen || s.team === commanderTeam || detectedSet.has(s.id))) {
+        if (s.hp > 0 && (showHiddenEnemy || s.team === commanderTeam || s.isRevealedToBlue || detectedSet.has(s.id))) {
           const pS = this.game.radar.toScreen(s.x, s.y);
           const distS = Math.hypot(pS.x - screenX, pS.y - screenY);
           if (distS <= maxRadiusPx) candidates.push({ entity: s, distPx: distS });

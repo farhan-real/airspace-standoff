@@ -45,7 +45,8 @@ class RadarCameraController {
     this.showGroundTargets = !this.showGroundTargets;
     if (!this.showGroundTargets && window.Game) {
       const tgt = window.Game.selectedTarget;
-      if (tgt && tgt.type && !tgt.spec && !tgt.isCivilian) {
+      const isSurface = Boolean(tgt && ((typeof SurfaceUnit !== 'undefined' && tgt instanceof SurfaceUnit) || (tgt.type && !tgt.isCivilian && !tgt.weapon)));
+      if (isSurface) {
         window.Game.selectedTarget = null;
         if (window.Game.activeUnit) window.Game.activeUnit.radarLockedTarget = null;
         const targetInfo = document.getElementById('selected-target-info');

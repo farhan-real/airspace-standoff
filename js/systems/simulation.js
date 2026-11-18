@@ -51,6 +51,16 @@ class SimulationSystem {
     for (const h of (this.game.hostileAircraft || [])) {
       if (h.hp > 0.05) rVal += (h.totalProcurementCost || 20) * (h.hp / Math.max(1, h.maxHp || 4));
     }
+    if (this.game.scenarioMode === 'ATTACK') {
+      for (const s of (this.game.surfaceUnits || [])) {
+        if (!s || s.team !== 'hostile' || s.hp <= 0.05 || s.isIndestructible || s.isGroundDecoy) continue;
+        const unitWorth = Math.max(8, (s.vpValue || 200) / 14);
+        rVal += unitWorth * (s.hp / Math.max(1, s.maxHp || 6));
+        if (s.isAircraftParking && Array.isArray(s.parkedAircraft) && s.parkedAircraft.length > 0) {
+          rVal += s.parkedAircraft.length * 14;
+        }
+      }
+    }
     this.fleetStrengthHistory.push({
       time: Number(this.elapsedTimeSec.toFixed(1)),
       blueCost: Number(bVal.toFixed(1)),

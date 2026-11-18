@@ -260,17 +260,18 @@ class RadarRenderer {
 
     const isInspection = Boolean(state && state.inspectionMode);
     const showGround = Boolean(this.cam && this.cam.showGroundTargets);
+    const isSurfaceObj = (obj) => Boolean(obj && ((typeof SurfaceUnit !== 'undefined' && obj instanceof SurfaceUnit) || (obj.type && !obj.isCivilian && !obj.weapon)));
 
     if (this.hoveredContact && typeof this.hoveredContact.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
       const isMsl = Boolean(this.hoveredContact.weapon && this.hoveredContact.target);
-      const isGnd = Boolean(this.hoveredContact.type && !this.hoveredContact.spec && !this.hoveredContact.isCivilian);
+      const isGnd = isSurfaceObj(this.hoveredContact);
       if ((!isMsl || isInspection) && (!isGnd || showGround) && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0.05)) {
         RadarCombatRenderer.drawHoverReticle(ctx, this.cam, this.hoveredContact);
       }
     }
     if (this.selectedTarget && typeof this.selectedTarget.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
       const isMsl = Boolean(this.selectedTarget.weapon && this.selectedTarget.target);
-      const isGnd = Boolean(this.selectedTarget.type && !this.selectedTarget.spec && !this.selectedTarget.isCivilian);
+      const isGnd = isSurfaceObj(this.selectedTarget);
       if ((!isMsl || isInspection) && (!isGnd || showGround) && (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0.05)) {
         RadarCombatRenderer.drawTargetReticle(ctx, this.cam, this.selectedTarget);
       }

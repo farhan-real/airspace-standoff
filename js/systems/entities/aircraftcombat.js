@@ -24,6 +24,11 @@ Aircraft.prototype.deployDecoyDrone = function() {
   this.maldDecoyCharges--;
   const drone = new DecoyDrone(this, this.heading);
   if (window.Game && window.Game.simulation) window.Game.simulation.decoyDrones.push(drone);
+  if (window.Game && window.Game.inspection && window.Game.inspection.enabled) {
+    window.Game.inspection.recordEvent('DECOY DEPLOYED', `${formatAircraftDisplayName(this)} launched MALD decoy drone`, this, drone, {
+      remainingCharges: this.maldDecoyCharges, mirroredRcs: drone.effectiveRcs, speedMach: drone.speed
+    });
+  }
   if (window.Game && window.Game.radar) {
     window.Game.radar.spawnCombatText(this.x, this.y, 'MALD DECOY LAUNCHED', '#c084fc');
     window.Game.radar.spawnShockwave(this.x, this.y, '#c084fc', 28);
@@ -230,6 +235,11 @@ Aircraft.prototype.processRTB = function(dt) {
       this.rtbTimer = 0.0;
       this.heading = isBlue ? 0.0 : Math.PI;
       this.engineAlpha = 0.50;
+      if (window.Game && window.Game.inspection && window.Game.inspection.enabled) {
+        window.Game.inspection.recordEvent('RTB REARMED', `${formatAircraftDisplayName(this)} completed base repair & rearm`, this, null, {
+          hpRestored: this.hp, gunAmmo: this.gunAmmo, fastTurnaround: Boolean(this.hasFastRTB)
+        });
+      }
       if (window.Game && window.Game.radar) {
         window.Game.radar.spawnCombatText(this.x, this.y, 'RE-ARMED & REPAIRED', isBlue ? '#00f5a0' : '#ef4444');
       }

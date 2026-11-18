@@ -76,6 +76,9 @@ class AttackDirector {
         if (!game.attackState.neutralizedBases.has(anchor.airbaseId)) {
           game.attackState.neutralizedBases.add(anchor.airbaseId);
           if (game.simulation) game.simulation.logScoreEvent('friendly', 450, `RUNWAY NEUTRALIZED: ${anchor.airbaseId} incapacitated`);
+          if (game.inspection && game.inspection.enabled) {
+            game.inspection.recordEvent('RUNWAY NEUTRALIZED', `${anchor.airbaseId} rendered unusable for manned QRA launches (+450 VP)`, null, anchor, { airbaseId: anchor.airbaseId, bonusVp: 450 });
+          }
           if (game.radar) game.radar.spawnCombatText(anchor.x, anchor.y, 'RUNWAY INCAPACITATED (+450 VP)', '#00f5a0');
         }
       }
@@ -101,6 +104,11 @@ class AttackDirector {
 
       if (Math.random() < emconChance) {
         tgt.emconTimer = profile.emconCooldownSec * docProfile.emconDurationMult;
+        if (game.inspection && game.inspection.enabled) {
+          game.inspection.recordEvent('EMCON SHUTDOWN', `${tgt.name} silenced emitter vs ${m.weapon.name} (${tgt.emconTimer.toFixed(1)}s)`, m, tgt, {
+            emconDurationSec: tgt.emconTimer, triggerDistanceKm: m.distanceToTarget, armAntiEmcon: Boolean(m.weapon.antiEmcon), c2Online: c2Alive
+          });
+        }
         if (game.radar) game.radar.spawnCombatText(tgt.x, tgt.y, `${tgt.name} EMCON SHUTDOWN`, '#fbbf24');
       }
     }

@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Inspection Cognition & AI Attention Submodule
- * Displays live AI cognitive focus slots, active theater doctrine, tactical roles, and succession states.
+ * AIRSPACE STANDOFF: Inspection Cognition & Doctrine Submodule
+ * Displays live AI cognitive focus slots, Air & Attack doctrines, ground phase, and friendly subsystems.
  */
 
 window.INSP_SVG = window.INSP_SVG || {
@@ -10,80 +10,48 @@ window.INSP_SVG = window.INSP_SVG || {
 };
 
 class InspectionCognitionRenderer {
-  static getTacticalRoleLabel(rawRole) {
+  static getTacticalRoleLabel(rawRole, groundPhase) {
     const roleMap = {
-      'SNIPER': 'STANDOFF SNIPER',
-      'INTERCEPT': 'HIGH-SPEED INTERCEPTOR',
-      'DOGFIGHT': 'WVR DOGFIGHTER',
-      'SWARM': 'SWARM FLIGHT SCREEN',
-      'ESCORT': 'FORMATION ESCORT',
-      'SEAD': 'SEAD ESCORT',
-      'STRIKE': 'STRIKE INTERDICTION',
-      'AMBUSH': 'STEALTH AMBUSH',
-      'SWEEP': 'AIR DOMINANCE SWEEP',
-      'FLAGSHIP': 'COMMAND FLAGSHIP'
+      SNIPER: 'STANDOFF SNIPER', INTERCEPT: 'HIGH-SPEED INTERCEPTOR', DOGFIGHT: 'WVR DOGFIGHTER',
+      SWARM: 'SWARM FLIGHT SCREEN', ESCORT: 'FORMATION ESCORT', SEAD: 'SEAD ESCORT',
+      STRIKE: 'STRIKE INTERDICTION', AMBUSH: 'STEALTH AMBUSH', SWEEP: 'AIR DOMINANCE SWEEP', FLAGSHIP: 'COMMAND FLAGSHIP'
     };
-    return roleMap[rawRole] || (rawRole ? String(rawRole).replace(/_/g, ' ') : 'AIR DOMINANCE SWEEP');
+    const base = roleMap[rawRole] || String(rawRole || 'SWEEP').replace(/_/g, ' ');
+    return groundPhase ? `${base} [${groundPhase}]` : base;
   }
 
-  static getRoleAssessment(rawRole, isAce, isActivelyControlled, focusCount, maxSlots, diffKey) {
-    if (isAce) {
-      if (diffKey === 'LEGEND') return 'Extreme Threat Flagship Ace Command: Coordinates multi-axis volleys, utilizes directed-energy lasers, and executes sub-second defensive breaks.';
-      if (diffKey === 'MASTER') return 'Air Denial Ace Lead: Operating stratospheric energy perch with railgun/pulse-laser snipes and high-G Kulbit capability.';
-      if (diffKey === 'FORTIFIED') return 'Fortified Airspace Ace: Coordinating integrated surface-to-air defense rings with high-speed BVR pincer intercepts.';
-      if (diffKey === 'ACE') return 'High-Threat Ace Lead: Superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.';
-      if (diffKey === 'FORWARD') return 'Forward Combat Zone Ace: Frontline element leader executing aggressive multi-missile volleys with tight cornering speed control.';
-      if (diffKey === 'ESCALATED') return 'Escalated Squadron Ace: Active two-ship element leader executing coordinated BVR missile volleys with high-G break authority.';
-      return 'Designated Ace Flight Lead with superior reaction speeds, advanced decoy discrimination, and high-G notch discipline.';
+  static getRoleAssessment(prof) {
+    if (prof.groundPhase === 'TAXI') return `QRA Taxi Phase on ${prof.airbaseId}: Taxiing to intact runway segment (requires ${prof.takeoffSegmentsReq} contiguous segments).`;
+    if (prof.groundPhase === 'TAKEOFF') return `QRA Takeoff Roll on ${prof.airbaseId}: Accelerating down runway strip. Cratering active segments destroys the rolling aircraft.`;
+    if (prof.isRTB) return 'Returning to covered base sanctuary or SAM cover to conserve remaining airframe integrity.';
+
+    if (prof.isAttackMode && prof.atkCapPosture) {
+      if (prof.atkCapPosture === 'GUARD_OBJECTIVES') return 'Tight Base Defense CAP: Orbiting primary strategic bunkers and runways to intercept incoming strike flights.';
+      if (prof.atkCapPosture === 'INTERCEPT_FORWARD') return 'Fast Air Scramble CAP: Pushing aggressively forward toward incoming strike packages at high throttle.';
+      if (prof.atkCapPosture === 'AMBUSH') return 'Silent Radar Ambush CAP: Flanking wide around the central corridor to ambush strikers from outer angles.';
     }
 
-    if (rawRole === 'INTERCEPT') return 'High-Speed Intercept: Pushing afterburner thrust to achieve maximum supersonic closure against high-priority aerial targets.';
-    if (rawRole === 'DOGFIGHT') return 'Close-Range Dogfight: Seeking visual-range merge (< 20 km), modulating throttle into optimal corner speed for high-G snapshots and autocannon bursts.';
-    if (rawRole === 'SWARM') return 'Unmanned Swarm Screen: Flanking formation edges to draw enemy missile fire and deploy saturation micro-missile volleys.';
-    if (rawRole === 'ESCORT') return 'Close Formation Escort: Maintaining tight perimeter coverage around the flight lead and engaging incoming interceptors.';
-
-    if (rawRole === 'SNIPER') {
-      if (diffKey === 'LEGEND') return 'Standoff F-Pole Skate: Stratospheric FL500 cruise, maintaining 46 to 90 km standoff and cranking 65 deg off boresight to deny return fire.';
-      if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') return 'Stratospheric Energy Skate: Cruising FL440 to FL460, holding 50 to 85 km range and performing retrograde drags to drain incoming missiles.';
-      if (diffKey === 'ACE' || diffKey === 'FORWARD') return 'Distance Drag & Standoff: Cruising FL400 to FL420 at 50 to 80 km range, executing 135 deg retrograde turns when targets close inside 45 km.';
-      return 'Standoff Perimeter: Holding 45 to 75 km range at FL360 to FL380, turning beam perpendicular if targets approach inside 38 km.';
+    if (prof.isAce) {
+      return `Ace Cadre (${prof.diffKey}): Coordinating ${prof.salvoMaxMissiles}-missile volleys (${Math.round(prof.mixedSeekerChance * 100)}% mixed radar+IR), ${prof.reactionCooldown.toFixed(1)}s reflex, and ${Math.round(prof.notchChance * 100)}% notch discipline.`;
     }
 
-    if (rawRole === 'SEAD') {
-      if (diffKey === 'LEGEND') return 'Surgical IADS Dismantling: Actively blinding Early Warning Radars and Jammer stations first to disable S-400 batteries without radiating.';
-      if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') return 'Emitter Standoff & Shielding: Projecting GaN AESA jamming while geolocating and neutralizing surface radar arrays with AGM-88Gs.';
-      if (diffKey === 'ACE' || diffKey === 'FORWARD') return 'Threat-Hierarchy SEAD: Actively prioritizing S-400 and Early Warning Radars over secondary ground units, flying FL310 to FL320 approach.';
-      return 'Air Defense Suppression: Actively seeking surface radar stations and air-defense batteries with anti-radiation missiles.';
-    }
+    const docNotes = {
+      AGGRESSIVE: 'Aggressive Rush Doctrine: Pushing high throttle, committing early to close merges, and firing expanded salvos.',
+      STANDOFF: 'Long-Range Standoff Doctrine: Climbing high, firing early at extended reach, cranking 60 deg, and dragging away inside 44 km.',
+      STEALTH_AMBUSH: 'Stealth Ambush Doctrine: Routing along north/south borders at reduced cruise heat and holding fire for broadside angles.',
+      DRONE_SWARM: 'Drone Swarm Doctrine: Screening forward with unmanned waves and MALD decoys while leads coordinate behind.',
+      RADAR_JAMMING: 'Electronic Jamming Doctrine: Maintaining central ECM jamming umbrella while escorts screen ahead.',
+      DEFENSIVE_HOLD: 'Defensive Hold Doctrine: Orbiting friendly base SAM/jammer cover, conserving missiles, and retreating early to rearm.'
+    };
+    if (!prof.isAttackMode && prof.airDoctrineId && docNotes[prof.airDoctrineId]) return docNotes[prof.airDoctrineId];
 
-    if (rawRole === 'STRIKE') {
-      if (diffKey === 'LEGEND') return 'Deck-Skimming Attack Run: Low-altitude approach at FL055 beneath sensor horizon, executing synchronized standoff cruise missile releases.';
-      if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') return 'Low-Altitude Standoff Run: Flying FL080 to FL095 along low-threat alleys, delivering Kinzhal or JASSM-ER strikes on command bunkers.';
-      if (diffKey === 'ACE' || diffKey === 'FORWARD') return 'Terrain-Masked Strike: Flying FL110 to FL120 approach with pop-up delivery at 25 km to release glide bombs onto command infrastructure.';
-      return 'Low-Altitude Approach: Flying FL130 to FL150 below radar coverage directly toward allied command bunkers and fuel depots.';
-    }
-
-    if (rawRole === 'AMBUSH') {
-      if (diffKey === 'LEGEND') return 'Crossfire Stealth Bracket: Deep outer flank approach at FL420, attacking player beam aspects from behind the frontline with clean bays.';
-      if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') return 'Silent Lateral Ambush: Operating along boundary corridors at FL380 to FL400 with zero pylon drag to launch surprise broadside BVR volleys.';
-      if (diffKey === 'ACE' || diffKey === 'FORWARD') return 'Offset Corridor Approach: Flying FL340 to FL360 along northern or southern sector edges, exploiting player beam RCS spikes at 40 km.';
-      return 'Lateral Corridor Flanking: Flying outer boundaries at FL320 to acquire broadside locks with internal stealth missiles.';
-    }
-
-    if (rawRole === 'SWEEP') {
-      if (diffKey === 'LEGEND') return 'Dynamic 3D Air Dominance: High-speed fighter merge, utilizing optimal cornering throttle cuts and post-stall snapshot bursts.';
-      if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') return 'Combat Drag & Intercept: High-Low element pairing, pulling defenders into turning dogfights while wingmen take high-off-boresight shots.';
-      if (diffKey === 'ACE' || diffKey === 'FORWARD') return 'Defensive Screen & Merge: Patrolling FL280 to engage allied fighters and clear corridors for friendly snipers and strike craft.';
-      return 'Offensive Combat Sweep: Maneuvering to engage allied fighters directly in forward air merges.';
-    }
-
-    return isActivelyControlled
-      ? 'Commander attention active. Target steering, energy optimization, and missile release solutions are actively processed.'
-      : `Aircraft is on autonomous patrol awaiting an available commander focus slot (${focusCount}/${maxSlots} currently engaged).`;
+    return prof.isFocused
+      ? `Commander focus active (${prof.remainingFocus.toFixed(1)}s). Steering, speed control, and weapon firing actively managed.`
+      : `Autonomous patrol awaiting a free focus slot (${prof.activeFocusCount}/${prof.maxSlots} active).`;
   }
 
   static renderCognitionCard(controller, aircraft) {
-    if (!aircraft || !aircraft.spec) return '';
+    if (!controller.isAircraft(aircraft)) return '';
     const ai = controller.game && controller.game.ai;
     if (!ai || typeof ai.getCognitiveProfile !== 'function') return '';
 
@@ -91,29 +59,26 @@ class InspectionCognitionRenderer {
     const isActivelyControlled = Boolean(prof.isFocused);
     const isAce = Boolean(prof.isAce);
     const focusTimerSec = Math.max(0, prof.remainingFocus || 0);
-    const diffKey = prof.diffKey;
 
     const postureText = String(prof.posture || 'OFFENSIVE_SWEEP').replace(/_/g, ' ');
-    const roleText = prof.roleInFormation || (isAce ? 'Ace Interceptor' : 'Independent Element');
-    const pairDetail = prof.pairedUnit ? ` ${window.INSP_SVG.dot} Pair: ${prof.pairedUnit.callsign || 'Wingman'}` : '';
-    const tacticalRoleLabel = this.getTacticalRoleLabel(prof.tacticalRole);
-    const doctrineLabel = String(prof.doctrineName || 'Balanced').toUpperCase();
+    const roleText = prof.roleInFormation;
+    const pairDetail = prof.pairedUnit ? ` ${window.INSP_SVG.dot} Pair: ${prof.pairedUnit.callsign}` : '';
+    const tacticalRoleLabel = this.getTacticalRoleLabel(prof.tacticalRole, prof.groundPhase);
+    const doctrineLabel = `${String(prof.doctrineName).toUpperCase()}${prof.atkCapPosture ? ` (${prof.atkCapPosture.replace(/_/g, ' ')})` : ''}`;
 
-    let successionHtml = '<b>Normal decision cycle</b>';
-    if (prof.isHesitating) {
-      successionHtml = `<b style="color:var(--stat-tier-4);">Command disruption (${prof.successionTimer.toFixed(1)}s hesitation)</b>`;
-    }
+    const successionHtml = prof.isHesitating
+      ? `<b style="color:var(--stat-tier-4);">Command disruption (${prof.successionTimer.toFixed(1)}s hesitation)</b>`
+      : '<b>Normal decision cycle</b>';
 
-    const cardClass = isAce ? 'active-focus' : (isActivelyControlled ? 'active-focus' : '');
+    const cardClass = (isAce || isActivelyControlled) ? 'active-focus' : '';
     const headerColor = isAce ? '#ffd700' : (isActivelyControlled ? 'var(--color-red)' : 'var(--theme-accent)');
-    const statusChipText = isAce ? 'ELITE ACE CADRE' : (isActivelyControlled ? 'ACTIVELY CONTROLLED' : 'AUTONOMOUS PATROL');
-    const statusChipClass = isAce ? 'warning' : (isActivelyControlled ? 'negative' : 'neutral');
+    const statusChipText = prof.groundPhase ? `GROUND: ${prof.groundPhase}` : (isAce ? 'ELITE ACE CADRE' : (isActivelyControlled ? 'ACTIVELY CONTROLLED' : 'AUTONOMOUS PATROL'));
+    const statusChipClass = prof.groundPhase ? 'warning' : (isAce ? 'warning' : (isActivelyControlled ? 'negative' : 'neutral'));
 
     const focusValText = isAce
-      ? (isActivelyControlled ? `LOCKED (ACE CADRE ${focusTimerSec.toFixed(1)}s)` : `ACE STANDBY (${focusTimerSec.toFixed(1)}s)`)
+      ? (isActivelyControlled ? `LOCKED (ACE ${focusTimerSec.toFixed(1)}s)` : `ACE CADRE (${focusTimerSec.toFixed(1)}s)`)
       : (isActivelyControlled ? `LOCKED (${focusTimerSec.toFixed(1)}s)` : 'WAITING FOR SLOT');
     const focusValColor = isAce ? '#ffd700' : (isActivelyControlled ? 'var(--color-red)' : 'var(--color-moon-mist)');
-    const assessmentText = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots, diffKey);
 
     return `
       <section class="inspection-card insp-cognition-card ${cardClass}" data-insp-enemy-cognition="${aircraft.id}">
@@ -121,35 +86,112 @@ class InspectionCognitionRenderer {
           <h3 style="margin:0; color:${headerColor};">${isAce ? 'ACE PILOT COGNITION' : 'AI COGNITIVE PROFILE'}</h3>
           <span class="factor-chip ${statusChipClass} cog-status-chip">${statusChipText}</span>
         </div>
-
         <div class="insp-cognition-grid">
-          <div class="insp-cognition-field"><span>AI DOCTRINE:</span><b class="cog-doctrine-val" style="color:var(--stat-tier-3);">${doctrineLabel}</b></div>
+          <div class="insp-cognition-field"><span>DOCTRINE:</span><b class="cog-doctrine-val" style="color:var(--stat-tier-3);">${doctrineLabel}</b></div>
           <div class="insp-cognition-field"><span>TACTICAL ROLE:</span><b class="cog-tactical-role-val" style="color:var(--stat-tier-1);">${tacticalRoleLabel}</b></div>
           <div class="insp-cognition-field"><span>COMMANDER FOCUS:</span><b class="cog-focus-val" style="color:${focusValColor};">${focusValText}</b></div>
-          <div class="insp-cognition-field"><span>ACTIVE FOCUS SLOTS:</span><b class="cog-slots-val">${prof.activeFocusCount} / ${prof.maxSlots} SLOTS</b></div>
-          <div class="insp-cognition-field"><span>SQUADRON POSTURE:</span><b class="cog-posture-val" style="color:var(--stat-tier-2);">${postureText}</b></div>
-          <div class="insp-cognition-field"><span>FORMATION ROLE:</span><b class="cog-role-val" style="color:${isAce ? '#ffd700' : 'var(--color-pure-white)'};">${roleText}${pairDetail}</b></div>
-          <div class="insp-cognition-field"><span>CHAIN OF COMMAND:</span><span class="cog-succession-val">${successionHtml}</span></div>
-          <div class="insp-cognition-field"><span>REACTION LATENCY:</span><b class="cog-reaction-val" style="color:${isAce ? 'var(--stat-tier-1)' : 'var(--color-pure-white)'};">${prof.reactionCooldown.toFixed(1)}s ${isAce ? '(Ace Reflex)' : 'delay'}</b></div>
-          <div class="insp-cognition-field"><span>DOPPLER NOTCH:</span><b class="cog-notch-val" style="color:${isAce ? 'var(--stat-tier-2)' : 'var(--color-pure-white)'};">${Math.round(prof.notchChance * 100)}% ${isAce ? '(High-G)' : 'discipline'}</b></div>
-          <div class="insp-cognition-field"><span>DECOY DISCRIMINATION:</span><b class="cog-decoy-val" style="color:${isAce ? 'var(--stat-tier-1)' : 'var(--color-pure-white)'};">${Math.round(prof.decoyDiscrimination * 100)}% ${isAce ? '(Signal Filter)' : 'filter rate'}</b></div>
+          <div class="insp-cognition-field"><span>FOCUS SLOTS:</span><b class="cog-slots-val">${prof.activeFocusCount} / ${prof.maxSlots} SLOTS</b></div>
+          <div class="insp-cognition-field"><span>SQUAD POSTURE:</span><b class="cog-posture-val" style="color:var(--stat-tier-2);">${postureText}</b></div>
+          <div class="insp-cognition-field"><span>FORMATION:</span><b class="cog-role-val" style="color:${isAce ? '#ffd700' : 'var(--color-pure-white)'};">${roleText}${pairDetail}</b></div>
+          <div class="insp-cognition-field"><span>COMMAND CHAIN:</span><span class="cog-succession-val">${successionHtml}</span></div>
+          <div class="insp-cognition-field"><span>TARGET LOCKED:</span><b class="cog-target-val" style="color:var(--color-ice-highlight);">${controller.escape(prof.engagedTargetName || (prof.isRTB ? 'RTB EGRESS' : 'SEARCHING'))}</b></div>
+          <div class="insp-cognition-field"><span>SALVO / MIXED:</span><b class="cog-salvo-val">Max x${prof.salvoMaxMissiles} (${Math.round(prof.mixedSeekerChance * 100)}% Mix)</b></div>
+          <div class="insp-cognition-field"><span>REFLEX / NOTCH:</span><b>${prof.reactionCooldown.toFixed(1)}s | ${Math.round(prof.notchChance * 100)}%</b></div>
+          <div class="insp-cognition-field"><span>DECOY FILTER:</span><b>${Math.round(prof.decoyDiscrimination * 100)}% spot rate</b></div>
+          <div class="insp-cognition-field"><span>ORDNANCE LEFT:</span><b class="cog-ammo-val">${prof.ammoRemaining} rounds</b></div>
         </div>
-
         <div class="inspection-reason-box ${isActivelyControlled || isAce ? 'warning' : ''}" style="margin-top:6px;">
-          <b>COGNITIVE ASSESSMENT:</b> <span class="cog-summary-text">${assessmentText}</span>
+          <b>COGNITIVE ASSESSMENT:</b> <span class="cog-summary-text">${this.getRoleAssessment(prof)}</span>
         </div>
-      </section>
-    `;
+      </section>`;
+  }
+
+  static renderFriendlyAircraftProfile(controller, a) {
+    const leadData = (a.isFlightLead && window.LEAD_BUFFS) ? window.LEAD_BUFFS[a.spec.category] : null;
+    const chips = [];
+    if (a.isFlightLead) chips.push({ t: 'warning', txt: `FLIGHT LEAD: ${leadData ? leadData.title : 'ACTIVE'}` });
+    if (a.isCoffin) chips.push({ t: 'positive', txt: `COFFIN (+${Math.round(a.coffinDodgeBonus * 100)}% DODGE, NO G-LOC)` });
+    if (a.hasTfrMasking) chips.push({ t: a.altFt <= 10000 ? 'positive' : 'neutral', txt: a.altFt <= 10000 ? 'TFR MASKING ENGAGED (+2500FT FLOOR)' : 'TFR RADAR (ACTIVE <FL100)' });
+    if (a.targetingPodBonus > 0) chips.push({ t: 'positive', txt: `TGP +${Math.round(a.targetingPodBonus * 100)}% A2G | ${a.targetingSpotRangeKm}KM SPOT` });
+    if (a.hasHtsPod) chips.push({ t: 'positive', txt: 'HTS POD (+20% ARM RNG, +14% Pk)' });
+    if (a.ccipBonus > 0) chips.push({ t: 'positive', txt: 'CCIP COMPUTER (+16% BOMB/RKT)' });
+    if (a.mitlBonus > 0) chips.push({ t: 'positive', txt: 'MITL DATALINK (+14% STANDOFF)' });
+    if (a.aaaResistance > 0) chips.push({ t: 'positive', txt: `KEVLAR BELLY (-${Math.round(a.aaaResistance * 100)}% AAA)` });
+    if (a.dircmEvasion > 0) chips.push({ t: 'positive', txt: `DIRCM (+${Math.round(a.dircmEvasion * 100)}% VS IR)` });
+    if (a.jamEfficiency > 0) chips.push({ t: 'info', txt: `ECM JAMMER (${Math.round(a.jamEfficiency * 100)}%)` });
+    if (a.hasECCM) chips.push({ t: 'info', txt: `ECCM (-${Math.round(a.eccmBonus * 100)}% JAM)` });
+    if (a.hasIRST) chips.push({ t: 'info', txt: 'PASSIVE IRST (28KM BURN)' });
+    if (a.hasGaNAESA) chips.push({ t: 'info', txt: 'GaN AESA (+20% REACH)' });
+    if (a.hasDAS) chips.push({ t: 'info', txt: 'DAS 360 (+10% EVASION)' });
+    if (a.datalinkBonus > 0) chips.push({ t: 'neutral', txt: `MADL +${a.datalinkBonus.toFixed(2)} TOK/s` });
+    if (a.hasFastRTB) chips.push({ t: 'neutral', txt: 'TACAN FAST RTB (1.8s)' });
+
+    const manStatus = a.activeManeuverTimer > 0
+      ? `<b class="fr-man-val" style="color:var(--stat-tier-2);">${a.activeManeuverId} (+${Math.round(a.activeManeuverBonus * 100)}% EVASION, ${a.activeManeuverTimer.toFixed(1)}s)</b>`
+      : '<b class="fr-man-val" style="color:var(--color-moon-mist);">CRUISE / MANUAL CONTROL</b>';
+
+    return `
+      <section class="inspection-card insp-cognition-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="margin:0;">SQUADRON SYSTEMS &amp; CAPABILITIES</h3>
+          <span class="factor-chip ${a.isRTB ? 'warning' : 'positive'}">${a.isRTB ? 'RTB REARMING' : 'COMBAT READY'}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font:600 0.62rem var(--font-dotdigital); margin-top:6px;">
+          <span>ACTIVE MANEUVER:</span>${manStatus}
+        </div>
+        <div class="inspection-chips-wrap" style="margin-top:6px;">
+          ${chips.map(c => `<span class="factor-chip ${c.t}">${c.txt}</span>`).join('') || '<span class="inspection-muted">Standard baseline avionics.</span>'}
+        </div>
+      </section>`;
+  }
+
+  static renderAttackDoctrineCard(controller, s) {
+    const game = controller.game;
+    if (game.scenarioMode !== 'ATTACK') return '';
+    if (!window.ATTACK_DIFFICULTIES || !window.ATTACK_DOCTRINES) throw new Error('Attack difficulty or doctrine tables not loaded.');
+    const diff = window.ATTACK_DIFFICULTIES[game.attackDifficulty];
+    const doc = window.ATTACK_DOCTRINES[game.attackDoctrine];
+    if (!diff || !doc) throw new Error('Invalid active attack difficulty or doctrine.');
+
+    const emconPct = Math.round(Math.min(85, Math.max(0, (diff.emconChance + doc.emconBonus) * 100)));
+    const gatePct = Math.round(Math.min(100, Math.max(52, (diff.ambushHoldRatio + doc.ambushHoldOffset) * 100)));
+
+    return `
+      <section class="inspection-card insp-cognition-card ${s.emconTimer > 0 ? '' : 'active-focus'}">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="margin:0; color:var(--color-red);">IADS DEFENSE DOCTRINE</h3>
+          <span class="factor-chip warning">${doc.name.toUpperCase()}</span>
+        </div>
+        <div class="insp-cognition-grid">
+          <div class="insp-cognition-field"><span>DEFENSE TIER:</span><b>${diff.name}</b></div>
+          <div class="insp-cognition-field"><span>CAP POSTURE:</span><b style="color:var(--stat-tier-1);">${doc.capPosture.replace(/_/g, ' ')}</b></div>
+          <div class="insp-cognition-field"><span>EMCON CHANCE:</span><b>${emconPct}% (&le;${doc.armTriggerKm}km ARM)</b></div>
+          <div class="insp-cognition-field"><span>AMBUSH GATE:</span><b>${gatePct}% Max Range</b></div>
+          <div class="insp-cognition-field"><span>SAM / AAA CADENCE:</span><b>${doc.samCooldownMult.toFixed(2)}x SAM | ${doc.aaaCooldownMult.toFixed(2)}x AAA</b></div>
+          <div class="insp-cognition-field"><span>QRA SCRAMBLE:</span><b>${(diff.takeoffIntervalSec * doc.takeoffIntervalMult).toFixed(0)}s (${Math.round((diff.scramblePairChance + doc.scramblePairBonus) * 100)}% Pair)</b></div>
+        </div>
+        <div class="inspection-reason-box" style="margin-top:6px;">
+          <b>DOCTRINE BRIEF:</b> ${doc.desc}
+        </div>
+      </section>`;
   }
 
   static updateLive(controller, aircraft, content) {
-    if (!aircraft || !content || !aircraft.spec) return;
+    if (!aircraft || !content || !controller.isAircraft(aircraft)) return;
+    const frMan = content.querySelector('.fr-man-val');
+    if (frMan) {
+      if (aircraft.activeManeuverTimer > 0) {
+        frMan.textContent = `${aircraft.activeManeuverId} (+${Math.round(aircraft.activeManeuverBonus * 100)}% EVASION, ${aircraft.activeManeuverTimer.toFixed(1)}s)`;
+        frMan.style.color = 'var(--stat-tier-2)';
+      } else {
+        frMan.textContent = 'CRUISE / MANUAL CONTROL';
+        frMan.style.color = 'var(--color-moon-mist)';
+      }
+    }
+
     const ai = controller.game && controller.game.ai;
-    if (!ai || typeof ai.getCognitiveProfile !== 'function') return;
-
     const card = content.querySelector(`[data-insp-enemy-cognition="${aircraft.id}"]`);
-    if (!card) return;
-
+    if (!ai || !card) return;
     const prof = ai.getCognitiveProfile(aircraft.id);
     const isActivelyControlled = Boolean(prof.isFocused);
     const isAce = Boolean(prof.isAce);
@@ -158,44 +200,26 @@ class InspectionCognitionRenderer {
     card.classList.toggle('active-focus', isActivelyControlled || isAce);
     const chip = card.querySelector('.cog-status-chip');
     if (chip) {
-      chip.className = `factor-chip ${isAce ? 'warning' : (isActivelyControlled ? 'negative' : 'neutral')} cog-status-chip`;
-      chip.textContent = isAce ? 'ELITE ACE CADRE' : (isActivelyControlled ? 'ACTIVELY CONTROLLED' : 'AUTONOMOUS PATROL');
+      chip.className = `factor-chip ${prof.groundPhase ? 'warning' : (isAce ? 'warning' : (isActivelyControlled ? 'negative' : 'neutral'))} cog-status-chip`;
+      chip.textContent = prof.groundPhase ? `GROUND: ${prof.groundPhase}` : (isAce ? 'ELITE ACE CADRE' : (isActivelyControlled ? 'ACTIVELY CONTROLLED' : 'AUTONOMOUS PATROL'));
     }
-
-    const docVal = card.querySelector('.cog-doctrine-val');
-    if (docVal) docVal.textContent = String(prof.doctrineName || 'Balanced').toUpperCase();
-    const roleLabel = card.querySelector('.cog-tactical-role-val');
-    if (roleLabel) roleLabel.textContent = this.getTacticalRoleLabel(prof.tacticalRole);
-
+    const roleEl = card.querySelector('.cog-tactical-role-val');
+    if (roleEl) roleEl.textContent = this.getTacticalRoleLabel(prof.tacticalRole, prof.groundPhase);
     const focusVal = card.querySelector('.cog-focus-val');
     if (focusVal) {
-      focusVal.textContent = isAce
-        ? (isActivelyControlled ? `LOCKED (ACE CADRE ${focusTimerSec.toFixed(1)}s)` : `ACE STANDBY (${focusTimerSec.toFixed(1)}s)`)
-        : (isActivelyControlled ? `LOCKED (${focusTimerSec.toFixed(1)}s)` : 'WAITING FOR SLOT');
+      focusVal.textContent = isAce ? (isActivelyControlled ? `LOCKED (ACE ${focusTimerSec.toFixed(1)}s)` : `ACE CADRE (${focusTimerSec.toFixed(1)}s)`) : (isActivelyControlled ? `LOCKED (${focusTimerSec.toFixed(1)}s)` : 'WAITING FOR SLOT');
       focusVal.style.color = isAce ? '#ffd700' : (isActivelyControlled ? 'var(--color-red)' : 'var(--color-moon-mist)');
     }
-
     const slotsVal = card.querySelector('.cog-slots-val');
     if (slotsVal) slotsVal.textContent = `${prof.activeFocusCount} / ${prof.maxSlots} SLOTS`;
     const postureVal = card.querySelector('.cog-posture-val');
     if (postureVal) postureVal.textContent = String(prof.posture || 'OFFENSIVE_SWEEP').replace(/_/g, ' ');
-
-    const roleVal = card.querySelector('.cog-role-val');
-    if (roleVal) {
-      const pairDetail = prof.pairedUnit ? ` ${window.INSP_SVG.dot} Pair: ${prof.pairedUnit.callsign || 'Wingman'}` : '';
-      roleVal.innerHTML = `${prof.roleInFormation || (isAce ? 'Ace Interceptor' : 'Independent Element')}${pairDetail}`;
-      roleVal.style.color = isAce ? '#ffd700' : 'var(--color-pure-white)';
-    }
-
-    const succVal = card.querySelector('.cog-succession-val');
-    if (succVal) {
-      succVal.innerHTML = prof.isHesitating
-        ? `<b style="color:var(--stat-tier-4);">Command disruption (${prof.successionTimer.toFixed(1)}s hesitation)</b>`
-        : '<b>Normal decision cycle</b>';
-    }
-
-    const summaryText = card.querySelector('.cog-summary-text');
-    if (summaryText) summaryText.textContent = this.getRoleAssessment(prof.tacticalRole, isAce, isActivelyControlled, prof.activeFocusCount, prof.maxSlots, prof.diffKey);
+    const tgtVal = card.querySelector('.cog-target-val');
+    if (tgtVal) tgtVal.textContent = prof.engagedTargetName || (prof.isRTB ? 'RTB EGRESS' : 'SEARCHING');
+    const ammoVal = card.querySelector('.cog-ammo-val');
+    if (ammoVal) ammoVal.textContent = `${prof.ammoRemaining} rounds`;
+    const sumVal = card.querySelector('.cog-summary-text');
+    if (sumVal) sumVal.textContent = this.getRoleAssessment(prof);
   }
 }
 

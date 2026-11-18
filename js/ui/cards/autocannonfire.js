@@ -137,6 +137,11 @@ class AutocannonFireExecutor {
 
         if (r === numRounds - 1) {
           const podNote = mountedPods.length > 0 ? `+${mountedPods.length} PODS ` : '';
+          if (game.inspection && game.inspection.enabled) {
+            game.inspection.recordEvent('GUN BURST', `${window.formatAircraftDisplayName(unit)} fired manual ${gun.name} burst`, unit, targetCheck, {
+              gun: gun.name, gunpods: mountedPods.length, roundsFired: numRounds, roundsLanded, totalDamage: Number(totalBurstDamage.toFixed(2)), ammunitionRemaining: unit.gunAmmo
+            });
+          }
           if (roundsLanded > 0 && targetCheck) {
             if (game.radar) {
               game.radar.spawnCombatText(targetCheck.x, targetCheck.y, `${isDEW ? 'LASER' : 'BURST'} ${podNote}-${totalBurstDamage.toFixed(1)}HP (${roundsLanded}/${numRounds} RDS)`, '#00f0ff');

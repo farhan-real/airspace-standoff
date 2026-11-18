@@ -113,7 +113,7 @@ class ControlsTargetingHandler {
     const isMissile = Boolean(target.weapon && target.target);
     if (isMissile && (!this.game.inspection || !this.game.inspection.isOpen)) return;
 
-    const isGround = Boolean(target.type && !target.spec && !target.isCivilian);
+    const isGround = Boolean((typeof SurfaceUnit !== 'undefined' && target instanceof SurfaceUnit) || (target.type && !target.isCivilian && !target.weapon));
     const showGround = Boolean(this.game.radar && this.game.radar.cam && this.game.radar.cam.showGroundTargets);
     if (isGround && !showGround) return;
 
