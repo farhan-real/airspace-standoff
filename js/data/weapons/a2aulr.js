@@ -1,5 +1,5 @@
 /**
- * js/data/weapons/a2aulr.js - Ultra-Long-Range BVR, Hypersonic, and Area-Shockwave Air-to-Air missiles.
+ * js/data/weapons/a2aulr.js - Ultra-Long-Range BVR, Ramjet/Hypersonic, and Area-Shockwave Air-to-Air missiles.
  */
 
 window.WEAPONS_A2A_ULR = {
@@ -12,6 +12,16 @@ window.WEAPONS_A2A_ULR = {
     lambda: 0.16, p: 1.8, T_0: 0.86, antiNotchBonus: 0.35, sigmaPylon: 0.04,
     category: 'A2A', a2aGroup: 'ULR_BVR',
     desc: 'Next-generation air dominance stealth missile (4x, Mach 4.2). Sized for internal stealth bays; can also be mounted on external pylons.'
+  },
+  'ASTRA-MK3': {
+    id: 'ASTRA-MK3', name: 'Astra Mk3 Gandiva SFDR (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
+    mass: 860, cost: 2.7, rangeKm: 115.0, speedMach: 4.5, seeker: 'ARH', rcs: 0.015,
+    trait: 'RAMJET_SUSTAINED', traitBadge: '115KM SFDR RAMJET',
+    behaviorDesc: 'Solid-Fuel Ducted Ramjet BVR missile (4x, 3.5 HP, 115 km, Mach 4.5). Zero cruise drag decay sustains high terminal energy across the entire theater.',
+    damage: 3.5, ammoCount: 4, minRangeKm: 6.0, sweetSpotMin: 22.0, sweetSpotMax: 100.0,
+    lambda: 0.04, p: 3.0, T_0: 0.85, antiNotchBonus: 0.25, sigmaPylon: 0.06,
+    category: 'A2A', a2aGroup: 'ULR_BVR',
+    desc: 'Solid-fuel ducted ramjet ultra-long-range BVR missile (4x, 115 km, Mach 4.5) with zero velocity decay.'
   },
   'R-37M': {
     id: 'R-37M', name: 'R-37M Axehead (2x)', slots: 3, slotType: 'EXTERNAL', minRating: 'Type H',
@@ -33,6 +43,16 @@ window.WEAPONS_A2A_ULR = {
     category: 'A2A', a2aGroup: 'ULR_BVR',
     desc: 'Extreme standoff ramjet interceptor (2x, Mach 4.5). Requires external heavy pylons due to oversized ramjet airframe length.'
   },
+  'AIM-152': {
+    id: 'AIM-152', name: 'AIM-152 AAAM Dual-Mode (2x)', slots: 3, slotType: 'EXTERNAL', minRating: 'Type H',
+    mass: 1340, cost: 3.0, rangeKm: 130.0, speedMach: 5.0, seeker: 'ARH', rcs: 0.08,
+    trait: 'RAMJET_SUSTAINED', traitBadge: 'MACH 5.0 RAMJET ULR',
+    behaviorDesc: 'Integral rocket-ramjet heavy fleet interceptor (2x, 5 HP, 130 km, Mach 5.0). Maintains Mach 5.0 ramjet cruise to intercept bombers and supersonic fighters.',
+    damage: 5, ammoCount: 2, minRangeKm: 10.0, sweetSpotMin: 26.0, sweetSpotMax: 112.0,
+    lambda: 0.06, p: 2.5, T_0: 0.80, heavyTargetBonus: true, sigmaPylon: 0.18,
+    category: 'A2A', a2aGroup: 'ULR_BVR',
+    desc: 'High-speed Mach 5.0 fleet-defense ramjet interceptor (2x, 130 km) for heavy outer-air-battle patrols.'
+  },
   'AIM-174B': {
     id: 'AIM-174B', name: 'AIM-174B Air-Launched SM-6 (2x)', slots: 3, slotType: 'EXTERNAL', minRating: 'Type H',
     mass: 1720, cost: 3.1, rangeKm: 132.0, speedMach: 4.8, seeker: 'ARH', rcs: 0.12,
@@ -43,6 +63,17 @@ window.WEAPONS_A2A_ULR = {
     category: 'A2A', a2aGroup: 'ULR_BVR',
     allowedAirframes: ['F-18E', 'F-15EX', 'F-15E', 'F-14D', 'EA-18G', 'F-15-SMTD', 'F-15-SMT-COFFIN'],
     desc: 'Heavy fleet-defense ultra-long-range missile (2x, 132 km) certified for heavy Super Hornets and Eagles.'
+  },
+  'PL-17': {
+    id: 'PL-17', name: 'PL-17 Very-Long-Range (2x)', slots: 3, slotType: 'EXTERNAL', minRating: 'Type H',
+    mass: 1420, cost: 3.1, rangeKm: 135.0, speedMach: 4.9, seeker: 'ARH', rcs: 0.05,
+    trait: 'DUAL_PULSE_SURGE', traitBadge: '135KM DUAL-PULSE ULR',
+    behaviorDesc: 'Extreme-range dual-pulse AESA interceptor (2x, 5 HP, 135 km, Mach 4.9). Built to snipe EW jammers, bombers, and high-value support aircraft.',
+    damage: 5, ammoCount: 2, minRangeKm: 12.0, sweetSpotMin: 30.0, sweetSpotMax: 120.0,
+    lambda: 0.16, p: 1.6, T_0: 0.79, heavyTargetBonus: true, antiNotchBonus: 0.25, sigmaPylon: 0.18,
+    category: 'A2A', a2aGroup: 'ULR_BVR',
+    allowedAirframes: ['J-16', 'J-16D', 'J-15D', 'J-20', 'Su-35S', 'Su-30SM', 'Su-34'],
+    desc: 'Very-long-range dual-pulse AESA interceptor (2x, 135 km) deployed by heavy Flankers and J-20s.'
   },
   'KS-172': {
     id: 'KS-172', name: 'KS-172 Novator Standoff (2x)', slots: 4, slotType: 'EXTERNAL', minRating: 'Type H',

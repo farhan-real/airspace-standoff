@@ -115,9 +115,11 @@ Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
   if (wpn.isJammerPod) this.jamEfficiency = Math.max(this.jamEfficiency, wpn.jamEfficiency);
   if (wpn.isTargetingPod) {
     this.targetingPodBonus = Math.max(this.targetingPodBonus, wpn.a2gPkBonus);
-    this.targetingSpotRangeKm = Math.max(this.targetingSpotRangeKm, wpn.spotRangeKm);
+    if (wpn.exposesDecoys) this.targetingSpotRangeKm = Math.max(this.targetingSpotRangeKm, wpn.spotRangeKm);
     this.cloudMitigation = Math.max(this.cloudMitigation, wpn.cloudMitigation);
     if (wpn.grantsIRST) this.hasIRST = true;
+    if (wpn.grantsESM) this.hasESM = true;
+    if (wpn.armRangeBoost) this.armRangeMult = Math.max(this.armRangeMult, wpn.armRangeBoost);
   }
   if (wpn.isDecoyDrone) {
     this.hasMaldDecoy = true;

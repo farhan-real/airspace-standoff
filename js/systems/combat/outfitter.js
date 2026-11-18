@@ -1,6 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Fleet Outfitter Submodule
- * Evaluates airframe constraints, weapon classes, contextual aerodynamics, and tactical role planning.
+ * js/systems/combat/outfitter.js - Tactical AI loadout planner matching airframe limits, missile classes, and pods.
  */
 
 class FleetOutfitter {
@@ -28,9 +27,9 @@ class FleetOutfitter {
     const isStrike = (spec.category === 'STRIKE');
     const isDrone = (spec.category === 'DRONES' || spec.isDrone);
     const isStealth = (spec.internalSlots > 0 && spec.category === 'STEALTH');
-    const isHeavyTruck = ['F-15EX', 'MiG-31BM', 'J-16', 'Su-34', 'A-10C', 'B-1B', 'Tu-160M'].includes(spec.id);
-    const isAgileDogfighter = ['Rafale-C', 'Eurofighter', 'Su-35S', 'Mirage-2000', 'F-16V', 'JAS-39E', 'Tejas-MK2', 'Su-47', 'X-29A', 'Su-37'].includes(spec.id);
-    const isHighSpeed = (spec.S_0 >= 1.25 || ['MiG-31BM', 'DARKSTAR', 'F-15EX', 'YF-23', 'F-14D', 'Tu-160M'].includes(spec.id));
+    const isHeavyTruck = ['F-15EX', 'F-15E', 'MiG-31BM', 'J-16', 'Su-34', 'A-10C', 'B-1B', 'B-52H', 'Tu-160M', 'F-111F'].includes(spec.id);
+    const isAgileDogfighter = ['Rafale-C', 'Eurofighter', 'Su-35S', 'Mirage-2000', 'Mirage-2000D', 'F-16V', 'JAS-39E', 'Tejas-MK2', 'Su-47', 'X-29A', 'Su-37'].includes(spec.id);
+    const isHighSpeed = (spec.S_0 >= 1.25 || ['MiG-31BM', 'DARKSTAR', 'F-15EX', 'F-15E', 'YF-23', 'F-14D', 'Tu-160M'].includes(spec.id));
 
     const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
     const specRatingIndex = ratings.indexOf(spec.maxPylonRating);
@@ -43,10 +42,10 @@ class FleetOutfitter {
       return true;
     };
 
-    const class1Ulr = ['AIM-260', 'R-37M', 'PL-21', 'KINZHAL'].filter(id => isEligible(wCatalog[id]));
-    const class2Lr = ['METEOR', 'PL-15E', 'AGM-88G'].filter(id => isEligible(wCatalog[id]));
-    const class3Mr = ['AIM-120D', 'MPBM'].filter(id => isEligible(wCatalog[id]));
-    const class4Sr = ['PYTHON-5', 'IRIS-T', 'AIM-9X-2', 'R-73', 'MAM'].filter(id => isEligible(wCatalog[id]));
+    const class1Ulr = ['AIM-260', 'ASTRA-MK3', 'R-37M', 'PL-21', 'PL-17', 'AIM-174B', 'KS-172', 'AIM-152', 'KINZHAL'].filter(id => isEligible(wCatalog[id]));
+    const class2Lr = ['METEOR', 'PL-15E', 'ASTRA-MK2', 'R-77M', 'AAM-4B', 'AGM-88G'].filter(id => isEligible(wCatalog[id]));
+    const class3Mr = ['AIM-120D', 'R-77-1', 'MICA-EM', 'ASTRA-MK1', 'I-DERBY-ER', 'MPBM'].filter(id => isEligible(wCatalog[id]));
+    const class4Sr = ['PYTHON-5', 'IRIS-T', 'AIM-9X-2', 'R-73', 'ASRAAM', 'MICA-IR', 'PL-10', 'AAM-5B', 'R-74M2', 'MAM', 'PEREGRINE'].filter(id => isEligible(wCatalog[id]));
 
     const addWpn = (wId, station) => {
       const w = wCatalog[wId];
@@ -81,7 +80,7 @@ class FleetOutfitter {
 
       const ulrChoice = rng.pick(class1Ulr) || class2Lr[0];
       const lrChoice = rng.pick(class2Lr);
-      const srChoice = ['PYTHON-5', 'IRIS-T'].filter(id => isEligible(wCatalog[id]))[0] || class4Sr[0];
+      const srChoice = ['PYTHON-5', 'IRIS-T', 'ASRAAM', 'PL-10'].filter(id => isEligible(wCatalog[id]))[0] || class4Sr[0];
 
       if (spec.internalSlots > 0) {
         addWpn(isEligible(wCatalog['AIM-260']) ? 'AIM-260' : ulrChoice, 'INTERNAL');
@@ -126,7 +125,7 @@ class FleetOutfitter {
     else if (isHighSpeed && (doctrine === 'AGGRESSIVE' || rng.boolean(0.45))) role = 'INTERCEPT';
     else if (isAgileDogfighter && (doctrine === 'AGGRESSIVE' || rng.boolean(0.45))) role = 'DOGFIGHT';
     else if (doctrine === 'STANDOFF' && class1Ulr.length > 0) role = 'SNIPER';
-    else if (rng.boolean(0.22) && !['DARKSTAR', 'B-1B', 'Tu-160M', 'A-10C'].includes(spec.id)) role = 'ESCORT';
+    else if (rng.boolean(0.22) && !['DARKSTAR', 'B-1B', 'B-52H', 'Tu-160M', 'A-10C'].includes(spec.id)) role = 'ESCORT';
 
     const ulrWeights = { CADET: 0.0, BUFFER: 0.02, VETERAN: 0.05, ESCALATED: 0.10, ELITE: 0.15, FORWARD: 0.25, ACE: 0.35, FORTIFIED: 0.42, MASTER: 0.50, LEGEND: 0.65 };
     const rollBvr = (allowUlr = true) => {
@@ -138,18 +137,19 @@ class FleetOutfitter {
 
     const rollWvr = () => {
       if (['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)) {
-        if (class4Sr.includes('PYTHON-5') && rng.boolean(0.45)) return 'PYTHON-5';
-        if (class4Sr.includes('IRIS-T') && rng.boolean(0.35)) return 'IRIS-T';
+        const highWvr = ['PYTHON-5', 'IRIS-T', 'ASRAAM', 'PL-10', 'AAM-5B'].filter(id => isEligible(wCatalog[id]));
+        if (highWvr.length > 0 && rng.boolean(0.55)) return rng.pick(highWvr);
       }
       return rng.pick(class4Sr);
     };
 
     if (role === 'SEAD') {
-      addWpn(rng.boolean(0.60) ? 'AN-ALQ-249' : 'AN-ALQ-99', 'EXTERNAL');
-      addWpn('AGM-88G', 'EXTERNAL');
+      const jamChoices = ['AN-ALQ-249', 'SAP-14-POD', 'AN-ALQ-99', 'KHIBINY-L175', 'AN-ALQ-131'].filter(id => isEligible(wCatalog[id]));
+      addWpn(rng.pick(jamChoices) || 'AN-ALQ-99', 'EXTERNAL');
+      addWpn(rng.boolean(0.60) ? 'AGM-88G' : 'AGM-88E', 'EXTERNAL');
       addWpn(rollBvr(false), 'EXTERNAL');
       addUpg('ADAPTIVE_ECCM_SUITE');
-      if (spec.upgradeSockets >= 2) addUpg('ESM_PASSIVE_SUITE');
+      if (spec.upgradeSockets >= 2) addUpg('SEAD_HTS_POD');
       if (spec.upgradeSockets >= 3 && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)) addUpg('GAN_AESA_CORE');
       return { weapons, upgrades, totalCost, chosenGunId, role };
     }
@@ -164,6 +164,7 @@ class FleetOutfitter {
 
     if (role === 'STRIKE') {
       if (spec.hasCenterline && isEligible(wCatalog['KINZHAL']) && (diff === 'LEGEND' || rng.boolean(0.50))) addWpn('KINZHAL', 'CENTERLINE');
+      else if (isEligible(wCatalog['AGM-158C']) && rng.boolean(0.45)) addWpn('AGM-158C', 'EXTERNAL');
       else if (isEligible(wCatalog['AGM-158B'])) addWpn('AGM-158B', 'EXTERNAL');
       else addWpn('GBU-39', 'EXTERNAL');
       if (isEligible(wCatalog['AGM-88G']) && rng.boolean(0.60)) addWpn('AGM-88G', 'EXTERNAL');
@@ -183,7 +184,7 @@ class FleetOutfitter {
       }
       addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
     } else if (role === 'AMBUSH') {
-      addWpn('AIM-260', 'INTERNAL');
+      addWpn(isEligible(wCatalog['AIM-260']) ? 'AIM-260' : rollBvr(true), 'INTERNAL');
       addWpn(rollWvr(), 'INTERNAL');
       if (spec.internalSlots >= 4) addWpn(rollBvr(false), 'INTERNAL');
       addUpg('RAM_NANO_COATING');
@@ -198,8 +199,8 @@ class FleetOutfitter {
       addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       if (spec.externalSlots >= 4 && !enforceLightweight && rng.boolean(0.40)) {
-        const podChoice = spec.category === 'MULTIROLE' ? 'SUU-23A' : 'SPPU-22';
-        if (isEligible(wCatalog[podChoice])) addWpn(podChoice, 'EXTERNAL');
+        const podChoices = ['DEFA-554-POD', 'SUU-23A', 'SPPU-22', 'GSH-6-23-POD'].filter(id => isEligible(wCatalog[id]));
+        if (podChoices.length > 0) addWpn(rng.pick(podChoices), 'EXTERNAL');
       }
       addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       if (spec.thrustVector) addUpg('THRUST_VECTOR');

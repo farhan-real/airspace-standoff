@@ -1,5 +1,5 @@
 /**
- * js/ui/procurement/catalog/shelfcards.js - Armory shelf card DOM builders for guns, upgrades, and weapons.
+ * js/ui/procurement/catalog/shelfcards.js - Armory shelf card DOM builders for guns, upgrades, weapons, and pods.
  */
 
 class ShelfCardBuilders {
@@ -74,7 +74,9 @@ class ShelfCardBuilders {
     const wpnSlotWord = wpn.slots === 1 ? 'SLOT' : 'SLOTS';
 
     let typeBadge = '';
-    if (wpn.isTargetingPod) typeBadge = '<span class="badge-category" style="color:#00f5a0;border-color:#10b981;">TARGETING POD</span>';
+    if (wpn.grantsESM) typeBadge = '<span class="badge-category" style="color:#fbbf24;border-color:#d97706;">ELINT / ESM</span>';
+    else if (wpn.grantsIRST && wpn.a2gPkBonus <= 0) typeBadge = '<span class="badge-category" style="color:#00f0ff;border-color:#0284c7;">PASSIVE IRST</span>';
+    else if (wpn.isTargetingPod) typeBadge = '<span class="badge-category" style="color:#00f5a0;border-color:#10b981;">TARGETING POD</span>';
     else if (wpn.isJammerPod) typeBadge = '<span class="badge-category" style="color:#38bdf8;border-color:#0284c7;">ECM JAMMER</span>';
     else if (wpn.isDecoy || wpn.isDecoyDrone) typeBadge = '<span class="badge-category" style="color:#c084fc;border-color:#9333ea;">DECOY</span>';
     else if (wpn.isGunpod) typeBadge = '<span class="badge-category" style="color:#fde047;border-color:#ca8a04;">GUN POD</span>';
@@ -92,7 +94,11 @@ class ShelfCardBuilders {
     card.dataset.dragType = 'weapon'; card.dataset.dragId = wpn.id; card.dataset.dragName = wpn.name;
 
     let specsRow = `<div>RNG: <b>${wpn.rangeKm}km</b></div><div>SPD: <b>M ${wpn.speedMach}</b> &bull; DMG: <b>${wpn.damagePerBurst || wpn.damage} HP</b></div>`;
-    if (wpn.isTargetingPod) {
+    if (wpn.grantsESM) {
+      specsRow = `<div>ESM REACH: <b>${wpn.spotRangeKm}km</b></div><div>SEAD: <b>+${Math.round((wpn.armRangeBoost - 1) * 100)}% ARM RNG</b></div>`;
+    } else if (wpn.grantsIRST && wpn.a2gPkBonus <= 0) {
+      specsRow = `<div>TRACK: <b>PASSIVE IRST</b></div><div>ANTI-STEALTH: <b>28km BURN</b></div>`;
+    } else if (wpn.isTargetingPod) {
       specsRow = `<div>RECON: <b>${wpn.spotRangeKm}km</b></div><div>BUFF: <b>+${Math.round(wpn.a2gPkBonus * 100)}% A2G Pk</b></div>`;
     } else if (wpn.isJammerPod) {
       specsRow = `<div>UMBRELLA: <b>${wpn.rangeKm}km</b></div><div>SUPPRESSION: <b>-${Math.round(wpn.jamEfficiency * 100)}% RADAR</b></div>`;
@@ -100,7 +106,7 @@ class ShelfCardBuilders {
       specsRow = `<div>${wpn.isDecoyDrone ? `RANGE: <b>${wpn.rangeKm}km</b>` : 'TOWED: <b>REPEATER</b>'}</div><div>CHARGES: <b>${wpn.ammoCount}x</b></div>`;
     }
 
-    const seekerLabel = wpn.isTargetingPod ? 'OPTICAL / LASER' : (wpn.isJammerPod ? 'BROADBAND ECM' : (wpn.isDecoy || wpn.isDecoyDrone ? 'RF DECOY' : (wpn.seeker || 'GUIDED')));
+    const seekerLabel = wpn.grantsESM ? 'PASSIVE ELINT' : (wpn.grantsIRST ? 'PASSIVE IRST' : (wpn.isTargetingPod ? 'OPTICAL / LASER' : (wpn.isJammerPod ? 'BROADBAND ECM' : (wpn.isDecoy || wpn.isDecoyDrone ? 'RF DECOY' : (wpn.seeker || 'GUIDED')))));
 
     card.innerHTML = `
       <div class="cic-top"><span class="cic-title">${wpn.name}</span><span class="cic-cost">$${wpn.cost.toFixed(1)}M</span></div>

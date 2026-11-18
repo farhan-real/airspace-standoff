@@ -23,6 +23,36 @@ window.WEAPONS_A2A_WVR = {
     category: 'A2A', a2aGroup: 'WVR',
     desc: 'High off-boresight infrared dogfight missile (4x, Mach 2.5). Fits stealth side internal bays or external wingtip rails.'
   },
+  'PL-10': {
+    id: 'PL-10', name: 'PL-10 HOBS Imaging IR (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
+    mass: 420, cost: 0.6, rangeKm: 32.0, speedMach: 3.0, seeker: 'IIR', rcs: 0.025,
+    trait: 'HOBS_VANE', traitBadge: '90 DEG INTERNAL IIR',
+    behaviorDesc: 'Thrust-vectoring imaging-infrared dogfighter (4x, 32 km, Mach 3.0). Clipped fins fit lateral stealth bays with strong countermeasure rejection.',
+    damage: 2, ammoCount: 4, minRangeKm: 0.6, sweetSpotMin: 1.5, sweetSpotMax: 26.0,
+    lambda: 0.68, p: 1.0, T_0: 0.89, decoyResistance: 0.72, sigmaPylon: 0.02,
+    category: 'A2A', a2aGroup: 'WVR',
+    desc: 'Agile 90-degree off-boresight IIR missile (4x, Mach 3.0) built for J-20, J-35, and Flanker close merges.'
+  },
+  'R-74M2': {
+    id: 'R-74M2', name: 'R-74M2 Internal HOBS IR (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
+    mass: 430, cost: 0.7, rangeKm: 34.0, speedMach: 2.8, seeker: 'IIR', rcs: 0.02,
+    trait: 'HOBS_VANE', traitBadge: '34KM INTERNAL ARCHER',
+    behaviorDesc: 'Stealth-bay conformal Archer upgrade (4x, 34 km, Mach 2.8). Combines 90-degree HOBS gimbal tracking with digital IR decoy rejection.',
+    damage: 2, ammoCount: 4, minRangeKm: 0.6, sweetSpotMin: 1.5, sweetSpotMax: 27.0,
+    lambda: 0.66, p: 1.0, T_0: 0.90, decoyResistance: 0.74, sigmaPylon: 0.02,
+    category: 'A2A', a2aGroup: 'WVR',
+    desc: 'Internal-bay conformal high-off-boresight IR missile (4x, 34 km) engineered for 5th-Gen Russian fighters.'
+  },
+  'AAM-5B': {
+    id: 'AAM-5B', name: 'Type 04 AAM-5B IIR (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
+    mass: 440, cost: 0.7, rangeKm: 35.0, speedMach: 2.9, seeker: 'IIR', rcs: 0.025,
+    trait: 'IMAGE_RECOGNITION', traitBadge: 'TVC ANTI-FLARE WVR',
+    behaviorDesc: 'Dual-band focal-plane array IR dogfighter with thrust vectoring (4x, 35 km, Mach 2.9). Maintains lock through heavy flare clouds.',
+    damage: 2, ammoCount: 4, minRangeKm: 0.6, sweetSpotMin: 1.5, sweetSpotMax: 28.0,
+    lambda: 0.65, p: 1.0, T_0: 0.90, decoyResistance: 0.80, sigmaPylon: 0.02,
+    category: 'A2A', a2aGroup: 'WVR',
+    desc: 'Thrust-vectored dual-band imaging infrared missile (4x, 35 km) with superior decoy resistance.'
+  },
   'IRIS-T': {
     id: 'IRIS-T', name: 'IRIS-T Dogfight (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
     mass: 460, cost: 0.6, rangeKm: 35.0, speedMach: 2.6, seeker: 'IIR', rcs: 0.03,

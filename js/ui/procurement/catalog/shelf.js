@@ -218,6 +218,7 @@ class ProcurementShelf {
         { id: 'ALL', label: 'ALL PODS' },
         { id: 'ECM', label: 'ECM JAMMERS' },
         { id: 'TARGETING', label: 'TARGETING PODS' },
+        { id: 'RECON_IRST', label: 'RECON & IRST PODS' },
         { id: 'DECOY', label: 'DECOY SYSTEMS' }
       ];
       this.renderFilterPills(container, podGroups, this.pm.currentPodCategory, (id) => {

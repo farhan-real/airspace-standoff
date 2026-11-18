@@ -1,5 +1,5 @@
 /**
- * js/data/weapons/targetingpods.js - Optical, laser designation, and ground reconnaissance targeting pods.
+ * js/data/weapons/targetingpods.js - Optical targeting, passive IRST tracking, ESM ELINT, and ground recon pods.
  */
 
 window.WEAPONS_TARGETING_PODS = {
@@ -63,7 +63,43 @@ window.WEAPONS_TARGETING_PODS = {
     a2gPkBonus: 0.20, spotRangeKm: 58.0, cloudMitigation: 0.35, exposesDecoys: true,
     trait: 'DUAL_AIR_GROUND_IRST', traitBadge: 'PASSIVE IRST + 58KM RECON',
     behaviorDesc: 'Combined passive air-to-air IRST and ground optical designator. Grants full passive IRST anti-stealth tracking plus +20% A2G Pk and 58 km ground recon.',
-    sigmaPylon: 0.05, category: 'POD', podGroup: 'TARGETING', a2gGroup: 'TARGETING_POD',
+    sigmaPylon: 0.05, category: 'POD', podGroup: 'RECON_IRST', a2gGroup: 'TARGETING_POD',
     desc: 'Dual-role IRST and laser targeting pod providing silent air-to-air stealth detection alongside ground decoy exposure.'
+  },
+  'PIRATE-IRST-POD': {
+    id: 'PIRATE-IRST-POD', name: 'Skyward-G Passive IRST Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
+    mass: 110, cost: 0.9, rangeKm: 40.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    a2gPkBonus: 0.08, spotRangeKm: 40.0, cloudMitigation: 0.15, exposesDecoys: true,
+    trait: 'PASSIVE_IRST_POD', traitBadge: '1-SLOT PASSIVE IRST',
+    behaviorDesc: 'Lightweight passive infrared air-to-air search pod. Enables silent anti-stealth and anti-notch tracking plus 40 km optical ground spotting.',
+    sigmaPylon: 0.03, category: 'POD', podGroup: 'RECON_IRST',
+    desc: 'Compact 1-slot passive infrared tracking pod built for legacy 4th-Gen interceptors and light fighters.'
+  },
+  'IRST-21-POD': {
+    id: 'IRST-21-POD', name: 'AN/ASG-34B IRST21 Air Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type M',
+    mass: 160, cost: 1.2, rangeKm: 50.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    a2gPkBonus: 0.0, spotRangeKm: 32.0, cloudMitigation: 0.0, exposesDecoys: false,
+    trait: 'PASSIVE_IRST_POD', traitBadge: 'LONG-WAVE AIR IRST',
+    behaviorDesc: 'Dedicated long-wave infrared air-to-air sensor pod. Detects stealth fighters silently at 28 km burn-through and prevents target loss during Doppler notches.',
+    sigmaPylon: 0.04, category: 'POD', podGroup: 'RECON_IRST',
+    desc: 'Centerline fuel-tank nose IRST21 pod upgrading F/A-18E, F-15EX, and F-16V airframes with passive stealth tracking.'
+  },
+  'AN-ALQ-218-POD': {
+    id: 'AN-ALQ-218-POD', name: 'AN/ALQ-218 Tactical ELINT Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type M',
+    mass: 215, cost: 1.3, rangeKm: 135.0, damage: 0, isTargetingPod: true, grantsESM: true, armRangeBoost: 1.15,
+    a2gPkBonus: 0.0, spotRangeKm: 135.0, cloudMitigation: 0.0, exposesDecoys: false,
+    trait: 'PASSIVE_ELINT_ESM', traitBadge: '135KM ESM + 15% ARM RNG',
+    behaviorDesc: 'Precision interferometric ESM/ELINT receiver pod. Immediately exposes emitting ground SAMs and radars out to 135 km and extends ARM missile range by +15%.',
+    sigmaPylon: 0.05, category: 'POD', podGroup: 'RECON_IRST',
+    desc: 'Passive electronic intelligence pod converting multirole and strike fighters into agile SEAD hunter escorts.'
+  },
+  'TARPS-RECON-POD': {
+    id: 'TARPS-RECON-POD', name: 'RAPTOR / ATARS Standoff Recon Pod', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
+    mass: 480, cost: 1.4, rangeKm: 65.0, damage: 0, isTargetingPod: true,
+    a2gPkBonus: 0.14, spotRangeKm: 65.0, cloudMitigation: 0.30, exposesDecoys: true,
+    trait: 'STANDOFF_SAR_RECON', traitBadge: '65KM GROUND RECON +14% Pk',
+    behaviorDesc: 'Long-standoff synthetic aperture radar and EO reconnaissance container. Exposes camouflaged decoys and silent optical SHORAD out to 65 km.',
+    sigmaPylon: 0.08, category: 'POD', podGroup: 'RECON_IRST', a2gGroup: 'TARGETING_POD',
+    desc: 'Deep-standoff aerial reconnaissance pod mapping enemy IADS deployments and exposing decoy emitters from safe standoff.'
   }
 };

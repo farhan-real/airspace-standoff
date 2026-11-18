@@ -1,12 +1,11 @@
 /**
- * AIRSPACE STANDOFF: Specifications Subsystem Dossier Views Module
+ * js/ui/procurement/specs/views.js - Specification dossier modal views for weapons, pods, cannons, and upgrades.
  */
 
 class SpecsSubsystemViews {
   static renderWeapon(w) {
     if (!w) return '<div class="inspect-desc-box">NO WEAPON DATA AVAILABLE</div>';
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
+    const rate = window.StatEvaluator.rate;
 
     const rRange = rate('missile_range', w.rangeKm || 20.0);
     const rMin = rate('min_arming', w.minRangeKm || 1.0);
@@ -16,12 +15,14 @@ class SpecsSubsystemViews {
     const rMass = rate('ordnance_mass', w.mass || 100);
     const rCost = rate('cost_weapon', w.cost || 1.0);
 
-    const category = w.category || 'WEAPON';
+    const category = w.category;
 
     let seekerText = w.seeker || 'GUIDED';
-    if (w.isTargetingPod) seekerText = 'Electro-Optical FLIR + Laser Designator';
+    if (w.grantsESM) seekerText = 'Wideband Passive ELINT / ESM Emitter Receiver';
+    else if (w.grantsIRST && w.a2gPkBonus <= 0) seekerText = 'Long-Wave Passive Infrared Search & Track (IRST)';
+    else if (w.isTargetingPod) seekerText = 'Electro-Optical FLIR + Laser Designator';
     else if (w.isJammerPod) seekerText = 'Broadband Microwave ECM';
-    else if (w.isDecoy) seekerText = 'Fiber-Optic RF Decoy';
+    else if (w.isDecoy) seekerText = 'Fiber-Optic / DRFM RF Decoy';
     else if (w.isDecoyDrone) seekerText = 'Autonomous Radar Mirror';
     else if (w.isLaser) seekerText = 'Directed Energy Thermal Beam';
     else if (w.isGunpod) seekerText = 'Direct-Fire Gunpod';
@@ -38,7 +39,8 @@ class SpecsSubsystemViews {
     else if (w.seeker === 'PASSIVE_RADAR') seekerText = w.antiEmcon ? 'Passive RF + MMW Anti-EMCON Memory' : 'Passive Radar (Anti-Radiation)';
 
     let counterHint = 'High-G break turns or countermeasures';
-    if (w.isTargetingPod) counterHint = 'Passive optical sensor: undetectable emission; heavy cloud cells soften laser range';
+    if (w.grantsESM) counterHint = 'EMCON radar shutdowns or silent passive optical SHORAD';
+    else if (w.isTargetingPod) counterHint = 'Passive optical sensor: undetectable emission; heavy cloud cells soften laser range';
     else if (w.isJammerPod) counterHint = 'Anti-Radiation Missiles (HOJ tracking) or IR/Optical seekers';
     else if (w.isDecoy || w.isDecoyDrone) counterHint = 'Optical seekers, visual identification, or CIWS';
     else if (w.isLaser) counterHint = 'Weather Clouds scatter beam or maintain standoff beyond 9 km';
@@ -46,38 +48,55 @@ class SpecsSubsystemViews {
     else if (w.seeker === 'ARH') counterHint = 'Beam 90 deg (Doppler Notch), deploy Chaff or ECM pods';
     else if (w.seeker === 'IIR' || w.seeker === 'EO') counterHint = 'Cut throttle to Idle or dive into clouds';
     else if (w.seeker === 'LASER') counterHint = 'Thick clouds scatter laser spot; mitigated by Targeting Pods';
-    else if (w.seeker === 'PASSIVE_RADAR') counterHint = w.antiEmcon ? 'CIWS point defense (retains memory through EMCON shutdown!)' : 'Enter EMCON radar shutdown to break seeker lock';
+    else if (w.seeker === 'PASSIVE_RADAR') counterHint = w.antiEmcon ? 'CIWS point defense (retains memory through EMCON shutdown)' : 'Enter EMCON radar shutdown to break seeker lock';
     else if (w.seeker === 'GPS_INS' || w.seeker === 'UNGUIDED') counterHint = 'CIWS / SeaRAM / Tor-M2 point defense interception';
 
-    const traitLabel = w.traitBadge || 'STANDARD';
-    const primaryDesc = w.behaviorDesc || w.desc || 'Precision-guided aerospace munition.';
+    const traitLabel = w.traitBadge;
+    const primaryDesc = w.behaviorDesc || w.desc;
     const subDesc = (w.desc && w.desc !== w.behaviorDesc) ? w.desc : '';
     const airframesText = (w.allowedAirframes && w.allowedAirframes.length > 0)
       ? w.allowedAirframes.join(', ')
       : 'All certified aircraft with sufficient pylon rating';
 
-    const tgpSpecsHtml = w.isTargetingPod ? `
-      <div class="inspect-stat-item"><span>OPTICAL RECON SPOT RANGE:</span><b class="stat-tier-1">${w.spotRangeKm || 40} km (Exposes Ground Decoys)</b></div>
-      <div class="inspect-stat-item"><span>A2G PRECISION ACCURACY BUFF:</span><b class="stat-tier-2">+${Math.round((w.a2gPkBonus || 0.18) * 100)}% Pk</b></div>
-      <div class="inspect-stat-item"><span>CLOUD SCATTER MITIGATION:</span><b class="stat-tier-2">${Math.round((w.cloudMitigation || 0.25) * 100)}%</b></div>
-    ` : `
-      <div class="inspect-stat-item"><span>MAX ENGAGEMENT RANGE:</span><b class="${rRange.colorClass}">${w.rangeKm || 0} km</b></div>
-      <div class="inspect-stat-item"><span>MIN ARMING DISTANCE:</span><b class="${rMin.colorClass}">${w.minRangeKm || 0.8} km</b></div>
-      <div class="inspect-stat-item"><span>CRUISE &amp; TERMINAL VELOCITY:</span><b class="${rSpd.colorClass}">Mach ${w.speedMach || '1.0'}</b></div>
-      <div class="inspect-stat-item"><span>WARHEAD DAMAGE:</span><b class="${rDmg.colorClass}">${w.damage || 0} HP${w.isBunkerCracker ? ' (Bunker Penetrator)' : ''}</b></div>
-      <div class="inspect-stat-item"><span>MAGAZINE CAPACITY:</span><b class="${rAmmo.colorClass}">${w.ammoCount !== undefined ? w.ammoCount : 4} Rounds</b></div>
-    `;
+    let podOrWeaponStatsHtml = '';
+    if (w.isTargetingPod) {
+      podOrWeaponStatsHtml = `
+        <div class="inspect-stat-item"><span>SENSOR / RECON RANGE:</span><b class="stat-tier-1">${w.spotRangeKm} km ${w.exposesDecoys ? '(Exposes Ground Decoys)' : ''}</b></div>
+        <div class="inspect-stat-item"><span>A2G PRECISION BUFF:</span><b class="stat-tier-2">+${Math.round(w.a2gPkBonus * 100)}% Pk</b></div>
+        <div class="inspect-stat-item"><span>CLOUD SCATTER MITIGATION:</span><b class="stat-tier-2">${Math.round(w.cloudMitigation * 100)}%</b></div>
+        ${w.grantsIRST ? '<div class="inspect-stat-item"><span>AIR-TO-AIR IRST:</span><b class="stat-tier-1">ACTIVE (28km Stealth Burn-Through)</b></div>' : ''}
+        ${w.grantsESM ? `<div class="inspect-stat-item"><span>SEAD ARM RANGE BOOST:</span><b class="stat-tier-1">+${Math.round((w.armRangeBoost - 1) * 100)}% ARM Reach</b></div>` : ''}
+      `;
+    } else if (w.isJammerPod) {
+      podOrWeaponStatsHtml = `
+        <div class="inspect-stat-item"><span>JAMMING UMBRELLA:</span><b class="stat-tier-1">${w.rangeKm} km</b></div>
+        <div class="inspect-stat-item"><span>RADAR SUPPRESSION:</span><b class="stat-tier-2">-${Math.round(w.jamEfficiency * 100)}% Detection Reach</b></div>
+      `;
+    } else if (w.isDecoy || w.isDecoyDrone) {
+      podOrWeaponStatsHtml = `
+        <div class="inspect-stat-item"><span>DEPLOYMENT REACH:</span><b class="stat-tier-1">${w.isDecoyDrone ? `${w.rangeKm} km Autonomous Profile` : 'Towed / Expendable Self-Defense'}</b></div>
+        <div class="inspect-stat-item"><span>DISPENSER CAPACITY:</span><b class="${rAmmo.colorClass}">${w.ammoCount} Charges</b></div>
+      `;
+    } else {
+      podOrWeaponStatsHtml = `
+        <div class="inspect-stat-item"><span>MAX ENGAGEMENT RANGE:</span><b class="${rRange.colorClass}">${w.rangeKm} km</b></div>
+        <div class="inspect-stat-item"><span>MIN ARMING DISTANCE:</span><b class="${rMin.colorClass}">${w.minRangeKm || 0.8} km</b></div>
+        <div class="inspect-stat-item"><span>CRUISE &amp; TERMINAL VELOCITY:</span><b class="${rSpd.colorClass}">Mach ${w.speedMach}</b></div>
+        <div class="inspect-stat-item"><span>WARHEAD DAMAGE:</span><b class="${rDmg.colorClass}">${w.damage} HP${w.isBunkerCracker ? ' (Bunker Penetrator)' : ''}${w.isAntiRunway ? ' (2x vs Runways)' : ''}</b></div>
+        <div class="inspect-stat-item"><span>MAGAZINE CAPACITY:</span><b class="${rAmmo.colorClass}">${w.ammoCount} Rounds</b></div>
+      `;
+    }
 
     return `
       <div class="inspect-type-banner">
         <span class="inspect-badge badge-cat-${category.toLowerCase()}">${category}</span>
-        <span class="inspect-cost-tag ${rCost.colorClass}">$${Number(w.cost || 0).toFixed(1)}M</span>
+        <span class="inspect-cost-tag ${rCost.colorClass}">$${w.cost.toFixed(1)}M</span>
       </div>
       ${SpecsModalRenderer.getLegendHtml()}
       <div class="inspect-sec-head">1. ENGAGEMENT BASKET &amp; KINEMATICS</div>
       <div class="inspect-stat-grid">
-        ${tgpSpecsHtml}
-        <div class="inspect-stat-item"><span>MOUNT MASS:</span><b class="${rMass.colorClass}">+${w.mass || 100} kg</b></div>
+        ${podOrWeaponStatsHtml}
+        <div class="inspect-stat-item"><span>MOUNT MASS:</span><b class="${rMass.colorClass}">+${w.mass} kg</b></div>
         ${w.isCluster ? `<div class="inspect-stat-item"><span>CLUSTER SPLASH RADIUS:</span><b class="stat-tier-1">${w.clusterRadiusKm} km (${w.clusterDamage} HP AOE)</b></div>` : ''}
       </div>
       <div class="inspect-sec-head">2. GUIDANCE, TRAITS &amp; DEFENSES</div>
@@ -101,35 +120,29 @@ class SpecsSubsystemViews {
 
   static renderGun(g) {
     if (!g) return '<div class="inspect-desc-box">NO GUN DATA AVAILABLE</div>';
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
-
-    const rRpm = rate('gun_rpm', g.rpm || 3000);
-    const rDps = rate('gun_dps', g.damagePerSec || 2.5);
-    const rMass = rate('ordnance_mass', g.mass || 100);
-    const coneDeg = g.coneAngleDeg || 45;
-    const roundsInBurst = g.roundsPerBurst || 4;
-    const perRoundDmg = (g.damagePerRound || ((g.damagePerBurst || 1.4) / roundsInBurst)).toFixed(2);
-    const totalBurstDmg = (g.damagePerBurst || 1.40).toFixed(2);
+    const rate = window.StatEvaluator.rate;
+    const rRpm = rate('gun_rpm', g.rpm);
+    const rDps = rate('gun_dps', g.damagePerSec);
+    const rMass = rate('ordnance_mass', g.mass);
 
     return `
       <div class="inspect-type-banner">
-        <span class="inspect-badge">${g.caliber || 'Direct Fire'}</span>
+        <span class="inspect-badge">${g.caliber}</span>
         <span class="inspect-cost-tag">BUILT-IN AUTOCANNON</span>
       </div>
       ${SpecsModalRenderer.getLegendHtml()}
       <div class="inspect-sec-head">1. BALLISTIC SPECIFICATIONS</div>
       <div class="inspect-stat-grid">
-        <div class="inspect-stat-item"><span>CYCLIC FIRE RATE:</span><b class="${rRpm.colorClass}">${g.rpm || 3000} RPM</b></div>
-        <div class="inspect-stat-item"><span>SUSTAINED BURST DPS:</span><b class="${rDps.colorClass}">${(g.damagePerSec || 2.5).toFixed(1)} HP/s</b></div>
-        <div class="inspect-stat-item"><span>BURST CONFIGURATION:</span><b style="color:#00f0ff;">${roundsInBurst} Rounds per Burst (${perRoundDmg} HP ea, ${totalBurstDmg} HP total)</b></div>
-        <div class="inspect-stat-item"><span>BURST RELOAD:</span><b style="color:#ffb830;">${(g.burstCooldown || 1.6).toFixed(1)}s Reload Cycle</b></div>
-        <div class="inspect-stat-item"><span>EFFECTIVE MERGE RANGE:</span><b>${g.rangeKm || 4.8} km (${coneDeg} deg Cone)</b></div>
-        <div class="inspect-stat-item"><span>AMMUNITION CAPACITY:</span><b class="stat-tier-1">${g.defaultAmmo || 500} Rounds</b></div>
-        <div class="inspect-stat-item"><span>MECHANISM WEIGHT:</span><b class="${rMass.colorClass}">+${g.mass || 100} kg</b></div>
+        <div class="inspect-stat-item"><span>CYCLIC FIRE RATE:</span><b class="${rRpm.colorClass}">${g.rpm} RPM</b></div>
+        <div class="inspect-stat-item"><span>SUSTAINED BURST DPS:</span><b class="${rDps.colorClass}">${g.damagePerSec.toFixed(1)} HP/s</b></div>
+        <div class="inspect-stat-item"><span>BURST CONFIGURATION:</span><b style="color:#00f0ff;">${g.roundsPerBurst} Rounds per Burst (${g.damagePerRound.toFixed(2)} HP ea, ${g.damagePerBurst.toFixed(2)} HP total)</b></div>
+        <div class="inspect-stat-item"><span>BURST RELOAD:</span><b style="color:#ffb830;">${g.burstCooldown.toFixed(1)}s Reload Cycle</b></div>
+        <div class="inspect-stat-item"><span>EFFECTIVE MERGE RANGE:</span><b>${g.rangeKm} km (${g.coneAngleDeg} deg Cone)</b></div>
+        <div class="inspect-stat-item"><span>AMMUNITION CAPACITY:</span><b class="stat-tier-1">${g.defaultAmmo} Rounds</b></div>
+        <div class="inspect-stat-item"><span>MECHANISM WEIGHT:</span><b class="${rMass.colorClass}">+${g.mass} kg</b></div>
       </div>
       <div class="inspect-sec-head">2. BALLISTIC OPERATION</div>
-      <div class="inspect-desc-box"><div style="color:#f8fafc;">${g.desc || ''}</div></div>
+      <div class="inspect-desc-box"><div style="color:#f8fafc;">${g.desc}</div></div>
       <div class="inspect-action-bar">
         <button type="button" class="inspect-action-btn select-btn" id="inspect-btn-equip-gun" onclick="if(window.Game&&window.Game.procurement){window.Game.procurement.equipItemDirectly({type:'gun',id:'${g.id}',name:'${g.name}'});const m=document.getElementById('system-inspect-modal');if(m)m.classList.remove('active');if(window.Game&&window.Game.controls)window.Game.controls.autoUnpauseOnDialogClose();}">EQUIP TO ACTIVE AIRCRAFT</button>
         <button type="button" class="inspect-action-btn close-btn" onclick="const m=document.getElementById('system-inspect-modal');if(m)m.classList.remove('active');if(window.Game&&window.Game.controls)window.Game.controls.autoUnpauseOnDialogClose();">CLOSE</button>
@@ -139,27 +152,26 @@ class SpecsSubsystemViews {
 
   static renderUpgrade(u) {
     if (!u) return '<div class="inspect-desc-box">NO UPGRADE DATA AVAILABLE</div>';
-    const rate = (window.StatEvaluator && typeof window.StatEvaluator.rate === 'function')
-      ? window.StatEvaluator.rate : () => ({ tier: 3, colorClass: 'stat-tier-3' });
-    const rCost = rate('cost_upgrade', u.cost || 1.0);
-    const rMass = rate('component_mass', u.mass || 50);
-    const allAirframes = Object.values(window.AIRCRAFT_CATALOG || {});
+    const rate = window.StatEvaluator.rate;
+    const rCost = rate('cost_upgrade', u.cost);
+    const rMass = rate('component_mass', u.mass);
+    const allAirframes = Object.values(window.AIRCRAFT_CATALOG);
     const compatible = !u.isAllowed ? allAirframes : allAirframes.filter(s => u.isAllowed(s));
 
     return `
       <div class="inspect-type-banner">
-        <span class="inspect-badge">${u.category || 'AVIONICS'}</span>
-        <span class="inspect-cost-tag ${rCost.colorClass}">$${Number(u.cost || 0).toFixed(1)}M</span>
+        <span class="inspect-badge">${u.category}</span>
+        <span class="inspect-cost-tag ${rCost.colorClass}">$${u.cost.toFixed(1)}M</span>
       </div>
       ${SpecsModalRenderer.getLegendHtml()}
       <div class="inspect-sec-head">1. SUBSYSTEM INTEGRATION &amp; WEIGHT IMPACT</div>
       <div class="inspect-stat-grid">
-        <div class="inspect-stat-item"><span>SUBSYSTEM DISCIPLINE:</span><b>${u.category || 'AVIONICS'} Enhancement Core</b></div>
-        <div class="inspect-stat-item"><span>COMPONENT MASS:</span><b class="${rMass.colorClass}">+${u.mass || 50} kg</b></div>
+        <div class="inspect-stat-item"><span>SUBSYSTEM DISCIPLINE:</span><b>${u.category} Enhancement Core</b></div>
+        <div class="inspect-stat-item"><span>COMPONENT MASS:</span><b class="${rMass.colorClass}">+${u.mass} kg</b></div>
         <div class="inspect-stat-item"><span>COMPATIBLE AIRFRAMES:</span><b style="color:#fef08a;font-size:0.62rem;">${compatible.length === allAirframes.length ? 'Universal (All Airframes)' : compatible.map(a => a.id).join(', ')}</b></div>
       </div>
       <div class="inspect-sec-head">2. FUNCTIONAL BENEFIT</div>
-      <div class="inspect-desc-box"><div style="color:#f8fafc;">${u.desc || ''}</div></div>
+      <div class="inspect-desc-box"><div style="color:#f8fafc;">${u.desc}</div></div>
       <div class="inspect-action-bar">
         <button type="button" class="inspect-action-btn select-btn" id="inspect-btn-sel-upg">SELECT TO EQUIP</button>
         <button type="button" class="inspect-action-btn close-btn" onclick="const m=document.getElementById('system-inspect-modal');if(m)m.classList.remove('active');if(window.Game&&window.Game.controls)window.Game.controls.autoUnpauseOnDialogClose();">CLOSE</button>

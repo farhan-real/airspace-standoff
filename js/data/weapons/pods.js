@@ -1,5 +1,5 @@
 /**
- * js/data/weapons/pods.js - Electronic Warfare (ECM) jamming pods and radar decoy dispensers.
+ * js/data/weapons/pods.js - Electronic Warfare (ECM) jamming pods, towed repeaters, and decoy dispensers.
  */
 
 window.WEAPONS_PODS = {
@@ -11,6 +11,14 @@ window.WEAPONS_PODS = {
     ammoCount: 2, sigmaPylon: 0.02, category: 'POD', podGroup: 'DECOY',
     desc: 'Air-launched decoy drones (2x, Mach 0.80) matching host radar profile. Mounts inside internal stealth bays or on external pylons.'
   },
+  'BRITECLOUD-POD': {
+    id: 'BRITECLOUD-POD', name: 'BriteCloud Active DRFM Decoy (4x)', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
+    mass: 165, cost: 0.8, rangeKm: 0.0, speedMach: 1.0, damage: 0, isDecoy: true,
+    trait: 'DRFM_ACTIVE_DECOY', traitBadge: '1-SLOT 4x DRFM DECOY',
+    behaviorDesc: 'Expendable active digital RF memory countermeasure dispenser (4x). Fits in 1 internal slot to seduce active radar seekers away from stealth and strike aircraft.',
+    ammoCount: 4, sigmaPylon: 0.02, category: 'POD', podGroup: 'DECOY',
+    desc: 'Compact 1-slot active DRFM decoy cartridge pod (4x charges) compatible with internal bays and light fighters.'
+  },
   'ALE-55': {
     id: 'ALE-55', name: 'AN/ALE-55 FOTD Pod (4x)', slots: 2, slotType: 'INTERNAL', minRating: 'Type M',
     mass: 380, cost: 0.8, rangeKm: 0.0, speedMach: 1.0, damage: 0, isDecoy: true,
@@ -19,6 +27,22 @@ window.WEAPONS_PODS = {
     ammoCount: 4, sigmaPylon: 0.04, category: 'POD', podGroup: 'DECOY',
     desc: 'Towed fiber-optic decoy system (4x charges). Can be housed inside internal bays or mounted on external pylons.'
   },
+  'AN-ALE-50': {
+    id: 'AN-ALE-50', name: 'AN/ALE-50 Towed Decoy (6x)', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
+    mass: 240, cost: 0.7, rangeKm: 0.0, speedMach: 1.0, damage: 0, isDecoy: true,
+    trait: 'TOWED_RF_REPEATER', traitBadge: '1-SLOT 6x REPEATER',
+    behaviorDesc: 'Tactical towed RF decoy reel (6x charges) occupying 1 external station. Draws radar-guided SAM and BVR locks away from F-16V, F-18E, and B-1B crews.',
+    ammoCount: 6, sigmaPylon: 0.05, category: 'POD', podGroup: 'DECOY',
+    desc: 'Compact 1-slot towed RF decoy dispenser (6x charges) protecting strike and multirole aircraft against ARH missiles.'
+  },
+  'BOL-CHAFF-RAIL': {
+    id: 'BOL-CHAFF-RAIL', name: 'BOL-518 Chaff & Flare Rail (8x)', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
+    mass: 150, cost: 0.6, rangeKm: 0.0, speedMach: 1.0, damage: 0, isDecoy: true,
+    trait: 'HIGH_CAPACITY_CM', traitBadge: '1-SLOT 8x CHAFF POD',
+    behaviorDesc: 'Wingtip missile-rail countermeasure dispenser (8x salvos). Extends defensive chaff endurance across sustained dogfights and multi-SAM corridors.',
+    ammoCount: 8, sigmaPylon: 0.03, category: 'POD', podGroup: 'DECOY',
+    desc: 'High-capacity 1-slot BOL wingtip countermeasure dispenser (8x charges) adding no drag penalty to light fighters.'
+  },
   'TALD-DECOY': {
     id: 'TALD-DECOY', name: 'ADM-141C ITALD Gliding Decoy (4x)', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
     mass: 720, cost: 0.9, rangeKm: 115.0, speedMach: 0.85, damage: 0, isDecoyDrone: true,
@@ -26,6 +50,14 @@ window.WEAPONS_PODS = {
     behaviorDesc: 'Powered tactical radar decoy gliders (4x, 115 km). Launched ahead of strike wings to bait S-400, Patriot, and Buk SAM batteries into wasting salvos and revealing positions.',
     ammoCount: 4, sigmaPylon: 0.09, category: 'POD', podGroup: 'DECOY',
     desc: 'Four-pack tactical gliding decoys (4x) engineered to saturate SAM defense belts during deep Attack sorties.'
+  },
+  'AN-ALQ-165': {
+    id: 'AN-ALQ-165', name: 'AN/ALQ-165 ASPJ Internal Jammer', slots: 1, slotType: 'INTERNAL', minRating: 'Type S',
+    mass: 210, cost: 0.9, rangeKm: 75.0, speedMach: 1.0, damage: 0, isJammerPod: true, jamEfficiency: 0.32,
+    trait: 'INTERNAL_DRFM_ECM', traitBadge: 'INTERNAL 32% ECM',
+    behaviorDesc: 'Conformal internal self-protection DRFM jammer pod (32% radar suppression across 75 km). Fits inside stealth bays with zero external RCS penalty.',
+    sigmaPylon: 0.03, category: 'POD', podGroup: 'ECM',
+    desc: 'Internal-bay compatible 1-slot DRFM jammer providing 32% electronic countermeasures without spoiling VLO stealth.'
   },
   'AN-ALQ-184': {
     id: 'AN-ALQ-184', name: 'AN/ALQ-184 Electronic Countermeasure Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
@@ -43,6 +75,14 @@ window.WEAPONS_PODS = {
     sigmaPylon: 0.08, category: 'POD', podGroup: 'ECM',
     desc: 'Modular 1-slot tactical strike jamming pod providing 35% radar suppression against ground SAM and interceptor tracks.'
   },
+  'KHIBINY-L175': {
+    id: 'KHIBINY-L175', name: 'L175V Khibiny Wingtip Jammer', slots: 1, slotType: 'EXTERNAL', minRating: 'Type M',
+    mass: 300, cost: 1.0, rangeKm: 85.0, speedMach: 1.0, damage: 0, isJammerPod: true, jamEfficiency: 0.38,
+    trait: 'WINGTIP_DRFM_ECM', traitBadge: '1-SLOT 38% KHIBINY ECM',
+    behaviorDesc: 'Wingtip-mounted digital RF deception jammer (38% radar suppression across 85 km). Built for Su-34, Su-30SM, Su-35S, and Su-24M2 strike penetrations.',
+    sigmaPylon: 0.07, category: 'POD', podGroup: 'ECM',
+    desc: 'Compact 1-slot wingtip electronic warfare container projecting 38% radar suppression across 85 km.'
+  },
   'SORBTSIYA-L005': {
     id: 'SORBTSIYA-L005', name: 'L005 Sorbtsiya Wingtip Jammer', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
     mass: 410, cost: 1.1, rangeKm: 90.0, speedMach: 1.0, damage: 0, isJammerPod: true, jamEfficiency: 0.42,
@@ -58,6 +98,14 @@ window.WEAPONS_PODS = {
     behaviorDesc: 'Emits broadband microwave noise that degrades incoming active radar locks and search arrays across 95 km (45% suppression).',
     sigmaPylon: 0.15, category: 'POD', podGroup: 'ECM',
     desc: 'Broadband radar jammer pod mounted on external pylons to degrade hostile radar detection.'
+  },
+  'SAP-14-POD': {
+    id: 'SAP-14-POD', name: 'SAP-14 Tarantul Escort Jammer', slots: 3, slotType: 'EXTERNAL', minRating: 'Type H',
+    mass: 940, cost: 1.9, rangeKm: 115.0, speedMach: 1.0, damage: 0, isJammerPod: true, jamEfficiency: 0.55,
+    trait: 'AREA_ESCORT_ECM', traitBadge: '115KM 55% ESCORT ECM',
+    behaviorDesc: 'Heavy centerline/wing escort jamming container projecting 55% radar suppression out to 115 km to blind enemy early-warning and S-400 belts.',
+    sigmaPylon: 0.20, category: 'POD', podGroup: 'ECM',
+    desc: 'Heavy standoff escort jammer pod providing wide-area 55% microwave radar suppression across 115 km.'
   },
   'AN-ALQ-249': {
     id: 'AN-ALQ-249', name: 'AN/ALQ-249 NGJ-MB AESA Pod', slots: 3, slotType: 'EXTERNAL', minRating: 'Type H',

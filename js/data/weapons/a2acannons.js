@@ -3,6 +3,17 @@
  */
 
 window.WEAPONS_A2A_CANNONS = {
+  'DEFA-554-POD': {
+    id: 'DEFA-554-POD', name: 'CC422 DEFA 30mm Gunpod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
+    mass: 390, cost: 0.5, rangeKm: 4.5, speedMach: 3.0, seeker: 'DIRECT_FIRE',
+    trait: 'EXTRA_GUN_BATTERY', traitBadge: '1-SLOT 30MM POD',
+    behaviorDesc: 'Lightweight 1-slot 30mm revolver cannon pod firing 3-round HEI bursts (1.65 HP total, 3.0 HP/s, 1.6s reload). Ideal for Mirage, Tejas, and light attackers.',
+    damage: 2, roundsPerBurst: 3, damagePerRound: 0.55, damagePerBurst: 1.65, damagePerSec: 3.0,
+    burstCooldown: 1.6, ammoCount: 18, ammoPerBurst: 3, isGunpod: true, sigmaPylon: 0.07,
+    category: 'GUN', gunGroup: 'A2A_POD', tracerColor: '#facc15',
+    allowedAirframes: ['Mirage-2000', 'Mirage-2000D', 'Rafale-C', 'Tejas-MK2', 'A-29B', 'Tornado-GR4', 'Tornado-ECR', 'JAS-39E', 'F-16V', 'F-18E'],
+    desc: 'Compact 1-slot 30mm revolver gunpod (18 rounds, 6 bursts) certified for delta fighters and light CAS platforms.'
+  },
   'SUU-23A': {
     id: 'SUU-23A', name: 'SUU-23/A 20mm Vulcan Gunpod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
     mass: 780, cost: 0.6, rangeKm: 4.8, speedMach: 3.2, seeker: 'DIRECT_FIRE',
@@ -31,6 +42,17 @@ window.WEAPONS_A2A_CANNONS = {
       'J-16D', 'J-15D', 'JH-7A', 'MiG-29K', 'Tejas-MK2', 'Su-47', 'Su-37', 'Su-37-COFFIN', 'S-70', 'FC-31', 'J-35'
     ],
     desc: 'Twin 23mm autocannon pod (16 rounds, 4 bursts) certified for external hardpoints on Eastern strike fighters and Flankers.'
+  },
+  'GSH-6-23-POD': {
+    id: 'GSH-6-23-POD', name: 'SPPU-6 Six-Barrel 23mm Pod', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',
+    mass: 840, cost: 0.8, rangeKm: 4.8, speedMach: 3.3, seeker: 'DIRECT_FIRE',
+    trait: 'EXTRA_GUN_BATTERY', traitBadge: '9000 RPM ROTARY POD',
+    behaviorDesc: 'Six-barrel 23mm rotary cannon pod firing 5-round high-cyclic bursts (1.90 HP total, 3.6 HP/s, 1.7s reload) for Flankers and Fencers.',
+    damage: 2, roundsPerBurst: 5, damagePerRound: 0.38, damagePerBurst: 1.90, damagePerSec: 3.6,
+    burstCooldown: 1.7, ammoCount: 25, ammoPerBurst: 5, isGunpod: true, sigmaPylon: 0.13,
+    category: 'GUN', gunGroup: 'A2A_POD', tracerColor: '#f97316',
+    allowedAirframes: ['Su-24M2', 'Su-24MP', 'Su-25SM3', 'Su-34', 'Su-35S', 'Su-30SM', 'MiG-31BM', 'J-16', 'J-15D', 'JH-7A'],
+    desc: 'High-rate 6-barrel 23mm Gatling pod (25 rounds, 5 bursts) devastating close dogfighters and soft ground targets.'
   },
   'GPU-5A': {
     id: 'GPU-5A', name: 'GPU-5/A 30mm Heavy Gunpod', slots: 2, slotType: 'EXTERNAL', minRating: 'Type M',

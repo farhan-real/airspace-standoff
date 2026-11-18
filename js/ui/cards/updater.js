@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Pylon Card Real-time Status & Live Pk Updater
+ * js/ui/cards/updater.js - Real-time pylon status, Pk bar, and sensor pod indicator updater.
  */
 
 class PylonCardUpdater {
@@ -7,13 +7,13 @@ class PylonCardUpdater {
     const curGame = pylonBay.currentGame;
     const clouds = (curGame && curGame.simulation && curGame.simulation.weatherClouds) || [];
     const cards = targetContainer.querySelectorAll('.pylon-item-card, .mob-compact-pylon');
-    const tokenCost = (window.CONFIG && window.CONFIG.TOKEN_ACTION_COST) || 0.70;
-    const curTokens = (curGame && typeof curGame.getCurrentCommanderTokenBucket === 'function') ? curGame.getCurrentCommanderTokenBucket() : 8.0;
+    const tokenCost = window.CONFIG.TOKEN_ACTION_COST;
+    const curTokens = curGame ? curGame.getCurrentCommanderTokenBucket() : 8.0;
 
     cards.forEach(cardEl => {
       const idx = parseInt(cardEl.dataset.pylonIdx || cardEl.getAttribute('data-pylon-idx'), 10);
       if (isNaN(idx)) return;
-      const item = (activeUnit.equippedWeapons && activeUnit.equippedWeapons[idx]) || null;
+      const item = activeUnit.equippedWeapons[idx];
       if (!item || !item.weapon) return;
       const w = item.weapon;
 
@@ -27,7 +27,7 @@ class PylonCardUpdater {
       const pkFill = cardEl.querySelector('.pk-progress-fill');
       const fireBtn = cardEl.querySelector('.btn-fire-pylon');
 
-      const pkResult = (typeof Physics !== 'undefined' && Physics.calcPk) ? Physics.calcPk(w, activeUnit, validTarget, clouds) : { pk: 0, label: 'STANDBY', color: '#64748b', hasMixedSeekers: false };
+      const pkResult = Physics.calcPk(w, activeUnit, validTarget, clouds);
       const currentPk = (typeof pkResult.pk === 'number' && !isNaN(pkResult.pk)) ? pkResult.pk : 0;
 
       if (pkTag) {
@@ -38,8 +38,16 @@ class PylonCardUpdater {
           expectedTag = isMobile ? '[ECM]' : 'ACTIVE: [ECM]';
           expectedColor = '#00f0ff';
         } else if (w.isTargetingPod) {
-          expectedTag = isMobile ? '[TGP]' : `ACTIVE: [TGP +${Math.round((w.a2gPkBonus || 0.18) * 100)}%]`;
-          expectedColor = '#00f5a0';
+          if (w.grantsESM) {
+            expectedTag = isMobile ? '[ESM]' : 'ACTIVE: [ESM / ELINT]';
+            expectedColor = '#fbbf24';
+          } else if (w.grantsIRST && w.a2gPkBonus <= 0) {
+            expectedTag = isMobile ? '[IRST]' : 'ACTIVE: [PASSIVE IRST]';
+            expectedColor = '#00f0ff';
+          } else {
+            expectedTag = isMobile ? '[TGP]' : `ACTIVE: [TGP +${Math.round(w.a2gPkBonus * 100)}%]`;
+            expectedColor = '#00f5a0';
+          }
         } else if (w.isDecoy || w.isDecoyDrone) {
           expectedTag = isMobile ? '[DECOY]' : 'DEFENSE: [DECOY]';
           expectedColor = '#c084fc';
@@ -50,7 +58,7 @@ class PylonCardUpdater {
           expectedTag = isMobile ? '[DEW]' : 'DIRECT: [DEW]';
           expectedColor = '#00f0ff';
         } else {
-          const seeker = w.seeker || 'GUIDED';
+          const seeker = w.seeker;
           const mixedTag = pkResult.hasMixedSeekers ? ' [MIXED +25%]' : '';
           expectedTag = isMobile ? `[${seeker}]${mixedTag}` : `HOMING: [${seeker}]${mixedTag}`;
           const seekerColors = {
@@ -66,14 +74,17 @@ class PylonCardUpdater {
       }
 
       if (w.isJammerPod) {
-        if (pkFill) pkFill.style.width = `${Math.round((w.jamEfficiency || 0.45) * 100)}%`;
+        if (pkFill) pkFill.style.width = `${Math.round(w.jamEfficiency * 100)}%`;
         if (fireBtn && !fireBtn.disabled) { fireBtn.disabled = true; fireBtn.textContent = 'ECM ACTIVE'; }
         return;
       }
 
       if (w.isTargetingPod) {
-        if (pkFill) { pkFill.style.width = '100%'; pkFill.style.background = '#00f5a0'; }
-        if (fireBtn && !fireBtn.disabled) { fireBtn.disabled = true; fireBtn.textContent = `TGP RECON (${w.spotRangeKm || 40}km)`; }
+        if (pkFill) { pkFill.style.width = '100%'; pkFill.style.background = w.grantsESM ? '#fbbf24' : '#00f5a0'; }
+        if (fireBtn && !fireBtn.disabled) {
+          fireBtn.disabled = true;
+          fireBtn.textContent = w.grantsESM ? `ESM ACTIVE (${w.spotRangeKm}km)` : (w.grantsIRST && w.a2gPkBonus <= 0 ? 'IRST TRACK ACTIVE' : `TGP RECON (${w.spotRangeKm}km)`);
+        }
         return;
       }
 
@@ -120,7 +131,7 @@ class PylonCardUpdater {
         if (pkFill) pkFill.style.width = '100%';
         if (fireBtn) {
           fireBtn.disabled = !hasTokens;
-          const podText = hasTokens ? `POD BURST (${w.damagePerBurst || 1.4} HP)` : 'NEED TOK';
+          const podText = hasTokens ? `POD BURST (${w.damagePerBurst} HP)` : 'NEED TOK';
           if (fireBtn.textContent !== podText) fireBtn.textContent = podText;
           fireBtn.style.color = '#ffffff';
           fireBtn.style.borderColor = 'var(--theme-primary)';
@@ -144,8 +155,7 @@ class PylonCardUpdater {
         pkFill.style.background = pkResult.color || '#00f0ff';
       }
 
-      let canFire = false;
-      try { canFire = (curGame && typeof curGame.canFirePylon === 'function') ? curGame.canFirePylon(activeUnit, item, validTarget) : false; } catch (err) { canFire = false; }
+      const canFire = curGame ? curGame.canFirePylon(activeUnit, item, validTarget) : false;
 
       if (fireBtn) {
         fireBtn.disabled = !canFire;
@@ -155,7 +165,7 @@ class PylonCardUpdater {
 
         const isKnown = Boolean(
           validTarget.type ||
-          (typeof validTarget.isIdentifiedBy === 'function' ? validTarget.isIdentifiedBy(curGame.currentPvpCommander || 'friendly') : validTarget.isIdentified)
+          (typeof validTarget.isIdentifiedBy === 'function' ? validTarget.isIdentifiedBy(curGame.currentPvpCommander) : validTarget.isIdentified)
         );
 
         if (['AIR ONLY', 'GROUND ONLY', 'IMMUNE', 'TOO CLOSE', 'OUT OF RANGE', 'OFF BORESIGHT'].includes(pkResult.label)) {
