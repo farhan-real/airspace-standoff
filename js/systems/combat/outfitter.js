@@ -20,9 +20,9 @@ class FleetOutfitter {
 
     const isEW = (spec.category === 'EW' || spec.isEW), isStrike = (spec.category === 'STRIKE');
     const isDrone = (spec.category === 'DRONES' || spec.isDrone), isStealth = (spec.internalSlots > 0 && spec.category === 'STEALTH');
-    const isHeavyTruck = ['F-15EX', 'F-15E', 'F-16XL', 'MiG-31BM', 'J-16', 'Su-34', 'A-10C', 'Su-39', 'MiG-27K', 'A-16', 'B-1B', 'B-52H', 'Tu-160M', 'F-111F'].includes(spec.id);
-    const isAgileDogfighter = ['Rafale-C', 'Eurofighter', 'Su-35S', 'Mirage-2000', 'Mirage-2000D', 'F-16V', 'A-16', 'F-16XL', 'AV-8B-PLUS', 'JAS-39E', 'Tejas-MK2', 'Su-47', 'X-29A', 'Su-37'].includes(spec.id);
-    const isHighSpeed = (spec.S_0 >= 1.25 || ['MiG-31BM', 'DARKSTAR', 'F-15EX', 'F-15E', 'F-16XL', 'MiG-27K', 'A-16', 'YF-23', 'F-14D', 'Tu-160M'].includes(spec.id));
+    const isHeavyTruck = ['F-15EX', 'F-15E', 'F-15J-JSI', 'F-16XL', 'MiG-31BM', 'J-16', 'J-11BG', 'J-15T', 'J-36', 'Mirage-4000', 'Su-34', 'A-10C', 'Su-39', 'MiG-27K', 'A-16', 'B-1B', 'B-52H', 'Tu-160M', 'F-111F'].includes(spec.id);
+    const isAgileDogfighter = ['Rafale-C', 'Rafale-M', 'Eurofighter', 'TYPHOON-T4', 'Su-35S', 'Su-27SM3', 'Su-30MKI', 'MiG-35S', 'J-10C', 'Mirage-2000', 'Mirage-2000D', 'F-16V', 'F-16C-B52', 'A-16', 'F-16XL', 'AV-8B-PLUS', 'JAS-39E', 'JAS-39C', 'Tejas-MK2', 'Tejas-MK1A', 'JF-17-B3', 'FA-50-B20', 'F-5E-TIGER', 'Su-47', 'X-29A', 'Su-37'].includes(spec.id);
+    const isHighSpeed = (spec.S_0 >= 1.25 || ['MiG-31BM', 'MiG-25PD', 'DARKSTAR', 'F-15EX', 'F-15E', 'F-15C', 'F-15J-JSI', 'F-16XL', 'MiG-27K', 'A-16', 'YF-23', 'F-22-SUPER', 'J-20B', 'J-36', 'TEMPEST', 'F-14D', 'F-14B', 'Tu-160M'].includes(spec.id));
 
     const ratings = ['Type S', 'Type M', 'Type H', 'Type X'];
     const specRatingIndex = ratings.indexOf(spec.maxPylonRating);
@@ -90,7 +90,7 @@ class FleetOutfitter {
     }
 
     let enforceCleanStealth = false;
-    if (isStealth && spec.id !== 'J-20') {
+    if (isStealth && spec.id !== 'J-20' && spec.id !== 'J-20B' && spec.id !== 'J-20S') {
       const cleanChances = { CADET: 0.0, BUFFER: 0.0, VETERAN: 0.0, ESCALATED: 0.18, ELITE: 0.35, FORWARD: 0.40, ACE: 0.45, FORTIFIED: 0.50, MASTER: 0.55, LEGEND: 0.60 };
       const cleanBoost = (docProfile.preferWeapons === 'INTERNAL_STEALTH') ? 0.35 : 0.0;
       enforceCleanStealth = rng.boolean(Math.min(0.95, cleanChances[diff] + cleanBoost));

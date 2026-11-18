@@ -10,8 +10,10 @@ window.AUTOCANNONS_ENERGY = {
     tracerColor: '#38bdf8', badge: '34 DEG PULSE LASER', defaultAmmo: 18,
     groundDamageMult: 1.0, armorPiercing: 0.40,
     lockedTo: [
-      'MQ-99', 'MQ-101', 'F-22A', 'FB-22', 'YF-23', 'F-35A', 'Su-57', 'J-20', 'Su-75',
-      'FC-31', 'J-35', 'B-21', 'F-15EX', 'F-22C-COFFIN', 'ADF-11F', 'ADFX-01', 'CFA-44',
+      'MQ-99', 'MQ-101', 'F-22A', 'F-22-SUPER', 'FB-22', 'YF-23', 'F-35A', 'F-35B', 'F-35C',
+      'Su-57', 'J-20', 'J-20B', 'J-20S', 'Su-75', 'FC-31', 'J-35', 'KAAN', 'KF-21EX', 'AMCA-MK1',
+      'TEMPEST', 'FCAS-NGF', 'J-36', 'J-50', 'TYPHOON-T4', 'F-15J-JSI',
+      'B-21', 'F-15EX', 'F-22C-COFFIN', 'ADF-11F', 'ADFX-01', 'CFA-44',
       'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B', 'EA-36'
     ],
     kineticConcussion: 0.0, thermalBloom: 1.4, cloudScattering: 0.70,
@@ -23,7 +25,7 @@ window.AUTOCANNONS_ENERGY = {
     damagePerBurst: 1.50, burstCooldown: 2.0, ammoPerBurst: 3, coneAngleDeg: 30, mass: 135,
     tracerColor: '#00f0ff', badge: '30 DEG MEDIUM LASER', defaultAmmo: 15,
     groundDamageMult: 1.0, armorPiercing: 0.50,
-    lockedTo: ['MQ-99', 'MQ-101', 'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B'],
+    lockedTo: ['MQ-99', 'MQ-101', 'TEMPEST', 'FCAS-NGF', 'J-36', 'J-50', 'ADF-11F', 'ADFX-01', 'CFA-44', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B'],
     kineticConcussion: 0.0, thermalBloom: 1.5, cloudScattering: 0.75,
     desc: 'Medium-tier optical pulse emitter firing 3-pulse bursts (1.50 HP total, 2.0s reload). 15 pulses allow 5 focused bursts. Narrow 30-degree beam requires close boresight tracking; scattered by cloud moisture.'
   },
@@ -44,7 +46,8 @@ window.AUTOCANNONS_ENERGY = {
     tracerColor: '#00f0ff', badge: '28 DEG PENCIL BEAM', defaultAmmo: 15,
     groundDamageMult: 1.0, armorPiercing: 0.50,
     lockedTo: [
-      'F-22A', 'Su-57', 'X-02S', 'B-21', 'J-20', 'F-15EX', 'FC-31', 'YF-23', 'ADF-11F',
+      'F-22A', 'F-22-SUPER', 'TEMPEST', 'FCAS-NGF', 'J-36', 'J-50',
+      'Su-57', 'X-02S', 'B-21', 'J-20', 'F-15EX', 'FC-31', 'YF-23', 'ADF-11F',
       'ADFX-01', 'DARKSTAR', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'CFA-44', 'X-40', 'XFA-36B', 'EA-36'
     ],
     kineticConcussion: 0.0, thermalBloom: 1.6, cloudScattering: 0.75,

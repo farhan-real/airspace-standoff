@@ -61,8 +61,8 @@ window.WEAPONS_A2A_ULR = {
     damage: 5, ammoCount: 2, minRangeKm: 11.0, sweetSpotMin: 28.0, sweetSpotMax: 115.0,
     lambda: 0.22, p: 1.4, T_0: 0.78, heavyTargetBonus: true, sigmaPylon: 0.22,
     category: 'A2A', a2aGroup: 'ULR_BVR',
-    allowedAirframes: ['F-18E', 'F-15EX', 'F-15E', 'F-14D', 'EA-18G', 'F-15-SMTD', 'F-15-SMT-COFFIN'],
-    desc: 'Heavy fleet-defense ultra-long-range missile (2x, 132 km) certified for heavy Super Hornets and Eagles.'
+    allowedAirframes: ['F-18E', 'F-18F', 'F-18C-PLUS', 'F-15EX', 'F-15E', 'F-15C', 'F-15J-JSI', 'F-14D', 'F-14B', 'EA-18G', 'F-15-SMTD', 'F-15-SMT-COFFIN'],
+    desc: 'Heavy fleet-defense ultra-long-range missile (2x, 132 km) certified for heavy Hornets, Tomcats, and Eagles.'
   },
   'PL-17': {
     id: 'PL-17', name: 'PL-17 Very-Long-Range (2x)', slots: 3, slotType: 'EXTERNAL', minRating: 'Type H',
@@ -72,7 +72,7 @@ window.WEAPONS_A2A_ULR = {
     damage: 5, ammoCount: 2, minRangeKm: 12.0, sweetSpotMin: 30.0, sweetSpotMax: 120.0,
     lambda: 0.16, p: 1.6, T_0: 0.79, heavyTargetBonus: true, antiNotchBonus: 0.25, sigmaPylon: 0.18,
     category: 'A2A', a2aGroup: 'ULR_BVR',
-    allowedAirframes: ['J-16', 'J-16D', 'J-15D', 'J-20', 'Su-35S', 'Su-30SM', 'Su-34'],
+    allowedAirframes: ['J-16', 'J-16D', 'J-15D', 'J-15T', 'J-11BG', 'J-20', 'J-20B', 'J-20S', 'Su-35S', 'Su-30SM', 'Su-30MKI', 'Su-27SM3', 'Su-34'],
     desc: 'Very-long-range dual-pulse AESA interceptor (2x, 135 km) deployed by heavy Flankers and J-20s.'
   },
   'KS-172': {
@@ -83,7 +83,7 @@ window.WEAPONS_A2A_ULR = {
     damage: 5, ammoCount: 2, minRangeKm: 14.0, sweetSpotMin: 30.0, sweetSpotMax: 122.0,
     lambda: 0.24, p: 1.3, T_0: 0.74, heavyTargetBonus: true, sigmaPylon: 0.24,
     category: 'A2A', a2aGroup: 'ULR_BVR',
-    allowedAirframes: ['MiG-31BM', 'Su-35S', 'Su-30SM', 'Su-37', 'Su-34', 'J-16'],
+    allowedAirframes: ['MiG-31BM', 'MiG-25PD', 'Su-35S', 'Su-30SM', 'Su-30MKI', 'Su-27SM3', 'Su-37', 'Su-34', 'J-16'],
     desc: 'Ultra-long-range heavy interceptor missile (2x, 140 km) carried on heavy Flanker and Foxhound stations.'
   },
   'MPBM': {

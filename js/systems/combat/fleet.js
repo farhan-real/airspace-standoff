@@ -59,8 +59,8 @@ const FleetGenerator = {
     }
 
     const aceCandidates = (['CADET', 'BUFFER', 'VETERAN', 'ESCALATED', 'ELITE', 'FORWARD'].includes(diff))
-      ? ['Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'F-15EX', 'Su-30SM', 'F-14D', 'Su-57', 'YF-23', 'J-20']
-      : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B', 'F-22C-COFFIN', 'Su-57', 'YF-23', 'F-22A', 'F-15EX'];
+      ? ['Su-35S', 'Su-37', 'Eurofighter', 'TYPHOON-T4', 'Rafale-C', 'Rafale-M', 'F-15EX', 'F-15J-JSI', 'Su-30SM', 'Su-30MKI', 'F-14D', 'Su-57', 'YF-23', 'J-20', 'J-20B']
+      : ['ADF-11F', 'CFA-44', 'ADFX-01', 'X-02S', 'DARKSTAR', 'X-40', 'XFA-36B', 'F-22C-COFFIN', 'TEMPEST', 'FCAS-NGF', 'J-36', 'J-50', 'F-22-SUPER', 'Su-57', 'YF-23', 'F-22A', 'F-15EX'];
     const aceCallsigns = rng.shuffle([...(isBlue ? ['Alpha Lead', 'Saber Lead', 'Ghost Lead', 'Viper Ace', 'Archangel'] : ['Yellow 13', 'Pixy', 'Mihaly', 'Gault', 'Strigon', 'Wizard', 'Schwarze', 'Espada'])]);
     const shuffledAces = rng.shuffle([...aceCandidates]);
 
@@ -105,12 +105,12 @@ const FleetGenerator = {
       }
     }
 
-    const flagshipPool = ['ADF-11F', 'CFA-44', 'X-02S', 'ADFX-01', 'DARKSTAR', 'X-40', 'XFA-36B'];
-    const highTierPool = ['Su-57', 'F-22A', 'YF-23', 'J-20', 'F-15EX', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'Su-47', 'F-15-SMTD', 'F-35A', 'Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'MiG-31BM', 'Su-30SM', 'B-1B', 'Su-34', 'F-16XL'];
-    const midTierPool = ['F-15EX', 'Eurofighter', 'Rafale-C', 'Su-35S', 'KF-21', 'F-18E', 'F-2A', 'J-16', 'Su-30SM', 'MiG-31BM', 'JAS-39E', 'Su-34', 'A-10C', 'Su-25SM3', 'Su-39', 'MiG-27K', 'A-16', 'F-16XL', 'S-70', 'Su-75', 'FC-31', 'J-35'];
-    const lowTierPool = ['F-15EX', 'F-16V', 'Mirage-2000', 'Tejas-MK2', 'MiG-29K', 'X-29A', 'Tornado-ECR', 'A-10C', 'Su-25SM3', 'AV-8B-PLUS', 'JAGUAR-GR3'];
+    const flagshipPool = ['ADF-11F', 'CFA-44', 'X-02S', 'ADFX-01', 'DARKSTAR', 'X-40', 'XFA-36B', 'TEMPEST', 'FCAS-NGF', 'J-36', 'J-50', 'F-22-SUPER'];
+    const highTierPool = ['Su-57', 'F-22A', 'YF-23', 'J-20', 'J-20B', 'J-20S', 'F-15EX', 'F-15J-JSI', 'F-15C', 'TYPHOON-T4', 'Rafale-M', 'F-35B', 'F-35C', 'KAAN', 'KF-21EX', 'AMCA-MK1', 'F-22C-COFFIN', 'Su-37-COFFIN', 'F-15-SMT-COFFIN', 'Su-47', 'F-15-SMTD', 'F-35A', 'Su-35S', 'Su-37', 'Eurofighter', 'Rafale-C', 'MiG-31BM', 'Su-30SM', 'Su-30MKI', 'B-1B', 'Su-34', 'F-16XL'];
+    const midTierPool = ['F-15EX', 'F-15C', 'Eurofighter', 'Rafale-C', 'Su-35S', 'Su-27SM3', 'J-11BG', 'J-15T', 'MiG-35S', 'Mirage-4000', 'KF-21', 'F-18E', 'F-18F', 'F-2A', 'J-16', 'J-10C', 'Su-30SM', 'MiG-31BM', 'JAS-39E', 'Su-34', 'A-10C', 'Su-25SM3', 'Su-39', 'MiG-27K', 'A-16', 'F-16XL', 'S-70', 'Su-75', 'FC-31', 'J-35'];
+    const lowTierPool = ['F-15EX', 'F-16V', 'F-16C-B52', 'F-18C-PLUS', 'Mirage-2000', 'Mirage-F1EQ', 'Tejas-MK2', 'Tejas-MK1A', 'JF-17-B3', 'FA-50-B20', 'JAS-39C', 'F-5E-TIGER', 'F-4E-2020', 'F-14B', 'MiG-25PD', 'MiG-29K', 'MiG-29SMT', 'X-29A', 'Tornado-ECR', 'A-10C', 'Su-25SM3', 'AV-8B-PLUS', 'JAGUAR-GR3'];
     const dronePool = ['MQ-99', 'MQ-101', 'XQ-58A', 'Kizilelma', 'MQ-28', 'RQ-180', 'S-70'];
-    const stealthPool = ['F-22A', 'YF-23', 'F-35A', 'Su-57', 'J-20', 'Su-75', 'FC-31', 'J-35', 'S-70'];
+    const stealthPool = ['F-22A', 'F-22-SUPER', 'YF-23', 'F-35A', 'F-35B', 'F-35C', 'Su-57', 'J-20', 'J-20B', 'J-20S', 'KAAN', 'KF-21EX', 'AMCA-MK1', 'TEMPEST', 'FCAS-NGF', 'J-36', 'J-50', 'Su-75', 'FC-31', 'J-35', 'S-70'];
 
     while (fleetItems.length < maxSquadronSize) {
       const roll = rng.next();
@@ -119,7 +119,7 @@ const FleetGenerator = {
       if (docProfile.droneWeightBoost > 0 && rng.boolean(docProfile.droneWeightBoost)) {
         candidatePool = ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff) ? ['MQ-101', 'XQ-58A', 'Kizilelma', 'S-70', 'RQ-180'] : dronePool;
       } else if (docProfile.stealthWeightBoost > 0 && rng.boolean(docProfile.stealthWeightBoost)) {
-        candidatePool = (diff === 'CADET' || diff === 'BUFFER') ? ['Su-75', 'FC-31', 'J-35', 'F-35A'] : stealthPool;
+        candidatePool = (diff === 'CADET' || diff === 'BUFFER') ? ['Su-75', 'FC-31', 'J-35', 'F-35A', 'AMCA-MK1', 'KF-21EX'] : stealthPool;
       } else if (diff === 'CADET') candidatePool = (roll < 0.20) ? highTierPool : ((roll < 0.65) ? midTierPool : lowTierPool);
       else if (diff === 'BUFFER') candidatePool = (roll < 0.32) ? highTierPool : ((roll < 0.74) ? midTierPool : lowTierPool);
       else if (diff === 'VETERAN') candidatePool = (roll < 0.45) ? highTierPool : ((roll < 0.80) ? midTierPool : ((roll < 0.90) ? flagshipPool : lowTierPool));

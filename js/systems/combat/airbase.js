@@ -4,18 +4,23 @@
 
 class AirbaseSystem {
   static TAKEOFF_SEGMENTS = {
-    'MQ-99': 1, 'MQ-101': 1, 'XQ-58A': 1, 'MQ-28': 1, 'RQ-180': 1, 'A-29B': 1, 'AKINCI': 1, 'AV-8B-PLUS': 1,
-    'JAS-39E': 2, 'F-16V': 2, 'Mirage-2000': 2, 'Mirage-2000D': 2, 'Tejas-MK2': 2, 'MiG-29K': 2,
-    'F-18E': 2, 'F-2A': 2, 'Rafale-C': 2, 'A-10C': 2, 'Su-25SM3': 2, 'Su-39': 2, 'MiG-27K': 2,
-    'A-16': 2, 'JAGUAR-GR3': 2, 'F-16XL': 2, 'MQ-20': 2, 'Kizilelma': 2, 'X-29A': 2, 'F-35A': 2,
-    'Eurofighter': 3, 'KF-21': 3, 'Su-30SM': 3, 'Su-35S': 3, 'Su-37': 3, 'Su-47': 3,
-    'F-15EX': 3, 'F-15E': 3, 'F-15-SMTD': 3, 'F-14D': 3, 'J-16': 3, 'J-16D': 3, 'J-15D': 3,
+    'MQ-99': 1, 'MQ-101': 1, 'XQ-58A': 1, 'MQ-28': 1, 'RQ-180': 1, 'A-29B': 1, 'AKINCI': 1, 'AV-8B-PLUS': 1, 'F-35B': 1,
+    'JAS-39E': 2, 'JAS-39C': 2, 'F-16V': 2, 'F-16C-B52': 2, 'Mirage-2000': 2, 'Mirage-2000D': 2, 'Mirage-F1EQ': 2,
+    'Tejas-MK2': 2, 'Tejas-MK1A': 2, 'JF-17-B3': 2, 'FA-50-B20': 2, 'F-5E-TIGER': 2,
+    'MiG-29K': 2, 'MiG-29SMT': 2, 'MiG-35S': 2, 'F-18E': 2, 'F-18C-PLUS': 2, 'F-18F': 2, 'F-2A': 2,
+    'Rafale-C': 2, 'Rafale-M': 2, 'J-10C': 2, 'A-10C': 2, 'Su-25SM3': 2, 'Su-39': 2, 'MiG-27K': 2,
+    'A-16': 2, 'JAGUAR-GR3': 2, 'F-16XL': 2, 'MQ-20': 2, 'Kizilelma': 2, 'X-29A': 2, 'F-35A': 2, 'F-35C': 2,
+    'Eurofighter': 3, 'TYPHOON-T4': 3, 'KF-21': 3, 'KF-21EX': 3, 'KAAN': 3, 'AMCA-MK1': 3,
+    'Su-27SM3': 3, 'Su-30SM': 3, 'Su-30MKI': 3, 'Su-35S': 3, 'Su-37': 3, 'Su-47': 3,
+    'F-15EX': 3, 'F-15E': 3, 'F-15C': 3, 'F-15J-JSI': 3, 'F-15-SMTD': 3, 'F-14D': 3, 'F-14B': 3, 'F-4E-2020': 3,
+    'J-16': 3, 'J-16D': 3, 'J-15D': 3, 'J-15T': 3, 'J-11BG': 3, 'Mirage-4000': 3,
     'EA-18G': 3, 'Tornado-ECR': 3, 'Tornado-GR4': 3, 'EF-111A': 3, 'Su-24M2': 3, 'Su-24MP': 3,
-    'JH-7A': 3, 'F-111F': 3, 'F-117A': 3, 'F-22A': 3, 'FB-22': 3, 'Su-57': 3, 'J-20': 3,
-    'Su-75': 3, 'FC-31': 3, 'J-35': 3, 'X-02S': 3, 'ADFX-01': 3, 'CFA-44': 3, 'S-70': 3,
+    'JH-7A': 3, 'F-111F': 3, 'F-117A': 3, 'F-22A': 3, 'F-22-SUPER': 3, 'FB-22': 3,
+    'Su-57': 3, 'J-20': 3, 'J-20B': 3, 'J-20S': 3, 'Su-75': 3, 'FC-31': 3, 'J-35': 3,
+    'TEMPEST': 3, 'FCAS-NGF': 3, 'J-50': 3, 'X-02S': 3, 'ADFX-01': 3, 'CFA-44': 3, 'S-70': 3,
     'XFA-36B': 3, 'EA-36': 3, 'X-40': 3, 'ADF-11F': 3, 'YF-23': 3,
     'F-22C-COFFIN': 3, 'Su-37-COFFIN': 3, 'F-15-SMT-COFFIN': 3,
-    'MiG-31BM': 4, 'DARKSTAR': 4, 'B-1B': 4, 'B-52H': 4, 'Tu-160M': 4, 'B-2A': 4, 'B-21': 4, 'Su-34': 4
+    'MiG-31BM': 4, 'MiG-25PD': 4, 'J-36': 4, 'DARKSTAR': 4, 'B-1B': 4, 'B-52H': 4, 'Tu-160M': 4, 'B-2A': 4, 'B-21': 4, 'Su-34': 4
   };
 
   static getTakeoffSegments(specId) {
@@ -25,16 +30,16 @@ class AirbaseSystem {
 
   static getAirbaseRosterPool(qraDiff) {
     const pools = {
-      CADET: ['F-16V', 'MiG-29K', 'Mirage-2000'],
-      BUFFER: ['MiG-29K', 'Mirage-2000', 'F-16V', 'Su-30SM'],
-      VETERAN: ['JAS-39E', 'F-16V', 'Su-30SM', 'Eurofighter'],
-      ESCALATED: ['F-16V', 'MiG-29K', 'Su-30SM', 'Eurofighter', 'Su-35S'],
-      ELITE: ['JAS-39E', 'Su-35S', 'Eurofighter', 'Rafale-C', 'MiG-31BM'],
-      FORWARD: ['Rafale-C', 'Su-35S', 'J-16', 'MiG-31BM', 'F-15EX'],
-      ACE: ['MiG-29K', 'Su-35S', 'Su-57', 'MiG-31BM', 'MQ-101'],
-      FORTIFIED: ['JAS-39E', 'Su-57', 'J-20', 'F-15EX', 'MiG-31BM', 'MQ-101'],
-      MASTER: ['Rafale-C', 'Su-57', 'F-22A', 'J-20', 'MiG-31BM', 'MQ-101'],
-      LEGEND: ['F-35A', 'Su-57', 'F-22A', 'X-02S', 'MiG-31BM', 'MQ-101']
+      CADET: ['F-16V', 'MiG-29K', 'Mirage-2000', 'F-5E-TIGER', 'Mirage-F1EQ', 'JF-17-B3'],
+      BUFFER: ['MiG-29K', 'Mirage-2000', 'F-16V', 'Su-30SM', 'F-16C-B52', 'JAS-39C', 'MiG-29SMT'],
+      VETERAN: ['JAS-39E', 'F-16V', 'Su-30SM', 'Eurofighter', 'J-10C', 'F-18C-PLUS', 'MiG-35S'],
+      ESCALATED: ['F-16V', 'MiG-29K', 'Su-30SM', 'Eurofighter', 'Su-35S', 'Su-27SM3', 'J-11BG', 'F-15C'],
+      ELITE: ['JAS-39E', 'Su-35S', 'Eurofighter', 'Rafale-C', 'MiG-31BM', 'Su-30MKI', 'F-18F', 'J-15T'],
+      FORWARD: ['Rafale-C', 'Su-35S', 'J-16', 'MiG-31BM', 'F-15EX', 'Rafale-M', 'TYPHOON-T4', 'KAAN'],
+      ACE: ['MiG-29K', 'Su-35S', 'Su-57', 'MiG-31BM', 'MQ-101', 'AMCA-MK1', 'KF-21EX', 'J-20S'],
+      FORTIFIED: ['JAS-39E', 'Su-57', 'J-20', 'F-15EX', 'MiG-31BM', 'MQ-101', 'J-20B', 'F-35C'],
+      MASTER: ['Rafale-C', 'Su-57', 'F-22A', 'J-20', 'MiG-31BM', 'MQ-101', 'F-22-SUPER', 'J-50', 'TEMPEST'],
+      LEGEND: ['F-35A', 'Su-57', 'F-22A', 'X-02S', 'MiG-31BM', 'MQ-101', 'FCAS-NGF', 'J-36', 'F-22-SUPER']
     };
     if (!qraDiff || !pools[qraDiff]) throw new Error(`Invalid QRA roster difficulty "${qraDiff}".`);
     return pools[qraDiff];

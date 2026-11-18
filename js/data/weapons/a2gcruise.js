@@ -74,7 +74,7 @@ window.WEAPONS_A2G_CRUISE = {
     behaviorDesc: 'Supersonic Mach 3.0 sea-skimming ramjet cruise missile (1x, 16 HP, 125 km). High kinetic velocity penetrates SeaRAM and Pantsir defense zones.',
     damage: 16, ammoCount: 1, minRangeKm: 12.0, sweetSpotMin: 25.0, sweetSpotMax: 115.0, lambda: 0.04, p: 2.0, T_0: 0.94,
     isBunkerCracker: true, sigmaPylon: 0.45, category: 'A2G', a2gGroup: 'CRUISE',
-    allowedAirframes: ['Su-30SM', 'Su-34', 'Su-35S', 'Su-24M2', 'Tu-160M', 'MiG-31BM', 'J-16'],
+    allowedAirframes: ['Su-30SM', 'Su-30MKI', 'Su-27SM3', 'Su-34', 'Su-35S', 'Su-24M2', 'Tu-160M', 'MiG-31BM', 'MiG-35S', 'J-16'],
     desc: 'Centerline Mach 3.0 supersonic ramjet standoff missile (1x, 16 HP) resisting CIWS point defenses.'
   },
   'KH-32': {

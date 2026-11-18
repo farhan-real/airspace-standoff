@@ -101,7 +101,11 @@ window.WEAPONS_A2A_WVR = {
     damage: 1, ammoCount: 8, minRangeKm: 0.6, sweetSpotMin: 1.5, sweetSpotMax: 16.0,
     lambda: 0.80, p: 1.0, T_0: 0.70, sigmaPylon: 0.01,
     category: 'A2A', a2aGroup: 'SWARM_MICRO',
-    allowedAirframes: ['MQ-99', 'MQ-101', 'XQ-58A', 'Kizilelma', 'S-70', 'MQ-28', 'MQ-20', 'AKINCI', 'RQ-180', 'JAS-39E', 'F-16V', 'Tejas-MK2', 'Mirage-2000', 'CFA-44'],
+    allowedAirframes: [
+      'MQ-99', 'MQ-101', 'XQ-58A', 'Kizilelma', 'S-70', 'MQ-28', 'MQ-20', 'AKINCI', 'RQ-180',
+      'JAS-39E', 'JAS-39C', 'F-16V', 'F-16C-B52', 'Tejas-MK2', 'Tejas-MK1A', 'Mirage-2000',
+      'JF-17-B3', 'FA-50-B20', 'F-5E-TIGER', 'CFA-44'
+    ],
     desc: 'Ultra-lightweight micro-missile (8x, Mach 1.8) designed for UCAV internal weapon bays and lightweight external pylon racks.'
   },
   'PEREGRINE': {

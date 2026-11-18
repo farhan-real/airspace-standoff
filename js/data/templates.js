@@ -1,11 +1,14 @@
 /**
- * AIRSPACE STANDOFF: Master Templates Aggregator & Query Registry
+ * js/data/templates.js - Master Templates Aggregator & Query Registry.
  */
 
 const requiredTemplateModules = [
   ['TEMPLATES_STEALTH', window.TEMPLATES_STEALTH],
+  ['TEMPLATES_STEALTH_NEXT', window.TEMPLATES_STEALTH_NEXT],
   ['TEMPLATES_SUPERIORITY', window.TEMPLATES_SUPERIORITY],
+  ['TEMPLATES_AIR_DOMINANCE', window.TEMPLATES_AIR_DOMINANCE],
   ['TEMPLATES_MULTIROLE', window.TEMPLATES_MULTIROLE],
+  ['TEMPLATES_MULTIROLE_PLUS', window.TEMPLATES_MULTIROLE_PLUS],
   ['TEMPLATES_STRIKE', window.TEMPLATES_STRIKE],
   ['TEMPLATES_EW', window.TEMPLATES_EW],
   ['TEMPLATES_DRONES', window.TEMPLATES_DRONES],
@@ -22,8 +25,11 @@ for (const [name, moduleData] of requiredTemplateModules) {
 window.AIRCRAFT_TEMPLATES = Object.assign(
   {},
   window.TEMPLATES_STEALTH,
+  window.TEMPLATES_STEALTH_NEXT,
   window.TEMPLATES_SUPERIORITY,
+  window.TEMPLATES_AIR_DOMINANCE,
   window.TEMPLATES_MULTIROLE,
+  window.TEMPLATES_MULTIROLE_PLUS,
   window.TEMPLATES_STRIKE,
   window.TEMPLATES_EW,
   window.TEMPLATES_DRONES,

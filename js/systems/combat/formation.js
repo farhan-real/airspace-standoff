@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Fleet Formation & Spatial Slots Planner
+ * js/systems/combat/formation.js - Fleet Formation & Spatial Slots Planner.
  * Places flight leads in the center and assigns flank and wing coordinates.
  */
 
@@ -8,9 +8,16 @@ class FormationPlanner {
     if (!spec) throw new Error('FormationPlanner.getFormationRank requires a valid aircraft spec.');
     if (isLead || isAce) return 0;
     if (spec.isDrone || spec.category === 'DRONES') return 4;
-    const cheaperOlder = ['Mirage-2000', 'Tejas-MK2', 'F-16V', 'MiG-29K', 'Tornado-ECR', 'X-29A', 'EF-111A', 'F-14D'];
+    const cheaperOlder = [
+      'Mirage-2000', 'Mirage-F1EQ', 'Tejas-MK2', 'Tejas-MK1A', 'JF-17-B3', 'FA-50-B20',
+      'F-16V', 'F-16C-B52', 'F-18C-PLUS', 'F-5E-TIGER', 'F-4E-2020', 'JAS-39C',
+      'MiG-29K', 'MiG-29SMT', 'Tornado-ECR', 'X-29A', 'EF-111A', 'F-14D', 'F-14B'
+    ];
     if (cheaperOlder.includes(spec.id) || (spec.cost <= 18.0 && spec.category !== 'STRIKE')) return 3;
-    const heavySpecs = ['B-1B', 'Tu-160M', 'B-21', 'B-2A', 'Su-34', 'A-10C', 'Su-25SM3', 'MiG-31BM', 'F-15EX', 'CFA-44', 'DARKSTAR', 'F-15-SMT-COFFIN', 'X-40', 'XFA-36B', 'EA-36'];
+    const heavySpecs = [
+      'B-1B', 'Tu-160M', 'B-21', 'B-2A', 'Su-34', 'A-10C', 'Su-25SM3', 'MiG-31BM', 'MiG-25PD',
+      'F-15EX', 'F-15J-JSI', 'J-36', 'CFA-44', 'DARKSTAR', 'F-15-SMT-COFFIN', 'X-40', 'XFA-36B', 'EA-36'
+    ];
     if (heavySpecs.includes(spec.id) || spec.category === 'STRIKE' || (spec.M_max >= 8000) || (spec.hp >= 6)) return 1;
     return 2;
   }
