@@ -76,6 +76,14 @@
             <div id="cdd-doctrine"></div>
           </div>
           <span id="theater-mode-indicator" style="display:none;"></span>
+        </div>
+        <div class="proc-actions-row">
+          <div class="proc-left-actions">
+            <button type="button" id="btn-open-aircraft-presets" class="hud-btn highlight">AIRCRAFT PRESETS</button>
+            <button type="button" id="btn-open-squadron-presets" class="hud-btn highlight">SQUADRON PRESETS</button>
+            <button type="button" id="btn-save-squadron-preset" class="hud-btn">SAVE SQUADRON</button>
+            <button type="button" id="btn-clear-squadron" class="hud-btn alert">CLEAR ALL</button>
+          </div>
           <div class="proc-right-actions">
             <button id="btn-open-mission-editor" class="hud-btn mission-editor-open-btn" title="Build a custom, unranked mission"><img src="icons/edit.svg" class="btn-vector-ico" width="13" height="13" alt="Edit"><span>MISSION EDITOR</span></button>
             <span id="mission-editor-state" class="mission-editor-state">STANDARD MISSION</span>
@@ -88,7 +96,6 @@
           <span id="proc-budget-subtext" class="proc-subtext-note" style="display:none;"></span>
         </div>
       </header>
-      <div class="procurement-presets" id="procurement-presets-bar"></div>
     </div>
     <div class="procurement-mobile-tabs" id="procurement-mobile-tabs">
       <button type="button" class="p-mob-tab active" id="btn-tab-hanger-shelf" data-target="shelf">ARMORY</button>
@@ -518,6 +525,7 @@
 <script src="js/ui/procurement/dialogs/cards.js"></script>
 <script src="js/ui/procurement/dialogs/dialog.js"></script>
 <script src="js/ui/procurement/dialogs/preconfig.js"></script>
+<script src="js/ui/procurement/dialogs/squadronpresets.js"></script>
 <script src="js/ui/procurement/specs/weaponbehaviors.js"></script>
 <script src="js/ui/procurement/specs/behaviors.js"></script>
 <script src="js/ui/procurement/specs/eval.js"></script>

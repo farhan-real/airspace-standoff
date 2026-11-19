@@ -158,39 +158,6 @@
   z-index: 60;
 }
 
-.segmented-control {
-  display: flex;
-  background: var(--glass-3d-well-bg);
-  border: 1px solid var(--glass-3d-well-border);
-  border-radius: var(--radius-btn);
-  padding: 2px;
-  flex-shrink: 0;
-  box-shadow: var(--glass-3d-well-shadow);
-}
-
-.seg-btn {
-  border: 1px solid transparent;
-  font-family: var(--font-untitled-sans);
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--radius-badge);
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.14s ease;
-  white-space: nowrap;
-}
-
-.seg-btn:hover { color: #ffffff; }
-.seg-btn.active {
-  background: rgba(2, 132, 199, 0.45);
-  color: #ffffff;
-  border-color: var(--theme-accent);
-  border-top-color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 8px var(--theme-primary-glow);
-}
-
 .ai-config-group {
   display: flex;
   align-items: center;
@@ -204,6 +171,23 @@
   flex-shrink: 0;
 }
 
+.proc-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.proc-left-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
 .proc-right-actions {
   margin-left: auto;
   display: flex;
@@ -212,11 +196,12 @@
   flex-shrink: 0;
 }
 
+.proc-left-actions .hud-btn,
 .proc-right-actions .hud-btn {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   padding: 5px 12px;
   font-weight: 600;
-  height: 30px;
+  height: 29px;
   border-radius: var(--radius-btn);
 }
 
@@ -304,7 +289,22 @@
     gap: 4px;
   }
   .mode-and-ai-controls { gap: 4px; flex-wrap: wrap; overflow: visible; }
-  .seg-btn { padding: 3px 6px; font-size: 0.66rem; }
+  .proc-actions-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+  }
+  .proc-actions-row::-webkit-scrollbar { display: none; }
+  .proc-left-actions { flex-wrap: nowrap; flex-shrink: 0; gap: 4px; }
+  .proc-left-actions .hud-btn,
+  .proc-right-actions .hud-btn {
+    height: 26px;
+    font-size: 0.64rem;
+    padding: 3px 8px;
+  }
   .budget-display { padding: 3px 8px; }
   .budget-display .amount { font-size: 0.78rem; }
 }

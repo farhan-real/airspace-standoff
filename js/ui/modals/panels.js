@@ -1,5 +1,5 @@
 /**
- * js/ui/modals/panels.js - Modal Templates: Presets, Leaderboard, Manual & Settings.
+ * js/ui/modals/panels.js - Modal Templates: Presets, Squadron Presets, Leaderboard, Manual & Settings.
  */
 
 class ModalPanelsTemplates {
@@ -30,18 +30,44 @@ class ModalPanelsTemplates {
                 <div id="cdd-preconfig-sort"></div>
                 <button type="button" class="hud-btn small highlight" id="btn-save-current-to-templates">+ SAVE CURRENT AIRCRAFT</button>
               </div>
-              <div class="preconfig-pills-row" id="preconfig-category-pills">
-                <button type="button" class="cat-pill-btn active" data-pcat="ALL">ALL</button>
-                <button type="button" class="cat-pill-btn" data-pcat="AIR DOMINANCE">AIR SUPERIORITY</button>
-                <button type="button" class="cat-pill-btn" data-pcat="DOGFIGHT">WVR COMBAT</button>
-                <button type="button" class="cat-pill-btn" data-pcat="STRIKE">STRIKE &amp; CAS</button>
-                <button type="button" class="cat-pill-btn" data-pcat="SEAD & EW">SEAD &amp; EW</button>
-                <button type="button" class="cat-pill-btn" data-pcat="SWARM & DRONES">UNMANNED (UAV)</button>
-                <button type="button" class="cat-pill-btn" data-pcat="COFFIN & FLAGSHIPS">ADVANCED / EXPERIMENTAL</button>
-                <button type="button" class="cat-pill-btn" data-pcat="CUSTOM">USER PRESETS</button>
+              <div class="shelf-tabs preconfig-tabs" id="preconfig-category-tabs">
+                <button type="button" class="shelf-tab-btn active" data-pcat="ALL">ALL</button>
+                <button type="button" class="shelf-tab-btn" data-pcat="AIR DOMINANCE">AIR SUPERIORITY</button>
+                <button type="button" class="shelf-tab-btn" data-pcat="DOGFIGHT">WVR COMBAT</button>
+                <button type="button" class="shelf-tab-btn" data-pcat="STRIKE">STRIKE &amp; CAS</button>
+                <button type="button" class="shelf-tab-btn" data-pcat="SEAD & EW">SEAD &amp; EW</button>
+                <button type="button" class="shelf-tab-btn" data-pcat="SWARM & DRONES">UNMANNED (UAV)</button>
+                <button type="button" class="shelf-tab-btn" data-pcat="COFFIN & FLAGSHIPS">EXPERIMENTAL</button>
+                <button type="button" class="shelf-tab-btn" data-pcat="CUSTOM">USER PRESETS</button>
               </div>
+              <div class="airframe-filter-bar preconfig-subcat-bar" id="preconfig-subcat-pills"></div>
             </div>
             <div class="preconfig-modal-body"><div id="preconfig-cards-grid" class="preconfig-grid"></div></div>
+          </div>
+        </div>`);
+    } else if (panelId === 'squadron-presets-modal') {
+      container.insertAdjacentHTML('beforeend', `
+        <div id="squadron-presets-modal" class="modal-backdrop">
+          <div class="inspect-window preconfig-window">
+            <div class="inspect-header">
+              <div class="modal-title-row">
+                <h2>SQUADRON PRESETS</h2>
+                <span class="subtext" style="color: var(--color-frost-glow); font-family: var(--font-dotdigital); font-size: 0.64rem; margin-left: 8px;">DOCTRINE FLEETS &amp; SAVED SQUADRONS</span>
+              </div>
+              <button id="btn-close-sq-presets" class="hud-btn small"><img src="icons/close.svg" width="10" height="10" alt="Close"></button>
+            </div>
+            <div class="preconfig-toolbar">
+              <div class="preconfig-search-row">
+                <input type="text" id="sq-presets-search-input" class="hud-search-input" placeholder="Filter by squadron name, aircraft, gun, or missile...">
+                <button type="button" class="hud-btn small highlight" id="btn-save-current-squadron-modal">+ SAVE CURRENT SQUADRON</button>
+              </div>
+              <div class="preconfig-pills-row" id="sq-presets-category-pills">
+                <button type="button" class="cat-pill-btn active" data-sqcat="ALL">ALL</button>
+                <button type="button" class="cat-pill-btn" data-sqcat="BUILTIN">BUILTIN PRESETS</button>
+                <button type="button" class="cat-pill-btn" data-sqcat="USER">USER SQUADRONS</button>
+              </div>
+            </div>
+            <div class="preconfig-modal-body"><div id="squadron-presets-grid" class="sq-presets-grid"></div></div>
           </div>
         </div>`);
     } else if (panelId === 'leaderboard-modal') {

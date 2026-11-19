@@ -1,11 +1,74 @@
 /**
- * js/ui/procurement/dialogs/preconfig.js - Aircraft Presets Modal Controller
+ * js/ui/procurement/dialogs/preconfig.js - Aircraft Presets Modal Controller with Two-Tier Subcategories.
  */
 
 class PreconfigModalController {
+  static SUBCATEGORIES = {
+    ALL: [
+      { id: 'ALL', label: 'ALL AIRFRAMES', match: () => true },
+      { id: 'STEALTH', label: 'STEALTH', match: (t, s) => s.category === 'STEALTH' },
+      { id: 'SUPERIORITY', label: 'SUPERIORITY', match: (t, s) => s.category === 'SUPERIORITY' },
+      { id: 'MULTIROLE', label: 'MULTIROLE', match: (t, s) => s.category === 'MULTIROLE' },
+      { id: 'STRIKE', label: 'STRIKE & CAS', match: (t, s) => s.category === 'STRIKE' },
+      { id: 'EW', label: 'EW', match: (t, s) => s.category === 'EW' },
+      { id: 'DRONES', label: 'DRONES', match: (t, s) => s.category === 'DRONES' },
+      { id: 'EXPERIMENTAL', label: 'EXPERIMENTAL', match: (t, s) => s.category === 'EXPERIMENTAL' },
+      { id: 'CUSTOM', label: 'USER PRESETS', match: (t) => t.roleCategory === 'CUSTOM' }
+    ],
+    'AIR DOMINANCE': [
+      { id: 'ALL', label: 'ALL AIR DOMINANCE', match: () => true },
+      { id: 'STEALTH', label: 'STEALTH BVR', match: (t, s) => s.category === 'STEALTH' },
+      { id: 'SUPERIORITY', label: 'HEAVY SUPERIORITY', match: (t, s) => s.category === 'SUPERIORITY' },
+      { id: 'MULTIROLE', label: 'MULTIROLE CAP', match: (t, s) => s.category === 'MULTIROLE' },
+      { id: 'EXPERIMENTAL', label: 'EXPERIMENTAL & COFFIN', match: (t, s) => s.category === 'EXPERIMENTAL' }
+    ],
+    DOGFIGHT: [
+      { id: 'ALL', label: 'ALL WVR COMBAT', match: () => true },
+      { id: 'SUPERIORITY', label: 'SUPERIORITY', match: (t, s) => s.category === 'SUPERIORITY' },
+      { id: 'MULTIROLE', label: 'MULTIROLE', match: (t, s) => s.category === 'MULTIROLE' },
+      { id: 'STEALTH', label: 'STEALTH', match: (t, s) => s.category === 'STEALTH' },
+      { id: 'EXPERIMENTAL', label: 'EXPERIMENTAL', match: (t, s) => s.category === 'EXPERIMENTAL' }
+    ],
+    STRIKE: [
+      { id: 'ALL', label: 'ALL STRIKE & CAS', match: () => true },
+      { id: 'CAS', label: 'CLOSE AIR SUPPORT', match: (t, s) => ['A-10C', 'Su-25SM3', 'Su-39', 'AV-8B-PLUS', 'MiG-27K', 'A-16', 'A-29B', 'JAGUAR-GR3', 'F-16XL'].includes(s.id) },
+      { id: 'INTERDICTORS', label: 'TACTICAL INTERDICTORS', match: (t, s) => ['Mirage-2000D', 'JH-7A', 'Su-24M2', 'Tornado-GR4', 'F-111F', 'F-117A', 'F-15E', 'Su-34'].includes(s.id) },
+      { id: 'BOMBERS', label: 'HEAVY BOMBERS', match: (t, s) => ['B-52H', 'B-1B', 'Tu-160M', 'B-2A', 'FB-22', 'B-21'].includes(s.id) },
+      { id: 'STEALTH', label: 'STEALTH STRIKE', match: (t, s) => s.category === 'STEALTH' },
+      { id: 'MULTIROLE', label: 'MULTIROLE STRIKE', match: (t, s) => s.category === 'MULTIROLE' },
+      { id: 'SUPERIORITY', label: 'SUPERIORITY STRIKE', match: (t, s) => s.category === 'SUPERIORITY' },
+      { id: 'SPECIALS', label: 'UCAV & EXPERIMENTAL', match: (t, s) => s.category === 'DRONES' || s.category === 'EXPERIMENTAL' }
+    ],
+    'SEAD & EW': [
+      { id: 'ALL', label: 'ALL SEAD & EW', match: () => true },
+      { id: 'EW', label: 'EW ESCORTS', match: (t, s) => s.category === 'EW' },
+      { id: 'STEALTH', label: 'STEALTH SEAD', match: (t, s) => s.category === 'STEALTH' },
+      { id: 'MULTIROLE', label: 'MULTIROLE SEAD', match: (t, s) => s.category === 'MULTIROLE' },
+      { id: 'SUPERIORITY', label: 'SUPERIORITY SEAD', match: (t, s) => s.category === 'SUPERIORITY' },
+      { id: 'STRIKE', label: 'STRIKE SEAD', match: (t, s) => s.category === 'STRIKE' },
+      { id: 'SPECIALS', label: 'UCAV & EXPERIMENTAL', match: (t, s) => s.category === 'DRONES' || s.category === 'EXPERIMENTAL' }
+    ],
+    'SWARM & DRONES': [
+      { id: 'ALL', label: 'ALL UAVS', match: () => true },
+      { id: 'SWARM', label: 'SWARM MICRO-DRONES', match: (t, s) => ['MQ-99', 'MQ-101'].includes(s.id) },
+      { id: 'WINGMAN', label: 'LOYAL WINGMEN', match: (t, s) => ['XQ-58A', 'MQ-28', 'Kizilelma'].includes(s.id) },
+      { id: 'HEAVY_UCAV', label: 'HEAVY & RECON UCAV', match: (t, s) => ['S-70', 'MQ-20', 'AKINCI', 'RQ-180'].includes(s.id) }
+    ],
+    'COFFIN & FLAGSHIPS': [
+      { id: 'ALL', label: 'ALL EXPERIMENTAL', match: () => true },
+      { id: 'COFFIN', label: 'COFFIN FRAMES', match: (t, s) => Boolean(s.isCoffin) },
+      { id: 'SUPERFIGHTERS', label: 'SUPERFIGHTERS', match: (t, s) => !s.isCoffin && ['X-02S', 'ADFX-01', 'CFA-44', 'DARKSTAR', 'X-40', 'XFA-36B'].includes(s.id) },
+      { id: 'DEMONSTRATORS', label: 'TECH DEMONSTRATORS', match: (t, s) => !s.isCoffin && ['F-15-SMTD', 'Su-47', 'Su-37', 'X-29A'].includes(s.id) }
+    ],
+    CUSTOM: [
+      { id: 'ALL', label: 'ALL USER PRESETS', match: () => true }
+    ]
+  };
+
   constructor(procurementManager) {
     this.pm = procurementManager;
     this.category = 'ALL';
+    this.subCategory = 'ALL';
     this.airframe = 'ALL';
     this.search = '';
     this.sort = 'DEFAULT';
@@ -83,13 +146,15 @@ class PreconfigModalController {
       });
     }
 
-    const catPills = document.querySelectorAll('#preconfig-category-pills .cat-pill-btn');
-    catPills.forEach(btn => {
+    const catTabs = document.querySelectorAll('#preconfig-category-tabs .shelf-tab-btn');
+    catTabs.forEach(btn => {
       btn.onclick = () => {
-        catPills.forEach(b => b.classList.remove('active'));
+        catTabs.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         this.category = btn.getAttribute('data-pcat') || 'ALL';
+        this.subCategory = 'ALL';
         this.renderGrid();
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       };
     });
   }
@@ -120,6 +185,47 @@ class PreconfigModalController {
     modal.classList.add('active');
   }
 
+  renderSubcategoryPills(categoryTemplates, acMap) {
+    const bar = document.getElementById('preconfig-subcat-pills');
+    if (!bar) return;
+    bar.innerHTML = '';
+
+    const defs = PreconfigModalController.SUBCATEGORIES[this.category];
+    if (!defs) throw new Error(`Unknown preconfig category "${this.category}".`);
+
+    const visibleDefs = defs.filter(def => {
+      if (def.id === 'ALL') return true;
+      return categoryTemplates.some(t => {
+        const spec = acMap[t.specId];
+        return spec && def.match(t, spec);
+      });
+    });
+
+    if (visibleDefs.length <= 1) {
+      bar.style.display = 'none';
+      this.subCategory = 'ALL';
+      return;
+    }
+
+    bar.style.display = 'flex';
+    if (!visibleDefs.some(d => d.id === this.subCategory)) {
+      this.subCategory = 'ALL';
+    }
+
+    visibleDefs.forEach(def => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `cat-pill-btn ${this.subCategory === def.id ? 'active' : ''}`;
+      btn.textContent = def.label;
+      btn.onclick = () => {
+        this.subCategory = def.id;
+        this.renderGrid();
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+      };
+      bar.appendChild(btn);
+    });
+  }
+
   renderGrid() {
     this.ensureModal();
     const grid = document.getElementById('preconfig-cards-grid');
@@ -131,10 +237,25 @@ class PreconfigModalController {
     const wpnMap = window.WEAPONS_CATALOG || {};
     const upgMap = window.UPGRADES_CATALOG || {};
 
-    let list = Object.values(templates);
+    let categoryList = Object.values(templates);
     if (this.category && this.category !== 'ALL') {
-      list = list.filter(t => t.roleCategory === this.category);
+      categoryList = categoryList.filter(t => t.roleCategory === this.category);
     }
+
+    this.renderSubcategoryPills(categoryList, acMap);
+
+    let list = categoryList;
+    if (this.subCategory && this.subCategory !== 'ALL') {
+      const defs = PreconfigModalController.SUBCATEGORIES[this.category];
+      const subDef = defs && defs.find(d => d.id === this.subCategory);
+      if (subDef) {
+        list = list.filter(t => {
+          const spec = acMap[t.specId];
+          return spec && subDef.match(t, spec);
+        });
+      }
+    }
+
     if (this.airframe && this.airframe !== 'ALL') {
       list = list.filter(t => t.specId === this.airframe);
     }

@@ -1,9 +1,20 @@
 /**
- * js/ui/procurement/catalog/presets.js - Fleet Presets & Preconfigured Aircraft Toolbar.
+ * js/ui/procurement/catalog/presets.js - Builtin Squadron Presets Catalog & Header Action Binding.
  */
 
 class ProcurementPresets {
   static activePreset = 'stealth';
+
+  static getBuiltinPresetCatalog() {
+    return [
+      { id: 'stealth', name: 'STEALTH SWEEP', desc: 'Balanced 5th-gen stealth air superiority flight backed by loyal wingman and swarm UCAVs.' },
+      { id: 'strike', name: 'GROUND STRIKE', desc: 'Heavy CAS, fast interdictors, and SEAD/EW suppression package for dismantling IADS belts.' },
+      { id: 'sead', name: 'SEAD ESCORT', desc: 'Dedicated anti-radiation and electronic attack strike escort package.' },
+      { id: 'ew', name: 'EW SUPPRESSION', desc: 'Full-spectrum airborne electronic attack and jamming umbrella wing.' },
+      { id: 'swarm', name: 'UAV FLIGHT', desc: 'COFFIN & F-15EX command leads directing autonomous loyal wingmen and swarm drones.' },
+      { id: 'interceptor', name: 'BVR INTERCEPT', desc: 'High-speed ramjet and ultra-long-range outer-air-battle interceptors.' }
+    ];
+  }
 
   static getBuiltinPreset(type) {
     const catalog = window.AIRCRAFT_CATALOG || {};
@@ -63,123 +74,74 @@ class ProcurementPresets {
       ]
     };
 
-    const list = presets[type] || [];
-    return list.filter(item => catalog[item.specId] !== undefined);
+    const list = presets[type];
+    if (!list) throw new Error(`Unknown builtin squadron preset "${type}".`);
+    return list.filter(item => catalog[item.specId] !== undefined).map(item => ({
+      specId: item.specId,
+      chosenGunId: item.chosenGunId,
+      weapons: [...item.weapons],
+      upgrades: [...item.upgrades]
+    }));
   }
 
-  static renderDoctrineBar(container, procurementManager) {
-    if (!container) return;
-    container.innerHTML = '';
-
-    const label = document.createElement('span');
-    label.className = 'preset-label';
-    label.textContent = 'PRESETS:';
-    container.appendChild(label);
-
-    const builtins = [
-      { id: 'stealth', name: 'STEALTH SWEEP' },
-      { id: 'strike', name: 'GROUND STRIKE' },
-      { id: 'sead', name: 'SEAD ESCORT' },
-      { id: 'ew', name: 'EW SUPPRESSION' },
-      { id: 'swarm', name: 'UAV FLIGHT' },
-      { id: 'interceptor', name: 'BVR INTERCEPT' }
-    ];
-
-    builtins.forEach(b => {
-      const btn = document.createElement('button');
-      const isActive = ProcurementPresets.activePreset === b.id;
-      btn.className = `preset-btn ${isActive ? 'active' : ''}`;
-      btn.textContent = b.name;
-      btn.onclick = () => {
-        ProcurementPresets.activePreset = b.id;
-        procurementManager.applyBuiltinPreset(b.id);
-      };
-      container.appendChild(btn);
-    });
-
+  static promptSaveSquadron(procurementManager, onSaved = null) {
+    if (!procurementManager.game.procurementSquadron || procurementManager.game.procurementSquadron.length === 0) {
+      procurementManager.showAlertModal('EMPTY SQUADRON', 'Cannot save an empty squadron. Add aircraft first.');
+      return;
+    }
     const customManager = procurementManager.customLoadouts;
-    const customMap = customManager ? customManager.getAll() : {};
-
-    Object.keys(customMap).forEach(name => {
-      const isAct = ProcurementPresets.activePreset === `custom:${name}`;
-      const chip = document.createElement('div');
-      chip.className = `custom-preset-chip ${isAct ? 'active' : ''}`;
-
-      chip.innerHTML = `
-        <button class="preset-btn custom-load-btn ${isAct ? 'active' : ''}" title="Load ${name}">${name}</button>
-        <button class="preset-icon-btn btn-rename" title="Rename preset"><img src="icons/edit.svg" width="11" height="11" alt="Rename"></button>
-        <button class="preset-icon-btn btn-delete alert" title="Delete preset"><img src="icons/trash.svg" width="11" height="11" alt="Delete"></button>
-      `;
-
-      chip.querySelector('.custom-load-btn').onclick = () => {
-        ProcurementPresets.activePreset = `custom:${name}`;
-        procurementManager.applyCustomPreset(name);
-      };
-
-      chip.querySelector('.btn-rename').onclick = (e) => {
-        e.stopPropagation();
-        procurementManager.showPromptModal('RENAME PRESET', `Enter a new name for "${name}":`, name, (newName) => {
-          if (newName && newName.trim() && newName.trim() !== name) {
-            if (customManager.rename(name, newName.trim())) {
-              if (ProcurementPresets.activePreset === `custom:${name}`) ProcurementPresets.activePreset = `custom:${newName.trim()}`;
-              procurementManager.updateUI();
-            }
-          }
-        });
-      };
-
-      chip.querySelector('.btn-delete').onclick = (e) => {
-        e.stopPropagation();
-        procurementManager.showConfirmModal('DELETE PRESET', `Delete preset configuration "${name}"?`, () => {
-          customManager.delete(name);
-          if (ProcurementPresets.activePreset === `custom:${name}`) {
-            ProcurementPresets.activePreset = 'stealth';
-            procurementManager.applyBuiltinPreset('stealth');
-          } else {
-            procurementManager.updateUI();
-          }
-        });
-      };
-
-      container.appendChild(chip);
-    });
-
-    const templateBtn = document.createElement('button');
-    templateBtn.className = 'preset-btn highlight';
-    templateBtn.textContent = 'AIRCRAFT PRESETS';
-    templateBtn.onclick = () => procurementManager.openPreconfiguredAircraftModal();
-    container.appendChild(templateBtn);
-
-    const saveBtn = document.createElement('button');
-    saveBtn.className = 'preset-btn highlight';
-    saveBtn.textContent = 'SAVE SQUADRON';
-    saveBtn.onclick = () => {
-      if (procurementManager.game.procurementSquadron.length === 0) {
-        procurementManager.showAlertModal('EMPTY SQUADRON', 'Cannot save an empty squadron. Add aircraft first.');
-        return;
-      }
-      const count = Object.keys(customMap).length + 1;
-      procurementManager.showPromptModal('SAVE SQUADRON PRESET', 'Enter a name for this squadron configuration:', `Squadron ${count}`, (name) => {
-        if (name && name.trim()) {
-          if (customManager.save(name.trim(), procurementManager.game.procurementSquadron)) {
-            ProcurementPresets.activePreset = `custom:${name.trim()}`;
-            procurementManager.updateUI();
-          }
+    const customMap = customManager.getAll();
+    const count = Object.keys(customMap).length + 1;
+    procurementManager.showPromptModal('SAVE SQUADRON PRESET', 'Enter a name for this squadron configuration:', `Squadron ${count}`, (name) => {
+      if (name && name.trim()) {
+        if (customManager.save(name.trim(), procurementManager.game.procurementSquadron)) {
+          ProcurementPresets.activePreset = `custom:${name.trim()}`;
+          procurementManager.updateUI();
+          if (onSaved) onSaved(name.trim());
         }
-      });
-    };
-    container.appendChild(saveBtn);
+      }
+    });
+  }
 
-    const clearBtn = document.createElement('button');
-    clearBtn.className = 'preset-btn alert';
-    clearBtn.textContent = 'CLEAR ALL';
-    clearBtn.onclick = () => {
-      procurementManager.showConfirmModal('CLEAR SQUADRON', 'Remove all aircraft from the current squadron?', () => {
-        ProcurementPresets.activePreset = '';
-        procurementManager.clearSquadron();
-      });
-    };
-    container.appendChild(clearBtn);
+  static bindHeaderButtons(procurementManager) {
+    const airBtn = document.getElementById('btn-open-aircraft-presets');
+    const sqBtn = document.getElementById('btn-open-squadron-presets');
+    const saveBtn = document.getElementById('btn-save-squadron-preset');
+    const clearBtn = document.getElementById('btn-clear-squadron');
+
+    if (airBtn && !airBtn._bound) {
+      airBtn._bound = true;
+      airBtn.onclick = () => {
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        procurementManager.openPreconfiguredAircraftModal();
+      };
+    }
+
+    if (sqBtn && !sqBtn._bound) {
+      sqBtn._bound = true;
+      sqBtn.onclick = () => {
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        procurementManager.openSquadronPresetsModal();
+      };
+    }
+
+    if (saveBtn && !saveBtn._bound) {
+      saveBtn._bound = true;
+      saveBtn.onclick = () => {
+        if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        this.promptSaveSquadron(procurementManager);
+      };
+    }
+
+    if (clearBtn && !clearBtn._bound) {
+      clearBtn._bound = true;
+      clearBtn.onclick = () => {
+        procurementManager.showConfirmModal('CLEAR SQUADRON', 'Remove all aircraft from the current squadron?', () => {
+          ProcurementPresets.activePreset = '';
+          procurementManager.clearSquadron();
+        });
+      };
+    }
   }
 }
 

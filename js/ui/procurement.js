@@ -18,6 +18,7 @@ class ProcurementManager {
     this.roster = new ProcurementRoster(this);
     this.customLoadouts = new CustomLoadoutsManager();
     this.preconfigModal = new PreconfigModalController(this);
+    this.squadronPresetsModal = new SquadronPresetsModalController(this);
     this.equipHandler = (typeof ProcurementEquipHandler !== 'undefined') ? new ProcurementEquipHandler(this) : null;
 
     window.openSystemInspectModal = (t, id) => this.specs.openInspectModal(t, id);
@@ -32,6 +33,7 @@ class ProcurementManager {
   showAlertModal(t, m) { this.dialogModal.showAlert(t, m); }
   openCallsignPickerModal(sIdx) { this.dialogModal.openCallsignPicker(sIdx); }
   openPreconfiguredAircraftModal() { this.preconfigModal.open(); }
+  openSquadronPresetsModal() { this.squadronPresetsModal.open(); }
 
   initHangarCustomDropdowns() {
     if (typeof ProcurementHeaderDropdowns === 'undefined') throw new Error('ProcurementHeaderDropdowns is not loaded.');
@@ -158,13 +160,12 @@ class ProcurementManager {
       ProcurementActionDispatcher.initCollapsibleHeader(this);
     }
 
-    this.renderDoctrinePresetsBar();
+    this.bindHeaderPresetActions();
     this.renderCatalog();
   }
 
-  renderDoctrinePresetsBar() {
-    const presetsContainer = document.getElementById('procurement-presets-bar') || document.querySelector('.procurement-presets');
-    if (presetsContainer) ProcurementPresets.renderDoctrineBar(presetsContainer, this);
+  bindHeaderPresetActions() {
+    ProcurementPresets.bindHeaderButtons(this);
   }
 
   renderCatalog() {
@@ -192,7 +193,7 @@ class ProcurementManager {
     const fleetEl = document.getElementById('fleet-count');
     const scrambleBtn = document.getElementById('btn-scramble');
 
-    this.renderDoctrinePresetsBar();
+    this.bindHeaderPresetActions();
     this.roster.render(rosterEl, this.game.procurementSquadron, budgetEl, fleetEl, scrambleBtn);
 
     const mobCount = document.getElementById('mob-roster-count');
