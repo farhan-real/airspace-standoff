@@ -68,11 +68,6 @@ class SaveGameManager {
       if (game.radar && game.activeUnit) {
         game.radar.spawnCombatText(game.activeUnit.x, game.activeUnit.y, 'SORTIE SAVED', '#00f5a0');
       }
-      const btn = document.getElementById('btn-save-game');
-      if (btn) {
-        btn.textContent = 'SAVED!';
-        setTimeout(() => { if (btn) btn.textContent = 'SAVE'; }, 1400);
-      }
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     }
     return payload;

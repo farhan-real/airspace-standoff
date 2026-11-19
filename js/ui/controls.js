@@ -95,6 +95,8 @@ class ControlsSystem {
     const btnAbort = document.getElementById('btn-pause-abort');
 
     if (btnResume) btnResume.onclick = () => { pauseModal.classList.remove('active'); this.setTimeWarp(1); };
+    if (btnSettings) btnSettings.onclick = () => { if (this.game.settings && typeof this.game.settings.open === 'function') this.game.settings.open(); };
+    if (btnManual) btnManual.onclick = () => { if (typeof window.openFlightManual === 'function') window.openFlightManual(); };
     if (btnSave) {
       btnSave.onclick = () => {
         this.game.saveCurrentSortie(false);
@@ -103,8 +105,6 @@ class ControlsSystem {
       };
     }
     if (btnSaveQuit) btnSaveQuit.onclick = () => this.game.saveAndQuitToHangar();
-    if (btnSettings) btnSettings.onclick = () => { if (this.game.settings && typeof this.game.settings.open === 'function') this.game.settings.open(); };
-    if (btnManual) btnManual.onclick = () => { if (typeof window.openFlightManual === 'function') window.openFlightManual(); };
     if (btnAbort) btnAbort.onclick = () => { pauseModal.classList.remove('active'); this.game.abortSortie(); };
     pauseModal.onclick = (e) => { if (e.target === pauseModal) { pauseModal.classList.remove('active'); this.setTimeWarp(1); } };
   }
@@ -182,12 +182,6 @@ class ControlsSystem {
     if (diveBtn) diveBtn.onclick = () => this.executeDive();
     const climbBtn = document.getElementById('btn-pitch-climb');
     if (climbBtn) climbBtn.onclick = () => this.executeZoomClimb();
-
-    const saveBtn = document.getElementById('btn-save-game');
-    if (saveBtn) saveBtn.onclick = () => this.game.saveCurrentSortie(false);
-
-    const saveQuitBtn = document.getElementById('btn-save-quit-game');
-    if (saveQuitBtn) saveQuitBtn.onclick = () => this.game.saveAndQuitToHangar();
 
     const abortBtn = document.getElementById('btn-abort-match');
     if (abortBtn) {

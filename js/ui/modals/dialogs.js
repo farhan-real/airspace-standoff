@@ -19,10 +19,10 @@ class ModalDialogTemplates {
               <p style="font-size: 0.76rem; color: var(--color-moon-mist); line-height: 1.5;">Simulation paused. Select an option to proceed.</p>
               <div style="display: flex; flex-direction: column; gap: 8px;">
                 <button id="btn-resume-sortie" class="scramble-btn" style="width: 100%; padding: 8px;">RESUME</button>
-                <button id="btn-pause-save" class="hud-btn highlight" style="width: 100%;">SAVE SORTIE</button>
-                <button id="btn-pause-save-quit" class="hud-btn" style="width: 100%;">SAVE &amp; QUIT TO HANGAR</button>
                 <button id="btn-pause-settings" class="hud-btn" style="width: 100%;"><img src="icons/settings.svg" class="btn-vector-ico" width="13" height="13" alt="Settings"><span>SETTINGS</span></button>
                 <button id="btn-pause-manual" class="hud-btn" style="width: 100%;"><img src="icons/manual.svg" class="btn-vector-ico" width="13" height="13" alt="Manual"><span>FLIGHT MANUAL</span></button>
+                <button id="btn-pause-save" class="hud-btn highlight" style="width: 100%;">SAVE SORTIE</button>
+                <button id="btn-pause-save-quit" class="hud-btn" style="width: 100%;">SAVE &amp; QUIT TO HANGAR</button>
                 <button id="btn-pause-abort" class="hud-btn alert" style="width: 100%;">ABORT MISSION</button>
               </div>
             </div>
