@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Preconfigured Loadouts: UCAVs & Collaborative Combat Drones
+ * js/data/templates/drones.js - Preconfigured Loadouts: UCAVs & Collaborative Combat Drones.
  */
 
 window.TEMPLATES_DRONES = {
@@ -10,7 +10,7 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'PLSL_LIGHT',
     weapons: ['MAM'],
     upgrades: ['SWARM_AI_COPROCESSOR'],
-    desc: 'Low-cost 18G swarm drone ($4.0M). Armed with PLSL-10 pulse laser and MAM micro-missiles to draw hostile fire.'
+    desc: 'Low-cost 18G swarm drone. Armed with PLSL-10 pulse laser and MAM micro-missiles to draw hostile fire.'
   },
   'MQ-99 Micro-Missile Swarm': {
     name: 'MQ-99 Micro-Missile Swarm',
@@ -20,6 +20,15 @@ window.TEMPLATES_DRONES = {
     weapons: ['MAM', 'MAM'],
     upgrades: ['SWARM_AI_COPROCESSOR'],
     desc: 'Pulse laser armed drone with double micro-missile saturation payload (16x) to overwhelm hostile defenses.'
+  },
+  'MQ-99 Close-Combat Micro-IR': {
+    name: 'MQ-99 Close-Combat Micro-IR',
+    specId: 'MQ-99',
+    roleCategory: 'SWARM & DRONES',
+    chosenGunId: 'MICRO_GUN',
+    weapons: ['CACM-6', 'SADM-8'],
+    upgrades: ['SWARM_AI_COPROCESSOR'],
+    desc: '18G close-combat UCAV carrying 6 HOBS CACM micro-IRs and 8 SADM active-radar drone killers internally.'
   },
   'MQ-101 Collaborative Combat Aircraft (CCA)': {
     name: 'MQ-101 Collaborative Combat Aircraft (CCA)',
@@ -39,6 +48,15 @@ window.TEMPLATES_DRONES = {
     upgrades: ['SWARM_AI_COPROCESSOR', 'SUPERCRUISE_VCE'],
     desc: 'High-speed 20G autonomous interceptor mounting the PLSL-20 medium pulse laser for medium-range directed-energy fire.'
   },
+  'MQ-101 High-G Micro-BVR Interceptor': {
+    name: 'MQ-101 High-G Micro-BVR Interceptor',
+    specId: 'MQ-101',
+    roleCategory: 'SWARM & DRONES',
+    chosenGunId: 'PLSL_LIGHT',
+    weapons: ['SADM-8', 'CACM-6'],
+    upgrades: ['SWARM_AI_COPROCESSOR', 'GAN_AESA_CORE'],
+    desc: 'Supersonic 20G interceptor drone packing 14 internal radar and HOBS IR micro-missiles with GaN AESA tracking.'
+  },
   'XQ-58A Loyal Wingman Escort': {
     name: 'XQ-58A Loyal Wingman Escort',
     specId: 'XQ-58A',
@@ -46,7 +64,16 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'MICRO_GUN',
     weapons: ['AIM-120D', 'ADM-160B'],
     upgrades: ['SWARM_AI_COPROCESSOR', 'MALD_DECOY_SYSTEM'],
-    desc: 'Cost-effective stealth wingman ($9.0M). Carries internal BVR missiles and launches MALD decoy drones.'
+    desc: 'Cost-effective stealth wingman. Carries internal BVR missiles and launches MALD decoy drones.'
+  },
+  'XQ-58A Peregrine Micro-BVR Wingman': {
+    name: 'XQ-58A Peregrine Micro-BVR Wingman',
+    specId: 'XQ-58A',
+    roleCategory: 'SWARM & DRONES',
+    chosenGunId: 'MICRO_GUN',
+    weapons: ['PEREGRINE', 'CACM-6', 'BRITECLOUD-POD'],
+    upgrades: ['SWARM_AI_COPROCESSOR', 'GAN_AESA_CORE'],
+    desc: 'Stealth wingman packing 6 Peregrine 52 km mini-BVR missiles, 6 CACM HOBS IRs, and BriteCloud DRFM decoys.'
   },
   'XQ-58A Forward Missile Magazine': {
     name: 'XQ-58A Forward Missile Magazine',
@@ -62,9 +89,9 @@ window.TEMPLATES_DRONES = {
     specId: 'Kizilelma',
     roleCategory: 'SWARM & DRONES',
     chosenGunId: 'BK-27',
-    weapons: ['AIM-120D', 'AIM-9X-2'],
+    weapons: ['GOKHAN', 'BOZDOGAN', 'CACM-6'],
     upgrades: ['SWARM_AI_COPROCESSOR', 'GAN_AESA_CORE'],
-    desc: 'Carrier-capable supersonic UCAV ($14.0M). Internal weapon bay, AESA radar, and 16G combat breaks.'
+    desc: 'Carrier-capable supersonic UCAV pairing internal Gokhan ramjets with Bozdogan HOBS IR and CACM micro-IR.'
   },
   'Kizilelma Standoff Intercept UCAV': {
     name: 'Kizilelma Standoff Intercept UCAV',
@@ -82,7 +109,16 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'GSH-30-1',
     weapons: ['AGM-88G', 'PL-15E'],
     upgrades: ['SWARM_AI_COPROCESSOR', 'RAM_NANO_COATING'],
-    desc: '20-ton heavy stealth flying-wing UCAV ($18.0M). Capable of internal heavy standoff anti-radiation missile volleys.'
+    desc: '20-ton heavy stealth flying-wing UCAV capable of internal heavy standoff anti-radiation missile volleys.'
+  },
+  'S-70 Heavy Stealth BVR Wingman': {
+    name: 'S-70 Heavy Stealth BVR Wingman',
+    specId: 'S-70',
+    roleCategory: 'SWARM & DRONES',
+    chosenGunId: 'GSH-30-1',
+    weapons: ['R-77M', 'R-77T', 'R-74M2'],
+    upgrades: ['SWARM_AI_COPROCESSOR', 'RAM_NANO_COATING', 'GAN_AESA_CORE'],
+    desc: 'Stealth flying-wing BVR escort packing internal R-77M radar and silent thermal R-77T missiles backed by R-74M2.'
   },
   'S-70 Penetration Interdiction': {
     name: 'S-70 Penetration Interdiction',
@@ -98,9 +134,9 @@ window.TEMPLATES_DRONES = {
     specId: 'MQ-28',
     roleCategory: 'SWARM & DRONES',
     chosenGunId: 'MICRO_GUN',
-    weapons: ['AIM-120D', 'AIM-9X-2'],
+    weapons: ['CUDA-SAC', 'SADM-8', 'BRITECLOUD-POD'],
     upgrades: ['SWARM_AI_COPROCESSOR', 'MADL_BATTLE_LINK'],
-    desc: 'Collaborative combat aircraft ($11.0M) providing low-cost sensor extension and BVR missile screening.'
+    desc: 'Collaborative wingman packing 8 hit-to-kill CUDA micro-BVR, 8 SADM drone killers, and BriteCloud DRFM decoys.'
   },
   'RQ-180 High-Altitude Reconnaissance (HALE)': {
     name: 'RQ-180 High-Altitude Reconnaissance (HALE)',
@@ -109,6 +145,6 @@ window.TEMPLATES_DRONES = {
     chosenGunId: 'MICRO_GUN',
     weapons: ['ADM-160B', 'MAM'],
     upgrades: ['GAN_AESA_CORE', 'MADL_BATTLE_LINK'],
-    desc: 'Stratospheric flying-wing drone (0.0001m2 RCS, $22.0M). Operates as a dedicated high-altitude squadron sensor gateway.'
+    desc: 'Stratospheric flying-wing drone (0.0001m2 RCS). Operates as a dedicated high-altitude squadron sensor gateway.'
   }
 };

@@ -1,5 +1,5 @@
 /**
- * js/data/templates/stealthnext.js - Preconfigured Loadouts for 5th-Gen Variants & 6th-Gen Stealth Airframes.
+ * js/data/templates/stealthnext.js - Preconfigured Loadouts: 5th-Gen Variants & 6th-Gen Stealth Airframes.
  */
 
 window.TEMPLATES_STEALTH_NEXT = {
@@ -8,9 +8,9 @@ window.TEMPLATES_STEALTH_NEXT = {
     specId: 'F-35B',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'GAU-22',
-    weapons: ['AIM-260', 'AIM-9X-2', 'GBU-39', 'AIM-120D'],
+    weapons: ['AIM-260', 'AIM-9X-B3', 'GBU-39', 'AIM-120D-3'],
     upgrades: ['EOTS_DUAL_OPTICS', 'MADL_BATTLE_LINK'],
-    desc: 'Short-takeoff stealth expeditionary loadout ($39.0M) blending internal AIM-260s with external SDB strike power.'
+    desc: 'Short-takeoff stealth expeditionary loadout blending internal AIM-260 and SDBs with external F3R AMRAAM and Block III Sidewinders.'
   },
   'F-35C Carrier Air Wing Stealth': {
     name: 'F-35C Carrier Air Wing Stealth',
@@ -21,14 +21,23 @@ window.TEMPLATES_STEALTH_NEXT = {
     upgrades: ['RAM_NANO_COATING', 'DAS_360_OPTIC', 'MADL_BATTLE_LINK'],
     desc: 'Heavy carrier stealth wingman carrying internal stealth BVR alongside 8 StormBreaker tri-mode SDBs.'
   },
+  'F-35C Carrier Air Wing CAP': {
+    name: 'F-35C Carrier Air Wing CAP',
+    specId: 'F-35C',
+    roleCategory: 'AIR DOMINANCE',
+    chosenGunId: 'GAU-22',
+    weapons: ['AIM-260', 'AIM-9X-B3', 'AN-ALQ-165', 'FMRAAM', 'AIM-120D-3', 'IRST-21-POD'],
+    upgrades: ['RAM_NANO_COATING', 'DAS_360_OPTIC', 'GAN_AESA_CORE', 'MADL_BATTLE_LINK'],
+    desc: 'Heavy 10-station naval fleet defender stacking internal AIM-260 and ASPJ with external FMRAAM, F3R AMRAAM, and IRST21.'
+  },
   'F-22A+ Super Raptor Air Dominance': {
     name: 'F-22A+ Super Raptor Air Dominance',
     specId: 'F-22-SUPER',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'DE-PULSE',
-    weapons: ['AIM-260', 'METEOR', 'AIM-120D', 'AIM-9X-2'],
+    weapons: ['AIM-260', 'JNAAM', 'AIM-120D-3', 'AIM-9X-B3', 'BRITECLOUD-POD'],
     upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE', 'EOTS_DUAL_OPTICS'],
-    desc: 'Upgraded 0.00008m2 Super Raptor mounting solid-state laser defense and 12 sustained BVR missiles.'
+    desc: 'Modernized Super Raptor mounting solid-state laser defense, JNAAM AESA ramjets, F3R AMRAAMs, and BriteCloud active decoys.'
   },
   'J-20B WS-15 Air Superiority': {
     name: 'J-20B WS-15 Air Superiority',
@@ -38,6 +47,15 @@ window.TEMPLATES_STEALTH_NEXT = {
     weapons: ['PL-15E', 'PL-10', 'PL-17'],
     upgrades: ['THRUST_VECTOR', 'GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
     desc: '3D TVC supercruising Dragon combining internal PL-15E stealth bays with external PL-17 ultra-long-range missiles.'
+  },
+  'J-20B Counter-EW Stealth Intercept': {
+    name: 'J-20B Counter-EW Stealth Intercept',
+    specId: 'J-20B',
+    roleCategory: 'AIR DOMINANCE',
+    chosenGunId: 'GSH-30-1',
+    weapons: ['PL-15', 'PL-15-HOJ', 'PL-17', 'PL-10E-ER'],
+    upgrades: ['THRUST_VECTOR', 'GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'SUPERCRUISE_VCE'],
+    desc: 'Anti-jammer WS-15 Dragon pairing internal PL-15 and Home-On-Jam PL-15B with external 135 km PL-17 and extended PL-10E.'
   },
   'J-20S Stealth EW & Strike Lead': {
     name: 'J-20S Stealth EW & Strike Lead',
@@ -53,9 +71,9 @@ window.TEMPLATES_STEALTH_NEXT = {
     specId: 'KAAN',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'M61A2',
-    weapons: ['METEOR', 'AIM-120D', 'IRIS-T'],
+    weapons: ['GOKHAN', 'GOKDOGAN', 'BOZDOGAN', 'AN-ALQ-165'],
     upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE'],
-    desc: 'Twin-jet 5th-gen fighter ($36.0M) keeping pure internal VLO stealth with 8 BVR missiles and IRIS-T defense.'
+    desc: 'Twin-jet 5th-gen Kaan fielding domestic Gokhan ramjets, Gokdogan BVR, Bozdogan HOBS IR, and internal ASPJ self-protection.'
   },
   'KF-21EX Block III Stealth Strike': {
     name: 'KF-21EX Block III Stealth Strike',
@@ -66,6 +84,15 @@ window.TEMPLATES_STEALTH_NEXT = {
     upgrades: ['RAM_NANO_COATING', 'EOTS_DUAL_OPTICS'],
     desc: 'Internal-bay Boramae pairing stealthy BVR defense with 4 compact SOM-J standoff cruise missiles.'
   },
+  'KF-21EX Block III Air Dominance': {
+    name: 'KF-21EX Block III Air Dominance',
+    specId: 'KF-21EX',
+    roleCategory: 'AIR DOMINANCE',
+    chosenGunId: 'M61A2',
+    weapons: ['METEOR', 'AIM-120D-3', 'AIM-9X-B3', 'BRITECLOUD-POD'],
+    upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE', 'EOTS_DUAL_OPTICS'],
+    desc: 'Stealth Boramae interceptor pairing internal Meteor and F3R AMRAAMs with Block III Sidewinders and BriteCloud DRFM decoys.'
+  },
   'HAL AMCA Mk1 Stealth Interceptor': {
     name: 'HAL AMCA Mk1 Stealth Interceptor',
     specId: 'AMCA-MK1',
@@ -75,6 +102,15 @@ window.TEMPLATES_STEALTH_NEXT = {
     upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE'],
     desc: 'Clean internal-bay 5th-gen interceptor carrying Gandiva SFDR ramjets, Astra Mk2, and Mach 3.2 ASRAAMs.'
   },
+  'HAL AMCA Mk1 Dual-Pulse & Silent IR': {
+    name: 'HAL AMCA Mk1 Dual-Pulse & Silent IR',
+    specId: 'AMCA-MK1',
+    roleCategory: 'DOGFIGHT',
+    chosenGunId: 'GSH-23L',
+    weapons: ['ASTRA-MK2', 'I-DERBY-ER', 'ASRAAM', 'R-77T'],
+    upgrades: ['RAM_NANO_COATING', 'EOTS_DUAL_OPTICS', 'GAN_AESA_CORE'],
+    desc: 'Agile medium stealth fighter mixing internal Astra Mk2, I-Derby ER, and ASRAAM with external 56 km thermal R-77T ambushes.'
+  },
   'GCAP Tempest 6th-Gen Dominance': {
     name: 'GCAP Tempest 6th-Gen Dominance',
     specId: 'TEMPEST',
@@ -82,16 +118,25 @@ window.TEMPLATES_STEALTH_NEXT = {
     chosenGunId: 'DE-PULSE',
     weapons: ['METEOR', 'AIM-260', 'SPEAR-3', 'ASRAAM'],
     upgrades: ['GAN_AESA_CORE', 'DAS_360_OPTIC', 'ADAPTIVE_ECCM_SUITE'],
-    desc: '6th-gen sensor flagship ($56.0M, 104 km radar) armed with hitscan laser fire, Meteors, AIM-260s, and SPEAR-3s.'
+    desc: '6th-gen sensor flagship (104 km radar) armed with hitscan laser fire, Meteors, AIM-260s, and SPEAR-3s.'
+  },
+  'GCAP Tempest Micro-Swarm & HOJ': {
+    name: 'GCAP Tempest Micro-Swarm & HOJ',
+    specId: 'TEMPEST',
+    roleCategory: 'AIR DOMINANCE',
+    chosenGunId: 'DE-PULSE',
+    weapons: ['FMRAAM', 'AIM-260B-HOJ', 'ADMM-S', 'CACM-6', 'SADM-8'],
+    upgrades: ['GAN_AESA_CORE', 'DAS_360_OPTIC', 'ADAPTIVE_ECCM_SUITE', 'SUPERCRUISE_VCE'],
+    desc: 'Next-gen saturation Tempest blending FMRAAM and HOJ JATM with internal ADMM-S omni-packs and 14x close-combat micro-missiles.'
   },
   'FCAS NGF Tailless Stealth': {
     name: 'FCAS NGF Tailless Stealth',
     specId: 'FCAS-NGF',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'DE-PULSE',
-    weapons: ['METEOR', 'AIM-260', 'MICA-EM', 'MICA-IR'],
+    weapons: ['FMRAAM', 'AIM-260', 'MICA-EM', 'MICA-IR'],
     upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE', 'EOTS_DUAL_OPTICS'],
-    desc: 'Pure internal-bay tailless 6th-gen air dominance fighter (0.0001m2 RCS, 1.18 agility, 16 internal missiles).'
+    desc: 'Pure internal-bay tailless 6th-gen air dominance fighter (0.0001m2 RCS, 1.18 agility) carrying FMRAAM, AIM-260, and MICA-EM/IR.'
   },
   'J-36 Heavy 6th-Gen Arsenal': {
     name: 'J-36 Heavy 6th-Gen Arsenal',
@@ -102,13 +147,22 @@ window.TEMPLATES_STEALTH_NEXT = {
     upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
     desc: 'Tri-jet 8-slot internal bay stealth arsenal pairing deep standoff stealth cruise missiles with 12 PL-15E BVR.'
   },
+  'J-36 Heavy 6th-Gen Air Dominance': {
+    name: 'J-36 Heavy 6th-Gen Air Dominance',
+    specId: 'J-36',
+    roleCategory: 'AIR DOMINANCE',
+    chosenGunId: 'PLSL_MED',
+    weapons: ['PL-15', 'PL-15-HOJ', 'ADMM-S', 'PL-10E-ER', 'CACM-6', 'PEREGRINE'],
+    upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'SUPERCRUISE_VCE'],
+    desc: 'Tri-jet stealth fleet dominator packing 8 internal slots of PL-15, HOJ, ADMM-S, and micro-IR backed by external Peregrines.'
+  },
   'J-50 Tailless Lambdoid Intercept': {
     name: 'J-50 Tailless Lambdoid Intercept',
     specId: 'J-50',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'DE-PULSE',
-    weapons: ['PL-15E', 'R-77M', 'PL-10', 'R-74M2'],
+    weapons: ['PL-15', 'K-77ME', 'PL-10E-ER', 'R-74M2'],
     upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'High-agility tailless stealth interceptor keeping all 16 BVR and HOBS IR missiles concealed internally.'
+    desc: 'High-agility tailless stealth interceptor keeping domestic PL-15, Mach 4.5 K-77ME, and extended HOBS IR concealed internally.'
   }
 };

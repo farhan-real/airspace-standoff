@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Preconfigured Loadouts: Fictional Superfighters
+ * js/data/templates/superfighters.js - Preconfigured Loadouts: Fictional Superfighters.
  */
 
 window.TEMPLATES_SUPERFIGHTERS = {
@@ -8,9 +8,18 @@ window.TEMPLATES_SUPERFIGHTERS = {
     specId: 'X-02S',
     roleCategory: 'COFFIN & FLAGSHIPS',
     chosenGunId: 'M61A2',
-    weapons: ['AIM-260', 'AIM-120D', 'AIM-120D', 'AIM-9X-2'],
+    weapons: ['AIM-260', 'ADMM-S', 'JNAAM', 'AIM-9X-B3'],
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'THRUST_VECTOR'],
-    desc: 'Variable-geometry stealth superfighter ($62.0M) deploying 12 BVR missiles and Sidewinders.'
+    desc: 'Variable-geometry stealth superfighter deploying internal AIM-260 and ADMM-S omni-packs with JNAAM AESA ramjets.'
+  },
+  'X-02S Wyvern MPBM-II Area Denial': {
+    name: 'X-02S Wyvern MPBM-II Area Denial',
+    specId: 'X-02S',
+    roleCategory: 'COFFIN & FLAGSHIPS',
+    chosenGunId: 'EML_GUN',
+    weapons: ['MPBM-II', 'ADMM-S', 'AIM-260', 'CACM-6'],
+    upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'THRUST_VECTOR'],
+    desc: 'Area-denial Strike Wyvern combining 10.5 km blast MPBM-II shockwaves with internal ADMM-S, AIM-260, and EML railgun.'
   },
   'X-02S Stealth Strike Wyvern': {
     name: 'X-02S Stealth Strike Wyvern',
@@ -26,18 +35,18 @@ window.TEMPLATES_SUPERFIGHTERS = {
     specId: 'X-02S',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'EML_GUN',
-    weapons: ['AIM-260', 'METEOR', 'AIM-120D', 'AIM-9X-2'],
+    weapons: ['AIM-260', 'METEOR', 'AIM-120D-3', 'AIM-9X-B3'],
     upgrades: ['SUPERCRUISE_VCE', 'GAN_AESA_CORE'],
-    desc: 'Railgun interceptor pairing EML slugs with ramjet Meteor and AMRAAM missiles.'
+    desc: 'Railgun interceptor pairing EML slugs with AIM-260, ramjet Meteor, F3R AMRAAMs, and Block III Sidewinders.'
   },
   'ADFX-01 Standoff Multi-Mission Prototype': {
     name: 'ADFX-01 Standoff Multi-Mission Prototype',
     specId: 'ADFX-01',
     roleCategory: 'COFFIN & FLAGSHIPS',
     chosenGunId: 'M61A2',
-    weapons: ['MPBM', 'AIM-120D', 'AIM-9X-2'],
+    weapons: ['MPBM-II', 'ADMM-S', 'AIM-120D-3', 'AIM-9X-B3'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'SUPERCRUISE_VCE', 'EXPANDED_CM_DISPENSER'],
-    desc: 'Forward-canted canard prototype superfighter ($65.0M) deploying high-yield MPBM thermobaric shockwave missiles (2x).'
+    desc: 'Forward-canted canard prototype deploying 10.5 km blast MPBM-II missiles alongside internal ADMM-S and F3R AMRAAMs.'
   },
   'ADFX-01 Directed Energy Testbed': {
     name: 'ADFX-01 Directed Energy Testbed',
@@ -53,9 +62,9 @@ window.TEMPLATES_SUPERFIGHTERS = {
     specId: 'CFA-44',
     roleCategory: 'COFFIN & FLAGSHIPS',
     chosenGunId: 'EML_GUN',
-    weapons: ['ADMM', 'AIM-260', 'AIM-120D', 'PYTHON-5', 'AIM-9X-2'],
+    weapons: ['ADMM', 'ADMM-S', 'AIM-260', 'PYTHON-5', 'AIM-9X-B3'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'Carrier defense package ($68.0M) combining EML railgun, ADMM pod (12x), BVR missiles, and rearward Python-5.'
+    desc: 'Carrier defense package combining EML railgun, 20x ADMM/ADMM-S omni-missiles, AIM-260, and rearward Python-5.'
   },
   'CFA-44 Thermobaric Area Denial': {
     name: 'CFA-44 Thermobaric Area Denial',
@@ -71,9 +80,9 @@ window.TEMPLATES_SUPERFIGHTERS = {
     specId: 'CFA-44',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'DE-PULSE',
-    weapons: ['AIM-260', 'METEOR', 'PL-15E', 'AIM-120D', 'AIM-9X-2'],
+    weapons: ['AIM-260B-HOJ', 'ADMM-S', 'FMRAAM', 'PL-15-HOJ', 'AIM-9X-B3'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'],
-    desc: 'Long-range carrier interceptor pairing AIM-260 stealth BVR volleys with ramjet Meteor and dual-pulse rockets.'
+    desc: 'Counter-jamming carrier interceptor pairing Home-On-Jam JATM and PL-15B with FMRAAM ramjets and internal ADMM-S.'
   },
   'DARKSTAR Hypersonic High-Altitude Penetrator': {
     name: 'DARKSTAR Hypersonic High-Altitude Penetrator',
@@ -82,16 +91,16 @@ window.TEMPLATES_SUPERFIGHTERS = {
     chosenGunId: 'DE-PULSE',
     weapons: ['AGM-158B', 'AIM-260'],
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE'],
-    desc: 'Scramjet penetrator ($70.0M) cruising at Mach 3.20+ above FL580, out-pacing standard surface SAM engagement envelopes.'
+    desc: 'Scramjet penetrator cruising above FL580, out-pacing standard surface SAM engagement envelopes.'
   },
   'X-40 Stealth Air Dominance': {
     name: 'X-40 Stealth Air Dominance',
     specId: 'X-40',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'EML_GUN',
-    weapons: ['AIM-260', 'METEOR', 'AIM-9X-2', 'PYTHON-5'],
+    weapons: ['AIM-260', 'ADMM-S', 'JNAAM', 'AIM-9X-B3', 'PYTHON-5'],
     upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'ADAPTIVE_ECCM_SUITE'],
-    desc: 'Stealth dominance package ($72.0M) pairing internal EML railgun with stealth BVR missiles and ramjet Meteors.'
+    desc: 'Stealth dominance package pairing internal EML railgun, AIM-260, and ADMM-S with external JNAAM ramjets and Python-5.'
   },
   'X-40 Laser UAV & Railgun Intercept': {
     name: 'X-40 Laser UAV & Railgun Intercept',
@@ -116,9 +125,9 @@ window.TEMPLATES_SUPERFIGHTERS = {
     specId: 'XFA-36B',
     roleCategory: 'AIR DOMINANCE',
     chosenGunId: 'M61A2',
-    weapons: ['AIM-260', 'METEOR', 'AIM-120D', 'AIM-9X-2'],
+    weapons: ['AIM-260', 'ADMM-S', 'FMRAAM', 'AIM-120D-3', 'AIM-9X-B3'],
     upgrades: ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'THRUST_VECTOR', 'EOTS_DUAL_OPTICS'],
-    desc: 'Carrier air superiority package ($58.0M) pairing pivoting wingtips and 3D TVC with 12 BVR missiles.'
+    desc: 'Carrier air superiority package pairing pivoting wingtips and 3D TVC with AIM-260, ADMM-S, FMRAAM, and F3R AMRAAMs.'
   },
   'XFA-36B Kinetic Railgun Intercept': {
     name: 'XFA-36B Kinetic Railgun Intercept',

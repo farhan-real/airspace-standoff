@@ -9,14 +9,14 @@ class ProcurementPresets {
     const catalog = window.AIRCRAFT_CATALOG || {};
     const presets = {
       stealth: [
-        { specId: 'F-22A', chosenGunId: 'M61A2', weapons: ['AIM-120D', 'AIM-120D', 'METEOR', 'AIM-9X-2'], upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE'] },
-        { specId: 'F-22A', chosenGunId: 'M61A2', weapons: ['AIM-120D', 'AIM-120D', 'METEOR', 'AIM-9X-2'], upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE'] },
-        { specId: 'Su-57', chosenGunId: 'GSH-30-1', weapons: ['R-37M', 'PL-15E', 'R-73'], upgrades: ['THRUST_VECTOR', 'RAM_NANO_COATING'] },
-        { specId: 'F-35A', chosenGunId: 'GAU-22', weapons: ['AIM-260', 'AIM-260', 'AIM-9X-2'], upgrades: ['EOTS_DUAL_OPTICS', 'DAS_360_OPTIC'] },
-        { specId: 'Su-75', chosenGunId: 'GSH-30-1', weapons: ['AIM-120D', 'R-73'], upgrades: ['RAM_NANO_COATING'] },
-        { specId: 'Kizilelma', chosenGunId: 'BK-27', weapons: ['AIM-120D', 'AIM-9X-2'], upgrades: ['SWARM_AI_COPROCESSOR'] },
-        { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] },
-        { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] }
+        { specId: 'F-22A', chosenGunId: 'M61A2', weapons: ['AIM-260', 'AIM-120D-3', 'METEOR', 'AIM-9X-B3'], upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE'] },
+        { specId: 'F-22A', chosenGunId: 'M61A2', weapons: ['AIM-260', 'AIM-120D-3', 'METEOR', 'AIM-9X-B3'], upgrades: ['RAM_NANO_COATING', 'GAN_AESA_CORE'] },
+        { specId: 'Su-57', chosenGunId: 'GSH-30-1', weapons: ['R-37M', 'R-77M', 'R-74M2'], upgrades: ['THRUST_VECTOR', 'RAM_NANO_COATING'] },
+        { specId: 'F-35A', chosenGunId: 'GAU-22', weapons: ['AIM-260', 'AIM-120D-3', 'AIM-9X-B3'], upgrades: ['EOTS_DUAL_OPTICS', 'DAS_360_OPTIC'] },
+        { specId: 'Su-75', chosenGunId: 'GSH-30-1', weapons: ['R-77M', 'R-74M2'], upgrades: ['RAM_NANO_COATING'] },
+        { specId: 'Kizilelma', chosenGunId: 'BK-27', weapons: ['GOKHAN', 'BOZDOGAN'], upgrades: ['SWARM_AI_COPROCESSOR'] },
+        { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['SADM-8', 'CACM-6'], upgrades: ['SWARM_AI_COPROCESSOR'] },
+        { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['SADM-8', 'CACM-6'], upgrades: ['SWARM_AI_COPROCESSOR'] }
       ],
       strike: [
         { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['GBU-28', 'GBU-39', 'AGM-88G', 'AN-AAQ-33', 'AIM-120D', 'AIM-9X-2'], upgrades: ['GAN_AESA_CORE', 'MADL_BATTLE_LINK'] },
@@ -47,19 +47,19 @@ class ProcurementPresets {
         { specId: 'J-20S', chosenGunId: 'GSH-30-1', weapons: ['AN-ALQ-165', 'ADM-160B', 'PL-15-HOJ', 'AN-ALQ-249', 'PL-10'], upgrades: ['RAM_NANO_COATING', 'MALD_DECOY_SYSTEM', 'ADAPTIVE_ECCM_SUITE', 'MADL_BATTLE_LINK'] }
       ],
       swarm: [
-        { specId: 'F-22C-COFFIN', chosenGunId: 'DE-PULSE', weapons: ['AIM-260', 'AIM-120D', 'AIM-9X-2'], upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'] },
-        { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['AIM-260', 'AIM-260', 'AIM-120D', 'AIM-120D', 'METEOR', 'AIM-9X-2', 'AIM-9X-2'], upgrades: ['MADL_BATTLE_LINK', 'GAN_AESA_CORE'] },
-        { specId: 'S-70', chosenGunId: 'GSH-30-1', weapons: ['PL-15E', 'AIM-120D'], upgrades: ['SWARM_AI_COPROCESSOR'] },
-        { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] },
-        { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] },
-        { specId: 'MQ-99', chosenGunId: 'MICRO_GUN', weapons: ['MAM'], upgrades: ['SWARM_AI_COPROCESSOR'] }
+        { specId: 'F-22C-COFFIN', chosenGunId: 'DE-PULSE', weapons: ['ADMM-S', 'CUDA-SAC', 'AIM-260', 'AIM-9X-B3'], upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'] },
+        { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['AIM-174B', 'AIM-260', 'AIM-120D-3', 'AIM-120D-3', 'FMRAAM', 'AIM-9X-B3'], upgrades: ['MADL_BATTLE_LINK', 'GAN_AESA_CORE'] },
+        { specId: 'S-70', chosenGunId: 'GSH-30-1', weapons: ['R-77M', 'R-77T', 'R-74M2'], upgrades: ['SWARM_AI_COPROCESSOR'] },
+        { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['SADM-8', 'CACM-6'], upgrades: ['SWARM_AI_COPROCESSOR'] },
+        { specId: 'MQ-101', chosenGunId: 'MICRO_GUN', weapons: ['SADM-8', 'CACM-6'], upgrades: ['SWARM_AI_COPROCESSOR'] },
+        { specId: 'MQ-99', chosenGunId: 'MICRO_GUN', weapons: ['MAM', 'CACM-6'], upgrades: ['SWARM_AI_COPROCESSOR'] }
       ],
       interceptor: [
-        { specId: 'MiG-31BM', chosenGunId: 'GSH-30-1', weapons: ['R-37M', 'PL-21', 'AIM-120D'], upgrades: ['SUPERCRUISE_VCE', 'ESM_PASSIVE_SUITE'] },
-        { specId: 'Su-35S', chosenGunId: 'GSH-30-1', weapons: ['R-37M', 'PL-15E', 'PYTHON-5', 'AN-ALQ-99'], upgrades: ['THRUST_VECTOR'] },
-        { specId: 'Eurofighter', chosenGunId: 'BK-27', weapons: ['METEOR', 'METEOR', 'IRIS-T'], upgrades: ['EOTS_DUAL_OPTICS', 'GAN_AESA_CORE'] },
-        { specId: 'Rafale-C', chosenGunId: 'BK-27', weapons: ['METEOR', 'METEOR', 'PYTHON-5'], upgrades: ['EOTS_DUAL_OPTICS', 'DAS_360_OPTIC'] },
-        { specId: 'Su-37', chosenGunId: 'GSH-30-1', weapons: ['PL-15E', 'R-73', 'R-73'], upgrades: ['THRUST_VECTOR'] }
+        { specId: 'MiG-31BM', chosenGunId: 'GSH-30-1', weapons: ['K-100', 'R-33S', 'R-77M'], upgrades: ['SUPERCRUISE_VCE', 'ESM_PASSIVE_SUITE'] },
+        { specId: 'Su-35S', chosenGunId: 'GSH-30-1', weapons: ['KS-172', 'RVV-AE-PD', 'PYTHON-5', 'AN-ALQ-99'], upgrades: ['THRUST_VECTOR'] },
+        { specId: 'Eurofighter', chosenGunId: 'BK-27', weapons: ['FMRAAM', 'METEOR', 'IRIS-T-LR'], upgrades: ['EOTS_DUAL_OPTICS', 'GAN_AESA_CORE'] },
+        { specId: 'Rafale-C', chosenGunId: 'BK-27', weapons: ['JNAAM', 'METEOR', 'MICA-IR'], upgrades: ['EOTS_DUAL_OPTICS', 'DAS_360_OPTIC'] },
+        { specId: 'Su-37', chosenGunId: 'GSH-30-1', weapons: ['K-77ME', 'R-74M2', 'R-73'], upgrades: ['THRUST_VECTOR'] }
       ]
     };
 
