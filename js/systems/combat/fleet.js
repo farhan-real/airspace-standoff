@@ -1,6 +1,6 @@
 /**
  * js/systems/combat/fleet.js - Dynamic Fleet Generator (150km x 100km Theater)
- * Integrates AIR_DOCTRINES into squadron drafting while preserving difficulty budget curves.
+ * Integrates AIR_DOCTRINES and budget-scaled squadron caps into fleet drafting.
  */
 
 const FleetGenerator = {
@@ -20,7 +20,7 @@ const FleetGenerator = {
     if (team !== 'friendly' && team !== 'hostile') throw new Error(`Invalid team "${team}" in FleetGenerator.generateFleet.`);
     if (!window.AI_DIFFICULTIES) throw new Error('AI_DIFFICULTIES is not loaded.');
     if (!window.AIR_DOCTRINES) throw new Error('AIR_DOCTRINES is not loaded.');
-    if (!window.CONFIG || typeof window.CONFIG.MAX_SQUADRON_SIZE !== 'number') throw new Error('CONFIG.MAX_SQUADRON_SIZE is not defined.');
+    if (!window.CONFIG || typeof window.CONFIG.getMaxSquadronSize !== 'function') throw new Error('CONFIG.getMaxSquadronSize is not defined.');
     if (!window.AIRCRAFT_CATALOG || !Array.isArray(window.CALLSIGN_POOL)) throw new Error('Aircraft catalog or CALLSIGN_POOL is not loaded.');
 
     const docProfile = window.AIR_DOCTRINES[doctrineKey];
@@ -36,13 +36,13 @@ const FleetGenerator = {
 
     const isBlue = (team === 'friendly');
     const rng = window.PRNG.create((Date.now() ^ ((performance.now() * 1000) | 0) ^ (isBlue ? 0x12345678 : 0x9E3779B9)) >>> 0);
-    const maxSquadronSize = window.CONFIG.MAX_SQUADRON_SIZE;
     let targetBudget = diffProfile.budgetCap;
     if (options.budget !== undefined && options.budget !== null) {
       const parsedBudget = Number(options.budget);
       if (!Number.isFinite(parsedBudget) || parsedBudget <= 0) throw new Error(`Invalid custom fleet budget "${options.budget}".`);
       targetBudget = parsedBudget;
     }
+    const maxSquadronSize = window.CONFIG.getMaxSquadronSize(targetBudget);
 
     const catalog = window.AIRCRAFT_CATALOG;
     const callsigns = rng.shuffle([...(isBlue ? window.CALLSIGN_POOL : ['Bandit', 'Outlaw', 'Razor', 'Havoc', 'Stalker', 'Cobra'])]);

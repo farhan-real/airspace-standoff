@@ -1,19 +1,25 @@
 /**
- * AIRSPACE STANDOFF: Mission Builder & Fleet Randomization Submodule
+ * js/ui/missioneditor/builder.js - Mission Builder & Fleet Randomization Submodule
  */
 
 class MissionBuilder {
   static createRandomSquadron(game, mission) {
+    if (!window.CONFIG || typeof window.CONFIG.getMaxSquadronSize !== 'function') {
+      throw new Error('CONFIG.getMaxSquadronSize is not loaded.');
+    }
     const catalog = Object.values(window.AIRCRAFT_CATALOG || {}).filter(spec => spec && spec.id && !spec.isDrone && Number(spec.cost) > 0);
     if (catalog.length === 0 || typeof FleetGenerator === 'undefined') return [];
-    const budget = Math.max(1, Number(game.budgetMax) || 400);
+    const budget = Math.max(1, Number(game.budgetMax));
+    const maxUnits = window.CONFIG.getMaxSquadronSize(budget);
     let remaining = budget;
-    const requested = window.PRNG.int(3, 8);
+    const minReq = Math.min(maxUnits, 3);
+    const maxReq = Math.min(maxUnits, Math.max(minReq, Math.round(maxUnits * 0.65)));
+    const requested = window.PRNG.int(minReq, maxReq);
     const roster = [];
     const rawCalls = window.CALLSIGN_POOL || ['Viper', 'Ghost', 'Talon', 'Saber'];
     const callsigns = window.PRNG.shuffle([...rawCalls]);
 
-    while (roster.length < requested && roster.length < 16) {
+    while (roster.length < requested && roster.length < maxUnits) {
       const affordable = catalog.filter(spec => Number(spec.cost) <= remaining);
       if (affordable.length === 0) break;
       const spec = window.PRNG.pick(affordable);

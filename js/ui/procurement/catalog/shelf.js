@@ -138,8 +138,9 @@ class ProcurementShelf {
     const el = document.getElementById('shelf-instructions');
     if (!el) return;
     const active = this.getActiveBaySummary();
+    const maxUnits = this.pm.game.getMaxSquadronSize();
     if (tab === 'airframes') {
-      el.innerHTML = `CLICK "ADD TO SQUADRON" OR DRAG AIRFRAME TO SQUADRON (${(this.pm.game.procurementSquadron || []).length}/16) &bull; TAP TAGS FOR SPEC DETAILS`;
+      el.innerHTML = `CLICK "ADD TO SQUADRON" OR DRAG AIRFRAME TO SQUADRON (${(this.pm.game.procurementSquadron || []).length}/${maxUnits}) &bull; TAP TAGS FOR SPEC DETAILS`;
       return;
     }
     if (!active) { el.innerHTML = `<span style="color:#f97316;">NO ACTIVE AIRCRAFT SELECTED &bull; ADD AN AIRFRAME FIRST</span>`; return; }

@@ -13,7 +13,7 @@ window.MANUAL_BASICS = [
 
       <div class="ge-subhead">1. DEFENSE ALLOCATION ($200M - $1,000M CR) &amp; FLIGHT LEAD SELECTION</div>
       <div class="ge-desc">
-        Your squadron can deploy up to <b>16 combat airframes</b> within your selected defense budget (standard <b>$400.0M CR</b> at 1.00x VP, adjustable from <b>$200M Austerity</b> at 1.75x VP up to <b>$1,000M Maximum Surge</b> at 0.40x VP). Designate one aircraft as your <b>[FLIGHT LEAD]</b> <img src="icons/star.svg" width="11" height="11" alt="Lead" class="manual-inline-ico"> in the Hangar. The Lead flies in the <b>central formation slot</b> and receives specialized upgrades:
+        Your maximum squadron size scales proportionally with your selected defense budget (<b>8 aircraft at $200M</b> at 1.75x VP, <b>12 at $300M</b>, standard <b>16 aircraft at $400M</b> at 1.00x VP, up to <b>40 aircraft at $1,000M</b> at 0.40x VP), allowing large wings of lightweight fighters supported by unmanned drones or compact elite stealth formations. Designate one aircraft as your <b>[FLIGHT LEAD]</b> <img src="icons/star.svg" width="11" height="11" alt="Lead" class="manual-inline-ico"> in the Hangar. The Lead flies in the <b>central formation slot</b> and receives specialized upgrades:
       </div>
 
       <div class="ge-grid-2">

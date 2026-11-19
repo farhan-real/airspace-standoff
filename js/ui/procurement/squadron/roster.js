@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Squadron Roster Display Coordinator
- * In-place card replacement and preserved scroll offsets to eliminate roster jumps.
+ * js/ui/procurement/squadron/roster.js - Squadron Roster Display Coordinator
+ * In-place card replacement, preserved scroll offsets, and budget-scaled squadron limits.
  */
 
 class ProcurementRoster {
@@ -69,7 +69,10 @@ class ProcurementRoster {
       });
     });
 
-    const budgetMax = pm.game.budgetMax || (window.CONFIG && window.CONFIG.BUDGET_MAX_MILLIONS) || 400.0;
+    const budgetMax = pm.game.budgetMax;
+    const maxUnits = pm.game.getMaxSquadronSize();
+    const count = pm.game.procurementSquadron.length;
+    const isOverCount = count > maxUnits;
     pm.game.budgetRemaining = budgetMax - spent;
 
     if (budgetCounterEl) {
@@ -83,20 +86,28 @@ class ProcurementRoster {
       budgetCounterEl.classList.toggle('overbudget', isOver);
     }
 
-    const maxUnits = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
-    if (fleetCountEl) fleetCountEl.textContent = `${pm.game.procurementSquadron.length} / ${maxUnits} AIRCRAFT`;
+    if (fleetCountEl) {
+      fleetCountEl.textContent = `${count} / ${maxUnits} AIRCRAFT`;
+      fleetCountEl.style.color = isOverCount ? '#ff3366' : '';
+      fleetCountEl.style.borderColor = isOverCount ? 'rgba(244, 63, 94, 0.55)' : '';
+    }
     const mobRosterCount = document.getElementById('mob-roster-count');
-    if (mobRosterCount) mobRosterCount.textContent = pm.game.procurementSquadron.length;
+    if (mobRosterCount) mobRosterCount.textContent = count;
     const quickStatEl = document.getElementById('roster-quick-stat');
-    if (quickStatEl) quickStatEl.textContent = `${pm.game.procurementSquadron.length} AIRCRAFT ASSIGNED`;
+    if (quickStatEl) {
+      quickStatEl.textContent = `${count} / ${maxUnits} AIRCRAFT ASSIGNED`;
+      quickStatEl.style.color = isOverCount ? '#ff3366' : '';
+    }
 
     if (scrambleBtnEl) {
       const editorRandomRoster = window.MissionEditor
         && window.MissionEditor.canProvideRandomSquadron(pm.game);
-      const canScramble = editorRandomRoster || (pm.game.procurementSquadron.length > 0 && spent <= budgetMax);
+      const canScramble = editorRandomRoster || (count > 0 && count <= maxUnits && spent <= budgetMax);
       scrambleBtnEl.disabled = !canScramble;
       scrambleBtnEl.textContent = editorRandomRoster ? 'LAUNCH EDITOR MISSION'
-        : (canScramble ? 'LAUNCH MISSION' : (pm.game.procurementSquadron.length === 0 ? 'ASSIGN AIRCRAFT' : 'BUDGET EXCEEDED'));
+        : (canScramble ? 'LAUNCH MISSION'
+          : (count === 0 ? 'ASSIGN AIRCRAFT'
+            : (isOverCount ? 'SQUADRON LIMIT EXCEEDED' : 'BUDGET EXCEEDED')));
     }
   }
 

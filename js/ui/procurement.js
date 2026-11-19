@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Procurement Orchestrator
+ * js/ui/procurement.js - Procurement Orchestrator
  */
 
 class ProcurementManager {
@@ -124,8 +124,13 @@ class ProcurementManager {
       bScramble.onclick = (e) => {
         e.preventDefault();
         const editorRandomRoster = window.MissionEditor && window.MissionEditor.canProvideRandomSquadron(this.game);
+        const maxUnits = this.game.getMaxSquadronSize();
         if (this.game.procurementSquadron.length === 0 && !editorRandomRoster) {
           this.showAlertModal('EMPTY SQUADRON', 'Add at least one aircraft to your squadron before launching the mission.');
+          return;
+        }
+        if (this.game.procurementSquadron.length > maxUnits && !editorRandomRoster) {
+          this.showAlertModal('SQUADRON LIMIT EXCEEDED', `Current budget tier allows up to ${maxUnits} aircraft (${this.game.procurementSquadron.length} assigned). Remove ${this.game.procurementSquadron.length - maxUnits} aircraft or increase defense budget.`);
           return;
         }
         if (this.game.budgetRemaining < 0 && !editorRandomRoster) {

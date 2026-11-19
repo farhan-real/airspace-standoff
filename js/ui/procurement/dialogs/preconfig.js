@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Aircraft Presets Modal Controller
+ * js/ui/procurement/dialogs/preconfig.js - Aircraft Presets Modal Controller
  */
 
 class PreconfigModalController {
@@ -182,9 +182,9 @@ class PreconfigModalController {
   }
 
   deploy(tpl) {
-    const maxUnits = (window.CONFIG && window.CONFIG.MAX_SQUADRON_SIZE) || 16;
+    const maxUnits = this.pm.game.getMaxSquadronSize();
     if (this.pm.game.procurementSquadron.length >= maxUnits) {
-      this.pm.showAlertModal('LIMIT REACHED', `Maximum squadron capacity of ${maxUnits} aircraft reached.`);
+      this.pm.showAlertModal('LIMIT REACHED', `Maximum squadron capacity of ${maxUnits} aircraft reached for the $${this.pm.game.budgetMax.toFixed(0)}M budget tier.`);
       return;
     }
     const pool = window.CALLSIGN_POOL || ['Trigger', 'Mobius', 'Cipher', 'Viper'];

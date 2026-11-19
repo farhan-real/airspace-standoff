@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Master Game Orchestrator
+ * js/game.js - Master Game Orchestrator
  */
 
 if (typeof navigator !== 'undefined') {
@@ -35,8 +35,11 @@ class AirspaceStandoffGame {
     this.attackDoctrine = (saved && saved.attackDoctrine && window.ATTACK_DOCTRINES[saved.attackDoctrine]) ? saved.attackDoctrine : 'BALANCED';
     this.playerBudgetId = (saved && saved.playerBudgetId && window.BUDGET_TIERS[saved.playerBudgetId]) ? saved.playerBudgetId : 'BUDGET_400';
 
-    this.budgetMax = window.BUDGET_TIERS[this.playerBudgetId].budget;
+    const initTier = window.BUDGET_TIERS[this.playerBudgetId];
+    this.budgetMax = initTier.budget;
     this.budgetRemaining = this.budgetMax;
+    this.maxSquadronSize = initTier.maxSquadronSize;
+    window.CONFIG.MAX_SQUADRON_SIZE = this.maxSquadronSize;
 
     this.pendingMissionEditorSettings = null;
     this.missionEditorBaseSettings = null;
@@ -100,6 +103,13 @@ class AirspaceStandoffGame {
     this.setPlayerBudgetTier(this.playerBudgetId);
   }
 
+  getMaxSquadronSize() {
+    if (!window.CONFIG || typeof window.CONFIG.getMaxSquadronSize !== 'function') {
+      throw new Error('CONFIG.getMaxSquadronSize is not loaded.');
+    }
+    return window.CONFIG.getMaxSquadronSize(this.budgetMax);
+  }
+
   setGameMode(modeId) {
     const modeDef = window.GAME_MODES[modeId];
     if (!modeDef) throw new Error(`Game mode "${modeId}" does not exist in GAME_MODES.`);
@@ -141,18 +151,24 @@ class AirspaceStandoffGame {
 
   setPlayerBudgetTier(tierKey) {
     const tierData = window.BUDGET_TIERS[tierKey];
-    if (!tierData || typeof tierData.budget !== 'number') {
-      throw new Error(`Budget tier "${tierKey}" is not defined in BUDGET_TIERS.`);
+    if (!tierData || typeof tierData.budget !== 'number' || typeof tierData.maxSquadronSize !== 'number') {
+      throw new Error(`Budget tier "${tierKey}" is missing valid budget or maxSquadronSize in BUDGET_TIERS.`);
     }
     this.playerBudgetId = tierKey;
     this.budgetMax = tierData.budget;
+    this.maxSquadronSize = tierData.maxSquadronSize;
+    window.CONFIG.MAX_SQUADRON_SIZE = this.maxSquadronSize;
+
     const subtextEl = document.getElementById('proc-budget-subtext');
     if (subtextEl) {
-      subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) UP TO 16 UNITS`;
+      subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) UP TO ${this.maxSquadronSize} UNITS`;
     }
     this.updateModeIndicator();
     this.saveGameplaySettings();
-    if (this.procurement) this.procurement.updateUI();
+    if (this.procurement) {
+      this.procurement.updateUI();
+      this.procurement.renderCatalog();
+    }
   }
 
   setSquadronName(name) {

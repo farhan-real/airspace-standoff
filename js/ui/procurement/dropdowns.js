@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF: Hangar Header Dropdown Initialization & Sync
- * Populates mode, budget, difficulty, and separated Air vs. Attack doctrine menus.
+ * js/ui/procurement/dropdowns.js - Hangar Header Dropdown Initialization & Sync
+ * Populates mode, budget (with scaled max squadron size), difficulty, and doctrine menus.
  */
 
 class ProcurementHeaderDropdowns {
@@ -36,6 +36,19 @@ class ProcurementHeaderDropdowns {
     }));
   }
 
+  static getBudgetOptions() {
+    if (!window.BUDGET_TIERS) throw new Error('BUDGET_TIERS is not loaded.');
+    return Object.values(window.BUDGET_TIERS).map(tier => {
+      if (typeof tier.budget !== 'number' || typeof tier.maxSquadronSize !== 'number') {
+        throw new Error(`Invalid BUDGET_TIERS entry "${tier.id}".`);
+      }
+      return {
+        value: tier.id,
+        text: `${tier.budget.toFixed(0)}M (${tier.multiplier.toFixed(2)}x | ${tier.maxSquadronSize} MAX)`
+      };
+    });
+  }
+
   static init(pm) {
     if (typeof CustomDropdown === 'undefined') return;
     const game = pm.game;
@@ -55,17 +68,7 @@ class ProcurementHeaderDropdowns {
     CustomDropdown.setup('cdd-budget', {
       label: 'BUDGET',
       value: game.playerBudgetId,
-      options: [
-        { value: 'BUDGET_200', text: '200M (1.75x)' },
-        { value: 'BUDGET_300', text: '300M (1.30x)' },
-        { value: 'BUDGET_400', text: '400M (1.00x)' },
-        { value: 'BUDGET_500', text: '500M (0.80x)' },
-        { value: 'BUDGET_650', text: '650M (0.60x)' },
-        { value: 'BUDGET_750', text: '750M (0.55x)' },
-        { value: 'BUDGET_800', text: '800M (0.50x)' },
-        { value: 'BUDGET_900', text: '900M (0.45x)' },
-        { value: 'BUDGET_1000', text: '1000M (0.40x)' }
-      ],
+      options: this.getBudgetOptions(),
       onChange: (val) => game.setPlayerBudgetTier(val)
     });
 

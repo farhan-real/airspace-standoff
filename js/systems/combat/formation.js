@@ -1,6 +1,6 @@
 /**
  * js/systems/combat/formation.js - Fleet Formation & Spatial Slots Planner.
- * Places flight leads in the center and assigns flank and wing coordinates.
+ * Places flight leads in the center and arranges large wings into multi-echelon columns.
  */
 
 class FormationPlanner {
@@ -43,28 +43,34 @@ class FormationPlanner {
     }).sort((a, b) => a.rank - b.rank);
 
     const midY = theaterHeight / 2.0;
-    const totalSpanY = Math.min(theaterHeight - 20.0, Math.max(22.0, (total - 1) * 6.0));
-    const startY = midY - (totalSpanY / 2.0);
-    const stepY = total > 1 ? (totalSpanY / (total - 1)) : 0;
-
-    const slotOrder = [];
-    const middleSlot = Math.floor(total / 2);
-    slotOrder.push(middleSlot);
-    let l = middleSlot - 1;
-    let r = middleSlot + 1;
-    while (l >= 0 || r < total) {
-      if (l >= 0) slotOrder.push(l--);
-      if (r < total) slotOrder.push(r++);
-    }
-
+    const maxPerCol = 16;
     const baseSpawnX = isBlue ? (13.0 + rng.range(0, 2.0)) : (theaterWidth - 14.0 - rng.range(0, 2.0));
     const plans = new Array(total);
+
     for (let k = 0; k < total; k++) {
-      const slotIndex = slotOrder[k];
+      const colIdx = Math.floor(k / maxPerCol);
+      const idxInCol = k % maxPerCol;
+      const itemsInCol = Math.min(maxPerCol, total - colIdx * maxPerCol);
+      const colSpanY = Math.min(theaterHeight - 20.0, Math.max(22.0, (itemsInCol - 1) * 6.0));
+      const colStartY = midY - (colSpanY / 2.0);
+      const colStepY = itemsInCol > 1 ? (colSpanY / (itemsInCol - 1)) : 0;
+
+      const slotOrder = [];
+      const middleSlot = Math.floor(itemsInCol / 2);
+      slotOrder.push(middleSlot);
+      let l = middleSlot - 1;
+      let r = middleSlot + 1;
+      while (l >= 0 || r < itemsInCol) {
+        if (l >= 0) slotOrder.push(l--);
+        if (r < itemsInCol) slotOrder.push(r++);
+      }
+
+      const slotIndex = slotOrder[idxInCol];
       const assigned = sorted[k];
-      const nominalY = (total === 1) ? midY : (startY + slotIndex * stepY);
+      const nominalY = (itemsInCol === 1) ? midY : (colStartY + slotIndex * colStepY);
       const randomizedY = Math.max(8.0, Math.min(theaterHeight - 8.0, nominalY + rng.range(-1.3, 1.3)));
-      const tightX = baseSpawnX + rng.range(-1.2, 1.2);
+      const colOffsetX = isBlue ? (-colIdx * 4.5) : (colIdx * 4.5);
+      const tightX = Math.max(4.0, Math.min(theaterWidth - 4.0, baseSpawnX + colOffsetX + rng.range(-1.0, 1.0)));
 
       plans[assigned.originalIndex] = {
         item: assigned.item,
