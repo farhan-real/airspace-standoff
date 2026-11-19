@@ -31,7 +31,6 @@ class ControlsSystem {
   }
 
   exitGame() {
-    const confirmMsg = 'Are you sure you want to exit the application?';
     const doExit = () => {
       try {
         if (typeof window.AndroidAppBridge !== 'undefined' && typeof window.AndroidAppBridge.exitApp === 'function') {
@@ -46,18 +45,15 @@ class ControlsSystem {
           <p style="color:#8494ab;font-size:0.9rem;">You may now close this application window or browser tab.</p>
         </div>`;
     };
-    this.game.procurement.showConfirmModal('EXIT', confirmMsg, doExit, { confirmText: 'EXIT', isAlert: true });
+    this.game.procurement.showConfirmModal('EXIT', 'Are you sure you want to exit the application?', doExit, { confirmText: 'EXIT', isAlert: true });
   }
 
   initTimeWarpControls() {
-    const btnPause = document.getElementById('btn-time-pause');
-    const btn1x = document.getElementById('btn-time-1x');
-    const btn2x = document.getElementById('btn-time-2x');
-    const btn4x = document.getElementById('btn-time-4x');
-    if (btnPause) btnPause.onclick = () => this.togglePause();
-    if (btn1x) btn1x.onclick = () => this.setTimeWarp(1);
-    if (btn2x) btn2x.onclick = () => this.setTimeWarp(2);
-    if (btn4x) btn4x.onclick = () => this.setTimeWarp(4);
+    const map = { 'btn-time-pause': null, 'btn-time-1x': 1, 'btn-time-2x': 2, 'btn-time-4x': 4 };
+    Object.entries(map).forEach(([id, speed]) => {
+      const btn = document.getElementById(id);
+      if (btn) btn.onclick = () => (speed === null ? this.togglePause() : this.setTimeWarp(speed));
+    });
   }
 
   setTimeWarp(speed) {
@@ -110,10 +106,7 @@ class ControlsSystem {
     if (btnSettings) btnSettings.onclick = () => { if (this.game.settings && typeof this.game.settings.open === 'function') this.game.settings.open(); };
     if (btnManual) btnManual.onclick = () => { if (typeof window.openFlightManual === 'function') window.openFlightManual(); };
     if (btnAbort) btnAbort.onclick = () => { pauseModal.classList.remove('active'); this.game.abortSortie(); };
-
-    pauseModal.onclick = (e) => {
-      if (e.target === pauseModal) { pauseModal.classList.remove('active'); this.setTimeWarp(1); }
-    };
+    pauseModal.onclick = (e) => { if (e.target === pauseModal) { pauseModal.classList.remove('active'); this.setTimeWarp(1); } };
   }
 
   autoPauseOnDialogOpen() {
@@ -137,10 +130,7 @@ class ControlsSystem {
     const closeFleetBtn = document.getElementById('btn-close-fleet-drawer');
     const fleetPane = document.getElementById('pane-fleet');
 
-    const toggleDrawer = () => {
-      if (fleetPane) { fleetPane.classList.toggle('drawer-open'); this.game.avionics.renderFlightRoster(); }
-    };
-    if (openFleetBtn) openFleetBtn.onclick = toggleDrawer;
+    if (openFleetBtn) openFleetBtn.onclick = () => { if (fleetPane) { fleetPane.classList.toggle('drawer-open'); this.game.avionics.renderFlightRoster(); } };
     if (closeFleetBtn) closeFleetBtn.onclick = () => { if (fleetPane) fleetPane.classList.remove('drawer-open'); };
 
     const bindSteer = (btn, code) => {
@@ -197,16 +187,7 @@ class ControlsSystem {
     if (saveBtn) saveBtn.onclick = () => this.game.saveCurrentSortie(false);
 
     const saveQuitBtn = document.getElementById('btn-save-quit-game');
-    if (saveQuitBtn) {
-      saveQuitBtn.onclick = () => {
-        this.game.procurement.showConfirmModal(
-          'SAVE & QUIT',
-          'Save your current sortie progress and return to the Hangar?',
-          () => this.game.saveAndQuitToHangar(),
-          { confirmText: 'SAVE & QUIT', isAlert: false }
-        );
-      };
-    }
+    if (saveQuitBtn) saveQuitBtn.onclick = () => this.game.saveAndQuitToHangar();
 
     const abortBtn = document.getElementById('btn-abort-match');
     if (abortBtn) {

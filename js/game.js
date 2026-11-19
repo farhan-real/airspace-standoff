@@ -207,35 +207,10 @@ class AirspaceStandoffGame {
     SaveGameManager.saveAndQuitToHangar(this);
   }
 
-  loadSavedSortie(saveId) {
+  loadSavedSortie() {
     if (typeof SaveGameManager === 'undefined') throw new Error('SaveGameManager is not loaded.');
     if (typeof AudioSys !== 'undefined') AudioSys.ensureContext();
-    return SaveGameManager.loadSortie(this, saveId);
-  }
-
-  resetHangarToNew() {
-    this.activeSaveId = null;
-    this.pendingMissionEditorSettings = null;
-    this.missionEditorBaseSettings = null;
-    this.activeMissionEditorConfig = null;
-    this.isMissionEditorMatch = false;
-    this.inspectionModeEnabled = false;
-    if (window.MissionEditor) {
-      if (document.getElementById('mission-editor-modal')) window.MissionEditor.resetDraft();
-      else window.MissionEditor.updateStateLabel('STANDARD MISSION', false);
-    }
-    this.aiDifficulty = 'VETERAN';
-    this.aiDoctrine = 'BALANCED';
-    this.attackDifficulty = 'FORWARD_GARRISON';
-    this.attackDoctrine = 'BALANCED';
-    this.setSquadronName('7th Tactical Squadron');
-    this.setGameMode('SP_SKIRMISH');
-    this.setPlayerBudgetTier('BUDGET_400');
-    const bCdd = window.CustomDropdown ? window.CustomDropdown.get('cdd-budget') : null;
-    if (bCdd) bCdd.setValue('BUDGET_400', false);
-    if (window.ProcurementPresets) window.ProcurementPresets.activePreset = 'stealth';
-    this.procurement.applyBuiltinPreset('stealth');
-    if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+    return SaveGameManager.loadSortie(this);
   }
 
   abortSortie() {
@@ -251,6 +226,7 @@ class AirspaceStandoffGame {
     if (hudContainer) hudContainer.classList.add('hidden');
     if (procModal) { procModal.classList.remove('hidden'); procModal.classList.add('active'); }
     if (this.procurement) this.procurement.updateUI();
+    if (typeof SaveGameManager !== 'undefined') SaveGameManager.updateHangarLoadButton();
   }
 
   scrambleFlight() {
@@ -300,6 +276,7 @@ class AirspaceStandoffGame {
 
   triggerGameOver(blueWon, msg) {
     this.isGameOver = true;
+    if (typeof SaveGameManager !== 'undefined') SaveGameManager.markSaveCompleted(this);
     if (this.inspection) this.inspection.recordEvent('MISSION END', msg || (blueWon ? 'Victory' : 'Defeat'), null, null, { result: blueWon ? 'VICTORY' : 'DEFEAT' });
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }
     this.simulation.captureReplayFrame(true);

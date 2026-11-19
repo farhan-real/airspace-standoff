@@ -119,21 +119,10 @@ class ProcurementManager {
       };
     });
 
-    const bNew = document.getElementById('btn-proc-new');
-    if (bNew) {
-      bNew.onclick = () => {
-        this.showConfirmModal(
-          'NEW MISSION SETUP',
-          'Reset Hangar to a fresh default squadron, standard mission settings, and clear active save link? Saved sorties remain available under LOAD.',
-          () => this.game.resetHangarToNew(),
-          { confirmText: 'NEW SETUP', isAlert: false }
-        );
-      };
-    }
-
     const bLoad = document.getElementById('btn-proc-load');
     if (bLoad) {
       bLoad.onclick = () => {
+        if (bLoad.disabled) return;
         if (typeof SaveLoadModal === 'undefined') throw new Error('SaveLoadModal is not loaded.');
         SaveLoadModal.open(this.game);
       };
@@ -146,7 +135,7 @@ class ProcurementManager {
         const editorRandomRoster = window.MissionEditor && window.MissionEditor.canProvideRandomSquadron(this.game);
         const maxUnits = this.game.getMaxSquadronSize();
         if (this.game.procurementSquadron.length === 0 && !editorRandomRoster) {
-          this.showAlertModal('EMPTY SQUADRON', 'Add at least one aircraft to your squadron before launching the mission.');
+          this.showAlertModal('EMPTY SQUADRON', 'Add at least one aircraft to your squadron before starting a new game.');
           return;
         }
         if (this.game.procurementSquadron.length > maxUnits && !editorRandomRoster) {
@@ -159,9 +148,9 @@ class ProcurementManager {
         }
         const isEditorSortie = Boolean(this.game.pendingMissionEditorSettings);
         const confirmText = isEditorSortie
-          ? 'Commence this custom editor sortie? It will not be ranked or saved to the leaderboard.'
-          : `Commence sortie with ${this.game.procurementSquadron.length} aircraft?`;
-        this.showConfirmModal(isEditorSortie ? 'COMMENCE UNRANKED SORTIE' : 'COMMENCE SORTIE', confirmText, () => this.game.scrambleFlight(), { confirmText: 'COMMENCE SORTIE', isAlert: false });
+          ? 'Start this custom editor game? It will not be ranked or saved to the leaderboard.'
+          : `Start new game with ${this.game.procurementSquadron.length} aircraft?`;
+        this.showConfirmModal(isEditorSortie ? 'START UNRANKED GAME' : 'NEW GAME', confirmText, () => this.game.scrambleFlight(), { confirmText: 'START GAME', isAlert: false });
       };
     }
 
@@ -216,7 +205,7 @@ class ProcurementManager {
     if (dispSqName) dispSqName.textContent = cleanName;
 
     if (this.shelf) this.shelf.syncActiveAircraft();
-    if (typeof SaveGameManager !== 'undefined') SaveGameManager.updateHangarIntelSummary();
+    if (typeof SaveGameManager !== 'undefined') SaveGameManager.updateHangarLoadButton();
 
     if (window.Persistence && this.game.procurementSquadron.length > 0) {
       window.Persistence.saveLastSquadron(this.game.procurementSquadron);

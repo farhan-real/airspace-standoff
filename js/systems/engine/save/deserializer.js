@@ -99,6 +99,7 @@ class SaveGameDeserializer {
 
   static restoreIntoGame(game, save) {
     if (!game || !save || save.version !== 1) throw new Error('Invalid or unsupported save file format.');
+    if (save.isCompleted) throw new Error('Cannot load a completed game.');
     if (game.animFrameId) { cancelAnimationFrame(game.animFrameId); game.animFrameId = null; }
 
     game.activeSaveId = save.id;

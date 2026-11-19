@@ -1,22 +1,22 @@
 /**
- * js/systems/engine/save/manager.js - Save Slot Storage, Quick-Save, Save and Quit, and Load Coordinator.
+ * js/systems/engine/save/manager.js - Single-Slot Save, Completion Tracking & Load Coordinator.
  */
 
 class SaveGameManager {
-  static STORAGE_KEY = 'SAVED_SORTIES_V1';
-  static MAX_SLOTS = 8;
+  static STORAGE_KEY = 'SAVED_SORTIE_V1';
+  static SINGLE_SAVE_ID = 'ACTIVE_SORTIE_SAVE';
 
-  static getSaves() {
+  static getSave() {
     if (!window.Persistence) throw new Error('Persistence engine is required for SaveGameManager.');
-    const list = window.Persistence.get(this.STORAGE_KEY, []);
-    if (!Array.isArray(list)) throw new Error('Corrupted saved sorties list in storage.');
-    return list;
+    const save = window.Persistence.get(this.STORAGE_KEY, null);
+    if (save !== null && typeof save !== 'object') throw new Error('Corrupted saved sortie in storage.');
+    return save;
   }
 
-  static writeSaves(list) {
+  static writeSave(saveObj) {
     if (!window.Persistence) throw new Error('Persistence engine is required for SaveGameManager.');
-    const ok = window.Persistence.set(this.STORAGE_KEY, list);
-    if (!ok) throw new Error('Failed to write saved sorties to localStorage.');
+    const ok = window.Persistence.set(this.STORAGE_KEY, saveObj);
+    if (!ok) throw new Error('Failed to write saved sortie to localStorage.');
   }
 
   static getSummary(save) {
@@ -31,6 +31,9 @@ class SaveGameManager {
     const diffTable = isAttack ? window.ATTACK_DIFFICULTIES : window.AI_DIFFICULTIES;
     const diffEntry = diffTable && diffTable[isAttack ? save.attackDifficulty : save.aiDifficulty];
     const diffLabel = diffEntry ? diffEntry.name : (isAttack ? save.attackDifficulty : save.aiDifficulty);
+    const docTable = isAttack ? window.ATTACK_DOCTRINES : window.AIR_DOCTRINES;
+    const docEntry = docTable && docTable[isAttack ? save.attackDoctrine : save.aiDoctrine];
+    const doctrineLabel = docEntry ? docEntry.name : (isAttack ? save.attackDoctrine : save.aiDoctrine);
 
     return {
       id: save.id,
@@ -39,13 +42,15 @@ class SaveGameManager {
       elapsedClock: save.elapsedClock || '00:00',
       modeLabel,
       diffLabel,
+      doctrineLabel,
       vpAlly: save.vpAlly || 0,
       vpHostile: save.vpHostile || 0,
       blueAlive,
       blueTotal,
       redAlive,
       redTotal,
-      unranked: Boolean(save.isMissionEditorMatch)
+      unranked: Boolean(save.isMissionEditorMatch),
+      isCompleted: Boolean(save.isCompleted)
     };
   }
 
@@ -53,14 +58,11 @@ class SaveGameManager {
     if (!game || game.isGameOver) return null;
     if (typeof SaveGameSerializer === 'undefined') throw new Error('SaveGameSerializer is not loaded.');
 
-    const slotId = game.activeSaveId || ('SAVE_' + Date.now());
-    const payload = SaveGameSerializer.serialize(game, slotId);
-
-    let list = this.getSaves().filter(s => s && s.id !== slotId);
-    list.unshift(payload);
-    if (list.length > this.MAX_SLOTS) list = list.slice(0, this.MAX_SLOTS);
-    this.writeSaves(list);
-    game.activeSaveId = slotId;
+    const payload = SaveGameSerializer.serialize(game, this.SINGLE_SAVE_ID);
+    payload.isCompleted = false;
+    this.writeSave(payload);
+    game.activeSaveId = this.SINGLE_SAVE_ID;
+    this.updateHangarLoadButton();
 
     if (!silent) {
       if (game.radar && game.activeUnit) {
@@ -74,6 +76,15 @@ class SaveGameManager {
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     }
     return payload;
+  }
+
+  static markSaveCompleted(game) {
+    const save = this.getSave();
+    if (!save) return;
+    save.isCompleted = true;
+    this.writeSave(save);
+    if (game) game.activeSaveId = null;
+    this.updateHangarLoadButton();
   }
 
   static saveAndQuitToHangar(game) {
@@ -92,38 +103,38 @@ class SaveGameManager {
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
-  static loadSortie(game, saveId) {
+  static loadSortie(game) {
     if (!game) throw new Error('SaveGameManager.loadSortie requires game instance.');
     if (typeof SaveGameDeserializer === 'undefined') throw new Error('SaveGameDeserializer is not loaded.');
-    const save = this.getSaves().find(s => s && s.id === saveId);
-    if (!save) throw new Error(`Saved sortie "${saveId}" was not found.`);
+    const save = this.getSave();
+    if (!save) throw new Error('No saved sortie was found.');
+    if (save.isCompleted) throw new Error('Previous game is already completed.');
     SaveGameDeserializer.restoreIntoGame(game, save);
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
     return save;
   }
 
-  static deleteSave(saveId) {
-    const next = this.getSaves().filter(s => s && s.id !== saveId);
-    this.writeSaves(next);
-    if (window.Game && window.Game.activeSaveId === saveId) {
-      window.Game.activeSaveId = null;
-    }
-    return next;
+  static deleteSave() {
+    this.writeSave(null);
+    if (window.Game) window.Game.activeSaveId = null;
+    this.updateHangarLoadButton();
   }
 
-  static updateHangarIntelSummary() {
-    const el = document.getElementById('procurement-intel');
-    if (!el) return;
-    const saves = this.getSaves();
+  static updateHangarLoadButton() {
     const loadBtn = document.getElementById('btn-proc-load');
-    if (loadBtn) loadBtn.textContent = saves.length > 0 ? `LOAD (${saves.length})` : 'LOAD';
-
-    if (saves.length === 0) {
-      el.innerHTML = '<span class="intel-save-note">NO SAVED SORTIES IN STORAGE</span>';
-      return;
+    if (!loadBtn) return;
+    const save = this.getSave();
+    loadBtn.textContent = 'LOAD PREVIOUS GAME';
+    if (!save) {
+      loadBtn.disabled = true;
+      loadBtn.title = 'No saved game available';
+    } else if (save.isCompleted) {
+      loadBtn.disabled = true;
+      loadBtn.title = 'Previous game is completed';
+    } else {
+      loadBtn.disabled = false;
+      loadBtn.title = `Inspect or resume saved game (${save.squadronName} - ${save.elapsedClock})`;
     }
-    const latest = this.getSummary(saves[0]);
-    el.innerHTML = `<span class="intel-save-note active">LATEST SAVE: <b>${latest.squadronName}</b> &bull; ${latest.modeLabel} [${latest.elapsedClock}] &bull; ${latest.blueAlive}/${latest.blueTotal} BLUE</span>`;
   }
 }
 

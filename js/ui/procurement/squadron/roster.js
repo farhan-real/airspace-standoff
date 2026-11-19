@@ -104,8 +104,8 @@ class ProcurementRoster {
         && window.MissionEditor.canProvideRandomSquadron(pm.game);
       const canScramble = editorRandomRoster || (count > 0 && count <= maxUnits && spent <= budgetMax);
       scrambleBtnEl.disabled = !canScramble;
-      scrambleBtnEl.textContent = editorRandomRoster ? 'LAUNCH EDITOR MISSION'
-        : (canScramble ? 'LAUNCH MISSION'
+      scrambleBtnEl.textContent = editorRandomRoster ? 'NEW GAME (EDITOR)'
+        : (canScramble ? 'NEW GAME'
           : (count === 0 ? 'ASSIGN AIRCRAFT'
             : (isOverCount ? 'SQUADRON LIMIT EXCEEDED' : 'BUDGET EXCEEDED')));
     }

@@ -1,4 +1,4 @@
-/* css/procurement/layout.css - Procurement Hangar Window & Layout */
+/* css/procurement/layout.css - Procurement Hangar Window & Full-Width Bottom Actions */
 
 #procurement-modal {
   background: #000000 !important;
@@ -66,45 +66,49 @@ body.safe-zone-on .procurement-window {
 .procurement-footer {
   flex-shrink: 0;
   border-top: 1px solid var(--glass-border);
-  padding-top: 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.intel-summary {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-family: var(--font-dotdigital);
-  font-size: 0.62rem;
-  color: var(--color-moon-mist);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.intel-save-note.active {
-  color: var(--color-frost-glow);
-}
-
-.intel-save-note b {
-  color: var(--stat-tier-2);
+  padding-top: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .proc-footer-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
 }
 
-.proc-new-btn,
-.proc-load-btn {
-  height: 34px;
-  padding: 0 14px;
-  font-size: 0.74rem;
+.proc-load-btn,
+.scramble-btn {
+  width: 100%;
+  height: 38px;
+  font-family: var(--font-untitled-sans);
+  font-size: 0.82rem;
   font-weight: 700;
+  letter-spacing: 0.6px;
+  border-radius: var(--radius-btn);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  box-sizing: border-box;
+}
+
+.proc-load-btn {
+  padding: 8px 16px;
+}
+
+.proc-load-btn:disabled {
+  background: var(--glass-3d-well-bg) !important;
+  border-color: var(--glass-3d-well-border) !important;
+  border-top-color: var(--glass-3d-well-border) !important;
+  color: var(--color-fog-veil) !important;
+  opacity: 0.42 !important;
+  filter: grayscale(1) !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 .scramble-btn {
@@ -112,22 +116,15 @@ body.safe-zone-on .procurement-window {
   border: 1px solid var(--theme-accent);
   border-top: 1px solid #ffffff;
   color: #ffffff;
-  font-family: var(--font-untitled-sans);
-  font-size: 0.82rem;
-  font-weight: 700;
   padding: 8px 24px;
-  border-radius: var(--radius-btn);
-  cursor: pointer;
-  letter-spacing: 0.6px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 0 16px var(--theme-primary-glow);
-  transition: all 0.16s ease;
 }
 
 .scramble-btn:hover:not(:disabled) {
   background: rgba(2, 132, 199, 0.7);
   border-color: #ffffff;
   box-shadow: inset 0 1px 0 #ffffff, 0 0 24px var(--theme-primary-glow);
-  transform: translateY(-1px) scale(1.02);
+  transform: translateY(-1px);
 }
 
 .scramble-btn:active:not(:disabled) {
@@ -165,31 +162,17 @@ body.safe-zone-on .procurement-window {
   }
 
   .procurement-footer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
-    padding-top: 4px;
-  }
-
-  .intel-summary {
-    display: none;
+    padding-top: 6px;
   }
 
   .proc-footer-actions {
-    width: 100%;
     gap: 6px;
   }
 
-  .proc-new-btn,
-  .proc-load-btn {
-    height: 30px;
-    padding: 0 12px;
-    font-size: 0.68rem;
-  }
-
+  .proc-load-btn,
   .scramble-btn {
-    flex: 1 1 auto;
-    padding: 7px;
+    height: 34px;
+    padding: 6px 10px;
     font-size: 0.74rem;
   }
 }
@@ -200,13 +183,5 @@ body.safe-zone-on .procurement-window {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 6px !important;
-  }
-  .procurement-footer {
-    flex-direction: row;
-    align-items: center;
-  }
-  .proc-footer-actions {
-    width: auto;
-    margin-left: auto;
   }
 }

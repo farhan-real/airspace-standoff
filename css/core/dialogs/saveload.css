@@ -1,13 +1,13 @@
-/* css/core/dialogs/saveload.css - Saved Sorties Load Modal & Hangar Save Status */
+/* css/core/dialogs/saveload.css - Single Saved Game Preview, Positions & Roster Modal */
 
 #save-load-modal {
   z-index: 3400 !important;
 }
 
 .saveload-window {
-  width: min(92vw, 720px);
-  max-height: 86vh;
-  max-height: 86dvh;
+  width: min(94vw, 840px);
+  max-height: 90vh;
+  max-height: 90dvh;
   display: flex;
   flex-direction: column;
   background: var(--glass-bg-modal);
@@ -27,7 +27,7 @@
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .saveload-empty {
@@ -57,7 +57,7 @@
   padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   box-shadow: var(--glass-3d-card-shadow);
 }
 
@@ -70,7 +70,7 @@
 }
 
 .save-slot-title {
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: #ffffff;
   font-family: var(--font-aeonikpro);
@@ -130,16 +130,128 @@
 
 .save-slot-metric b {
   color: #ffffff;
-  font-size: 0.66rem;
+  font-size: 0.68rem;
 }
 
-.save-slot-actions {
+.saveload-map-card {
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
+  border-radius: var(--radius-card);
+  padding: 8px 10px;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.saveload-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: 700 0.60rem var(--font-dotdigital);
+  color: var(--theme-accent);
+  letter-spacing: 0.4px;
+}
+
+.saveload-section-head span {
+  color: var(--color-moon-mist);
+}
+
+.saveload-map-canvas {
+  display: block;
+  width: 100%;
+  height: clamp(160px, 26vh, 235px);
+  background: #01040a;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: var(--radius-badge);
+}
+
+.saveload-rosters-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.saveload-roster-card {
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
+  border-radius: var(--radius-card);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.saveload-roster-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 185px;
+  overflow-y: auto;
+}
+
+.saveload-unit-row {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 6px;
-  padding-top: 4px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 4px 7px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-badge);
+  border-left: 2px solid var(--theme-accent);
+  font-family: var(--font-dotdigital);
+  font-size: 0.58rem;
+}
+
+.saveload-unit-row.red {
+  border-left-color: var(--color-red);
+}
+
+.saveload-unit-row.dead {
+  opacity: 0.45;
+  border-left-color: #64748b;
+}
+
+.saveload-unit-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.saveload-unit-main b {
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.saveload-unit-pos {
+  color: var(--color-moon-mist);
+  font-size: 0.54rem;
+}
+
+.saveload-unit-status {
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.saveload-footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--glass-3d-card-bg);
+  border-top: 1px solid var(--glass-border);
+}
+
+.saveload-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
 }
 
 @media (max-width: 680px) {
@@ -147,6 +259,11 @@
     width: 96vw;
     max-height: 92dvh;
     border-radius: var(--radius-card);
+  }
+
+  .save-slot-metrics,
+  .saveload-rosters-grid {
+    grid-template-columns: 1fr;
   }
 
   .save-slot-metrics {

@@ -26,6 +26,9 @@ class SaveGameSerializer {
     return {
       version: 1,
       id: slotId,
+      isCompleted: false,
+      mapW: window.CONFIG.THEATER_WIDTH_KM,
+      mapH: window.CONFIG.THEATER_HEIGHT_KM,
       savedAt: new Date().toISOString(),
       savedAtDisplay: new Date().toLocaleString(),
       elapsedClock: sim.getElapsedTimeString(),
