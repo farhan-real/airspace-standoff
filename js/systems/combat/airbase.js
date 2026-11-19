@@ -93,13 +93,15 @@ class AirbaseSystem {
   static isAirbaseNeutralized(game, airbaseId) {
     const segs = game.surfaceUnits.filter(s => s.team === 'hostile' && s.isRunwaySegment && s.airbaseId === airbaseId);
     if (segs.length === 0) return false;
+    const centerSeg = segs.find(s => s.segmentIndex === Math.floor(segs.length / 2));
+    if (centerSeg && centerSeg.hp <= 0.05) return true;
+
     const { maxLength } = this.getContiguousRuns(segs);
     if (maxLength < 2) return true;
 
     const parked = game.surfaceUnits.filter(s => s.team === 'hostile' && s.isAircraftParking && s.airbaseId === airbaseId && s.hp > 0.05);
     const anyTakeoffCapable = parked.some(p => p.parkedAircraft.some(ac => ac.takeoffSegments <= maxLength));
     const rollingFromBase = game.hostileAircraft.some(a => a.hp > 0.05 && a.groundPhase && a.airbaseId === airbaseId);
-    if (maxLength <= 2 && !anyTakeoffCapable && !rollingFromBase) return true;
     return !anyTakeoffCapable && !rollingFromBase && parked.every(p => p.parkedAircraft.length === 0) && maxLength < segs.length;
   }
 
@@ -193,7 +195,13 @@ class AirbaseSystem {
       const acIdx = node.parkedAircraft.findIndex(ac => ac.takeoffSegments <= maxLen);
       if (acIdx !== -1) {
         chosenNode = node; chosenIdx = acIdx;
-        chosenRun = runs.find(r => r.length >= node.parkedAircraft[acIdx].takeoffSegments);
+        const reqSegs = node.parkedAircraft[acIdx].takeoffSegments;
+        const validRuns = runs.filter(r => r.length >= reqSegs).sort((a, b) => {
+          const da = Math.hypot(a.segments[0].x - node.x, a.segments[0].y - node.y);
+          const db = Math.hypot(b.segments[0].x - node.x, b.segments[0].y - node.y);
+          return da - db;
+        });
+        chosenRun = validRuns[0] || null;
         break;
       }
     }

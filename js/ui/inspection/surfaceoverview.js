@@ -83,6 +83,11 @@ class InspectionSurfaceOverview {
         const neutralized = AirbaseSystem.isAirbaseNeutralized(game, s.airbaseId);
         const timerSec = (game.airbaseTimers && typeof game.airbaseTimers[s.airbaseId] === 'number')
           ? Math.max(0, game.airbaseTimers[s.airbaseId]).toFixed(1) : '--';
+        const parking = allSurf.filter(u => u.team === s.team && u.isAircraftParking && u.airbaseId === s.airbaseId && u.hp > 0.05);
+        const hasCapableJets = runInfo.maxLength >= 1 && parking.some(p => p.parkedAircraft.some(ac => ac.takeoffSegments <= runInfo.maxLength));
+        const statusLabel = neutralized
+          ? (hasCapableJets ? `DISABLED (1-${runInfo.maxLength} SEG QRA: ${timerSec}s)` : 'NEUTRALIZED')
+          : `MAX RUN: ${runInfo.maxLength} SEG | QRA: ${timerSec}s`;
         const segChips = segs.map(seg => {
           const intact = seg.hp > 0.05;
           const isCur = seg.id === s.id;
@@ -92,7 +97,7 @@ class InspectionSurfaceOverview {
           <div class="ovr-surf-rwy-wrap" style="margin-bottom:6px;">
             <div style="display:flex; justify-content:space-between; font:600 0.62rem var(--font-dotdigital); margin-bottom:4px;">
               <span>AIRBASE ${s.airbaseId} (${runInfo.totalIntact}/${segs.length} INTACT)</span>
-              <b style="color:${neutralized ? 'var(--stat-tier-2)' : 'var(--stat-tier-5)'};">${neutralized ? 'NEUTRALIZED' : `MAX RUN: ${runInfo.maxLength} SEG | QRA: ${timerSec}s`}</b>
+              <b style="color:${neutralized ? 'var(--stat-tier-2)' : 'var(--stat-tier-5)'};">${statusLabel}</b>
             </div>
             <div class="inspection-chips-wrap">${segChips}</div>
             <small class="inspection-meter-note">Launch req: 1 Seg UCAVs | 2 Seg Light/CAS | 3 Seg Fighters | 4 Seg Heavy/Bombers</small>

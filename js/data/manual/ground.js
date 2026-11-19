@@ -24,8 +24,8 @@ window.MANUAL_GROUND = [
         <div class="ge-card" style="border-left:3px solid #fbbf24;">
           <b style="color:#fbbf24;">TACTICAL RUNWAY CRATERING &amp; PARKING NODES</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.5;">
-            &bull; <b>Middle Segment Cut (Seg 3):</b> Breaks 3 and 4-segment launches immediately, leaving two 2-segment halves.<br>
-            &bull; <b>Quarter Cuts (Seg 2 &amp; Seg 4):</b> Leaves only single isolated segments, permanently grounding all manned aircraft.<br>
+            &bull; <b>Middle Segment Cut (Seg 3):</b> Disables the main runway, clears its <b>[OBJ]</b> objective, and grounds 3- and 4-segment aircraft, while 1- and 2-segment aircraft can still launch from the remaining 2-segment halves.<br>
+            &bull; <b>Quarter Cuts (Seg 2 &amp; Seg 4):</b> Leaves only single isolated segments, clearing the objective and grounding all 2-, 3-, and 4-segment manned aircraft (only 1-segment STOVL jets and UCAVs can launch).<br>
             &bull; <b>Parking Nodes:</b> Jets wait inside <b>Open Fields</b> (3 HP Soft), <b>Hangars</b> (8 HP Armored), and <b>Hardened Shelters</b> (10 HP Fortified). Bombing storage destroys parked jets inside. Before takeoff, jets physically <b>taxi</b> and perform a <b>takeoff roll</b> where strafing or runway cratering destroys them!
           </div>
         </div>

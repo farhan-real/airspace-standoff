@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Inspection Graphs for Ground Installations & IADS Batteries
+ * js/ui/inspection/graphs/surfacegraphs.js - Inspection Graphs for Ground Installations & IADS Batteries
  */
 
 class InspectionSurfaceGraphs {
@@ -122,10 +122,15 @@ class InspectionSurfaceGraphs {
     if (s.isRunwaySegment) {
       const segs = (game.surfaceUnits || []).filter(u => u.team === s.team && u.isRunwaySegment && u.airbaseId === s.airbaseId);
       const runInfo = (typeof AirbaseSystem !== 'undefined') ? AirbaseSystem.getContiguousRuns(segs) : { maxLength: 5, totalIntact: 5 };
+      const isMiddleCratered = segs.some(seg => seg.segmentIndex === Math.floor(segs.length / 2) && seg.hp <= 0.05);
       ratio = runInfo.maxLength / Math.max(1, segs.length);
       mainVal = `${runInfo.maxLength} / ${segs.length} CONTIGUOUS`;
-      subVal = runInfo.maxLength < 2 ? 'RUNWAY NEUTRALIZED' : `${runInfo.totalIntact} SEGMENTS INTACT`;
-      color = runInfo.maxLength < 2 ? '#f43f5e' : (runInfo.maxLength <= 3 ? '#fbbf24' : '#00f5a0');
+      subVal = runInfo.maxLength === 0
+        ? 'RUNWAY DESTROYED'
+        : ((isMiddleCratered || runInfo.maxLength < 2)
+          ? `DISABLED (MAX ${runInfo.maxLength} SEG ACTIVE)`
+          : `${runInfo.totalIntact} SEGMENTS INTACT`);
+      color = (isMiddleCratered || runInfo.maxLength < 2) ? '#f43f5e' : (runInfo.maxLength <= 3 ? '#fbbf24' : '#00f5a0');
     } else if (s.canAttack || s.canInterceptMissiles || s.isAaaGun) {
       const effMax = Math.max(0.5, s.cooldownMax * mods.samCooldownMult);
       ratio = s.emconTimer > 0 ? 0 : Math.max(0, Math.min(1, 1 - (s.fireCooldown / effMax)));
