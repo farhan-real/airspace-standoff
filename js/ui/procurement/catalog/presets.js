@@ -36,6 +36,16 @@ class ProcurementPresets {
         { specId: 'A-16', chosenGunId: 'GAU-13', weapons: ['GPU-5A', 'CRV7-MPSM', 'AGM-88G', 'TALD-DECOY', 'AIM-9X-2'], upgrades: ['SEAD_HTS_POD', 'CCIP_BALLISTIC_COMP'] },
         { specId: 'Tornado-ECR', chosenGunId: 'BK-27', weapons: ['AGM-88G', 'AIM-120D', 'ALE-55'], upgrades: ['ESM_PASSIVE_SUITE'] }
       ],
+      ew: [
+        { specId: 'EA-36', chosenGunId: 'DE-PULSE', weapons: ['AN-ALQ-165', 'AIM-260B-HOJ', 'AIM-9X-B3', 'AN-ALQ-249', 'AN-ALQ-218-POD'], upgrades: ['GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'ESM_PASSIVE_SUITE', 'SUPERCRUISE_VCE'] },
+        { specId: 'EA-18G', chosenGunId: 'GAU-22', weapons: ['AN-ALQ-249', 'AGM-88G', 'AIM-120D-HOJ', 'AN-ALQ-218-POD'], upgrades: ['SEAD_HTS_POD', 'ADAPTIVE_ECCM_SUITE', 'GAN_AESA_CORE'] },
+        { specId: 'J-15D', chosenGunId: 'GSH-30-1', weapons: ['SAP-14-POD', 'PL-15-HOJ', 'KH-58USHKE', 'PL-10', 'KHIBINY-L175'], upgrades: ['GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'MADL_BATTLE_LINK'] },
+        { specId: 'J-16D', chosenGunId: 'GSH-30-1', weapons: ['SAP-14-POD', 'KH-58USHKE', 'KH-59MK2', 'SAPSAN-E'], upgrades: ['SEAD_HTS_POD', 'ADAPTIVE_ECCM_SUITE', 'MITL_DATALINK_TRANSCEIVER'] },
+        { specId: 'EF-111A', chosenGunId: 'M61A2', weapons: ['AN-ALQ-165', 'ADM-160B', 'AN-ALQ-249', 'TALD-DECOY', 'AN-ALQ-218-POD'], upgrades: ['SEAD_HTS_POD', 'ADAPTIVE_ECCM_SUITE'] },
+        { specId: 'Su-24MP', chosenGunId: 'GSH-23L', weapons: ['SAP-14-POD', 'KH-58USHKE', 'R-27EP', 'KHIBINY-L175', 'R-73'], upgrades: ['ADAPTIVE_ECCM_SUITE', 'ESM_PASSIVE_SUITE', 'TFR_TERRAIN_RADAR'] },
+        { specId: 'Tornado-ECR', chosenGunId: 'BK-27', weapons: ['ALARM-II', 'AN-ALQ-131', 'TALD-DECOY', 'AN-AAQ-28'], upgrades: ['SEAD_HTS_POD', 'ADAPTIVE_ECCM_SUITE'] },
+        { specId: 'J-20S', chosenGunId: 'GSH-30-1', weapons: ['AN-ALQ-165', 'ADM-160B', 'PL-15-HOJ', 'AN-ALQ-249', 'PL-10'], upgrades: ['RAM_NANO_COATING', 'MALD_DECOY_SYSTEM', 'ADAPTIVE_ECCM_SUITE', 'MADL_BATTLE_LINK'] }
+      ],
       swarm: [
         { specId: 'F-22C-COFFIN', chosenGunId: 'DE-PULSE', weapons: ['AIM-260', 'AIM-120D', 'AIM-9X-2'], upgrades: ['COFFIN_OPTICAL_BUS', 'GAN_AESA_CORE'] },
         { specId: 'F-15EX', chosenGunId: 'M61A2', weapons: ['AIM-260', 'AIM-260', 'AIM-120D', 'AIM-120D', 'METEOR', 'AIM-9X-2', 'AIM-9X-2'], upgrades: ['MADL_BATTLE_LINK', 'GAN_AESA_CORE'] },
@@ -70,6 +80,7 @@ class ProcurementPresets {
       { id: 'stealth', name: 'STEALTH SWEEP' },
       { id: 'strike', name: 'GROUND STRIKE' },
       { id: 'sead', name: 'SEAD ESCORT' },
+      { id: 'ew', name: 'EW SUPPRESSION' },
       { id: 'swarm', name: 'UAV FLIGHT' },
       { id: 'interceptor', name: 'BVR INTERCEPT' }
     ];

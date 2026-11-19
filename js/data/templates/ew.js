@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Preconfigured Loadouts: Electronic Warfare & SEAD Escorts
+ * js/data/templates/ew.js - Preconfigured Loadouts: Electronic Warfare & SEAD Escorts.
  */
 
 window.TEMPLATES_EW = {
@@ -39,6 +39,24 @@ window.TEMPLATES_EW = {
     upgrades: ['ESM_PASSIVE_SUITE', 'EXTENDED_RANGE_TURBO'],
     desc: 'Affordable strike package escort providing broadband microwave radar noise jamming.'
   },
+  'Tornado-ECR Anti-EMCON ALARM & Spear': {
+    name: 'Tornado-ECR Anti-EMCON ALARM & Spear',
+    specId: 'Tornado-ECR',
+    roleCategory: 'SEAD & EW',
+    chosenGunId: 'BK-27',
+    weapons: ['ALARM-II', 'SPEAR-EW', 'AN-ALQ-131', 'AN-AAQ-28', 'BRITECLOUD-POD', 'IRIS-T'],
+    upgrades: ['SEAD_HTS_POD', 'TFR_TERRAIN_RADAR', 'ADAPTIVE_ECCM_SUITE'],
+    desc: 'Low-level European Wild Weasel pairing ALARM-II and SPEAR-EW radar hunters with BriteCloud DRFM decoys.'
+  },
+  'Tornado-ECR ITALD Bait & Standoff Jammer': {
+    name: 'Tornado-ECR ITALD Bait & Standoff Jammer',
+    specId: 'Tornado-ECR',
+    roleCategory: 'SEAD & EW',
+    chosenGunId: 'BK-27',
+    weapons: ['AN-ALQ-249', 'TALD-DECOY', 'AGM-88E', 'AN-ALQ-218-POD'],
+    upgrades: ['ESM_PASSIVE_SUITE', 'ADAPTIVE_ECCM_SUITE', 'DIRCM_IR_TURRET'],
+    desc: 'Suppression Tornado projecting 125 km NGJ jamming while launching ITALD gliders to exhaust SAM ready racks.'
+  },
   'EF-111A Penetration Jamming System': {
     name: 'EF-111A Penetration Jamming System',
     specId: 'EF-111A',
@@ -56,6 +74,60 @@ window.TEMPLATES_EW = {
     weapons: ['AN-ALQ-249', 'AIM-120D', 'ALE-55'],
     upgrades: ['ADAPTIVE_ECCM_SUITE', 'SUPERCRUISE_VCE'],
     desc: 'Equipped with next-generation GaN AESA jamming pods to project directional jamming beams from 120km out.'
+  },
+  'Su-24MP Fencer-F Broadband Jamming Escort': {
+    name: 'Su-24MP Fencer-F Broadband Jamming Escort',
+    specId: 'Su-24MP',
+    roleCategory: 'SEAD & EW',
+    chosenGunId: 'GSH-23L',
+    weapons: ['SAP-14-POD', 'KH-58USHKE', 'R-27EP', 'KHIBINY-L175', 'R-73'],
+    upgrades: ['ADAPTIVE_ECCM_SUITE', 'ESM_PASSIVE_SUITE', 'TFR_TERRAIN_RADAR', 'DIRCM_IR_TURRET'],
+    desc: 'Standoff EW Fencer combining 45% innate jamming, Tarantul and Khibiny pods, and 95 km R-27EP anti-EW missiles.'
+  },
+  'Su-24MP Fencer-F Anti-Radar & Decoy Screen': {
+    name: 'Su-24MP Fencer-F Anti-Radar & Decoy Screen',
+    specId: 'Su-24MP',
+    roleCategory: 'SEAD & EW',
+    chosenGunId: 'GSH-23L',
+    weapons: ['KH-31P', 'KH-31P', 'TALD-DECOY', 'ADM-160B', 'SAPSAN-E'],
+    upgrades: ['SEAD_HTS_POD', 'ADAPTIVE_ECCM_SUITE', 'EXPANDED_CM_DISPENSER', 'HEAVY_PYLON_FAIRINGS'],
+    desc: 'High-volume SEAD Fencer carrying 8 ramjet Kh-31P ARMs alongside ITALD and MALD decoys plus Sapsan-E optics.'
+  },
+  'Su-24MP Fencer-F Passive ELINT & HOJ': {
+    name: 'Su-24MP Fencer-F Passive ELINT & HOJ',
+    specId: 'Su-24MP',
+    roleCategory: 'SEAD & EW',
+    chosenGunId: 'GSH-23L',
+    weapons: ['SORBTSIYA-L005', 'R-27P', 'R-27EP', 'AN-ALQ-218-POD', 'BRITECLOUD-POD'],
+    upgrades: ['GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'MADL_BATTLE_LINK', 'RTB_HOMING_BEACON'],
+    desc: 'Lightweight 30% Wr Fencer-F hunting enemy radars silently with ELINT receivers and passive R-27P/EP seekers.'
+  },
+  'J-15D Carrier Growler Fleet Jammer & HOJ': {
+    name: 'J-15D Carrier Growler Fleet Jammer & HOJ',
+    specId: 'J-15D',
+    roleCategory: 'SEAD & EW',
+    chosenGunId: 'GSH-30-1',
+    weapons: ['AN-ALQ-249', 'PL-15-HOJ', 'PL-15-HOJ', 'PL-10', 'KHIBINY-L175', 'AN-ALE-50'],
+    upgrades: ['GAN_AESA_CORE', 'ADAPTIVE_ECCM_SUITE', 'MADL_BATTLE_LINK', 'EOTS_DUAL_OPTICS'],
+    desc: 'Naval carrier EW escort pairing 125 km NGJ jamming with 8 Home-On-Jam PL-15 missiles and towed repeaters.'
+  },
+  'J-15D Carrier Growler Anti-IADS Swarm': {
+    name: 'J-15D Carrier Growler Anti-IADS Swarm',
+    specId: 'J-15D',
+    roleCategory: 'SEAD & EW',
+    chosenGunId: 'GSH-30-1',
+    weapons: ['KH-58USHKE', 'KH-31P', 'TALD-DECOY', 'SAPSAN-E', 'SORBTSIYA-L005', 'PL-10'],
+    upgrades: ['SEAD_HTS_POD', 'TFR_TERRAIN_RADAR', 'DIRCM_IR_TURRET', 'MITL_DATALINK_TRANSCEIVER'],
+    desc: 'Carrier DEAD package combining Sorbtsiya jamming and ITALD decoys with dual-type ARM radar suppression.'
+  },
+  'J-15D Carrier Growler Long-Reach Escort': {
+    name: 'J-15D Carrier Growler Long-Reach Escort',
+    specId: 'J-15D',
+    roleCategory: 'SEAD & EW',
+    chosenGunId: 'GSH-30-1',
+    weapons: ['SAP-14-POD', 'R-27EP', 'PL-15-HOJ', 'AN-ALQ-218-POD', 'ADM-160B', 'PL-10'],
+    upgrades: ['ADAPTIVE_ECCM_SUITE', 'GAN_AESA_CORE', 'MALD_DECOY_SYSTEM', 'SUPERCRUISE_VCE'],
+    desc: 'Long-range maritime EW escort screening strike wings with 115 km Tarantul jamming, ELINT, and MALD decoys.'
   },
   'J-16D Electronic Warfare Escort': {
     name: 'J-16D Electronic Warfare Escort',
