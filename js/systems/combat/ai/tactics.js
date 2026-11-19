@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Tactical AI Missile Decision Engine
+ * js/systems/combat/ai/tactics.js - Tactical AI Missile Decision Engine
  * Integrates AIR_DOCTRINES firing thresholds, target priorities, decoy releases, and RTB discipline.
  */
 
@@ -100,6 +100,7 @@ class AIMissileTactics {
         if (role === 'DOGFIGHT' && (w.seeker === 'IIR' || w.seeker === 'EO' || w.trait === 'HOBS_VANE')) score += 22;
         if (role === 'INTERCEPT' && dist >= 25.0 && w.speedMach >= 3.5) score += 20;
         if (role === 'SWARM' && w.trait === 'SWARM_RIPPLE') score += 20;
+        if (role === 'ESCORT' && tgt.radarLockedTarget && tgt.radarLockedTarget.team === shooter.team) score += 28;
         if (tgt.isFlightLead) score += 18;
         if (tgt.hp <= 2) score += 16;
         if (diffKey === 'CADET' || diffKey === 'BUFFER') score += (Math.random() * 20 - 10);

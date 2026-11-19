@@ -1,6 +1,6 @@
 /**
  * js/systems/combat/outfitter.js - Tactical AI Loadout Planner
- * Matches airframe pylon ratings, weapon range classes, and active AIR_DOCTRINES preferences.
+ * Matches airframe pylon ratings, weapon range classes, CAS roles, and active AIR_DOCTRINES.
  */
 
 class FleetOutfitter {
@@ -20,6 +20,7 @@ class FleetOutfitter {
 
     const isEW = (spec.category === 'EW' || spec.isEW), isStrike = (spec.category === 'STRIKE');
     const isDrone = (spec.category === 'DRONES' || spec.isDrone), isStealth = (spec.internalSlots > 0 && spec.category === 'STEALTH');
+    const isCasAirframe = ['A-10C', 'Su-25SM3', 'Su-39', 'MiG-27K', 'A-16', 'AV-8B-PLUS', 'JAGUAR-GR3', 'F-16XL', 'A-29B'].includes(spec.id);
     const isHeavyTruck = ['F-15EX', 'F-15E', 'F-15J-JSI', 'F-16XL', 'MiG-31BM', 'J-16', 'J-11BG', 'J-15T', 'J-36', 'Mirage-4000', 'Su-34', 'A-10C', 'Su-39', 'MiG-27K', 'A-16', 'B-1B', 'B-52H', 'Tu-160M', 'F-111F'].includes(spec.id);
     const isAgileDogfighter = ['Rafale-C', 'Rafale-M', 'Eurofighter', 'TYPHOON-T4', 'Su-35S', 'Su-27SM3', 'Su-30MKI', 'MiG-35S', 'J-10C', 'Mirage-2000', 'Mirage-2000D', 'F-16V', 'F-16C-B52', 'A-16', 'F-16XL', 'AV-8B-PLUS', 'JAS-39E', 'JAS-39C', 'Tejas-MK2', 'Tejas-MK1A', 'JF-17-B3', 'FA-50-B20', 'F-5E-TIGER', 'Su-47', 'X-29A', 'Su-37'].includes(spec.id);
     const isHighSpeed = (spec.S_0 >= 1.25 || ['MiG-31BM', 'MiG-25PD', 'DARKSTAR', 'F-15EX', 'F-15E', 'F-15C', 'F-15J-JSI', 'F-16XL', 'MiG-27K', 'A-16', 'YF-23', 'F-22-SUPER', 'J-20B', 'J-36', 'TEMPEST', 'F-14D', 'F-14B', 'Tu-160M'].includes(spec.id));
@@ -37,7 +38,8 @@ class FleetOutfitter {
     const addWpn = (wId, station) => {
       const w = wCatalog[wId];
       if (!w || !isEligible(w)) return false;
-      weapons.push({ id: wId, station });
+      const st = (station === 'EXTERNAL' && spec.externalSlots === 0 && spec.internalSlots > 0) ? 'INTERNAL' : station;
+      weapons.push({ id: wId, station: st });
       totalCost += w.cost;
       return true;
     };
@@ -76,10 +78,11 @@ class FleetOutfitter {
         if (spec.externalSlots >= 6) addWpn(lrChoice, 'EXTERNAL');
         if (spec.externalSlots >= 8) addWpn(srChoice, 'EXTERNAL');
       }
-
       const aceSockets = ['FORTIFIED', 'MASTER', 'LEGEND'].includes(diff) ? Math.min(spec.upgradeSockets, 4) : 3;
-      const aceUpgPool = ['GAN_AESA_CORE', 'THRUST_VECTOR', 'SUPERCRUISE_VCE', 'RAM_NANO_COATING', 'ADAPTIVE_ECCM_SUITE', 'COFFIN_OPTICAL_BUS'];
-      for (const uId of aceUpgPool) { if (upgrades.length >= aceSockets) break; addUpg(uId); }
+      for (const uId of ['GAN_AESA_CORE', 'THRUST_VECTOR', 'SUPERCRUISE_VCE', 'RAM_NANO_COATING', 'ADAPTIVE_ECCM_SUITE', 'COFFIN_OPTICAL_BUS']) {
+        if (upgrades.length >= aceSockets) break;
+        addUpg(uId);
+      }
       return { weapons, upgrades, totalCost, chosenGunId, role: aceRole };
     }
 
@@ -143,13 +146,32 @@ class FleetOutfitter {
     }
 
     if (role === 'STRIKE') {
-      if (spec.hasCenterline && isEligible(wCatalog['KINZHAL']) && (diff === 'LEGEND' || rng.boolean(0.50))) addWpn('KINZHAL', 'CENTERLINE');
-      else if (isEligible(wCatalog['AGM-158C']) && rng.boolean(0.45)) addWpn('AGM-158C', 'EXTERNAL');
-      else if (isEligible(wCatalog['AGM-158B'])) addWpn('AGM-158B', 'EXTERNAL');
-      else addWpn('GBU-39', 'EXTERNAL');
-      if (isEligible(wCatalog['AGM-88G']) && rng.boolean(0.60)) addWpn('AGM-88G', 'EXTERNAL');
-      addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
-      addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      if (isCasAirframe) {
+        const casCl = ['CBU-105', 'RBK-500', 'CBU-97', 'CBU-87'].filter(id => isEligible(wCatalog[id]));
+        const casRk = ['S-25OFM', 'CRV7-MPSM', 'S-13OF', 'HYDRA-70'].filter(id => isEligible(wCatalog[id]));
+        const casAt = ['KH-38ML', 'BRIMSTONE-II', 'AGM-179', 'SPIKE-NLOS'].filter(id => isEligible(wCatalog[id]));
+        const casTg = ['AN-AAQ-33', 'SAPSAN-E', 'AN-AAQ-28'].filter(id => isEligible(wCatalog[id]));
+        if (casCl.length > 0) addWpn(rng.pick(casCl), 'EXTERNAL');
+        if (casRk.length > 0) addWpn(rng.pick(casRk), 'EXTERNAL');
+        if (casAt.length > 0) addWpn(rng.pick(casAt), 'EXTERNAL');
+        if (casTg.length > 0) addWpn(rng.pick(casTg), 'EXTERNAL');
+        if (!['A-10C', 'Su-25SM3', 'A-29B'].includes(spec.id) && spec.externalSlots >= 8) addWpn(rollBvr(false), 'EXTERNAL');
+        addWpn(rollWvr(), 'EXTERNAL');
+        addUpg('KEVLAR_BELLY_ARMOR');
+        addUpg('CCIP_BALLISTIC_COMP');
+        addUpg('TFR_TERRAIN_RADAR');
+      } else {
+        const strikeSt = (spec.externalSlots === 0 && spec.internalSlots > 0) ? 'INTERNAL' : 'EXTERNAL';
+        if (spec.hasCenterline && isEligible(wCatalog['KINZHAL']) && (diff === 'LEGEND' || rng.boolean(0.50))) addWpn('KINZHAL', 'CENTERLINE');
+        else if (isEligible(wCatalog['AGM-158C']) && rng.boolean(0.45)) addWpn('AGM-158C', strikeSt);
+        else if (isEligible(wCatalog['AGM-158B'])) addWpn('AGM-158B', strikeSt);
+        else addWpn('GBU-39', strikeSt);
+        if (isEligible(wCatalog['AGM-88G']) && rng.boolean(0.60)) addWpn('AGM-88G', strikeSt);
+        addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+        addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+        addUpg('TFR_TERRAIN_RADAR');
+        addUpg('MITL_DATALINK_TRANSCEIVER');
+      }
     } else if (role === 'SNIPER') {
       const primaryUlr = rng.pick(class1Ulr) || rollBvr(true), secondaryLr = rng.pick(class2Lr) || rollBvr(false);
       if (spec.internalSlots > 0) {
@@ -213,9 +235,10 @@ class FleetOutfitter {
     else if (docProfile.preferWeapons === 'EW_SEAD') addUpg('ADAPTIVE_ECCM_SUITE');
     else if (docProfile.preferWeapons === 'DEFENSIVE') addUpg('RTB_HOMING_BEACON');
 
-    const upgPool = ['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'THRUST_VECTOR', 'RAM_NANO_COATING', 'ADAPTIVE_ECCM_SUITE', 'EOTS_DUAL_OPTICS', 'DAS_360_OPTIC', 'TITANIUM_COCKPIT'];
-    for (const uId of rng.shuffle(upgPool)) { if (upgrades.length >= targetSockets) break; addUpg(uId); }
-
+    for (const uId of rng.shuffle(['GAN_AESA_CORE', 'SUPERCRUISE_VCE', 'THRUST_VECTOR', 'RAM_NANO_COATING', 'ADAPTIVE_ECCM_SUITE', 'EOTS_DUAL_OPTICS', 'DAS_360_OPTIC', 'TITANIUM_COCKPIT'])) {
+      if (upgrades.length >= targetSockets) break;
+      addUpg(uId);
+    }
     return { weapons, upgrades, totalCost, chosenGunId, role };
   }
 }

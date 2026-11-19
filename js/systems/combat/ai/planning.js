@@ -1,6 +1,6 @@
 /**
- * AIRSPACE STANDOFF: AI Mission Planning Subsystem
- * Flight paths, formation element pairing, doctrine posture thresholds, and role-based altitudes.
+ * js/systems/combat/ai/planning.js - AI Mission Planning Subsystem
+ * Flight paths, formation element pairing, doctrine posture thresholds, and role-based altitudes & vectors.
  */
 
 class AIPlanningSystem {
@@ -123,51 +123,47 @@ class AIPlanningSystem {
 
     let baseAlt = 28000;
     if (role === 'SNIPER') {
-      if (diffKey === 'LEGEND') baseAlt = unit.spec && unit.spec.id === 'DARKSTAR' ? 58000 : 50000;
-      else if (diffKey === 'MASTER') baseAlt = 46000;
-      else if (diffKey === 'FORTIFIED') baseAlt = 44000;
-      else if (diffKey === 'ACE') baseAlt = 42000;
-      else if (diffKey === 'FORWARD') baseAlt = 40000;
-      else if (diffKey === 'ELITE') baseAlt = 38000;
-      else baseAlt = 36000;
+      baseAlt = diffKey === 'LEGEND' ? (unit.spec && unit.spec.id === 'DARKSTAR' ? 58000 : 50000)
+        : (diffKey === 'MASTER' ? 46000 : (diffKey === 'FORTIFIED' ? 44000 : (diffKey === 'ACE' ? 42000 : (diffKey === 'FORWARD' ? 40000 : (diffKey === 'ELITE' ? 38000 : 36000)))));
+    } else if (role === 'FLAGSHIP') {
+      baseAlt = diffKey === 'LEGEND' ? 44000 : (diffKey === 'MASTER' ? 42000 : (diffKey === 'FORTIFIED' ? 40000 : 38000));
     } else if (role === 'INTERCEPT') {
-      if (diffKey === 'LEGEND' || diffKey === 'MASTER') baseAlt = 42000;
-      else if (diffKey === 'FORTIFIED') baseAlt = 40000;
-      else if (diffKey === 'ACE') baseAlt = 38000;
-      else if (diffKey === 'FORWARD') baseAlt = 36000;
-      else if (diffKey === 'ELITE') baseAlt = 34000;
-      else baseAlt = 32000;
+      baseAlt = (diffKey === 'LEGEND' || diffKey === 'MASTER') ? 42000
+        : (diffKey === 'FORTIFIED' ? 40000 : (diffKey === 'ACE' ? 38000 : (diffKey === 'FORWARD' ? 36000 : (diffKey === 'ELITE' ? 34000 : 32000))));
     } else if (role === 'DOGFIGHT') baseAlt = 20000;
     else if (role === 'SWARM') baseAlt = 18000;
-    else if (role === 'ESCORT') baseAlt = 28000;
+    else if (role === 'ESCORT') baseAlt = 30000;
     else if (role === 'STRIKE') {
-      if (diffKey === 'LEGEND') baseAlt = 5500;
-      else if (diffKey === 'MASTER') baseAlt = 8000;
-      else if (diffKey === 'FORTIFIED') baseAlt = 9500;
-      else if (diffKey === 'ACE') baseAlt = 11000;
-      else if (diffKey === 'FORWARD') baseAlt = 12000;
-      else if (diffKey === 'ELITE') baseAlt = 13000;
-      else baseAlt = 15000;
+      baseAlt = diffKey === 'LEGEND' ? 5500 : (diffKey === 'MASTER' ? 8000 : (diffKey === 'FORTIFIED' ? 9500 : (diffKey === 'ACE' ? 11000 : (diffKey === 'FORWARD' ? 12000 : (diffKey === 'ELITE' ? 13000 : 15000)))));
     } else if (role === 'SEAD') {
-      if (diffKey === 'LEGEND') baseAlt = 36000;
-      else if (diffKey === 'MASTER') baseAlt = 34000;
-      else if (diffKey === 'FORTIFIED') baseAlt = 33000;
-      else if (diffKey === 'ACE') baseAlt = 32000;
-      else if (diffKey === 'FORWARD') baseAlt = 31000;
-      else baseAlt = 30000;
+      baseAlt = diffKey === 'LEGEND' ? 36000 : (diffKey === 'MASTER' ? 34000 : (diffKey === 'FORTIFIED' ? 33000 : (diffKey === 'ACE' ? 32000 : (diffKey === 'FORWARD' ? 31000 : 30000))));
     } else if (role === 'AMBUSH') {
-      if (diffKey === 'LEGEND') baseAlt = 42000;
-      else if (diffKey === 'MASTER') baseAlt = 40000;
-      else if (diffKey === 'FORTIFIED') baseAlt = 38000;
-      else if (diffKey === 'ACE') baseAlt = 36000;
-      else if (diffKey === 'FORWARD') baseAlt = 34000;
-      else baseAlt = 32000;
+      baseAlt = diffKey === 'LEGEND' ? 42000 : (diffKey === 'MASTER' ? 40000 : (diffKey === 'FORTIFIED' ? 38000 : (diffKey === 'ACE' ? 36000 : (diffKey === 'FORWARD' ? 34000 : 32000))));
     } else if (profile.formationDoctrine === 'HIGH_LOW_BRACKET' || profile.formationDoctrine === 'PINCER_BRACKET') {
       const isWingman = [...this.elementPairs.values()].includes(unit.id);
       baseAlt = isWingman ? 20000 : 34000;
     }
 
     return Math.max(5000, Math.min(58000, baseAlt + altBias));
+  }
+
+  getEscortVector(unit, target, dist) {
+    const friendlies = (this.game.hostileAircraft || []).filter(h => h && h.id !== unit.id && h.hp > 0.05);
+    const vip = friendlies.find(h => h.isAce || h.isFlightLead) ||
+      friendlies.find(h => h.tacticalRole === 'STRIKE' || h.tacticalRole === 'SEAD');
+
+    if (vip && target) {
+      const vipDistToTgt = Math.hypot(target.x - vip.x, target.y - vip.y);
+      const screenAngle = Math.atan2(target.y - vip.y, target.x - vip.x);
+      const screenX = vip.x + Math.cos(screenAngle) * Math.min(12.0, vipDistToTgt * 0.45);
+      const screenY = vip.y + Math.sin(screenAngle) * Math.min(12.0, vipDistToTgt * 0.45);
+      if (Math.hypot(screenX - unit.x, screenY - unit.y) > 6.0 && dist > 26.0) {
+        return { heading: Math.atan2(screenY - unit.y, screenX - unit.x), throttle: 0.78 };
+      }
+    }
+    const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+    const sOpt = unit.getOptimalCornerSpeed();
+    return { heading: directAngle, throttle: unit.speed > sOpt * 1.10 ? 0.50 : 0.72 };
   }
 
   getSniperVector(unit, target, dist, diffKey) {

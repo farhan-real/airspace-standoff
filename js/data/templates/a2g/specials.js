@@ -170,9 +170,9 @@ window.TEMPLATES_A2G_SPECIALS = {
     specId: 'F-22C-COFFIN',
     roleCategory: 'STRIKE',
     chosenGunId: 'DE-PULSE',
-    weapons: ['AGM-154C', 'GBU-53', 'AGM-88G', 'AN-AAQ-33'],
+    weapons: ['AGM-154C', 'GBU-53', 'SPEAR-EW', 'AN-AAQ-33'],
     upgrades: ['COFFIN_OPTICAL_BUS', 'RAM_NANO_COATING', 'SEAD_HTS_POD', 'MITL_DATALINK_TRANSCEIVER'],
-    desc: '0.00005m2 COFFIN Raptor II combining internal JSOW-C, StormBreakers, and AARGM-ER radar hunting.'
+    desc: '0.00005m2 COFFIN Raptor II combining internal JSOW-C, StormBreakers, and compact SPEAR-EW radar hunting.'
   },
   'ADF-11F Raven SEAD & StormBreaker': {
     name: 'ADF-11F Raven SEAD & StormBreaker',

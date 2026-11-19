@@ -116,9 +116,9 @@ window.TEMPLATES_A2G_MULTIROLE = {
     specId: 'F-2A',
     roleCategory: 'STRIKE',
     chosenGunId: 'M61A2',
-    weapons: ['AGM-158C', 'GBU-38', 'AGM-88E', 'AN-AAQ-33', 'AAM-5B'],
+    weapons: ['AGM-158C', 'AGM-88E', 'APKWS-II', 'AN-AAQ-33', 'AAM-5B'],
     upgrades: ['MITL_DATALINK_TRANSCEIVER', 'SEAD_HTS_POD', 'HEAVY_PYLON_FAIRINGS'],
-    desc: 'Composite-wing F-2A deploying 120 km LRASM stealth cruise, AARGMs, and Sniper XR precision JDAMs.'
+    desc: 'Composite-wing F-2A deploying 120 km LRASM stealth cruise, AARGMs, 12x laser rockets, and Sniper XR precision.'
   },
   'KF-21 Boramae Semi-Stealth Glide & SEAD': {
     name: 'KF-21 Boramae Semi-Stealth Glide & SEAD',
@@ -134,9 +134,9 @@ window.TEMPLATES_A2G_MULTIROLE = {
     specId: 'JF-17-B3',
     roleCategory: 'SEAD & EW',
     chosenGunId: 'GSH-23L',
-    weapons: ['MAR-1', 'KH-58USHKE', 'S-13OF', 'SAPSAN-E', 'PL-10'],
+    weapons: ['MAR-1', 'KH-58USHKE', 'S-8KOM', 'SAPSAN-E', 'PL-10'],
     upgrades: ['SEAD_HTS_POD', 'CCIP_BALLISTIC_COMP', 'TFR_TERRAIN_RADAR'],
-    desc: 'Cost-effective Thunder SEAD package carrying MAR-1 and Kh-58UShKE ARMs plus 122mm bunker rockets.'
+    desc: 'Cost-effective Thunder SEAD package carrying MAR-1 and Kh-58UShKE ARMs alongside 80mm shaped-charge rockets.'
   },
   'FA-50 Block 20 Precision Strike & Rocket': {
     name: 'FA-50 Block 20 Precision Strike & Rocket',

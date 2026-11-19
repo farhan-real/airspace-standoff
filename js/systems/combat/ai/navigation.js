@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: AI Unit Navigation & Spatial Steering Handler
+ * js/systems/combat/ai/navigation.js - AI Unit Navigation & Spatial Steering Handler
  * Executes separated Air Combat Doctrines and Attack CAP postures cleanly over spatial positioning.
  */
 
@@ -179,6 +179,9 @@ class AINavigationHandler {
     } else if (role === 'DOGFIGHT') {
       const dogfightMove = aiCommander.planning.getDogfightVector(hostile, target);
       desiredHeading = dogfightMove.heading; desiredThrottle = dogfightMove.throttle;
+    } else if (role === 'ESCORT') {
+      const escortMove = aiCommander.planning.getEscortVector(hostile, target, dist);
+      desiredHeading = escortMove.heading; desiredThrottle = escortMove.throttle;
     } else if (role === 'AMBUSH' && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
       const ambushMove = aiCommander.planning.getAmbushVector(hostile, target, dist, diffKey);
       desiredHeading = ambushMove.heading; desiredThrottle = ambushMove.throttle;

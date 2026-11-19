@@ -35,9 +35,9 @@ window.TEMPLATES_A2G_STEALTH = {
     specId: 'YF-23',
     roleCategory: 'SEAD & EW',
     chosenGunId: 'M61A2',
-    weapons: ['SPEAR-EW', 'SPEAR-3', 'AIM-260', 'AN-ALQ-165'],
+    weapons: ['SPEAR-EW', 'SPEAR-3', 'AN-ALQ-165', 'AIM-9X-B3'],
     upgrades: ['SEAD_HTS_POD', 'RAM_NANO_COATING', 'SUPERCRUISE_VCE'],
-    desc: 'High-speed stealth SEAD hunter deploying SPEAR-EW radar killers, SPEAR-3 mini-cruise, and internal ASPJ.'
+    desc: 'Pure internal-bay stealth SEAD hunter carrying SPEAR-EW, SPEAR-3 mini-cruise, internal ASPJ, and Block III IRs.'
   },
   'F-35A Beast-Mode Heavy Strike': {
     name: 'F-35A Beast-Mode Heavy Strike',
