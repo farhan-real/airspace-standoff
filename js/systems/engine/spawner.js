@@ -1,5 +1,5 @@
 /**
- * AIRSPACE STANDOFF: Sortie Spawner Submodule
+ * js/systems/engine/spawner.js - Sortie Spawner Submodule
  * Prepares squadrons, surface defenses, Attack IADS theaters, and transitions between Hangar and Battle modes.
  */
 
@@ -12,6 +12,7 @@ class SortieSpawner {
     if (!Array.isArray(window.CALLSIGN_POOL)) throw new Error('CALLSIGN_POOL is not loaded.');
 
     const prng = window.PRNG;
+    game.activeSaveId = null;
 
     if (game.pendingMissionEditorSettings) {
       game.missionEditorBaseSettings = {
@@ -50,7 +51,7 @@ class SortieSpawner {
     if (procModal) { procModal.classList.remove('active'); procModal.classList.add('hidden'); }
     if (hudContainer) hudContainer.classList.remove('hidden');
 
-    ['system-inspect-modal', 'glossary-modal', 'settings-modal', 'rwr-briefing-modal', 'abort-confirm-modal', 'game-over-modal', 'pause-modal', 'dialog-modal', 'tactical-dialog-modal'].forEach(id => {
+    ['save-load-modal', 'system-inspect-modal', 'glossary-modal', 'settings-modal', 'rwr-briefing-modal', 'abort-confirm-modal', 'game-over-modal', 'pause-modal', 'dialog-modal', 'tactical-dialog-modal'].forEach(id => {
       const m = document.getElementById(id); if (m) m.classList.remove('active');
     });
 

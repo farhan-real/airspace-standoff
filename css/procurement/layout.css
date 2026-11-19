@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Procurement Hangar Window & Layout */
+/* css/procurement/layout.css - Procurement Hangar Window & Layout */
 
 #procurement-modal {
   background: #000000 !important;
@@ -68,8 +68,43 @@ body.safe-zone-on .procurement-window {
   border-top: 1px solid var(--glass-border);
   padding-top: 6px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+  gap: 10px;
+}
+
+.intel-summary {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-dotdigital);
+  font-size: 0.62rem;
+  color: var(--color-moon-mist);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.intel-save-note.active {
+  color: var(--color-frost-glow);
+}
+
+.intel-save-note b {
+  color: var(--stat-tier-2);
+}
+
+.proc-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.proc-new-btn,
+.proc-load-btn {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 0.74rem;
+  font-weight: 700;
 }
 
 .scramble-btn {
@@ -129,8 +164,31 @@ body.safe-zone-on .procurement-window {
     box-shadow: none !important;
   }
 
-  .scramble-btn {
+  .procurement-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding-top: 4px;
+  }
+
+  .intel-summary {
+    display: none;
+  }
+
+  .proc-footer-actions {
     width: 100%;
+    gap: 6px;
+  }
+
+  .proc-new-btn,
+  .proc-load-btn {
+    height: 30px;
+    padding: 0 12px;
+    font-size: 0.68rem;
+  }
+
+  .scramble-btn {
+    flex: 1 1 auto;
     padding: 7px;
     font-size: 0.74rem;
   }
@@ -142,5 +200,13 @@ body.safe-zone-on .procurement-window {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 6px !important;
+  }
+  .procurement-footer {
+    flex-direction: row;
+    align-items: center;
+  }
+  .proc-footer-actions {
+    width: auto;
+    margin-left: auto;
   }
 }

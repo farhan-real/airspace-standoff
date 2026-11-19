@@ -1,4 +1,4 @@
-/* AIRSPACE STANDOFF: Controls System Coordinator */
+/* js/ui/controls.js - Controls System Coordinator */
 
 class ControlsSystem {
   constructor(gameEngine) {
@@ -46,12 +46,7 @@ class ControlsSystem {
           <p style="color:#8494ab;font-size:0.9rem;">You may now close this application window or browser tab.</p>
         </div>`;
     };
-
-    if (this.game.procurement && typeof this.game.procurement.showConfirmModal === 'function') {
-      this.game.procurement.showConfirmModal('EXIT', confirmMsg, doExit, { confirmText: 'EXIT', isAlert: true });
-    } else if (window.confirm(confirmMsg)) {
-      doExit();
-    }
+    this.game.procurement.showConfirmModal('EXIT', confirmMsg, doExit, { confirmText: 'EXIT', isAlert: true });
   }
 
   initTimeWarpControls() {
@@ -97,11 +92,21 @@ class ControlsSystem {
     pauseModal._boundEvents = true;
 
     const btnResume = document.getElementById('btn-resume-sortie');
+    const btnSave = document.getElementById('btn-pause-save');
+    const btnSaveQuit = document.getElementById('btn-pause-save-quit');
     const btnSettings = document.getElementById('btn-pause-settings');
     const btnManual = document.getElementById('btn-pause-manual');
     const btnAbort = document.getElementById('btn-pause-abort');
 
     if (btnResume) btnResume.onclick = () => { pauseModal.classList.remove('active'); this.setTimeWarp(1); };
+    if (btnSave) {
+      btnSave.onclick = () => {
+        this.game.saveCurrentSortie(false);
+        btnSave.textContent = 'SORTIE SAVED!';
+        setTimeout(() => { if (btnSave) btnSave.textContent = 'SAVE SORTIE'; }, 1400);
+      };
+    }
+    if (btnSaveQuit) btnSaveQuit.onclick = () => this.game.saveAndQuitToHangar();
     if (btnSettings) btnSettings.onclick = () => { if (this.game.settings && typeof this.game.settings.open === 'function') this.game.settings.open(); };
     if (btnManual) btnManual.onclick = () => { if (typeof window.openFlightManual === 'function') window.openFlightManual(); };
     if (btnAbort) btnAbort.onclick = () => { pauseModal.classList.remove('active'); this.game.abortSortie(); };
@@ -133,18 +138,11 @@ class ControlsSystem {
     const fleetPane = document.getElementById('pane-fleet');
 
     const toggleDrawer = () => {
-      if (fleetPane) {
-        fleetPane.classList.toggle('drawer-open');
-        this.game.avionics.renderFlightRoster();
-      }
+      if (fleetPane) { fleetPane.classList.toggle('drawer-open'); this.game.avionics.renderFlightRoster(); }
     };
-    const closeDrawer = () => { if (fleetPane) fleetPane.classList.remove('drawer-open'); };
-
     if (openFleetBtn) openFleetBtn.onclick = toggleDrawer;
-    if (closeFleetBtn) closeFleetBtn.onclick = closeDrawer;
+    if (closeFleetBtn) closeFleetBtn.onclick = () => { if (fleetPane) fleetPane.classList.remove('drawer-open'); };
 
-    const steerLeft = document.getElementById('mobile-steer-left');
-    const steerRight = document.getElementById('mobile-steer-right');
     const bindSteer = (btn, code) => {
       if (!btn) return;
       const start = (e) => { e.preventDefault(); this.keyboard.keysHeld[code] = true; };
@@ -154,8 +152,8 @@ class ControlsSystem {
       btn.addEventListener('pointercancel', end);
       btn.addEventListener('pointerleave', end);
     };
-    bindSteer(steerLeft, 'ArrowLeft');
-    bindSteer(steerRight, 'ArrowRight');
+    bindSteer(document.getElementById('mobile-steer-left'), 'ArrowLeft');
+    bindSteer(document.getElementById('mobile-steer-right'), 'ArrowRight');
   }
 
   initHUDButtons() {
@@ -195,6 +193,21 @@ class ControlsSystem {
     const climbBtn = document.getElementById('btn-pitch-climb');
     if (climbBtn) climbBtn.onclick = () => this.executeZoomClimb();
 
+    const saveBtn = document.getElementById('btn-save-game');
+    if (saveBtn) saveBtn.onclick = () => this.game.saveCurrentSortie(false);
+
+    const saveQuitBtn = document.getElementById('btn-save-quit-game');
+    if (saveQuitBtn) {
+      saveQuitBtn.onclick = () => {
+        this.game.procurement.showConfirmModal(
+          'SAVE & QUIT',
+          'Save your current sortie progress and return to the Hangar?',
+          () => this.game.saveAndQuitToHangar(),
+          { confirmText: 'SAVE & QUIT', isAlert: false }
+        );
+      };
+    }
+
     const abortBtn = document.getElementById('btn-abort-match');
     if (abortBtn) {
       abortBtn.onclick = () => {
@@ -218,7 +231,7 @@ class ControlsSystem {
     if (this.game.consumeCurrentCommanderTokens(0.4)) {
       u.dive();
       if (this.game.inspection && this.game.inspection.enabled) {
-        this.game.inspection.recordEvent('FLIGHT ACTION', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : u.callsign} executed a dive`, u, null, { altitudeFt: u.altFt, targetAltitudeFt: u.targetAltFt, speedMach: u.speed, energy: u.energy, stress: u.stress });
+        this.game.inspection.recordEvent('FLIGHT ACTION', `${window.formatAircraftDisplayName(u)} executed a dive`, u, null, { altitudeFt: u.altFt, targetAltitudeFt: u.targetAltFt, speedMach: u.speed, energy: u.energy, stress: u.stress });
       }
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'DIVE', '#00f0ff');
@@ -236,7 +249,7 @@ class ControlsSystem {
     if (this.game.consumeCurrentCommanderTokens(0.4)) {
       u.zoomClimb();
       if (this.game.inspection && this.game.inspection.enabled) {
-        this.game.inspection.recordEvent('FLIGHT ACTION', `${window.formatAircraftDisplayName ? window.formatAircraftDisplayName(u) : u.callsign} executed a zoom climb`, u, null, { altitudeFt: u.altFt, targetAltitudeFt: u.targetAltFt, speedMach: u.speed, energy: u.energy, stress: u.stress });
+        this.game.inspection.recordEvent('FLIGHT ACTION', `${window.formatAircraftDisplayName(u)} executed a zoom climb`, u, null, { altitudeFt: u.altFt, targetAltitudeFt: u.targetAltFt, speedMach: u.speed, energy: u.energy, stress: u.stress });
       }
       if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'CLIMB', '#00f5a0');
@@ -267,17 +280,9 @@ class ControlsSystem {
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
   }
 
-  getDetectedTargets() {
-    return this.targeting ? this.targeting.getDetectedTargets() : [];
-  }
-
-  cycleTarget(direction = 1) {
-    if (this.targeting) this.targeting.cycleTarget(direction);
-  }
-
-  lockTargetEntity(target) {
-    if (this.targeting) this.targeting.lockTargetEntity(target);
-  }
+  getDetectedTargets() { return this.targeting ? this.targeting.getDetectedTargets() : []; }
+  cycleTarget(direction = 1) { if (this.targeting) this.targeting.cycleTarget(direction); }
+  lockTargetEntity(target) { if (this.targeting) this.targeting.lockTargetEntity(target); }
 
   firePylonByIndex(pIdx) {
     const u = this.game.activeUnit;
@@ -285,12 +290,9 @@ class ControlsSystem {
     const item = u.equippedWeapons[pIdx];
     const w = item.weapon;
     if (!w) return;
-
     if (!w.isDecoy && !w.isDecoyDrone && !w.isGunpod && w.category !== 'GUN') {
       let tgt = this.game.selectedTarget;
-      if (!tgt || tgt.hp <= 0.05) {
-        if (this.targeting) { this.targeting.autoLock(); tgt = this.game.selectedTarget; }
-      }
+      if (!tgt || tgt.hp <= 0.05) { if (this.targeting) { this.targeting.autoLock(); tgt = this.game.selectedTarget; } }
       if (!tgt || tgt.hp <= 0.05) {
         if (this.game.radar) this.game.radar.spawnCombatText(u.x, u.y, 'NO TARGET SELECTED [PRESS T OR TAP RADAR]', '#f97316');
         if (typeof AudioSys !== 'undefined') AudioSys.playClick();
@@ -313,8 +315,7 @@ class ControlsSystem {
     if (aiPanel) aiPanel.style.display = is1p ? 'flex' : 'none';
     if (pvpSwitcher) pvpSwitcher.classList.toggle('hidden', is1p);
 
-    const btnBlue = document.getElementById('btn-switch-blue');
-    const btnRed = document.getElementById('btn-switch-red');
+    const btnBlue = document.getElementById('btn-switch-blue'), btnRed = document.getElementById('btn-switch-red');
     if (btnBlue && btnRed) {
       btnBlue.onclick = () => {
         this.game.currentPvpCommander = 'friendly';

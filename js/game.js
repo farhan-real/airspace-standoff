@@ -46,6 +46,7 @@ class AirspaceStandoffGame {
     this.activeMissionEditorConfig = null;
     this.isMissionEditorMatch = false;
     this.inspectionModeEnabled = false;
+    this.activeSaveId = null;
     this.currentPvpCommander = 'friendly';
 
     const initialSquadronName = (window.Persistence && window.Persistence.getSquadronName()) || '7th Tactical Squadron';
@@ -116,21 +117,16 @@ class AirspaceStandoffGame {
     this.gameMode = modeDef.id;
     this.playerMode = modeDef.playerMode;
     this.scenarioMode = modeDef.scenarioMode;
-
     window.CONFIG.THEATER_WIDTH_KM = modeDef.theaterWidthKm;
     window.CONFIG.THEATER_HEIGHT_KM = modeDef.theaterHeightKm;
 
     const aiPanel = document.getElementById('ai-config-panel');
     const pvpSwitcher = document.getElementById('pvp-switcher-bar');
     const is2P = (this.playerMode === '2P');
-
     if (aiPanel) aiPanel.style.display = is2P ? 'none' : 'flex';
     if (pvpSwitcher) pvpSwitcher.classList.toggle('hidden', !is2P);
 
-    if (this.procurement && typeof this.procurement.syncModeDropdowns === 'function') {
-      this.procurement.syncModeDropdowns();
-    }
-
+    if (this.procurement && typeof this.procurement.syncModeDropdowns === 'function') this.procurement.syncModeDropdowns();
     this.updateModeIndicator();
     this.saveGameplaySettings();
   }
@@ -138,14 +134,9 @@ class AirspaceStandoffGame {
   saveGameplaySettings() {
     if (!window.Persistence || typeof window.Persistence.saveGameplaySettings !== 'function') return;
     window.Persistence.saveGameplaySettings({
-      gameMode: this.gameMode,
-      playerMode: this.playerMode,
-      scenarioMode: this.scenarioMode,
-      aiDifficulty: this.aiDifficulty,
-      aiDoctrine: this.aiDoctrine,
-      attackDifficulty: this.attackDifficulty,
-      attackDoctrine: this.attackDoctrine,
-      playerBudgetId: this.playerBudgetId
+      gameMode: this.gameMode, playerMode: this.playerMode, scenarioMode: this.scenarioMode,
+      aiDifficulty: this.aiDifficulty, aiDoctrine: this.aiDoctrine,
+      attackDifficulty: this.attackDifficulty, attackDoctrine: this.attackDoctrine, playerBudgetId: this.playerBudgetId
     });
   }
 
@@ -160,15 +151,10 @@ class AirspaceStandoffGame {
     window.CONFIG.MAX_SQUADRON_SIZE = this.maxSquadronSize;
 
     const subtextEl = document.getElementById('proc-budget-subtext');
-    if (subtextEl) {
-      subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) UP TO ${this.maxSquadronSize} UNITS`;
-    }
+    if (subtextEl) subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) UP TO ${this.maxSquadronSize} UNITS`;
     this.updateModeIndicator();
     this.saveGameplaySettings();
-    if (this.procurement) {
-      this.procurement.updateUI();
-      this.procurement.renderCatalog();
-    }
+    if (this.procurement) { this.procurement.updateUI(); this.procurement.renderCatalog(); }
   }
 
   setSquadronName(name) {
@@ -182,17 +168,12 @@ class AirspaceStandoffGame {
     if (window.Persistence) window.Persistence.saveSquadronName(this.squadronName);
   }
 
-  getCurrentCommanderTokenBucket() {
-    return this.currentPvpCommander === 'friendly' ? this.tokenBucketBlue : this.tokenBucketRed;
-  }
+  getCurrentCommanderTokenBucket() { return this.currentPvpCommander === 'friendly' ? this.tokenBucketBlue : this.tokenBucketRed; }
 
   consumeCurrentCommanderTokens(amount) {
     if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) throw new Error(`Invalid token deduction amount: ${amount}`);
-    if (this.currentPvpCommander === 'friendly') {
-      if (this.tokenBucketBlue >= amount) { this.tokenBucketBlue -= amount; return true; }
-    } else if (this.tokenBucketRed >= amount) {
-      this.tokenBucketRed -= amount; return true;
-    }
+    if (this.currentPvpCommander === 'friendly') { if (this.tokenBucketBlue >= amount) { this.tokenBucketBlue -= amount; return true; } }
+    else if (this.tokenBucketRed >= amount) { this.tokenBucketRed -= amount; return true; }
     return false;
   }
 
@@ -209,13 +190,53 @@ class AirspaceStandoffGame {
     const diffTag = `${diffData.name} (${diffData.scoreMultiplier.toFixed(2)}x)`;
     const bTag = `${bTierData.budget.toFixed(0)}M (${bTierData.multiplier.toFixed(2)}x)`;
     const modeTag = this.playerMode === '2P' ? '2P VERSUS' : (isAttack ? `ATTACK [${diffTag}] [${docData.name}] [${bTag}]` : `1P VS AI [${diffTag}] [${docData.name}] [${bTag}]`);
-    const scenarioTag = isAttack ? '240x160 IADS' : (this.scenarioMode === 'DYNAMIC_THEATER' ? 'DYNAMIC THEATER' : 'SKIRMISH');
-    ind.textContent = `${modeTag} ${scenarioTag}`;
+    ind.textContent = `${modeTag} ${isAttack ? '240x160 IADS' : (this.scenarioMode === 'DYNAMIC_THEATER' ? 'DYNAMIC THEATER' : 'SKIRMISH')}`;
   }
 
   canFirePylon(u, item, tgt) { return this.combat.canFire(u, item, tgt); }
   firePylon(u, idx, tgt) { this.combat.fire(u, idx, tgt); this.stats.missilesLaunched++; }
   executeCard(card, u) { this.combat.executeCard(card, u); }
+
+  saveCurrentSortie(silent = false) {
+    if (typeof SaveGameManager === 'undefined') throw new Error('SaveGameManager is not loaded.');
+    return SaveGameManager.saveCurrentSortie(this, silent);
+  }
+
+  saveAndQuitToHangar() {
+    if (typeof SaveGameManager === 'undefined') throw new Error('SaveGameManager is not loaded.');
+    SaveGameManager.saveAndQuitToHangar(this);
+  }
+
+  loadSavedSortie(saveId) {
+    if (typeof SaveGameManager === 'undefined') throw new Error('SaveGameManager is not loaded.');
+    if (typeof AudioSys !== 'undefined') AudioSys.ensureContext();
+    return SaveGameManager.loadSortie(this, saveId);
+  }
+
+  resetHangarToNew() {
+    this.activeSaveId = null;
+    this.pendingMissionEditorSettings = null;
+    this.missionEditorBaseSettings = null;
+    this.activeMissionEditorConfig = null;
+    this.isMissionEditorMatch = false;
+    this.inspectionModeEnabled = false;
+    if (window.MissionEditor) {
+      if (document.getElementById('mission-editor-modal')) window.MissionEditor.resetDraft();
+      else window.MissionEditor.updateStateLabel('STANDARD MISSION', false);
+    }
+    this.aiDifficulty = 'VETERAN';
+    this.aiDoctrine = 'BALANCED';
+    this.attackDifficulty = 'FORWARD_GARRISON';
+    this.attackDoctrine = 'BALANCED';
+    this.setSquadronName('7th Tactical Squadron');
+    this.setGameMode('SP_SKIRMISH');
+    this.setPlayerBudgetTier('BUDGET_400');
+    const bCdd = window.CustomDropdown ? window.CustomDropdown.get('cdd-budget') : null;
+    if (bCdd) bCdd.setValue('BUDGET_400', false);
+    if (window.ProcurementPresets) window.ProcurementPresets.activePreset = 'stealth';
+    this.procurement.applyBuiltinPreset('stealth');
+    if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+  }
 
   abortSortie() {
     if (this.animFrameId) { cancelAnimationFrame(this.animFrameId); this.animFrameId = null; }

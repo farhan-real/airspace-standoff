@@ -119,6 +119,26 @@ class ProcurementManager {
       };
     });
 
+    const bNew = document.getElementById('btn-proc-new');
+    if (bNew) {
+      bNew.onclick = () => {
+        this.showConfirmModal(
+          'NEW MISSION SETUP',
+          'Reset Hangar to a fresh default squadron, standard mission settings, and clear active save link? Saved sorties remain available under LOAD.',
+          () => this.game.resetHangarToNew(),
+          { confirmText: 'NEW SETUP', isAlert: false }
+        );
+      };
+    }
+
+    const bLoad = document.getElementById('btn-proc-load');
+    if (bLoad) {
+      bLoad.onclick = () => {
+        if (typeof SaveLoadModal === 'undefined') throw new Error('SaveLoadModal is not loaded.');
+        SaveLoadModal.open(this.game);
+      };
+    }
+
     const bScramble = document.getElementById('btn-scramble');
     if (bScramble) {
       bScramble.onclick = (e) => {
@@ -196,6 +216,7 @@ class ProcurementManager {
     if (dispSqName) dispSqName.textContent = cleanName;
 
     if (this.shelf) this.shelf.syncActiveAircraft();
+    if (typeof SaveGameManager !== 'undefined') SaveGameManager.updateHangarIntelSummary();
 
     if (window.Persistence && this.game.procurementSquadron.length > 0) {
       window.Persistence.saveLastSquadron(this.game.procurementSquadron);

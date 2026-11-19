@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="css/core/manual.css">
   <link rel="stylesheet" href="css/core/dialogs/dialogs.css">
   <link rel="stylesheet" href="css/core/dialogs/settings.css">
+  <link rel="stylesheet" href="css/core/dialogs/saveload.css">
   <link rel="stylesheet" href="css/editor/editor.css">
   <link rel="stylesheet" href="css/editor/editorpreview.css">
   <link rel="stylesheet" href="css/leaderboard/leaderboard.css">
@@ -122,7 +123,11 @@
     </div>
     <footer class="procurement-footer">
       <div class="intel-summary" id="procurement-intel"></div>
-      <button id="btn-scramble" class="scramble-btn" disabled>LAUNCH MISSION</button>
+      <div class="proc-footer-actions">
+        <button type="button" id="btn-proc-new" class="hud-btn proc-new-btn" title="Reset hangar to a fresh squadron configuration">NEW</button>
+        <button type="button" id="btn-proc-load" class="hud-btn highlight proc-load-btn" title="Load a saved sortie">LOAD</button>
+        <button id="btn-scramble" class="scramble-btn" disabled>LAUNCH MISSION</button>
+      </div>
     </footer>
   </div>
 </div>
@@ -172,6 +177,8 @@
       <button id="btn-audio-toggle" class="hud-btn small" title="Toggle Audio">AUDIO: ON</button>
       <button id="btn-hud-glossary" class="hud-btn small"><img src="icons/manual.svg" class="btn-vector-ico" width="11" height="11" alt="Manual"><span>MANUAL</span></button>
       <button id="btn-open-settings" class="hud-btn small"><img src="icons/settings.svg" class="btn-vector-ico" width="11" height="11" alt="Settings"><span>SETTINGS</span></button>
+      <button type="button" id="btn-save-game" class="hud-btn small highlight" title="Save current sortie progress">SAVE</button>
+      <button type="button" id="btn-save-quit-game" class="hud-btn small" title="Save sortie and return to Hangar">SAVE &amp; QUIT</button>
       <button id="btn-abort-match" class="hud-btn small alert">ABORT</button>
     </div>
   </header>
@@ -396,6 +403,9 @@
 <script src="js/systems/engine/audio.js"></script>
 <script src="js/systems/engine/physics.js"></script>
 <script src="js/systems/engine/spawner.js"></script>
+<script src="js/systems/engine/save/serializer.js"></script>
+<script src="js/systems/engine/save/deserializer.js"></script>
+<script src="js/systems/engine/save/manager.js"></script>
 <script src="js/systems/missiles/guidance.js"></script>
 <script src="js/systems/missiles/kinetics.js"></script>
 <script src="js/systems/missiles/impact.js"></script>
@@ -493,6 +503,7 @@
 <script src="js/ui/modals/dialogs.js"></script>
 <script src="js/ui/modals/editor.js"></script>
 <script src="js/ui/modals/panels.js"></script>
+<script src="js/ui/modals/saveload.js"></script>
 <script src="js/ui/procurement/actions.js"></script>
 <script src="js/ui/procurement/equip.js"></script>
 <script src="js/ui/procurement/loadoutmetrics.js"></script>

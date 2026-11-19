@@ -1,0 +1,155 @@
+/* css/core/dialogs/saveload.css - Saved Sorties Load Modal & Hangar Save Status */
+
+#save-load-modal {
+  z-index: 3400 !important;
+}
+
+.saveload-window {
+  width: min(92vw, 720px);
+  max-height: 86vh;
+  max-height: 86dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--glass-bg-modal);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-bottom: 1px solid var(--liquid-glass-border-bottom);
+  border-radius: var(--radius-modal);
+  box-shadow: var(--glass-shadow);
+  overflow: hidden;
+  font-family: var(--font-untitled-sans);
+}
+
+.saveload-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.saveload-empty {
+  text-align: center;
+  padding: 34px 14px;
+  background: var(--glass-3d-well-bg);
+  border: 1px dashed var(--glass-border);
+  border-radius: var(--radius-card);
+  color: var(--color-moon-mist);
+  font-size: 0.74rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.saveload-empty b {
+  color: var(--theme-accent);
+  font-family: var(--font-dotdigital);
+}
+
+.save-slot-card {
+  background: var(--glass-3d-card-bg);
+  border: 1px solid var(--glass-3d-card-border);
+  border-top: 1px solid var(--liquid-glass-border-top);
+  border-left: 3px solid var(--theme-accent);
+  border-radius: var(--radius-card);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--glass-3d-card-shadow);
+}
+
+.save-slot-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.save-slot-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: var(--font-aeonikpro);
+}
+
+.save-slot-date {
+  font-size: 0.60rem;
+  color: var(--color-moon-mist);
+  font-family: var(--font-dotdigital);
+}
+
+.save-slot-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.save-slot-badge {
+  font-size: 0.56rem;
+  font-family: var(--font-dotdigital);
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-badge);
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
+  color: var(--color-frost-glow);
+}
+
+.save-slot-badge.mode {
+  color: var(--theme-accent);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.save-slot-badge.unranked {
+  color: var(--stat-tier-3);
+  border-color: rgba(251, 191, 36, 0.45);
+}
+
+.save-slot-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  background: var(--glass-3d-well-bg);
+  border: 1px solid var(--glass-3d-well-border);
+  border-radius: var(--radius-badge);
+  padding: 6px 8px;
+  font-size: 0.60rem;
+  font-family: var(--font-dotdigital);
+  color: var(--color-moon-mist);
+}
+
+.save-slot-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.save-slot-metric b {
+  color: #ffffff;
+  font-size: 0.66rem;
+}
+
+.save-slot-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 680px) {
+  .saveload-window {
+    width: 96vw;
+    max-height: 92dvh;
+    border-radius: var(--radius-card);
+  }
+
+  .save-slot-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
