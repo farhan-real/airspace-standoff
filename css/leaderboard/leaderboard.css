@@ -70,9 +70,9 @@
 .leaderboard-table th {
   text-align: left;
   padding: 6px 8px;
-  background: rgba(6, 14, 30, 0.95);
+  background: rgba(10, 12, 16, 0.96);
   color: var(--color-frost-glow);
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
   font-weight: 700;
   letter-spacing: 0.4px;
 }
@@ -94,9 +94,9 @@
 }
 
 .leaderboard-row.selected td {
-  background: rgba(2, 132, 199, 0.24);
+  background: rgba(0, 229, 255, 0.14);
   color: #ffffff;
-  border-bottom-color: rgba(56, 189, 248, 0.28);
+  border-bottom-color: rgba(0, 229, 255, 0.28);
 }
 
 .leaderboard-row.selected:hover td {
@@ -117,26 +117,11 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-.rank-gold {
-  background: linear-gradient(180deg, rgba(251, 191, 36, 0.3) 0%, rgba(69, 26, 3, 0.8) 100%);
-  color: #fbbf24;
-  border: 1px solid rgba(251, 191, 36, 0.5);
-  border-top: 1px solid #fef08a;
-}
+.rank-gold { background: var(--jewel-amber-bg); color: #fef08a; border: 1px solid rgba(250, 204, 21, 0.50); }
 
-.rank-silver {
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.3) 0%, rgba(3, 30, 60, 0.8) 100%);
-  color: #bae6fd;
-  border: 1px solid rgba(56, 189, 248, 0.5);
-  border-top: 1px solid #ffffff;
-}
+.rank-silver { background: var(--jewel-cyan-bg); color: #cffafe; border: 1px solid rgba(0, 229, 255, 0.50); }
 
-.rank-bronze {
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0.25) 0%, rgba(15, 23, 42, 0.8) 100%);
-  color: #cbd5e1;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  border-top: 1px solid #ffffff;
-}
+.rank-bronze { background: rgba(255, 255, 255, 0.09); color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.24); }
 
 .rank-standard {
   background: var(--glass-3d-well-bg);

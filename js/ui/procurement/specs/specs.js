@@ -154,6 +154,7 @@ class ProcurementSpecs {
       bodyEl.innerHTML = renderer.renderAirframe(a, guns);
       const btn = bodyEl.querySelector('#inspect-btn-req');
       if (btn) btn.onclick = () => { this.pm.addAirframe(a.id); btn.textContent = 'ADDED'; };
+      this.syncInspectFooter(bodyEl);
       modal.classList.add('active');
       return;
     }
@@ -168,6 +169,7 @@ class ProcurementSpecs {
         modal.classList.remove('active');
         if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
       };
+      this.syncInspectFooter(bodyEl);
       modal.classList.add('active');
       return;
     }
@@ -176,6 +178,7 @@ class ProcurementSpecs {
       if (!g) return;
       titleEl.textContent = `AUTOCANNON SPECIFICATION - ${(g.name || id).toUpperCase()}`;
       bodyEl.innerHTML = renderer.renderGun(g);
+      this.syncInspectFooter(bodyEl);
       modal.classList.add('active');
       return;
     }
@@ -190,6 +193,7 @@ class ProcurementSpecs {
         modal.classList.remove('active');
         if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
       };
+      this.syncInspectFooter(bodyEl);
       modal.classList.add('active');
       return;
     }
@@ -198,6 +202,7 @@ class ProcurementSpecs {
       if (!a) return;
       titleEl.textContent = `FLIGHT LEAD DOCTRINE - ${(a.name || id).toUpperCase()}`;
       bodyEl.innerHTML = renderer.renderLeadBuffs ? renderer.renderLeadBuffs(a) : '';
+      this.syncInspectFooter(bodyEl);
       modal.classList.add('active');
       return;
     }
@@ -206,6 +211,7 @@ class ProcurementSpecs {
       const c = pool.find(f => f.code === id || f.name === id) || { code: id, name: id, speedMach: 0.78, altFt: 36000, rcs: 25.0 };
       titleEl.textContent = `CIVILIAN AIRLINER SPECIFICATION - ${c.code || id}`;
       bodyEl.innerHTML = renderer.renderCivilian ? renderer.renderCivilian(c) : '';
+      this.syncInspectFooter(bodyEl);
       modal.classList.add('active');
       return;
     }
@@ -215,7 +221,22 @@ class ProcurementSpecs {
       const s = surf || { type: id, name: id, hp: 6, maxHp: 6, desc: 'Surface tactical air-defense battery or logistics facility.' };
       titleEl.textContent = `SURFACE INSTALLATION - ${(s.name || s.type || id).toUpperCase()}`;
       bodyEl.innerHTML = renderer.renderSurfaceUnit ? renderer.renderSurfaceUnit(s) : '';
+      this.syncInspectFooter(bodyEl);
       modal.classList.add('active');
+    }
+  }
+
+  syncInspectFooter(bodyEl) {
+    const footerEl = document.getElementById('inspect-modal-footer');
+    if (bodyEl) bodyEl.scrollTop = 0;
+    if (!footerEl) return;
+    footerEl.innerHTML = '';
+    const bar = bodyEl ? bodyEl.querySelector('.inspect-action-bar') : null;
+    if (bar) {
+      footerEl.appendChild(bar);
+      footerEl.classList.remove('hidden');
+    } else {
+      footerEl.classList.add('hidden');
     }
   }
 }

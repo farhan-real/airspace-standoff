@@ -21,12 +21,7 @@
   padding-bottom: 5px;
 }
 
-.me-preview-head span {
-  font: 700 0.58rem var(--font-dotdigital);
-  color: var(--theme-accent);
-  letter-spacing: 0.5px;
-  text-shadow: 0 0 6px var(--theme-accent-glow);
-}
+.me-preview-head span { font: 700 0.58rem var(--font-dotdigital); color: var(--color-cyan); letter-spacing: 0.5px; }
 
 .me-preview-status {
   font: 700 0.54rem var(--font-dotdigital);
@@ -35,10 +30,9 @@
 }
 
 .me-preview-status.armed {
-  background: linear-gradient(180deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 74, 56, 0.85) 100%);
-  color: var(--stat-tier-2);
-  border: 1px solid rgba(16, 185, 129, 0.45);
-  border-top: 1px solid #ffffff;
+  background: var(--jewel-green-bg);
+  color: var(--color-green);
+  border: 1px solid rgba(0, 245, 160, 0.48);
 }
 
 .me-preview-status.unarmed {
@@ -85,10 +79,7 @@
   white-space: nowrap;
 }
 
-.mission-editor-state.armed {
-  color: var(--stat-tier-2);
-  text-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
-}
+.mission-editor-state.armed { color: var(--color-green); }
 
 @media (max-width: 680px) {
   .mission-editor-window {
@@ -97,7 +88,7 @@
     border-radius: var(--radius-card);
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-    background: #04091a !important;
+    background: #06080c !important;
   }
 
   .mission-editor-body {

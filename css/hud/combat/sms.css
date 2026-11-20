@@ -16,19 +16,18 @@
 }
 
 .target-solution-box.no-target {
-  background: var(--glass-3d-well-bg);
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  box-shadow: var(--glass-3d-well-shadow);
+  background: #000000;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
   color: var(--color-fog-veil);
   font-size: 0.58rem;
   text-align: center;
 }
 
 .target-solution-box.active-target {
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.22) 0%, rgba(4, 10, 28, 0.75) 100%);
-  border: 1px solid var(--theme-primary);
-  border-top: 1px solid var(--theme-accent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 14px var(--theme-primary-dim);
+  background: var(--jewel-cyan-bg);
+  border: 1px solid rgba(0, 229, 255, 0.52);
+  border-top: 1px solid rgba(205, 248, 255, 0.52);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
 }
 
 .tsb-header {
@@ -43,12 +42,7 @@
   margin-bottom: 3px;
 }
 
-.tsb-dist {
-  color: var(--theme-accent);
-  font-family: var(--font-dotdigital);
-  font-weight: 700;
-  text-shadow: 0 0 8px var(--theme-accent-glow);
-}
+.tsb-dist { color: var(--color-cyan); font-family: var(--font-dotdigital); font-weight: 700; }
 
 .tsb-grid {
   display: grid;
@@ -99,11 +93,7 @@
   color: var(--color-moon-mist);
 }
 
-.armed-indicator {
-  color: var(--stat-tier-2);
-  font-weight: 700;
-  text-shadow: 0 0 6px rgba(0, 245, 160, 0.5);
-}
+.armed-indicator { color: var(--color-green); font-weight: 700; }
 
 .pylon-item-card {
   background: var(--glass-3d-card-bg);
@@ -217,18 +207,17 @@
 
 .pk-progress-fill {
   height: 100%;
-  background: var(--theme-accent);
-  box-shadow: 0 0 8px var(--theme-accent);
+  background: linear-gradient(90deg, #0ea5e9 0%, #00e5ff 55%, #00f5a0 100%);
   transition: width 0.14s ease;
 }
 
 .btn-fire-pylon {
-  background: var(--glass-3d-btn-bg);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
+  background: var(--jewel-cyan-bg);
+  border: 1px solid rgba(0, 229, 255, 0.45);
+  border-top: 1px solid rgba(205, 248, 255, 0.45);
   color: #ffffff;
   font-size: 0.64rem;
-  font-weight: 600;
+  font-weight: 700;
   font-family: var(--font-untitled-sans);
   padding: 4px 10px;
   text-align: center;
@@ -236,14 +225,27 @@
   cursor: pointer;
   border-radius: var(--radius-btn);
   box-shadow: var(--glass-3d-btn-shadow);
-  transition: all 0.14s ease;
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+
+.btn-fire-pylon.cannon-burst-btn {
+  background: var(--jewel-cyan-bg);
+  border-color: rgba(0, 229, 255, 0.48);
+  border-top-color: rgba(205, 248, 255, 0.48);
+  color: #e0f7ff;
 }
 
 .btn-fire-pylon:hover:not(:disabled) {
-  background: var(--glass-3d-btn-bg-hover);
-  border-color: var(--theme-accent);
-  border-top-color: #ffffff;
+  background: var(--jewel-cyan-hover);
+  border-color: var(--color-cyan);
+  border-top-color: rgba(255, 255, 255, 0.68);
   transform: translateY(-1px);
+}
+
+.btn-fire-pylon.cannon-burst-btn:hover:not(:disabled) {
+  background: var(--jewel-cyan-hover);
+  border-color: var(--color-cyan);
+  color: #ffffff;
 }
 
 .btn-fire-pylon:disabled {

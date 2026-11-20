@@ -33,13 +33,11 @@
   display: flex !important;
   flex-direction: column;
   overflow: hidden;
-  background: var(--liquid-glass-bg);
+  background: rgba(6, 8, 12, 0.90);
   -webkit-backdrop-filter: var(--glass-filter);
   backdrop-filter: var(--glass-filter);
-  border-left: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
-  box-shadow: var(--glass-shadow);
-  color: var(--color-ice-highlight);
+  border-left: 1px solid rgba(255, 255, 255, 0.11);
+  color: #ffffff;
   font-family: var(--font-untitled-sans);
   z-index: 4;
 }
@@ -191,10 +189,10 @@
 }
 
 .inspection-tabs button.active {
-  background: var(--theme-primary-dim);
+  background: var(--jewel-cyan-bg);
   color: #ffffff;
-  border-color: var(--theme-accent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 0 10px var(--theme-primary-glow);
+  border-color: rgba(0, 229, 255, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .inspection-content {
@@ -259,34 +257,9 @@
   .inspection-pane {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-    background: #040916 !important;
+    background: #06080c !important;
   }
 }
-
-@media (max-width: 1024px) and (orientation: portrait) {
-  .inspection-layout .cockpit-workspace {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) !important;
-    grid-template-rows: minmax(130px, 28dvh) minmax(220px, 1fr) minmax(68px, 14dvh) !important;
-  }
-  .inspection-layout #pane-radar {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-    height: auto !important;
-  }
-  .inspection-layout .inspection-pane {
-    grid-column: 1 !important;
-    grid-row: 2 !important;
-    border-left: 0;
-    border-top: 1px solid var(--glass-border);
-  }
-  .inspection-layout #pane-mfd {
-    grid-column: 1 !important;
-    grid-row: 3 !important;
-    max-height: 14dvh !important;
-  }
-}
-
 @media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) {
   .inspection-layout .cockpit-workspace {
     display: grid !important;

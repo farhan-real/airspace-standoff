@@ -318,13 +318,13 @@
 .inspection-data-value { color: var(--color-pure-white); text-align: right; }
 
 .insp-cognition-card {
-  border-left: 3px solid var(--theme-accent);
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.12) 0%, rgba(4, 9, 22, 0.85) 100%);
+  border-left: 2px solid var(--color-cyan);
+  background: var(--jewel-cyan-bg);
 }
 
 .insp-cognition-card.active-focus {
   border-left-color: var(--color-red);
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.16) 0%, rgba(4, 9, 22, 0.88) 100%);
+  background: var(--jewel-red-bg);
 }
 
 .insp-cognition-grid {

@@ -1,5 +1,5 @@
 /**
- * js/ui/procurement/dialogs/squadronpresets.js - Two-Column Collapsible Squadron Presets Modal Controller.
+ * js/ui/procurement/dialogs/squadronpresets.js - Single-Column Squadron Presets with Two-Column Aircraft Cards.
  */
 
 class SquadronPresetsModalController {
@@ -83,6 +83,43 @@ class SquadronPresetsModalController {
     if (this.pm.game.controls) this.pm.game.controls.autoUnpauseOnDialogClose();
   }
 
+  resolveWeaponRows(weaponsList, spec, wpnsMap) {
+    const intCap = Number(spec.internalSlots || 0);
+    const extCap = Number(spec.externalSlots !== undefined ? spec.externalSlots : (spec.totalSlots !== undefined ? spec.totalSlots : 6));
+    const ctrCap = Number(spec.centerlineSlots !== undefined ? spec.centerlineSlots : (spec.hasCenterline ? 6 : 0));
+    let intUsed = 0, extUsed = 0, ctrUsed = 0;
+
+    return (weaponsList || []).map(wEntry => {
+      const wId = (typeof wEntry === 'object' && wEntry !== null) ? (wEntry.id || wEntry.specId) : wEntry;
+      const w = wpnsMap[wId];
+      if (!w) throw new Error(`Weapon "${wId}" does not exist in WEAPONS_CATALOG.`);
+
+      const wSlots = Number(w.slots || 1);
+      let station = (typeof wEntry === 'object' && wEntry !== null && wEntry.station) ? wEntry.station : null;
+      if (!station) {
+        if (w.slotType === 'CENTERLINE' && spec.hasCenterline && ctrUsed + wSlots <= ctrCap) station = 'CENTERLINE';
+        else if (w.slotType === 'INTERNAL' && intUsed + wSlots <= intCap) station = 'INTERNAL';
+        else if (extCap > 0 && extUsed + wSlots <= extCap) station = 'EXTERNAL';
+        else if (spec.hasCenterline && ctrUsed + wSlots <= ctrCap) station = 'CENTERLINE';
+        else station = extCap > 0 ? 'EXTERNAL' : 'INTERNAL';
+      }
+
+      if (station === 'INTERNAL') intUsed += wSlots;
+      else if (station === 'CENTERLINE') ctrUsed += wSlots;
+      else extUsed += wSlots;
+
+      const stationTag = station === 'INTERNAL' ? 'INT' : (station === 'CENTERLINE' ? 'CTR' : 'EXT');
+      const seekerTag = w.isTargetingPod ? 'TGP' : (w.isJammerPod ? 'ECM' : (w.isDecoyDrone ? 'MALD' : (w.isDecoy ? 'DECOY' : (w.seeker || 'GUIDED'))));
+      return {
+        name: w.name,
+        stationClass: station.toLowerCase(),
+        stationTag,
+        seekerTag,
+        slots: wSlots
+      };
+    });
+  }
+
   buildPresetEntries() {
     const acMap = window.AIRCRAFT_CATALOG;
     const gunsMap = window.AUTOCANNONS_CATALOG;
@@ -94,14 +131,13 @@ class SquadronPresetsModalController {
     const entries = [];
 
     ProcurementPresets.getBuiltinPresetCatalog().forEach(meta => {
-      const units = ProcurementPresets.getBuiltinPreset(meta.id);
       entries.push({
         key: `builtin:${meta.id}`,
         id: meta.id,
         name: meta.name,
         desc: meta.desc,
         source: 'BUILTIN',
-        units
+        units: ProcurementPresets.getBuiltinPreset(meta.id)
       });
     });
 
@@ -132,19 +168,12 @@ class SquadronPresetsModalController {
         const gunObj = gunsMap[gunId];
         if (!gunObj) throw new Error(`Gun "${gunId}" in squadron preset "${entry.name}" does not exist.`);
 
-        const weaponNames = (u.weapons || []).map(wEntry => {
-          const wId = (typeof wEntry === 'object' && wEntry !== null) ? (wEntry.id || wEntry.specId) : wEntry;
-          const wObj = wpnsMap[wId];
-          if (!wObj) throw new Error(`Weapon "${wId}" in squadron preset "${entry.name}" does not exist.`);
-          return wObj.name;
-        });
-
         return {
           specName: spec.name,
           isLead,
           cost: metrics.totalCost,
           gunName: gunObj.name,
-          weaponNames
+          weaponRows: this.resolveWeaponRows(u.weapons, spec, wpnsMap)
         };
       });
 
@@ -164,22 +193,19 @@ class SquadronPresetsModalController {
     grid.innerHTML = '';
 
     let entries = this.buildPresetEntries();
-    if (this.category !== 'ALL') {
-      entries = entries.filter(e => e.source === this.category);
-    }
+    if (this.category !== 'ALL') entries = entries.filter(e => e.source === this.category);
     if (this.search) {
       entries = entries.filter(e => {
         const parts = [
-          e.name,
-          e.desc,
-          ...e.aircraftDetails.map(a => `${a.specName} ${a.gunName} ${a.weaponNames.join(' ')}`)
+          e.name, e.desc,
+          ...e.aircraftDetails.map(a => `${a.specName} ${a.gunName} ${a.weaponRows.map(r => r.name).join(' ')}`)
         ].join(' ').toLowerCase();
         return parts.includes(this.search);
       });
     }
 
     if (entries.length === 0) {
-      grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: #8494ab; font-family: var(--font-mono); font-size: 0.74rem;"><b style="color:#00f0ff;">NO SQUADRON PRESETS MATCH THE SELECTED FILTER</b></div>`;
+      grid.innerHTML = `<div style="text-align: center; padding: 40px 10px; color: #8494ab; font-family: var(--font-mono); font-size: 0.74rem;"><b style="color:#00f0ff;">NO SQUADRON PRESETS MATCH THE SELECTED FILTER</b></div>`;
       return;
     }
 
@@ -197,27 +223,31 @@ class SquadronPresetsModalController {
            <button type="button" class="sq-preset-icon-btn alert btn-sq-delete" title="Delete squadron preset"><img src="icons/trash.svg" width="11" height="11" alt="Delete"></button>`
         : '';
 
-      const miniCardsHtml = entry.aircraftDetails.map(ac => `
-        <div class="sq-mini-card">
-          <div class="sq-mini-top">
-            <div class="sq-mini-name-wrap">
-              <span class="sq-mini-name">${ac.specName}</span>
-              ${ac.isLead ? '<span class="sq-mini-lead">LEAD</span>' : ''}
+      const miniCardsHtml = entry.aircraftDetails.map(ac => {
+        const wpnLinesHtml = ac.weaponRows.length > 0
+          ? ac.weaponRows.map(r => `
+              <div class="sq-mini-wpn-row station-${r.stationClass}">
+                <span class="sq-mini-wpn-name" title="${r.name}">${r.name}</span>
+                <span class="sq-mini-wpn-meta">${r.slots}S &bull; ${r.seekerTag} <span class="sq-mini-wpn-st">[${r.stationTag}]</span></span>
+              </div>`).join('')
+          : '<div class="sq-mini-wpn-row"><span class="sq-mini-wpn-meta">No missiles or pods equipped</span></div>';
+
+        return `
+          <div class="sq-mini-card">
+            <div class="sq-mini-top">
+              <div class="sq-mini-name-wrap">
+                <span class="sq-mini-name">${ac.specName}</span>
+                ${ac.isLead ? '<span class="sq-mini-lead">LEAD</span>' : ''}
+              </div>
+              <span class="sq-mini-cost">$${ac.cost.toFixed(1)}M</span>
             </div>
-            <span class="sq-mini-cost">$${ac.cost.toFixed(1)}M</span>
-          </div>
-          <div class="sq-mini-armaments">
-            <div class="sq-mini-row">
-              <span class="sq-mini-label">GUN:</span>
-              <span class="sq-mini-gun">${ac.gunName}</span>
+            <div class="sq-mini-gun-line">
+              <span class="sq-mini-gun-label">GUN:</span>
+              <span class="sq-mini-gun-name">${ac.gunName}</span>
             </div>
-            <div class="sq-mini-row">
-              <span class="sq-mini-label">MISSILES:</span>
-              <span class="sq-mini-missiles">${ac.weaponNames.length > 0 ? ac.weaponNames.join(', ') : 'None equipped'}</span>
-            </div>
-          </div>
-        </div>
-      `).join('');
+            <div class="sq-mini-wpn-list">${wpnLinesHtml}</div>
+          </div>`;
+      }).join('');
 
       card.innerHTML = `
         <div class="sq-preset-header" role="button" tabindex="0" aria-expanded="${isOpen}">
@@ -230,7 +260,7 @@ class SquadronPresetsModalController {
               </div>
               <div class="sq-preset-meta-line">
                 <span class="sq-preset-cost${isOverBudget ? ' over' : ''}">$${entry.totalCost.toFixed(1)}M</span>
-                <span class="sq-preset-count">${entry.aircraftCount} ${entry.aircraftCount === 1 ? 'AIRCRAFT' : 'AIRCRAFT'}</span>
+                <span class="sq-preset-count">${entry.aircraftCount} AIRCRAFT</span>
               </div>
             </div>
           </div>
@@ -242,8 +272,7 @@ class SquadronPresetsModalController {
         <div class="sq-preset-body">
           <div class="sq-preset-desc">${entry.desc}</div>
           <div class="sq-mini-list">${miniCardsHtml}</div>
-        </div>
-      `;
+        </div>`;
 
       const header = card.querySelector('.sq-preset-header');
       header.onclick = (e) => {
@@ -256,8 +285,7 @@ class SquadronPresetsModalController {
         if (typeof AudioSys !== 'undefined') AudioSys.playClick();
       };
 
-      const loadBtn = card.querySelector('.sq-preset-load-btn');
-      loadBtn.onclick = (e) => {
+      card.querySelector('.sq-preset-load-btn').onclick = (e) => {
         e.stopPropagation();
         ProcurementPresets.activePreset = entry.key;
         if (entry.source === 'BUILTIN') this.pm.applyBuiltinPreset(entry.id);
@@ -273,9 +301,7 @@ class SquadronPresetsModalController {
           this.pm.showPromptModal('RENAME SQUADRON PRESET', `Enter a new name for "${entry.id}":`, entry.id, (newName) => {
             if (newName && newName.trim() && newName.trim() !== entry.id) {
               if (this.pm.customLoadouts.rename(entry.id, newName.trim())) {
-                if (ProcurementPresets.activePreset === entry.key) {
-                  ProcurementPresets.activePreset = `custom:${newName.trim()}`;
-                }
+                if (ProcurementPresets.activePreset === entry.key) ProcurementPresets.activePreset = `custom:${newName.trim()}`;
                 this.renderGrid();
               }
             }
@@ -289,9 +315,7 @@ class SquadronPresetsModalController {
           e.stopPropagation();
           this.pm.showConfirmModal('DELETE SQUADRON PRESET', `Delete preset configuration "${entry.id}"?`, () => {
             this.pm.customLoadouts.delete(entry.id);
-            if (ProcurementPresets.activePreset === entry.key) {
-              ProcurementPresets.activePreset = '';
-            }
+            if (ProcurementPresets.activePreset === entry.key) ProcurementPresets.activePreset = '';
             this.renderGrid();
           });
         };

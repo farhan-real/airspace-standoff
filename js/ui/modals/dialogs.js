@@ -18,13 +18,15 @@ class ModalDialogTemplates {
             <div class="inspect-body" style="padding: 20px; gap: 14px;">
               <p style="font-size: 0.76rem; color: var(--color-moon-mist); line-height: 1.5;">Simulation paused. Select an option to proceed.</p>
               <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button id="btn-resume-sortie" class="scramble-btn" style="width: 100%; padding: 8px;">RESUME</button>
                 <button id="btn-pause-settings" class="hud-btn" style="width: 100%;"><img src="icons/settings.svg" class="btn-vector-ico" width="13" height="13" alt="Settings"><span>SETTINGS</span></button>
                 <button id="btn-pause-manual" class="hud-btn" style="width: 100%;"><img src="icons/manual.svg" class="btn-vector-ico" width="13" height="13" alt="Manual"><span>FLIGHT MANUAL</span></button>
                 <button id="btn-pause-save" class="hud-btn highlight" style="width: 100%;">SAVE SORTIE</button>
                 <button id="btn-pause-save-quit" class="hud-btn" style="width: 100%;">SAVE &amp; QUIT TO HANGAR</button>
                 <button id="btn-pause-abort" class="hud-btn alert" style="width: 100%;">ABORT MISSION</button>
               </div>
+            </div>
+            <div class="inspect-footer">
+              <button id="btn-resume-sortie" class="scramble-btn" style="width: 100%; padding: 8px;">RESUME</button>
             </div>
           </div>
         </div>`);
@@ -40,6 +42,8 @@ class ModalDialogTemplates {
               <p id="dialog-msg" style="font-size: 0.80rem; color: var(--color-moon-mist); line-height: 1.5;"></p>
               <div id="dialog-field-wrap"><input type="text" id="dialog-input" class="hud-search-input" style="font-size: 0.78rem; padding: 7px 12px; width: 100%;"></div>
               <div id="dialog-options-wrap" style="display:none; flex-direction:column; gap:5px; max-height:200px; overflow-y:auto;"></div>
+            </div>
+            <div class="inspect-footer">
               <div class="dialog-actions">
                 <button id="btn-dialog-cancel" class="hud-btn dialog-btn">CANCEL</button>
                 <button id="btn-dialog-confirm" class="hud-btn dialog-btn highlight">CONFIRM</button>
@@ -50,12 +54,13 @@ class ModalDialogTemplates {
     } else if (modalId === 'system-inspect-modal') {
       container.insertAdjacentHTML('beforeend', `
         <div id="system-inspect-modal" class="modal-backdrop">
-          <div class="inspect-window" style="max-width: 860px;">
+          <div class="inspect-window" style="max-width: 940px;">
             <div class="inspect-header">
               <div class="modal-title-row"><h2 id="inspect-modal-title">SYSTEM SPECIFICATIONS</h2></div>
               <button id="btn-close-inspect" class="hud-btn small">CLOSE</button>
             </div>
             <div class="inspect-body" id="inspect-modal-body"></div>
+            <div class="inspect-footer hidden" id="inspect-modal-footer"></div>
           </div>
         </div>`);
     } else if (modalId === 'rwr-briefing-modal') {
@@ -85,10 +90,10 @@ class ModalDialogTemplates {
             <div class="inspect-header" style="background: rgba(244, 63, 94, 0.12);"><h2 style="color: #fca5a5;">ABORT MISSION?</h2></div>
             <div class="inspect-body" style="gap:12px; padding: 18px;">
               <p style="font-size:0.76rem; color: var(--color-moon-mist);">Abort current mission and review the debriefing report?</p>
-              <div style="display:flex; justify-content:center; gap:10px;">
-                <button id="btn-confirm-abort" class="hud-btn alert">ABORT MISSION</button>
-                <button id="btn-cancel-abort" class="hud-btn">CANCEL</button>
-              </div>
+            </div>
+            <div class="inspect-footer" style="justify-content:center;">
+              <button id="btn-confirm-abort" class="hud-btn alert">ABORT MISSION</button>
+              <button id="btn-cancel-abort" class="hud-btn">CANCEL</button>
             </div>
           </div>
         </div>`);

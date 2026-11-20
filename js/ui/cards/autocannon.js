@@ -51,14 +51,14 @@ class AutocannonBayRenderer {
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
             <button type="button" class="gun-inspect-btn small" data-inspect-type="gun" data-inspect-id="${gun.id}">SPECS</button>
-            <span id="gun-ui-ammo" class="gun-ammo-tag" style="color:#00f5a0;font-family:var(--font-mono);font-weight:700;">${activeUnit.gunAmmo} RDS</span>
+            <span id="gun-ui-ammo" class="gun-ammo-tag" style="color:#00f5a0;font-family:var(--font-dotdigital);font-weight:700;">${activeUnit.gunAmmo} RDS</span>
           </div>
         </div>
         <div class="autocannon-auto-badge">
           <span id="gun-ui-stats"><b style="color:#00f0ff;">${gunRangeKm}km</b> &bull; ${coneText} &bull; <b style="color:#ffb830;">${dmgDisplay}</b></span>
-          <span id="gun-ui-indicator" class="armed-indicator" style="color:#00f0ff;">ARMED</span>
+          <span id="gun-ui-indicator" class="armed-indicator">ARMED</span>
         </div>
-        <button type="button" id="btn-fire-cannon-manual" class="btn-fire-pylon" style="margin-top:2px;border-color:#00f0ff;color:#7dd3fc;">BURST</button>
+        <button type="button" id="btn-fire-cannon-manual" class="btn-fire-pylon cannon-burst-btn">BURST</button>
       `;
     }
 

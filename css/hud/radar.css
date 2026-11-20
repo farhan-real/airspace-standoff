@@ -24,42 +24,31 @@
 
 .radar-uplink-banner {
   position: absolute;
-  top: 66px;
+  top: 78px;
   left: 16px;
   z-index: 8;
   pointer-events: none;
-  background: var(--liquid-glass-bg);
+  background: rgba(6, 18, 26, 0.82);
   -webkit-backdrop-filter: var(--glass-filter);
   backdrop-filter: var(--glass-filter);
-  border: 1px solid var(--theme-accent);
-  border-top: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: var(--radius-badge);
-  padding: 3px 10px;
+  border: 1px solid rgba(0, 229, 255, 0.48);
+  border-top: 1px solid rgba(205, 248, 255, 0.45);
+  border-radius: var(--radius-btn);
+  padding: 4px 10px;
   font-family: var(--font-dotdigital);
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   font-weight: 700;
-  color: var(--color-ice-highlight);
+  color: #e0f7ff;
   letter-spacing: 0.5px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 16px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 20px rgba(0, 0, 0, 0.85);
   white-space: nowrap;
-  animation: radarUplinkGlow 2.2s infinite ease-in-out;
+  animation: radarUplinkGlow 2.4s infinite ease-in-out;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
 .radar-uplink-banner.hidden { display: none !important; }
-
-@keyframes radarUplinkGlow {
-  0%, 100% {
-    border-color: var(--theme-accent);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 12px var(--theme-primary-glow);
-  }
-  50% {
-    border-color: #ffffff;
-    box-shadow: inset 0 1px 0 #ffffff, 0 0 20px var(--theme-primary-glow);
-  }
-}
 
 html.safe-zone-on .radar-uplink-banner,
 body.safe-zone-on .radar-uplink-banner {
@@ -74,14 +63,16 @@ body.safe-zone-on .radar-uplink-banner {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  background: var(--glass-3d-card-bg);
-  border: 1px solid var(--glass-3d-card-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
-  border-radius: var(--radius-badge);
-  padding: 4px 9px;
+  background: var(--glass-bg-modal);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--radius-card);
+  padding: 5px 10px;
   cursor: pointer;
-  box-shadow: var(--glass-3d-card-shadow);
-  transition: all 0.16s ease;
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.14s ease, border-color 0.14s ease;
 }
 
 html.safe-zone-on .rwr-warning-box,
@@ -110,13 +101,13 @@ body.safe-zone-on .rwr-warning-box {
   letter-spacing: 0.5px;
 }
 
-.rwr-status.clean { color: var(--stat-tier-2); text-shadow: 0 0 6px rgba(0, 245, 160, 0.5); }
-.rwr-status.sweep { color: var(--stat-tier-3); text-shadow: 0 0 6px rgba(251, 191, 36, 0.5); }
+.rwr-status.clean { color: var(--color-green); }
+.rwr-status.sweep { color: var(--color-amber); }
 .rwr-status.lock {
-  background: #f43f5e;
-  border: 1px solid #ffffff;
-  color: #fff;
-  box-shadow: 0 0 10px rgba(244, 63, 94, 0.7);
+  background: var(--jewel-red-bg);
+  border: 1px solid rgba(255, 56, 100, 0.78);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 56, 100, 0.34);
 }
 
 .rwr-subtext {
@@ -147,14 +138,16 @@ body.safe-zone-on .radar-bottom-controls-dock {
   display: flex;
   height: 32px;
   box-sizing: border-box;
-  background: var(--glass-3d-card-bg);
-  border: 1px solid var(--glass-3d-card-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
+  background: var(--liquid-glass-bg);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: var(--radius-btn);
   padding: 2px 4px;
   gap: 4px;
   align-items: center;
-  box-shadow: var(--glass-3d-card-shadow);
+  box-shadow: var(--liquid-glass-shadow);
   flex-shrink: 0;
 }
 
@@ -184,10 +177,10 @@ body.safe-zone-on .radar-bottom-controls-dock {
 
 .radar-floating-cam-bar .cam-btn:active,
 .radar-floating-cam-bar .cam-btn.active {
-  background: rgba(2, 132, 199, 0.4);
+  background: var(--jewel-cyan-bg);
   color: #ffffff;
-  border-color: var(--theme-accent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  border-color: rgba(0, 229, 255, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .radar-floating-cam-bar .prominent-cam-btn {
@@ -256,10 +249,10 @@ body.safe-zone-on .mobile-steering-overlay {
 
 .mobile-steer-btn {
   pointer-events: auto;
-  background: var(--glass-3d-btn-bg);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
-  color: var(--theme-accent);
+  background: var(--jewel-cyan-bg);
+  border: 1px solid rgba(0, 229, 255, 0.48);
+  border-top: 1px solid rgba(205, 248, 255, 0.48);
+  color: #ffffff;
   padding: 6px 14px;
   font-family: var(--font-untitled-sans);
   font-size: 0.66rem;
@@ -268,16 +261,17 @@ body.safe-zone-on .mobile-steering-overlay {
   border-radius: var(--radius-btn);
   box-shadow: var(--glass-3d-btn-shadow);
   touch-action: manipulation;
-  transition: all 0.14s ease;
+  transition: transform 0.12s ease, background 0.12s ease;
 }
 
 .mobile-steer-btn:active {
-  background: rgba(2, 132, 199, 0.5);
+  background: var(--jewel-cyan-hover);
+  border-color: var(--color-cyan);
   color: #ffffff;
   transform: translateY(1px);
 }
 
-@media (max-width: 1024px) and (orientation: portrait) {
-  .rwr-warning-box { top: 6px; right: 6px; padding: 2px 5px; }
-  .radar-uplink-banner { top: 52px !important; left: 8px !important; font-size: 0.54rem !important; padding: 2px 7px !important; }
+@keyframes radarUplinkGlow {
+  0%, 100% { border-color: rgba(0, 229, 255, 0.42); }
+  50% { border-color: rgba(0, 229, 255, 0.88); }
 }

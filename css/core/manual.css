@@ -1,18 +1,20 @@
 /* AIRSPACE STANDOFF: Flight Manual Theme */
 
 .glossary-window {
-  background: rgba(3, 7, 18, 0.96);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-modal);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.30);
   border-radius: var(--radius-modal);
   width: 94vw;
   max-width: 1200px;
-  height: 90vh;
   height: 90dvh;
   max-height: 90dvh;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8);
+  box-shadow: var(--glass-shadow);
   overflow: hidden;
   font-family: var(--font-untitled-sans);
   box-sizing: border-box;
@@ -233,9 +235,9 @@ mark.manual-search-hl.current {
 }
 
 .manual-nav-btn.active {
-  background: var(--theme-primary);
+  background: var(--jewel-cyan-bg);
   color: #ffffff;
-  border-color: var(--theme-accent);
+  border-color: rgba(0, 229, 255, 0.60);
   font-weight: 600;
 }
 
@@ -412,9 +414,7 @@ mark.manual-search-hl.current {
   min-width: 540px;
 }
 
-.ge-table thead {
-  background: rgba(6, 14, 30, 0.96);
-}
+.ge-table thead { background: rgba(10, 12, 16, 0.96); }
 
 .ge-table th {
   text-align: left;

@@ -26,16 +26,15 @@
 }
 
 .strip-header {
-  background: var(--liquid-glass-bg);
+  background: rgba(255, 255, 255, 0.035);
   padding: 6px 10px;
   font-size: 0.66rem;
-  font-weight: 600;
+  font-weight: 700;
   font-family: var(--font-untitled-sans);
-  color: var(--color-ice-highlight);
-  border-bottom: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
-  border-left: 3px solid var(--theme-accent);
-  letter-spacing: 0.6px;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  border-left: 2px solid var(--color-cyan);
+  letter-spacing: 0.5px;
   flex-shrink: 0;
 }
 
@@ -91,88 +90,9 @@ body.has-touch .mobile-steering-overlay,
   }
 }
 
-@media (max-width: 1024px) and (orientation: portrait) {
-  .cockpit-workspace {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 1 0% !important;
-    min-height: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
-    position: relative !important;
-  }
 
-  .mobile-steering-overlay {
-    display: flex !important;
-  }
 
-  #pane-radar.radar-viewport {
-    display: flex !important;
-    position: relative !important;
-    flex: 1 1 0% !important;
-    min-height: 180px !important;
-    width: 100% !important;
-    height: auto !important;
-    z-index: 1 !important;
-  }
-
-  #pane-mfd.active-unit-mfd {
-    display: flex !important;
-    position: static !important;
-    flex: 0 0 auto !important;
-    max-height: 30vh !important;
-    max-height: 30dvh !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    width: 100% !important;
-    border-left: none !important;
-    border-top: 1px solid var(--border-color) !important;
-    background: var(--liquid-glass-bg) !important;
-    padding: 3px 5px !important;
-    gap: 2px !important;
-    z-index: 2 !important;
-  }
-
-  #pane-fleet.squadron-flight-data {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 1200;
-    background: rgba(0, 0, 0, 0.96);
-    flex-direction: column;
-    padding: 8px;
-    overflow-y: auto;
-  }
-
-  html.safe-zone-on #pane-fleet.squadron-flight-data,
-  body.safe-zone-on #pane-fleet.squadron-flight-data {
-    padding: max(8px, var(--safe-top, 0px)) max(8px, var(--safe-right, 0px)) max(8px, var(--safe-bottom, 0px)) max(8px, var(--safe-left, 0px));
-  }
-
-  #pane-fleet.squadron-flight-data.drawer-open {
-    display: flex !important;
-  }
-
-  #fleet-strip-header {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 8px 10px !important;
-    width: 100% !important;
-  }
-
-  .fleet-drawer-close-btn {
-    display: inline-flex !important;
-    margin-left: auto !important;
-    min-height: 28px;
-    padding: 3px 12px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-}
-
-@media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
+@media (max-width: 1024px), (max-height: 550px) and (max-width: 1024px) {
   .cockpit-workspace {
     display: flex !important;
     flex-direction: row !important;
@@ -203,11 +123,11 @@ body.has-touch .mobile-steering-overlay,
     width: 280px !important;
     max-height: 100% !important;
     height: 100% !important;
-    border-left: 1px solid var(--border-color) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.10) !important;
     border-top: none !important;
-    background: var(--liquid-glass-bg) !important;
-    padding: 3px 5px !important;
-    gap: 2px !important;
+    background: #000000 !important;
+    padding: 4px 6px !important;
+    gap: 4px !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     z-index: 2 !important;

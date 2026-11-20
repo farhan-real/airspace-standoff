@@ -63,25 +63,25 @@ class AvionicsUI {
   }
 
   getSpeedColor(speed, sOpt, sMax) {
-    if (speed < 0.35) return '#ff3366';
-    if (speed >= sMax * 0.98) return '#00f0ff';
+    if (speed < 0.35) return '#ff3864';
+    if (speed >= sMax * 0.98) return '#00e5ff';
     if (Math.abs(speed - sOpt) < 0.12) return '#00f5a0';
-    return speed < sOpt ? '#f97316' : '#38bdf8';
+    return speed < sOpt ? '#fb923c' : '#38bdf8';
   }
 
   getAltColor(altFt) {
-    if (altFt >= 40000) return '#00f0ff';
+    if (altFt >= 40000) return '#00e5ff';
     if (altFt >= 20000) return '#00f5a0';
-    return altFt >= 10000 ? '#38bdf8' : '#ff3366';
+    return altFt >= 10000 ? '#38bdf8' : '#ff3864';
   }
 
   getTurnColor(et, isCoffin = false) {
     if (isCoffin) return '#c7d2fe';
-    return et >= 0.88 ? '#00f0ff' : (et >= 0.75 ? '#00f5a0' : (et >= 0.60 ? '#38bdf8' : '#ff3366'));
+    return et >= 0.88 ? '#00e5ff' : (et >= 0.75 ? '#00f5a0' : (et >= 0.60 ? '#38bdf8' : '#ff3864'));
   }
 
-  getLoadColor(wr) { return wr <= 0.35 ? '#00f0ff' : (wr <= 0.60 ? '#00f5a0' : (wr <= 0.80 ? '#f97316' : '#ff3366')); }
-  getStressColor(s) { return s <= 0.30 ? '#00f5a0' : (s <= 0.65 ? '#f97316' : '#ff3366'); }
+  getLoadColor(wr) { return wr <= 0.35 ? '#00e5ff' : (wr <= 0.60 ? '#00f5a0' : (wr <= 0.80 ? '#fb923c' : '#ff3864')); }
+  getStressColor(s) { return s <= 0.30 ? '#00f5a0' : (s <= 0.65 ? '#fb923c' : '#ff3864'); }
 
   updateActiveUnitMFD() {
     const u = this.game.activeUnit;
@@ -139,7 +139,7 @@ class AvionicsUI {
 
     this.setFastText(nameEl, 'name', modelName);
     this.setFastText(callsignValEl, 'cs', displayName);
-    if (callsignValEl) callsignValEl.style.color = isFriendly ? '#00f0ff' : '#ff3366';
+    if (callsignValEl) callsignValEl.style.color = isFriendly ? '#00e5ff' : '#ff3864';
 
     if (coffinTag) coffinTag.classList.toggle('hidden', !u.isCoffin);
     if (leadTag) leadTag.classList.toggle('hidden', !(u.isFlightLead && !u.isAce));
@@ -172,10 +172,10 @@ class AvionicsUI {
     this.setFastText(hudAltArrow, 'altA', u.altTrend || '--');
     const vsiStr = (fpm > 0 ? '+' : '') + fpm + ' fpm ' + (fpm > 300 ? 'CLIMB' : (fpm < -300 ? 'DIVE' : 'LVL'));
     this.setFastText(hudVsi, 'vsi', vsiStr);
-    if (hudVsi) hudVsi.style.color = fpm > 300 ? '#00f5a0' : (fpm < -300 ? '#ff3366' : '#8494ab');
+    if (hudVsi) hudVsi.style.color = fpm > 300 ? '#00f5a0' : (fpm < -300 ? '#ff3864' : '#8494ab');
 
     this.setFastText(hudCallsign, 'hCs', `${callsignText.toUpperCase()}${u.isAce ? ' [ACE]' : (u.isFlightLead ? ' [LEAD]' : '')}`);
-    if (hudCallsign) hudCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00f0ff' : '#ff3366'));
+    if (hudCallsign) hudCallsign.style.color = u.isAce ? '#ffd700' : (u.isFlightLead ? '#38bdf8' : (isFriendly ? '#00e5ff' : '#ff3864'));
     this.setFastText(hudModel, 'hMod', `${modelName.toUpperCase()} - ${u.spec ? u.spec.role.toUpperCase() : 'AIRCRAFT'}`);
     this.setFastText(hudCardinal, 'hCard', cardStr);
     this.setFastText(hudDeg, 'hDeg', String(deg).padStart(3, '0') + '\u00B0');
@@ -206,15 +206,16 @@ class AvionicsUI {
     if (alphaLabel) {
       const modeText = pct > 85 ? 'AFTERBURNER' : (pct > 75 ? 'MIL POWER' : (pct > 35 ? 'CRUISE' : 'IDLE'));
       this.setFastText(alphaLabel, 'alphaLbl', `${pct}% ${modeText} [M ${targetMach.toFixed(2)}]`);
-      alphaLabel.style.color = pct > 85 ? '#f97316' : '#38bdf8';
+      alphaLabel.style.color = pct > 85 ? '#fb923c' : '#38bdf8';
       alphaLabel.classList.toggle('burner', pct > 85);
     }
 
     if (rtbBtn) {
       const rtbText = u.isRTB ? 'CANCEL RETURN TO BASE' : 'RETURN TO BASE';
       this.setFastText(rtbBtn, 'rtb', rtbText);
-      rtbBtn.style.background = u.isRTB ? '#450a0a' : '#064e3b';
-      rtbBtn.style.color = u.isRTB ? '#fecdd3' : '#a7f3d0';
+      rtbBtn.style.background = '';
+      rtbBtn.style.color = '';
+      rtbBtn.classList.toggle('is-rtb', Boolean(u.isRTB));
     }
 
     const stressVal = u.isCoffin ? 0.0 : (u.stress || 0);

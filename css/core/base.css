@@ -1,13 +1,13 @@
-/* AIRSPACE STANDOFF: Base Styles - Solid Pitch Black with Subtle Aerospace Glass */
+/* AIRSPACE STANDOFF: Base Styles - AMOLED Black Canvas & Jewel Glass Controls */
 
 :root {
-  --bg-dark: var(--color-pitch-black);
-  --bg-panel: rgba(4, 9, 22, 0.94);
-  --bg-panel-alt: rgba(3, 7, 18, 0.92);
+  --bg-dark: #000000;
+  --bg-panel: rgba(8, 10, 14, 0.88);
+  --bg-panel-alt: rgba(5, 7, 10, 0.92);
   --bg-card: var(--glass-3d-card-bg);
   --border-color: var(--glass-border);
   --border-highlight: var(--glass-border-hover);
-  --border-focus: var(--color-frost-glow);
+  --border-focus: var(--color-cyan);
 
   --text-main: var(--color-pure-white);
   --text-muted: var(--color-moon-mist);
@@ -41,7 +41,7 @@ body.safe-zone-on {
   -webkit-user-select: none;
   touch-action: manipulation;
   scrollbar-width: thin;
-  scrollbar-color: rgba(56, 189, 248, 0.28) var(--color-pitch-black);
+  scrollbar-color: rgba(255, 255, 255, 0.20) #000000;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -49,6 +49,7 @@ html, body {
   background-color: #000000 !important;
   color: var(--text-main);
   font-family: var(--font-untitled-sans);
+  font-variant-numeric: tabular-nums;
   overflow: hidden;
   height: 100%;
   width: 100%;
@@ -56,15 +57,11 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Pseudo-fullscreen fallback */
 html.pseudo-fullscreen,
 body.pseudo-fullscreen {
   position: fixed !important;
   inset: 0 !important;
-  top: 0 !important;
-  left: 0 !important;
   width: 100vw !important;
-  height: 100vh !important;
   height: 100dvh !important;
   max-width: 100vw !important;
   max-height: 100dvh !important;
@@ -77,21 +74,7 @@ body.pseudo-fullscreen {
 html.pseudo-fullscreen #hud-container,
 body.pseudo-fullscreen #hud-container,
 html.pseudo-fullscreen #procurement-modal,
-body.pseudo-fullscreen #procurement-modal {
-  height: 100dvh !important;
-  width: 100vw !important;
-}
-
-:fullscreen,
-:-webkit-full-screen,
-:-moz-full-screen {
-  background-color: #000000 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  height: 100dvh !important;
-  overflow: hidden !important;
-}
-
+body.pseudo-fullscreen #procurement-modal,
 :fullscreen #hud-container,
 :-webkit-full-screen #hud-container,
 :fullscreen #procurement-modal,
@@ -100,44 +83,37 @@ body.pseudo-fullscreen #procurement-modal {
   height: 100dvh !important;
 }
 
+:fullscreen,
+:-webkit-full-screen,
+:-moz-full-screen {
+  background-color: #000000 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
 #radar-canvas {
   background-color: #000000 !important;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #000000;
-  border-left: 1px solid var(--glass-border);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(56, 189, 248, 0.25);
-  border-radius: var(--radius-btn);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-accent);
-  box-shadow: 0 0 8px var(--theme-accent-glow);
-}
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #000000; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.18); border-radius: var(--radius-pill); }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 229, 255, 0.60); }
 
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.90) !important;
+  background: rgba(0, 0, 0, 0.82) !important;
   z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.15s ease-out;
+  transition: opacity 0.16s ease-out;
   transform: translateZ(0);
   padding: 8px;
-  box-sizing: border-box;
 }
 
 .modal-backdrop.active {
@@ -147,22 +123,22 @@ body.pseudo-fullscreen #procurement-modal {
 
 .hud-btn {
   background: var(--glass-3d-btn-bg);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.34);
   color: #ffffff;
   font-family: var(--font-untitled-sans);
   font-size: 0.72rem;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 6px 13px;
   cursor: pointer;
   border-radius: var(--radius-btn);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.25px;
   box-shadow: var(--glass-3d-btn-shadow);
-  transition: all 0.14s ease;
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -172,13 +148,14 @@ body.pseudo-fullscreen #procurement-modal {
   vertical-align: middle;
   flex-shrink: 0;
   pointer-events: none;
-  transition: transform 0.15s ease, filter 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease;
   object-fit: contain;
+  opacity: 0.92;
 }
 
 .hud-btn:hover:not(:disabled) .btn-vector-ico {
-  transform: scale(1.10);
-  filter: drop-shadow(0 0 6px var(--theme-accent));
+  transform: scale(1.08);
+  opacity: 1;
 }
 
 .modal-title-ico {
@@ -186,17 +163,16 @@ body.pseudo-fullscreen #procurement-modal {
   vertical-align: middle;
   flex-shrink: 0;
   margin-right: 8px;
-  filter: drop-shadow(0 0 8px var(--theme-accent-glow));
   object-fit: contain;
 }
 
 .hud-btn:hover:not(:disabled) {
   background: var(--glass-3d-btn-bg-hover);
-  border-color: var(--theme-accent);
-  border-top-color: #ffffff;
+  border-color: rgba(0, 229, 255, 0.52);
+  border-top-color: rgba(255, 255, 255, 0.50);
   color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 4px 14px rgba(0, 0, 0, 0.7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34), 0 4px 14px rgba(0, 0, 0, 0.80);
 }
 
 .hud-btn:active:not(:disabled) {
@@ -205,7 +181,7 @@ body.pseudo-fullscreen #procurement-modal {
 }
 
 .hud-btn:disabled {
-  opacity: 0.32;
+  opacity: 0.34;
   cursor: not-allowed;
   filter: grayscale(0.8);
   box-shadow: none;
@@ -217,37 +193,36 @@ body.pseudo-fullscreen #procurement-modal {
   height: 28px;
   min-height: 28px;
   gap: 5px;
-  border-radius: var(--radius-btn);
-  flex-shrink: 0;
 }
 
 .hud-btn.alert {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.28) 0%, rgba(136, 19, 55, 0.45) 100%), #14040a;
-  border-color: rgba(244, 63, 94, 0.45);
-  border-top-color: rgba(255, 140, 165, 0.55);
-  color: #fecdd3;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 10px rgba(244, 63, 94, 0.30);
+  background: var(--jewel-red-bg);
+  border-color: rgba(255, 56, 100, 0.50);
+  border-top-color: rgba(255, 195, 210, 0.52);
+  color: #ffe4ec;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 3px 12px rgba(255, 56, 100, 0.14);
 }
 
 .hud-btn.alert:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.42) 0%, rgba(136, 19, 55, 0.60) 100%), #1e060e;
-  border-color: #f43f5e;
-  border-top-color: #ffffff;
+  background: var(--jewel-red-hover);
+  border-color: #ff3864;
+  border-top-color: rgba(255, 230, 238, 0.72);
   color: #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff, 0 0 16px rgba(244, 63, 94, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 0 16px rgba(255, 56, 100, 0.28);
 }
 
 .hud-btn.highlight {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(2, 132, 199, 0.25) 50%, rgba(3, 105, 161, 0.45) 100%), #020c1e;
-  border-color: var(--theme-primary);
-  border-top-color: var(--color-ice-highlight);
+  background: var(--jewel-cyan-bg);
+  border-color: rgba(0, 229, 255, 0.52);
+  border-top-color: rgba(205, 248, 255, 0.55);
   color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 0 14px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 3px 12px rgba(0, 229, 255, 0.14);
 }
 
 .hud-btn.highlight:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.55) 0%, rgba(2, 132, 199, 0.38) 50%, rgba(3, 105, 161, 0.60) 100%), #03122c;
-  border-color: #ffffff;
+  background: var(--jewel-cyan-hover);
+  border-color: #00e5ff;
+  border-top-color: rgba(255, 255, 255, 0.75);
   color: #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff, 0 0 20px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 0 18px rgba(0, 229, 255, 0.26);
 }

@@ -2,21 +2,19 @@
 
 .settings-window {
   background: var(--glass-bg-modal);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
-  border-bottom: 1px solid var(--liquid-glass-border-bottom);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.30);
   border-radius: var(--radius-modal);
   width: 90%;
   max-width: 580px;
-  height: 80vh;
   height: 80dvh;
   min-height: 0;
   max-height: 600px;
   display: flex;
   flex-direction: column;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), inset 0 0 20px rgba(56, 189, 248, 0.05), 0 20px 60px rgba(0, 0, 0, 0.85);
+  box-shadow: var(--glass-shadow);
   overflow: hidden;
   font-family: var(--font-untitled-sans);
   box-sizing: border-box;
@@ -91,11 +89,11 @@
 }
 
 .settings-tab-btn.active {
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.45) 0%, rgba(2, 132, 199, 0.85) 100%);
+  background: var(--jewel-cyan-bg);
   color: #ffffff;
-  border-color: var(--theme-accent);
-  border-top-color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 10px var(--theme-primary-glow);
+  border-color: rgba(0, 229, 255, 0.58);
+  border-top-color: rgba(205, 248, 255, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .settings-body {
@@ -135,9 +133,9 @@
 .keybinds-table th {
   text-align: left;
   padding: 7px 10px;
-  background: rgba(6, 14, 30, 0.95);
+  background: rgba(12, 15, 20, 0.96);
   color: var(--color-frost-glow);
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
   font-weight: 700;
 }
 
@@ -173,11 +171,10 @@
 }
 
 .btn-rebind.recording {
-  background: linear-gradient(180deg, rgba(244, 63, 94, 0.45) 0%, rgba(136, 19, 55, 0.8) 100%);
+  background: var(--jewel-red-bg);
   color: #ffffff;
-  border-color: #f43f5e;
-  border-top-color: #ffffff;
-  box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
+  border-color: var(--color-red);
+  box-shadow: 0 0 12px rgba(255, 56, 100, 0.35);
 }
 
 .settings-form-row {

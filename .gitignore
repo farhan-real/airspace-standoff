@@ -1,4 +1,5 @@
-super_secret_folder/
+*_secret_*
 .env
 .idea
 *.ps1
+*.txt

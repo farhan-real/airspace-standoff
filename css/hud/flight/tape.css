@@ -22,17 +22,19 @@ body.safe-zone-on .radar-flight-hud {
 }
 
 .rfh-panel {
-  background: var(--liquid-glass-bg);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
+  background: var(--glass-bg-modal);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: var(--radius-card);
-  padding: 4px 10px;
+  padding: 5px 11px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 4px 16px rgba(0, 0, 0, 0.75);
+  box-shadow: var(--glass-shadow);
   white-space: nowrap;
   overflow: hidden;
 }
@@ -51,38 +53,24 @@ body.safe-zone-on .radar-flight-hud {
   gap: 4px;
 }
 
-.rfh-num {
-  font-size: 0.96rem;
-  font-weight: 700;
-  color: var(--color-pure-white);
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
-}
+.rfh-num { font-size: 0.96rem; font-weight: 700; color: #ffffff; }
 
-.rfh-arrow {
-  font-size: 0.74rem;
-  font-weight: 700;
-}
-
-.rfh-sub {
-  font-size: 0.56rem;
-  color: var(--theme-accent);
-  font-weight: 700;
-  text-shadow: 0 0 6px var(--theme-accent-glow);
-}
+.rfh-arrow { font-size: 0.74rem; font-weight: 700; }
+.rfh-sub { font-size: 0.56rem; color: var(--color-cyan); font-weight: 700; }
 
 .rfh-alt,
 .rfh-speed {
   min-width: 78px;
-  padding: 4px 10px;
+  padding: 5px 10px;
 }
 
 .rfh-center,
 .rfh-details {
   min-width: 215px;
   max-width: 265px;
-  padding: 4px 12px;
-  border-color: rgba(56, 189, 248, 0.35);
-  border-top-color: #ffffff;
+  padding: 5px 12px;
+  border-color: rgba(0, 229, 255, 0.36);
+  border-top-color: rgba(205, 248, 255, 0.45);
 }
 
 .rfh-center-top {
@@ -94,13 +82,7 @@ body.safe-zone-on .radar-flight-hud {
   width: 100%;
 }
 
-.rfh-cs {
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--color-pure-white);
-  letter-spacing: 0.4px;
-  text-shadow: 0 0 8px var(--theme-accent-glow);
-}
+.rfh-cs { font-size: 0.76rem; font-weight: 700; color: #ffffff; letter-spacing: 0.4px; }
 
 .rfh-model {
   font-size: 0.54rem;
@@ -121,12 +103,7 @@ body.safe-zone-on .radar-flight-hud {
   margin-top: 2px;
 }
 
-.rfh-cardinal {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--stat-tier-2);
-  text-shadow: 0 0 8px rgba(0, 245, 160, 0.5);
-}
+.rfh-cardinal { font-size: 0.78rem; font-weight: 700; color: var(--color-green); }
 
 .rfh-deg {
   font-size: 0.72rem;
@@ -145,19 +122,16 @@ body.safe-zone-on .radar-flight-hud {
   font-size: 0.52rem;
   padding: 1px 6px;
   border-radius: var(--radius-badge);
-  background: var(--glass-3d-well-bg);
-  border: 1px solid var(--glass-3d-well-border);
-  color: var(--theme-accent);
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--color-cyan);
   font-weight: 700;
-  box-shadow: var(--glass-3d-well-shadow);
 }
 
 .rfh-pill.coffin-turn {
-  background: rgba(2, 132, 199, 0.3) !important;
-  border: 1px solid var(--theme-accent) !important;
-  border-top-color: #ffffff !important;
-  color: #bae6fd !important;
-  box-shadow: 0 0 8px var(--theme-primary-glow);
+  background: var(--jewel-cyan-bg) !important;
+  border: 1px solid rgba(0, 229, 255, 0.55) !important;
+  color: #e0f7ff !important;
 }
 
 @media (max-width: 1200px) and (orientation: landscape), (max-height: 600px) and (orientation: landscape) {
@@ -172,16 +146,3 @@ body.safe-zone-on .radar-flight-hud {
   }
 }
 
-@media (max-width: 1024px) and (orientation: portrait) {
-  .radar-flight-hud {
-    top: 6px !important;
-    left: 8px !important;
-    gap: 3px !important;
-    max-width: calc(100% - 80px) !important;
-  }
-  .rfh-panel { padding: 2px 5px !important; }
-  .rfh-alt, .rfh-speed { min-width: 60px !important; padding: 2px 4px !important; }
-  .rfh-center, .rfh-details { min-width: 120px !important; max-width: 148px !important; padding: 2px 4px !important; }
-  .rfh-num { font-size: 0.80rem !important; }
-  .rfh-cs { font-size: 0.64rem !important; }
-}

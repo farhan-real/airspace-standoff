@@ -2,20 +2,18 @@
 
 .game-over-dialog {
   background: var(--glass-bg-modal);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
-  border-bottom: 1px solid var(--liquid-glass-border-bottom);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.30);
   border-radius: var(--radius-modal);
   width: 95%;
   max-width: 840px;
-  height: 92vh;
   height: 92dvh;
   max-height: 92dvh;
   display: flex;
   flex-direction: column;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), inset 0 0 20px rgba(56, 189, 248, 0.05), 0 20px 60px rgba(0, 0, 0, 0.85);
+  box-shadow: var(--glass-shadow);
   font-family: var(--font-untitled-sans);
   overflow: hidden;
   box-sizing: border-box;
@@ -97,53 +95,21 @@
   position: relative;
 }
 
-.ace-card.team-blue {
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.14) 0%, rgba(4, 12, 28, 0.95) 100%) !important;
-  border: 1px solid rgba(56, 189, 248, 0.45) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 14px rgba(56, 189, 248, 0.20) !important;
-}
+.ace-card.team-blue { background: var(--jewel-cyan-bg) !important; border: 1px solid rgba(0, 229, 255, 0.44) !important; }
 
-.ace-card.team-blue.rank-1 {
-  border: 1px solid rgba(251, 191, 36, 0.65) !important;
-  border-top: 1px solid #fef08a !important;
-  background: linear-gradient(180deg, rgba(251, 191, 36, 0.22) 0%, rgba(4, 12, 28, 0.95) 100%) !important;
-}
+.ace-card.team-blue.rank-1 { border: 1px solid rgba(250, 204, 21, 0.60) !important; background: var(--jewel-amber-bg) !important; }
 
-.ace-card.team-blue.rank-2 {
-  border: 1px solid #38bdf8 !important;
-  border-top: 1px solid #ffffff !important;
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.24) 0%, rgba(4, 12, 28, 0.95) 100%) !important;
-}
+.ace-card.team-blue.rank-2 { border: 1px solid rgba(0, 229, 255, 0.65) !important; background: var(--jewel-cyan-bg) !important; }
 
-.ace-card.team-blue.rank-3 {
-  border: 1px solid rgba(148, 163, 184, 0.50) !important;
-  border-top: 1px solid #ffffff !important;
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0.16) 0%, rgba(4, 12, 28, 0.95) 100%) !important;
-}
+.ace-card.team-blue.rank-3 { border: 1px solid rgba(255, 255, 255, 0.28) !important; background: var(--glass-3d-card-bg) !important; }
 
-.ace-card.team-red {
-  background: linear-gradient(180deg, rgba(244, 63, 94, 0.18) 0%, rgba(28, 4, 12, 0.95) 100%) !important;
-  border: 1px solid rgba(244, 63, 94, 0.55) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 140, 165, 0.25), 0 0 14px rgba(244, 63, 94, 0.25) !important;
-}
+.ace-card.team-red { background: var(--jewel-red-bg) !important; border: 1px solid rgba(255, 56, 100, 0.50) !important; }
 
-.ace-card.team-red.rank-1 {
-  border: 1px solid rgba(251, 191, 36, 0.65) !important;
-  border-top: 1px solid #fef08a !important;
-  background: linear-gradient(180deg, rgba(251, 191, 36, 0.22) 0%, rgba(28, 4, 12, 0.95) 100%) !important;
-}
+.ace-card.team-red.rank-1 { border: 1px solid rgba(250, 204, 21, 0.60) !important; background: var(--jewel-amber-bg) !important; }
 
-.ace-card.team-red.rank-2 {
-  border: 1px solid #f43f5e !important;
-  border-top: 1px solid #ffffff !important;
-  background: linear-gradient(180deg, rgba(244, 63, 94, 0.26) 0%, rgba(28, 4, 12, 0.95) 100%) !important;
-}
+.ace-card.team-red.rank-2 { border: 1px solid rgba(255, 56, 100, 0.68) !important; background: var(--jewel-red-bg) !important; }
 
-.ace-card.team-red.rank-3 {
-  border: 1px solid rgba(244, 63, 94, 0.45) !important;
-  border-top: 1px solid #fecdd3 !important;
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0.16) 0%, rgba(28, 4, 12, 0.95) 100%) !important;
-}
+.ace-card.team-red.rank-3 { border: 1px solid rgba(255, 56, 100, 0.36) !important; background: var(--glass-3d-card-bg) !important; }
 
 .ace-team-badge {
   font-size: 0.54rem;
@@ -184,15 +150,9 @@
   font-weight: 700;
 }
 
-.ace-card.team-blue .ace-callsign {
-  color: #38bdf8;
-  text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
-}
+.ace-card.team-blue .ace-callsign { color: var(--color-cyan); }
 
-.ace-card.team-red .ace-callsign {
-  color: #f43f5e;
-  text-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
-}
+.ace-card.team-red .ace-callsign { color: var(--color-red); }
 
 .ace-sub {
   font-size: 0.62rem;

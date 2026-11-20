@@ -7,23 +7,23 @@ class SpecsModalRenderer {
     return `
       <div class="inspect-spectrum-legend">
         <div class="legend-row">
-          <span class="legend-title">PERFORMANCE:</span>
+          <span class="legend-title">PERFORMANCE</span>
           <div class="legend-chips-row">
-            <span class="legend-chip tier-1">[T1: EXCELLENT]</span>
-            <span class="legend-chip tier-2">[T2: GOOD]</span>
-            <span class="legend-chip tier-3">[T3: AVERAGE]</span>
-            <span class="legend-chip tier-4">[T4: POOR]</span>
-            <span class="legend-chip tier-5">[T5: VERY POOR]</span>
+            <span class="legend-chip tier-1"><i class="legend-dot"></i>T1 EXCELLENT</span>
+            <span class="legend-chip tier-2"><i class="legend-dot"></i>T2 GOOD</span>
+            <span class="legend-chip tier-3"><i class="legend-dot"></i>T3 AVERAGE</span>
+            <span class="legend-chip tier-4"><i class="legend-dot"></i>T4 POOR</span>
+            <span class="legend-chip tier-5"><i class="legend-dot"></i>T5 VERY POOR</span>
           </div>
         </div>
         <div class="legend-row">
-          <span class="legend-title">COST / BUDGET:</span>
+          <span class="legend-title">COST / BUDGET</span>
           <div class="legend-chips-row">
-            <span class="legend-chip tier-1">[T1: VERY LOW]</span>
-            <span class="legend-chip tier-2">[T2: LOW]</span>
-            <span class="legend-chip tier-3">[T3: MEDIUM]</span>
-            <span class="legend-chip tier-4">[T4: HIGH]</span>
-            <span class="legend-chip tier-5">[T5: VERY HIGH]</span>
+            <span class="legend-chip tier-1"><i class="legend-dot"></i>T1 VERY LOW</span>
+            <span class="legend-chip tier-2"><i class="legend-dot"></i>T2 LOW</span>
+            <span class="legend-chip tier-3"><i class="legend-dot"></i>T3 MEDIUM</span>
+            <span class="legend-chip tier-4"><i class="legend-dot"></i>T4 HIGH</span>
+            <span class="legend-chip tier-5"><i class="legend-dot"></i>T5 VERY HIGH</span>
           </div>
         </div>
       </div>
@@ -102,10 +102,18 @@ class SpecsModalRenderer {
     return `
       <div class="inspect-type-banner">
         <span class="inspect-badge badge-cat-${category.toLowerCase()}" data-tag-title="${category} CLASS" data-tag-tooltip="${a.desc || 'Tactical airframe.'}">${category}</span>
-        <span class="inspect-badge" style="background:#091e36;border:1px solid #0284c7;color:#7dd3fc;" data-tag-title="PROPULSION SYSTEM" data-tag-tooltip="${nozzleDesc}">${a.thrustVector ? '3D TVC' : (a.isCoffin ? 'COFFIN' : 'AERO')}</span>
-        <span class="inspect-badge" style="background:#051424;border:1px solid #162a42;color:#94a3b8;" data-tag-title="GROUND CLUTTER FILTER" data-tag-tooltip="Look-down clutter suppression allows tracking terrain-skimming bandits.">CLUTTER: +${Math.round((a.lookDownBonus || 0.2)*100)}%</span>
-        <span class="inspect-badge" style="background:#051424;border:1px solid #162a42;color:#94a3b8;" data-tag-title="PAYLOAD CARRIAGE" data-tag-tooltip="Certified structural payload limit.">PAYLOAD: ${maxPayloadKg} kg</span>
+        <span class="inspect-badge propulsion" data-tag-title="PROPULSION SYSTEM" data-tag-tooltip="${nozzleDesc}">${a.thrustVector ? '3D TVC' : (a.isCoffin ? 'COFFIN' : 'AERO')}</span>
+        <span class="inspect-badge subtle" data-tag-title="GROUND CLUTTER FILTER" data-tag-tooltip="Look-down clutter suppression allows tracking terrain-skimming bandits.">CLUTTER +${Math.round((a.lookDownBonus || 0.2)*100)}%</span>
+        <span class="inspect-badge subtle" data-tag-title="PAYLOAD CARRIAGE" data-tag-tooltip="Certified structural payload limit.">PAYLOAD ${maxPayloadKg} kg</span>
         <span class="inspect-cost-tag ${rCost.colorClass}">$${Number(a.cost || 0).toFixed(1)}M</span>
+      </div>
+
+      <div class="inspect-kpi-strip">
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">MAX SPRINT</span><b class="inspect-kpi-val ${rSpeed.colorClass}">M ${(a.S_0 || 0.90).toFixed(2)}</b><span class="inspect-kpi-sub">${Math.round((a.S_0 || 0.90) * 1225)} km/h</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">AGILITY</span><b class="inspect-kpi-val ${rAgi.colorClass}">${(a.AGI_0 || 0.85).toFixed(2)}</b><span class="inspect-kpi-sub">Opt M ${sOptVal.toFixed(2)} / ${(a.G_limit || 9.0).toFixed(1)}G</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">RADAR REACH</span><b class="inspect-kpi-val ${rRadar.colorClass}">${(a.R_0 || 75.0).toFixed(1)} km</b><span class="inspect-kpi-sub">${a.radarType || 'Pulse-Doppler'}</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">NOSE RCS</span><b class="inspect-kpi-val ${rRcs.colorClass}">${a.sigma_0 || 1.0} m2</b><span class="inspect-kpi-sub">${stealthClass}</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">ARMOR</span><b class="inspect-kpi-val ${rHp.colorClass}">${a.hp || 4} HP</b><span class="inspect-kpi-sub">${a.totalSlots || 6} Slots / ${a.upgradeSockets || 3} Sockets</span></div>
       </div>
 
       ${specialDetailHtml}
@@ -113,12 +121,15 @@ class SpecsModalRenderer {
 
       <div class="inspect-sec-head">1. KINEMATICS &amp; FLIGHT ENVELOPE</div>
       <div class="inspect-stat-grid">
-        <div class="inspect-stat-item"><span>PRIMARY COMBAT ROLE:</span><b>${a.role || 'Fighter'}</b></div>
-        <div class="inspect-stat-item"><span>MAX SPRINT AIRSPEED:</span><b class="${rSpeed.colorClass}">Mach ${(a.S_0 || 0.90).toFixed(2)} (${Math.round((a.S_0 || 0.90) * 1225)} km/h)</b></div>
-        <div class="inspect-stat-item"><span>TURN AGILITY (CORNER SPEED):</span><b class="${rAgi.colorClass}">${(a.AGI_0 || 0.85).toFixed(2)} (M ${sOptVal.toFixed(2)} / ${sOptKmH} km/h opt)</b></div>
+        <div class="inspect-stat-item"><span>PRIMARY ROLE:</span><b>${a.role || 'Fighter'}</b></div>
+        <div class="inspect-stat-item"><span>ARMOR INTEGRITY:</span><b class="${rHp.colorClass}">${a.hp || 4} HP</b></div>
+        <div class="inspect-stat-item"><span>MAX SPRINT:</span><b class="${rSpeed.colorClass}">M ${(a.S_0 || 0.90).toFixed(2)} (${Math.round((a.S_0 || 0.90) * 1225)} km/h)</b></div>
         <div class="inspect-stat-item"><span>STRUCTURAL G-LIMIT:</span><b class="${rG.colorClass}">${(a.G_limit || 9.0).toFixed(1)} G</b></div>
-        <div class="inspect-stat-item"><span>THRUST VECTORING / COFFIN:</span><b class="${nozzleClass}">${nozzleDesc} <span class="stat-badge-tier ${nozzleTier}">${a.thrustVector ? 'TVC' : (a.isCoffin ? 'COFFIN' : 'AERO')}</span></b></div>
-        <div class="inspect-stat-item"><span>AIRFRAME ARMOR INTEGRITY:</span><b class="${rHp.colorClass}">${a.hp || 4} HP</b></div>
+        <div class="inspect-stat-item"><span>CORNER AGILITY:</span><b class="${rAgi.colorClass}">${(a.AGI_0 || 0.85).toFixed(2)} (M ${sOptVal.toFixed(2)} / ${sOptKmH} km/h)</b></div>
+        <div class="inspect-stat-item"><span>CONTROL TYPE:</span><b class="${nozzleClass}"><span class="stat-badge-tier ${nozzleTier}">${a.thrustVector ? '3D TVC' : (a.isCoffin ? 'COFFIN' : 'AERO')}</span></b></div>
+      </div>
+      <div class="inspect-detail-list">
+        <div class="inspect-detail-row"><span>PROPULSION / FLIGHT CONTROL:</span><b class="${nozzleClass}">${nozzleDesc}</b></div>
       </div>
 
       <div class="inspect-sec-head">2. SENSORS, OBSERVABILITY &amp; THERMAL EMISSIONS</div>
@@ -126,23 +137,27 @@ class SpecsModalRenderer {
         <div class="inspect-stat-item"><span>RADAR ARRAY:</span><b>${a.radarType || 'Pulse-Doppler'}</b></div>
         <div class="inspect-stat-item"><span>INSTRUMENTED RANGE:</span><b class="${rRadar.colorClass}">${(a.R_0 || 75.0).toFixed(1)} km</b></div>
         <div class="inspect-stat-item"><span>GIMBAL SCAN CONE:</span><b class="${rCone.colorClass}">+-${Math.round((a.radarConeDeg || 120) / 2)}deg</b></div>
-        <div class="inspect-stat-item"><span>LOOK-DOWN CLUTTER FILTER:</span><b class="${rClutter.colorClass}">+${Math.round((a.lookDownBonus || 0.20) * 100)}%</b></div>
-        <div class="inspect-stat-item"><span>BASE RCS (NOSE-ON):</span><b class="${rRcs.colorClass}">${a.sigma_0 || 1.0} m2 (${stealthClass})</b></div>
-        <div class="inspect-stat-item"><span>BEAM EXPOSURE SPIKE:</span><b class="${rBeamSpike.colorClass}">${baseSpike.toFixed(1)}x (+${spikePct}% signature increase when turning broadside)</b></div>
-        <div class="inspect-stat-item"><span>IR THERMAL SIGNATURE:</span><b class="${rThermal.colorClass}">${thermalDescription}</b></div>
-        <div class="inspect-stat-item"><span>COFFIN SYNTHETIC VISION:</span><b class="${a.isCoffin ? 'stat-tier-1' : 'stat-tier-3'}">${a.isCoffin ? 'MANUAL COFFIN (Zero stress, immune to G-LOC, +25% automated evasion)' : 'HUMAN CREWED (Standard stress limits)'}</b></div>
+        <div class="inspect-stat-item"><span>CLUTTER FILTER:</span><b class="${rClutter.colorClass}">+${Math.round((a.lookDownBonus || 0.20) * 100)}%</b></div>
+        <div class="inspect-stat-item"><span>NOSE-ON RCS:</span><b class="${rRcs.colorClass}">${a.sigma_0 || 1.0} m2 (${stealthClass})</b></div>
+        <div class="inspect-stat-item"><span>BEAM EXPOSURE SPIKE:</span><b class="${rBeamSpike.colorClass}">${baseSpike.toFixed(1)}x (+${spikePct}% broadside)</b></div>
+      </div>
+      <div class="inspect-detail-list">
+        <div class="inspect-detail-row"><span>IR THERMAL SIGNATURE:</span><b class="${rThermal.colorClass}">${thermalDescription}</b></div>
+        <div class="inspect-detail-row"><span>COFFIN SYNTHETIC VISION:</span><b class="${a.isCoffin ? 'stat-tier-1' : 'stat-tier-3'}">${a.isCoffin ? 'MANUAL COFFIN (Zero stress, immune to G-LOC, +25% automated evasion)' : 'HUMAN CREWED (Standard stress limits)'}</b></div>
       </div>
 
       <div class="inspect-sec-head">3. ORDNANCE ARCHITECTURE &amp; HARDPOINTS</div>
       <div class="inspect-stat-grid">
-        <div class="inspect-stat-item"><span>INTERNAL WEAPONS BAY:</span><b class="${a.internalSlots > 0 ? 'stat-tier-1' : 'stat-tier-4'}">${internalBayDesc}</b></div>
-        <div class="inspect-stat-item"><span>EXTERNAL WING PYLONS:</span><b class="${extSlotsVal > 0 ? 'stat-tier-2' : 'stat-tier-4'}">${externalPylonsDesc}</b></div>
-        <div class="inspect-stat-item"><span>CENTERLINE FUSELAGE STATION:</span><b class="${a.hasCenterline ? 'stat-tier-2' : 'stat-tier-4'}">${centerlineDesc}</b></div>
-        <div class="inspect-stat-item"><span>TOTAL COMBINED CAPACITY:</span><b class="${rSlots.colorClass}">${a.totalSlots || 6} Max Slots</b></div>
-        <div class="inspect-stat-item"><span>MAX PAYLOAD CARRIAGE:</span><b class="${rMass.colorClass}">${maxPayloadKg} kg</b></div>
+        <div class="inspect-stat-item"><span>COMBINED CAPACITY:</span><b class="${rSlots.colorClass}">${a.totalSlots || 6} Max Slots</b></div>
+        <div class="inspect-stat-item"><span>MAX PAYLOAD MASS:</span><b class="${rMass.colorClass}">${maxPayloadKg} kg</b></div>
         <div class="inspect-stat-item"><span>BUILT-IN CANNON:</span><b>${builtInName} (${builtInCapacity} rds)</b></div>
-        <div class="inspect-stat-item"><span>COMPATIBLE GUNS:</span><b>${allowedGunNames}</b></div>
         <div class="inspect-stat-item"><span>MODULAR SOCKETS:</span><b class="${rUpg.colorClass}">${a.upgradeSockets || 3} Sockets</b></div>
+      </div>
+      <div class="inspect-detail-list">
+        <div class="inspect-detail-row"><span>INTERNAL WEAPONS BAY:</span><b class="${a.internalSlots > 0 ? 'stat-tier-1' : 'stat-tier-4'}">${internalBayDesc}</b></div>
+        <div class="inspect-detail-row"><span>EXTERNAL WING PYLONS:</span><b class="${extSlotsVal > 0 ? 'stat-tier-2' : 'stat-tier-4'}">${externalPylonsDesc}</b></div>
+        <div class="inspect-detail-row"><span>CENTERLINE STATION:</span><b class="${a.hasCenterline ? 'stat-tier-2' : 'stat-tier-4'}">${centerlineDesc}</b></div>
+        <div class="inspect-detail-row"><span>COMPATIBLE GUNS:</span><b>${allowedGunNames}</b></div>
       </div>
 
       <div class="inspect-desc-box">

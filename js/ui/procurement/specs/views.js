@@ -88,11 +88,21 @@ class SpecsSubsystemViews {
     }
 
     const specialDetailHtml = window.BehaviorCodex.renderSpecsDetailHtml('weapon', w);
+    const kpiRange = w.isTargetingPod ? `${w.spotRangeKm} km` : `${w.rangeKm || 0} km`;
+    const kpiSpeed = w.isTargetingPod ? `+${Math.round(w.a2gPkBonus * 100)}% Pk` : (w.isJammerPod ? `-${Math.round(w.jamEfficiency * 100)}%` : `M ${w.speedMach || 0}`);
+    const kpiDmg   = (w.isTargetingPod || w.isJammerPod || w.isDecoy || w.isDecoyDrone) ? (w.seeker || 'SUPPORT') : `${w.damage} HP`;
 
     return `
       <div class="inspect-type-banner">
         <span class="inspect-badge badge-cat-${category.toLowerCase()}">${category}</span>
+        <span class="inspect-badge propulsion">${traitLabel || 'ORDNANCE'}</span>
         <span class="inspect-cost-tag ${rCost.colorClass}">$${w.cost.toFixed(1)}M</span>
+      </div>
+      <div class="inspect-kpi-strip">
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">${w.isTargetingPod ? 'RECON REACH' : 'MAX RANGE'}</span><b class="inspect-kpi-val ${rRange.colorClass}">${kpiRange}</b><span class="inspect-kpi-sub">Min ${w.minRangeKm || 0.8} km</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">${w.isTargetingPod ? 'PRECISION BUFF' : (w.isJammerPod ? 'SUPPRESSION' : 'VELOCITY')}</span><b class="inspect-kpi-val ${rSpd.colorClass}">${kpiSpeed}</b><span class="inspect-kpi-sub">${w.seeker || 'GUIDED'}</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">${(w.isTargetingPod || w.isJammerPod || w.isDecoy || w.isDecoyDrone) ? 'ROLE' : 'WARHEAD'}</span><b class="inspect-kpi-val ${rDmg.colorClass}">${kpiDmg}</b><span class="inspect-kpi-sub">${w.ammoCount || 1}x Capacity</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">MOUNT MASS</span><b class="inspect-kpi-val ${rMass.colorClass}">+${w.mass} kg</b><span class="inspect-kpi-sub">${w.slotCost || 1} Pylon Slot(s)</span></div>
       </div>
       ${specialDetailHtml}
       ${SpecsModalRenderer.getLegendHtml()}
@@ -100,19 +110,19 @@ class SpecsSubsystemViews {
       <div class="inspect-stat-grid">
         ${podOrWeaponStatsHtml}
         <div class="inspect-stat-item"><span>MOUNT MASS:</span><b class="${rMass.colorClass}">+${w.mass} kg</b></div>
-        ${w.isCluster ? `<div class="inspect-stat-item"><span>CLUSTER SPLASH RADIUS:</span><b class="stat-tier-1">${w.clusterRadiusKm} km (${w.clusterDamage} HP AOE)</b></div>` : ''}
       </div>
+      ${w.isCluster ? `<div class="inspect-detail-list"><div class="inspect-detail-row"><span>CLUSTER SPLASH RADIUS:</span><b class="stat-tier-1">${w.clusterRadiusKm} km (${w.clusterDamage} HP AOE)</b></div></div>` : ''}
       <div class="inspect-sec-head">2. GUIDANCE, TRAITS &amp; DEFENSES</div>
-      <div class="inspect-stat-grid">
-        <div class="inspect-stat-item"><span>GUIDANCE &amp; SEEKER HEAD:</span><b style="color:#00f0ff;">${seekerText}</b></div>
-        <div class="inspect-stat-item"><span>SPECIAL TRAIT:</span><b style="color:#ffd700;">[${traitLabel}]</b></div>
-        <div class="inspect-stat-item"><span>COMPATIBLE AIRFRAMES:</span><b style="color:#fef08a;text-align:right;font-size:0.62rem;">${airframesText}</b></div>
-        <div class="inspect-stat-item"><span>COUNTER / LIMITATION:</span><b style="color:#7dd3fc;text-align:right;font-size:0.64rem;">${counterHint}</b></div>
+      <div class="inspect-detail-list">
+        <div class="inspect-detail-row"><span>GUIDANCE &amp; SEEKER HEAD:</span><b style="color:var(--color-cyan);">${seekerText}</b></div>
+        <div class="inspect-detail-row"><span>SPECIAL TRAIT:</span><b style="color:var(--color-amber);">[${traitLabel}]</b></div>
+        <div class="inspect-detail-row"><span>COMPATIBLE AIRFRAMES:</span><b style="color:#fef08a;font-size:0.62rem;">${airframesText}</b></div>
+        <div class="inspect-detail-row"><span>COUNTER / LIMITATION:</span><b style="color:#7dd3fc;font-size:0.64rem;">${counterHint}</b></div>
       </div>
       <div class="inspect-sec-head">3. OPERATIONAL PROFILE</div>
       <div class="inspect-desc-box">
-        <p style="color:#f8fafc;font-size:0.72rem;line-height:1.55;">${primaryDesc}</p>
-        ${subDesc ? `<p style="color:#8494ab;font-size:0.66rem;border-top:1px dashed #16273e;padding-top:4px;margin-top:4px;line-height:1.45;">${subDesc}</p>` : ''}
+        <p>${primaryDesc}</p>
+        ${subDesc ? `<p class="inspect-desc-sub">${subDesc}</p>` : ''}
       </div>
       <div class="inspect-action-bar">
         <button type="button" class="inspect-action-btn select-btn" id="inspect-btn-sel">SELECT TO EQUIP</button>
@@ -132,8 +142,14 @@ class SpecsSubsystemViews {
 
     return `
       <div class="inspect-type-banner">
-        <span class="inspect-badge">${g.caliber}</span>
+        <span class="inspect-badge propulsion">${g.caliber}</span>
         <span class="inspect-cost-tag">BUILT-IN AUTOCANNON</span>
+      </div>
+      <div class="inspect-kpi-strip">
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">FIRE RATE</span><b class="inspect-kpi-val ${rRpm.colorClass}">${g.rpm} RPM</b><span class="inspect-kpi-sub">${g.burstCooldown.toFixed(1)}s Reload</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">BURST DPS</span><b class="inspect-kpi-val ${rDps.colorClass}">${g.damagePerSec.toFixed(1)} HP/s</b><span class="inspect-kpi-sub">${g.damagePerBurst.toFixed(2)} HP/Burst</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">MERGE REACH</span><b class="inspect-kpi-val">${g.rangeKm} km</b><span class="inspect-kpi-sub">${g.coneAngleDeg} deg Cone</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">MAGAZINE</span><b class="inspect-kpi-val stat-tier-1">${g.defaultAmmo} RDS</b><span class="inspect-kpi-sub">+${g.mass} kg Weight</span></div>
       </div>
       ${specialDetailHtml}
       ${SpecsModalRenderer.getLegendHtml()}
@@ -141,14 +157,16 @@ class SpecsSubsystemViews {
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>CYCLIC FIRE RATE:</span><b class="${rRpm.colorClass}">${g.rpm} RPM</b></div>
         <div class="inspect-stat-item"><span>SUSTAINED BURST DPS:</span><b class="${rDps.colorClass}">${g.damagePerSec.toFixed(1)} HP/s</b></div>
-        <div class="inspect-stat-item"><span>BURST CONFIGURATION:</span><b style="color:#00f0ff;">${g.roundsPerBurst} Rounds per Burst (${g.damagePerRound.toFixed(2)} HP ea, ${g.damagePerBurst.toFixed(2)} HP total)</b></div>
-        <div class="inspect-stat-item"><span>BURST RELOAD:</span><b style="color:#ffb830;">${g.burstCooldown.toFixed(1)}s Reload Cycle</b></div>
-        <div class="inspect-stat-item"><span>EFFECTIVE MERGE RANGE:</span><b>${g.rangeKm} km (${g.coneAngleDeg} deg Cone)</b></div>
-        <div class="inspect-stat-item"><span>AMMUNITION CAPACITY:</span><b class="stat-tier-1">${g.defaultAmmo} Rounds</b></div>
+        <div class="inspect-stat-item"><span>BURST RELOAD:</span><b style="color:var(--color-amber);">${g.burstCooldown.toFixed(1)}s Reload Cycle</b></div>
+        <div class="inspect-stat-item"><span>MERGE RANGE:</span><b>${g.rangeKm} km (${g.coneAngleDeg} deg Cone)</b></div>
+        <div class="inspect-stat-item"><span>AMMO CAPACITY:</span><b class="stat-tier-1">${g.defaultAmmo} Rounds</b></div>
         <div class="inspect-stat-item"><span>MECHANISM WEIGHT:</span><b class="${rMass.colorClass}">+${g.mass} kg</b></div>
       </div>
+      <div class="inspect-detail-list">
+        <div class="inspect-detail-row"><span>BURST CONFIGURATION:</span><b style="color:var(--color-cyan);">${g.roundsPerBurst} Rounds per Burst (${g.damagePerRound.toFixed(2)} HP ea, ${g.damagePerBurst.toFixed(2)} HP total)</b></div>
+      </div>
       <div class="inspect-sec-head">2. BALLISTIC OPERATION</div>
-      <div class="inspect-desc-box"><div style="color:#f8fafc;">${g.desc}</div></div>
+      <div class="inspect-desc-box"><div>${g.desc}</div></div>
       <div class="inspect-action-bar">
         <button type="button" class="inspect-action-btn select-btn" id="inspect-btn-equip-gun" onclick="if(window.Game&&window.Game.procurement){window.Game.procurement.equipItemDirectly({type:'gun',id:'${g.id}',name:'${g.name}'});const m=document.getElementById('system-inspect-modal');if(m)m.classList.remove('active');if(window.Game&&window.Game.controls)window.Game.controls.autoUnpauseOnDialogClose();}">EQUIP TO ACTIVE AIRCRAFT</button>
         <button type="button" class="inspect-action-btn close-btn" onclick="const m=document.getElementById('system-inspect-modal');if(m)m.classList.remove('active');if(window.Game&&window.Game.controls)window.Game.controls.autoUnpauseOnDialogClose();">CLOSE</button>
@@ -168,8 +186,13 @@ class SpecsSubsystemViews {
 
     return `
       <div class="inspect-type-banner">
-        <span class="inspect-badge">${u.category}</span>
+        <span class="inspect-badge propulsion">${u.category}</span>
         <span class="inspect-cost-tag ${rCost.colorClass}">$${u.cost.toFixed(1)}M</span>
+      </div>
+      <div class="inspect-kpi-strip">
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">DISCIPLINE</span><b class="inspect-kpi-val">${u.category}</b><span class="inspect-kpi-sub">Enhancement Core</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">COMPONENT MASS</span><b class="inspect-kpi-val ${rMass.colorClass}">+${u.mass} kg</b><span class="inspect-kpi-sub">Socket Module</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">COMPATIBILITY</span><b class="inspect-kpi-val stat-tier-1">${compatible.length === allAirframes.length ? 'UNIVERSAL' : compatible.length + ' FRAMES'}</b><span class="inspect-kpi-sub">Certified Fleet</span></div>
       </div>
       ${specialDetailHtml}
       ${SpecsModalRenderer.getLegendHtml()}
@@ -177,10 +200,12 @@ class SpecsSubsystemViews {
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>SUBSYSTEM DISCIPLINE:</span><b>${u.category} Enhancement Core</b></div>
         <div class="inspect-stat-item"><span>COMPONENT MASS:</span><b class="${rMass.colorClass}">+${u.mass} kg</b></div>
-        <div class="inspect-stat-item"><span>COMPATIBLE AIRFRAMES:</span><b style="color:#fef08a;font-size:0.62rem;">${compatible.length === allAirframes.length ? 'Universal (All Airframes)' : compatible.map(a => a.id).join(', ')}</b></div>
+      </div>
+      <div class="inspect-detail-list">
+        <div class="inspect-detail-row"><span>COMPATIBLE AIRFRAMES:</span><b style="color:#fef08a;font-size:0.62rem;">${compatible.length === allAirframes.length ? 'Universal (All Airframes)' : compatible.map(a => a.id).join(', ')}</b></div>
       </div>
       <div class="inspect-sec-head">2. FUNCTIONAL BENEFIT</div>
-      <div class="inspect-desc-box"><div style="color:#f8fafc;">${u.desc}</div></div>
+      <div class="inspect-desc-box"><div>${u.desc}</div></div>
       <div class="inspect-action-bar">
         <button type="button" class="inspect-action-btn select-btn" id="inspect-btn-sel-upg">SELECT TO EQUIP</button>
         <button type="button" class="inspect-action-btn close-btn" onclick="const m=document.getElementById('system-inspect-modal');if(m)m.classList.remove('active');if(window.Game&&window.Game.controls)window.Game.controls.autoUnpauseOnDialogClose();">CLOSE</button>

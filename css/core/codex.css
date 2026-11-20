@@ -1,44 +1,10 @@
 /* css/core/codex.css - High-Contrast Spec Evaluation Codex, Card Behavior Callouts, and Top Specs Behavior Box */
 
-.stat-tier-1,
-b.stat-tier-1,
-span.stat-tier-1 {
-  color: var(--stat-tier-1) !important;
-  font-weight: 700 !important;
-  text-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
-}
-
-.stat-tier-2,
-b.stat-tier-2,
-span.stat-tier-2 {
-  color: var(--stat-tier-2) !important;
-  font-weight: 600 !important;
-  text-shadow: 0 0 6px rgba(16, 185, 129, 0.25);
-}
-
-.stat-tier-3,
-b.stat-tier-3,
-span.stat-tier-3 {
-  color: var(--stat-tier-3) !important;
-  font-weight: 600 !important;
-  text-shadow: 0 0 6px rgba(251, 191, 36, 0.25);
-}
-
-.stat-tier-4,
-b.stat-tier-4,
-span.stat-tier-4 {
-  color: var(--stat-tier-4) !important;
-  font-weight: 600 !important;
-  text-shadow: 0 0 6px rgba(249, 115, 22, 0.25);
-}
-
-.stat-tier-5,
-b.stat-tier-5,
-span.stat-tier-5 {
-  color: var(--stat-tier-5) !important;
-  font-weight: 600 !important;
-  text-shadow: 0 0 6px rgba(244, 63, 94, 0.25);
-}
+.stat-tier-1, b.stat-tier-1, span.stat-tier-1 { color: var(--stat-tier-1) !important; font-weight: 700 !important; }
+.stat-tier-2, b.stat-tier-2, span.stat-tier-2 { color: var(--stat-tier-2) !important; font-weight: 600 !important; }
+.stat-tier-3, b.stat-tier-3, span.stat-tier-3 { color: var(--stat-tier-3) !important; font-weight: 600 !important; }
+.stat-tier-4, b.stat-tier-4, span.stat-tier-4 { color: var(--stat-tier-4) !important; font-weight: 600 !important; }
+.stat-tier-5, b.stat-tier-5, span.stat-tier-5 { color: var(--stat-tier-5) !important; font-weight: 600 !important; }
 
 .stat-badge-tier {
   font-size: 0.58rem;
@@ -107,14 +73,13 @@ span.stat-tier-5 {
 .inspect-spectrum-legend {
   display: flex;
   flex-direction: column;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-card);
-  padding: 8px 12px;
-  gap: 6px;
-  font-size: 0.62rem;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: var(--radius-btn);
+  padding: 7px 11px;
+  gap: 5px;
+  font-size: 0.58rem;
   font-family: var(--font-dotdigital);
-  box-shadow: var(--glass-highlight);
 }
 
 .legend-row {
@@ -143,9 +108,19 @@ span.stat-tier-5 {
 .legend-chip {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   padding: 2px 7px;
-  border-radius: var(--radius-badge);
-  font-weight: 600;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 0.54rem;
+}
+
+.legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
 }
 
 .legend-chip.tier-1 {
@@ -181,9 +156,9 @@ span.stat-tier-5 {
 /* Concise colored special behavior summary inside armory & preset cards without clipping */
 .card-special-line {
   display: block;
-  background: rgba(2, 10, 26, 0.85);
-  border: 1px solid rgba(56, 189, 248, 0.20);
-  border-left: 2.5px solid var(--theme-accent);
+  background: rgba(0, 0, 0, 0.74);
+  border: 1px solid rgba(0, 229, 255, 0.24);
+  border-left: 2px solid var(--color-cyan);
   border-radius: var(--radius-badge);
   padding: 4px 7px;
   font-size: 0.61rem;
@@ -209,9 +184,9 @@ span.stat-tier-5 {
 
 /* Top special behaviors dossier inside Specs modal */
 .inspect-special-box {
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.14) 0%, rgba(4, 9, 22, 0.92) 100%);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  border-left: 3px solid var(--theme-accent);
+  background: var(--jewel-cyan-bg);
+  border: 1px solid rgba(0, 229, 255, 0.36);
+  border-left: 2px solid var(--color-cyan);
   border-radius: var(--radius-card);
   padding: 9px 12px;
   display: flex;

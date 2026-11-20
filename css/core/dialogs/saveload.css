@@ -160,8 +160,8 @@
   display: block;
   width: 100%;
   height: clamp(160px, 26vh, 235px);
-  background: #01040a;
-  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: #000000;
+  border: 1px solid rgba(0, 229, 255, 0.28);
   border-radius: var(--radius-badge);
 }
 

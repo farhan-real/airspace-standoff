@@ -77,13 +77,17 @@ class RosterCardBuilder {
 
     card.innerHTML = `
       <div class="squad-unit-header">
-        <div class="suh-title-group">
-          <span class="squad-callsign-tag" data-sidx="${sIdx}" title="Click to rename callsign">${item.callsign}</span>
-          <span class="squad-unit-name">${spec.name}</span>
-          <span class="squad-unit-badge badge-cat-${category.toLowerCase()}">${category}</span>
-          <span class="squad-unit-cost">$${totalCost.toFixed(1)}M</span>
-          ${isActiveBay ? '<span class="active-bay-badge">SELECTED</span>' : ''}
-          <button type="button" class="spec-inspect-btn small" data-inspect-type="airframe" data-inspect-id="${spec.id}">SPECS</button>
+        <div class="suh-top-row">
+          <div class="suh-title-group">
+            <span class="squad-callsign-tag" data-sidx="${sIdx}" title="Click to rename callsign">${item.callsign}</span>
+            <span class="squad-unit-name">${spec.name}</span>
+            <span class="squad-unit-badge badge-cat-${category.toLowerCase()}">${category}</span>
+          </div>
+          <div class="suh-right-meta">
+            ${isActiveBay ? '<span class="active-bay-badge">SELECTED</span>' : ''}
+            <span class="squad-unit-cost">$${totalCost.toFixed(1)}M</span>
+            <button type="button" class="spec-inspect-btn small" data-inspect-type="airframe" data-inspect-id="${spec.id}">SPECS</button>
+          </div>
         </div>
         <div class="squad-unit-actions">
           ${leadButtonHtml}

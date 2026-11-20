@@ -3,32 +3,18 @@
 .roster-section-box {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  background: var(--glass-3d-well-bg);
-  border: 1px solid var(--glass-3d-well-border);
-  border-radius: var(--radius-badge);
-  padding: 6px 8px;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-btn);
+  padding: 7px 9px;
   box-sizing: border-box;
-  box-shadow: var(--glass-3d-well-shadow);
 }
 
-.stats-section-box {
-  border-left: 3px solid var(--theme-accent);
-}
-
-.gun-section-box {
-  border-left: 3px solid #fbbf24;
-  position: relative;
-  z-index: 20;
-}
-
-.gun-section-box:has(.custom-dropdown.open) {
-  z-index: 5500;
-}
-
-.systems-section-box {
-  border-left: 3px solid #a855f7;
-}
+.stats-section-box { border-left: 2px solid var(--color-cyan); }
+.gun-section-box { border-left: 2px solid var(--color-amber); position: relative; z-index: 20; }
+.gun-section-box:has(.custom-dropdown.open) { z-index: 5500; }
+.systems-section-box { border-left: 2px solid var(--color-purple); }
 
 .su-gun-selector-row {
   display: flex;
@@ -151,14 +137,14 @@
 }
 
 .station-slot-pill.ctr-pill {
-  background: rgba(251, 191, 36, 0.16);
-  border: 1px solid rgba(251, 191, 36, 0.40);
-  color: #fbbf24;
+  background: rgba(250, 204, 21, 0.14);
+  border: 1px solid rgba(250, 204, 21, 0.38);
+  color: #fde047;
 }
 
 .station-slot-pill.ctr-pill.occupied {
-  background: rgba(251, 191, 36, 0.30);
-  border-color: #f59e0b;
+  background: rgba(250, 204, 21, 0.28);
+  border-color: #fde047;
   color: #ffffff;
 }
 
@@ -208,39 +194,41 @@
 }
 
 .upgrade-socket.filled {
-  border-color: rgba(168, 85, 247, 0.45);
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--jewel-purple-bg);
+  border-color: rgba(167, 139, 250, 0.48);
+  border-top: 1px solid rgba(230, 220, 255, 0.40);
   color: #ffffff;
 }
 
 .upgrade-socket.empty {
   cursor: pointer;
   color: var(--color-moon-mist);
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.15);
-  transition: all 0.14s ease;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  transition: border-color 0.14s ease, background 0.14s ease, color 0.14s ease;
 }
 
 .upgrade-socket.empty:hover {
-  border-color: var(--theme-accent);
+  border-color: var(--color-purple);
   color: #ffffff;
-  background: var(--glass-3d-btn-bg-hover);
+  background: var(--jewel-purple-bg);
 }
 
 .btn-socket-dismount {
-  background: rgba(244, 63, 94, 0.2);
-  border: 1px solid rgba(244, 63, 94, 0.4);
-  color: #fecdd3;
+  background: var(--jewel-red-bg);
+  border: 1px solid rgba(255, 56, 100, 0.45);
+  color: #ffe4ec;
   cursor: pointer;
   padding: 2px 5px;
   border-radius: var(--radius-badge);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.14s ease, border-color 0.14s ease;
 }
 
 .btn-socket-dismount:hover {
-  background: rgba(244, 63, 94, 0.45);
-  border-color: #f43f5e;
+  background: var(--jewel-red-hover);
+  border-color: var(--color-red);
   color: #ffffff;
 }

@@ -6,7 +6,6 @@
 
 .mission-editor-window {
   width: min(94vw, 840px);
-  height: min(88vh, 790px);
   height: min(88dvh, 790px);
   min-height: 0;
   display: flex;
@@ -14,13 +13,12 @@
   overflow: hidden;
   box-sizing: border-box;
   background: var(--glass-bg-modal);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
-  border-bottom: 1px solid var(--liquid-glass-border-bottom);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.30);
   border-radius: var(--radius-modal);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), inset 0 0 20px rgba(56, 189, 248, 0.05), 0 20px 60px rgba(0, 0, 0, 0.85);
+  box-shadow: var(--glass-shadow);
   font-family: var(--font-untitled-sans);
 }
 
@@ -94,15 +92,13 @@
 
 .mission-editor-unranked-badge {
   font: 700 0.54rem var(--font-dotdigital);
-  color: var(--stat-tier-3);
-  background: linear-gradient(180deg, rgba(251, 191, 36, 0.2) 0%, rgba(45, 20, 4, 0.7) 100%);
-  border: 1px solid rgba(251, 191, 36, 0.45);
-  border-top: 1px solid #fef08a;
+  color: #fef08a;
+  background: var(--jewel-amber-bg);
+  border: 1px solid rgba(250, 204, 21, 0.44);
   padding: 3px 8px;
   border-radius: var(--radius-badge);
   white-space: nowrap;
   letter-spacing: 0.5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .mission-editor-inspection-setting {
@@ -179,10 +175,10 @@
 
 .mission-editor-inspection-toggle.is-active {
   color: #ffffff;
-  border-color: var(--stat-tier-2);
-  border-top-color: #ffffff;
-  background: linear-gradient(180deg, rgba(16, 185, 129, 0.4) 0%, rgba(5, 74, 56, 0.85) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 14px rgba(16, 185, 129, 0.45);
+  border-color: var(--color-green);
+  border-top-color: rgba(185, 255, 228, 0.55);
+  background: var(--jewel-green-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .mission-editor-section {
@@ -320,9 +316,9 @@
 }
 
 .mission-editor-random-toggle.is-active {
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.45) 0%, rgba(2, 132, 199, 0.85) 100%);
-  border-color: var(--theme-accent);
-  border-top-color: #ffffff;
+  background: var(--jewel-cyan-bg);
+  border-color: var(--color-cyan);
+  border-top-color: rgba(205, 248, 255, 0.55);
   color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 12px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }

@@ -1,4 +1,4 @@
-/* css/procurement/layout.css - Procurement Hangar Window & Full-Width Bottom Actions */
+/* css/procurement/layout.css - Procurement Hangar Window & Side-by-Side Layout */
 
 #procurement-modal {
   background: #000000 !important;
@@ -8,22 +8,20 @@
 .procurement-window {
   width: 98vw;
   max-width: 1760px;
-  height: 98vh;
   height: 98dvh;
   max-height: 98dvh;
-  min-height: 500px;
-  background-color: #030713;
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
+  min-height: 460px;
+  background: rgba(4, 5, 8, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: var(--radius-modal);
   display: flex;
   flex-direction: column;
   padding: 10px 14px;
   gap: 8px;
   overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 16px 48px rgba(0, 0, 0, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 1px 0 0 rgba(0, 240, 255, 0.10), 0 20px 56px rgba(0, 0, 0, 0.95);
   transform: translateZ(0);
-  box-sizing: border-box;
 }
 
 html.safe-zone-on .procurement-window,
@@ -33,7 +31,7 @@ body.safe-zone-on .procurement-window {
 }
 
 .procurement-mobile-tabs {
-  display: none;
+  display: none !important;
 }
 
 .procurement-body {
@@ -41,7 +39,7 @@ body.safe-zone-on .procurement-window {
   min-height: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
   overflow: hidden;
   contain: layout;
   transform: translateZ(0);
@@ -53,11 +51,11 @@ body.safe-zone-on .procurement-window {
   flex-direction: column;
   min-height: 0;
   height: 100%;
-  border: 1px solid var(--glass-3d-card-border);
-  border-top: 1px solid var(--liquid-glass-border-top);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
   background: var(--glass-3d-card-bg);
   border-radius: var(--radius-card);
-  padding: 8px;
+  padding: 10px;
   overflow: hidden;
   box-shadow: var(--glass-3d-card-shadow);
   contain: paint;
@@ -65,10 +63,9 @@ body.safe-zone-on .procurement-window {
 
 .procurement-footer {
   flex-shrink: 0;
-  border-top: 1px solid var(--glass-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 8px;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .proc-footer-actions {
@@ -83,16 +80,15 @@ body.safe-zone-on .procurement-window {
   width: 100%;
   height: 38px;
   font-family: var(--font-untitled-sans);
-  font-size: 0.82rem;
+  font-size: 0.80rem;
   font-weight: 700;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   border-radius: var(--radius-btn);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.16s ease;
-  box-sizing: border-box;
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
 }
 
 .proc-load-btn {
@@ -100,9 +96,8 @@ body.safe-zone-on .procurement-window {
 }
 
 .proc-load-btn:disabled {
-  background: var(--glass-3d-well-bg) !important;
-  border-color: var(--glass-3d-well-border) !important;
-  border-top-color: var(--glass-3d-well-border) !important;
+  background: rgba(0, 0, 0, 0.65) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
   color: var(--color-fog-veil) !important;
   opacity: 0.42 !important;
   filter: grayscale(1) !important;
@@ -112,18 +107,19 @@ body.safe-zone-on .procurement-window {
 }
 
 .scramble-btn {
-  background: rgba(2, 132, 199, 0.45);
-  border: 1px solid var(--theme-accent);
-  border-top: 1px solid #ffffff;
+  background: var(--jewel-cyan-bg);
+  border: 1px solid rgba(0, 229, 255, 0.55);
+  border-top: 1px solid rgba(205, 248, 255, 0.55);
   color: #ffffff;
   padding: 8px 24px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 0 16px var(--theme-primary-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 18px rgba(0, 229, 255, 0.16);
 }
 
 .scramble-btn:hover:not(:disabled) {
-  background: rgba(2, 132, 199, 0.7);
-  border-color: #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff, 0 0 24px var(--theme-primary-glow);
+  background: var(--jewel-cyan-hover);
+  border-color: #00e5ff;
+  border-top-color: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.44), 0 0 22px rgba(0, 229, 255, 0.26);
   transform: translateY(-1px);
 }
 
@@ -132,8 +128,8 @@ body.safe-zone-on .procurement-window {
 }
 
 .scramble-btn:disabled {
-  background: var(--glass-3d-well-bg);
-  border-color: var(--glass-3d-well-border);
+  background: rgba(0, 0, 0, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
   color: var(--color-fog-veil);
   cursor: not-allowed;
   box-shadow: none;
@@ -143,22 +139,26 @@ body.safe-zone-on .procurement-window {
   .procurement-window {
     width: 100vw;
     max-width: 100vw;
-    height: 100vh;
     height: 100dvh;
     max-height: 100dvh;
     min-height: 100dvh;
     border-radius: 0;
+    border: none;
     padding: 6px 8px;
-    gap: 4px;
-    overflow-x: hidden;
+    gap: 6px;
     background: #000000 !important;
     box-shadow: none !important;
   }
 
+  .procurement-body {
+    gap: 6px;
+  }
+
   .hanger-shelf,
   .flight-roster {
-    background: #000000 !important;
-    box-shadow: none !important;
+    padding: 6px;
+    background: rgba(5, 6, 9, 0.96) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
   }
 
   .procurement-footer {
@@ -174,14 +174,5 @@ body.safe-zone-on .procurement-window {
     height: 34px;
     padding: 6px 10px;
     font-size: 0.74rem;
-  }
-}
-
-@media (max-width: 1024px) and (orientation: landscape), (max-height: 550px) and (max-width: 1024px) {
-  .procurement-mobile-tabs { display: none !important; }
-  .procurement-body {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 6px !important;
   }
 }
