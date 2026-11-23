@@ -251,6 +251,10 @@
 .budget-display .amount .rem-val { font-size: 0.62rem; color: var(--color-moon-mist); font-weight: 600; margin-left: 3px; }
 
 .budget-display .count-tag {
+  margin-left: auto;
+  order: 2;
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 0.62rem;
   color: var(--color-cyan);
   background: rgba(0, 229, 255, 0.12);
