@@ -161,6 +161,8 @@ class SpecsSubsystemViews {
         <div class="inspect-stat-item"><span>MERGE RANGE:</span><b>${g.rangeKm} km (${g.coneAngleDeg} deg Cone)</b></div>
         <div class="inspect-stat-item"><span>AMMO CAPACITY:</span><b class="stat-tier-1">${g.defaultAmmo} Rounds</b></div>
         <div class="inspect-stat-item"><span>MECHANISM WEIGHT:</span><b class="${rMass.colorClass}">+${g.mass} kg</b></div>
+        <div class="inspect-stat-item"><span>SPRINT SPEED PENALTY:</span><b class="${g.speedPenalty > 0 ? 'stat-tier-4' : 'stat-tier-1'}">${g.speedPenalty > 0 ? `-${Math.round(g.speedPenalty * 100)}% Max Mach` : 'None (0%)'}</b></div>
+        <div class="inspect-stat-item"><span>SIGNATURE / RCS PENALTY:</span><b class="${g.rcsPenalty > 0 ? 'stat-tier-5' : 'stat-tier-1'}">${g.rcsPenalty > 0 ? `+${Math.round(g.rcsPenalty * 100)}% Airframe RCS` : 'Flush Stealth (+0%)'}</b></div>
       </div>
       <div class="inspect-detail-list">
         <div class="inspect-detail-row"><span>BURST CONFIGURATION:</span><b style="color:var(--color-cyan);">${g.roundsPerBurst} Rounds per Burst (${g.damagePerRound.toFixed(2)} HP ea, ${g.damagePerBurst.toFixed(2)} HP total)</b></div>

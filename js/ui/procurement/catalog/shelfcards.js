@@ -18,6 +18,8 @@ class ShelfCardBuilders {
       <div class="cic-type-bar">
         <span class="badge-category">${g.rpm} RPM</span>
         <span class="badge-mass">+${g.mass} kg</span>
+        ${g.speedPenalty > 0 ? `<span class="badge-category" style="color:#fda4af;">-${Math.round(g.speedPenalty * 100)}% SPD</span>` : ''}
+        ${g.rcsPenalty > 0 ? `<span class="badge-category" style="color:#fbbf24;">+${Math.round(g.rcsPenalty * 100)}% RCS</span>` : ''}
         <span class="badge-category" style="color:#00f5a0;">${burstDmg} HP (${g.roundsPerBurst} rds, ${g.burstCooldown.toFixed(1)}s)</span>
       </div>
       ${specialLineHtml}

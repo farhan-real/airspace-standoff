@@ -177,12 +177,15 @@ Aircraft.prototype.recalculateWeight = function() {
   effectiveWr = Math.max(0, effectiveWr * (1.0 - this.pylonDragRelief * 0.50) - this.heavyLeadDragMitigation);
   this.Wr = effectiveWr;
 
+  if (typeof this.gun.rcsPenalty !== 'number' || typeof this.gun.speedPenalty !== 'number') {
+    throw new Error(`Gun "${this.gun.id}" is missing numeric rcsPenalty or speedPenalty.`);
+  }
   let baseRcs = this.spec.sigma_0;
   if (this.isFlightLead && this.spec.category === 'STEALTH') baseRcs *= 0.65;
   if (this.equippedUpgrades.includes('RAM_NANO_COATING')) baseRcs *= 0.55;
-  this.effectiveRcs = Math.max(0.00005, baseRcs + extraRcs);
+  this.effectiveRcs = Math.max(0.00005, baseRcs * (1.0 + this.gun.rcsPenalty) + extraRcs);
 
-  this.effectiveMaxSpeed = Math.max(0.35, this.spec.S_0 * (1.0 - 0.22 * this.Wr - externalDragFactor));
+  this.effectiveMaxSpeed = Math.max(0.35, this.spec.S_0 * (1.0 - 0.22 * this.Wr - externalDragFactor - this.gun.speedPenalty));
   this.effectiveAcceleration = (0.24 + this.accelBonus) / (1.0 + 0.70 * this.Wr);
 
   if (this.distanceTraveled === 0) {

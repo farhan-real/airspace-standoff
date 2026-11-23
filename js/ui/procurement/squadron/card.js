@@ -41,8 +41,12 @@ class RosterCardBuilder {
     const gunOptsList = Object.values(gunsMap).map(g => {
       const isComp = window.AircraftRegistry.isGunCompatible(spec, g);
       const isSelected = item.chosenGunId === g.id;
+      const penalties = [];
+      if (g.speedPenalty > 0) penalties.push(`-${Math.round(g.speedPenalty * 100)}% SPD`);
+      if (g.rcsPenalty > 0) penalties.push(`+${Math.round(g.rcsPenalty * 100)}% RCS`);
+      const penSuffix = penalties.length > 0 ? ` | ${penalties.join(', ')}` : '';
       return `<button type="button" class="custom-dropdown-opt ${isSelected ? 'active' : ''}" data-gun-id="${g.id}" ${isComp ? '' : 'disabled'}>
-        ${isComp ? g.name + ' (' + (g.damagePerSec || 2.5) + ' HP/s)' : '[INCOMPATIBLE] ' + g.name}
+        ${isComp ? g.name + ' (' + (g.damagePerSec || 2.5) + ' HP/s' + penSuffix + ')' : '[INCOMPATIBLE] ' + g.name}
       </button>`;
     }).join('');
 

@@ -7,8 +7,7 @@ class LoadoutMetrics {
     if (val === undefined || val === null || isNaN(val)) throw new Error(`Invalid RCS value passed to formatRcs: ${val}`);
     const num = Number(val);
     if (num <= 0.00005) return '0.00005';
-    if (num <= 0.0001) return '0.0001';
-    if (num <= 0.0005) return '0.0005';
+    if (num < 0.001) return num.toFixed(5).replace(/0+$/, '').replace(/\.$/, '');
     if (num < 0.01) return num.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
     if (num < 0.1) return num.toFixed(3);
     if (num < 1.0) return num.toFixed(2);
@@ -118,7 +117,13 @@ class LoadoutMetrics {
     }
     if (hasRam) baseRcs *= 0.55;
 
-    const loadedRcs = Math.max(0.00005, baseRcs + extraRcs);
+    const gunRcsPenalty = activeGun.rcsPenalty;
+    const gunSpeedPenalty = activeGun.speedPenalty;
+    if (typeof gunRcsPenalty !== 'number' || typeof gunSpeedPenalty !== 'number') {
+      throw new Error(`Gun "${gunId}" is missing numeric rcsPenalty or speedPenalty.`);
+    }
+
+    const loadedRcs = Math.max(0.00005, baseRcs * (1.0 + gunRcsPenalty) + extraRcs);
     const baseRcsRating = rate('rcs', baseRcs), loadedRcsRating = rate('rcs', loadedRcs);
 
     let baseSpeed = spec.S_0;
@@ -126,7 +131,7 @@ class LoadoutMetrics {
     if (hasSupercruise) baseSpeed *= 1.10;
     if (hasRangeTurbo) baseSpeed *= 0.96;
 
-    const loadedSpeed = Math.max(0.35, baseSpeed * (1.0 - 0.22 * effectiveWr - externalDragFactor));
+    const loadedSpeed = Math.max(0.35, baseSpeed * (1.0 - 0.22 * effectiveWr - externalDragFactor - gunSpeedPenalty));
     const baseSpeedRating = rate('speed', baseSpeed), loadedSpeedRating = rate('speed', loadedSpeed);
 
     const baseAgility = spec.AGI_0;
@@ -163,8 +168,10 @@ class LoadoutMetrics {
     const costRating = rate('cost_airframe', totalCost);
 
     const formattedBaseRcs = LoadoutMetrics.formatRcs(baseRcs), formattedLoadedRcs = LoadoutMetrics.formatRcs(loadedRcs);
-    const rcsDualHtml = `<span class="dual-val" data-tag-title="RADAR CROSS SECTION" data-tag-tooltip="Clean Base: ${formattedBaseRcs} m2 -> Loaded: ${formattedLoadedRcs} m2 (+${LoadoutMetrics.formatRcs(extraRcs)} from external stores)."><b class="${baseRcsRating.colorClass}">${formattedBaseRcs}</b><span class="val-sep">&rarr;</span><b class="${loadedRcsRating.colorClass}">${formattedLoadedRcs} m2</b></span>`;
-    const speedDualHtml = `<span class="dual-val" data-tag-title="MAX SPRINT AIRSPEED" data-tag-tooltip="Clean Base: Mach ${baseSpeed.toFixed(2)} -> Loaded: Mach ${loadedSpeed.toFixed(2)} (${wrPercent}% payload weight & drag)."><b class="${baseSpeedRating.colorClass}">M ${baseSpeed.toFixed(2)}</b><span class="val-sep">&rarr;</span><b class="${loadedSpeedRating.colorClass}">M ${loadedSpeed.toFixed(2)}</b></span>`;
+    const gunRcsNote = gunRcsPenalty > 0 ? `, +${Math.round(gunRcsPenalty * 100)}% laser aperture RCS` : '';
+    const gunSpdNote = gunSpeedPenalty > 0 ? `, -${Math.round(gunSpeedPenalty * 100)}% laser drag/bleed` : '';
+    const rcsDualHtml = `<span class="dual-val" data-tag-title="RADAR CROSS SECTION" data-tag-tooltip="Clean Base: ${formattedBaseRcs} m2 -> Loaded: ${formattedLoadedRcs} m2 (+${LoadoutMetrics.formatRcs(extraRcs)} from external stores${gunRcsNote})."><b class="${baseRcsRating.colorClass}">${formattedBaseRcs}</b><span class="val-sep">&rarr;</span><b class="${loadedRcsRating.colorClass}">${formattedLoadedRcs} m2</b></span>`;
+    const speedDualHtml = `<span class="dual-val" data-tag-title="MAX SPRINT AIRSPEED" data-tag-tooltip="Clean Base: Mach ${baseSpeed.toFixed(2)} -> Loaded: Mach ${loadedSpeed.toFixed(2)} (${wrPercent}% payload weight & drag${gunSpdNote})."><b class="${baseSpeedRating.colorClass}">M ${baseSpeed.toFixed(2)}</b><span class="val-sep">&rarr;</span><b class="${loadedSpeedRating.colorClass}">M ${loadedSpeed.toFixed(2)}</b></span>`;
     const agilityDualHtml = `<span class="dual-val" data-tag-title="TURN AGILITY" data-tag-tooltip="Base Agility: ${baseAgility.toFixed(2)} -> Loaded Agility: ${loadedAgility.toFixed(2)} (${wrPercent}% payload weight & drag)."><b class="${baseAgiRating.colorClass}">${baseAgility.toFixed(2)}</b><span class="val-sep">&rarr;</span><b class="${loadedAgiRating.colorClass}">${loadedAgility.toFixed(2)}</b></span>`;
     const armorDualHtml = (loadedHp !== baseHp)
       ? `<span class="dual-val" data-tag-title="ARMOR DURABILITY" data-tag-tooltip="Base Armor: ${baseHp} HP -> Reinforced: ${loadedHp} HP."><b class="${baseHpRating.colorClass}">${baseHp}</b><span class="val-sep">&rarr;</span><b class="${loadedHpRating.colorClass}">${loadedHp} HP</b></span>`

@@ -58,10 +58,12 @@ class BehaviorCodex {
     if (!g || !g.id) throw new Error('BehaviorCodex.getGunBehaviors requires a valid gun object.');
     const items = [];
     if (g.cloudScattering > 0) {
+      const spdTxt = g.speedPenalty > 0 ? `, -${Math.round(g.speedPenalty * 100)}% speed` : '';
+      const rcsTxt = g.rcsPenalty > 0 ? `, +${Math.round(g.rcsPenalty * 100)}% RCS` : '';
       items.push({
         color: '#00f0ff',
-        short: `Hitscan DEW Beam (-${Math.round(g.cloudScattering * 100)}% cloud scatter, 3.5s IR spike)`,
-        detail: `Instant hitscan beam needs zero lead, but clouds scatter ${Math.round(g.cloudScattering * 100)}% damage per cell and firing spikes thermal bloom for 3.5s.`
+        short: `Hitscan DEW Beam (${spdTxt ? spdTxt.slice(2) : '0% spd'}${rcsTxt}, -${Math.round(g.cloudScattering * 100)}% cloud scatter, 3.5s IR spike)`,
+        detail: `Instant hitscan beam needs zero lead, but optical aperture & power plant impose +${g.mass} kg weight${spdTxt}${rcsTxt}; clouds scatter ${Math.round(g.cloudScattering * 100)}% damage per cell and firing spikes thermal bloom for 3.5s.`
       });
     } else if (g.id === 'EML_GUN') {
       items.push({
