@@ -289,3 +289,29 @@ body.pseudo-fullscreen #procurement-modal,
   gap: 6px;
   flex-shrink: 0;
 }
+
+.is-android #hud-container .hud-banner,
+.is-android #hud-container .maneuver-deck-bay,
+.is-android #hud-container .rfh-panel,
+.is-android #hud-container .rwr-warning-box,
+.is-android #hud-container .radar-uplink-banner,
+.is-android #hud-container .radar-floating-cam-bar,
+.is-android .hud-tooltip-box,
+.is-android .pwa-update-toast {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
+  #hud-container .hud-banner,
+  #hud-container .maneuver-deck-bay,
+  #hud-container .rfh-panel,
+  #hud-container .rwr-warning-box,
+  #hud-container .radar-uplink-banner,
+  #hud-container .radar-floating-cam-bar,
+  .hud-tooltip-box,
+  .pwa-update-toast {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}

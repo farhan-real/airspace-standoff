@@ -25,6 +25,8 @@ class RadarRenderer {
 
     this.inspectionDetectedSet = new Set();
     this.emptyDetectedSet = new Set();
+    this._uplinkBannerEl = document.getElementById('radar-uplink-banner');
+    this._lastUplinkKey = '';
 
     this.resize();
     window.addEventListener('resize', () => this.resize(), { passive: true });
@@ -232,28 +234,36 @@ class RadarRenderer {
     }
 
     const isAttackMode = Boolean(window.Game && window.Game.scenarioMode === 'ATTACK');
-    const uplinkBannerEl = document.getElementById('radar-uplink-banner');
+    const uplinkBannerEl = this._uplinkBannerEl || (this._uplinkBannerEl = document.getElementById('radar-uplink-banner'));
 
     if (uplinkBannerEl) {
       if (isAttackMode && typeof AttackDirector !== 'undefined') {
         const obj = AttackDirector.getObjectiveSummary(window.Game);
-        uplinkBannerEl.textContent = `PRIMARY STRIKE OBJECTIVES: ${obj.remaining} / ${obj.total} ACTIVE`;
-        uplinkBannerEl.style.borderColor = obj.remaining === 0 ? '#00f5a0' : '#ffd700';
-        uplinkBannerEl.style.color = obj.remaining === 0 ? '#00f5a0' : '#fef08a';
-        uplinkBannerEl.classList.remove('hidden');
+        const key = `ATK:${obj.remaining}:${obj.total}`;
+        if (this._lastUplinkKey !== key) {
+          this._lastUplinkKey = key;
+          uplinkBannerEl.textContent = `PRIMARY STRIKE OBJECTIVES: ${obj.remaining} / ${obj.total} ACTIVE`;
+          uplinkBannerEl.style.borderColor = obj.remaining === 0 ? '#00f5a0' : '#ffd700';
+          uplinkBannerEl.style.color = obj.remaining === 0 ? '#00f5a0' : '#fef08a';
+          uplinkBannerEl.classList.remove('hidden');
+        }
       } else {
         let liveHostileCount = 0;
         for (let i = 0; i < hostiles.length; i++) {
           if (hostiles[i] && hostiles[i].hp > 0.05) liveHostileCount++;
         }
         const shouldShowUplink = (!is2P && commanderTeam === 'friendly' && liveHostileCount > 0 && liveHostileCount <= 3);
-        if (shouldShowUplink) {
-          uplinkBannerEl.textContent = `SATELLITE RADAR UPLINK: ${liveHostileCount} HOSTILE${liveHostileCount > 1 ? 'S' : ''} REMAINING (PINPOINTED)`;
-          uplinkBannerEl.style.borderColor = '';
-          uplinkBannerEl.style.color = '';
-          uplinkBannerEl.classList.remove('hidden');
-        } else {
-          uplinkBannerEl.classList.add('hidden');
+        const key = shouldShowUplink ? `UP:${liveHostileCount}` : 'HIDE';
+        if (this._lastUplinkKey !== key) {
+          this._lastUplinkKey = key;
+          if (shouldShowUplink) {
+            uplinkBannerEl.textContent = `SATELLITE RADAR UPLINK: ${liveHostileCount} HOSTILE${liveHostileCount > 1 ? 'S' : ''} REMAINING (PINPOINTED)`;
+            uplinkBannerEl.style.borderColor = '';
+            uplinkBannerEl.style.color = '';
+            uplinkBannerEl.classList.remove('hidden');
+          } else {
+            uplinkBannerEl.classList.add('hidden');
+          }
         }
       }
     }

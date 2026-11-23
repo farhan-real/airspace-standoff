@@ -1,5 +1,5 @@
 /**
- * js/systems/engine/pwa.js - PWA Service Worker registration, background diff check, and update toast.
+ * js/systems/engine/pwa.js - PWA Service Worker registration, single-manifest diff check, and update toast.
  */
 
 class PwaController {
@@ -66,7 +66,7 @@ class PwaController {
             registration.update().catch(() => {});
             const targetSw = registration.active || navigator.serviceWorker.controller;
             if (targetSw) targetSw.postMessage({ type: 'CHECK_FOR_UPDATES' });
-          }, 1200);
+          }, 2000);
         })
         .catch((err) => {
           console.warn('Service Worker registration failed:', err);

@@ -151,8 +151,10 @@ class PylonCardUpdater {
       }
 
       if (pkFill) {
-        pkFill.style.width = `${currentPk}%`;
-        pkFill.style.background = pkResult.color || '#00f0ff';
+        const nextW = `${currentPk}%`;
+        const nextBg = pkResult.color || '#00f0ff';
+        if (pkFill._lastW !== nextW) { pkFill._lastW = nextW; pkFill.style.width = nextW; }
+        if (pkFill._lastBg !== nextBg) { pkFill._lastBg = nextBg; pkFill.style.background = nextBg; }
       }
 
       const canFire = curGame ? curGame.canFirePylon(activeUnit, item, validTarget) : false;

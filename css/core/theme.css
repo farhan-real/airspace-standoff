@@ -48,7 +48,7 @@
   --liquid-glass-border-bottom: rgba(255, 255, 255, 0.06);
   --liquid-glass-border-hover: rgba(0, 229, 255, 0.55);
   --liquid-glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 10px 28px rgba(0, 0, 0, 0.88);
-  --liquid-glass-filter: blur(16px) saturate(145%);
+  --liquid-glass-filter: blur(8px) saturate(125%);
 
   /* Card Glass (Fast 60-120fps Scrolling on Android & Desktop) */
   --glass-3d-card-bg: linear-gradient(170deg, rgba(255, 255, 255, 0.065) 0%, rgba(255, 255, 255, 0.02) 48%, rgba(255, 255, 255, 0.008) 100%), #07090d;

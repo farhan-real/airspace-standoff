@@ -1,13 +1,11 @@
-/* sw.js - AIRSPACE STANDOFF Offline-First Service Worker with Background File-Diff Updates */
+/* sw.js - AIRSPACE STANDOFF Offline-First Service Worker with Single-Manifest Diff Updates */
 
-const CACHE_NAME = 'airspace-standoff-app-v1';
+const CACHE_NAME = 'airspace-standoff-app-v2';
 const FONT_CACHE = 'airspace-standoff-fonts-v1';
 
 const CORE_ASSETS = [
   "./",
-  "./favicon.svg",
-  "./index.html",
-  "./manifest.webmanifest",
+  "./asset-manifest.json",
   "./css/core/base.css",
   "./css/core/codex.css",
   "./css/core/dialogs/dialogs.css",
@@ -47,6 +45,7 @@ const CORE_ASSETS = [
   "./css/procurement/squadron/hardware.css",
   "./css/procurement/squadron/loadout.css",
   "./css/procurement/squadron/stations.css",
+  "./favicon.svg",
   "./icons/arrowdown.svg",
   "./icons/arrowleft.svg",
   "./icons/arrowright.svg",
@@ -67,6 +66,7 @@ const CORE_ASSETS = [
   "./icons/settings.svg",
   "./icons/star.svg",
   "./icons/trash.svg",
+  "./index.html",
   "./js/data/aidifficulties.js",
   "./js/data/aircraft.js",
   "./js/data/aircraft/airdominance.js",
@@ -285,7 +285,8 @@ const CORE_ASSETS = [
   "./js/ui/procurement/squadron/loadouts.js",
   "./js/ui/procurement/squadron/roster.js",
   "./js/ui/procurement/squadron/stations.js",
-  "./js/ui/settings.js"
+  "./js/ui/settings.js",
+  "./manifest.webmanifest"
 ];
 
 let isCheckingUpdates = false;
@@ -375,49 +376,6 @@ self.addEventListener('fetch', (event) => {
   })());
 });
 
-function extractLocalUrlsFromHtml(html) {
-  const urls = new Set([
-    './index.html',
-    './manifest.webmanifest',
-    './favicon.svg',
-    './icons/icon-192.png',
-    './icons/icon-512.png'
-  ]);
-  const attrRegex = /(?:href|src)=["']((?:css|js|icons)\/[^"'?#]+|favicon\.svg|manifest\.webmanifest)["']/g;
-  let m;
-  while ((m = attrRegex.exec(html)) !== null) {
-    urls.add('./' + m[1]);
-  }
-  return Array.from(urls);
-}
-
-function headersIndicateSameFile(cachedRes, headRes) {
-  const cEtag = cachedRes.headers.get('etag');
-  const nEtag = headRes.headers.get('etag');
-  if (cEtag && nEtag) return cEtag === nEtag;
-
-  const cMod = cachedRes.headers.get('last-modified');
-  const nMod = headRes.headers.get('last-modified');
-  const cLen = cachedRes.headers.get('content-length');
-  const nLen = headRes.headers.get('content-length');
-  if (cMod && nMod && cMod === nMod) {
-    if (!cLen || !nLen || cLen === nLen) return true;
-  }
-  return false;
-}
-
-async function bodiesEqual(resA, resB) {
-  const bufA = await resA.clone().arrayBuffer();
-  const bufB = await resB.clone().arrayBuffer();
-  if (bufA.byteLength !== bufB.byteLength) return false;
-  const viewA = new Uint8Array(bufA);
-  const viewB = new Uint8Array(bufB);
-  for (let i = 0; i < viewA.length; i++) {
-    if (viewA[i] !== viewB[i]) return false;
-  }
-  return true;
-}
-
 async function checkAndSyncFiles() {
   if (isCheckingUpdates) return;
   isCheckingUpdates = true;
@@ -425,78 +383,58 @@ async function checkAndSyncFiles() {
 
   try {
     const cache = await caches.open(CACHE_NAME);
-
-    let indexRes;
+    let netManifestRes;
     try {
-      indexRes = await fetch('./index.html', { cache: 'no-store' });
+      netManifestRes = await fetch('./asset-manifest.json', { cache: 'no-store' });
     } catch (_) {
       return;
     }
-    if (!indexRes || !indexRes.ok) return;
+    if (!netManifestRes || !netManifestRes.ok) return;
 
-    const freshHtml = await indexRes.clone().text();
-    const cachedIndex = await cache.match('./index.html');
-    if (!cachedIndex) {
-      await cache.put('./index.html', indexRes.clone());
-      await cache.put('./', indexRes.clone());
-      changedCount++;
-    } else {
-      const oldHtml = await cachedIndex.clone().text();
-      if (oldHtml !== freshHtml) {
-        await cache.put('./index.html', indexRes.clone());
-        await cache.put('./', indexRes.clone());
-        changedCount++;
+    const netText = await netManifestRes.clone().text();
+    const netMap = JSON.parse(netText);
+
+    let oldMap = {};
+    const cachedManifest = await cache.match('./asset-manifest.json');
+    if (cachedManifest) {
+      try { oldMap = await cachedManifest.clone().json(); } catch (_) {}
+    }
+
+    const changedUrls = [];
+    for (const [url, hash] of Object.entries(netMap)) {
+      const hasCached = Boolean(await cache.match(url));
+      if (!hasCached || oldMap[url] !== hash) {
+        changedUrls.push(url);
       }
     }
 
-    const activeUrls = extractLocalUrlsFromHtml(freshHtml);
-    const otherUrls = activeUrls.filter(u => u !== './index.html');
-    const batchSize = 8;
+    const removedUrls = Object.keys(oldMap).filter(u => !(u in netMap));
 
-    for (let i = 0; i < otherUrls.length; i += batchSize) {
-      const slice = otherUrls.slice(i, i + batchSize);
+    if (changedUrls.length === 0 && removedUrls.length === 0) {
+      if (!cachedManifest) await cache.put('./asset-manifest.json', netManifestRes);
+      return;
+    }
+
+    const batchSize = 8;
+    for (let i = 0; i < changedUrls.length; i += batchSize) {
+      const slice = changedUrls.slice(i, i + batchSize);
       await Promise.all(slice.map(async (url) => {
         try {
-          const cached = await cache.match(url);
-          if (!cached) {
-            const getRes = await fetch(url, { cache: 'no-store' });
-            if (getRes && getRes.ok) {
-              await cache.put(url, getRes);
-              changedCount++;
-            }
-            return;
+          const res = await fetch(url, { cache: 'no-store' });
+          if (res && res.ok) {
+            await cache.put(url, res.clone());
+            if (url === './index.html') await cache.put('./', res);
+            changedCount++;
           }
-
-          let needGet = true;
-          try {
-            const headRes = await fetch(url, { method: 'HEAD', cache: 'no-store' });
-            if (headRes && headRes.ok && headersIndicateSameFile(cached, headRes)) {
-              needGet = false;
-            }
-          } catch (_) {}
-
-          if (!needGet) return;
-
-          const getRes = await fetch(url, { cache: 'no-store' });
-          if (!getRes || !getRes.ok) return;
-          const same = await bodiesEqual(cached, getRes);
-          await cache.put(url, getRes);
-          if (!same) changedCount++;
         } catch (_) {}
       }));
     }
 
-    // Prune assets removed from index.html
-    const activeSet = new Set(activeUrls.map(u => new URL(u, self.location.origin).pathname));
-    activeSet.add(new URL('./', self.location.origin).pathname);
-    const cachedKeys = await cache.keys();
-    await Promise.all(cachedKeys.map(async (req) => {
-      const p = new URL(req.url).pathname;
-      if (!activeSet.has(p)) {
-        await cache.delete(req);
-        changedCount++;
-      }
-    }));
+    for (const url of removedUrls) {
+      if (await cache.delete(url)) changedCount++;
+    }
+
+    await cache.put('./asset-manifest.json', netManifestRes);
 
     if (changedCount > 0) {
       const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });

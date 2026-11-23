@@ -9,8 +9,42 @@ class AvionicsUI {
     this.rosterDisplay = new AvionicsRosterDisplay(this);
     this.lastMfdUnitId = null;
     this._cachedTexts = {};
+    this._cachedStyles = {};
+    this._mfdEls = null;
     this.initRWRInteractions();
     this.initRTBButton();
+  }
+
+  getMfdEls() {
+    if (this._mfdEls) return this._mfdEls;
+    this._mfdEls = {
+      nameEl: document.getElementById('mfd-unit-name'),
+      callsignValEl: document.getElementById('mfd-callsign-val'),
+      coffinTag: document.getElementById('mfd-coffin-tag'),
+      leadTag: document.getElementById('mfd-lead-tag'),
+      aceTag: document.getElementById('mfd-ace-tag'),
+      rtbBtn: document.getElementById('btn-rtb-rearm'),
+      stressValEl: document.getElementById('mfd-stress-val'),
+      stressFillEl: document.getElementById('mfd-stress-fill'),
+      glocEl: document.getElementById('gloc-badge'),
+      stressWarnEl: document.getElementById('stress-warning-badge'),
+      inspectUnitBtn: document.getElementById('btn-inspect-active-unit'),
+      slider: document.getElementById('engine-slider'),
+      alphaLabel: document.getElementById('alpha-val'),
+      hudSpdMain: document.getElementById('hud-speed-main'),
+      hudSpdArrow: document.getElementById('hud-speed-arrow'),
+      hudSpdSub: document.getElementById('hud-speed-sub'),
+      hudAltMain: document.getElementById('hud-alt-main'),
+      hudAltArrow: document.getElementById('hud-alt-arrow'),
+      hudVsi: document.getElementById('hud-vsi'),
+      hudCallsign: document.getElementById('hud-unit-callsign'),
+      hudModel: document.getElementById('hud-unit-model'),
+      hudCardinal: document.getElementById('hud-hdg-cardinal'),
+      hudDeg: document.getElementById('hud-hdg-deg'),
+      hudEturn: document.getElementById('hud-eturn-tag'),
+      hudWr: document.getElementById('hud-wr-tag')
+    };
+    return this._mfdEls;
   }
 
   setFastText(el, key, val) {
@@ -18,6 +52,14 @@ class AvionicsUI {
     if (this._cachedTexts[key] !== val) {
       this._cachedTexts[key] = val;
       el.textContent = val;
+    }
+  }
+
+  setFastColor(el, key, val) {
+    if (!el) return;
+    if (this._cachedStyles[key] !== val) {
+      this._cachedStyles[key] = val;
+      el.style.color = val;
     }
   }
 
@@ -85,32 +127,13 @@ class AvionicsUI {
 
   updateActiveUnitMFD() {
     const u = this.game.activeUnit;
-    const nameEl = document.getElementById('mfd-unit-name');
-    const callsignValEl = document.getElementById('mfd-callsign-val');
-    const coffinTag = document.getElementById('mfd-coffin-tag');
-    const leadTag = document.getElementById('mfd-lead-tag');
-    const aceTag = document.getElementById('mfd-ace-tag');
-    const rtbBtn = document.getElementById('btn-rtb-rearm');
-    const stressValEl = document.getElementById('mfd-stress-val');
-    const stressFillEl = document.getElementById('mfd-stress-fill');
-    const glocEl = document.getElementById('gloc-badge');
-    const stressWarnEl = document.getElementById('stress-warning-badge');
-    const inspectUnitBtn = document.getElementById('btn-inspect-active-unit');
-    const slider = document.getElementById('engine-slider');
-    const alphaLabel = document.getElementById('alpha-val');
-
-    const hudSpdMain = document.getElementById('hud-speed-main');
-    const hudSpdArrow = document.getElementById('hud-speed-arrow');
-    const hudSpdSub = document.getElementById('hud-speed-sub');
-    const hudAltMain = document.getElementById('hud-alt-main');
-    const hudAltArrow = document.getElementById('hud-alt-arrow');
-    const hudVsi = document.getElementById('hud-vsi');
-    const hudCallsign = document.getElementById('hud-unit-callsign');
-    const hudModel = document.getElementById('hud-unit-model');
-    const hudCardinal = document.getElementById('hud-hdg-cardinal');
-    const hudDeg = document.getElementById('hud-hdg-deg');
-    const hudEturn = document.getElementById('hud-eturn-tag');
-    const hudWr = document.getElementById('hud-wr-tag');
+    const {
+      nameEl, callsignValEl, coffinTag, leadTag, aceTag, rtbBtn,
+      stressValEl, stressFillEl, glocEl, stressWarnEl, inspectUnitBtn,
+      slider, alphaLabel, hudSpdMain, hudSpdArrow, hudSpdSub,
+      hudAltMain, hudAltArrow, hudVsi, hudCallsign, hudModel,
+      hudCardinal, hudDeg, hudEturn, hudWr
+    } = this.getMfdEls();
 
     if (!u || u.hp <= 0.05) {
       this.setFastText(nameEl, 'name', 'NO CRAFT SELECTED');
@@ -223,7 +246,13 @@ class AvionicsUI {
       this.setFastText(stressValEl, 'stressNum', u.isCoffin ? 'IMMUNE' : stressVal.toFixed(2));
       stressValEl.style.color = u.isCoffin ? '#6366f1' : this.getStressColor(stressVal);
     }
-    if (stressFillEl) stressFillEl.style.width = u.isCoffin ? '0%' : Math.round(stressVal * 100) + '%';
+    if (stressFillEl) {
+      const nextStressW = u.isCoffin ? '0%' : Math.round(stressVal * 100) + '%';
+      if (this._cachedStyles.stressFillW !== nextStressW) {
+        this._cachedStyles.stressFillW = nextStressW;
+        stressFillEl.style.width = nextStressW;
+      }
+    }
     if (glocEl) glocEl.classList.toggle('hidden', u.isCoffin || u.glocTimer <= 0);
     if (stressWarnEl) stressWarnEl.classList.toggle('hidden', u.isCoffin || u.stress < 0.65 || u.glocTimer > 0);
 

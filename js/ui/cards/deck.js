@@ -7,22 +7,28 @@ class ManeuverDeckRenderer {
     this.dm = deckManager;
     this.game = deckManager.game;
     this.currentUnitId = null;
+    this._cardNodes = [];
   }
 
   render(activeUnit, container) {
     if (!container) return;
 
     if (!activeUnit || activeUnit.hp <= 0) {
-      container.innerHTML = '<div class="deck-empty-prompt">SELECT AN OPERATIONAL AIRFRAME TO ISSUE FLIGHT MANEUVERS</div>';
-      this.currentUnitId = null;
+      if (this.currentUnitId !== 'EMPTY') {
+        container.innerHTML = '<div class="deck-empty-prompt">SELECT AN OPERATIONAL AIRFRAME TO ISSUE FLIGHT MANEUVERS</div>';
+        this.currentUnitId = 'EMPTY';
+        this._cardNodes = [];
+      }
       return;
     }
 
     const cardsList = window.MANEUVER_CARDS || [];
 
-    if (this.currentUnitId !== activeUnit.id || container.children.length === 0) {
+    if (this.currentUnitId !== activeUnit.id || this._cardNodes.length !== cardsList.length) {
       this.currentUnitId = activeUnit.id;
+      this._cardNodes = [];
       container.innerHTML = '';
+      const frag = document.createDocumentFragment();
 
       cardsList.forEach(card => {
         const cardEl = document.createElement('div');
@@ -52,35 +58,31 @@ class ManeuverDeckRenderer {
           }
         };
 
-        container.appendChild(cardEl);
+        const recomBadge = cardEl.querySelector('.recom-badge');
+        this._cardNodes.push({ el: cardEl, card, recomBadge, lastLocked: null, lastRecom: null });
+        frag.appendChild(cardEl);
       });
+      container.appendChild(frag);
     }
 
     const currentTokens = this.game.getCurrentCommanderTokenBucket();
-    const cardElements = container.querySelectorAll('.maneuver-card');
-
-    cardElements.forEach(el => {
-      const cardId = el.dataset.cardId;
-      const card = cardsList.find(c => c.id === cardId);
-      if (!card) return;
-
+    for (let i = 0; i < this._cardNodes.length; i++) {
+      const node = this._cardNodes[i];
+      const card = node.card;
       const cost = card.cost || 0.7;
-      const isEligible = card.checkPrereq(activeUnit) && currentTokens >= cost;
-      if (isEligible) el.classList.remove('locked');
-      else el.classList.add('locked');
-
-      const recomBadge = el.querySelector('.recom-badge');
-      const isRecom = card.isRecommended && card.isRecommended(activeUnit, this.game);
-      if (recomBadge) {
-        if (isRecom) {
-          recomBadge.classList.remove('hidden');
-          el.classList.add('recommended-card');
-        } else {
-          recomBadge.classList.add('hidden');
-          el.classList.remove('recommended-card');
-        }
+      const isLocked = !(card.checkPrereq(activeUnit) && currentTokens >= cost);
+      if (node.lastLocked !== isLocked) {
+        node.lastLocked = isLocked;
+        node.el.classList.toggle('locked', isLocked);
       }
-    });
+
+      const isRecom = Boolean(card.isRecommended && card.isRecommended(activeUnit, this.game));
+      if (node.lastRecom !== isRecom) {
+        node.lastRecom = isRecom;
+        if (node.recomBadge) node.recomBadge.classList.toggle('hidden', !isRecom);
+        node.el.classList.toggle('recommended-card', isRecom);
+      }
+    }
   }
 }
 
