@@ -89,19 +89,24 @@ class AirspaceStandoffGame {
     this.procurement = new ProcurementManager(this);
     this.procurementSquadron = [];
 
-    this.controls.init();
-    this.procurement.init();
-
+    this._booting = true;
     const lastSquadron = window.Persistence ? window.Persistence.getLastSquadron() : null;
     if (lastSquadron && lastSquadron.length > 0) {
       this.procurementSquadron = lastSquadron;
-      this.procurement.updateUI();
     } else {
-      this.procurement.applyBuiltinPreset('stealth');
+      this.procurementSquadron = ProcurementPresets.getBuiltinPreset('stealth');
+      if (this.procurementSquadron.length > 0 && !this.procurementSquadron.some(it => it && it.isLead)) {
+        this.procurementSquadron[0].isLead = true;
+      }
     }
     this.setSquadronName(this.squadronName);
     this.setGameMode(this.gameMode);
     this.setPlayerBudgetTier(this.playerBudgetId);
+    this._booting = false;
+
+    this.controls.init();
+    this.procurement.init();
+    this.procurement.updateUI();
   }
 
   getMaxSquadronSize() {
@@ -154,7 +159,7 @@ class AirspaceStandoffGame {
     if (subtextEl) subtextEl.textContent = `DEFENSE ALLOCATION: ${this.budgetMax.toFixed(1)}M CREDITS (${tierData.multiplier.toFixed(2)}x VP) UP TO ${this.maxSquadronSize} UNITS`;
     this.updateModeIndicator();
     this.saveGameplaySettings();
-    if (this.procurement) { this.procurement.updateUI(); this.procurement.renderCatalog(); }
+    if (!this._booting && this.procurement) { this.procurement.updateUI(); this.procurement.renderCatalog(); }
   }
 
   setSquadronName(name) {

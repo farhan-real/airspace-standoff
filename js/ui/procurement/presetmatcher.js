@@ -46,6 +46,23 @@ class PresetMatcher {
       : window.AIRCRAFT_TEMPLATES;
     if (!templates) throw new Error('AIRCRAFT_TEMPLATES must be loaded before PresetMatcher.match.');
 
+    const templateKeys = Object.keys(templates);
+    const cacheSig = `${templateKeys.length}:${templateKeys[templateKeys.length - 1] || ''}`;
+    if (!PresetMatcher._specIndex || PresetMatcher._cacheSig !== cacheSig) {
+      const idxMap = new Map();
+      Object.values(templates).forEach(t => {
+        if (!t || !t.specId) return;
+        let list = idxMap.get(t.specId);
+        if (!list) { list = []; idxMap.set(t.specId, list); }
+        list.push(t);
+      });
+      PresetMatcher._specIndex = idxMap;
+      PresetMatcher._cacheSig = cacheSig;
+    }
+
+    const candidates = PresetMatcher._specIndex.get(specId);
+    if (!candidates || candidates.length === 0) return null;
+
     const acWeaponIds = PresetMatcher.extractWeaponIds(weaponsList);
     const acCounts = PresetMatcher.countItems(acWeaponIds);
     const acUpgradeSet = new Set(PresetMatcher.extractUpgradeIds(upgradesList));
@@ -53,8 +70,7 @@ class PresetMatcher {
     let bestMatch = null;
     let bestScore = null;
 
-    Object.values(templates).forEach(tpl => {
-      if (!tpl || tpl.specId !== specId) return;
+    candidates.forEach(tpl => {
 
       const tplWeaponIds = PresetMatcher.extractWeaponIds(tpl.weapons);
       if (acWeaponIds.length === 0 && tplWeaponIds.length > 0) return;
