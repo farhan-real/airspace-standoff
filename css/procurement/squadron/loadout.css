@@ -125,7 +125,19 @@
 
 .squad-unit-actions { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
 
-@media (max-width: 1024px) {
+.is-android .squadron-container,
+.is-android-apk .squadron-container {
+  grid-template-columns: 1fr;
+  padding-right: 0;
+}
+
+.is-android .squad-unit-card,
+.is-android-apk .squad-unit-card {
+  padding: 9px 10px;
+  gap: 6px;
+}
+
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
   .squadron-container { grid-template-columns: 1fr; padding-right: 0; }
   .squad-unit-card { padding: 9px 10px; gap: 6px; }
 }

@@ -161,9 +161,19 @@
   }
 }
 
+.is-android .airframes-dense-grid,
+.is-android-apk .airframes-dense-grid {
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
 @media (max-width: 1024px) {
   .airframe-filter-bar { flex-wrap: nowrap; overflow-x: auto; white-space: nowrap; padding-bottom: 2px; scrollbar-width: none; }
   .airframe-filter-bar::-webkit-scrollbar { display: none; }
   .cat-pill-btn { padding: 3px 8px; font-size: 0.58rem; flex-shrink: 0; }
-  .airframes-dense-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 6px; }
+  .airframes-dense-grid { grid-template-columns: 1fr; gap: 6px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .airframes-dense-grid { grid-template-columns: 1fr; gap: 6px; }
 }
