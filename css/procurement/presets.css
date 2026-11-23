@@ -229,13 +229,29 @@
   min-width: 0;
 }
 
+.sq-mini-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 4px;
+}
+
 .sq-mini-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  padding-bottom: 4px;
+}
+
+.sq-mini-preset-line {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.sq-mini-preset-line .preset-match-name {
+  font-size: 0.60rem;
 }
 
 .sq-mini-name-wrap {

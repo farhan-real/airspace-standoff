@@ -94,6 +94,78 @@
 .suh-top-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; flex-wrap: wrap; }
 .suh-title-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
 .suh-right-meta { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.suh-preset-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-width: 0; }
+.suh-preset-row .active-bay-badge { margin-left: auto; flex-shrink: 0; }
+
+.preset-match-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.preset-match-badge {
+  font-size: 0.52rem;
+  font-family: var(--font-dotdigital);
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: var(--radius-badge);
+  letter-spacing: 0.4px;
+  flex-shrink: 0;
+}
+
+.preset-match-badge.exact {
+  background: rgba(0, 229, 255, 0.14);
+  border: 1px solid rgba(0, 229, 255, 0.42);
+  color: var(--color-cyan);
+}
+
+.preset-match-badge.modified {
+  background: rgba(167, 139, 250, 0.16);
+  border: 1px solid rgba(167, 139, 250, 0.45);
+  color: #ddd6fe;
+}
+
+.preset-match-name {
+  font-size: 0.64rem;
+  font-family: var(--font-untitled-sans);
+  font-weight: 600;
+  color: var(--color-frost-glow);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.preset-match-diff {
+  font-size: 0.56rem;
+  font-family: var(--font-dotdigital);
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: var(--radius-badge);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.preset-match-diff.added {
+  background: rgba(0, 245, 160, 0.13);
+  border: 1px solid rgba(0, 245, 160, 0.40);
+  color: #34d399;
+}
+
+.preset-match-diff.removed {
+  background: rgba(255, 56, 100, 0.14);
+  border: 1px solid rgba(255, 56, 100, 0.42);
+  color: #fda4af;
+}
+
+.preset-match-diff.swapped {
+  background: rgba(56, 189, 248, 0.14);
+  border: 1px solid rgba(56, 189, 248, 0.42);
+  color: #7dd3fc;
+}
 .squad-unit-name { font-size: 0.92rem; font-weight: 700; color: #ffffff; font-family: var(--font-aeonikpro); }
 .squad-unit-badge { font-size: 0.58rem; font-family: var(--font-dotdigital); font-weight: 700; padding: 2px 6px; border-radius: var(--radius-badge); }
 .squad-unit-cost { font-size: 0.80rem; font-family: var(--font-dotdigital); font-weight: 700; color: var(--color-green); }

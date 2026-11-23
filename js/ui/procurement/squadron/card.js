@@ -71,6 +71,13 @@ class RosterCardBuilder {
     const category = spec.category || 'MULTIROLE';
     const activeGunDmg = activeGun ? (activeGun.damagePerSec || 2.5) : 2.5;
 
+    if (typeof PresetMatcher === 'undefined') throw new Error('PresetMatcher is not loaded.');
+    const presetMatch = PresetMatcher.match(item.specId, item.weapons, item.chosenGunId, item.upgrades, pm.customLoadouts);
+    const presetMatchHtml = presetMatch ? PresetMatcher.renderMatchHtml(presetMatch) : '';
+    const subRowHtml = (presetMatchHtml || isActiveBay)
+      ? `<div class="suh-preset-row">${presetMatchHtml}${isActiveBay ? '<span class="active-bay-badge">SELECTED</span>' : ''}</div>`
+      : '';
+
     const leadButtonHtml = item.isLead
       ? `<button type="button" class="hud-btn small btn-toggle-lead active-lead" data-sidx="${sIdx}" data-inspect-type="lead" data-inspect-id="${spec.id}"><img src="icons/star.svg" width="11" height="11" alt="Lead" style="vertical-align:middle;margin-right:3px;">FLIGHT LEAD</button>`
       : `<button type="button" class="hud-btn small btn-toggle-lead" data-sidx="${sIdx}" data-inspect-type="lead" data-inspect-id="${spec.id}">SET LEAD</button>`;
@@ -84,11 +91,11 @@ class RosterCardBuilder {
             <span class="squad-unit-badge badge-cat-${category.toLowerCase()}">${category}</span>
           </div>
           <div class="suh-right-meta">
-            ${isActiveBay ? '<span class="active-bay-badge">SELECTED</span>' : ''}
             <span class="squad-unit-cost">$${totalCost.toFixed(1)}M</span>
             <button type="button" class="spec-inspect-btn small" data-inspect-type="airframe" data-inspect-id="${spec.id}">SPECS</button>
           </div>
         </div>
+        ${subRowHtml}
         <div class="squad-unit-actions">
           ${leadButtonHtml}
           <button type="button" class="hud-btn small btn-save-config" data-sidx="${sIdx}" title="Save as reusable preset">SAVE PRESET</button>

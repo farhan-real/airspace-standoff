@@ -168,11 +168,15 @@ class SquadronPresetsModalController {
         const gunObj = gunsMap[gunId];
         if (!gunObj) throw new Error(`Gun "${gunId}" in squadron preset "${entry.name}" does not exist.`);
 
+        if (typeof PresetMatcher === 'undefined') throw new Error('PresetMatcher is not loaded.');
+        const presetMatch = PresetMatcher.match(u.specId, u.weapons || [], gunId, u.upgrades || [], this.pm.customLoadouts);
+
         return {
           specName: spec.name,
           isLead,
           cost: metrics.totalCost,
           gunName: gunObj.name,
+          presetMatch,
           weaponRows: this.resolveWeaponRows(u.weapons, spec, wpnsMap)
         };
       });
@@ -198,7 +202,7 @@ class SquadronPresetsModalController {
       entries = entries.filter(e => {
         const parts = [
           e.name, e.desc,
-          ...e.aircraftDetails.map(a => `${a.specName} ${a.gunName} ${a.weaponRows.map(r => r.name).join(' ')}`)
+          ...e.aircraftDetails.map(a => `${a.specName} ${a.presetMatch ? a.presetMatch.name : ''} ${a.gunName} ${a.weaponRows.map(r => r.name).join(' ')}`)
         ].join(' ').toLowerCase();
         return parts.includes(this.search);
       });
@@ -232,14 +236,21 @@ class SquadronPresetsModalController {
               </div>`).join('')
           : '<div class="sq-mini-wpn-row"><span class="sq-mini-wpn-meta">No missiles or pods equipped</span></div>';
 
+        const presetLineHtml = ac.presetMatch
+          ? `<div class="sq-mini-preset-line">${PresetMatcher.renderMatchHtml(ac.presetMatch)}</div>`
+          : '';
+
         return `
           <div class="sq-mini-card">
-            <div class="sq-mini-top">
-              <div class="sq-mini-name-wrap">
-                <span class="sq-mini-name">${ac.specName}</span>
-                ${ac.isLead ? '<span class="sq-mini-lead">LEAD</span>' : ''}
+            <div class="sq-mini-head">
+              <div class="sq-mini-top">
+                <div class="sq-mini-name-wrap">
+                  <span class="sq-mini-name">${ac.specName}</span>
+                  ${ac.isLead ? '<span class="sq-mini-lead">LEAD</span>' : ''}
+                </div>
+                <span class="sq-mini-cost">$${ac.cost.toFixed(1)}M</span>
               </div>
-              <span class="sq-mini-cost">$${ac.cost.toFixed(1)}M</span>
+              ${presetLineHtml}
             </div>
             <div class="sq-mini-gun-line">
               <span class="sq-mini-gun-label">GUN:</span>
