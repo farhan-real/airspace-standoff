@@ -159,6 +159,9 @@ class Aircraft {
     this.targetingPodBonus = 0.0;
     this.targetingSpotRangeKm = 0.0;
     this.cloudMitigation = 0.0;
+    this.a2aPkBonus = 0.0;
+    this.irstRangeKm = 0.0;
+    this.hasDatalinkRelay = false;
     this.distanceTraveled = 0.0;
     this.flightHistory = [];
     this.historySampleTimer = 0.0;
@@ -168,6 +171,12 @@ class Aircraft {
     this.trackDurationRed = (team === 'hostile' || is2P) ? 999.0 : 0.0;
     this.identifiedByBlue = (team === 'friendly' || is2P);
     this.identifiedByRed = (team === 'hostile' || is2P);
+    this.everIdentifiedByBlue = (team === 'friendly' || is2P);
+    this.everIdentifiedByRed = (team === 'hostile' || is2P);
+    this.activelyTrackedByBlue = (team === 'friendly' || is2P);
+    this.activelyTrackedByRed = (team === 'hostile' || is2P);
+    this.trackDecayBlue = (team === 'friendly' || is2P) ? window.CONFIG.RADAR_TRACK_DECAY_SEC : 0.0;
+    this.trackDecayRed = (team === 'hostile' || is2P) ? window.CONFIG.RADAR_TRACK_DECAY_SEC : 0.0;
 
     this.kills = 0;
     this.scorePoints = 0;
@@ -202,6 +211,32 @@ class Aircraft {
     if (window.Game && window.Game.playerMode === '2P') return true;
     if (this.team === team) return true;
     return (team === 'friendly') ? Boolean(this.identifiedByBlue) : Boolean(this.identifiedByRed);
+  }
+
+  isActivelyTrackedBy(team) {
+    if (team !== 'friendly' && team !== 'hostile') throw new Error(`Invalid team "${team}" in isActivelyTrackedBy.`);
+    if (window.Game && window.Game.playerMode === '2P') return true;
+    if (this.team === team) return true;
+    return (team === 'friendly') ? Boolean(this.activelyTrackedByBlue) : Boolean(this.activelyTrackedByRed);
+  }
+
+  everIdentifiedBy(team) {
+    if (team !== 'friendly' && team !== 'hostile') throw new Error(`Invalid team "${team}" in everIdentifiedBy.`);
+    if (window.Game && window.Game.playerMode === '2P') return true;
+    if (this.team === team) return true;
+    return (team === 'friendly') ? Boolean(this.everIdentifiedByBlue) : Boolean(this.everIdentifiedByRed);
+  }
+
+  getTrackState(team) {
+    if (team !== 'friendly' && team !== 'hostile') throw new Error(`Invalid team "${team}" in getTrackState.`);
+    if (window.Game && window.Game.playerMode === '2P') return 'TRACKED';
+    if (this.team === team) return 'TRACKED';
+    const isId = (team === 'friendly') ? Boolean(this.identifiedByBlue) : Boolean(this.identifiedByRed);
+    const active = (team === 'friendly') ? Boolean(this.activelyTrackedByBlue) : Boolean(this.activelyTrackedByRed);
+    const everId = (team === 'friendly') ? Boolean(this.everIdentifiedByBlue) : Boolean(this.everIdentifiedByRed);
+    if (isId) return active ? 'TRACKED' : 'DECAYING';
+    if (everId) return 'STALE';
+    return 'BOGEY';
   }
 
   get isIdentified() {

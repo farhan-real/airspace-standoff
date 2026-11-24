@@ -164,6 +164,8 @@ class InspectionOverviewRenderer {
           <div>DISTANCE: <b class="ovr-msl-dist">${dist.toFixed(1)} km</b></div>
           <div>TRAVELED: <b class="ovr-msl-traveled">${m.distanceTraveled.toFixed(1)} / ${m.maxRangeKm.toFixed(0)} km</b></div>
           <div>STAGE: <b class="ovr-msl-stage msl-live-stage" style="color:var(--stat-tier-3);">${m.stage || 'BOOST'}</b></div>
+          <div>GUIDANCE: <b class="ovr-msl-guid" style="color:${m.guidanceMode === 'ACTIVE_SEEKER' ? 'var(--stat-tier-2)' : (m.guidanceMode === 'COAST_INERTIAL' ? 'var(--stat-tier-4)' : 'var(--theme-accent)')};">${m.guidanceMode || 'MIDCOURSE'}</b></div>
+          <div>OWN SEEKER: <b class="ovr-msl-seeker">${(m.effectiveSeekerRangeKm || m.seekerRangeKm || 18).toFixed(1)} km</b></div>
           <div>CIWS STATUS: <b style="color:${ciwsImmune ? 'var(--stat-tier-2)' : 'var(--stat-tier-3)'};">${ciwsImmune ? 'IMMUNE (>= M5.0)' : 'INTERCEPTABLE'}</b></div>
           <div>DAMAGE: <b>${w.damage || 0} HP</b></div>
         </div>
@@ -230,6 +232,13 @@ class InspectionOverviewRenderer {
       if (travEl) travEl.textContent = `${entity.distanceTraveled.toFixed(1)} / ${entity.maxRangeKm.toFixed(0)} km`;
       const stageEl = content.querySelector('.ovr-msl-stage, .msl-live-stage');
       if (stageEl) stageEl.textContent = entity.stage || 'BOOST';
+      const guidEl = content.querySelector('.ovr-msl-guid');
+      if (guidEl) {
+        guidEl.textContent = entity.guidanceMode || 'MIDCOURSE';
+        guidEl.style.color = entity.guidanceMode === 'ACTIVE_SEEKER' ? 'var(--stat-tier-2)' : (entity.guidanceMode === 'COAST_INERTIAL' ? 'var(--stat-tier-4)' : 'var(--theme-accent)');
+      }
+      const skrEl = content.querySelector('.ovr-msl-seeker');
+      if (skrEl) skrEl.textContent = `${(entity.effectiveSeekerRangeKm || entity.seekerRangeKm || 18).toFixed(1)} km`;
       return;
     }
 

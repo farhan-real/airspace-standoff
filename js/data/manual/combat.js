@@ -85,9 +85,9 @@ window.MANUAL_COMBAT = [
               <td>Require medium-to-close ingress inside MR/SR SAM rings; best paired with SEAD suppression or low-deck approaches.</td>
             </tr>
             <tr>
-              <td style="color:#00f0ff;font-weight:800;">Targeting Pods (TGP)</td>
-              <td>Passive external pods (LITENING, Sniper XR, ATFLIR, Sapsan-E, Legion). Grant +18% to +26% A2G Pk and expose Ground Radar Decoys out to 58 km.</td>
-              <td>Occupies 1 external hardpoint and adds slight external pylon signature; worth mounting on strike leads.</td>
+              <td style="color:#00f0ff;font-weight:800;">A2G &amp; Air Combat Targeting Pods</td>
+              <td>Strike pods (LITENING, Sniper XR, ATFLIR) add up to +28% A2G Pk and 58 km recon; Air Combat pods (OLS-35M, Legion Block II, Internal EOTS-X, Cobra-Stare 360) boost stealth IRST burn-through (30-42 km), +85% track ID speed, and up to +10% A2A Pk.</td>
+              <td>External pods occupy a wing/centerline pylon and add slight signature; EOTS-X fits inside stealth bays.</td>
             </tr>
           </tbody>
         </table>
@@ -109,6 +109,22 @@ window.MANUAL_COMBAT = [
           <b style="color:#00f5a0;">MIXED-SEEKER SYNERGY (+25%)</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
             Combining Active Radar Homing (ARH) with Imaging Infrared (IIR) missiles triggers a <b>+25% synergy bonus</b>, forcing conflicting evasive responses.
+          </div>
+        </div>
+      </div>
+
+      <div class="ge-subhead">4. MID-COURSE DATALINK, OWN SEEKER HANDOFF &amp; SALVO CUES</div>
+      <div class="ge-grid-2">
+        <div class="ge-card" style="border-left:3px solid #00f0ff;">
+          <b style="color:#00f0ff;">FRIENDLY MID-COURSE GUIDANCE</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Long-range missiles rely on <b>mid-course datalink updates</b> while outside their own seeker range. As long as <b>any friendly aircraft or surface radar</b> actively tracks the target, the missile updates intercept lead continuously. If all friendly sensors drop track before seeker lock, the missile enters <b>Inertial Coast</b> (marked with a dashed amber ring and <code>[NO GUID]</code> on radar, and <code>[NO GUIDANCE]</code> on affected salvos) toward the target's last predicted trajectory; permanently defeated missiles show a crossed-out <code>[LOST]</code> marker.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #00f5a0;">
+          <b style="color:#00f5a0;">OWN SEEKER &amp; NO MISSILE DATA SHARING</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            Once a missile closes within its <b>own seeker range</b> and forward cone, it locks autonomously (<code>ACTIVE_SEEKER</code>) and no longer needs friendly radar support. <b>Missiles cannot share data with other missiles</b>: in a multi-missile salvo, lead missiles going active do not guide trailing missiles, and the radar draws a <b>subtle seeker-range line cue only for the farthest missile</b> in the salvo so you know when the entire volley is self-sufficient.
           </div>
         </div>
       </div>

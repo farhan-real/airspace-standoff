@@ -23,6 +23,10 @@ class CombatSystem {
     if (typeof targetEntity.x !== 'number' || typeof targetEntity.y !== 'number' || isNaN(targetEntity.x) || isNaN(targetEntity.y)) {
       throw new Error(`Target entity "${targetEntity.id}" has invalid coordinates.`);
     }
+    const is2P = Boolean(this.game && this.game.playerMode === '2P');
+    if (!is2P && targetEntity.team !== sourceUnit.team && typeof targetEntity.getTrackState === 'function') {
+      if (targetEntity.getTrackState(sourceUnit.team) === 'STALE') return false;
+    }
 
     const isAcSource = (typeof Aircraft !== 'undefined' && sourceUnit instanceof Aircraft);
     const rangeMult = isAcSource
@@ -82,7 +86,9 @@ class CombatSystem {
     const isTargetIdentified = is2P || Boolean(
       targetEntity && (
         targetEntity.type ||
-        (typeof targetEntity.isIdentifiedBy === 'function' ? targetEntity.isIdentifiedBy(commanderTeam) : targetEntity.isIdentified)
+        (typeof targetEntity.everIdentifiedBy === 'function'
+          ? targetEntity.everIdentifiedBy(commanderTeam)
+          : (typeof targetEntity.isIdentifiedBy === 'function' ? targetEntity.isIdentifiedBy(commanderTeam) : targetEntity.isIdentified))
       )
     );
 

@@ -21,14 +21,19 @@ class PylonTargetSolution {
       const ax = (typeof activeUnit.x === 'number' && !isNaN(activeUnit.x)) ? activeUnit.x : 0;
       const ay = (typeof activeUnit.y === 'number' && !isNaN(activeUnit.y)) ? activeUnit.y : 0;
       const dist = Math.hypot(validTarget.x - ax, validTarget.y - ay);
-      const isKnown = (validTarget.team === activeUnit.team) ||
-        (typeof validTarget.isIdentifiedBy === 'function' ? validTarget.isIdentifiedBy(commanderTeam) : validTarget.isIdentified);
+      const trackState = (validTarget.team === activeUnit.team) ? 'TRACKED' : (typeof validTarget.getTrackState === 'function' ? validTarget.getTrackState(commanderTeam) : ((typeof validTarget.isIdentifiedBy === 'function' ? validTarget.isIdentifiedBy(commanderTeam) : validTarget.isIdentified) ? 'TRACKED' : 'BOGEY'));
+      const isKnown = (trackState === 'TRACKED' || trackState === 'DECAYING');
+      const isStale = (trackState === 'STALE');
 
       let rawTgtName = 'BOGEY [?]';
       let classification = 'UNIDENTIFIED RADAR TRACK';
       let armorText = 'UNKNOWN';
 
-      if (!isKnown) {
+      if (isStale) {
+        rawTgtName = "ID'D [NO TRACK]";
+        classification = 'CONFIRMED HOSTILE - NO ACTIVE SENSOR TRACK';
+        armorText = 'NO TRACK';
+      } else if (!isKnown) {
         if (validTarget.type) {
           rawTgtName = 'EMITTER [?]';
           classification = 'UNIDENTIFIED RF EMISSION (RECON OR ARM)';
@@ -82,7 +87,7 @@ class PylonTargetSolution {
       targetBox.className = 'target-solution-box active-target';
       if (nameSpan) {
         nameSpan.textContent = `TARGET: ${tgtName}`;
-        nameSpan.style.color = !isKnown ? '#f97316' : (validTarget.isPrimaryObjective ? '#ffd700' : (showAceColor ? '#ffd700' : (validTarget.isGhost ? '#94a3b8' : (isHostile ? '#ff3366' : (isCiv ? '#7dd3fc' : '#00f0ff')))));
+        nameSpan.style.color = isStale ? '#fb7185' : (!isKnown ? '#f97316' : (validTarget.isPrimaryObjective ? '#ffd700' : (showAceColor ? '#ffd700' : (validTarget.isGhost ? '#94a3b8' : (isHostile ? '#ff3366' : (isCiv ? '#7dd3fc' : '#00f0ff'))))));
       }
       if (distSpan) {
         if (inGunRange && inBoresight) {
@@ -102,7 +107,7 @@ class PylonTargetSolution {
 
       if (typeB) {
         typeB.textContent = classification;
-        typeB.style.color = isKnown ? (isHostile ? '#ff3366' : (isCiv ? '#7dd3fc' : '#f8fafc')) : '#f97316';
+        typeB.style.color = isStale ? '#fb7185' : (isKnown ? (isHostile ? '#ff3366' : (isCiv ? '#7dd3fc' : '#f8fafc')) : '#f97316');
       }
 
       if (specsBtn) {

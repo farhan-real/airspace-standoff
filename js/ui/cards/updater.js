@@ -41,11 +41,14 @@ class PylonCardUpdater {
           if (w.grantsESM) {
             expectedTag = isMobile ? '[ESM]' : 'ACTIVE: [ESM / ELINT]';
             expectedColor = '#fbbf24';
+          } else if (w.grantsIRST && w.a2aPkBonus > 0) {
+            expectedTag = isMobile ? '[A2A IRST]' : `ACTIVE: [IRST +${Math.round(w.a2aPkBonus * 100)}% A2A]`;
+            expectedColor = '#00f0ff';
           } else if (w.grantsIRST && w.a2gPkBonus <= 0) {
             expectedTag = isMobile ? '[IRST]' : 'ACTIVE: [PASSIVE IRST]';
             expectedColor = '#00f0ff';
           } else {
-            expectedTag = isMobile ? '[TGP]' : `ACTIVE: [TGP +${Math.round(w.a2gPkBonus * 100)}%]`;
+            expectedTag = isMobile ? '[TGP]' : `ACTIVE: [TGP +${Math.round((w.a2gPkBonus || 0) * 100)}%]`;
             expectedColor = '#00f5a0';
           }
         } else if (w.isDecoy || w.isDecoyDrone) {
@@ -80,10 +83,14 @@ class PylonCardUpdater {
       }
 
       if (w.isTargetingPod) {
-        if (pkFill) { pkFill.style.width = '100%'; pkFill.style.background = w.grantsESM ? '#fbbf24' : '#00f5a0'; }
+        if (pkFill) { pkFill.style.width = '100%'; pkFill.style.background = w.grantsESM ? '#fbbf24' : (w.grantsIRST && w.a2aPkBonus > 0 ? '#00f0ff' : '#00f5a0'); }
         if (fireBtn && !fireBtn.disabled) {
           fireBtn.disabled = true;
-          fireBtn.textContent = w.grantsESM ? `ESM ACTIVE (${w.spotRangeKm}km)` : (w.grantsIRST && w.a2gPkBonus <= 0 ? 'IRST TRACK ACTIVE' : `TGP RECON (${w.spotRangeKm}km)`);
+          fireBtn.textContent = w.grantsESM
+            ? `ESM ACTIVE (${w.spotRangeKm}km)`
+            : (w.grantsIRST && w.a2aPkBonus > 0
+              ? `IRST ${w.irstRangeKm || 28}km (+${Math.round(w.a2aPkBonus * 100)}% A2A)`
+              : (w.grantsIRST && w.a2gPkBonus <= 0 ? 'IRST TRACK ACTIVE' : `TGP RECON (${w.spotRangeKm}km)`));
         }
         return;
       }
@@ -165,12 +172,19 @@ class PylonCardUpdater {
         let expectedBtnColor = '#ffffff';
         let expectedBtnBorder = 'var(--theme-primary)';
 
-        const isKnown = Boolean(
-          validTarget.type ||
-          (typeof validTarget.isIdentifiedBy === 'function' ? validTarget.isIdentifiedBy(curGame.currentPvpCommander) : validTarget.isIdentified)
-        );
+        const trackState = (validTarget.type || validTarget.team === activeUnit.team)
+          ? 'TRACKED'
+          : (typeof validTarget.getTrackState === 'function'
+            ? validTarget.getTrackState(curGame.currentPvpCommander)
+            : ((typeof validTarget.isIdentifiedBy === 'function' ? validTarget.isIdentifiedBy(curGame.currentPvpCommander) : validTarget.isIdentified) ? 'TRACKED' : 'BOGEY'));
+        const isKnown = (trackState === 'TRACKED' || trackState === 'DECAYING');
+        const isStale = (trackState === 'STALE');
 
-        if (['AIR ONLY', 'GROUND ONLY', 'IMMUNE', 'TOO CLOSE', 'OUT OF RANGE', 'OFF BORESIGHT'].includes(pkResult.label)) {
+        if (isStale) {
+          expectedBtnText = 'STALE TRACK (RE-ACQUIRE)';
+          expectedBtnColor = '#fb7185';
+          expectedBtnBorder = 'rgba(251, 113, 133, 0.45)';
+        } else if (['AIR ONLY', 'GROUND ONLY', 'IMMUNE', 'TOO CLOSE', 'OUT OF RANGE', 'OFF BORESIGHT'].includes(pkResult.label)) {
           expectedBtnText = pkResult.label;
           if (pkResult.label === 'OUT OF RANGE' || pkResult.label === 'TOO CLOSE' || pkResult.label === 'OFF BORESIGHT') {
             expectedBtnColor = '#f87171';

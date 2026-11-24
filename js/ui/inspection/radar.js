@@ -25,10 +25,12 @@ class InspectionRadarView {
         <h3>MISSILE TERMINAL SEEKER SUITE</h3>
         <p class="inspection-muted">In-flight weapon guidance sensors and tracking lock telemetry</p>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font:600 0.64rem var(--font-dotdigital);">
-          <div>SEEKER HEAD: <b style="color:var(--stat-tier-2);">${w.seeker || 'GUIDED'}</b></div>
+          <div>SEEKER HEAD: <b style="color:var(--stat-tier-2);">${w.seeker || 'GUIDED'} (${(missile.effectiveSeekerRangeKm || missile.seekerRangeKm || 18).toFixed(1)} km)</b></div>
+          <div>GUIDANCE MODE: <b style="color:${missile.guidanceMode === 'ACTIVE_SEEKER' ? 'var(--stat-tier-2)' : (missile.guidanceMode === 'COAST_INERTIAL' ? 'var(--stat-tier-4)' : 'var(--theme-accent)')};">${missile.guidanceMode || 'MIDCOURSE'}</b></div>
           <div>FLIGHT STAGE: <b style="color:var(--stat-tier-3);">${missile.stage || 'BOOST'}</b></div>
           <div>BORESIGHT OFFSET: <b style="color:${offBoresightDeg <= 30 ? 'var(--stat-tier-2)' : 'var(--stat-tier-4)'};">${offBoresightDeg}${sDeg} off seeker line</b></div>
           <div>CLOUD IMPACT: <b style="color:${cloudHits > 0 ? 'var(--stat-tier-3)' : 'var(--stat-tier-2)'};">${cloudAtten}</b></div>
+          <div>DATALINK STATUS: <b style="color:${missile.hasMidcourseDatalink ? 'var(--stat-tier-2)' : 'var(--stat-tier-4)'};">${missile.hasOwnSeekerLock ? 'AUTONOMOUS SEEKER' : (missile.hasMidcourseDatalink ? 'FRIENDLY TRACK LINKED' : 'NO FRIENDLY TRACK')}</b></div>
         </div>
         <div style="margin-top:8px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); font:600 0.62rem var(--font-dotdigital); display:flex; justify-content:space-between;">
           <span>TARGET TRACK:</span>

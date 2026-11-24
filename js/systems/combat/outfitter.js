@@ -174,6 +174,7 @@ class FleetOutfitter {
       }
     } else if (role === 'SNIPER') {
       const primaryUlr = rng.pick(class1Ulr) || rollBvr(true), secondaryLr = rng.pick(class2Lr) || rollBvr(false);
+      if (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diff) && spec.externalSlots >= 6 && isEligible(wCatalog['LEGION-POD-BLK2'])) addWpn('LEGION-POD-BLK2', 'EXTERNAL');
       if (spec.internalSlots > 0) {
         addWpn(primaryUlr, 'INTERNAL'); addWpn(secondaryLr, 'INTERNAL');
         if (!enforceCleanStealth && spec.externalSlots >= 2) addWpn(primaryUlr, 'EXTERNAL');
@@ -192,6 +193,10 @@ class FleetOutfitter {
       addWpn(rollBvr(true), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       addWpn(rollWvr(), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
       addWpn(rollBvr(false), spec.internalSlots > 0 ? 'INTERNAL' : 'EXTERNAL');
+      if (['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diff)) {
+        if (spec.internalSlots >= 4 && isEligible(wCatalog['EOTS-POD-VLO'])) addWpn('EOTS-POD-VLO', 'INTERNAL');
+        else if (spec.externalSlots >= 4 && isEligible(wCatalog['OLS-35-POD'])) addWpn('OLS-35-POD', 'EXTERNAL');
+      }
       addUpg('SUPERCRUISE_VCE');
       if (spec.upgradeSockets >= 2) addUpg('GAN_AESA_CORE');
     } else if (role === 'DOGFIGHT') {

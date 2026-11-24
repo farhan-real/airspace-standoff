@@ -72,8 +72,13 @@ class SpecsSubsystemViews {
       podOrWeaponStatsHtml = `
         <div class="inspect-stat-item"><span>SENSOR / RECON RANGE:</span><b class="${rRange.colorClass}">${w.spotRangeKm} km ${w.exposesDecoys ? '(Exposes Ground Decoys)' : ''}</b></div>
         <div class="inspect-stat-item"><span>A2G PRECISION BUFF:</span><b class="${rSpd.colorClass}">+${Math.round(w.a2gPkBonus * 100)}% Pk</b></div>
-        <div class="inspect-stat-item"><span>CLOUD SCATTER MITIGATION:</span><b class="${rCloud.colorClass}">${Math.round(w.cloudMitigation * 100)}%</b></div>
-        ${w.grantsIRST ? '<div class="inspect-stat-item"><span>AIR-TO-AIR IRST:</span><b class="stat-tier-1">ACTIVE (28km Stealth Burn-Through)</b></div>' : ''}
+        <div class="inspect-stat-item"><span>CLOUD SCATTER MITIGATION:</span><b class="${rCloud.colorClass}">${Math.round((w.cloudMitigation || 0) * 100)}%</b></div>
+        ${w.grantsIRST ? `<div class="inspect-stat-item"><span>AIR-TO-AIR IRST:</span><b class="stat-tier-1">${w.irstRangeKm || 28} km Stealth Burn-Through</b></div>` : ''}
+        ${w.airTrackSpeedMult ? `<div class="inspect-stat-item"><span>AIR TRACK ID SPEED:</span><b class="stat-tier-1">+${Math.round((w.airTrackSpeedMult - 1) * 100)}% Classification</b></div>` : ''}
+        ${w.a2aPkBonus ? `<div class="inspect-stat-item"><span>A2A LOCK ACCURACY:</span><b class="stat-tier-1">+${Math.round(w.a2aPkBonus * 100)}% A2A Pk</b></div>` : ''}
+        ${w.a2aEccmBonus ? `<div class="inspect-stat-item"><span>A2A ANTI-JAM ECCM:</span><b class="stat-tier-1">+${Math.round(w.a2aEccmBonus * 100)}% Jam Resistance</b></div>` : ''}
+        ${w.a2aEvasionBonus ? `<div class="inspect-stat-item"><span>OPTICAL MISSILE WARNING:</span><b class="stat-tier-1">+${Math.round(w.a2aEvasionBonus * 100)}% Dodge</b></div>` : ''}
+        ${w.grantsDatalinkRelay ? '<div class="inspect-stat-item"><span>TACTICAL CROSSLINK:</span><b class="stat-tier-1">Datalink Relay (+0.20 TOK/s)</b></div>' : ''}
         ${w.grantsESM ? `<div class="inspect-stat-item"><span>SEAD ARM RANGE BOOST:</span><b class="stat-tier-1">+${Math.round((w.armRangeBoost - 1) * 100)}% ARM Reach</b></div>` : ''}
       `;
     } else if (w.isJammerPod) {
@@ -97,8 +102,8 @@ class SpecsSubsystemViews {
     }
 
     const specialDetailHtml = window.BehaviorCodex.renderSpecsDetailHtml('weapon', w);
-    const kpiRange = w.isTargetingPod ? `${w.spotRangeKm} km` : `${w.rangeKm || 0} km`;
-    const kpiSpeed = w.isTargetingPod ? `+${Math.round(w.a2gPkBonus * 100)}% Pk` : (w.isJammerPod ? `-${Math.round(w.jamEfficiency * 100)}%` : (w.isGunpod ? `${(w.damagePerSec || 2.8).toFixed(1)} HP/s` : `M ${w.speedMach || 0}`));
+    const kpiRange = w.isTargetingPod ? `${w.podGroup === 'AIR_COMBAT' ? (w.irstRangeKm || w.spotRangeKm) : w.spotRangeKm} km` : `${w.rangeKm || 0} km`;
+    const kpiSpeed = w.isTargetingPod ? (w.a2aPkBonus > 0 ? `+${Math.round(w.a2aPkBonus * 100)}% A2A` : `+${Math.round((w.a2gPkBonus || 0) * 100)}% Pk`) : (w.isJammerPod ? `-${Math.round(w.jamEfficiency * 100)}%` : (w.isGunpod ? `${(w.damagePerSec || 2.8).toFixed(1)} HP/s` : `M ${w.speedMach || 0}`));
     const kpiDmg   = (w.isTargetingPod || w.isJammerPod || w.isDecoy || w.isDecoyDrone) ? (w.seeker || 'SUPPORT') : (w.isGunpod ? `${(w.damagePerBurst || w.damage).toFixed(2)} HP` : `${w.damage} HP`);
     const kpiRoleClass = (w.isTargetingPod || w.isJammerPod || w.isDecoy || w.isDecoyDrone) ? 'stat-tier-1' : rDmg.colorClass;
 
@@ -109,7 +114,7 @@ class SpecsSubsystemViews {
         <span class="inspect-cost-tag ${rCost.colorClass}">$${w.cost.toFixed(1)}M</span>
       </div>
       <div class="inspect-kpi-strip">
-        <div class="inspect-kpi-card"><span class="inspect-kpi-label">${w.isTargetingPod ? 'RECON REACH' : 'MAX RANGE'}</span><b class="inspect-kpi-val ${rRange.colorClass}">${kpiRange}</b><span class="inspect-kpi-sub">Min ${w.minRangeKm || 0.8} km</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">${w.podGroup === 'AIR_COMBAT' ? 'IRST REACH' : (w.isTargetingPod ? 'RECON REACH' : 'MAX RANGE')}</span><b class="inspect-kpi-val ${rRange.colorClass}">${kpiRange}</b><span class="inspect-kpi-sub">Min ${w.minRangeKm || 0.8} km</span></div>
         <div class="inspect-kpi-card"><span class="inspect-kpi-label">${w.isTargetingPod ? 'PRECISION BUFF' : (w.isJammerPod ? 'SUPPRESSION' : (w.isGunpod ? 'BURST DPS' : 'VELOCITY'))}</span><b class="inspect-kpi-val ${rSpd.colorClass}">${kpiSpeed}</b><span class="inspect-kpi-sub">${w.seeker || 'GUIDED'}</span></div>
         <div class="inspect-kpi-card"><span class="inspect-kpi-label">${(w.isTargetingPod || w.isJammerPod || w.isDecoy || w.isDecoyDrone) ? 'ROLE' : (w.isGunpod ? 'BURST DMG' : 'WARHEAD')}</span><b class="inspect-kpi-val ${kpiRoleClass}">${kpiDmg}</b><span class="inspect-kpi-sub">${w.ammoCount || 1}x Capacity</span></div>
         <div class="inspect-kpi-card"><span class="inspect-kpi-label">MOUNT MASS</span><b class="inspect-kpi-val ${rMass.colorClass}">+${w.mass} kg</b><span class="inspect-kpi-sub">${w.slotCost || 1} Pylon Slot(s)</span></div>

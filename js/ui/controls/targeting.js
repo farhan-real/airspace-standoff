@@ -124,12 +124,18 @@ class ControlsTargetingHandler {
     this.game.selectedTarget = target;
     if (active) active.radarLockedTarget = target;
 
-    const isKnown = is2P || (target.team === active.team) ||
-      (typeof target.isIdentifiedBy === 'function' ? target.isIdentifiedBy(commanderTeam) : target.isIdentified);
+    const trackState = (is2P || target.team === active.team)
+      ? 'TRACKED'
+      : (typeof target.getTrackState === 'function'
+        ? target.getTrackState(commanderTeam)
+        : ((typeof target.isIdentifiedBy === 'function' ? target.isIdentifiedBy(commanderTeam) : target.isIdentified) ? 'TRACKED' : 'BOGEY'));
+    const isKnown = (trackState === 'TRACKED' || trackState === 'DECAYING');
+    const isStale = (trackState === 'STALE');
 
     if (this.game.radar) {
-      const lockColor = !isKnown ? '#f97316' : ((target.isAce && isKnown) ? '#ffd700' : '#00f0ff');
-      this.game.radar.spawnCombatText(target.x, target.y, isKnown ? 'TARGET LOCKED' : 'CONTACT TRACKED', lockColor);
+      const lockColor = isStale ? '#fb7185' : (!isKnown ? '#f97316' : ((target.isAce && isKnown) ? '#ffd700' : '#00f0ff'));
+      const lockMsg = isStale ? 'STALE TRACK (RE-ACQUIRE)' : (isKnown ? 'TARGET LOCKED' : 'CONTACT TRACKED');
+      this.game.radar.spawnCombatText(target.x, target.y, lockMsg, lockColor);
       this.game.radar.spawnShockwave(target.x, target.y, lockColor, 25);
     }
 

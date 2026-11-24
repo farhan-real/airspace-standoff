@@ -46,7 +46,8 @@ class InspectionTelemetry {
     const vhfMult = scanner.counterStealthMult || (scanner.spec && scanner.spec.counterStealthMult) || 1.0;
     const tfrMasked = Boolean(target.hasTfrMasking && target.altFt < 13000 && (target.alt || 0.5) < 0.20);
     const belowFloor = Boolean(scanner.spec && scanner.spec.minDetectAltFt && typeof target.altFt === 'number' && target.altFt < scanner.spec.minDetectAltFt);
-    const irstBurnThrough = Boolean(scanner.hasIRST && distanceKm <= 28.0);
+    const irstRange = scanner.hasIRST ? (scanner.irstRangeKm || 28.0) : 0.0;
+    const irstBurnThrough = Boolean(irstRange > 0 && distanceKm <= irstRange);
     const isEmcon = Boolean(scanner.emconTimer > 0);
 
     const detects = inCone && rangeKm > 0 && distanceKm <= rangeKm;

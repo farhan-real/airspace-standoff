@@ -59,7 +59,7 @@ window.WEAPONS_TARGETING_PODS = {
   },
   'AN-ASG-34': {
     id: 'AN-ASG-34', name: 'AN/ASG-34 Legion IRST + Laser Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type M',
-    mass: 230, cost: 1.8, rangeKm: 56.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    mass: 230, cost: 1.8, rangeKm: 56.0, damage: 0, isTargetingPod: true, grantsIRST: true, irstRangeKm: 32.0, airTrackSpeedMult: 1.35, a2aPkBonus: 0.05,
     a2gPkBonus: 0.20, spotRangeKm: 56.0, cloudMitigation: 0.35, exposesDecoys: true,
     trait: 'DUAL_AIR_GROUND_IRST', traitBadge: 'PASSIVE IRST + 56KM RECON',
     behaviorDesc: 'Combined passive air-to-air infrared tracker (IRST) and ground laser designator. Grants silent anti-stealth air tracking plus +20% A2G Pk and 56 km ground recon.',
@@ -68,20 +68,20 @@ window.WEAPONS_TARGETING_PODS = {
   },
   'PIRATE-IRST-POD': {
     id: 'PIRATE-IRST-POD', name: 'Skyward-G Passive IRST Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
-    mass: 110, cost: 0.9, rangeKm: 40.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    mass: 110, cost: 0.9, rangeKm: 40.0, damage: 0, isTargetingPod: true, grantsIRST: true, irstRangeKm: 30.0, airTrackSpeedMult: 1.25, a2aPkBonus: 0.04,
     a2gPkBonus: 0.08, spotRangeKm: 40.0, cloudMitigation: 0.15, exposesDecoys: true,
     trait: 'PASSIVE_IRST_POD', traitBadge: '1-SLOT PASSIVE IRST',
     behaviorDesc: 'Lightweight passive infrared air-to-air search pod. Enables silent anti-stealth and anti-notch tracking plus +8% A2G Pk and 40 km optical ground spotting.',
-    sigmaPylon: 0.03, category: 'POD', podGroup: 'RECON_IRST',
+    sigmaPylon: 0.03, category: 'POD', podGroup: 'AIR_COMBAT',
     desc: 'Compact 1-slot passive infrared tracking pod built for legacy 4th-Gen interceptors and light fighters.'
   },
   'IRST-21-POD': {
     id: 'IRST-21-POD', name: 'AN/ASG-34B IRST21 Air Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type M',
-    mass: 160, cost: 1.2, rangeKm: 50.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    mass: 160, cost: 1.2, rangeKm: 50.0, damage: 0, isTargetingPod: true, grantsIRST: true, irstRangeKm: 34.0, airTrackSpeedMult: 1.40, a2aPkBonus: 0.05,
     a2gPkBonus: 0.0, spotRangeKm: 32.0, cloudMitigation: 0.0, exposesDecoys: false,
     trait: 'PASSIVE_IRST_POD', traitBadge: 'LONG-WAVE AIR IRST',
     behaviorDesc: 'Dedicated passive infrared air-to-air sensor pod. Detects stealth fighters silently at 28 km burn-through and keeps tracking targets when they try to Doppler notch.',
-    sigmaPylon: 0.04, category: 'POD', podGroup: 'RECON_IRST',
+    sigmaPylon: 0.04, category: 'POD', podGroup: 'AIR_COMBAT',
     desc: 'Centerline IRST21 pod upgrading F/A-18E, F-15EX, and F-16V airframes with silent stealth tracking.'
   },
   'AN-ALQ-218-POD': {
@@ -101,5 +101,65 @@ window.WEAPONS_TARGETING_PODS = {
     behaviorDesc: 'Long-range ground-mapping radar and optical reconnaissance pod. Exposes hidden decoys and silent optical SHORAD out to 68 km while adding +14% A2G Pk and 30% cloud mitigation.',
     sigmaPylon: 0.08, category: 'POD', podGroup: 'RECON_IRST', a2gGroup: 'TARGETING_POD',
     desc: 'Long-range aerial recon pod (68 km) mapping enemy ground defenses and spotting radar decoys from safe distance.'
+  },
+  'OLS-35-POD': {
+    id: 'OLS-35-POD', name: 'OLS-35M Air Combat IRST Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
+    mass: 145, cost: 1.0, rangeKm: 36.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    irstRangeKm: 34.0, airTrackSpeedMult: 1.30, a2aPkBonus: 0.05,
+    a2gPkBonus: 0.06, spotRangeKm: 36.0, cloudMitigation: 0.12, exposesDecoys: true,
+    trait: 'AIR_COMBAT_IRST', traitBadge: '34KM IRST +5% A2A Pk',
+    behaviorDesc: 'Compact air-to-air optical/infrared tracker and laser rangefinder pod. Burns through stealth out to 34 km, speeds air classification by +30%, and adds +5% A2A lock Pk.',
+    sigmaPylon: 0.03, category: 'POD', podGroup: 'AIR_COMBAT',
+    desc: 'Affordable 1-slot air combat IRST pod for light and legacy fighters hunting stealth targets.'
+  },
+  'LITENING-AT-A2A': {
+    id: 'LITENING-AT-A2A', name: 'LITENING-5 Air-Combat EO Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type S',
+    mass: 190, cost: 1.2, rangeKm: 42.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    irstRangeKm: 30.0, airTrackSpeedMult: 1.45, a2aPkBonus: 0.06,
+    a2gPkBonus: 0.14, spotRangeKm: 42.0, cloudMitigation: 0.25, exposesDecoys: true,
+    trait: 'AIR_COMBAT_EO_ID', traitBadge: '+45% AIR ID & +6% A2A Pk',
+    behaviorDesc: 'Tactical air-to-air optical identification pod for Type S multirole pylons. Speeds target classification by +45%, adds 30 km passive IRST tracking, +6% A2A Pk, and +14% A2G Pk.',
+    sigmaPylon: 0.04, category: 'POD', podGroup: 'AIR_COMBAT', a2gGroup: 'TARGETING_POD',
+    desc: 'Dual-role air combat identification and precision optical pod tailored for agile multirole fighters.'
+  },
+  'SNIPER-ATP-A2A': {
+    id: 'SNIPER-ATP-A2A', name: 'AN/AAQ-33A Sniper Air-Track Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type M',
+    mass: 205, cost: 1.5, rangeKm: 52.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    irstRangeKm: 32.0, airTrackSpeedMult: 1.55, a2aPkBonus: 0.07,
+    a2gPkBonus: 0.16, spotRangeKm: 52.0, cloudMitigation: 0.35, exposesDecoys: true,
+    trait: 'AIR_COMBAT_TWS_OPTIC', traitBadge: '+55% AIR ID & +7% A2A Pk',
+    behaviorDesc: 'Long-range air-to-air optical recognition pod. Accelerates air track ID by +55%, provides 32 km passive IRST burn-through, +7% A2A Pk, and 52 km ground decoy spotting.',
+    sigmaPylon: 0.04, category: 'POD', podGroup: 'AIR_COMBAT', a2gGroup: 'TARGETING_POD',
+    desc: 'High-zoom air combat electro-optical tracker classifying distant bogeys and stale contacts rapidly.'
+  },
+  'LEGION-POD-BLK2': {
+    id: 'LEGION-POD-BLK2', name: 'Legion Block II Networked IRST Pod', slots: 1, slotType: 'EXTERNAL', minRating: 'Type M',
+    mass: 225, cost: 2.1, rangeKm: 46.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    irstRangeKm: 38.0, airTrackSpeedMult: 1.65, a2aPkBonus: 0.08, a2aEccmBonus: 0.20, grantsDatalinkRelay: true,
+    a2gPkBonus: 0.10, spotRangeKm: 46.0, cloudMitigation: 0.20, exposesDecoys: true,
+    trait: 'NETWORKED_AIR_IRST', traitBadge: '38KM IRST + RELAY +8% A2A',
+    behaviorDesc: 'Networked long-wave IRST pod with optical crosslink relay. Tracks stealth aircraft silently at 38 km, speeds ID by +65%, adds +8% A2A Pk, +20% ECCM, and boosts command datalink.',
+    sigmaPylon: 0.04, category: 'POD', podGroup: 'AIR_COMBAT',
+    desc: 'Next-gen networked air superiority IRST pod built to counter stealth and heavy ECM brackets.'
+  },
+  'EOTS-POD-VLO': {
+    id: 'EOTS-POD-VLO', name: 'Conformal EOTS-X Internal Air Sensor', slots: 1, slotType: 'INTERNAL', minRating: 'Type M',
+    mass: 175, cost: 2.3, rangeKm: 48.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    irstRangeKm: 36.0, airTrackSpeedMult: 1.70, a2aPkBonus: 0.09, a2aEccmBonus: 0.25,
+    a2gPkBonus: 0.12, spotRangeKm: 48.0, cloudMitigation: 0.30, exposesDecoys: true,
+    trait: 'INTERNAL_VLO_EOTS', traitBadge: 'INTERNAL 36KM IRST +9% A2A',
+    behaviorDesc: 'Flush internal-bay air combat EOTS sensor. Fits inside stealth weapon bays with near-zero RCS penalty, delivering 36 km IRST stealth tracking, +70% ID speed, +9% A2A Pk, and +25% ECCM.',
+    sigmaPylon: 0.015, category: 'POD', podGroup: 'AIR_COMBAT',
+    desc: 'VLO internal-bay air combat sensor module giving stealth airframes long-range passive optical tracking.'
+  },
+  'COBRA-STARE-360': {
+    id: 'COBRA-STARE-360', name: 'Cobra-Stare 360 Optical Combat Pod', slots: 2, slotType: 'EXTERNAL', minRating: 'Type H',
+    mass: 340, cost: 2.6, rangeKm: 44.0, damage: 0, isTargetingPod: true, grantsIRST: true,
+    irstRangeKm: 42.0, airTrackSpeedMult: 1.85, a2aPkBonus: 0.10, a2aEccmBonus: 0.30, grantsDatalinkRelay: true, a2aEvasionBonus: 0.08,
+    a2gPkBonus: 0.08, spotRangeKm: 44.0, cloudMitigation: 0.25, exposesDecoys: true,
+    trait: 'WIDE_APERTURE_AIR_POD', traitBadge: '42KM IRST +10% A2A +8% DODGE',
+    behaviorDesc: 'Heavy 2-slot wide-aperture optical combat pod. Delivers 42 km passive stealth burn-through, +85% air ID speed, +10% A2A Pk, +30% ECCM, datalink relay, and +8% missile-approach dodge.',
+    sigmaPylon: 0.06, category: 'POD', podGroup: 'AIR_COMBAT',
+    desc: 'Heavy air-dominance optical suite converting heavy interceptors into long-reach stealth hunters.'
   }
 };

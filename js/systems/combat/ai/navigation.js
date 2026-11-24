@@ -87,7 +87,7 @@ class AINavigationHandler {
     return null;
   }
 
-  static handleNavigation(aiCommander, hostile, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused, airDoctrine, atkDoctrine) {
+  static handleNavigation(aiCommander, hostile, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused, airDoctrine, atkDoctrine, untrackedAirContacts = [], allMissiles = []) {
     if (!hostile || hostile.activeManeuverTimer > 0 || hostile.hp <= 0.05) return;
 
     if (hostile.isRTB) {
@@ -151,7 +151,18 @@ class AINavigationHandler {
     const docMove = this.getDoctrineSteering(aiCommander.game, hostile, target, dist, airDoctrine, atkDoctrine);
     const throttleBias = airDoctrine ? airDoctrine.throttleBias : 0.0;
 
+    const trackOrder = aiCommander.planning.getTrackAcquisitionVector(hostile, candidateAirTargets, untrackedAirContacts, allMissiles, diffKey);
     if (!target) {
+      if (trackOrder) {
+        hostile.radarLockedTarget = trackOrder.target;
+        let tDiff = trackOrder.heading - hostile.heading;
+        while (tDiff < -Math.PI) tDiff += Math.PI * 2;
+        while (tDiff > Math.PI) tDiff -= Math.PI * 2;
+        const turnCapSearch = hostile.getEffectiveAgility() * tier.turnMult * (isFocused ? 1.0 : 0.72);
+        hostile.heading += Math.max(-turnCapSearch * dt, Math.min(turnCapSearch * dt, tDiff));
+        hostile.engineAlpha = Math.max(0.25, Math.min(1.0, trackOrder.throttle + throttleBias));
+        return;
+      }
       let idleHeading = Math.PI;
       if (docMove) idleHeading = docMove.heading;
       else if (wingmanOffset) idleHeading = Math.atan2(wingmanOffset.y - hostile.y, wingmanOffset.x - hostile.x);
@@ -162,12 +173,18 @@ class AINavigationHandler {
       hostile.engineAlpha = Math.max(0.25, Math.min(1.0, (docMove ? docMove.throttle : tier.throttle) + throttleBias));
       return;
     }
+    if (trackOrder && trackOrder.reason === 'F-POLE MIDCOURSE SUPPORT') {
+      target = trackOrder.target;
+    }
 
     hostile.radarLockedTarget = target;
     let desiredHeading = Math.atan2(target.y - hostile.y, target.x - hostile.x);
     let desiredThrottle = tier.throttle;
 
-    if (docMove) {
+    if (trackOrder && trackOrder.reason === 'F-POLE MIDCOURSE SUPPORT') {
+      desiredHeading = trackOrder.heading;
+      desiredThrottle = trackOrder.throttle;
+    } else if (docMove) {
       desiredHeading = docMove.heading;
       desiredThrottle = docMove.throttle;
     } else if (role === 'SNIPER' && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {

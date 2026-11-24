@@ -95,7 +95,7 @@ class AIEvasionHandler {
     hostile.isNotching = false;
   }
 
-  static coordinateAceTactics(aiCommander, aces, candidateTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt, airDoctrine = null, atkDoctrine = null) {
+  static coordinateAceTactics(aiCommander, aces, candidateTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt, airDoctrine = null, atkDoctrine = null, untrackedContacts = []) {
     if (!aces || aces.length === 0) return;
     const game = aiCommander.game;
     const aceProf = (window.AI_ACE_PROFILES && window.AI_ACE_PROFILES[diffKey]);
@@ -143,6 +143,18 @@ class AIEvasionHandler {
         const targetsForAce = (isStrikeAce && visibleBunkers.length > 0) ? visibleBunkers.concat(candidateTargets) : candidateTargets;
         const acePlan = AIMissileTactics.selectAceTargetAndSalvo(ace, targetsForAce, clouds, allMissiles, diffKey, mergedAceProfile, airDoctrine);
 
+        if ((!acePlan || !acePlan.target) && untrackedContacts && untrackedContacts.length > 0) {
+          const trackOrder = aiCommander.planning.getTrackAcquisitionVector(ace, candidateTargets, untrackedContacts, allMissiles, diffKey);
+          if (trackOrder && trackOrder.target) {
+            ace.radarLockedTarget = trackOrder.target;
+            let tDiff = trackOrder.heading - ace.heading;
+            while (tDiff < -Math.PI) tDiff += Math.PI * 2;
+            while (tDiff > Math.PI) tDiff -= Math.PI * 2;
+            const aceAgi = ace.getEffectiveAgility();
+            ace.heading += Math.max(-aceAgi * 1.1 * dt, Math.min(aceAgi * 1.1 * dt, tDiff));
+            ace.engineAlpha = Math.max(0.25, Math.min(1.0, trackOrder.throttle));
+          }
+        }
         if (acePlan && acePlan.target) {
           const tgt = acePlan.target;
           ace.radarLockedTarget = tgt;

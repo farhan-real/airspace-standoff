@@ -3,18 +3,128 @@
  */
 
 class MissileGuidanceSystem {
+  static initSeekerProfile(missile) {
+    const w = missile.weapon || {};
+    const seeker = w.seeker || 'ARH';
+    const range = w.rangeKm || 40.0;
+    const trait = w.trait || '';
+    let baseSeeker = 18.0;
+    let coneDeg = 110;
+
+    if (typeof w.seekerRangeKm === 'number') {
+      baseSeeker = w.seekerRangeKm;
+    } else if (seeker === 'ARH') {
+      if (w.category === 'SAM') baseSeeker = Math.min(26.0, Math.max(12.0, range * 0.25));
+      else baseSeeker = Math.min(30.0, Math.max(15.0, range * 0.24));
+      if (trait === 'AESA_ANTI_NOTCH' || trait === 'STEALTH_SEEKER') baseSeeker = Math.min(32.0, baseSeeker + 3.0);
+    } else if (seeker === 'IIR' || seeker === 'EO' || seeker === 'OPT') {
+      if (trait === 'REAR_ENGAGE' || trait === 'ALL_ASPECT_BURST') coneDeg = 360;
+      else coneDeg = 120;
+      baseSeeker = (w.category === 'A2G') ? 16.0 : Math.min(26.0, Math.max(12.0, range * 0.42));
+    } else if (seeker === 'PASSIVE_RADAR') {
+      baseSeeker = Math.min(range, 48.0);
+      coneDeg = 120;
+    } else if (seeker === 'INS') {
+      baseSeeker = 18.0;
+    } else if (seeker === 'MMW' || seeker === 'MMW_IIR') {
+      baseSeeker = 18.0;
+    } else if (seeker === 'LASER') {
+      baseSeeker = 12.0;
+    } else if (seeker === 'GPS_INS' || seeker === 'UNGUIDED') {
+      baseSeeker = range;
+      coneDeg = 360;
+    }
+
+    missile.seekerRangeKm = baseSeeker;
+    missile.effectiveSeekerRangeKm = baseSeeker;
+    missile.seekerConeDeg = coneDeg;
+  }
+
+  static getEffectiveSeekerRange(missile, tgt, weatherClouds) {
+    const w = missile.weapon || {};
+    const seeker = w.seeker || 'ARH';
+    const base = missile.seekerRangeKm || 18.0;
+
+    if (seeker === 'GPS_INS' || seeker === 'UNGUIDED') return base;
+
+    if (seeker === 'ARH') {
+      const tgtRcs = (tgt.effectiveRcs !== undefined) ? tgt.effectiveRcs : ((tgt.spec && tgt.spec.sigma_0) || 1.0);
+      const rcsScale = Math.max(0.58, Math.min(1.22, Math.pow(Math.max(0.0005, tgtRcs), 0.14)));
+      const jamVal = tgt.jamEfficiency || 0;
+      const jamFactor = jamVal > 0 ? Math.max(0.68, 1.0 - jamVal * 0.25 * (1.0 - (w.antiNotchBonus || 0))) : 1.0;
+      return base * rcsScale * jamFactor;
+    }
+
+    if (seeker === 'IIR' || seeker === 'EO' || seeker === 'OPT') {
+      const thermal = Number(tgt.thermalBloom !== undefined ? tgt.thermalBloom : 1.0);
+      const thermalScale = Math.max(0.80, Math.min(1.25, 0.85 + thermal * 0.15));
+      const clouds = weatherClouds || [];
+      const cloudHits = (typeof Physics !== 'undefined' && clouds.length > 0)
+        ? Physics.countIntersectingClouds(missile.x, missile.y, tgt.x, tgt.y, clouds) : 0;
+      const cloudFactor = cloudHits > 0 ? Math.max(0.60, 1.0 - cloudHits * 0.14) : 1.0;
+      return base * thermalScale * cloudFactor;
+    }
+
+    if (seeker === 'PASSIVE_RADAR') {
+      const isEmitting = tgt.type
+        ? (Boolean(tgt.isEmitter) && !(tgt.emconTimer > 0))
+        : (Boolean(tgt.jamEfficiency > 0) || Boolean(tgt.spec && tgt.spec.R_0 > 0));
+      if (isEmitting) return base;
+      return w.antiEmcon ? 12.0 : 0.0;
+    }
+
+    return base;
+  }
+
+  static hasFriendlyMidcourseSupport(missile, tgt) {
+    const game = window.Game;
+    if (!game || game.playerMode === '2P') return true;
+    if (!tgt) return false;
+    const team = missile.team;
+    const w = missile.weapon || {};
+
+    if (w.seeker === 'GPS_INS' || w.seeker === 'UNGUIDED') return true;
+
+    const isSurface = (typeof SurfaceUnit !== 'undefined' && tgt instanceof SurfaceUnit) || Boolean(tgt.type && !tgt.spec && !tgt.isCivilian);
+    if (isSurface) {
+      if (w.seeker === 'LASER') {
+        const allies = (team === 'friendly') ? (game.alliedAircraft || []) : (game.hostileAircraft || []);
+        for (let i = 0; i < allies.length; i++) {
+          const a = allies[i];
+          if (!a || a.hp <= 0.05) continue;
+          const tgpReach = Math.max(24.0, a.targetingSpotRangeKm || (a.hasIRST ? 30.0 : 0.0));
+          if (Math.hypot(tgt.x - a.x, tgt.y - a.y) <= tgpReach) return true;
+        }
+        return false;
+      }
+      return Boolean(team === 'hostile' || tgt.isRevealedToBlue || tgt.identifiedByBlue);
+    }
+
+    if (tgt.isDecoyDrone || tgt.isGhost || tgt.isCivilian) {
+      return (team === 'friendly')
+        ? Boolean(game.detectedByBlue && game.detectedByBlue.has(tgt.id))
+        : Boolean(game.detectedByRed && game.detectedByRed.has(tgt.id));
+    }
+
+    if (team === 'friendly') {
+      return Boolean(tgt.activelyTrackedByBlue || tgt._inSensorRange || (game.simulation && game.simulation._satelliteUplinkAnnouncedBlue));
+    }
+    return Boolean(tgt.activelyTrackedByRed || tgt._inRedSensor);
+  }
+
   static computeGuidance(missile, dt) {
     const tgt = missile.target;
     if (!tgt || typeof tgt.x !== 'number' || typeof tgt.y !== 'number') {
       throw new Error(`Missile "${missile.id}" has invalid target coordinates in computeGuidance.`);
     }
 
-    const dx = tgt.x - missile.x;
-    const dy = tgt.y - missile.y;
-    const dist = Math.hypot(dx, dy);
+    const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
+    const realDx = tgt.x - missile.x;
+    const realDy = tgt.y - missile.y;
+    const realDist = Math.hypot(realDx, realDy);
 
-    missile.distanceToTarget = dist;
-    missile.minDistanceReached = Math.min(missile.minDistanceReached, dist);
+    missile.distanceToTarget = realDist;
+    missile.minDistanceReached = Math.min(missile.minDistanceReached, realDist);
 
     const isStationaryTarget = (typeof SurfaceUnit !== 'undefined' && tgt instanceof SurfaceUnit) ||
       Boolean(tgt.type && !tgt.spec && !tgt.isCivilian);
@@ -29,26 +139,83 @@ class MissileGuidanceSystem {
       tgtHdg = (typeof tgt.heading === 'number' && !isNaN(tgt.heading)) ? tgt.heading : 0.0;
     }
 
+    const effSeekerRange = this.getEffectiveSeekerRange(missile, tgt, clouds);
+    missile.effectiveSeekerRangeKm = effSeekerRange;
+
+    const halfConeRad = ((missile.seekerConeDeg || 110) / 2.0) * (Math.PI / 180.0);
+    let seekerAngleDiff = Math.abs(Math.atan2(realDy, realDx) - (missile.heading || 0));
+    while (seekerAngleDiff > Math.PI) seekerAngleDiff = Math.abs(seekerAngleDiff - Math.PI * 2);
+
+    const ownSeekerTracks = (effSeekerRange > 0) && (realDist <= effSeekerRange) && (seekerAngleDiff <= halfConeRad);
+    const midcourseActive = this.hasFriendlyMidcourseSupport(missile, tgt);
+
+    missile.hasOwnSeekerLock = ownSeekerTracks;
+    missile.hasMidcourseDatalink = midcourseActive;
+
+    const realVtx = Math.cos(tgtHdg) * (tgtSpeedMach * 0.35);
+    const realVty = Math.sin(tgtHdg) * (tgtSpeedMach * 0.35);
+
+    let guideX = tgt.x;
+    let guideY = tgt.y;
+    let guideVx = realVtx;
+    let guideVy = realVty;
+    let guideSpeedMach = tgtSpeedMach;
+    let guideHdg = tgtHdg;
+
+    if (ownSeekerTracks) {
+      missile.guidanceMode = 'ACTIVE_SEEKER';
+      missile.inertialCoastTime = 0.0;
+      missile.lastKnownTargetX = tgt.x;
+      missile.lastKnownTargetY = tgt.y;
+      missile.lastKnownTargetVx = realVtx;
+      missile.lastKnownTargetVy = realVty;
+    } else if (midcourseActive) {
+      missile.guidanceMode = 'MIDCOURSE';
+      missile.inertialCoastTime = 0.0;
+      missile.lastKnownTargetX = tgt.x;
+      missile.lastKnownTargetY = tgt.y;
+      missile.lastKnownTargetVx = realVtx;
+      missile.lastKnownTargetVy = realVty;
+    } else {
+      missile.guidanceMode = 'COAST_INERTIAL';
+      missile.inertialCoastTime = (missile.inertialCoastTime || 0.0) + dt;
+      missile.lastKnownTargetX = (missile.lastKnownTargetX !== undefined ? missile.lastKnownTargetX : tgt.x) + (missile.lastKnownTargetVx || 0) * dt;
+      missile.lastKnownTargetY = (missile.lastKnownTargetY !== undefined ? missile.lastKnownTargetY : tgt.y) + (missile.lastKnownTargetVy || 0) * dt;
+      guideX = missile.lastKnownTargetX;
+      guideY = missile.lastKnownTargetY;
+      guideVx = missile.lastKnownTargetVx || 0;
+      guideVy = missile.lastKnownTargetVy || 0;
+      const gSpdKm = Math.hypot(guideVx, guideVy);
+      guideSpeedMach = gSpdKm / 0.35;
+      guideHdg = gSpdKm > 0.001 ? Math.atan2(guideVy, guideVx) : tgtHdg;
+      const distToPredicted = Math.hypot(guideX - missile.x, guideY - missile.y);
+      if ((distToPredicted <= 1.2 || missile.inertialCoastTime >= 11.0) && !ownSeekerTracks) {
+        missile.triggerLostTrack('MIDCOURSE DATALINK LOST');
+        return;
+      }
+    }
+
+    const dx = guideX - missile.x;
+    const dy = guideY - missile.y;
+    const dist = Math.hypot(dx, dy);
+
     const vm = Math.max(0.15, missile.speed * 0.35);
-    const tgtSpeedKm = tgtSpeedMach * 0.35;
-    const vtx = Math.cos(tgtHdg) * tgtSpeedKm;
-    const vty = Math.sin(tgtHdg) * tgtSpeedKm;
     const vmx = Math.cos(missile.heading) * vm;
     const vmy = Math.sin(missile.heading) * vm;
-    const vrx = vtx - vmx;
-    const vry = vty - vmy;
+    const vrx = guideVx - vmx;
+    const vry = guideVy - vmy;
 
     const safeDist = Math.max(1.2, dist);
     const losRate = (dx * vry - dy * vrx) / (safeDist * safeDist);
     const closingVel = -((dx * vrx + dy * vry) / Math.max(0.1, dist));
 
-    if (!missile.hasStartedClosing && (closingVel > 0.05 || dist < missile.prevDistanceToTarget)) {
+    if (!missile.hasStartedClosing && (closingVel > 0.05 || realDist < missile.prevDistanceToTarget)) {
       missile.hasStartedClosing = true;
     }
 
-    const desiredLead = isStationaryTarget
+    const desiredLead = (isStationaryTarget || missile.guidanceMode === 'COAST_INERTIAL')
       ? Math.atan2(dy, dx)
-      : Physics.calcLeadInterceptAngle(missile.x, missile.y, missile.speed, tgt.x, tgt.y, tgtHdg, tgtSpeedMach);
+      : Physics.calcLeadInterceptAngle(missile.x, missile.y, missile.speed, guideX, guideY, guideHdg, guideSpeedMach);
 
     let leadDiff = desiredLead - missile.heading;
     while (leadDiff < -Math.PI) leadDiff += Math.PI * 2;
@@ -102,6 +269,9 @@ class MissileGuidanceSystem {
       }
     }
 
+    if (!missile.hasOwnSeekerLock && missile.guidanceMode === 'COAST_INERTIAL') {
+      return { shouldTrigger: false };
+    }
     if (missile.hasStartedClosing && missile.minDistanceReached <= 2.0 && missile.cumulativeTurn > Math.PI * 3.0 && missile.age > 3.0) {
       return { shouldTrigger: true, isHitCandidate: false, isOvershoot: true };
     }
@@ -189,7 +359,8 @@ class MissileGuidanceSystem {
     const agilityDefenseBonus = (targetAgility - 0.85) * 0.12;
     const turnOptBonus = (turnOptEff - 0.70) * 0.10;
 
-    const rawProb = (basePk * aspectScore * kineticRetention) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + thermalModifier + hojBonus + heavyBonus + energyDeficitBonus - weatherPenalty - energyTurnPenalty;
+    const a2aTgpBonus = missile.launchA2aTgpBonus || 0.0;
+    const rawProb = (basePk * aspectScore * kineticRetention) - effectiveDefense - agilityDefenseBonus - turnOptBonus + salvoBonus + mixedSynergyBonus + thermalModifier + hojBonus + heavyBonus + energyDeficitBonus + a2aTgpBonus - weatherPenalty - energyTurnPenalty;
     const probability = Math.max(0.0, Math.min(0.95, rawProb));
 
     return {

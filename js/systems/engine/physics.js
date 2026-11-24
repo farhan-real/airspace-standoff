@@ -137,7 +137,10 @@ const Physics = {
       return { pk: 0, label: 'NO TARGET', color: '#64748b', arrow: '--', desc: 'Select target', salvoCount: 0, hasMixedSeekers: false };
     }
     if (weapon.isJammerPod) return { pk: 0, label: 'ACTIVE ECM', color: '#38bdf8', arrow: '--', desc: `Jamming active (${Math.round(weapon.jamEfficiency * 100)}%)`, salvoCount: 0, hasMixedSeekers: false };
-    if (weapon.isTargetingPod) return { pk: 0, label: 'ACTIVE TGP', color: '#00f5a0', arrow: '--', desc: `Recon ${weapon.spotRangeKm}km (+${Math.round(weapon.a2gPkBonus * 100)}% A2G Pk)`, salvoCount: 0, hasMixedSeekers: false };
+    if (weapon.isTargetingPod) {
+      const podDesc = weapon.a2aPkBonus > 0 ? `IRST ${weapon.irstRangeKm || 28}km (+${Math.round(weapon.a2aPkBonus * 100)}% A2A Pk)` : `Recon ${weapon.spotRangeKm}km (+${Math.round((weapon.a2gPkBonus || 0) * 100)}% A2G Pk)`;
+      return { pk: 0, label: 'ACTIVE TGP', color: '#00f5a0', arrow: '--', desc: podDesc, salvoCount: 0, hasMixedSeekers: false };
+    }
     if (weapon.isDecoy || weapon.isDecoyDrone) return { pk: 100, label: 'DEFENSIVE', color: '#c084fc', arrow: '--', desc: weapon.isDecoyDrone ? 'MALD spoof drone' : 'FOTD decoy', salvoCount: 0, hasMixedSeekers: false };
 
     const isAcAttacker = (typeof Aircraft !== 'undefined' && attacker instanceof Aircraft);
@@ -245,7 +248,8 @@ const Physics = {
     const hojTargetActive = Boolean(target.jamEfficiency > 0 || (target.spec && (target.spec.isEW || target.spec.category === 'EW' || target.spec.R_0 >= 90)));
     const hojAdd = (weapon.hojBonus > 0 && hojTargetActive) ? weapon.hojBonus : 0.0;
     const weatherPenalty = (weatherClouds && isOpticalSeeker && weatherClouds.some(c => c.containsPoint(target.x, target.y))) ? 0.12 : 0.0;
-    const basePk = weapon.T_0 * rangeScore * aspectScore - effectiveDefense + salvoBonus + thermalModifier + hojAdd - offBoresightPenalty - weatherPenalty;
+    const a2aTgpBonus = isAcAttacker ? (attacker.a2aPkBonus || 0) : 0.0;
+    const basePk = weapon.T_0 * rangeScore * aspectScore - effectiveDefense + salvoBonus + thermalModifier + hojAdd + a2aTgpBonus - offBoresightPenalty - weatherPenalty;
     const pkPercent = Math.round(Math.max(0, Math.min(95, basePk * 100)));
     const arrow = (aspectDiff > 1.8) ? '^' : 'v';
 

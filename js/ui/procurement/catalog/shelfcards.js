@@ -103,6 +103,7 @@ class ShelfCardBuilders {
 
     let typeBadge = '';
     if (wpn.grantsESM) typeBadge = '<span class="badge-category" style="color:#fbbf24;border-color:#d97706;">ELINT / ESM</span>';
+    else if (wpn.podGroup === 'AIR_COMBAT' || (wpn.grantsIRST && wpn.a2aPkBonus > 0)) typeBadge = '<span class="badge-category" style="color:#00f0ff;border-color:#0284c7;">A2A SENSOR POD</span>';
     else if (wpn.grantsIRST && wpn.a2gPkBonus <= 0) typeBadge = '<span class="badge-category" style="color:#00f0ff;border-color:#0284c7;">PASSIVE IRST</span>';
     else if (wpn.isTargetingPod) typeBadge = '<span class="badge-category" style="color:#00f5a0;border-color:#10b981;">TARGETING POD</span>';
     else if (wpn.isJammerPod) typeBadge = '<span class="badge-category" style="color:#38bdf8;border-color:#0284c7;">ECM JAMMER</span>';
@@ -128,8 +129,12 @@ class ShelfCardBuilders {
     if (wpn.grantsESM) {
       const rSpot = rate('spot_range', wpn.spotRangeKm);
       specsRow = `<div><span>ESM:</span><b class="${rSpot.colorClass}">${wpn.spotRangeKm}km</b></div><div><span>SEAD:</span><b class="stat-tier-1">+${Math.round((wpn.armRangeBoost - 1) * 100)}% ARM</b></div>`;
+    } else if (wpn.podGroup === 'AIR_COMBAT' || (wpn.grantsIRST && wpn.a2aPkBonus > 0)) {
+      const irstKm = wpn.irstRangeKm || 28;
+      const idPct = Math.round(((wpn.airTrackSpeedMult || 1.0) - 1.0) * 100);
+      specsRow = `<div><span>IRST:</span><b class="stat-tier-1">${irstKm}km BURN</b></div><div><span>A2A PK:</span><b class="stat-tier-1">+${Math.round((wpn.a2aPkBonus || 0) * 100)}% Pk</b></div><div><span>AIR ID:</span><b class="stat-tier-2">+${idPct}% SPD</b></div><div><span>RECON:</span><b class="stat-tier-2">${wpn.spotRangeKm || 30}km</b></div>`;
     } else if (wpn.grantsIRST && wpn.a2gPkBonus <= 0) {
-      specsRow = `<div><span>TRACK:</span><b class="stat-tier-1">PASSIVE IRST</b></div><div><span>STEALTH:</span><b class="stat-tier-1">28km BURN</b></div>`;
+      specsRow = `<div><span>TRACK:</span><b class="stat-tier-1">PASSIVE IRST</b></div><div><span>STEALTH:</span><b class="stat-tier-1">${wpn.irstRangeKm || 28}km BURN</b></div>`;
     } else if (wpn.isTargetingPod) {
       const rSpot = rate('spot_range', wpn.spotRangeKm);
       const rPk = rate('a2g_pk_bonus', wpn.a2gPkBonus);

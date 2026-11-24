@@ -94,13 +94,19 @@ window.MANUAL_SENSORS = [
           </div>
         </div>
       </div>
+      <div class="ge-card" style="border-left:3px solid #fb7185;margin-top:8px;">
+        <b style="color:#fb7185;">PHASE 3: RADAR CONTACT DECAY &amp; ID'D [NO TRACK] (STALE)</b>
+        <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+          If a positively identified hostile leaves every friendly radar cone and IRST reach, its active track enters a <b>4.5-second decay countdown</b> (<code>[DECAY]</code>). Once the timer expires, it transitions to <b>ID'D [NO TRACK]</b> (dashed coral diamond): its live theater position remains visible so nothing vanishes unfairly, but aircraft details (model, callsign, HP, Ace status) are hidden just like a bogey. You <b>cannot fire guided weapons at stale contacts</b> until a friendly radar or IRST re-illuminates them (fast <b>1.8s</b> re-acquisition).
+        </div>
+      </div>
 
       <div class="ge-subhead">2. SCANNING SPEED &amp; OPTICAL CAMERAS</div>
       <div class="ge-card">
         <ul style="list-style:none;padding-left:0;font-size:0.72rem;line-height:1.6;color:#cbd5e1;">
           <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Standard Identification Time:</b> Standard fighters take about <b>5.5 seconds</b> of steady radar tracking to identify. Stealth aircraft take about <b>11.0 seconds</b> because their shape deflects radar signals.</li>
           <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Close-Range Identification:</b> Closing within <b>18.0 km</b> burns through enemy radar jammers and identifies targets rapidly.</li>
-          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Optical IRST Cameras:</b> Aircraft equipped with optical IRST sensors (or IRST pods) can silently identify stealth targets from <b>28.0 km</b> away, completely ignoring RF radar jammers.</li>
+          <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Optical IRST &amp; Air Combat Sensor Pods:</b> Built-in IRST sensors identify stealth targets silently at <b>28.0 km</b>, while dedicated Air Combat Targeting Pods (OLS-35M, LITENING-5 A2A, Sniper Air-Track, Legion Block II, Internal EOTS-X, Cobra-Stare 360) extend stealth burn-through to <b>30.0 to 42.0 km</b>, accelerate classification up to <b>+85%</b>, and add up to <b>+10% A2A Pk</b>.</li>
           <li><img src="icons/chevron.svg" width="8" height="8" alt=">" class="manual-chevron-ico"> <b>Two-Player Mode:</b> In Two-Player Skirmish, both commanders engage with identical cloned rosters (same airframes, guns, weapons, and upgrades) deployed in randomized formation orders for competitive parity, and all aircraft are identified from the start.</li>
         </ul>
       </div>

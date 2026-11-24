@@ -86,6 +86,8 @@ class RadarCombatRenderer {
       const tx = cam.toScreenX ? cam.toScreenX(tgt.x) : cam.toScreen(tgt.x, tgt.y).x;
       const ty = cam.toScreenY ? cam.toScreenY(tgt.y) : cam.toScreen(tgt.x, tgt.y).y;
       let friendlyCount = 0, enemyCount = 0;
+      let friendlyLostGuid = 0, enemyLostGuid = 0;
+      let farthestOwnMsl = null, farthestOwnDist = -1;
 
       for (let mIdx = 0; mIdx < group.missiles.length; mIdx++) {
         const m = group.missiles[mIdx];
@@ -99,17 +101,104 @@ class RadarCombatRenderer {
         ctx.beginPath();
         ctx.moveTo(pMx, pMy);
         ctx.lineTo(tx, ty);
-        ctx.strokeStyle = isOwn ? '#38bdf8' : '#fb7185';
-        ctx.setLineDash(isOwn ? [3, 3] : [2, 4]);
+        if (m.guidanceMode === 'COAST_INERTIAL') {
+          ctx.strokeStyle = isOwn ? 'rgba(245, 158, 11, 0.48)' : 'rgba(251, 146, 60, 0.42)';
+          ctx.setLineDash([2, 5]);
+        } else if (m.guidanceMode === 'ACTIVE_SEEKER') {
+          ctx.strokeStyle = isOwn ? 'rgba(0, 245, 160, 0.68)' : 'rgba(251, 113, 133, 0.68)';
+          ctx.setLineDash([4, 2]);
+        } else {
+          ctx.strokeStyle = isOwn ? '#38bdf8' : '#fb7185';
+          ctx.setLineDash(isOwn ? [3, 3] : [2, 4]);
+        }
         ctx.stroke();
 
-        if (isOwn) friendlyCount++; else enemyCount++;
+        if (isOwn) {
+          friendlyCount++;
+          if (m.guidanceMode === 'COAST_INERTIAL') friendlyLostGuid++;
+          const w = m.weapon || {};
+          const seekerKm = m.effectiveSeekerRangeKm || m.seekerRangeKm || 0;
+          if (seekerKm > 0 && w.seeker !== 'GPS_INS' && w.seeker !== 'UNGUIDED') {
+            const dKm = Math.hypot(tgt.x - m.x, tgt.y - m.y);
+            if (dKm > farthestOwnDist) {
+              farthestOwnDist = dKm;
+              farthestOwnMsl = m;
+            }
+          }
+        } else {
+          enemyCount++;
+          if (m.guidanceMode === 'COAST_INERTIAL') enemyLostGuid++;
+        }
       }
 
-      if (friendlyCount > 1 || enemyCount > 1) {
+      if (farthestOwnMsl && farthestOwnDist > 0.2) {
+        const seekerKm = farthestOwnMsl.effectiveSeekerRangeKm || farthestOwnMsl.seekerRangeKm || 0;
+        const ux = (tgt.x - farthestOwnMsl.x) / farthestOwnDist;
+        const uy = (tgt.y - farthestOwnMsl.y) / farthestOwnDist;
+        const reachKm = Math.min(farthestOwnDist, seekerKm);
+        const sxKm = farthestOwnMsl.x + ux * reachKm;
+        const syKm = farthestOwnMsl.y + uy * reachKm;
+        const pMx = cam.toScreenX ? cam.toScreenX(farthestOwnMsl.x) : cam.toScreen(farthestOwnMsl.x, farthestOwnMsl.y).x;
+        const pMy = cam.toScreenY ? cam.toScreenY(farthestOwnMsl.y) : cam.toScreen(farthestOwnMsl.x, farthestOwnMsl.y).y;
+        const pSx = cam.toScreenX ? cam.toScreenX(sxKm) : cam.toScreen(sxKm, syKm).x;
+        const pSy = cam.toScreenY ? cam.toScreenY(syKm) : cam.toScreen(sxKm, syKm).y;
+
+        ctx.save();
+        ctx.setLineDash([]);
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = farthestOwnMsl.hasOwnSeekerLock
+          ? 'rgba(0, 245, 160, 0.50)'
+          : (farthestOwnMsl.guidanceMode === 'COAST_INERTIAL' ? 'rgba(245, 158, 11, 0.42)' : 'rgba(0, 240, 255, 0.34)');
+        ctx.beginPath();
+        ctx.moveTo(pMx, pMy);
+        ctx.lineTo(pSx, pSy);
+        ctx.stroke();
+
+        const scrLen = Math.hypot(pSx - pMx, pSy - pMy);
+        if (scrLen > 4.0) {
+          const nx = -(pSy - pMy) / scrLen;
+          const ny = (pSx - pMx) / scrLen;
+          ctx.beginPath();
+          ctx.moveTo(pSx - nx * 3.5, pSy - ny * 3.5);
+          ctx.lineTo(pSx + nx * 3.5, pSy + ny * 3.5);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      if (friendlyCount > 1 || enemyCount > 1 || friendlyLostGuid > 0 || enemyLostGuid > 0) {
         ctx.font = '700 10.5px "JetBrains Mono", ui-monospace, monospace';
-        if (friendlyCount > 1) { ctx.fillStyle = '#38bdf8'; ctx.fillText('SALVO x' + friendlyCount, tx - 24, ty - 15); }
-        if (enemyCount > 1) { ctx.fillStyle = '#fb7185'; ctx.fillText('INBOUND x' + enemyCount, tx - 24, ty + (friendlyCount > 1 ? 24 : -15)); }
+        if (friendlyCount > 1) {
+          if (friendlyLostGuid === friendlyCount) {
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillText(`SALVO x${friendlyCount} [NO GUIDANCE]`, tx - 38, ty - 15);
+          } else if (friendlyLostGuid > 0) {
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillText(`SALVO x${friendlyCount} [${friendlyLostGuid} NO GUID]`, tx - 38, ty - 15);
+          } else {
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillText('SALVO x' + friendlyCount, tx - 24, ty - 15);
+          }
+        } else if (friendlyCount === 1 && friendlyLostGuid === 1) {
+          ctx.fillStyle = '#f59e0b';
+          ctx.fillText('NO GUIDANCE', tx - 28, ty - 15);
+        }
+        if (enemyCount > 1) {
+          const yOff = (friendlyCount > 0) ? 24 : -15;
+          if (enemyLostGuid === enemyCount) {
+            ctx.fillStyle = '#fb923c';
+            ctx.fillText(`INBOUND x${enemyCount} [NO GUIDANCE]`, tx - 38, ty + yOff);
+          } else if (enemyLostGuid > 0) {
+            ctx.fillStyle = '#fb923c';
+            ctx.fillText(`INBOUND x${enemyCount} [${enemyLostGuid} NO GUID]`, tx - 38, ty + yOff);
+          } else {
+            ctx.fillStyle = '#fb7185';
+            ctx.fillText('INBOUND x' + enemyCount, tx - 24, ty + yOff);
+          }
+        } else if (enemyCount === 1 && enemyLostGuid === 1) {
+          ctx.fillStyle = '#fb923c';
+          ctx.fillText('INBOUND [NO GUID]', tx - 32, ty + (friendlyCount > 0 ? 24 : -15));
+        }
       }
       group.missiles.length = 0;
     }
@@ -141,10 +230,15 @@ class RadarCombatRenderer {
       visItem.py = py;
       visibleCount++;
 
+      const isLostTrack = (m.state === 'LOST_TRACK');
+      const isInertialCoast = (!isLostTrack && m.guidanceMode === 'COAST_INERTIAL');
+
       if (m.trail && m.trail.length > 1) {
         ctx.save();
         ctx.lineWidth = 1.3;
-        ctx.strokeStyle = m.team === 'friendly' ? 'rgba(56, 189, 248, 0.65)' : 'rgba(251, 113, 133, 0.65)';
+        ctx.strokeStyle = isLostTrack
+          ? 'rgba(148, 163, 184, 0.35)'
+          : (isInertialCoast ? 'rgba(245, 158, 11, 0.50)' : (m.team === 'friendly' ? 'rgba(56, 189, 248, 0.65)' : 'rgba(251, 113, 133, 0.65)'));
         ctx.beginPath();
         for (let t = 0; t < m.trail.length; t++) {
           const pt = m.trail[t];
@@ -157,10 +251,11 @@ class RadarCombatRenderer {
         ctx.restore();
       }
 
-      const isPowered = (m.stage === 'BOOST' || m.stage === 'PULSE 2' || m.stage === 'RAMJET' || m.stage === 'SUSTAIN' || m.stage === 'DIVE');
+      const isPowered = !isLostTrack && (m.stage === 'BOOST' || m.stage === 'PULSE 2' || m.stage === 'RAMJET' || m.stage === 'SUSTAIN' || m.stage === 'DIVE');
 
       ctx.save();
       ctx.translate(px, py);
+      if (isLostTrack) ctx.globalAlpha = 0.62;
       ctx.rotate(m.heading || 0);
 
       if (isPowered) {
@@ -174,9 +269,9 @@ class RadarCombatRenderer {
         ctx.fill();
       }
 
-      const mColor = m.team === 'friendly' ? '#38bdf8' : '#fb7185';
+      const mColor = isLostTrack ? '#64748b' : (isInertialCoast ? '#f59e0b' : (m.team === 'friendly' ? '#38bdf8' : '#fb7185'));
       ctx.fillStyle = mColor;
-      ctx.strokeStyle = '#ffffff';
+      ctx.strokeStyle = isLostTrack ? '#f97316' : '#ffffff';
       ctx.lineWidth = 0.8;
       ctx.beginPath();
       ctx.moveTo(7.2, 0);
@@ -189,6 +284,26 @@ class RadarCombatRenderer {
       ctx.fill();
       ctx.stroke();
       ctx.restore();
+
+      if (isInertialCoast) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.78)';
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        ctx.arc(px, py, 8.5, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      } else if (isLostTrack) {
+        ctx.save();
+        ctx.strokeStyle = '#f97316';
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(px - 5, py - 5); ctx.lineTo(px + 5, py + 5);
+        ctx.moveTo(px + 5, py - 5); ctx.lineTo(px - 5, py + 5);
+        ctx.stroke();
+        ctx.restore();
+      }
     }
 
     if (visibleCount > 0) {
@@ -204,11 +319,12 @@ class RadarCombatRenderer {
         const distVal = Math.round(m.distanceToTarget || 0);
         const mSpeed = m.speed || 2.4;
         const mStage = m.stage || 'BOOST';
+        const guidStatus = (m.state === 'LOST_TRACK') ? 'LOST' : (m.guidanceMode === 'COAST_INERTIAL' ? 'INERTIAL' : 'GUIDED');
 
         let cluster = null;
         for (let c = 0; c < clusterCount; c++) {
           const cand = clPool[c];
-          if (cand.sourceId === sourceId && cand.weaponId === weaponId && cand.isBlue === isBlue && cand.isIdentified === isIdentified) {
+          if (cand.sourceId === sourceId && cand.weaponId === weaponId && cand.isBlue === isBlue && cand.isIdentified === isIdentified && cand.guidStatus === guidStatus) {
             const dx = cand.px - px, dy = cand.py - py;
             if (dx * dx + dy * dy < 34 * 34) { cluster = cand; break; }
           }
@@ -221,12 +337,13 @@ class RadarCombatRenderer {
         } else {
           let cl = clPool[clusterCount];
           if (!cl) {
-            cl = { sourceId: '', weaponId: '', weaponName: '', isBlue: false, isIdentified: false, count: 0, minDist: 0, speed: 0, stage: '', px: 0, py: 0 };
+            cl = { sourceId: '', weaponId: '', weaponName: '', isBlue: false, isIdentified: false, guidStatus: 'GUIDED', count: 0, minDist: 0, speed: 0, stage: '', px: 0, py: 0 };
             clPool[clusterCount] = cl;
           }
           cl.sourceId = sourceId; cl.weaponId = weaponId;
           cl.weaponName = (m.weapon && (m.weapon.id || m.weapon.name)) ? (m.weapon.id || m.weapon.name) : 'MSL';
-          cl.isBlue = isBlue; cl.isIdentified = isIdentified; cl.count = 1; cl.minDist = distVal; cl.speed = mSpeed; cl.stage = mStage; cl.px = px; cl.py = py;
+          cl.isBlue = isBlue; cl.isIdentified = isIdentified; cl.guidStatus = guidStatus;
+          cl.count = 1; cl.minDist = distVal; cl.speed = mSpeed; cl.stage = mStage; cl.px = px; cl.py = py;
           clusterCount++;
         }
       }
@@ -235,17 +352,24 @@ class RadarCombatRenderer {
       for (let c = 0; c < clusterCount; c++) {
         const cl = clPool[c];
         const countTag = cl.count > 1 ? ` x${cl.count}` : '';
-        const mslLabel = cl.isIdentified ? RadarRenderer.cleanText(cl.weaponName) : 'RADAR TRACK [?]';
+        const baseName = cl.isIdentified ? RadarRenderer.cleanText(cl.weaponName) : 'RADAR TRACK [?]';
+        const statusSuffix = cl.guidStatus === 'LOST' ? ' [LOST]' : (cl.guidStatus === 'INERTIAL' ? ' [NO GUID]' : '');
         const distTag = declutterMode ? '' : ` [${cl.minDist}km]`;
-        const speedTag = `M ${cl.speed.toFixed(1)} [${cl.stage}]`;
+        const speedTag = cl.guidStatus === 'LOST'
+          ? 'NO GUIDANCE'
+          : (cl.guidStatus === 'INERTIAL' ? `M ${cl.speed.toFixed(1)} [INERTIAL]` : `M ${cl.speed.toFixed(1)} [${cl.stage}]`);
 
         ctx.font = '700 10.5px "JetBrains Mono", ui-monospace, monospace';
-        ctx.fillStyle = cl.isBlue ? '#38bdf8' : (cl.isIdentified ? '#fb7185' : '#f97316');
-        ctx.fillText(RadarRenderer.cleanText(`${mslLabel}${countTag}`), cl.px + 9, cl.py - 5);
+        ctx.fillStyle = cl.guidStatus === 'LOST'
+          ? '#94a3b8'
+          : (cl.guidStatus === 'INERTIAL' ? '#fbbf24' : (cl.isBlue ? '#38bdf8' : (cl.isIdentified ? '#fb7185' : '#f97316')));
+        ctx.fillText(RadarRenderer.cleanText(`${baseName}${countTag}${statusSuffix}`), cl.px + 9, cl.py - 5);
 
         ctx.font = '600 9.5px "JetBrains Mono", ui-monospace, monospace';
-        ctx.fillStyle = cl.isBlue ? '#7dd3fc' : (cl.isIdentified ? '#fca5a5' : '#fed7aa');
-        ctx.fillText(RadarRenderer.cleanText(`${speedTag}${distTag}`), cl.px + 9, cl.py + 7);
+        ctx.fillStyle = cl.guidStatus === 'LOST'
+          ? '#f97316'
+          : (cl.guidStatus === 'INERTIAL' ? '#fde68a' : (cl.isBlue ? '#7dd3fc' : (cl.isIdentified ? '#fca5a5' : '#fed7aa')));
+        ctx.fillText(RadarRenderer.cleanText(`${speedTag}${cl.guidStatus === 'LOST' ? '' : distTag}`), cl.px + 9, cl.py + 7);
       }
       ctx.restore();
 
@@ -272,13 +396,14 @@ class RadarCombatRenderer {
     const px = cam.toScreenX ? cam.toScreenX(target.x) : cam.toScreen(target.x, target.y).x;
     const py = cam.toScreenY ? cam.toScreenY(target.y) : cam.toScreen(target.x, target.y).y;
     const commanderTeam = (window.Game && window.Game.currentPvpCommander) || 'friendly';
-    const isKnown = (target.team === commanderTeam) ||
-      (typeof target.isIdentifiedBy === 'function' ? target.isIdentifiedBy(commanderTeam) : target.isIdentified);
+    const trackState = (target.team === commanderTeam) ? 'TRACKED' : (typeof target.getTrackState === 'function' ? target.getTrackState(commanderTeam) : ((typeof target.isIdentifiedBy === 'function' ? target.isIdentifiedBy(commanderTeam) : target.isIdentified) ? 'TRACKED' : 'BOGEY'));
+    const isKnown = (trackState === 'TRACKED' || trackState === 'DECAYING');
+    const isStale = (trackState === 'STALE');
     const isHostile = target.team === 'hostile';
     const isAce = Boolean(target.isAce);
 
     ctx.save();
-    let reticleColor = '#f97316';
+    let reticleColor = isStale ? '#fb7185' : '#f97316';
     if (isKnown) {
       if (isAce) reticleColor = '#ffd700';
       else if (isHostile) reticleColor = '#ef4444';

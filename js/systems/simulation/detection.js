@@ -15,6 +15,8 @@ class SimulationDetectionSystem {
 
   update(dt) {
     const baseAirIdTime = window.CONFIG.RADAR_IDENTIFY_BASE_SEC;
+    const reacquireIdTime = window.CONFIG.RADAR_REACQUIRE_BASE_SEC;
+    const trackDecayMax = window.CONFIG.RADAR_TRACK_DECAY_SEC;
     const baseMslIdTime = window.CONFIG.MISSILE_IDENTIFY_BASE_SEC;
     const stealthMult = window.CONFIG.STEALTH_IDENTIFY_PENALTY_MULT;
     const uplinkThreshold = window.CONFIG.UPLINK_THRESHOLD_FIGHTERS;
@@ -49,14 +51,23 @@ class SimulationDetectionSystem {
         let inSensorRange = false, highestProgressRate = 0.0, isImmediateBurnThrough = false;
         for (let j = 0; j < blueSensors.length; j++) {
           const sensor = blueSensors[j];
+          const dx = h.x - sensor.x, dy = h.y - sensor.y;
+          const dist = Math.hypot(dx, dy);
           const maxDist = Physics.getRadarMaxDetectionRange(sensor, h, this.sim.weatherClouds);
-          if (maxDist <= 0.0) continue;
-          const dist = Math.hypot(h.x - sensor.x, h.y - sensor.y);
-          if (dist <= maxDist) {
+          let irstDetects = false;
+          const sensorIrstRange = sensor.hasIRST ? (sensor.irstRangeKm || 28.0) : 0.0;
+          if (sensorIrstRange > 0 && dist <= sensorIrstRange) {
+            const halfCone = (((sensor.spec && sensor.spec.radarConeDeg) ? sensor.spec.radarConeDeg : 140) / 2.0) * (Math.PI / 180.0);
+            let angleDiff = Math.abs((sensor.heading || 0) - Math.atan2(dy, dx));
+            while (angleDiff > Math.PI) angleDiff = Math.abs(angleDiff - Math.PI * 2);
+            if (angleDiff <= Math.max(halfCone, 1.15)) irstDetects = true;
+          }
+          if ((maxDist > 0.0 && dist <= maxDist) || irstDetects) {
             inSensorRange = true;
-            if (dist <= 18.0 || (sensor.hasIRST && dist <= 28.0)) isImmediateBurnThrough = true;
+            if (dist <= 18.0 || irstDetects) isImmediateBurnThrough = true;
             const idSpeed = (typeof sensor.radarIdentifySpeed === 'number') ? sensor.radarIdentifySpeed : 1.0;
-            const rate = idSpeed * Math.max(0.20, 1.0 - (dist / maxDist));
+            const effRange = Math.max(maxDist, sensorIrstRange, 1.0);
+            const rate = idSpeed * Math.max(0.25, 1.0 - (dist / effRange) * 0.85);
             if (rate > highestProgressRate) highestProgressRate = rate;
           }
         }
@@ -66,19 +77,30 @@ class SimulationDetectionSystem {
       }
 
       if (h._inSensorRange) {
+        h.activelyTrackedByBlue = true;
         if (!h.firstDetectedTime) h.firstDetectedTime = this.sim.getElapsedTimeString();
         const isStealth = Boolean(h.spec && (h.spec.sigma_0 <= 0.01 || h.spec.category === 'STEALTH'));
-        const requiredTime = isStealth ? (baseAirIdTime * stealthMult) : baseAirIdTime;
+        const requiredTime = h.everIdentifiedByBlue
+          ? (isStealth ? reacquireIdTime * 1.4 : reacquireIdTime)
+          : (isStealth ? (baseAirIdTime * stealthMult) : baseAirIdTime);
         h.trackDurationBlue += h._burnThrough ? (dt * 3.0) : (dt * Math.max(0.25, h._identifyRate));
-        if (h.trackDurationBlue >= requiredTime || (h._burnThrough && h.trackDurationBlue >= 1.5)) {
+        if (h.identifiedByBlue) {
+          h.trackDecayBlue = trackDecayMax;
+        } else if (h.trackDurationBlue >= requiredTime || (h._burnThrough && h.trackDurationBlue >= (h.everIdentifiedByBlue ? 0.6 : 1.5))) {
           h.identifiedByBlue = true;
-          h.isIdentified = true;
+          h.everIdentifiedByBlue = true;
+          h.trackDecayBlue = trackDecayMax;
         }
       } else {
-        h.trackDurationBlue = Math.max(0.0, h.trackDurationBlue - dt * 0.25);
-        if (h.trackDurationBlue <= 0.0 && !isUplinkActive) {
-          h.identifiedByBlue = false;
-          h.isIdentified = false;
+        h.activelyTrackedByBlue = false;
+        if (h.identifiedByBlue && !isUplinkActive) {
+          h.trackDecayBlue = Math.max(0.0, (typeof h.trackDecayBlue === 'number' ? h.trackDecayBlue : trackDecayMax) - dt);
+          if (h.trackDecayBlue <= 0.0) {
+            h.identifiedByBlue = false;
+            h.trackDurationBlue = 0.0;
+          }
+        } else if (!isUplinkActive) {
+          h.trackDurationBlue = Math.max(0.0, h.trackDurationBlue - dt * 0.35);
         }
       }
     }
@@ -88,7 +110,9 @@ class SimulationDetectionSystem {
         this.game.detectedByBlue.add(h.id);
         h.trackDurationBlue = Math.max(h.trackDurationBlue, 10.0);
         h.identifiedByBlue = true;
-        h.isIdentified = true;
+        h.everIdentifiedByBlue = true;
+        h.activelyTrackedByBlue = true;
+        h.trackDecayBlue = trackDecayMax;
       }
       if (!this.sim._satelliteUplinkAnnouncedBlue) {
         this.sim._satelliteUplinkAnnouncedBlue = true;
@@ -110,22 +134,60 @@ class SimulationDetectionSystem {
 
       if (runFullScan) {
         let inRedSensor = false;
+        let redIdRate = 1.0;
+        let redBurnThrough = false;
         for (let j = 0; j < redSensors.length; j++) {
           const s = redSensors[j];
-          if (s.isPassiveElint && (a.spec.R_0 > 0) && Math.hypot(a.x - s.x, a.y - s.y) <= s.rangeKm) {
-            inRedSensor = true; break;
+          const dx = a.x - s.x, dy = a.y - s.y;
+          const dist = Math.hypot(dx, dy);
+          if (s.isPassiveElint && (a.spec.R_0 > 0) && dist <= s.rangeKm) {
+            inRedSensor = true; redIdRate = Math.max(redIdRate, 1.5); break;
           }
-          if (Physics.canRadarDetect(s, a, this.sim.weatherClouds)) { inRedSensor = true; break; }
+          const sIrstRange = s.hasIRST ? (s.irstRangeKm || 28.0) : 0.0;
+          let irstHit = false;
+          if (sIrstRange > 0 && dist <= sIrstRange) {
+            const halfCone = (((s.spec && s.spec.radarConeDeg) ? s.spec.radarConeDeg : 140) / 2.0) * (Math.PI / 180.0);
+            let angleDiff = Math.abs((s.heading || 0) - Math.atan2(dy, dx));
+            while (angleDiff > Math.PI) angleDiff = Math.abs(angleDiff - Math.PI * 2);
+            if (angleDiff <= Math.max(halfCone, 1.15)) irstHit = true;
+          }
+          if (irstHit || Physics.canRadarDetect(s, a, this.sim.weatherClouds)) {
+            inRedSensor = true;
+            if (dist <= 18.0 || irstHit) redBurnThrough = true;
+            const sRate = (typeof s.radarIdentifySpeed === 'number') ? s.radarIdentifySpeed : 1.0;
+            if (sRate > redIdRate) redIdRate = sRate;
+          }
         }
         a._inRedSensor = inRedSensor;
+        a._redIdentifyRate = redIdRate;
+        a._redBurnThrough = redBurnThrough;
       }
 
       if (a._inRedSensor) {
-        a.trackDurationRed += dt;
-        if (a.trackDurationRed >= baseAirIdTime) a.identifiedByRed = true;
+        a.activelyTrackedByRed = true;
+        const isStealthBlue = Boolean(a.spec && (a.spec.sigma_0 <= 0.01 || a.spec.category === 'STEALTH'));
+        const reqRedTime = a.everIdentifiedByRed
+          ? (isStealthBlue ? reacquireIdTime * 1.4 : reacquireIdTime)
+          : (isStealthBlue ? (baseAirIdTime * stealthMult) : baseAirIdTime);
+        a.trackDurationRed += a._redBurnThrough ? (dt * 3.0) : (dt * Math.max(0.35, a._redIdentifyRate || 1.0));
+        if (a.identifiedByRed) {
+          a.trackDecayRed = trackDecayMax;
+        } else if (a.trackDurationRed >= reqRedTime || (a._redBurnThrough && a.trackDurationRed >= (a.everIdentifiedByRed ? 0.6 : 1.5))) {
+          a.identifiedByRed = true;
+          a.everIdentifiedByRed = true;
+          a.trackDecayRed = trackDecayMax;
+        }
       } else {
-        a.trackDurationRed = Math.max(0.0, a.trackDurationRed - dt * 0.25);
-        if (a.trackDurationRed <= 0.0) a.identifiedByRed = false;
+        a.activelyTrackedByRed = false;
+        if (a.identifiedByRed) {
+          a.trackDecayRed = Math.max(0.0, (typeof a.trackDecayRed === 'number' ? a.trackDecayRed : trackDecayMax) - dt);
+          if (a.trackDecayRed <= 0.0) {
+            a.identifiedByRed = false;
+            a.trackDurationRed = 0.0;
+          }
+        } else {
+          a.trackDurationRed = Math.max(0.0, a.trackDurationRed - dt * 0.35);
+        }
       }
     }
 
@@ -197,16 +259,23 @@ class SimulationDetectionSystem {
   }
 
   revealMutuallyAllCombatants() {
+    const decaySec = window.CONFIG.RADAR_TRACK_DECAY_SEC;
     for (const h of this.game.hostileAircraft) {
       if (h.hp > 0.05) {
         this.game.detectedByBlue.add(h.id); this.game.detectedByRed.add(h.id);
-        h.identifiedByBlue = true; h.identifiedByRed = true; h.isIdentified = true;
+        h.identifiedByBlue = true; h.identifiedByRed = true;
+        h.everIdentifiedByBlue = true; h.everIdentifiedByRed = true;
+        h.activelyTrackedByBlue = true; h.activelyTrackedByRed = true;
+        h.trackDecayBlue = decaySec; h.trackDecayRed = decaySec;
       }
     }
     for (const a of this.game.alliedAircraft) {
       if (a.hp > 0.05) {
         this.game.detectedByBlue.add(a.id); this.game.detectedByRed.add(a.id);
-        a.identifiedByBlue = true; a.identifiedByRed = true; a.isIdentified = true;
+        a.identifiedByBlue = true; a.identifiedByRed = true;
+        a.everIdentifiedByBlue = true; a.everIdentifiedByRed = true;
+        a.activelyTrackedByBlue = true; a.activelyTrackedByRed = true;
+        a.trackDecayBlue = decaySec; a.trackDecayRed = decaySec;
       }
     }
   }

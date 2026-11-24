@@ -45,9 +45,10 @@ class InspectionCognitionRenderer {
     };
     if (!prof.isAttackMode && prof.airDoctrineId && docNotes[prof.airDoctrineId]) return docNotes[prof.airDoctrineId];
 
+    const trackNote = prof.trackOrder ? ` Active sensor task: ${prof.trackOrder}.` : '';
     return prof.isFocused
-      ? `Commander focus active (${prof.remainingFocus.toFixed(1)}s). Steering, speed control, and weapon firing actively managed.`
-      : `Autonomous patrol awaiting a free focus slot (${prof.activeFocusCount}/${prof.maxSlots} active).`;
+      ? `Commander focus active (${prof.remainingFocus.toFixed(1)}s). Steering, speed control, and weapon firing actively managed.${trackNote}`
+      : `Autonomous patrol awaiting a free focus slot (${prof.activeFocusCount}/${prof.maxSlots} active).${trackNote}`;
   }
 
   static renderCognitionCard(controller, aircraft) {
@@ -120,7 +121,9 @@ class InspectionCognitionRenderer {
     if (a.dircmEvasion > 0) chips.push({ t: 'positive', txt: `DIRCM (+${Math.round(a.dircmEvasion * 100)}% VS IR)` });
     if (a.jamEfficiency > 0) chips.push({ t: 'info', txt: `ECM JAMMER (${Math.round(a.jamEfficiency * 100)}%)` });
     if (a.hasECCM) chips.push({ t: 'info', txt: `ECCM (-${Math.round(a.eccmBonus * 100)}% JAM)` });
-    if (a.hasIRST) chips.push({ t: 'info', txt: 'PASSIVE IRST (28KM BURN)' });
+    if (a.hasIRST) chips.push({ t: 'info', txt: `PASSIVE IRST (${a.irstRangeKm || 28}KM BURN)` });
+    if (a.a2aPkBonus > 0) chips.push({ t: 'positive', txt: `A2A SENSOR POD (+${Math.round(a.a2aPkBonus * 100)}% PK)` });
+    if (a.hasDatalinkRelay) chips.push({ t: 'neutral', txt: 'OPTICAL DATALINK RELAY' });
     if (a.hasGaNAESA) chips.push({ t: 'info', txt: 'GaN AESA (+20% REACH)' });
     if (a.hasDAS) chips.push({ t: 'info', txt: 'DAS 360 (+10% EVASION)' });
     if (a.datalinkBonus > 0) chips.push({ t: 'neutral', txt: `MADL +${a.datalinkBonus.toFixed(2)} TOK/s` });

@@ -276,8 +276,8 @@ class ProcurementShelf {
       ], this.pm.currentA2GCategory, (id) => { this.pm.currentA2GCategory = id; this.pm.renderCatalog(); });
     } else if (filterCat === 'UTILITY') {
       this.renderFilterPills(container, [
-        { id: 'ALL', label: 'ALL PODS' }, { id: 'ECM', label: 'ECM JAMMERS' },
-        { id: 'TARGETING', label: 'TARGETING PODS' }, { id: 'RECON_IRST', label: 'RECON & IRST PODS' }, { id: 'DECOY', label: 'DECOY SYSTEMS' }
+        { id: 'ALL', label: 'ALL PODS' }, { id: 'AIR_COMBAT', label: 'A2A SENSOR PODS' }, { id: 'ECM', label: 'ECM JAMMERS' },
+        { id: 'TARGETING', label: 'TARGETING PODS' }, { id: 'RECON_IRST', label: 'RECON & ELINT' }, { id: 'DECOY', label: 'DECOY SYSTEMS' }
       ], this.pm.currentPodCategory, (id) => { this.pm.currentPodCategory = id; this.pm.renderCatalog(); });
     }
 

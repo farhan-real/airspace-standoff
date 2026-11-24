@@ -221,6 +221,103 @@ class AIPlanningSystem {
     return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.65 };
   }
 
+  getTrackSearchParams(diffKey) {
+    const tiers = {
+      CADET:     { searchRangeKm: 42.0, reacquirePriority: 0.25, crankMidcourse: false, broadsideFlank: false, burnThroughPush: false, throttle: 0.50 },
+      BUFFER:    { searchRangeKm: 50.0, reacquirePriority: 0.35, crankMidcourse: false, broadsideFlank: false, burnThroughPush: false, throttle: 0.54 },
+      VETERAN:   { searchRangeKm: 65.0, reacquirePriority: 0.50, crankMidcourse: false, broadsideFlank: false, burnThroughPush: false, throttle: 0.58 },
+      ESCALATED: { searchRangeKm: 78.0, reacquirePriority: 0.65, crankMidcourse: true,  broadsideFlank: false, burnThroughPush: false, throttle: 0.64 },
+      ELITE:     { searchRangeKm: 92.0, reacquirePriority: 0.78, crankMidcourse: true,  broadsideFlank: false, burnThroughPush: true,  throttle: 0.70 },
+      FORWARD:   { searchRangeKm: 105.0, reacquirePriority: 0.85, crankMidcourse: true, broadsideFlank: true,  burnThroughPush: true,  throttle: 0.74 },
+      ACE:       { searchRangeKm: 120.0, reacquirePriority: 0.92, crankMidcourse: true, broadsideFlank: true,  burnThroughPush: true,  throttle: 0.78 },
+      FORTIFIED: { searchRangeKm: 135.0, reacquirePriority: 0.96, crankMidcourse: true, broadsideFlank: true,  burnThroughPush: true,  throttle: 0.82 },
+      MASTER:    { searchRangeKm: 150.0, reacquirePriority: 1.00, crankMidcourse: true, broadsideFlank: true,  burnThroughPush: true,  throttle: 0.85 },
+      LEGEND:    { searchRangeKm: 180.0, reacquirePriority: 1.00, crankMidcourse: true, broadsideFlank: true,  burnThroughPush: true,  throttle: 0.90 }
+    };
+    return tiers[diffKey] || tiers.VETERAN;
+  }
+
+  hasActiveMidcourseMissiles(unit, allMissiles) {
+    if (!unit || !allMissiles || allMissiles.length === 0) return false;
+    for (let i = 0; i < allMissiles.length; i++) {
+      const m = allMissiles[i];
+      if (!m || !m.active || m.team !== unit.team || m.hasOwnSeekerLock) continue;
+      if (m.guidanceMode === 'MIDCOURSE' && m.target && m.target.hp > 0.05) {
+        if (m.source && m.source.id === unit.id) return m.target;
+      }
+    }
+    return false;
+  }
+
+  getTrackAcquisitionVector(unit, trackedTargets, untrackedContacts, allMissiles, diffKey) {
+    const params = this.getTrackSearchParams(diffKey);
+    const midcourseTarget = params.crankMidcourse ? this.hasActiveMidcourseMissiles(unit, allMissiles) : false;
+
+    if (midcourseTarget) {
+      const dist = Math.hypot(midcourseTarget.x - unit.x, midcourseTarget.y - unit.y);
+      const directAngle = Math.atan2(midcourseTarget.y - unit.y, midcourseTarget.x - unit.x);
+      const halfConeRad = (((unit.spec && unit.spec.radarConeDeg) ? unit.spec.radarConeDeg : 120) / 2.0) * (Math.PI / 180.0);
+      const crankOffset = Math.min(halfConeRad * 0.72, 0.72);
+      const sign = (unit.id.charCodeAt(unit.id.length - 1) % 2 === 0) ? 1 : -1;
+      unit._aiTrackOrder = 'F-POLE MIDCOURSE SUPPORT';
+      return {
+        target: midcourseTarget,
+        heading: directAngle + sign * crankOffset,
+        throttle: dist < 34.0 ? 0.45 : params.throttle,
+        reason: 'F-POLE MIDCOURSE SUPPORT'
+      };
+    }
+
+    if (!untrackedContacts || untrackedContacts.length === 0) {
+      unit._aiTrackOrder = null;
+      return null;
+    }
+
+    let best = null;
+    let bestScore = -9999;
+    for (let i = 0; i < untrackedContacts.length; i++) {
+      const c = untrackedContacts[i];
+      if (!c || c.hp <= 0.05) continue;
+      const d = Math.hypot(c.x - unit.x, c.y - unit.y);
+      if (d > params.searchRangeKm) continue;
+      const isStale = Boolean(c.everIdentifiedByRed);
+      const score = (isStale ? 55 * params.reacquirePriority : 15) - d * 0.65;
+      if (score > bestScore) {
+        bestScore = score;
+        best = c;
+      }
+    }
+    if (!best) {
+      unit._aiTrackOrder = null;
+      return null;
+    }
+
+    const dist = Math.hypot(best.x - unit.x, best.y - unit.y);
+    const directAngle = Math.atan2(best.y - unit.y, best.x - unit.x);
+    const isStealth = Boolean(best.spec && (best.spec.sigma_0 <= 0.01 || best.spec.category === 'STEALTH'));
+
+    const isWingman = [...this.elementPairs.values()].includes(unit.id);
+    if (params.broadsideFlank && isWingman && dist > 26.0) {
+      const flankSign = (unit.id.charCodeAt(unit.id.length - 1) % 2 === 0) ? 1 : -1;
+      unit._aiTrackOrder = best.everIdentifiedByRed ? 'FLANK RE-ACQUIRE STALE' : 'FLANK SWEEP BOGEY';
+      return {
+        target: best,
+        heading: directAngle + flankSign * 0.52,
+        throttle: params.throttle,
+        reason: unit._aiTrackOrder
+      };
+    }
+
+    const pushFast = params.burnThroughPush && (isStealth || best.jamEfficiency > 0 || best.isNotching) && dist > (unit.hasIRST ? (unit.irstRangeKm || 28.0) : 18.0);
+    unit._aiTrackOrder = best.everIdentifiedByRed ? 'RE-ACQUIRING STALE TRACK' : 'SWEEP SEARCHING BOGEY';
+    return {
+      target: best,
+      heading: directAngle,
+      throttle: pushFast ? Math.min(0.96, params.throttle + 0.14) : params.throttle,
+      reason: unit._aiTrackOrder
+    };
+  }
+
   getCoveredEgressHeading(unit) {
     const mapW = (window.CONFIG && window.CONFIG.THEATER_WIDTH_KM) || 150.0;
     const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;

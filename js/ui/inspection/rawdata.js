@@ -47,7 +47,7 @@ class InspectionRawDataRenderer {
         <div class="inspection-data-section">
           <span class="inspection-data-title">STRIKE, SEAD &amp; SURVIVABILITY MODIFIERS</span>
           <div class="inspection-data-row"><span class="inspection-data-label">TFR Terrain Masking</span><b class="inspection-data-value">${entity.hasTfrMasking ? `+${entity.tfrFloorBonusFt} ft Floor (<FL100), -25% Look-Down` : 'Inactive'}</b></div>
-          <div class="inspection-data-row"><span class="inspection-data-label">Targeting Pod &amp; Cloud</span><b class="inspection-data-value">+${Math.round((entity.targetingPodBonus || 0) * 100)}% A2G Pk | ${entity.targetingSpotRangeKm || 0}km Spot | -${Math.round((entity.cloudMitigation || 0) * 100)}% Cloud</b></div>
+          <div class="inspection-data-row"><span class="inspection-data-label">Targeting Pod &amp; Cloud</span><b class="inspection-data-value">+${Math.round((entity.targetingPodBonus || 0) * 100)}% A2G | +${Math.round((entity.a2aPkBonus || 0) * 100)}% A2A | IRST ${entity.irstRangeKm || 0}km | -${Math.round((entity.cloudMitigation || 0) * 100)}% Cloud</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">CCIP / MITL / HTS</span><b class="inspection-data-value">CCIP +${Math.round((entity.ccipBonus || 0) * 100)}% | MITL +${Math.round((entity.mitlBonus || 0) * 100)}% | ARM ${(entity.armRangeMult || 1).toFixed(2)}x</b></div>
           <div class="inspection-data-row"><span class="inspection-data-label">DIRCM / Flak / ECCM</span><b class="inspection-data-value">DIRCM +${Math.round((entity.dircmEvasion || 0) * 100)}% | AAA -${Math.round((entity.aaaResistance || 0) * 100)}% | ECCM ${Math.round((entity.eccmBonus || 0) * 100)}%</b></div>
         </div>`;
@@ -126,7 +126,8 @@ class InspectionRawDataRenderer {
         <span class="inspection-data-title">IN-FLIGHT MUNITION TELEMETRY</span>
         <div class="inspection-data-row"><span class="inspection-data-label">Weapon &amp; Category</span><b class="inspection-data-value">${controller.escape(w.name || w.id)} (${w.category || 'MSL'})</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Seeker &amp; Traits</span><b class="inspection-data-value">${w.seeker || 'GUIDED'} | ${w.trait || 'STANDARD'}${w.antiEmcon ? ' [ANTI-EMCON]' : ''}${w.isBunkerCracker ? ' [PENETRATOR]' : ''}${w.isAntiRunway ? ' [2x RUNWAY]' : ''}</b></div>
-        <div class="inspection-data-row"><span class="inspection-data-label">Stage &amp; Speed</span><b class="inspection-data-value raw-msl-stage">${m.stage || 'BOOST'} | Mach ${this.fmtNum(m.speed)}</b></div>
+        <div class="inspection-data-row"><span class="inspection-data-label">Stage &amp; Guidance</span><b class="inspection-data-value raw-msl-stage">${m.stage || 'BOOST'} | ${m.guidanceMode || 'MIDCOURSE'} | Mach ${this.fmtNum(m.speed)}</b></div>
+        <div class="inspection-data-row"><span class="inspection-data-label">Own Seeker Envelope</span><b class="inspection-data-value">${this.fmtNum(m.effectiveSeekerRangeKm || m.seekerRangeKm || 18, 1)} km | ${m.seekerConeDeg || 110}${window.INSP_SVG ? window.INSP_SVG.deg : ''} cone</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Distance &amp; Range</span><b class="inspection-data-value raw-msl-dist">${this.fmtNum(m.distanceToTarget, 1)} km to tgt | ${this.fmtNum(m.distanceTraveled, 1)}/${this.fmtNum(m.maxRangeKm, 1)} km</b></div>
         <div class="inspection-data-row"><span class="inspection-data-label">Signature &amp; Damage</span><b class="inspection-data-value">${this.fmtNum(m.rcs, 4)} m2${m.isStealthMissile ? ' [VLO]' : ''} | ${w.damage || 0} HP</b></div>
       </div>
@@ -157,7 +158,7 @@ class InspectionRawDataRenderer {
     }
     if (controller.isMissile(entity)) {
       const stEl = content.querySelector('.raw-msl-stage');
-      if (stEl) stEl.textContent = `${entity.stage || 'BOOST'} | Mach ${this.fmtNum(entity.speed)}`;
+      if (stEl) stEl.textContent = `${entity.stage || 'BOOST'} | ${entity.guidanceMode || 'MIDCOURSE'} | Mach ${this.fmtNum(entity.speed)}`;
       const dEl = content.querySelector('.raw-msl-dist');
       if (dEl) dEl.textContent = `${this.fmtNum(entity.distanceToTarget, 1)} km to tgt | ${this.fmtNum(entity.distanceTraveled, 1)}/${this.fmtNum(entity.maxRangeKm, 1)} km`;
       return;

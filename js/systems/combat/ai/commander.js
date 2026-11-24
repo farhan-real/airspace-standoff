@@ -93,7 +93,7 @@ class AICommander {
 
     return {
       isAce, isFocused, remainingFocus, maxSlots, activeFocusCount, diffKey, posture,
-      tacticalRole, isHesitating, successionTimer, roleInFormation, pairedUnit,
+      tacticalRole, isHesitating, successionTimer, roleInFormation, pairedUnit, trackOrder: (unit && unit._aiTrackOrder) || null,
       isAttackMode: isAttack,
       airDoctrineId: airDoctrine.id,
       airDoctrineName: airDoctrine.name,
@@ -176,7 +176,9 @@ class AICommander {
     this.planning.update(dt, aliveHostiles, profile, diffKey, airDoctrine);
 
     const redDetected = this.game.detectedByRed || new Set();
-    const visibleAllies = (this.game.alliedAircraft || []).filter(a => a.hp > 0.05 && redDetected.has(a.id) && (a.identifiedByRed || a.isIdentifiedBy('hostile')));
+    const liveAllies = (this.game.alliedAircraft || []).filter(a => a.hp > 0.05 && redDetected.has(a.id));
+    const visibleAllies = liveAllies.filter(a => a.identifiedByRed || a.isIdentifiedBy('hostile'));
+    const untrackedAllies = liveAllies.filter(a => !(a.identifiedByRed || a.isIdentifiedBy('hostile')));
     const blueDecoys = (this.game.simulation && this.game.simulation.decoyDrones || []).filter(d => d.hp > 0.05 && d.team === 'friendly' && redDetected.has(d.id));
 
     const candidateAirTargets = visibleAllies.concat(blueDecoys);
@@ -185,14 +187,14 @@ class AICommander {
     const allMissiles = this.game.missiles || [];
 
     this.updateAttention(aliveHostiles, profile, diffKey, allMissiles, dt);
-    AIEvasionHandler.coordinateAceTactics(this, aliveHostiles.filter(h => h.isAce), candidateAirTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt, airDoctrine, atkDoctrine);
+    AIEvasionHandler.coordinateAceTactics(this, aliveHostiles.filter(h => h.isAce), candidateAirTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt, airDoctrine, atkDoctrine, untrackedAllies);
 
     for (const h of aliveHostiles) {
       if (h._aiFireCooldown > 0) h._aiFireCooldown = Math.max(0, h._aiFireCooldown - dt);
       if (!h.isAce) {
         const isFocused = this.isUnitFocused(h.id);
         AIEvasionHandler.handleDefensiveBehavior(h, profile, diffKey, dt, allMissiles, isFocused, airDoctrine);
-        AINavigationHandler.handleNavigation(this, h, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused, airDoctrine, atkDoctrine);
+        AINavigationHandler.handleNavigation(this, h, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused, airDoctrine, atkDoctrine, untrackedAllies, allMissiles);
       }
     }
 

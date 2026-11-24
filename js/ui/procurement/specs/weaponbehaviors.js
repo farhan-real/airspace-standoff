@@ -20,7 +20,15 @@ class WeaponBehaviorCodex {
         items.push({ color: '#fbbf24', short: 'Passive ELINT Pod (135km emitter ID & +15% ARM reach)', detail: 'Exposes active enemy ground radars and SAMs out to 135 km and boosts Anti-Radiation Missile reach by +15%.' });
       }
       if (w.grantsIRST) {
-        items.push({ color: '#00f0ff', short: 'Passive Air IRST (28km stealth track, ignores notches & ECM)', detail: 'Enables silent optical air-to-air stealth detection inside 28 km and holds lock through Doppler notching and radar jamming.' });
+        const irstKm = w.irstRangeKm || 28;
+        const a2aStr = w.a2aPkBonus ? ` +${Math.round(w.a2aPkBonus * 100)}% A2A Pk` : '';
+        items.push({ color: '#00f0ff', short: `Passive Air IRST (${irstKm}km stealth burn${a2aStr})`, detail: `Enables silent optical air-to-air stealth detection inside ${irstKm} km, speeds bogey/stale classification by +${Math.round(((w.airTrackSpeedMult || 1) - 1) * 100)}%, and resists Doppler notching.` });
+      }
+      if (w.slotType === 'INTERNAL') {
+        items.push({ color: '#00f5a0', short: 'Internal VLO Sensor Bay (mounts flush inside stealth bays)', detail: 'Fits inside internal stealth bays without external pylon drag or large RCS bloom.' });
+      }
+      if (w.grantsDatalinkRelay) {
+        items.push({ color: '#c084fc', short: 'Optical Datalink Relay (+0.20 TOK/s & anti-jam ECCM)', detail: 'Projects a high-bandwidth optical crosslink boosting command token regeneration and mid-course track stability.' });
       }
       if (w.cloudMitigation >= 0.40) {
         items.push({ color: '#00f5a0', short: `Heavy Cloud Cut (-${Math.round(w.cloudMitigation * 100)}% laser scatter & 50+km Thermal decoy ID)`, detail: `Cuts cloud laser attenuation by ${Math.round(w.cloudMitigation * 100)}% and exposes Thermal & Visual SAM mockups out to ${w.spotRangeKm} km.` });

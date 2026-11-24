@@ -26,7 +26,7 @@ class SaveGameDeserializer {
       'chaff', 'countermeasures', 'chaffFlares', 'cmTimer', 'gunAmmo', 'gunCooldown',
       'thermalBloomTimer', 'thermalBloom', 'isRTB', 'rtbTimer', 'tacticalRole',
       'hasMaldDecoy', 'maldDecoyCharges', 'distanceTraveled', 'flightHistory', 'historySampleTimer',
-      'trackDurationBlue', 'trackDurationRed', 'identifiedByBlue', 'identifiedByRed',
+      'trackDurationBlue', 'trackDurationRed', 'identifiedByBlue', 'identifiedByRed', 'everIdentifiedByBlue', 'everIdentifiedByRed', 'activelyTrackedByBlue', 'activelyTrackedByRed', 'trackDecayBlue', 'trackDecayRed',
       'kills', 'scorePoints', 'missilesLaunchedCount', 'missilesEvadedCount', 'firstDetectedTime',
       'groundPhase', 'airbaseId', 'takeoffSegmentsReq', 'rollHeading'
     ];
@@ -80,7 +80,7 @@ class SaveGameDeserializer {
       distanceToTarget: sM.distanceToTarget, prevDistanceToTarget: sM.prevDistanceToTarget,
       minDistanceReached: sM.minDistanceReached, hasStartedClosing: sM.hasStartedClosing,
       cumulativeTurn: sM.cumulativeTurn, maxRangeKm: sM.maxRangeKm, launchDistKm: sM.launchDistKm,
-      launchTgpBonus: sM.launchTgpBonus, launchCcipBonus: sM.launchCcipBonus, launchArmPkBonus: sM.launchArmPkBonus,
+      launchTgpBonus: sM.launchTgpBonus, launchA2aTgpBonus: sM.launchA2aTgpBonus || 0, launchCcipBonus: sM.launchCcipBonus, launchArmPkBonus: sM.launchArmPkBonus,
       launchMitlBonus: sM.launchMitlBonus, launchCloudMitigation: sM.launchCloudMitigation,
       launchEccmBonus: sM.launchEccmBonus, launchAltFt: sM.launchAltFt, launchCloudHits: sM.launchCloudHits,
       rcs: sM.rcs, isStealthMissile: sM.isStealthMissile, active: sM.active, isDead: sM.isDead,
@@ -91,6 +91,15 @@ class SaveGameDeserializer {
       pathRevealDistance: sM.pathRevealDistance, trackDurationBlue: sM.trackDurationBlue,
       trackDurationRed: sM.trackDurationRed, trackHoldBlue: sM.trackHoldBlue,
       identifiedByBlue: sM.identifiedByBlue, identifiedByRed: sM.identifiedByRed,
+      seekerRangeKm: sM.seekerRangeKm !== undefined ? sM.seekerRangeKm : 18.0,
+      effectiveSeekerRangeKm: sM.effectiveSeekerRangeKm !== undefined ? sM.effectiveSeekerRangeKm : 18.0,
+      seekerConeDeg: sM.seekerConeDeg !== undefined ? sM.seekerConeDeg : 110,
+      guidanceMode: sM.guidanceMode || 'MIDCOURSE',
+      hasOwnSeekerLock: Boolean(sM.hasOwnSeekerLock),
+      hasMidcourseDatalink: sM.hasMidcourseDatalink !== undefined ? Boolean(sM.hasMidcourseDatalink) : true,
+      lastKnownTargetX: sM.lastKnownTargetX, lastKnownTargetY: sM.lastKnownTargetY,
+      lastKnownTargetVx: sM.lastKnownTargetVx || 0, lastKnownTargetVy: sM.lastKnownTargetVy || 0,
+      inertialCoastTime: sM.inertialCoastTime || 0,
       state: sM.state, trail: sM.trail || [], lostTimer: sM.lostTimer, lostReason: sM.lostReason,
       _pdTestedBy: new Set(sM.pdTestedBy || [])
     });

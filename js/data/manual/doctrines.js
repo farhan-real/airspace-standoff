@@ -83,7 +83,42 @@ window.MANUAL_DOCTRINES = [
         </table>
       </div>
 
-      <div class="ge-subhead">3. GROUND ATTACK DEFENSE DOCTRINES (240x160 IADS THEATER)</div>
+      <div class="ge-subhead">3. DIFFICULTY-SCALED AI TRACK ACQUISITION &amp; MID-COURSE TACTICS</div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>DIFFICULTY TIER</th><th>SEARCH REACH</th><th>STALE RE-ACQUIRE</th><th>AI SENSOR &amp; DATALINK TACTICS</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#94a3b8;font-weight:800;">Cadet / Buffer</td>
+              <td>42 - 50 km</td>
+              <td>Passive (25-35%)</td>
+              <td>Turns toward nearby bogeys only inside medium range; turns cold early without supporting mid-course missiles.</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">Veteran / Escalated</td>
+              <td>65 - 78 km</td>
+              <td>Moderate (50-65%)</td>
+              <td>Sweeps nose onto untracked contacts and decayed stale tracks; Escalated tier begins holding <b>F-pole cranks</b> inside radar gimbal to feed mid-course datalink.</td>
+            </tr>
+            <tr>
+              <td style="color:#fbbf24;font-weight:800;">Elite / Forward / Ace</td>
+              <td>92 - 120 km</td>
+              <td>High (78-92%)</td>
+              <td>Prioritizes re-locking <b>Stale</b> contacts, pushes throttle for <b>18 km / IRST burn-through</b> against stealth fighters, and deploys <b>wingman broadside flanking</b> (Forward+) to spike RCS.</td>
+            </tr>
+            <tr>
+              <td style="color:#f43f5e;font-weight:800;">Fortified / Master / Legend</td>
+              <td>135 - 180 km</td>
+              <td>Immediate (96-100%)</td>
+              <td>Coordinates element cross-illumination: lead sustains <b>F-pole mid-course lock</b> until every missile reaches its own seeker range while wingmen flank notching bandits and carry A2A IRST pods.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ge-subhead">4. GROUND ATTACK DEFENSE DOCTRINES (240x160 IADS THEATER)</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>

@@ -57,7 +57,7 @@ Aircraft.prototype.installUpgrade = function(upgradeId) {
   this.equippedUpgrades.push(upgradeId);
   upg.apply(this);
   if (upgradeId === 'DAS_360_OPTIC') this.hasDAS = true;
-  if (upgradeId === 'EOTS_DUAL_OPTICS') this.hasIRST = true;
+  if (upgradeId === 'EOTS_DUAL_OPTICS') { this.hasIRST = true; this.irstRangeKm = Math.max(this.irstRangeKm || 0, 28.0); }
   this.recalculateWeight();
   return true;
 };
@@ -122,10 +122,24 @@ Aircraft.prototype.installWeapon = function(weaponId, targetStation = null) {
     this.maxJamRangeKm = Math.max(this.maxJamRangeKm, wpn.rangeKm);
   }
   if (wpn.isTargetingPod) {
-    this.targetingPodBonus = Math.max(this.targetingPodBonus, wpn.a2gPkBonus);
-    if (wpn.exposesDecoys) this.targetingSpotRangeKm = Math.max(this.targetingSpotRangeKm, wpn.spotRangeKm);
-    this.cloudMitigation = Math.max(this.cloudMitigation, wpn.cloudMitigation);
-    if (wpn.grantsIRST) this.hasIRST = true;
+    this.targetingPodBonus = Math.max(this.targetingPodBonus, wpn.a2gPkBonus || 0);
+    if (wpn.exposesDecoys) this.targetingSpotRangeKm = Math.max(this.targetingSpotRangeKm, wpn.spotRangeKm || 0);
+    this.cloudMitigation = Math.max(this.cloudMitigation, wpn.cloudMitigation || 0);
+    if (wpn.grantsIRST) {
+      this.hasIRST = true;
+      this.irstRangeKm = Math.max(this.irstRangeKm || 0, wpn.irstRangeKm || 28.0);
+    }
+    if (wpn.airTrackSpeedMult) this.radarIdentifySpeed = Math.max(this.radarIdentifySpeed || 1.0, wpn.airTrackSpeedMult);
+    if (wpn.a2aPkBonus) this.a2aPkBonus = Math.max(this.a2aPkBonus || 0, wpn.a2aPkBonus);
+    if (wpn.a2aEccmBonus) {
+      this.hasECCM = true;
+      this.eccmBonus = Math.max(this.eccmBonus || 0, wpn.a2aEccmBonus);
+    }
+    if (wpn.grantsDatalinkRelay) {
+      this.hasDatalinkRelay = true;
+      this.datalinkBonus = Math.max(this.datalinkBonus || 0, 0.20);
+    }
+    if (wpn.a2aEvasionBonus) this.dasEvasion = Math.max(this.dasEvasion || 0, wpn.a2aEvasionBonus);
     if (wpn.grantsESM) this.hasESM = true;
     if (wpn.armRangeBoost) this.armRangeMult = Math.max(this.armRangeMult, wpn.armRangeBoost);
   }

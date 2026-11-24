@@ -41,6 +41,7 @@ class MissileEntity {
     const clouds = (window.Game && window.Game.simulation && window.Game.simulation.weatherClouds) || [];
     this.launchDistKm = this.distanceToTarget;
     this.launchTgpBonus = isAcSource ? ((sourceUnit.targetingPodBonus || 0) + (sourceUnit.hasIRST && !sourceUnit.targetingPodBonus ? 0.08 : 0.0)) : 0.0;
+    this.launchA2aTgpBonus = isAcSource ? (sourceUnit.a2aPkBonus || 0) : 0.0;
     this.launchCcipBonus = (isAcSource && (weapon.seeker === 'UNGUIDED' || weapon.isCluster || weapon.isRocketPod)) ? sourceUnit.ccipBonus : 0.0;
     this.launchArmPkBonus = (isAcSource && weapon.isAntiRadiation) ? sourceUnit.armPkBonus : 0.0;
     this.launchMitlBonus = (isAcSource && (weapon.seeker === 'GPS_INS' || weapon.seeker === 'IIR' || weapon.seeker === 'INS')) ? sourceUnit.mitlBonus : 0.0;
@@ -66,6 +67,20 @@ class MissileEntity {
     this.trail = [];
     this.lostTimer = 0.0;
     this.lostReason = '';
+
+    this.seekerRangeKm = 18.0;
+    this.effectiveSeekerRangeKm = 18.0;
+    this.seekerConeDeg = 110;
+    this.guidanceMode = 'MIDCOURSE';
+    this.hasOwnSeekerLock = false;
+    this.hasMidcourseDatalink = true;
+    this.lastKnownTargetX = targetUnit.x;
+    this.lastKnownTargetY = targetUnit.y;
+    const tgtSpdKm = (typeof targetUnit.speed === 'number' && !isNaN(targetUnit.speed)) ? (targetUnit.speed * 0.35) : 0.0;
+    const tgtHdg = (typeof targetUnit.heading === 'number' && !isNaN(targetUnit.heading)) ? targetUnit.heading : 0.0;
+    this.lastKnownTargetVx = Math.cos(tgtHdg) * tgtSpdKm;
+    this.lastKnownTargetVy = Math.sin(tgtHdg) * tgtSpdKm;
+    this.inertialCoastTime = 0.0;
 
     if (sourceUnit.missilesLaunchedCount !== undefined) {
       sourceUnit.missilesLaunchedCount++;
@@ -97,6 +112,9 @@ class MissileEntity {
     while (this.heading >= Math.PI * 2) this.heading -= Math.PI * 2;
 
     MissileKinetics.initMissile(this);
+    if (typeof MissileGuidanceSystem !== 'undefined' && typeof MissileGuidanceSystem.initSeekerProfile === 'function') {
+      MissileGuidanceSystem.initSeekerProfile(this);
+    }
 
     const inspection = window.Game && window.Game.inspection;
     if (inspection && inspection.enabled) {
