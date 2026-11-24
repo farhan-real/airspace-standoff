@@ -253,7 +253,7 @@
   font-weight: 600;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
   .inspection-pane {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;

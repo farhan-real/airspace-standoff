@@ -6,9 +6,12 @@
 
 class RadarCameraController {
   constructor(canvas, cssWidth, cssHeight) {
+    if (!cssWidth || !cssHeight || cssWidth <= 0 || cssHeight <= 0) {
+      throw new Error(`RadarCameraController requires positive initial dimensions, got ${cssWidth}x${cssHeight}`);
+    }
     this.canvas = canvas;
-    this.cssWidth = cssWidth || 800;
-    this.cssHeight = cssHeight || 500;
+    this.cssWidth = cssWidth;
+    this.cssHeight = cssHeight;
     this.zoom = 1.0;
     this.minZoom = 0.65;
     this.maxZoom = 4.0;
@@ -34,11 +37,15 @@ class RadarCameraController {
   }
 
   updateScales() {
-    const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
-    const mapW = cfg.THEATER_WIDTH_KM || 150.0;
-    const mapH = cfg.THEATER_HEIGHT_KM || 100.0;
-    this.effScaleX = (this.cssWidth / mapW) * this.zoom;
-    this.effScaleY = (this.cssHeight / mapH) * this.zoom;
+    const cfg = window.CONFIG;
+    if (!cfg || !cfg.THEATER_WIDTH_KM || !cfg.THEATER_HEIGHT_KM) {
+      throw new Error('CONFIG.THEATER_WIDTH_KM and CONFIG.THEATER_HEIGHT_KM must be loaded.');
+    }
+    if (this.cssWidth <= 0 || this.cssHeight <= 0) {
+      throw new Error(`RadarCameraController has non-positive viewport dimensions: ${this.cssWidth}x${this.cssHeight}`);
+    }
+    this.effScaleX = (this.cssWidth / cfg.THEATER_WIDTH_KM) * this.zoom;
+    this.effScaleY = (this.cssHeight / cfg.THEATER_HEIGHT_KM) * this.zoom;
   }
 
   toggleGroundTargets() {
@@ -88,7 +95,10 @@ class RadarCameraController {
   }
 
   centerTheater() {
-    const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
+    const cfg = window.CONFIG;
+    if (!cfg || !cfg.THEATER_WIDTH_KM || !cfg.THEATER_HEIGHT_KM) {
+      throw new Error('CONFIG theater dimensions must be loaded before centerTheater.');
+    }
     this.centerOnKm(cfg.THEATER_WIDTH_KM * 0.5, cfg.THEATER_HEIGHT_KM * 0.5);
     this.trackingUnit = null;
   }

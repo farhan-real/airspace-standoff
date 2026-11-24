@@ -58,9 +58,9 @@ class PointerControlsHandler {
       this.lastPointerX = e.clientX;
       this.lastPointerY = e.clientY;
 
-      try {
+      if (typeof canvas.setPointerCapture === 'function') {
         canvas.setPointerCapture(e.pointerId);
-      } catch (err) {}
+      }
     });
 
     canvas.addEventListener('pointermove', (e) => {
@@ -81,7 +81,10 @@ class PointerControlsHandler {
           this.game.radar.trackingUnit = null;
           if (this.game.radar.cam) this.game.radar.cam.trackingUnit = null;
 
-          const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
+          const cfg = window.CONFIG;
+          if (!cfg || !cfg.THEATER_WIDTH_KM || !cfg.THEATER_HEIGHT_KM) {
+            throw new Error('CONFIG theater dimensions must be loaded for radar panning.');
+          }
           const effScaleX = (this.game.radar.cssWidth / cfg.THEATER_WIDTH_KM) * this.game.radar.zoom;
           const effScaleY = (this.game.radar.cssHeight / cfg.THEATER_HEIGHT_KM) * this.game.radar.zoom;
 
@@ -103,9 +106,9 @@ class PointerControlsHandler {
       if (!this.isDraggingMap) return;
       this.isDraggingMap = false;
 
-      try {
+      if (typeof canvas.hasPointerCapture === 'function' && canvas.hasPointerCapture(e.pointerId)) {
         canvas.releasePointerCapture(e.pointerId);
-      } catch (err) {}
+      }
 
       if (this.totalDragDist <= 6) {
         const rect = canvas.getBoundingClientRect();
@@ -160,8 +163,8 @@ class PointerControlsHandler {
     const inspectionOpen = Boolean(this.game.inspection && this.game.inspection.isOpen);
     const showHiddenEnemy = Boolean(inspectionOpen && this.game.inspection && this.game.inspection.showEnemyDetails);
     const detectedSet = (commanderTeam === 'friendly')
-      ? (this.game.detectedByBlue || new Set())
-      : (this.game.detectedByRed || new Set());
+      ? this.game.detectedByBlue
+      : this.game.detectedByRed;
 
     const candidates = [];
     const friendlies = (commanderTeam === 'friendly') ? this.game.alliedAircraft : this.game.hostileAircraft;

@@ -296,8 +296,18 @@ body.pseudo-fullscreen #procurement-modal,
 .is-android #hud-container .rwr-warning-box,
 .is-android #hud-container .radar-uplink-banner,
 .is-android #hud-container .radar-floating-cam-bar,
+.is-android #hud-container .inspection-pane,
 .is-android .hud-tooltip-box,
-.is-android .pwa-update-toast {
+.is-android .pwa-update-toast,
+.is-android-apk #hud-container .hud-banner,
+.is-android-apk #hud-container .maneuver-deck-bay,
+.is-android-apk #hud-container .rfh-panel,
+.is-android-apk #hud-container .rwr-warning-box,
+.is-android-apk #hud-container .radar-uplink-banner,
+.is-android-apk #hud-container .radar-floating-cam-bar,
+.is-android-apk #hud-container .inspection-pane,
+.is-android-apk .hud-tooltip-box,
+.is-android-apk .pwa-update-toast {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
@@ -309,6 +319,7 @@ body.pseudo-fullscreen #procurement-modal,
   #hud-container .rwr-warning-box,
   #hud-container .radar-uplink-banner,
   #hud-container .radar-floating-cam-bar,
+  #hud-container .inspection-pane,
   .hud-tooltip-box,
   .pwa-update-toast {
     -webkit-backdrop-filter: none !important;

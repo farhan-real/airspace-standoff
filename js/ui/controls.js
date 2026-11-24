@@ -3,10 +3,10 @@
 class ControlsSystem {
   constructor(gameEngine) {
     this.game = gameEngine;
-    this.targeting = (typeof ControlsTargetingHandler !== 'undefined') ? new ControlsTargetingHandler(this) : null;
+    this.targeting = new ControlsTargetingHandler(this);
     this.keyboard = new KeyboardControlsHandler(this);
     this.pointer = new PointerControlsHandler(this);
-    this.fullscreen = (typeof FullscreenHandler !== 'undefined') ? new FullscreenHandler(this) : null;
+    this.fullscreen = new FullscreenHandler(this);
     this._wasAutoPaused = false;
   }
 

@@ -10,21 +10,31 @@ class RadarRenderer {
 
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
-    this.ctx = this.canvas ? this.canvas.getContext('2d', { alpha: false, desynchronized: true }) : null;
+    if (!this.canvas) throw new Error(`Radar canvas element "${canvasId}" not found.`);
+    this.ctx = this.canvas.getContext('2d', { alpha: false });
+    if (!this.ctx) throw new Error(`Failed to acquire 2D rendering context for "${canvasId}".`);
+
+    if (typeof RadarCameraController === 'undefined') throw new Error('RadarCameraController is not loaded.');
+    if (typeof RadarEffectsSystem === 'undefined') throw new Error('RadarEffectsSystem is not loaded.');
+    if (typeof RadarEnvironmentRenderer === 'undefined') throw new Error('RadarEnvironmentRenderer is not loaded.');
+    if (typeof RadarSurfaceRenderer === 'undefined') throw new Error('RadarSurfaceRenderer is not loaded.');
+    if (typeof RadarCombatRenderer === 'undefined') throw new Error('RadarCombatRenderer is not loaded.');
+    if (typeof RadarContactsAuxRenderer === 'undefined') throw new Error('RadarContactsAuxRenderer is not loaded.');
+    if (typeof RadarContactsRenderer === 'undefined') throw new Error('RadarContactsRenderer is not loaded.');
+
     this.selectedTarget = null;
     this.hoveredContact = null;
-    this.cssWidth = 800;
-    this.cssHeight = 500;
-    this.isMobile = (typeof window !== 'undefined') && (window.innerWidth <= 1024);
+    this.cssWidth = 0;
+    this.cssHeight = 0;
+    this.isMobile = (window.innerWidth <= 1024);
 
     const rawDpr = window.devicePixelRatio || 1;
     this.dpr = Math.max(1, Math.min(rawDpr, 1.5));
 
-    this.cam = new RadarCameraController(this.canvas, this.cssWidth, this.cssHeight);
+    this.cam = new RadarCameraController(this.canvas, 800, 500);
     this.fx = new RadarEffectsSystem(this.cam);
 
     this.inspectionDetectedSet = new Set();
-    this.emptyDetectedSet = new Set();
     this._uplinkBannerEl = document.getElementById('radar-uplink-banner');
     this._lastUplinkKey = '';
 
@@ -61,28 +71,37 @@ class RadarRenderer {
   }
 
   resize() {
-    if (!this.canvas) return;
     const parent = this.canvas.parentElement;
-    const nextW = Math.round((parent && parent.clientWidth > 0) ? parent.clientWidth : 800);
-    const nextH = Math.round((parent && parent.clientHeight > 0) ? parent.clientHeight : 500);
+    if (!parent) throw new Error('Radar canvas has no parent element.');
 
+    if (parent.clientWidth <= 0 || parent.clientHeight <= 0) {
+      const hud = document.getElementById('hud-container');
+      if (hud && hud.classList.contains('hidden')) return;
+      throw new Error(`Radar viewport has invalid layout dimensions: ${parent.clientWidth}x${parent.clientHeight}`);
+    }
+
+    const nextW = Math.round(parent.clientWidth);
+    const nextH = Math.round(parent.clientHeight);
     const rawDpr = window.devicePixelRatio || 1;
-    this.dpr = Math.max(1, Math.min(rawDpr, 1.5));
+    const nextDpr = Math.max(1, Math.min(rawDpr, 1.5));
+    const pixelW = Math.round(nextW * nextDpr);
+    const pixelH = Math.round(nextH * nextDpr);
 
+    this.dpr = nextDpr;
     this.cssWidth = nextW;
     this.cssHeight = nextH;
     this.isMobile = (this.cssWidth <= 1024);
     this.cam.resize(this.cssWidth, this.cssHeight);
 
-    this.canvas.width = Math.round(this.cssWidth * this.dpr);
-    this.canvas.height = Math.round(this.cssHeight * this.dpr);
-    this.canvas.style.width = this.cssWidth + 'px';
-    this.canvas.style.height = this.cssHeight + 'px';
-
-    if (this.ctx) {
-      this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-      this.ctx.imageSmoothingEnabled = true;
+    if (this.canvas.width !== pixelW || this.canvas.height !== pixelH) {
+      this.canvas.width = pixelW;
+      this.canvas.height = pixelH;
+      this.canvas.style.width = this.cssWidth + 'px';
+      this.canvas.style.height = this.cssHeight + 'px';
     }
+
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    this.ctx.imageSmoothingEnabled = true;
   }
 
   syncControlButtons() {
@@ -154,40 +173,49 @@ class RadarRenderer {
   }
 
   render(state) {
-    if (!this.ctx || !this.canvas) return;
+    if (!state) throw new Error('RadarRenderer.render requires a state object.');
+    if (!window.Game || !window.Game.simulation) throw new Error('Game simulation must be initialized before radar render.');
+
     const parent = this.canvas.parentElement;
-    if (parent && parent.clientWidth > 0 && parent.clientHeight > 0 &&
+    if (!parent) throw new Error('Radar canvas has no parent element.');
+    if (parent.clientWidth > 0 && parent.clientHeight > 0 &&
         (Math.abs(parent.clientWidth - this.cssWidth) > 2 || Math.abs(parent.clientHeight - this.cssHeight) > 2)) {
       this.resize();
+    }
+    if (this.cssWidth <= 0 || this.cssHeight <= 0) {
+      throw new Error(`Radar viewport has invalid dimensions during render: ${this.cssWidth}x${this.cssHeight}`);
     }
 
     const ctx = this.ctx, w = this.cssWidth, h = this.cssHeight;
     this.cam.updateScales();
 
-    const allied = (state && state.alliedAircraft) || (window.Game && window.Game.alliedAircraft) || [];
-    const hostiles = (state && state.hostileAircraft) || (window.Game && window.Game.hostileAircraft) || [];
-    const surface = (state && state.surfaceUnits) || (window.Game && window.Game.surfaceUnits) || [];
-    const missiles = (state && state.missiles && state.missiles.length > 0)
-      ? state.missiles : ((window.Game && window.Game.missiles) || []);
-    const sim = window.Game && window.Game.simulation;
-    const civilians = (sim && sim.civilianTraffic) || [];
-    const ghosts = (sim && sim.ghostContacts) || [];
-    const decoys = (sim && sim.decoyDrones) || [];
-    const clouds = (sim && sim.weatherClouds) || [];
+    const allied = state.alliedAircraft;
+    const hostiles = state.hostileAircraft;
+    const surface = state.surfaceUnits;
+    const missiles = state.missiles;
+    if (!Array.isArray(allied) || !Array.isArray(hostiles) || !Array.isArray(surface) || !Array.isArray(missiles)) {
+      throw new Error('RadarRenderer.render received invalid entity arrays in state.');
+    }
 
-    const activeUnit = state ? state.activeUnit : null;
-    this.selectedTarget = state ? (state.inspectionEntity || state.selectedTarget) : null;
+    const sim = window.Game.simulation;
+    const civilians = sim.civilianTraffic;
+    const ghosts = sim.ghostContacts;
+    const decoys = sim.decoyDrones;
+    const clouds = sim.weatherClouds;
+
+    const activeUnit = state.activeUnit;
+    this.selectedTarget = state.inspectionEntity || state.selectedTarget;
 
     if (this.cam.trackingUnit) {
       if (this.cam.trackingUnit.hp > 0.05) this.cam.centerOnKm(this.cam.trackingUnit.x, this.cam.trackingUnit.y);
       else this.cam.trackingUnit = null;
     }
 
-    const commanderTeam = (window.Game && window.Game.currentPvpCommander) || 'friendly';
-    const is2P = Boolean(window.Game && window.Game.playerMode === '2P');
+    const commanderTeam = window.Game.currentPvpCommander;
+    const is2P = (window.Game.playerMode === '2P');
 
     let detectedSet;
-    if (is2P || (state && state.inspectionMode)) {
+    if (is2P || state.inspectionMode) {
       this.inspectionDetectedSet.clear();
       this.addEntityIds(this.inspectionDetectedSet, allied);
       this.addEntityIds(this.inspectionDetectedSet, hostiles);
@@ -198,46 +226,36 @@ class RadarRenderer {
       this.addEntityIds(this.inspectionDetectedSet, decoys);
       detectedSet = this.inspectionDetectedSet;
     } else if (commanderTeam === 'friendly') {
-      detectedSet = (window.Game && window.Game.detectedByBlue) ? window.Game.detectedByBlue : this.emptyDetectedSet;
+      detectedSet = window.Game.detectedByBlue;
     } else {
-      detectedSet = (window.Game && window.Game.detectedByRed) ? window.Game.detectedByRed : this.emptyDetectedSet;
+      detectedSet = window.Game.detectedByRed;
     }
 
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, w, h);
 
-    if (typeof RadarEnvironmentRenderer !== 'undefined') {
-      RadarEnvironmentRenderer.drawGrid(ctx, this.cam, w, h);
-      RadarEnvironmentRenderer.drawBaseCorridor(ctx, this.cam, w);
-      RadarEnvironmentRenderer.drawClouds(ctx, this.cam, clouds, w, h);
-    }
+    RadarEnvironmentRenderer.drawGrid(ctx, this.cam, w, h);
+    RadarEnvironmentRenderer.drawBaseCorridor(ctx, this.cam, w);
+    RadarEnvironmentRenderer.drawClouds(ctx, this.cam, clouds, w, h);
 
-    if (typeof RadarSurfaceRenderer !== 'undefined') {
-      RadarSurfaceRenderer.drawSurface(ctx, this.cam, surface, commanderTeam, detectedSet, activeUnit, this.selectedTarget, w, this.declutterMode);
-      RadarSurfaceRenderer.drawCivilianTraffic(ctx, this.cam, civilians, detectedSet, activeUnit, this.declutterMode, w);
-    }
+    RadarSurfaceRenderer.drawSurface(ctx, this.cam, surface, commanderTeam, detectedSet, activeUnit, this.selectedTarget, w, this.declutterMode);
+    RadarSurfaceRenderer.drawCivilianTraffic(ctx, this.cam, civilians, detectedSet, activeUnit, this.declutterMode, w);
 
-    if (typeof RadarCombatRenderer !== 'undefined') {
-      RadarCombatRenderer.drawRadarLocks(ctx, this.cam, allied, hostiles, activeUnit, commanderTeam, detectedSet);
-      RadarCombatRenderer.drawSalvoCoordinations(ctx, this.cam, missiles, commanderTeam);
-      RadarCombatRenderer.drawMissiles(ctx, this.cam, missiles, commanderTeam, detectedSet, this.declutterMode);
-    }
+    RadarCombatRenderer.drawRadarLocks(ctx, this.cam, allied, hostiles, activeUnit, commanderTeam, detectedSet);
+    RadarCombatRenderer.drawSalvoCoordinations(ctx, this.cam, missiles, commanderTeam);
+    RadarCombatRenderer.drawMissiles(ctx, this.cam, missiles, commanderTeam, detectedSet, this.declutterMode);
 
-    if (typeof RadarContactsAuxRenderer !== 'undefined') {
-      RadarContactsAuxRenderer.drawGhostContacts(ctx, this.cam, ghosts, detectedSet, this.selectedTarget, activeUnit, this.zoom);
-      RadarContactsAuxRenderer.drawDecoyDrones(ctx, this.cam, decoys, detectedSet, commanderTeam, activeUnit);
-    }
+    RadarContactsAuxRenderer.drawGhostContacts(ctx, this.cam, ghosts, detectedSet, this.selectedTarget, activeUnit, this.zoom);
+    RadarContactsAuxRenderer.drawDecoyDrones(ctx, this.cam, decoys, detectedSet, commanderTeam, activeUnit);
 
-    if (typeof RadarContactsRenderer !== 'undefined') {
-      RadarContactsRenderer.drawAircraft(ctx, this.cam, hostiles, 'hostile', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode);
-      RadarContactsRenderer.drawAircraft(ctx, this.cam, allied, 'friendly', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode);
-    }
+    RadarContactsRenderer.drawAircraft(ctx, this.cam, hostiles, 'hostile', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode);
+    RadarContactsRenderer.drawAircraft(ctx, this.cam, allied, 'friendly', activeUnit, this.selectedTarget, commanderTeam, detectedSet, w, this.declutterMode);
 
-    const isAttackMode = Boolean(window.Game && window.Game.scenarioMode === 'ATTACK');
-    const uplinkBannerEl = this._uplinkBannerEl || (this._uplinkBannerEl = document.getElementById('radar-uplink-banner'));
+    const isAttackMode = (window.Game.scenarioMode === 'ATTACK');
+    const uplinkBannerEl = this._uplinkBannerEl;
 
     if (uplinkBannerEl) {
-      if (isAttackMode && typeof AttackDirector !== 'undefined') {
+      if (isAttackMode) {
         const obj = AttackDirector.getObjectiveSummary(window.Game);
         const key = `ATK:${obj.remaining}:${obj.total}`;
         if (this._lastUplinkKey !== key) {
@@ -268,18 +286,18 @@ class RadarRenderer {
       }
     }
 
-    const isInspection = Boolean(state && state.inspectionMode);
-    const showGround = Boolean(this.cam && this.cam.showGroundTargets);
+    const isInspection = Boolean(state.inspectionMode);
+    const showGround = Boolean(this.cam.showGroundTargets);
     const isSurfaceObj = (obj) => Boolean(obj && ((typeof SurfaceUnit !== 'undefined' && obj instanceof SurfaceUnit) || (obj.type && !obj.isCivilian && !obj.weapon)));
 
-    if (this.hoveredContact && typeof this.hoveredContact.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
+    if (this.hoveredContact && typeof this.hoveredContact.x === 'number') {
       const isMsl = Boolean(this.hoveredContact.weapon && this.hoveredContact.target);
       const isGnd = isSurfaceObj(this.hoveredContact);
       if ((!isMsl || isInspection) && (!isGnd || showGround) && (this.hoveredContact.hp === undefined || this.hoveredContact.hp > 0.05)) {
         RadarCombatRenderer.drawHoverReticle(ctx, this.cam, this.hoveredContact);
       }
     }
-    if (this.selectedTarget && typeof this.selectedTarget.x === 'number' && typeof RadarCombatRenderer !== 'undefined') {
+    if (this.selectedTarget && typeof this.selectedTarget.x === 'number') {
       const isMsl = Boolean(this.selectedTarget.weapon && this.selectedTarget.target);
       const isGnd = isSurfaceObj(this.selectedTarget);
       if ((!isMsl || isInspection) && (!isGnd || showGround) && (this.selectedTarget.hp === undefined || this.selectedTarget.hp > 0.05)) {

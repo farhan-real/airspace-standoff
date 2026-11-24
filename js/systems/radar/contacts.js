@@ -2,15 +2,11 @@
 
 class RadarContactsRenderer {
   static drawGhostContacts(...args) {
-    if (typeof RadarContactsAuxRenderer !== 'undefined') {
-      RadarContactsAuxRenderer.drawGhostContacts(...args);
-    }
+    RadarContactsAuxRenderer.drawGhostContacts(...args);
   }
 
   static drawDecoyDrones(...args) {
-    if (typeof RadarContactsAuxRenderer !== 'undefined') {
-      RadarContactsAuxRenderer.drawDecoyDrones(...args);
-    }
+    RadarContactsAuxRenderer.drawDecoyDrones(...args);
   }
 
   static drawAircraft(ctx, cam, list, team, activeUnit, selectedTarget, commanderTeam, detectedSet, cssWidth, declutterMode) {
@@ -39,8 +35,8 @@ class RadarContactsRenderer {
       const a = list[i];
       if (!a || a.hp <= 0.05) continue;
 
-      const px = cam.toScreenX ? cam.toScreenX(a.x) : cam.toScreen(a.x, a.y).x;
-      const py = cam.toScreenY ? cam.toScreenY(a.y) : cam.toScreen(a.x, a.y).y;
+      const px = cam.toScreenX(a.x);
+      const py = cam.toScreenY(a.y);
       const isSelected = activeUnit && activeUnit.id === a.id;
       const isTgt = selectedTarget && selectedTarget.id === a.id;
       const trackState = (is2P || isBlue) ? 'TRACKED' : (typeof a.getTrackState === 'function' ? a.getTrackState(commanderTeam) : ((typeof a.isIdentifiedBy === 'function' ? a.isIdentifiedBy(commanderTeam) : a.isIdentified) ? 'TRACKED' : 'BOGEY'));
@@ -56,22 +52,19 @@ class RadarContactsRenderer {
       const clampedX = Math.max(margin, Math.min(maxScreenDist, px));
       const clampedY = Math.max(margin, Math.min(cssHeight - margin, py));
       if (px !== clampedX || py !== clampedY) {
-        if (typeof RadarContactsAuxRenderer !== 'undefined') {
-          const safeModel = RadarRenderer.cleanText(a.spec ? a.spec.id : 'JET');
-          RadarContactsAuxRenderer.drawOffscreenIndicator(ctx, { x: px, y: py }, clampedX, clampedY, cssWidth, cssHeight, isIdentified, isAce, isBlue, safeModel, relDistKm, trackState);
-        }
+        const safeModel = RadarRenderer.cleanText(a.spec ? a.spec.id : 'JET');
+        RadarContactsAuxRenderer.drawOffscreenIndicator(ctx, { x: px, y: py }, clampedX, clampedY, cssWidth, cssHeight, isIdentified, isAce, isBlue, safeModel, relDistKm, trackState);
         continue;
       }
 
       if (isEnemy && isInspection && window.Game && window.Game.ai && typeof window.Game.ai.isUnitFocused === 'function' && window.Game.ai.isUnitFocused(a.id)) {
-        if (typeof RadarContactsAuxRenderer !== 'undefined') {
-          RadarContactsAuxRenderer.drawEnemyControlArrow(ctx, px, py);
-        }
+        RadarContactsAuxRenderer.drawEnemyControlArrow(ctx, px, py);
       }
 
       if (isSelected && a.hp > 0.05 && a.gun) {
         const gunRangeKm = a.gun.rangeKm || 4.6;
-        const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0 };
+        const cfg = window.CONFIG;
+        if (!cfg || !cfg.THEATER_WIDTH_KM) throw new Error('CONFIG.THEATER_WIDTH_KM must be loaded.');
         const screenRadius = (gunRangeKm / cfg.THEATER_WIDTH_KM) * cssWidth * cam.zoom;
         if (screenRadius > 6) {
           const halfConeRad = (((a.gun.coneAngleDeg || 55) / 2.0) * Math.PI) / 180.0;

@@ -8,9 +8,12 @@ class RadarEnvironmentRenderer {
     ctx.save();
     ctx.strokeStyle = '#081324';
     ctx.lineWidth = 1;
-    const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
-    const w = cfg.THEATER_WIDTH_KM || 150.0;
-    const h = cfg.THEATER_HEIGHT_KM || 100.0;
+    const cfg = window.CONFIG;
+    if (!cfg || !cfg.THEATER_WIDTH_KM || !cfg.THEATER_HEIGHT_KM) {
+      throw new Error('CONFIG theater dimensions must be loaded before drawGrid.');
+    }
+    const w = cfg.THEATER_WIDTH_KM;
+    const h = cfg.THEATER_HEIGHT_KM;
     const y0 = cam.toScreenY(0);
     const yH = cam.toScreenY(h);
     const x0 = cam.toScreenX(0);
@@ -32,11 +35,13 @@ class RadarEnvironmentRenderer {
   }
 
   static drawBaseCorridor(ctx, cam, cssWidth) {
-    const corridorX = (window.CONFIG && window.CONFIG.RTB_CORRIDOR_X_KM) || 32.0;
-    const cfg = window.CONFIG || { THEATER_HEIGHT_KM: 100.0 };
-    const sx = cam.toScreenX(corridorX);
+    const cfg = window.CONFIG;
+    if (!cfg || !cfg.RTB_CORRIDOR_X_KM || !cfg.THEATER_HEIGHT_KM) {
+      throw new Error('CONFIG.RTB_CORRIDOR_X_KM and THEATER_HEIGHT_KM must be loaded before drawBaseCorridor.');
+    }
+    const sx = cam.toScreenX(cfg.RTB_CORRIDOR_X_KM);
     const y0 = cam.toScreenY(0);
-    const yH = cam.toScreenY(cfg.THEATER_HEIGHT_KM || 100.0);
+    const yH = cam.toScreenY(cfg.THEATER_HEIGHT_KM);
 
     ctx.save();
     ctx.strokeStyle = 'rgba(0, 245, 160, 0.40)';
@@ -51,7 +56,10 @@ class RadarEnvironmentRenderer {
 
   static drawClouds(ctx, cam, clouds, cssWidth, cssHeight) {
     if (!clouds || clouds.length === 0) return;
-    const cfg = window.CONFIG || { THEATER_WIDTH_KM: 150.0, THEATER_HEIGHT_KM: 100.0 };
+    const cfg = window.CONFIG;
+    if (!cfg || !cfg.THEATER_WIDTH_KM || !cfg.THEATER_HEIGHT_KM) {
+      throw new Error('CONFIG theater dimensions must be loaded before drawClouds.');
+    }
     const scaleX = (cssWidth / cfg.THEATER_WIDTH_KM) * cam.zoom;
     const scaleY = (cssHeight / cfg.THEATER_HEIGHT_KM) * cam.zoom;
 

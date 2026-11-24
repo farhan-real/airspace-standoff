@@ -9,11 +9,11 @@ class RadarCombatRenderer {
   static _clusterPool = [];
 
   static drawSurface(...args) {
-    if (typeof RadarSurfaceRenderer !== 'undefined') RadarSurfaceRenderer.drawSurface(...args);
+    RadarSurfaceRenderer.drawSurface(...args);
   }
 
   static drawCivilianTraffic(...args) {
-    if (typeof RadarSurfaceRenderer !== 'undefined') RadarSurfaceRenderer.drawCivilianTraffic(...args);
+    RadarSurfaceRenderer.drawCivilianTraffic(...args);
   }
 
   static drawRadarLocks(ctx, cam, craftA, craftB, activeUnit, team, detectedSet) {
@@ -40,10 +40,10 @@ class RadarCombatRenderer {
       if (!tgt || tgt.hp <= 0.05 || typeof tgt.x !== 'number') continue;
       if (source.team !== team && detectedSet && !detectedSet.has(source.id)) continue;
 
-      const p1x = cam.toScreenX ? cam.toScreenX(source.x) : cam.toScreen(source.x, source.y).x;
-      const p1y = cam.toScreenY ? cam.toScreenY(source.y) : cam.toScreen(source.x, source.y).y;
-      const p2x = cam.toScreenX ? cam.toScreenX(tgt.x) : cam.toScreen(tgt.x, tgt.y).x;
-      const p2y = cam.toScreenY ? cam.toScreenY(tgt.y) : cam.toScreen(tgt.x, tgt.y).y;
+      const p1x = cam.toScreenX(source.x);
+      const p1y = cam.toScreenY(source.y);
+      const p2x = cam.toScreenX(tgt.x);
+      const p2y = cam.toScreenY(tgt.y);
 
       ctx.beginPath();
       ctx.moveTo(p1x, p1y);
@@ -83,8 +83,8 @@ class RadarCombatRenderer {
     for (let g = 0; g < activeGroups.length; g++) {
       const group = activeGroups[g];
       const tgt = group.target;
-      const tx = cam.toScreenX ? cam.toScreenX(tgt.x) : cam.toScreen(tgt.x, tgt.y).x;
-      const ty = cam.toScreenY ? cam.toScreenY(tgt.y) : cam.toScreen(tgt.x, tgt.y).y;
+      const tx = cam.toScreenX(tgt.x);
+      const ty = cam.toScreenY(tgt.y);
       let friendlyCount = 0, enemyCount = 0;
       let friendlyLostGuid = 0, enemyLostGuid = 0;
       let farthestOwnMsl = null, farthestOwnDist = -1;
@@ -95,8 +95,8 @@ class RadarCombatRenderer {
         if (!isOwn && m.isPassiveRadar && m.distanceToTarget > (m.pathRevealDistance || 20.0)) continue;
         if (!isOwn && detectedSet && !detectedSet.has(m.id)) continue;
 
-        const pMx = cam.toScreenX ? cam.toScreenX(m.x) : cam.toScreen(m.x, m.y).x;
-        const pMy = cam.toScreenY ? cam.toScreenY(m.y) : cam.toScreen(m.x, m.y).y;
+        const pMx = cam.toScreenX(m.x);
+        const pMy = cam.toScreenY(m.y);
 
         ctx.beginPath();
         ctx.moveTo(pMx, pMy);
@@ -138,10 +138,10 @@ class RadarCombatRenderer {
         const reachKm = Math.min(farthestOwnDist, seekerKm);
         const sxKm = farthestOwnMsl.x + ux * reachKm;
         const syKm = farthestOwnMsl.y + uy * reachKm;
-        const pMx = cam.toScreenX ? cam.toScreenX(farthestOwnMsl.x) : cam.toScreen(farthestOwnMsl.x, farthestOwnMsl.y).x;
-        const pMy = cam.toScreenY ? cam.toScreenY(farthestOwnMsl.y) : cam.toScreen(farthestOwnMsl.x, farthestOwnMsl.y).y;
-        const pSx = cam.toScreenX ? cam.toScreenX(sxKm) : cam.toScreen(sxKm, syKm).x;
-        const pSy = cam.toScreenY ? cam.toScreenY(syKm) : cam.toScreen(sxKm, syKm).y;
+        const pMx = cam.toScreenX(farthestOwnMsl.x);
+        const pMy = cam.toScreenY(farthestOwnMsl.y);
+        const pSx = cam.toScreenX(sxKm);
+        const pSy = cam.toScreenY(syKm);
 
         ctx.save();
         ctx.setLineDash([]);
@@ -217,8 +217,8 @@ class RadarCombatRenderer {
       if (!isOwn && m.isPassiveRadar && m.age < (m.launchStealthDuration || 3.2) && m.distanceToTarget > (m.pathRevealDistance || 20.0)) continue;
       if (!isOwn && detectedSet && !detectedSet.has(m.id)) continue;
 
-      const px = Math.round(cam.toScreenX ? cam.toScreenX(m.x) : cam.toScreen(m.x, m.y).x);
-      const py = Math.round(cam.toScreenY ? cam.toScreenY(m.y) : cam.toScreen(m.x, m.y).y);
+      const px = Math.round(cam.toScreenX(m.x));
+      const py = Math.round(cam.toScreenY(m.y));
 
       let visItem = visPool[visibleCount];
       if (!visItem) {
@@ -242,8 +242,8 @@ class RadarCombatRenderer {
         ctx.beginPath();
         for (let t = 0; t < m.trail.length; t++) {
           const pt = m.trail[t];
-          const tpx = Math.round(cam.toScreenX ? cam.toScreenX(pt.x) : cam.toScreen(pt.x, pt.y).x);
-          const tpy = Math.round(cam.toScreenY ? cam.toScreenY(pt.y) : cam.toScreen(pt.x, pt.y).y);
+          const tpx = Math.round(cam.toScreenX(pt.x));
+          const tpy = Math.round(cam.toScreenY(pt.y));
           if (t === 0) ctx.moveTo(tpx, tpy);
           else ctx.lineTo(tpx, tpy);
         }
@@ -379,8 +379,8 @@ class RadarCombatRenderer {
 
   static drawHoverReticle(ctx, cam, contact) {
     if (!contact || typeof contact.x !== 'number') return;
-    const px = cam.toScreenX ? cam.toScreenX(contact.x) : cam.toScreen(contact.x, contact.y).x;
-    const py = cam.toScreenY ? cam.toScreenY(contact.y) : cam.toScreen(contact.x, contact.y).y;
+    const px = cam.toScreenX(contact.x);
+    const py = cam.toScreenY(contact.y);
     ctx.save();
     ctx.strokeStyle = '#00f0ff';
     ctx.lineWidth = 1.5;
@@ -393,8 +393,8 @@ class RadarCombatRenderer {
 
   static drawTargetReticle(ctx, cam, target) {
     if (!target || typeof target.x !== 'number') return;
-    const px = cam.toScreenX ? cam.toScreenX(target.x) : cam.toScreen(target.x, target.y).x;
-    const py = cam.toScreenY ? cam.toScreenY(target.y) : cam.toScreen(target.x, target.y).y;
+    const px = cam.toScreenX(target.x);
+    const py = cam.toScreenY(target.y);
     const commanderTeam = (window.Game && window.Game.currentPvpCommander) || 'friendly';
     const trackState = (target.team === commanderTeam) ? 'TRACKED' : (typeof target.getTrackState === 'function' ? target.getTrackState(commanderTeam) : ((typeof target.isIdentifiedBy === 'function' ? target.isIdentifiedBy(commanderTeam) : target.isIdentified) ? 'TRACKED' : 'BOGEY'));
     const isKnown = (trackState === 'TRACKED' || trackState === 'DECAYING');
