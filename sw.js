@@ -321,6 +321,48 @@ function isIgnoredLocalPath(pathname) {
     pathname.endsWith('/inspect_output.txt');
 }
 
+const MAX_CONCURRENT_FETCHES = 20;
+let activeFetchCount = 0;
+const fetchWaitQueue = [];
+
+function runQueuedFetch(task) {
+  return new Promise((resolve, reject) => {
+    const start = () => {
+      activeFetchCount++;
+      Promise.resolve()
+        .then(task)
+        .then(resolve, reject)
+        .finally(() => {
+          activeFetchCount--;
+          const next = fetchWaitQueue.shift();
+          if (next) next();
+        });
+    };
+    if (activeFetchCount < MAX_CONCURRENT_FETCHES) start();
+    else fetchWaitQueue.push(start);
+  });
+}
+
+async function fetchFreshWithRetry(reqOrUrl, retries = 2) {
+  return runQueuedFetch(async () => {
+    let lastErr = null;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const res = await fetch(reqOrUrl, { cache: 'no-cache' });
+        if (res && res.ok) return res;
+        if (res && res.status < 429) return res;
+      } catch (err) {
+        lastErr = err;
+      }
+      if (attempt < retries) {
+        await new Promise((r) => setTimeout(r, 120 * (attempt + 1)));
+      }
+    }
+    if (lastErr) throw lastErr;
+    return null;
+  });
+}
+
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
@@ -351,7 +393,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       try {
-        const res = await fetch('./index.html', { cache: 'no-cache' });
+        const res = await fetchFreshWithRetry('./index.html');
         if (res && res.ok) {
           await cache.put('./index.html', res.clone());
           await cache.put('./', res.clone());
@@ -368,7 +410,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
     try {
-      const res = await fetch(req, { cache: 'no-cache' });
+      const res = await fetchFreshWithRetry(req);
       if (res && res.ok) {
         await cache.put(req, res.clone());
         return res;
