@@ -123,10 +123,11 @@
 .adc-btn-add {
   flex: 1 1 auto;
   height: 26px;
-  background: var(--jewel-cyan-bg);
-  border: 1px solid rgba(0, 229, 255, 0.52);
-  border-top: 1px solid rgba(205, 248, 255, 0.52);
+  background: linear-gradient(175deg, rgba(14, 165, 233, 0.86) 0%, rgba(2, 132, 199, 0.80) 56%, rgba(3, 105, 161, 0.88) 100%), #06283d;
+  border: 1px solid rgba(56, 220, 255, 0.82);
+  border-top: 1px solid rgba(224, 249, 255, 0.85);
   color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 12, 24, 0.72);
   font-family: var(--font-untitled-sans);
   font-size: 0.66rem;
   font-weight: 700;
@@ -139,17 +140,17 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.26), 0 2px 8px rgba(0, 229, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 3px 12px rgba(0, 229, 255, 0.24);
   transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
   white-space: nowrap;
 }
 
 .adc-btn-add:hover:not(:disabled) {
-  background: var(--jewel-cyan-hover);
-  border-color: #00e5ff;
+  background: linear-gradient(175deg, rgba(56, 189, 248, 0.94) 0%, rgba(14, 165, 233, 0.88) 56%, rgba(2, 132, 199, 0.94) 100%), #08344f;
+  border-color: #67e8f9;
   border-top-color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 4px 14px rgba(0, 229, 255, 0.24);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.60), 0 5px 18px rgba(0, 229, 255, 0.36);
 }
 
 .adc-btn-add:active:not(:disabled) { transform: translateY(1px); box-shadow: var(--glass-3d-btn-active-shadow); }

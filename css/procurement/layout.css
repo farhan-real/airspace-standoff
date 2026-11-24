@@ -95,10 +95,28 @@ body.safe-zone-on .procurement-window {
   padding: 8px 16px;
 }
 
+.proc-load-btn:not(:disabled) {
+  background: linear-gradient(175deg, rgba(16, 185, 129, 0.86) 0%, rgba(5, 150, 105, 0.82) 56%, rgba(4, 120, 87, 0.90) 100%), #042b20;
+  border: 1px solid rgba(52, 245, 178, 0.82);
+  border-top: 1px solid rgba(215, 255, 240, 0.86);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 20, 14, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 4px 16px rgba(0, 245, 160, 0.24);
+}
+
+.proc-load-btn:hover:not(:disabled) {
+  background: linear-gradient(175deg, rgba(52, 211, 153, 0.94) 0%, rgba(16, 185, 129, 0.88) 56%, rgba(5, 150, 105, 0.94) 100%), #063b2c;
+  border-color: #6ee7b7;
+  border-top-color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.60), 0 0 22px rgba(0, 245, 160, 0.38);
+  transform: translateY(-1px);
+}
+
 .proc-load-btn:disabled {
   background: rgba(0, 0, 0, 0.65) !important;
   border-color: rgba(255, 255, 255, 0.07) !important;
   color: var(--color-fog-veil) !important;
+  text-shadow: none !important;
   opacity: 0.42 !important;
   filter: grayscale(1) !important;
   cursor: not-allowed !important;
@@ -107,19 +125,23 @@ body.safe-zone-on .procurement-window {
 }
 
 .scramble-btn {
-  background: var(--jewel-cyan-bg);
-  border: 1px solid rgba(0, 229, 255, 0.55);
-  border-top: 1px solid rgba(205, 248, 255, 0.55);
-  color: #ffffff;
   padding: 8px 24px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 18px rgba(0, 229, 255, 0.16);
+}
+
+.scramble-btn:not(:disabled) {
+  background: linear-gradient(175deg, rgba(14, 165, 233, 0.88) 0%, rgba(2, 132, 199, 0.82) 56%, rgba(3, 105, 161, 0.90) 100%), #06283d;
+  border: 1px solid rgba(56, 220, 255, 0.86);
+  border-top: 1px solid rgba(224, 249, 255, 0.88);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 12, 24, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 4px 18px rgba(0, 229, 255, 0.28);
 }
 
 .scramble-btn:hover:not(:disabled) {
-  background: var(--jewel-cyan-hover);
-  border-color: #00e5ff;
-  border-top-color: rgba(255, 255, 255, 0.78);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.44), 0 0 22px rgba(0, 229, 255, 0.26);
+  background: linear-gradient(175deg, rgba(56, 189, 248, 0.95) 0%, rgba(14, 165, 233, 0.90) 56%, rgba(2, 132, 199, 0.95) 100%), #08344f;
+  border-color: #67e8f9;
+  border-top-color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62), 0 0 24px rgba(0, 229, 255, 0.42);
   transform: translateY(-1px);
 }
 
