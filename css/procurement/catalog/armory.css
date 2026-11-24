@@ -119,7 +119,7 @@
 
 .dense-sub-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -140,6 +140,7 @@
 }
 
 .catalog-item-card {
+  min-width: 0;
   background: var(--glass-3d-card-bg);
   border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid rgba(255, 255, 255, 0.22);
@@ -219,9 +220,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   min-width: 0;
   padding: 1px 0;
+  white-space: nowrap;
+}
+
+.cic-specs > div span {
+  flex-shrink: 0;
+}
+
+.cic-specs > div b {
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cic-specs > div b:not([class*="stat-tier"]) {
@@ -272,5 +285,13 @@
   .shelf-tabs { flex-wrap: nowrap; overflow-x: auto; white-space: nowrap; padding-bottom: 2px; scrollbar-width: none; }
   .shelf-tabs::-webkit-scrollbar { display: none; }
   .shelf-tab-btn { padding: 4px 8px; font-size: 0.60rem; flex-shrink: 0; }
-  .dense-sub-grid { grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 6px; }
+  .dense-sub-grid { gap: 6px; }
+  .catalog-item-card { padding: 8px 9px; gap: 4px; }
+  .cic-specs { font-size: 0.56rem; gap: 2px 6px; padding: 5px 6px; }
+  .catalog-item-card .spec-inspect-btn { padding: 0 7px; font-size: 0.58rem; }
+  .btn-quick-equip { padding: 0 8px; font-size: 0.58rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+}
+
+@media (max-width: 768px), (max-height: 550px) {
+  .dense-sub-grid { grid-template-columns: 1fr; gap: 6px; }
 }

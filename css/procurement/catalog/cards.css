@@ -163,19 +163,22 @@
   }
 }
 
-.is-android .airframes-dense-grid,
-.is-android-apk .airframes-dense-grid {
-  grid-template-columns: 1fr;
-  gap: 6px;
-}
-
 @media (max-width: 1024px) {
   .airframe-filter-bar { flex-wrap: nowrap; overflow-x: auto; white-space: nowrap; padding-bottom: 2px; scrollbar-width: none; }
   .airframe-filter-bar::-webkit-scrollbar { display: none; }
   .cat-pill-btn { padding: 3px 8px; font-size: 0.58rem; flex-shrink: 0; }
-  .airframes-dense-grid { grid-template-columns: 1fr; gap: 6px; }
+  .airframes-dense-grid { gap: 6px; }
+  .airframe-dense-card { padding: 8px 9px; gap: 5px; }
+  .adc-metrics-grid { font-size: 0.56rem; gap: 2px 6px; padding: 5px 6px; }
+  .adc-footer .spec-inspect-btn { min-width: 48px; padding: 0 7px; font-size: 0.58rem; }
+  .adc-btn-add { padding: 0 8px; font-size: 0.59rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 }
 
-@media (hover: none) and (pointer: coarse) {
-  .airframes-dense-grid { grid-template-columns: 1fr; gap: 6px; }
+@media (max-width: 768px), (max-height: 550px) {
+  .airframes-dense-grid,
+  .is-android .airframes-dense-grid,
+  .is-android-apk .airframes-dense-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
 }

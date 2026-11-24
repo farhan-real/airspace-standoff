@@ -33,7 +33,7 @@ class ShelfCardBuilders {
         <div><span>RNG:</span><b class="${rRange.colorClass}">${g.rangeKm}km</b></div>
         <div><span>CONE:</span><b>${g.coneAngleDeg} deg</b></div>
         <div><span>DPS:</span><b class="${rDps.colorClass}">${g.damagePerSec.toFixed(1)} HP/s</b></div>
-        <div><span>BURST:</span><b class="${rBurst.colorClass}">${burstDmg} HP (${g.roundsPerBurst})</b></div>
+        <div><span>BURST:</span><b class="${rBurst.colorClass}">${burstDmg} HP</b></div>
         <div><span>RELOAD:</span><b class="${rCd.colorClass}">${g.burstCooldown.toFixed(1)}s</b></div>
         <div><span>MAG:</span><b class="${rAmmo.colorClass}">${g.defaultAmmo} RDS</b></div>
       </div>
@@ -127,7 +127,7 @@ class ShelfCardBuilders {
     let specsRow = '';
     if (wpn.grantsESM) {
       const rSpot = rate('spot_range', wpn.spotRangeKm);
-      specsRow = `<div><span>ESM REACH:</span><b class="${rSpot.colorClass}">${wpn.spotRangeKm}km</b></div><div><span>SEAD:</span><b class="stat-tier-1">+${Math.round((wpn.armRangeBoost - 1) * 100)}% ARM</b></div>`;
+      specsRow = `<div><span>ESM:</span><b class="${rSpot.colorClass}">${wpn.spotRangeKm}km</b></div><div><span>SEAD:</span><b class="stat-tier-1">+${Math.round((wpn.armRangeBoost - 1) * 100)}% ARM</b></div>`;
     } else if (wpn.grantsIRST && wpn.a2gPkBonus <= 0) {
       specsRow = `<div><span>TRACK:</span><b class="stat-tier-1">PASSIVE IRST</b></div><div><span>STEALTH:</span><b class="stat-tier-1">28km BURN</b></div>`;
     } else if (wpn.isTargetingPod) {
@@ -141,7 +141,7 @@ class ShelfCardBuilders {
     } else if (wpn.isJammerPod) {
       const rJamRng = rate('jam_range', wpn.rangeKm);
       const rJamEff = rate('jam_efficiency', wpn.jamEfficiency);
-      specsRow = `<div><span>UMBRELLA:</span><b class="${rJamRng.colorClass}">${wpn.rangeKm}km</b></div><div><span>JAMMING:</span><b class="${rJamEff.colorClass}">-${Math.round(wpn.jamEfficiency * 100)}%</b></div>`;
+      specsRow = `<div><span>RANGE:</span><b class="${rJamRng.colorClass}">${wpn.rangeKm}km</b></div><div><span>JAM:</span><b class="${rJamEff.colorClass}">-${Math.round(wpn.jamEfficiency * 100)}%</b></div>`;
     } else if (wpn.isDecoy || wpn.isDecoyDrone) {
       const rDroneRng = rate('missile_range', wpn.rangeKm);
       const rAmmo = rate('ammo_count', wpn.ammoCount);
