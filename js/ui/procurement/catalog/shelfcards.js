@@ -10,17 +10,30 @@ class ShelfCardBuilders {
     const isComp = activeSpec ? window.AircraftRegistry.isGunCompatible(activeSpec, g) : false;
     card.setAttribute('draggable', isComp ? 'true' : 'false');
     card.dataset.dragType = 'gun'; card.dataset.dragId = g.id; card.dataset.dragName = g.name;
+    const rate = StatEvaluator.rate;
     const burstDmg = g.damagePerBurst.toFixed(2);
+    const rRpm = rate('gun_rpm', g.rpm);
+    const rMass = rate('component_mass', g.mass);
+    const rRange = rate('gun_range', g.rangeKm);
+    const rDps = rate('gun_dps', g.damagePerSec);
+    const rBurst = rate('gun_burst', g.damagePerBurst);
+    const rAmmo = rate('gun_ammo', g.defaultAmmo);
+    const rCd = rate('gun_cooldown', g.burstCooldown);
     const specialLineHtml = window.BehaviorCodex.renderCardSummaryHtml('gun', g);
 
     card.innerHTML = `
       <div class="cic-top"><span class="cic-title">${g.name}</span><span class="cic-cost" style="color:#7dd3fc;">${g.caliber}</span></div>
       <div class="cic-type-bar">
-        <span class="badge-category">${g.rpm} RPM</span>
-        <span class="badge-mass">+${g.mass} kg</span>
-        ${g.speedPenalty > 0 ? `<span class="badge-category" style="color:#fda4af;">-${Math.round(g.speedPenalty * 100)}% SPD</span>` : ''}
-        ${g.rcsPenalty > 0 ? `<span class="badge-category" style="color:#fbbf24;">+${Math.round(g.rcsPenalty * 100)}% RCS</span>` : ''}
-        <span class="badge-category" style="color:#00f5a0;">${burstDmg} HP (${g.roundsPerBurst} rds, ${g.burstCooldown.toFixed(1)}s)</span>
+        <span class="badge-category ${rRpm.colorClass}">${g.rpm} RPM</span>
+        <span class="badge-mass ${rMass.colorClass}">+${g.mass} kg</span>
+        ${g.speedPenalty > 0 ? `<span class="badge-category stat-tier-4">-${Math.round(g.speedPenalty * 100)}% SPD</span>` : ''}
+        ${g.rcsPenalty > 0 ? `<span class="badge-category stat-tier-5">+${Math.round(g.rcsPenalty * 100)}% RCS</span>` : ''}
+      </div>
+      <div class="cic-specs">
+        <div>RNG: <b class="${rRange.colorClass}">${g.rangeKm}km</b> (${g.coneAngleDeg} deg)</div>
+        <div>DPS: <b class="${rDps.colorClass}">${g.damagePerSec.toFixed(1)} HP/s</b></div>
+        <div>BURST: <b class="${rBurst.colorClass}">${burstDmg} HP</b> (${g.roundsPerBurst} rds, <b class="${rCd.colorClass}">${g.burstCooldown.toFixed(1)}s</b>)</div>
+        <div>MAG: <b class="${rAmmo.colorClass}">${g.defaultAmmo} RDS</b></div>
       </div>
       ${specialLineHtml}
       <div class="cic-desc">${g.desc}</div>
@@ -50,16 +63,19 @@ class ShelfCardBuilders {
     else if (upg.id === 'ZOE_NEURAL_PROCESSOR') compBadge = 'DRONES & COFFIN ONLY';
     else if (upg.id === 'COFFIN_OPTICAL_BUS') compBadge = 'EXP, COFFIN & DRONES';
     else if (upg.id === 'SWARM_AI_COPROCESSOR') compBadge = 'DRONES ONLY';
-    const badgeColor = (compBadge === 'UNIVERSAL') ? '#00f5a0' : '#fbbf24';
+    const rate = StatEvaluator.rate;
+    const rCost = rate('cost_upgrade', upg.cost);
+    const rMass = rate('component_mass', upg.mass || 0);
+    const badgeTierClass = (compBadge === 'UNIVERSAL') ? 'stat-tier-1' : 'stat-tier-3';
     const specialLineHtml = window.BehaviorCodex.renderCardSummaryHtml('upgrade', upg);
 
     card.innerHTML = `
-      <div class="cic-top"><span class="cic-title">${upg.name}</span><span class="cic-cost">$${upg.cost.toFixed(1)}M</span></div>
+      <div class="cic-top"><span class="cic-title">${upg.name}</span><span class="cic-cost ${rCost.colorClass}">$${upg.cost.toFixed(1)}M</span></div>
       <div class="cic-type-bar">
         <span class="badge-category">${upg.category}</span>
-        <span class="badge-mass">+${upg.mass} kg</span>
+        <span class="badge-mass ${rMass.colorClass}">+${upg.mass} kg</span>
         <span class="badge-slots">1 SOCKET</span>
-        <span class="badge-category" style="color:${badgeColor};">${compBadge}</span>
+        <span class="badge-category ${badgeTierClass}">${compBadge}</span>
       </div>
       ${specialLineHtml}
       <div class="cic-desc">${upg.desc}</div>
@@ -103,28 +119,51 @@ class ShelfCardBuilders {
     card.setAttribute('draggable', isRestricted ? 'false' : 'true');
     card.dataset.dragType = 'weapon'; card.dataset.dragId = wpn.id; card.dataset.dragName = wpn.name;
 
-    let specsRow = `<div>RNG: <b>${wpn.rangeKm}km</b></div><div>SPD: <b>M ${wpn.speedMach}</b> &bull; DMG: <b>${wpn.damagePerBurst || wpn.damage} HP</b></div>`;
+    const rate = StatEvaluator.rate;
+    const rCost = rate('cost_weapon', wpn.cost);
+    const rMass = rate('ordnance_mass', wpn.mass);
+    let specsRow = '';
     if (wpn.grantsESM) {
-      specsRow = `<div>ESM REACH: <b>${wpn.spotRangeKm}km</b></div><div>SEAD: <b>+${Math.round((wpn.armRangeBoost - 1) * 100)}% ARM RNG</b></div>`;
+      const rSpot = rate('spot_range', wpn.spotRangeKm);
+      specsRow = `<div>ESM REACH: <b class="${rSpot.colorClass}">${wpn.spotRangeKm}km</b></div><div>SEAD: <b class="stat-tier-1">+${Math.round((wpn.armRangeBoost - 1) * 100)}% ARM RNG</b></div>`;
     } else if (wpn.grantsIRST && wpn.a2gPkBonus <= 0) {
-      specsRow = `<div>TRACK: <b>PASSIVE IRST</b></div><div>ANTI-STEALTH: <b>28km BURN</b></div>`;
+      specsRow = `<div>TRACK: <b class="stat-tier-1">PASSIVE IRST</b></div><div>ANTI-STEALTH: <b class="stat-tier-1">28km BURN</b></div>`;
     } else if (wpn.isTargetingPod) {
-      specsRow = `<div>RECON: <b>${wpn.spotRangeKm}km</b></div><div>BUFF: <b>+${Math.round(wpn.a2gPkBonus * 100)}% A2G Pk</b></div>`;
+      const rSpot = rate('spot_range', wpn.spotRangeKm);
+      const rPk = rate('a2g_pk_bonus', wpn.a2gPkBonus);
+      const rCloud = rate('cloud_mitigation', wpn.cloudMitigation || 0);
+      specsRow = `<div>RECON: <b class="${rSpot.colorClass}">${wpn.spotRangeKm}km</b>${wpn.cloudMitigation > 0 ? ` &bull; CLOUD: <b class="${rCloud.colorClass}">-${Math.round(wpn.cloudMitigation * 100)}%</b>` : ''}</div><div>BUFF: <b class="${rPk.colorClass}">+${Math.round(wpn.a2gPkBonus * 100)}% A2G Pk</b></div>`;
     } else if (wpn.isJammerPod) {
-      specsRow = `<div>UMBRELLA: <b>${wpn.rangeKm}km</b></div><div>SUPPRESSION: <b>-${Math.round(wpn.jamEfficiency * 100)}% RADAR</b></div>`;
+      const rJamRng = rate('jam_range', wpn.rangeKm);
+      const rJamEff = rate('jam_efficiency', wpn.jamEfficiency);
+      specsRow = `<div>UMBRELLA: <b class="${rJamRng.colorClass}">${wpn.rangeKm}km</b></div><div>SUPPRESSION: <b class="${rJamEff.colorClass}">-${Math.round(wpn.jamEfficiency * 100)}% RADAR</b></div>`;
     } else if (wpn.isDecoy || wpn.isDecoyDrone) {
-      specsRow = `<div>${wpn.isDecoyDrone ? `RANGE: <b>${wpn.rangeKm}km</b>` : 'TOWED: <b>REPEATER</b>'}</div><div>CHARGES: <b>${wpn.ammoCount}x</b></div>`;
+      const rDroneRng = rate('missile_range', wpn.rangeKm);
+      const rAmmo = rate('ammo_count', wpn.ammoCount);
+      specsRow = `<div>${wpn.isDecoyDrone ? `RANGE: <b class="${rDroneRng.colorClass}">${wpn.rangeKm}km</b>` : 'TOWED: <b class="stat-tier-2">REPEATER</b>'}</div><div>CHARGES: <b class="${rAmmo.colorClass}">${wpn.ammoCount}x</b></div>`;
+    } else if (wpn.isGunpod) {
+      const rRng = rate('gun_range', wpn.rangeKm);
+      const rDps = rate('gun_dps', wpn.damagePerSec || 2.8);
+      const rBurst = rate('gun_burst', wpn.damagePerBurst || wpn.damage);
+      const rAmmo = rate('gun_ammo', wpn.ammoCount || 16);
+      specsRow = `<div>RNG: <b class="${rRng.colorClass}">${wpn.rangeKm}km</b> &bull; MAG: <b class="${rAmmo.colorClass}">${wpn.ammoCount}x</b></div><div>DPS: <b class="${rDps.colorClass}">${(wpn.damagePerSec || 2.8).toFixed(1)} HP/s</b> &bull; BURST: <b class="${rBurst.colorClass}">${(wpn.damagePerBurst || wpn.damage).toFixed(2)} HP</b></div>`;
+    } else {
+      const rRng = rate('missile_range', wpn.rangeKm);
+      const rSpd = rate('missile_speed', wpn.speedMach);
+      const rDmg = rate('missile_damage', wpn.damage);
+      const rAmmo = rate('ammo_count', wpn.ammoCount || 4);
+      specsRow = `<div>RNG: <b class="${rRng.colorClass}">${wpn.rangeKm}km</b> &bull; MAG: <b class="${rAmmo.colorClass}">${wpn.ammoCount || 4}x</b></div><div>SPD: <b class="${rSpd.colorClass}">M ${wpn.speedMach}</b> &bull; DMG: <b class="${rDmg.colorClass}">${wpn.damage} HP</b></div>`;
     }
 
     const seekerLabel = wpn.grantsESM ? 'PASSIVE ELINT' : (wpn.grantsIRST ? 'PASSIVE IRST' : (wpn.isTargetingPod ? 'OPTICAL / LASER' : (wpn.isJammerPod ? 'BROADBAND ECM' : (wpn.isDecoy || wpn.isDecoyDrone ? 'RF DECOY' : (wpn.seeker || 'GUIDED')))));
     const specialLineHtml = window.BehaviorCodex.renderCardSummaryHtml('weapon', wpn);
 
     card.innerHTML = `
-      <div class="cic-top"><span class="cic-title">${wpn.name}</span><span class="cic-cost">$${wpn.cost.toFixed(1)}M</span></div>
+      <div class="cic-top"><span class="cic-title">${wpn.name}</span><span class="cic-cost ${rCost.colorClass}">$${wpn.cost.toFixed(1)}M</span></div>
       <div class="cic-type-bar">
         <span class="badge-slots">${wpn.slots} ${wpnSlotWord}</span>
         ${stationBadge}
-        <span class="badge-mass">+${wpn.mass} kg</span>
+        <span class="badge-mass ${rMass.colorClass}">+${wpn.mass} kg</span>
         ${typeBadge}
         <span class="badge-category" style="color:#00f0ff;">${seekerLabel}</span>
       </div>

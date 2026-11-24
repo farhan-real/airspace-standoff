@@ -77,7 +77,17 @@ class RosterStationsRenderer {
       else if (seekerTag === 'INS' || seekerTag === 'INS_RADAR') seekerTag = 'INS';
       else if (seekerTag === 'DIRECT_FIRE') seekerTag = 'DIRECT';
 
-      const hpPart = w.isTargetingPod ? `<b class="iic-hp">${w.spotRangeKm || 40}km</b>` : `<b class="iic-hp">${dmg} HP</b>`;
+      const rate = StatEvaluator.rate;
+      let hpPart = `<b class="iic-hp ${rate('missile_damage', dmg).colorClass}">${dmg} HP</b>`;
+      if (w.isTargetingPod) {
+        hpPart = `<b class="iic-hp ${rate('spot_range', w.spotRangeKm || 40).colorClass}">${w.spotRangeKm || 40}km</b>`;
+      } else if (w.isJammerPod) {
+        hpPart = `<b class="iic-hp ${rate('jam_efficiency', w.jamEfficiency || 0.3).colorClass}">-${Math.round((w.jamEfficiency || 0.3) * 100)}%</b>`;
+      } else if (w.isDecoy || w.isDecoyDrone) {
+        hpPart = `<b class="iic-hp ${rate('ammo_count', w.ammoCount || 2).colorClass}">${w.ammoCount || 2}x</b>`;
+      } else if (w.isGunpod) {
+        hpPart = `<b class="iic-hp ${rate('gun_dps', w.damagePerSec || 2.8).colorClass}">${(w.damagePerSec || 2.8).toFixed(1)} HP/s</b>`;
+      }
 
       return `
         <div class="installed-item-card station-${data.station.toLowerCase()}" data-sidx="${sIdx}" data-widx="${wIdx}">

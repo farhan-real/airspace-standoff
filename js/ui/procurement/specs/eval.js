@@ -80,12 +80,18 @@ class StatEvaluator {
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'ordnance_mass':
-      case 'component_mass':
       case 'deadweight':
         if (val <= 250)  return { tier: 1, colorClass: 'stat-tier-1' };
         if (val <= 600)  return { tier: 2, colorClass: 'stat-tier-2' };
         if (val <= 1100) return { tier: 3, colorClass: 'stat-tier-3' };
         if (val <= 2200) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'component_mass':
+        if (val <= 80)  return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val <= 160) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val <= 260) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val <= 380) return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'payload_capacity':
@@ -123,10 +129,11 @@ class StatEvaluator {
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'cost_upgrade':
-        if (val <= 0.8) return { tier: 1, colorClass: 'stat-tier-1' };
-        if (val <= 1.5) return { tier: 2, colorClass: 'stat-tier-2' };
-        if (val <= 2.0) return { tier: 3, colorClass: 'stat-tier-3' };
-        return { tier: 4, colorClass: 'stat-tier-4' };
+        if (val <= 0.7) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val <= 1.2) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val <= 1.7) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val <= 2.1) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
 
       case 'missile_range':
         if (val >= 110) return { tier: 1, colorClass: 'stat-tier-1' };
@@ -174,6 +181,69 @@ class StatEvaluator {
         if (val >= 2.5) return { tier: 2, colorClass: 'stat-tier-2' };
         if (val >= 2.0) return { tier: 3, colorClass: 'stat-tier-3' };
         if (val >= 1.5) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'gun_range':
+        if (val >= 9.0) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 5.6) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 4.8) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 4.2) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'gun_burst':
+        if (val >= 2.40) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 1.90) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 1.50) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 1.25) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'gun_ammo':
+        if (val >= 36) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 24) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 18) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 14) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'gun_cooldown':
+        if (val <= 1.5) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val <= 1.7) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val <= 2.0) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val <= 2.4) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'spot_range':
+        if (val >= 68) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 53) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 44) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 36) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'a2g_pk_bonus':
+        if (val >= 0.24) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 0.20) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 0.16) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 0.10) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'cloud_mitigation':
+        if (val >= 0.45) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 0.35) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 0.25) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 0.15) return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'jam_range':
+        if (val >= 115) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 95)  return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 80)  return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 70)  return { tier: 4, colorClass: 'stat-tier-4' };
+        return { tier: 5, colorClass: 'stat-tier-5' };
+
+      case 'jam_efficiency':
+        if (val >= 0.52) return { tier: 1, colorClass: 'stat-tier-1' };
+        if (val >= 0.42) return { tier: 2, colorClass: 'stat-tier-2' };
+        if (val >= 0.35) return { tier: 3, colorClass: 'stat-tier-3' };
+        if (val >= 0.30) return { tier: 4, colorClass: 'stat-tier-4' };
         return { tier: 5, colorClass: 'stat-tier-5' };
 
       default:

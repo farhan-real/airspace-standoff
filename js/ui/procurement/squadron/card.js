@@ -74,6 +74,7 @@ class RosterCardBuilder {
 
     const category = spec.category || 'MULTIROLE';
     const activeGunDmg = activeGun ? (activeGun.damagePerSec || 2.5) : 2.5;
+    const rGunDps = rate('gun_dps', activeGunDmg);
 
     if (typeof PresetMatcher === 'undefined') throw new Error('PresetMatcher is not loaded.');
     const presetMatch = PresetMatcher.match(item.specId, item.weapons, item.chosenGunId, item.upgrades, pm.customLoadouts);
@@ -95,7 +96,7 @@ class RosterCardBuilder {
             <span class="squad-unit-badge badge-cat-${category.toLowerCase()}">${category}</span>
           </div>
           <div class="suh-right-meta">
-            <span class="squad-unit-cost">$${totalCost.toFixed(1)}M</span>
+            <span class="squad-unit-cost ${metrics ? metrics.costColorClass : 'stat-tier-3'}">$${totalCost.toFixed(1)}M</span>
             <button type="button" class="spec-inspect-btn small" data-inspect-type="airframe" data-inspect-id="${spec.id}">SPECS</button>
           </div>
         </div>
@@ -131,7 +132,7 @@ class RosterCardBuilder {
       <div class="roster-section-box gun-section-box">
         <div class="station-header-row">
           <span class="station-title">AUTOCANNON / GUN: <b>${activeGun ? activeGun.name : 'M61A2'}</b></span>
-          <span class="station-tag centerline-tag">${activeGunDmg} HP/s</span>
+          <span class="station-tag centerline-tag ${rGunDps.colorClass}">${activeGunDmg} HP/s</span>
         </div>
         <div class="su-gun-selector-row">
           <div class="custom-dropdown su-gun-dropdown" id="cdd-gun-${sIdx}">

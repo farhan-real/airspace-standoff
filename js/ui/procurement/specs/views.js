@@ -8,11 +8,19 @@ class SpecsSubsystemViews {
     if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     const rate = window.StatEvaluator.rate;
 
-    const rRange = rate('missile_range', w.rangeKm || 20.0);
+    const rRange = w.isTargetingPod
+      ? rate('spot_range', w.spotRangeKm || w.rangeKm || 32.0)
+      : (w.isJammerPod ? rate('jam_range', w.rangeKm || 65.0)
+        : (w.isGunpod ? rate('gun_range', w.rangeKm || 4.5) : rate('missile_range', w.rangeKm || 20.0)));
     const rMin = rate('min_arming', w.minRangeKm || 1.0);
-    const rSpd = rate('missile_speed', w.speedMach || 1.0);
-    const rDmg = rate('missile_damage', w.damage || 2);
-    const rAmmo = rate('ammo_count', w.ammoCount || 4);
+    const rSpd = w.isTargetingPod
+      ? rate('a2g_pk_bonus', w.a2gPkBonus || 0)
+      : (w.isJammerPod ? rate('jam_efficiency', w.jamEfficiency || 0.3)
+        : (w.isGunpod ? rate('gun_dps', w.damagePerSec || 2.8) : rate('missile_speed', w.speedMach || 1.0)));
+    const rDmg = w.isGunpod
+      ? rate('gun_burst', w.damagePerBurst || w.damage || 1.5)
+      : rate('missile_damage', w.damage || 2);
+    const rAmmo = w.isGunpod ? rate('gun_ammo', w.ammoCount || 16) : rate('ammo_count', w.ammoCount || 4);
     const rMass = rate('ordnance_mass', w.mass || 100);
     const rCost = rate('cost_weapon', w.cost || 1.0);
     const category = w.category;
@@ -60,17 +68,18 @@ class SpecsSubsystemViews {
 
     let podOrWeaponStatsHtml = '';
     if (w.isTargetingPod) {
+      const rCloud = rate('cloud_mitigation', w.cloudMitigation || 0);
       podOrWeaponStatsHtml = `
-        <div class="inspect-stat-item"><span>SENSOR / RECON RANGE:</span><b class="stat-tier-1">${w.spotRangeKm} km ${w.exposesDecoys ? '(Exposes Ground Decoys)' : ''}</b></div>
-        <div class="inspect-stat-item"><span>A2G PRECISION BUFF:</span><b class="stat-tier-2">+${Math.round(w.a2gPkBonus * 100)}% Pk</b></div>
-        <div class="inspect-stat-item"><span>CLOUD SCATTER MITIGATION:</span><b class="stat-tier-2">${Math.round(w.cloudMitigation * 100)}%</b></div>
+        <div class="inspect-stat-item"><span>SENSOR / RECON RANGE:</span><b class="${rRange.colorClass}">${w.spotRangeKm} km ${w.exposesDecoys ? '(Exposes Ground Decoys)' : ''}</b></div>
+        <div class="inspect-stat-item"><span>A2G PRECISION BUFF:</span><b class="${rSpd.colorClass}">+${Math.round(w.a2gPkBonus * 100)}% Pk</b></div>
+        <div class="inspect-stat-item"><span>CLOUD SCATTER MITIGATION:</span><b class="${rCloud.colorClass}">${Math.round(w.cloudMitigation * 100)}%</b></div>
         ${w.grantsIRST ? '<div class="inspect-stat-item"><span>AIR-TO-AIR IRST:</span><b class="stat-tier-1">ACTIVE (28km Stealth Burn-Through)</b></div>' : ''}
         ${w.grantsESM ? `<div class="inspect-stat-item"><span>SEAD ARM RANGE BOOST:</span><b class="stat-tier-1">+${Math.round((w.armRangeBoost - 1) * 100)}% ARM Reach</b></div>` : ''}
       `;
     } else if (w.isJammerPod) {
       podOrWeaponStatsHtml = `
-        <div class="inspect-stat-item"><span>JAMMING UMBRELLA:</span><b class="stat-tier-1">${w.rangeKm} km</b></div>
-        <div class="inspect-stat-item"><span>RADAR SUPPRESSION:</span><b class="stat-tier-2">-${Math.round(w.jamEfficiency * 100)}% Detection Reach</b></div>
+        <div class="inspect-stat-item"><span>JAMMING UMBRELLA:</span><b class="${rRange.colorClass}">${w.rangeKm} km</b></div>
+        <div class="inspect-stat-item"><span>RADAR SUPPRESSION:</span><b class="${rSpd.colorClass}">-${Math.round(w.jamEfficiency * 100)}% Detection Reach</b></div>
       `;
     } else if (w.isDecoy || w.isDecoyDrone) {
       podOrWeaponStatsHtml = `
@@ -89,8 +98,9 @@ class SpecsSubsystemViews {
 
     const specialDetailHtml = window.BehaviorCodex.renderSpecsDetailHtml('weapon', w);
     const kpiRange = w.isTargetingPod ? `${w.spotRangeKm} km` : `${w.rangeKm || 0} km`;
-    const kpiSpeed = w.isTargetingPod ? `+${Math.round(w.a2gPkBonus * 100)}% Pk` : (w.isJammerPod ? `-${Math.round(w.jamEfficiency * 100)}%` : `M ${w.speedMach || 0}`);
-    const kpiDmg   = (w.isTargetingPod || w.isJammerPod || w.isDecoy || w.isDecoyDrone) ? (w.seeker || 'SUPPORT') : `${w.damage} HP`;
+    const kpiSpeed = w.isTargetingPod ? `+${Math.round(w.a2gPkBonus * 100)}% Pk` : (w.isJammerPod ? `-${Math.round(w.jamEfficiency * 100)}%` : (w.isGunpod ? `${(w.damagePerSec || 2.8).toFixed(1)} HP/s` : `M ${w.speedMach || 0}`));
+    const kpiDmg   = (w.isTargetingPod || w.isJammerPod || w.isDecoy || w.isDecoyDrone) ? (w.seeker || 'SUPPORT') : (w.isGunpod ? `${(w.damagePerBurst || w.damage).toFixed(2)} HP` : `${w.damage} HP`);
+    const kpiRoleClass = (w.isTargetingPod || w.isJammerPod || w.isDecoy || w.isDecoyDrone) ? 'stat-tier-1' : rDmg.colorClass;
 
     return `
       <div class="inspect-type-banner">
@@ -100,8 +110,8 @@ class SpecsSubsystemViews {
       </div>
       <div class="inspect-kpi-strip">
         <div class="inspect-kpi-card"><span class="inspect-kpi-label">${w.isTargetingPod ? 'RECON REACH' : 'MAX RANGE'}</span><b class="inspect-kpi-val ${rRange.colorClass}">${kpiRange}</b><span class="inspect-kpi-sub">Min ${w.minRangeKm || 0.8} km</span></div>
-        <div class="inspect-kpi-card"><span class="inspect-kpi-label">${w.isTargetingPod ? 'PRECISION BUFF' : (w.isJammerPod ? 'SUPPRESSION' : 'VELOCITY')}</span><b class="inspect-kpi-val ${rSpd.colorClass}">${kpiSpeed}</b><span class="inspect-kpi-sub">${w.seeker || 'GUIDED'}</span></div>
-        <div class="inspect-kpi-card"><span class="inspect-kpi-label">${(w.isTargetingPod || w.isJammerPod || w.isDecoy || w.isDecoyDrone) ? 'ROLE' : 'WARHEAD'}</span><b class="inspect-kpi-val ${rDmg.colorClass}">${kpiDmg}</b><span class="inspect-kpi-sub">${w.ammoCount || 1}x Capacity</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">${w.isTargetingPod ? 'PRECISION BUFF' : (w.isJammerPod ? 'SUPPRESSION' : (w.isGunpod ? 'BURST DPS' : 'VELOCITY'))}</span><b class="inspect-kpi-val ${rSpd.colorClass}">${kpiSpeed}</b><span class="inspect-kpi-sub">${w.seeker || 'GUIDED'}</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">${(w.isTargetingPod || w.isJammerPod || w.isDecoy || w.isDecoyDrone) ? 'ROLE' : (w.isGunpod ? 'BURST DMG' : 'WARHEAD')}</span><b class="inspect-kpi-val ${kpiRoleClass}">${kpiDmg}</b><span class="inspect-kpi-sub">${w.ammoCount || 1}x Capacity</span></div>
         <div class="inspect-kpi-card"><span class="inspect-kpi-label">MOUNT MASS</span><b class="inspect-kpi-val ${rMass.colorClass}">+${w.mass} kg</b><span class="inspect-kpi-sub">${w.slotCost || 1} Pylon Slot(s)</span></div>
       </div>
       ${specialDetailHtml}
@@ -137,7 +147,11 @@ class SpecsSubsystemViews {
     const rate = window.StatEvaluator.rate;
     const rRpm = rate('gun_rpm', g.rpm);
     const rDps = rate('gun_dps', g.damagePerSec);
-    const rMass = rate('ordnance_mass', g.mass);
+    const rRange = rate('gun_range', g.rangeKm);
+    const rAmmo = rate('gun_ammo', g.defaultAmmo);
+    const rCd = rate('gun_cooldown', g.burstCooldown);
+    const rBurst = rate('gun_burst', g.damagePerBurst);
+    const rMass = rate('component_mass', g.mass);
     const specialDetailHtml = window.BehaviorCodex.renderSpecsDetailHtml('gun', g);
 
     return `
@@ -148,8 +162,8 @@ class SpecsSubsystemViews {
       <div class="inspect-kpi-strip">
         <div class="inspect-kpi-card"><span class="inspect-kpi-label">FIRE RATE</span><b class="inspect-kpi-val ${rRpm.colorClass}">${g.rpm} RPM</b><span class="inspect-kpi-sub">${g.burstCooldown.toFixed(1)}s Reload</span></div>
         <div class="inspect-kpi-card"><span class="inspect-kpi-label">BURST DPS</span><b class="inspect-kpi-val ${rDps.colorClass}">${g.damagePerSec.toFixed(1)} HP/s</b><span class="inspect-kpi-sub">${g.damagePerBurst.toFixed(2)} HP/Burst</span></div>
-        <div class="inspect-kpi-card"><span class="inspect-kpi-label">MERGE REACH</span><b class="inspect-kpi-val">${g.rangeKm} km</b><span class="inspect-kpi-sub">${g.coneAngleDeg} deg Cone</span></div>
-        <div class="inspect-kpi-card"><span class="inspect-kpi-label">MAGAZINE</span><b class="inspect-kpi-val stat-tier-1">${g.defaultAmmo} RDS</b><span class="inspect-kpi-sub">+${g.mass} kg Weight</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">MERGE REACH</span><b class="inspect-kpi-val ${rRange.colorClass}">${g.rangeKm} km</b><span class="inspect-kpi-sub">${g.coneAngleDeg} deg Cone</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">MAGAZINE</span><b class="inspect-kpi-val ${rAmmo.colorClass}">${g.defaultAmmo} RDS</b><span class="inspect-kpi-sub">+${g.mass} kg Weight</span></div>
       </div>
       ${specialDetailHtml}
       ${SpecsModalRenderer.getLegendHtml()}
@@ -157,10 +171,11 @@ class SpecsSubsystemViews {
       <div class="inspect-stat-grid">
         <div class="inspect-stat-item"><span>CYCLIC FIRE RATE:</span><b class="${rRpm.colorClass}">${g.rpm} RPM</b></div>
         <div class="inspect-stat-item"><span>SUSTAINED BURST DPS:</span><b class="${rDps.colorClass}">${g.damagePerSec.toFixed(1)} HP/s</b></div>
-        <div class="inspect-stat-item"><span>BURST RELOAD:</span><b style="color:var(--color-amber);">${g.burstCooldown.toFixed(1)}s Reload Cycle</b></div>
-        <div class="inspect-stat-item"><span>MERGE RANGE:</span><b>${g.rangeKm} km (${g.coneAngleDeg} deg Cone)</b></div>
-        <div class="inspect-stat-item"><span>AMMO CAPACITY:</span><b class="stat-tier-1">${g.defaultAmmo} Rounds</b></div>
+        <div class="inspect-stat-item"><span>BURST RELOAD:</span><b class="${rCd.colorClass}">${g.burstCooldown.toFixed(1)}s Reload Cycle</b></div>
+        <div class="inspect-stat-item"><span>MERGE RANGE:</span><b class="${rRange.colorClass}">${g.rangeKm} km (${g.coneAngleDeg} deg Cone)</b></div>
+        <div class="inspect-stat-item"><span>AMMO CAPACITY:</span><b class="${rAmmo.colorClass}">${g.defaultAmmo} Rounds</b></div>
         <div class="inspect-stat-item"><span>MECHANISM WEIGHT:</span><b class="${rMass.colorClass}">+${g.mass} kg</b></div>
+        <div class="inspect-stat-item"><span>BURST DAMAGE:</span><b class="${rBurst.colorClass}">${g.damagePerBurst.toFixed(2)} HP (${g.roundsPerBurst} rds)</b></div>
         <div class="inspect-stat-item"><span>SPRINT SPEED PENALTY:</span><b class="${g.speedPenalty > 0 ? 'stat-tier-4' : 'stat-tier-1'}">${g.speedPenalty > 0 ? `-${Math.round(g.speedPenalty * 100)}% Max Mach` : 'None (0%)'}</b></div>
         <div class="inspect-stat-item"><span>SIGNATURE / RCS PENALTY:</span><b class="${g.rcsPenalty > 0 ? 'stat-tier-5' : 'stat-tier-1'}">${g.rcsPenalty > 0 ? `+${Math.round(g.rcsPenalty * 100)}% Airframe RCS` : 'Flush Stealth (+0%)'}</b></div>
       </div>
@@ -184,6 +199,7 @@ class SpecsSubsystemViews {
     const rMass = rate('component_mass', u.mass);
     const allAirframes = Object.values(window.AIRCRAFT_CATALOG);
     const compatible = !u.isAllowed ? allAirframes : allAirframes.filter(s => u.isAllowed(s));
+    const compatClass = (compatible.length === allAirframes.length) ? 'stat-tier-1' : (compatible.length >= allAirframes.length * 0.5 ? 'stat-tier-2' : 'stat-tier-3');
     const specialDetailHtml = window.BehaviorCodex.renderSpecsDetailHtml('upgrade', u);
 
     return `
@@ -194,7 +210,7 @@ class SpecsSubsystemViews {
       <div class="inspect-kpi-strip">
         <div class="inspect-kpi-card"><span class="inspect-kpi-label">DISCIPLINE</span><b class="inspect-kpi-val">${u.category}</b><span class="inspect-kpi-sub">Enhancement Core</span></div>
         <div class="inspect-kpi-card"><span class="inspect-kpi-label">COMPONENT MASS</span><b class="inspect-kpi-val ${rMass.colorClass}">+${u.mass} kg</b><span class="inspect-kpi-sub">Socket Module</span></div>
-        <div class="inspect-kpi-card"><span class="inspect-kpi-label">COMPATIBILITY</span><b class="inspect-kpi-val stat-tier-1">${compatible.length === allAirframes.length ? 'UNIVERSAL' : compatible.length + ' FRAMES'}</b><span class="inspect-kpi-sub">Certified Fleet</span></div>
+        <div class="inspect-kpi-card"><span class="inspect-kpi-label">COMPATIBILITY</span><b class="inspect-kpi-val ${compatClass}">${compatible.length === allAirframes.length ? 'UNIVERSAL' : compatible.length + ' FRAMES'}</b><span class="inspect-kpi-sub">Certified Fleet</span></div>
       </div>
       ${specialDetailHtml}
       ${SpecsModalRenderer.getLegendHtml()}
