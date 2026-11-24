@@ -23,19 +23,25 @@ class AIMissileTactics {
 
     const airTargets = AISalvoPlanner.filterCandidateTargets(shooter, rawAirTargets, profile, diffKey);
     const fireTiers = {
-      CADET:     { minPk: 25, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.50, maxOffAngle: Math.PI / 8.0 },
-      BUFFER:    { minPk: 35, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.42, maxOffAngle: Math.PI / 7.5 },
-      VETERAN:   { minPk: 45, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.35, maxOffAngle: Math.PI / 7.0 },
-      ESCALATED: { minPk: 48, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.30, maxOffAngle: Math.PI / 6.5 },
-      ELITE:     { minPk: 52, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.24, maxOffAngle: Math.PI / 6.0 },
-      FORWARD:   { minPk: 55, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.20, maxOffAngle: Math.PI / 5.5 },
-      ACE:       { minPk: 58, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.16, maxOffAngle: Math.PI / 5.0 },
-      FORTIFIED: { minPk: 61, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.13, maxOffAngle: Math.PI / 4.8 },
-      MASTER:    { minPk: 64, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.10, maxOffAngle: Math.PI / 4.5 },
-      LEGEND:    { minPk: 68, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.05, maxOffAngle: Math.PI / 4.0 }
+      CADET:     { minPk: 28, reservePkBoost: 4,  rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.45, maxOffAngle: Math.PI / 8.0 },
+      BUFFER:    { minPk: 36, reservePkBoost: 6,  rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.38, maxOffAngle: Math.PI / 7.5 },
+      VETERAN:   { minPk: 44, reservePkBoost: 8,  rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.30, maxOffAngle: Math.PI / 7.0 },
+      ESCALATED: { minPk: 50, reservePkBoost: 9,  rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.25, maxOffAngle: Math.PI / 6.5 },
+      ELITE:     { minPk: 54, reservePkBoost: 10, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.20, maxOffAngle: Math.PI / 6.0 },
+      FORWARD:   { minPk: 58, reservePkBoost: 11, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.16, maxOffAngle: Math.PI / 5.5 },
+      ACE:       { minPk: 61, reservePkBoost: 12, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.12, maxOffAngle: Math.PI / 5.0 },
+      FORTIFIED: { minPk: 64, reservePkBoost: 12, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.10, maxOffAngle: Math.PI / 4.8 },
+      MASTER:    { minPk: 67, reservePkBoost: 13, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.08, maxOffAngle: Math.PI / 4.5 },
+      LEGEND:    { minPk: 70, reservePkBoost: 14, rangeRatio: profile.engagementRangeRatio, hesitateChance: 0.04, maxOffAngle: Math.PI / 4.0 }
     };
     const tier = fireTiers[diffKey];
     if (!shooter.isAce && Math.random() < tier.hesitateChance) return { isBingo: false, plan: null };
+
+    const { totalAmmoLeft, ammoFraction } = AISalvoPlanner.getAmmoReserveInfo(shooter, availablePylons);
+    const reserveRatio = Math.max(0.05, Math.min(0.65, (profile.reserveRatio || 0.30) + (airDoctrine ? (airDoctrine.reserveBias || 0) : 0)));
+    const hostileFleet = (window.Game && window.Game.hostileAircraft) || [];
+    const dyn = AISalvoPlanner.computeDynamicFireModifiers(shooter, totalAmmoLeft, ammoFraction, allMissiles, airTargets, hostileFleet, diffKey, airDoctrine);
+    const inReserve = (totalAmmoLeft <= 2 || (ammoFraction <= reserveRatio && !dyn.inDanger && !dyn.isLastStand));
 
     const docId = airDoctrine ? airDoctrine.id : 'BALANCED';
     const role = shooter.tacticalRole || (shooter.spec && shooter.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
@@ -53,8 +59,11 @@ class AIMissileTactics {
     }
     if (possibleTargets.length === 0) return { isBingo: false, plan: null };
 
-    const requiredPk = Math.max(20, Math.min(82, tier.minPk + (airDoctrine ? airDoctrine.minPkOffset : 0)));
-    const rangeRatio = Math.max(0.45, Math.min(1.0, tier.rangeRatio * (airDoctrine ? airDoctrine.engageRangeMult : 1.0)));
+    const reservePkAdd = inReserve ? tier.reservePkBoost : 0;
+    const requiredPk = Math.max(24, Math.min(86, tier.minPk + reservePkAdd + dyn.pkDelta + (airDoctrine ? airDoctrine.minPkOffset : 0)));
+    const reserveRangeMult = inReserve ? 0.84 : 1.0;
+    const rangeRatio = Math.max(0.45, Math.min(0.95, tier.rangeRatio * reserveRangeMult * (airDoctrine ? airDoctrine.engageRangeMult : 1.0)));
+    const maxInboundCap = Math.max(1, Math.min(4, (profile.maxInboundPerTarget || 2) + (airDoctrine ? (airDoctrine.inboundCapBias || 0) : 0)));
     let bestScore = -999, bestMatch = null;
 
     for (const pylon of availablePylons) {
@@ -66,11 +75,15 @@ class AIMissileTactics {
         const isSurface = Boolean(tgt.type && !tgt.spec && !tgt.isCivilian);
         if (isA2G !== isSurface) continue;
 
-        const effectiveHp = AISalvoPlanner.estimateTargetEffectiveHp(tgt, allMissiles, shooter.team, diffKey);
-        if (effectiveHp <= 0.05 && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) continue;
+        const inboundsCount = AISalvoPlanner.countActiveInbounds(tgt, allMissiles, shooter.team);
+        if (inboundsCount >= maxInboundCap) continue;
+
+        const effectiveHp = AISalvoPlanner.estimateTargetEffectiveHp(tgt, allMissiles, shooter.team, diffKey, profile);
+        if (effectiveHp <= 0.05 && diffKey !== 'CADET') continue;
 
         const dist = Math.hypot(tgt.x - shooter.x, tgt.y - shooter.y);
-        const maxRange = w.rangeKm * (shooter.isAce ? 0.70 : rangeRatio);
+        const effRangeRatio = shooter.isAce ? 0.70 : rangeRatio;
+        const maxRange = w.rangeKm * effRangeRatio;
         if (dist > maxRange || dist < (w.minRangeKm || 1.0)) continue;
 
         const angleToTarget = Math.atan2(tgt.y - shooter.y, tgt.x - shooter.x);
@@ -83,9 +96,10 @@ class AIMissileTactics {
 
         const pkResult = Physics.calcPk(w, shooter, tgt, clouds);
         const pk = pkResult.pk || 0;
-        if (pk < requiredPk && diffKey !== 'CADET') continue;
+        const distPkGate = (dist > w.rangeKm * 0.78 && !['CADET', 'BUFFER'].includes(diffKey)) ? (requiredPk + 10) : requiredPk;
+        if (pk < distPkGate) continue;
 
-        let score = pk;
+        let score = pk - (inboundsCount * 16);
         const sweetMin = w.sweetSpotMin || (w.rangeKm * 0.20);
         const sweetMax = w.sweetSpotMax || (w.rangeKm * 0.65);
         if (dist >= sweetMin && dist <= sweetMax) score += 20;
@@ -101,16 +115,24 @@ class AIMissileTactics {
         if (role === 'INTERCEPT' && dist >= 25.0 && w.speedMach >= 3.5) score += 20;
         if (role === 'SWARM' && w.trait === 'SWARM_RIPPLE') score += 20;
         if (role === 'ESCORT' && tgt.radarLockedTarget && tgt.radarLockedTarget.team === shooter.team) score += 28;
+        if (dyn.inDanger) {
+          if (tgt.radarLockedTarget && tgt.radarLockedTarget.id === shooter.id) score += 24;
+          if (dist <= 22.0) score += 20;
+        }
         if (tgt.isFlightLead) score += 18;
         if (tgt.hp <= 2) score += 16;
         if (diffKey === 'CADET' || diffKey === 'BUFFER') score += (Math.random() * 20 - 10);
 
-        if (score > bestScore) { bestScore = score; bestMatch = { pylon, weapon: w, target: tgt, pk, score, effectiveHp }; }
+        if (score > bestScore) {
+          bestScore = score;
+          bestMatch = { pylon, weapon: w, target: tgt, pk, score, effectiveHp, dist, offBoresight, rangeRatio: effRangeRatio, maxAngle, dyn };
+        }
       }
     }
 
     if (!bestMatch) return { isBingo: false, plan: null };
     const salvoPlan = AISalvoPlanner.calculateSalvoComposition(bestMatch, availablePylons, diffKey, shooter, profile, airDoctrine);
+    salvoPlan.dyn = dyn;
     return { isBingo: false, plan: salvoPlan };
   }
 
@@ -164,6 +186,11 @@ class AIMissileTactics {
         commander.game.missiles.push(new MissileEntity(pylon.weapon, shooter, tgt));
         if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
       }
+    }
+    if (anyFired) {
+      const cdMult = (res.plan && res.plan.dyn) ? res.plan.dyn.cooldownMult : 1.0;
+      const docCdMult = (airDoctrine && typeof airDoctrine.cooldownMult === 'number') ? airDoctrine.cooldownMult : 1.0;
+      shooter._aiFireCooldown = Math.max(1.2, (profile.shotCooldownSec || 3.5) * docCdMult * cdMult);
     }
     shooter.recalculateWeight();
     return anyFired;

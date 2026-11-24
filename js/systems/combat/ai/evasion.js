@@ -164,7 +164,7 @@ class AIEvasionHandler {
             ace.engineAlpha = Math.max(0.25, Math.min(1.0, docMove.throttle + (airDoctrine ? airDoctrine.throttleBias : 0)));
           }
 
-          if (aiCommander.aceSalvoTimer <= 0 && game.tokenBucketRed >= 0.70 && !ace.isRTB) {
+          if (aiCommander.aceSalvoTimer <= 0 && !(ace._aiFireCooldown > 0) && game.tokenBucketRed >= 0.70 && !ace.isRTB) {
             const canFire = acePlan.pylonsToFire.every(p => {
               const isHOBS = (p.weapon.trait === 'HOBS_VANE' || p.weapon.trait === 'ALL_ASPECT_BURST' || p.weapon.trait === 'REAR_ENGAGE' || p.weapon.id === 'IRIS-T');
               return isHOBS || Math.abs(diff) <= 0.65;
@@ -179,6 +179,9 @@ class AIEvasionHandler {
                   if (typeof AudioSys !== 'undefined') AudioSys.playLaunch();
                 }
               }
+              const aceCdMult = (acePlan && acePlan.dyn) ? acePlan.dyn.cooldownMult : 1.0;
+              const docCdMult = (airDoctrine && typeof airDoctrine.cooldownMult === 'number') ? airDoctrine.cooldownMult : 1.0;
+              ace._aiFireCooldown = Math.max(1.2, ((aceProf && aceProf.shotCooldownSec) ? aceProf.shotCooldownSec : 4.2) * docCdMult * aceCdMult);
               ace.recalculateWeight();
               aiCommander.aceSalvoTimer = aceTier.delay;
             }

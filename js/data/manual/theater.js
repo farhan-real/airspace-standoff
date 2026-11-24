@@ -129,6 +129,29 @@ window.MANUAL_THEATER = [
           </div>
         </div>
       </div>
+
+      <div class="ge-subhead">8. AI FIRE DISCIPLINE, OVERKILL PREVENTION &amp; PER-AIRCRAFT AGGRESSION</div>
+      <div class="ge-desc">
+        Enemy squadrons and named Aces regulate missile expenditure across the entire engagement so they sustain lethal BVR and WVR pressure into the middle and end of every battle instead of dumping all ordnance in the opening exchange. Discipline scales directly with both <b>Difficulty Tier</b> and active <b>Air Combat Doctrine</b>.
+      </div>
+      <div class="ge-grid-2">
+        <div class="ge-card" style="border-left:3px solid #00f0ff;">
+          <b style="color:#00f0ff;">PACING, SATURATION CAPS &amp; RESERVE CONSERVATION</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            &bull; <b>Per-Aircraft Shot Cooldown:</b> Each fighter enforces a minimum delay between launches (2.8s at Permissive Sector up to 5.6s at Extreme Threat Sector, scaled by Doctrine) so inbound missiles force reactions before follow-up shots.<br>
+            &bull; <b>Inbound Overkill Prevention:</b> Tracks active missiles already flying toward each target, enforces a max inbound cap (2 to 3 missiles, adjusted by Doctrine), and discounts target effective HP by difficulty (20% up to 95%).<br>
+            &bull; <b>Validated Salvos &amp; Reserve Mode:</b> Secondary salvo missiles must independently pass range, minimum-arming, and boresight checks so WVR IR missiles are never wasted at BVR distance. Once ammo drops into the reserve threshold (15% to 50%), AI requires +4% to +14% higher Pk, tightens range (0.84x), and switches to single-shot fire.
+          </div>
+        </div>
+        <div class="ge-card" style="border-left:3px solid #f43f5e;">
+          <b style="color:#f43f5e;">DYNAMIC PER-AIRCRAFT AGGRESSION MODIFIERS</b>
+          <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+            &bull; <b>Heavily Armed Loadouts (&ge;8 missiles &amp; &ge;62% left):</b> Missile-heavy platforms lower their Pk gate (up to -5%), shorten shot cooldown (-20%), and open 2-missile salvos earlier.<br>
+            &bull; <b>Last-Stand Attrition (&le;2 jets or &le;30% squadron left):</b> Surviving fighters lower their Pk gate (-5%), compress cooldown (-28%), and bypass reserve holds to spend remaining ordnance.<br>
+            &bull; <b>Immediate Danger (Inbound &lt;32 km, HP &le;2, or Bandit &lt;22 km):</b> Threatened fighters cut cooldown (-34%), relax Pk (-6%) for defensive snapshots, and add +24 priority against the locking attacker (+20 under 22 km). Scaled from 25% weight at Permissive Sector to 100% at Air Denial / Extreme Threat and modulated by Doctrine.
+          </div>
+        </div>
+      </div>
     `
   }
 ];

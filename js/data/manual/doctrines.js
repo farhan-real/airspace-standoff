@@ -22,50 +22,68 @@ window.MANUAL_DOCTRINES = [
             <tr>
               <td style="color:#38bdf8;font-weight:800;">Balanced</td>
               <td>Standard difficulty mix of fighters, stealth, and EW.</td>
-              <td>Uses individual aircraft roles, standard BVR ranges, and balanced missile discipline.</td>
+              <td>Uses individual aircraft roles, standard BVR spacing, balanced shot cooldowns (1.00x), and normal reserve and threat adaptation.</td>
               <td>Use balanced multi-layer tactics and target flight leads first.</td>
             </tr>
             <tr>
               <td style="color:#f43f5e;font-weight:800;">Aggressive Rush</td>
               <td>Fast interceptors, agile dogfighters, gunpods, and WVR rails.</td>
-              <td>Charges straight in at high throttle (+16% speed push), fires early at lower Pk thresholds, fires heavier salvos, and rarely retreats.</td>
-              <td>Hold standoff distance, kite backward while firing long-range BVR, and drain their energy as they chase.</td>
+              <td>Charges straight in (+16% speed push), fires 22% faster (0.78x cooldown), drops reserve hold (-10%), stacks +1 extra inbound missile, and pushes +25% harder in danger.</td>
+              <td>Hold standoff distance, kite backward while firing high-Pk BVR, and exploit their looser missile saturation.</td>
             </tr>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">Long-Range Standoff</td>
               <td>Heavy missile carriers, ramjet Meteors, ULR missiles, AESA cores.</td>
-              <td>Climbs +6,000 ft higher, fires early at extended range, cranks 60&deg; off boresight, turns away under 44 km, and notches aggressively.</td>
+              <td>Climbs +6,000 ft higher, fires at extended range (+18%), paces shots slightly slower (1.05x cooldown, +4% reserve) while cranking 60&deg; and dragging cold under 44 km.</td>
               <td>Use stealth wings, terrain-skimming approaches, or fast supercruisers to close inside 40 km where they try to drag away.</td>
             </tr>
             <tr>
               <td style="color:#a855f7;font-weight:800;">Stealth Ambush</td>
               <td>Stealth airframes with clean internal bays, RAM, and silent IR missiles.</td>
-              <td>Routes along north and south edges at low cruise throttle (-8% thermal bloom) and holds fire until high-Pk broadside angles.</td>
+              <td>Routes along north/south flanks at low cruise throttle (-8% IR bloom), fires deliberately (1.12x cooldown, +8% reserve, +6% Pk gate), and holds fire until high-Pk broadside angles.</td>
               <td>Sweep the outer north and south corridors with high-power GaN AESA radars, IRST pods, and AEW/Uplink eyes.</td>
             </tr>
             <tr>
               <td style="color:#fbbf24;font-weight:800;">Drone Swarm</td>
               <td>High ratio of unmanned UCAVs, MAM micro-missiles, and MALD decoys.</td>
-              <td>Sends wide drone waves ahead of manned leads, launches MALD decoys at 68 km, fires rapid salvos, and never RTBs.</td>
+              <td>Sends wide drone waves ahead of manned leads, launches MALD decoys at 68 km, fires 25% faster (0.75x cooldown, -15% reserve, +1 inbound cap), and never RTBs.</td>
               <td>Ignore obvious decoys, use high-capacity cannons or A2A gunpods and ADMMs to shred cheap drones, and snipe manned leads.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">Electronic Jamming</td>
               <td>Up to 2 EW escorts (Growlers, J-16Ds, EA-36s) with heavy ECM pods.</td>
-              <td>Holds EW jammers in a central 36-54 km umbrella while escorts screen ahead; focuses fire on your sensors and deploys extra chaff.</td>
+              <td>Holds EW jammers in a central 36-54 km umbrella while escorts screen ahead with balanced pacing (1.00x cooldown, +2% reserve); focuses fire on your sensors and deploys extra chaff.</td>
               <td>Mount Adaptive ECCM and IRST pods (immune to jamming), and fire fast BVR volleys directly at EW jammers first.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Defensive Hold</td>
               <td>Durable fighters with extra chaff, Titanium armor, and RTB beacons.</td>
-              <td>Orbits near friendly base SAM/jammer cover, holds missiles for high-Pk shots (+10%), notches hard, and RTBs early to rearm.</td>
+              <td>Orbits near friendly base cover with strict fire discipline: 1.25x shot spacing, +14% reserve hold, -1 inbound cap (min 1), +10% Pk gate, single-shot salvos unless 72%+ Pk, and early RTB.</td>
               <td>Suppress their base radars, isolate fighters away from SAM cover, or coordinate mixed ARH and IR salvos.</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="ge-subhead">2. GROUND ATTACK DEFENSE DOCTRINES (240x160 IADS THEATER)</div>
+      <div class="ge-subhead">2. AIR DOCTRINE FIRE DISCIPLINE &amp; RESERVE MODIFIERS</div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>DOCTRINE</th><th>SHOT COOLDOWN</th><th>RESERVE BIAS</th><th>INBOUND CAP BIAS</th><th>THREAT / LAST-STAND SCALE</th><th>PK &amp; SALVO BIAS</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:#38bdf8;font-weight:800;">Balanced</td><td>1.00x</td><td>+0%</td><td>0</td><td>1.00x</td><td>0% Pk / 0 Salvo</td></tr>
+            <tr><td style="color:#f43f5e;font-weight:800;">Aggressive Rush</td><td>0.78x</td><td>-10%</td><td>+1 missile</td><td>1.25x</td><td>-6% Pk / +1 Salvo</td></tr>
+            <tr><td style="color:#00f0ff;font-weight:800;">Long-Range Standoff</td><td>1.05x</td><td>+4%</td><td>0</td><td>0.95x</td><td>-2% Pk / 0 Salvo</td></tr>
+            <tr><td style="color:#a855f7;font-weight:800;">Stealth Ambush</td><td>1.12x</td><td>+8%</td><td>0</td><td>0.85x</td><td>+6% Pk / 0 Salvo</td></tr>
+            <tr><td style="color:#fbbf24;font-weight:800;">Drone Swarm</td><td>0.75x</td><td>-15%</td><td>+1 missile</td><td>1.20x</td><td>-8% Pk / +1 Salvo</td></tr>
+            <tr><td style="color:#c084fc;font-weight:800;">Electronic Jamming</td><td>1.00x</td><td>+2%</td><td>0</td><td>1.00x</td><td>0% Pk / 0 Salvo</td></tr>
+            <tr><td style="color:#00f5a0;font-weight:800;">Defensive Hold</td><td>1.25x</td><td>+14%</td><td>-1 (min 1)</td><td>0.90x</td><td>+10% Pk / -1 Salvo</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ge-subhead">3. GROUND ATTACK DEFENSE DOCTRINES (240x160 IADS THEATER)</div>
       <div class="table-scroll-wrapper">
         <table class="ge-table">
           <thead>

@@ -112,6 +112,13 @@ window.MANUAL_COMBAT = [
           </div>
         </div>
       </div>
+
+      <div class="ge-card" style="border-left:3px solid #38bdf8;margin-top:8px;">
+        <b style="color:#38bdf8;">AMMUNITION PACING &amp; OVERKILL AVOIDANCE</b>
+        <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+          Avoid firing entire missile racks in the opening long-range merge: shots near maximum range bleed kinetic energy and are easily notched, leaving your flight defenseless mid-battle. Coordinate single shots or 2-missile mixed-seeker pairs inside the high-Pk heart of the envelope (see <b>Section 09</b> &amp; <b>Section 10</b> for how AI squadrons pace salvo reserves).
+        </div>
+      </div>
     `
   },
   {

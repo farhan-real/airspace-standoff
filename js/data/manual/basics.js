@@ -136,6 +136,35 @@ window.MANUAL_BASICS = [
           </tbody>
         </table>
       </div>
+
+      <div class="ge-subhead">3. BUILT-IN AUTOCANNONS VS. INTEGRATED DIRECTED-ENERGY LASERS</div>
+      <div class="table-scroll-wrapper">
+        <table class="ge-table">
+          <thead>
+            <tr><th>GUN CLASS</th><th>WEIGHT &amp; SPEED IMPACT</th><th>AIRFRAME RCS IMPACT</th><th>COMBAT TRADE-OFFS</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#00f5a0;font-weight:800;">Ballistic Autocannons (M61A2, GSh-30-1, BK-27, GAU-22)</td>
+              <td>Light (35 to 150 kg) &bull; <b>0% Speed Loss</b></td>
+              <td><b>Flush Stealth (+0% RCS)</b></td>
+              <td>Zero thermal spike, 100% cloud penetration, wide 38&deg; to 60&deg; snapshot cones, and kinetic shock, limited to 3.6 to 6.0 km merge range.</td>
+            </tr>
+            <tr>
+              <td style="color:#00f0ff;font-weight:800;">Integrated Pulse &amp; Solid-State Lasers (PLSL-10/20/30, 80 kW DEW)</td>
+              <td>Heavy capacitor &amp; cooling plant (<b>130 to 520 kg</b>) &bull; <b>-4% to -9% Max Sprint Speed</b></td>
+              <td><b>+25% to +85% Base Airframe RCS</b> (scales with your jet&rsquo;s own stealth shaping)</td>
+              <td>Instant hitscan reach out to 7.5 to 18.0 km with zero lead error, but firing triggers a 3.5s IR thermal spike, clouds scatter 70% to 80% beam power, and narrow 26&deg; to 34&deg; cones demand boresight alignment.</td>
+            </tr>
+            <tr>
+              <td style="color:#38bdf8;font-weight:800;">Electromagnetic Railgun (EML)</td>
+              <td>320 kg &bull; 0% Drag Penalty</td>
+              <td>Flush (+0% RCS)</td>
+              <td>All-weather 9.5 km hypervelocity kinetic slugs with 90% AP and target energy drain, constrained to a tight 22&deg; boresight cone and 8-slug capacity.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     `
   },
   {

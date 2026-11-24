@@ -4,16 +4,16 @@
  */
 
 window.AI_ACE_PROFILES = {
-  CADET:     { reactionCooldown: 3.8, notchChance: 0.25, decoyDiscrimination: 0.35, blunderChance: 0.20, mixedSeekerChance: 0.00, salvoMaxMissiles: 1 },
-  BUFFER:    { reactionCooldown: 3.5, notchChance: 0.30, decoyDiscrimination: 0.40, blunderChance: 0.16, mixedSeekerChance: 0.05, salvoMaxMissiles: 1 },
-  VETERAN:   { reactionCooldown: 3.2, notchChance: 0.35, decoyDiscrimination: 0.45, blunderChance: 0.12, mixedSeekerChance: 0.15, salvoMaxMissiles: 2 },
-  ESCALATED: { reactionCooldown: 2.8, notchChance: 0.42, decoyDiscrimination: 0.52, blunderChance: 0.09, mixedSeekerChance: 0.20, salvoMaxMissiles: 2 },
-  ELITE:     { reactionCooldown: 2.4, notchChance: 0.50, decoyDiscrimination: 0.60, blunderChance: 0.06, mixedSeekerChance: 0.25, salvoMaxMissiles: 2 },
-  FORWARD:   { reactionCooldown: 2.1, notchChance: 0.55, decoyDiscrimination: 0.65, blunderChance: 0.04, mixedSeekerChance: 0.30, salvoMaxMissiles: 2 },
-  ACE:       { reactionCooldown: 1.8, notchChance: 0.60, decoyDiscrimination: 0.70, blunderChance: 0.02, mixedSeekerChance: 0.35, salvoMaxMissiles: 2 },
-  FORTIFIED: { reactionCooldown: 1.6, notchChance: 0.65, decoyDiscrimination: 0.75, blunderChance: 0.01, mixedSeekerChance: 0.40, salvoMaxMissiles: 3 },
-  MASTER:    { reactionCooldown: 1.4, notchChance: 0.70, decoyDiscrimination: 0.80, blunderChance: 0.00, mixedSeekerChance: 0.45, salvoMaxMissiles: 3 },
-  LEGEND:    { reactionCooldown: 1.1, notchChance: 0.75, decoyDiscrimination: 0.85, blunderChance: 0.00, mixedSeekerChance: 0.55, salvoMaxMissiles: 3 }
+  CADET:     { reactionCooldown: 3.8, shotCooldownSec: 2.6, maxInboundPerTarget: 3, inboundKillDiscount: 0.45, reserveRatio: 0.25, minPk: 38, notchChance: 0.25, decoyDiscrimination: 0.35, blunderChance: 0.20, mixedSeekerChance: 0.00, salvoMaxMissiles: 1 },
+  BUFFER:    { reactionCooldown: 3.5, shotCooldownSec: 3.0, maxInboundPerTarget: 3, inboundKillDiscount: 0.55, reserveRatio: 0.28, minPk: 42, notchChance: 0.30, decoyDiscrimination: 0.40, blunderChance: 0.16, mixedSeekerChance: 0.05, salvoMaxMissiles: 1 },
+  VETERAN:   { reactionCooldown: 3.2, shotCooldownSec: 3.4, maxInboundPerTarget: 2, inboundKillDiscount: 0.65, reserveRatio: 0.32, minPk: 48, notchChance: 0.35, decoyDiscrimination: 0.45, blunderChance: 0.12, mixedSeekerChance: 0.15, salvoMaxMissiles: 2 },
+  ESCALATED: { reactionCooldown: 2.8, shotCooldownSec: 3.8, maxInboundPerTarget: 2, inboundKillDiscount: 0.72, reserveRatio: 0.36, minPk: 52, notchChance: 0.42, decoyDiscrimination: 0.52, blunderChance: 0.09, mixedSeekerChance: 0.20, salvoMaxMissiles: 2 },
+  ELITE:     { reactionCooldown: 2.4, shotCooldownSec: 4.1, maxInboundPerTarget: 2, inboundKillDiscount: 0.78, reserveRatio: 0.40, minPk: 56, notchChance: 0.50, decoyDiscrimination: 0.60, blunderChance: 0.06, mixedSeekerChance: 0.25, salvoMaxMissiles: 2 },
+  FORWARD:   { reactionCooldown: 2.1, shotCooldownSec: 4.4, maxInboundPerTarget: 2, inboundKillDiscount: 0.84, reserveRatio: 0.42, minPk: 59, notchChance: 0.55, decoyDiscrimination: 0.65, blunderChance: 0.04, mixedSeekerChance: 0.30, salvoMaxMissiles: 2 },
+  ACE:       { reactionCooldown: 1.8, shotCooldownSec: 4.7, maxInboundPerTarget: 2, inboundKillDiscount: 0.88, reserveRatio: 0.45, minPk: 62, notchChance: 0.60, decoyDiscrimination: 0.70, blunderChance: 0.02, mixedSeekerChance: 0.35, salvoMaxMissiles: 2 },
+  FORTIFIED: { reactionCooldown: 1.6, shotCooldownSec: 4.9, maxInboundPerTarget: 2, inboundKillDiscount: 0.90, reserveRatio: 0.48, minPk: 65, notchChance: 0.65, decoyDiscrimination: 0.75, blunderChance: 0.01, mixedSeekerChance: 0.40, salvoMaxMissiles: 3 },
+  MASTER:    { reactionCooldown: 1.4, shotCooldownSec: 5.1, maxInboundPerTarget: 2, inboundKillDiscount: 0.93, reserveRatio: 0.50, minPk: 67, notchChance: 0.70, decoyDiscrimination: 0.80, blunderChance: 0.00, mixedSeekerChance: 0.45, salvoMaxMissiles: 3 },
+  LEGEND:    { reactionCooldown: 1.1, shotCooldownSec: 5.4, maxInboundPerTarget: 2, inboundKillDiscount: 0.96, reserveRatio: 0.52, minPk: 70, notchChance: 0.75, decoyDiscrimination: 0.85, blunderChance: 0.00, mixedSeekerChance: 0.55, salvoMaxMissiles: 3 }
 };
 
 class AICommander {
@@ -107,6 +107,9 @@ class AICommander {
       engagedTargetName,
       ammoRemaining,
       salvoMaxMissiles: isAce ? aceProfile.salvoMaxMissiles : Math.max(1, Math.min(3, baseProfile.salvoMaxMissiles + airDoctrine.salvoBias)),
+      shotCooldownSec: Number((((isAce ? aceProfile.shotCooldownSec : baseProfile.shotCooldownSec) * airDoctrine.cooldownMult)).toFixed(2)),
+      reserveRatio: Math.max(0.05, Math.min(0.65, (isAce ? aceProfile.reserveRatio : baseProfile.reserveRatio) + airDoctrine.reserveBias)),
+      maxInboundPerTarget: Math.max(1, Math.min(4, (isAce ? aceProfile.maxInboundPerTarget : baseProfile.maxInboundPerTarget) + airDoctrine.inboundCapBias)),
       mixedSeekerChance: isAce ? aceProfile.mixedSeekerChance : baseProfile.mixedSeekerChance,
       desiredHoldKm: airDoctrine.desiredHoldKm,
       doctrine: isAttack ? atkDoctrine.id : airDoctrine.id,
@@ -185,6 +188,7 @@ class AICommander {
     AIEvasionHandler.coordinateAceTactics(this, aliveHostiles.filter(h => h.isAce), candidateAirTargets, visibleBunkers, clouds, allMissiles, profile, diffKey, dt, airDoctrine, atkDoctrine);
 
     for (const h of aliveHostiles) {
+      if (h._aiFireCooldown > 0) h._aiFireCooldown = Math.max(0, h._aiFireCooldown - dt);
       if (!h.isAce) {
         const isFocused = this.isUnitFocused(h.id);
         AIEvasionHandler.handleDefensiveBehavior(h, profile, diffKey, dt, allMissiles, isFocused, airDoctrine);
@@ -199,10 +203,11 @@ class AICommander {
       for (const focusedId of this.focusedUnitIds) {
         const shooter = aliveHostiles.find(h => h.id === focusedId && !h.isAce);
         if (!shooter || shooter.hp <= 0.05 || shooter.isRTB || this.planning.isHesitating(shooter.id)) continue;
+        if (shooter._aiFireCooldown > 0) continue;
         if (this.game.tokenBucketRed < tokenCost) break;
 
         if (AIMissileTactics.executeEngagements(this, shooter, candidateAirTargets, visibleBunkers, profile, clouds, diffKey, tokenCost, allMissiles, airDoctrine)) {
-          this.actionCooldown = Math.max(0.35, profile.reactionCooldown / (maxSlots * 1.5));
+          this.actionCooldown = Math.max(0.95, profile.reactionCooldown / Math.max(1.2, maxSlots * 0.9));
           break;
         }
       }
