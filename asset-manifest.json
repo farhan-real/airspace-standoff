@@ -194,7 +194,7 @@
   "./js/systems/radar/effects.js": "89998f92679a",
   "./js/systems/radar/engagement.js": "17340bbcb782",
   "./js/systems/radar/environment.js": "d21c00d53cd6",
-  "./js/systems/radar/renderer.js": "d0f94aee4002",
+  "./js/systems/radar/renderer.js": "10512035ec0f",
   "./js/systems/radar/surfacezones.js": "866c83ba159b",
   "./js/systems/simulation.js": "067b114496d5",
   "./js/systems/simulation/atmosphere.js": "ecf826558f65",

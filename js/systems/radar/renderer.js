@@ -29,7 +29,7 @@ class RadarRenderer {
     this.isMobile = (window.innerWidth <= 1024);
 
     const rawDpr = window.devicePixelRatio || 1;
-    this.dpr = Math.max(1, Math.min(rawDpr, 1.5));
+    this.dpr = Math.max(1, Math.min(rawDpr, 3));
 
     this.cam = new RadarCameraController(this.canvas, 800, 500);
     this.fx = new RadarEffectsSystem(this.cam);
@@ -80,12 +80,15 @@ class RadarRenderer {
       throw new Error(`Radar viewport has invalid layout dimensions: ${parent.clientWidth}x${parent.clientHeight}`);
     }
 
-    const nextW = Math.round(parent.clientWidth);
-    const nextH = Math.round(parent.clientHeight);
+    const rect = parent.getBoundingClientRect();
+    const rawW = rect.width > 0 ? rect.width : parent.clientWidth;
+    const rawH = rect.height > 0 ? rect.height : parent.clientHeight;
+    const nextW = Math.round(rawW);
+    const nextH = Math.round(rawH);
     const rawDpr = window.devicePixelRatio || 1;
-    const nextDpr = Math.max(1, Math.min(rawDpr, 1.5));
-    const pixelW = Math.round(nextW * nextDpr);
-    const pixelH = Math.round(nextH * nextDpr);
+    const nextDpr = Math.max(1, Math.min(rawDpr, 3));
+    const pixelW = Math.round(rawW * nextDpr);
+    const pixelH = Math.round(rawH * nextDpr);
 
     this.dpr = nextDpr;
     this.cssWidth = nextW;
@@ -176,8 +179,11 @@ class RadarRenderer {
 
     const parent = this.canvas.parentElement;
     if (!parent) throw new Error('Radar canvas has no parent element.');
-    if (parent.clientWidth > 0 && parent.clientHeight > 0 &&
-        (Math.abs(parent.clientWidth - this.cssWidth) > 2 || Math.abs(parent.clientHeight - this.cssHeight) > 2)) {
+    const rect = parent.getBoundingClientRect();
+    const liveW = Math.round(rect.width > 0 ? rect.width : parent.clientWidth);
+    const liveH = Math.round(rect.height > 0 ? rect.height : parent.clientHeight);
+    const liveDpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
+    if (liveW > 0 && liveH > 0 && (liveW !== this.cssWidth || liveH !== this.cssHeight || liveDpr !== this.dpr)) {
       this.resize();
     }
     if (this.cssWidth <= 0 || this.cssHeight <= 0) {
