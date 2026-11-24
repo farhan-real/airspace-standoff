@@ -9,8 +9,8 @@ window.CORE_MANEUVER_CARDS = [
     name: 'Doppler Notch & Chaff',
     badge: 'RADAR BREAK',
     whenToUse: 'TRIGGER: Active radar (ARH) lock',
-    whyToUse: 'BENEFIT: Beams threat 90 degrees, cuts radial closure & deploys chaff (8s)',
-    evasionBonus: 0.48,
+    whyToUse: 'BENEFIT: Beams threat 90 degrees, cuts radial closure & deploys chaff (9s)',
+    evasionBonus: 0.54,
     cost: 0.7,
     isRecommended: function(unit, game) {
       if (!unit || !game.missiles) return false;
@@ -25,15 +25,15 @@ window.CORE_MANEUVER_CARDS = [
       const game = window.Game;
       unit.isNotching = true;
       unit.activeManeuverId = 'DOPPLER_NOTCH';
-      unit.activeManeuverTimer = 8.0;
+      unit.activeManeuverTimer = 9.0;
 
-      let bonus = 0.48;
+      let bonus = 0.54;
       const agi = unit.getEffectiveAgility();
-      bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
+      bonus *= Math.max(0.55, Math.min(1.55, agi / 0.85));
 
       const sOpt = unit.getOptimalCornerSpeed();
       const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
-      bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
+      bonus *= Math.max(0.62, Math.min(1.25, 0.62 + 0.38 * turnOptEff));
 
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.10;
@@ -67,8 +67,8 @@ window.CORE_MANEUVER_CARDS = [
     name: 'High-G Barrel Roll',
     badge: 'KINETIC DODGE',
     whenToUse: 'TRIGGER: Inbound missile < 25km',
-    whyToUse: 'BENEFIT: Spiral displacement disrupts proportional lead pursuit (7s)',
-    evasionBonus: 0.45,
+    whyToUse: 'BENEFIT: Spiral displacement disrupts proportional lead pursuit (8s)',
+    evasionBonus: 0.52,
     cost: 0.7,
     isRecommended: function(unit, game) {
       if (!unit || !game.missiles) return false;
@@ -83,15 +83,15 @@ window.CORE_MANEUVER_CARDS = [
       const game = window.Game;
       unit.isNotching = false;
       unit.activeManeuverId = 'BARREL_ROLL';
-      unit.activeManeuverTimer = 7.0;
+      unit.activeManeuverTimer = 8.0;
 
-      let bonus = 0.45;
+      let bonus = 0.52;
       const agi = unit.getEffectiveAgility();
-      bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
+      bonus *= Math.max(0.55, Math.min(1.55, agi / 0.85));
 
       const sOpt = unit.getOptimalCornerSpeed();
       const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
-      bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
+      bonus *= Math.max(0.62, Math.min(1.25, 0.62 + 0.38 * turnOptEff));
 
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.10;
@@ -112,8 +112,8 @@ window.CORE_MANEUVER_CARDS = [
     name: "Pugachev's Cobra",
     badge: 'SUPER-MANEUVER',
     whenToUse: 'TRIGGER: Hostile on tail < 15km',
-    whyToUse: 'BENEFIT: High-alpha aerodynamic brake creates closure-rate mismatch (6s)',
-    evasionBonus: 0.55,
+    whyToUse: 'BENEFIT: High-alpha aerodynamic brake creates closure-rate mismatch (7s)',
+    evasionBonus: 0.62,
     cost: 0.8,
     isRecommended: function(unit, game) {
       if (!unit || !unit.thrustVector || !game.missiles) return false;
@@ -128,15 +128,15 @@ window.CORE_MANEUVER_CARDS = [
       const game = window.Game;
       unit.isNotching = false;
       unit.activeManeuverId = 'PUSH_COBRA';
-      unit.activeManeuverTimer = 6.0;
+      unit.activeManeuverTimer = 7.0;
 
-      let bonus = 0.55;
+      let bonus = 0.62;
       const agi = unit.getEffectiveAgility();
-      bonus *= Math.max(0.40, Math.min(1.60, agi / 0.85));
+      bonus *= Math.max(0.55, Math.min(1.55, agi / 0.85));
 
       const sOpt = unit.getOptimalCornerSpeed();
       const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
-      bonus *= Math.max(0.50, Math.min(1.25, 0.50 + 0.50 * turnOptEff));
+      bonus *= Math.max(0.62, Math.min(1.25, 0.62 + 0.38 * turnOptEff));
 
       if (unit.stress >= 0.65) bonus *= 0.75;
       if (unit.isCoffin) bonus += 0.12;
