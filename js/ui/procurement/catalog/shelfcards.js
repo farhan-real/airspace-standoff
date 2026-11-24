@@ -30,10 +30,12 @@ class ShelfCardBuilders {
         ${g.rcsPenalty > 0 ? `<span class="badge-category stat-tier-5">+${Math.round(g.rcsPenalty * 100)}% RCS</span>` : ''}
       </div>
       <div class="cic-specs">
-        <div>RNG: <b class="${rRange.colorClass}">${g.rangeKm}km</b> (${g.coneAngleDeg} deg)</div>
-        <div>DPS: <b class="${rDps.colorClass}">${g.damagePerSec.toFixed(1)} HP/s</b></div>
-        <div>BURST: <b class="${rBurst.colorClass}">${burstDmg} HP</b> (${g.roundsPerBurst} rds, <b class="${rCd.colorClass}">${g.burstCooldown.toFixed(1)}s</b>)</div>
-        <div>MAG: <b class="${rAmmo.colorClass}">${g.defaultAmmo} RDS</b></div>
+        <div><span>RNG:</span><b class="${rRange.colorClass}">${g.rangeKm}km</b></div>
+        <div><span>CONE:</span><b>${g.coneAngleDeg} deg</b></div>
+        <div><span>DPS:</span><b class="${rDps.colorClass}">${g.damagePerSec.toFixed(1)} HP/s</b></div>
+        <div><span>BURST:</span><b class="${rBurst.colorClass}">${burstDmg} HP (${g.roundsPerBurst})</b></div>
+        <div><span>RELOAD:</span><b class="${rCd.colorClass}">${g.burstCooldown.toFixed(1)}s</b></div>
+        <div><span>MAG:</span><b class="${rAmmo.colorClass}">${g.defaultAmmo} RDS</b></div>
       </div>
       ${specialLineHtml}
       <div class="cic-desc">${g.desc}</div>
@@ -125,34 +127,37 @@ class ShelfCardBuilders {
     let specsRow = '';
     if (wpn.grantsESM) {
       const rSpot = rate('spot_range', wpn.spotRangeKm);
-      specsRow = `<div>ESM REACH: <b class="${rSpot.colorClass}">${wpn.spotRangeKm}km</b></div><div>SEAD: <b class="stat-tier-1">+${Math.round((wpn.armRangeBoost - 1) * 100)}% ARM RNG</b></div>`;
+      specsRow = `<div><span>ESM REACH:</span><b class="${rSpot.colorClass}">${wpn.spotRangeKm}km</b></div><div><span>SEAD:</span><b class="stat-tier-1">+${Math.round((wpn.armRangeBoost - 1) * 100)}% ARM</b></div>`;
     } else if (wpn.grantsIRST && wpn.a2gPkBonus <= 0) {
-      specsRow = `<div>TRACK: <b class="stat-tier-1">PASSIVE IRST</b></div><div>ANTI-STEALTH: <b class="stat-tier-1">28km BURN</b></div>`;
+      specsRow = `<div><span>TRACK:</span><b class="stat-tier-1">PASSIVE IRST</b></div><div><span>STEALTH:</span><b class="stat-tier-1">28km BURN</b></div>`;
     } else if (wpn.isTargetingPod) {
       const rSpot = rate('spot_range', wpn.spotRangeKm);
       const rPk = rate('a2g_pk_bonus', wpn.a2gPkBonus);
       const rCloud = rate('cloud_mitigation', wpn.cloudMitigation || 0);
-      specsRow = `<div>RECON: <b class="${rSpot.colorClass}">${wpn.spotRangeKm}km</b>${wpn.cloudMitigation > 0 ? ` &bull; CLOUD: <b class="${rCloud.colorClass}">-${Math.round(wpn.cloudMitigation * 100)}%</b>` : ''}</div><div>BUFF: <b class="${rPk.colorClass}">+${Math.round(wpn.a2gPkBonus * 100)}% A2G Pk</b></div>`;
+      specsRow = `<div><span>RECON:</span><b class="${rSpot.colorClass}">${wpn.spotRangeKm}km</b></div><div><span>BUFF:</span><b class="${rPk.colorClass}">+${Math.round(wpn.a2gPkBonus * 100)}% Pk</b></div>`;
+      if (wpn.cloudMitigation > 0) {
+        specsRow += `<div><span>CLOUD:</span><b class="${rCloud.colorClass}">-${Math.round(wpn.cloudMitigation * 100)}%</b></div><div><span>DECOYS:</span><b class="${wpn.exposesDecoys ? 'stat-tier-1' : 'stat-tier-4'}">${wpn.exposesDecoys ? 'EXPOSES' : 'NONE'}</b></div>`;
+      }
     } else if (wpn.isJammerPod) {
       const rJamRng = rate('jam_range', wpn.rangeKm);
       const rJamEff = rate('jam_efficiency', wpn.jamEfficiency);
-      specsRow = `<div>UMBRELLA: <b class="${rJamRng.colorClass}">${wpn.rangeKm}km</b></div><div>SUPPRESSION: <b class="${rJamEff.colorClass}">-${Math.round(wpn.jamEfficiency * 100)}% RADAR</b></div>`;
+      specsRow = `<div><span>UMBRELLA:</span><b class="${rJamRng.colorClass}">${wpn.rangeKm}km</b></div><div><span>JAMMING:</span><b class="${rJamEff.colorClass}">-${Math.round(wpn.jamEfficiency * 100)}%</b></div>`;
     } else if (wpn.isDecoy || wpn.isDecoyDrone) {
       const rDroneRng = rate('missile_range', wpn.rangeKm);
       const rAmmo = rate('ammo_count', wpn.ammoCount);
-      specsRow = `<div>${wpn.isDecoyDrone ? `RANGE: <b class="${rDroneRng.colorClass}">${wpn.rangeKm}km</b>` : 'TOWED: <b class="stat-tier-2">REPEATER</b>'}</div><div>CHARGES: <b class="${rAmmo.colorClass}">${wpn.ammoCount}x</b></div>`;
+      specsRow = `<div>${wpn.isDecoyDrone ? `<span>RANGE:</span><b class="${rDroneRng.colorClass}">${wpn.rangeKm}km</b>` : '<span>MODE:</span><b class="stat-tier-2">TOWED</b>'}</div><div><span>CHARGES:</span><b class="${rAmmo.colorClass}">${wpn.ammoCount}x</b></div>`;
     } else if (wpn.isGunpod) {
       const rRng = rate('gun_range', wpn.rangeKm);
       const rDps = rate('gun_dps', wpn.damagePerSec || 2.8);
       const rBurst = rate('gun_burst', wpn.damagePerBurst || wpn.damage);
       const rAmmo = rate('gun_ammo', wpn.ammoCount || 16);
-      specsRow = `<div>RNG: <b class="${rRng.colorClass}">${wpn.rangeKm}km</b> &bull; MAG: <b class="${rAmmo.colorClass}">${wpn.ammoCount}x</b></div><div>DPS: <b class="${rDps.colorClass}">${(wpn.damagePerSec || 2.8).toFixed(1)} HP/s</b> &bull; BURST: <b class="${rBurst.colorClass}">${(wpn.damagePerBurst || wpn.damage).toFixed(2)} HP</b></div>`;
+      specsRow = `<div><span>RNG:</span><b class="${rRng.colorClass}">${wpn.rangeKm}km</b></div><div><span>MAG:</span><b class="${rAmmo.colorClass}">${wpn.ammoCount}x</b></div><div><span>DPS:</span><b class="${rDps.colorClass}">${(wpn.damagePerSec || 2.8).toFixed(1)} HP/s</b></div><div><span>BURST:</span><b class="${rBurst.colorClass}">${(wpn.damagePerBurst || wpn.damage).toFixed(2)} HP</b></div>`;
     } else {
       const rRng = rate('missile_range', wpn.rangeKm);
       const rSpd = rate('missile_speed', wpn.speedMach);
       const rDmg = rate('missile_damage', wpn.damage);
       const rAmmo = rate('ammo_count', wpn.ammoCount || 4);
-      specsRow = `<div>RNG: <b class="${rRng.colorClass}">${wpn.rangeKm}km</b> &bull; MAG: <b class="${rAmmo.colorClass}">${wpn.ammoCount || 4}x</b></div><div>SPD: <b class="${rSpd.colorClass}">M ${wpn.speedMach}</b> &bull; DMG: <b class="${rDmg.colorClass}">${wpn.damage} HP</b></div>`;
+      specsRow = `<div><span>RNG:</span><b class="${rRng.colorClass}">${wpn.rangeKm}km</b></div><div><span>MAG:</span><b class="${rAmmo.colorClass}">${wpn.ammoCount || 4}x</b></div><div><span>SPD:</span><b class="${rSpd.colorClass}">M ${wpn.speedMach}</b></div><div><span>DMG:</span><b class="${rDmg.colorClass}">${wpn.damage} HP</b></div>`;
     }
 
     const seekerLabel = wpn.grantsESM ? 'PASSIVE ELINT' : (wpn.grantsIRST ? 'PASSIVE IRST' : (wpn.isTargetingPod ? 'OPTICAL / LASER' : (wpn.isJammerPod ? 'BROADBAND ECM' : (wpn.isDecoy || wpn.isDecoyDrone ? 'RF DECOY' : (wpn.seeker || 'GUIDED')))));

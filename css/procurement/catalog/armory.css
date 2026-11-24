@@ -204,15 +204,28 @@
 
 .cic-specs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px 8px;
-  font-size: 0.60rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px 8px;
+  font-size: 0.61rem;
   font-family: var(--font-dotdigital);
   color: var(--color-moon-mist);
-  background: rgba(0, 0, 0, 0.75);
+  background: #000000;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 5px 8px;
+  padding: 6px 8px;
   border-radius: var(--radius-badge);
+}
+
+.cic-specs > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 1px 0;
+}
+
+.cic-specs > div b:not([class*="stat-tier"]) {
+  color: #ffffff;
 }
 
 .cic-desc { font-size: 0.68rem; color: var(--color-moon-mist); line-height: 1.42; }
