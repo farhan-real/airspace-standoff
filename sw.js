@@ -1,4 +1,4 @@
-/* sw.js - AIRSPACE STANDOFF Offline-First Service Worker with Single-Manifest Diff Updates */
+/* sw.js - AIRSPACE STANDOFF Automatic Network-First Service Worker with Offline Cache Fallback */
 
 const CACHE_NAME = 'airspace-standoff-app-v2';
 const FONT_CACHE = 'airspace-standoff-fonts-v1';
@@ -289,8 +289,6 @@ const CORE_ASSETS = [
   "./manifest.webmanifest"
 ];
 
-let isCheckingUpdates = false;
-
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
@@ -357,96 +355,32 @@ self.addEventListener('fetch', (event) => {
   if (req.mode === 'navigate') {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
+      try {
+        const res = await fetch('./index.html', { cache: 'no-cache' });
+        if (res && res.ok) {
+          await cache.put('./index.html', res.clone());
+          await cache.put('./', res.clone());
+          return res;
+        }
+      } catch (_) {}
       const cached = (await cache.match('./index.html')) || (await cache.match('./'));
       if (cached) return cached;
-      const res = await fetch(req);
-      if (res && res.ok) await cache.put('./index.html', res.clone());
-      return res;
+      return fetch(req);
     })());
     return;
   }
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
+    try {
+      const res = await fetch(req.url, { cache: 'no-cache' });
+      if (res && res.ok) {
+        await cache.put(req, res.clone());
+        return res;
+      }
+    } catch (_) {}
     const cached = await cache.match(req);
     if (cached) return cached;
-    const res = await fetch(req);
-    if (res && res.ok) await cache.put(req, res.clone());
-    return res;
+    return fetch(req);
   })());
-});
-
-async function checkAndSyncFiles() {
-  if (isCheckingUpdates) return;
-  isCheckingUpdates = true;
-  let changedCount = 0;
-
-  try {
-    const cache = await caches.open(CACHE_NAME);
-    let netManifestRes;
-    try {
-      netManifestRes = await fetch('./asset-manifest.json', { cache: 'no-store' });
-    } catch (_) {
-      return;
-    }
-    if (!netManifestRes || !netManifestRes.ok) return;
-
-    const netText = await netManifestRes.clone().text();
-    const netMap = JSON.parse(netText);
-
-    let oldMap = {};
-    const cachedManifest = await cache.match('./asset-manifest.json');
-    if (cachedManifest) {
-      try { oldMap = await cachedManifest.clone().json(); } catch (_) {}
-    }
-
-    const changedUrls = [];
-    for (const [url, hash] of Object.entries(netMap)) {
-      const hasCached = Boolean(await cache.match(url));
-      if (!hasCached || oldMap[url] !== hash) {
-        changedUrls.push(url);
-      }
-    }
-
-    const removedUrls = Object.keys(oldMap).filter(u => !(u in netMap));
-
-    if (changedUrls.length === 0 && removedUrls.length === 0) {
-      if (!cachedManifest) await cache.put('./asset-manifest.json', netManifestRes);
-      return;
-    }
-
-    const batchSize = 8;
-    for (let i = 0; i < changedUrls.length; i += batchSize) {
-      const slice = changedUrls.slice(i, i + batchSize);
-      await Promise.all(slice.map(async (url) => {
-        try {
-          const res = await fetch(url, { cache: 'no-store' });
-          if (res && res.ok) {
-            await cache.put(url, res.clone());
-            if (url === './index.html') await cache.put('./', res);
-            changedCount++;
-          }
-        } catch (_) {}
-      }));
-    }
-
-    for (const url of removedUrls) {
-      if (await cache.delete(url)) changedCount++;
-    }
-
-    await cache.put('./asset-manifest.json', netManifestRes);
-
-    if (changedCount > 0) {
-      const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-      clients.forEach(c => c.postMessage({ type: 'PWA_FILES_UPDATED', changedCount }));
-    }
-  } finally {
-    isCheckingUpdates = false;
-  }
-}
-
-self.addEventListener('message', (event) => {
-  if (event && event.data && event.data.type === 'CHECK_FOR_UPDATES') {
-    event.waitUntil(checkAndSyncFiles());
-  }
 });

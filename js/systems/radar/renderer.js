@@ -11,7 +11,7 @@ class RadarRenderer {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) throw new Error(`Radar canvas element "${canvasId}" not found.`);
-    this.ctx = this.canvas.getContext('2d', { alpha: false });
+    this.ctx = this.canvas.getContext('2d');
     if (!this.ctx) throw new Error(`Failed to acquire 2D rendering context for "${canvasId}".`);
 
     if (typeof RadarCameraController === 'undefined') throw new Error('RadarCameraController is not loaded.');
@@ -96,8 +96,6 @@ class RadarRenderer {
     if (this.canvas.width !== pixelW || this.canvas.height !== pixelH) {
       this.canvas.width = pixelW;
       this.canvas.height = pixelH;
-      this.canvas.style.width = this.cssWidth + 'px';
-      this.canvas.style.height = this.cssHeight + 'px';
     }
 
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
@@ -187,6 +185,7 @@ class RadarRenderer {
     }
 
     const ctx = this.ctx, w = this.cssWidth, h = this.cssHeight;
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     this.cam.updateScales();
 
     const allied = state.alliedAircraft;
