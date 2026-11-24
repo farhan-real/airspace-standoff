@@ -1,6 +1,6 @@
 /* sw.js - AIRSPACE STANDOFF Automatic Network-First Service Worker with Offline Cache Fallback */
 
-const CACHE_NAME = 'airspace-standoff-app-v2';
+const CACHE_NAME = 'airspace-standoff-app-v3';
 const FONT_CACHE = 'airspace-standoff-fonts-v1';
 
 const CORE_ASSETS = [
@@ -292,16 +292,11 @@ const CORE_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      const batchSize = 16;
-      for (let i = 0; i < CORE_ASSETS.length; i += batchSize) {
-        const slice = CORE_ASSETS.slice(i, i + batchSize);
-        await Promise.all(slice.map(async (url) => {
-          try {
-            const req = new Request(url, { cache: 'reload' });
-            const res = await fetch(req);
-            if (res && res.ok) await cache.put(url, res);
-          } catch (_) {}
-        }));
+      for (const url of ['./', './index.html']) {
+        try {
+          const res = await fetch(new Request(url, { cache: 'no-cache' }));
+          if (res && res.ok) await cache.put(url, res);
+        } catch (_) {}
       }
     }).then(() => self.skipWaiting())
   );
@@ -373,7 +368,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
     try {
-      const res = await fetch(req.url, { cache: 'no-cache' });
+      const res = await fetch(req, { cache: 'no-cache' });
       if (res && res.ok) {
         await cache.put(req, res.clone());
         return res;

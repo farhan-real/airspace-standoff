@@ -291,6 +291,24 @@ class AirspaceStandoffGame {
 }
 
 window.AirspaceStandoffGame = AirspaceStandoffGame;
-function initAirspaceStandoff() { if (!window.Game) window.Game = new AirspaceStandoffGame(); }
+function showBootFailureBanner(err) {
+  const existing = document.getElementById('boot-failure-banner');
+  if (existing || !document.body) return;
+  const msg = (err && err.stack) ? err.stack : String(err);
+  const el = document.createElement('div');
+  el.id = 'boot-failure-banner';
+  el.style.cssText = 'position:fixed;inset:16px;z-index:999999;background:#090d14;color:#ff3864;border:1px solid #ff3864;border-radius:10px;padding:16px;font-family:monospace;font-size:12px;overflow:auto;white-space:pre-wrap;';
+  el.textContent = 'AIRSPACE STANDOFF BOOT ERROR:\n\n' + msg;
+  document.body.appendChild(el);
+}
+function initAirspaceStandoff() {
+  if (window.Game) return;
+  try {
+    window.Game = new AirspaceStandoffGame();
+  } catch (err) {
+    showBootFailureBanner(err);
+    throw err;
+  }
+}
 if (document.readyState === 'complete' || document.readyState === 'interactive') initAirspaceStandoff();
 else window.addEventListener('DOMContentLoaded', initAirspaceStandoff);

@@ -145,7 +145,7 @@
   "./js/data/weapons/pods.js": "431ecc482341",
   "./js/data/weapons/targetingpods.js": "6eba7774a7ee",
   "./js/data/weapons/wvr.js": "8833654ea9b3",
-  "./js/game.js": "6d31ddf17757",
+  "./js/game.js": "78d58e7e66b4",
   "./js/systems/combat/ai/commander.js": "7c16dc2d1cdb",
   "./js/systems/combat/ai/evasion.js": "b4dcb9a78ce1",
   "./js/systems/combat/ai/navigation.js": "0c5a25086c78",
