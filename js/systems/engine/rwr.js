@@ -6,6 +6,8 @@ class RWRAudio {
   constructor() {
     this.lastRwrState = 'clean';
     this.rwrPulseTimer = null;
+    this.lastLockPulseAt = 0;
+    this.lastSweepPulseAt = 0;
   }
 
   stop() {
@@ -28,6 +30,9 @@ class RWRAudio {
     if (threatState === 'lock') {
       const playMilLockPulse = () => {
         if (this.lastRwrState !== 'lock' || !ctx) return;
+        const nowMs = performance.now();
+        if (nowMs - this.lastLockPulseAt < 250) return;
+        this.lastLockPulseAt = nowMs;
         try {
           const now = ctx.currentTime;
           const osc1 = ctx.createOscillator();
@@ -61,6 +66,9 @@ class RWRAudio {
       playMilLockPulse();
       this.rwrPulseTimer = setInterval(playMilLockPulse, 320);
     } else if (threatState === 'sweep') {
+      const nowMs = performance.now();
+      if (nowMs - this.lastSweepPulseAt < 350) return;
+      this.lastSweepPulseAt = nowMs;
       try {
         const now = ctx.currentTime;
         const osc = ctx.createOscillator();

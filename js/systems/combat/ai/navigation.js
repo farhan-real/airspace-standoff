@@ -91,6 +91,7 @@ class AINavigationHandler {
     if (!hostile || hostile.activeManeuverTimer > 0 || hostile.hp <= 0.05) return;
 
     if (hostile.isRTB) {
+      hostile.radarLockedTarget = null;
       if (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) || (airDoctrine && airDoctrine.id === 'DEFENSIVE_HOLD')) {
         const egressHeading = aiCommander.planning.getCoveredEgressHeading(hostile);
         let diff = egressHeading - hostile.heading;
@@ -118,12 +119,20 @@ class AINavigationHandler {
       if (strikeTargets.length > 0) target = strikeTargets[0];
       else if (candidateAirTargets.length > 0) target = candidateAirTargets[0];
     } else if (candidateAirTargets.length > 0) {
-      if (role === 'SNIPER') {
-        const priorityTargets = candidateAirTargets.filter(t => t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
-        const pool = priorityTargets.length > 0 ? priorityTargets : candidateAirTargets;
-        target = pool.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), pool[0]);
+      const pool = (role === 'SNIPER')
+        ? (() => {
+            const priorityTargets = candidateAirTargets.filter(t => t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
+            return priorityTargets.length > 0 ? priorityTargets : candidateAirTargets;
+          })()
+        : candidateAirTargets;
+      const nearest = pool.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), pool[0]);
+      const prevLock = hostile.radarLockedTarget && pool.find(t => t.id === hostile.radarLockedTarget.id);
+      if (prevLock) {
+        const prevDist = Math.hypot(prevLock.x - hostile.x, prevLock.y - hostile.y);
+        const nearDist = Math.hypot(nearest.x - hostile.x, nearest.y - hostile.y);
+        target = (nearDist + 2.5 < prevDist) ? nearest : prevLock;
       } else {
-        target = candidateAirTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), candidateAirTargets[0]);
+        target = nearest;
       }
     }
 
@@ -163,6 +172,7 @@ class AINavigationHandler {
         hostile.engineAlpha = Math.max(0.25, Math.min(1.0, trackOrder.throttle + throttleBias));
         return;
       }
+      hostile.radarLockedTarget = null;
       let idleHeading = Math.PI;
       if (docMove) idleHeading = docMove.heading;
       else if (wingmanOffset) idleHeading = Math.atan2(wingmanOffset.y - hostile.y, wingmanOffset.x - hostile.x);

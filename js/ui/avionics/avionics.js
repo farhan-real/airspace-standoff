@@ -11,6 +11,10 @@ class AvionicsUI {
     this._cachedTexts = {};
     this._cachedStyles = {};
     this._mfdEls = null;
+    this._rwrUnitId = null;
+    this._rwrStableState = 'clean';
+    this._rwrDowngradeCandidate = null;
+    this._rwrDowngradeSince = 0;
     this.initRWRInteractions();
     this.initRTBButton();
   }
@@ -263,40 +267,74 @@ class AvionicsUI {
   }
 
   updateRWRState() {
-    let rwrState = 'clean';
     const commanderTeam = this.game.currentPvpCommander || 'friendly';
     const activeUnit = this.game.activeUnit;
+    const unitId = (activeUnit && activeUnit.hp > 0.05) ? activeUnit.id : null;
+
+    if (unitId !== this._rwrUnitId) {
+      this._rwrUnitId = unitId;
+      this._rwrStableState = 'clean';
+      this._rwrDowngradeCandidate = null;
+      this._rwrDowngradeSince = 0;
+    }
+
+    let rawState = 'clean';
+    let detailText = 'NO EMISSIONS DETECTED';
     const lockingThreats = [];
 
-    if (this.game.missiles && activeUnit && activeUnit.hp > 0.05) {
+    if (this.game.missiles && unitId) {
       for (let i = 0; i < this.game.missiles.length; i++) {
         const m = this.game.missiles[i];
-        if (m.active && m.team !== commanderTeam && m.target && m.target.id === activeUnit.id) {
+        if (m.active && m.team !== commanderTeam && m.target && m.target.id === unitId) {
           lockingThreats.push(m);
         }
       }
     }
 
-    const detailEl = document.getElementById('rwr-threat-detail');
     if (lockingThreats.length > 0) {
       const nearest = lockingThreats.reduce((min, m) => m.distanceToTarget < min.distanceToTarget ? m : min, lockingThreats[0]);
-      rwrState = nearest.distanceToTarget < 30 ? 'lock' : 'sweep';
-      this.setFastText(detailEl, 'rwrDetail', `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km`);
-    } else {
+      const lockThresholdKm = (this._rwrStableState === 'lock') ? 33.0 : 30.0;
+      rawState = nearest.distanceToTarget < lockThresholdKm ? 'lock' : 'sweep';
+      detailText = `INBOUND MSL: ${Math.round(nearest.distanceToTarget)}km`;
+    } else if (unitId) {
       let hasLocks = false;
-      if (activeUnit && activeUnit.hp > 0.05) {
-        const hostileFleet = (commanderTeam === 'friendly') ? this.game.hostileAircraft : this.game.alliedAircraft;
-        for (let i = 0; i < hostileFleet.length; i++) {
-          const h = hostileFleet[i];
-          if (h.hp > 0.05 && h.radarLockedTarget && h.radarLockedTarget.id === activeUnit.id) {
-            hasLocks = true;
-            break;
-          }
+      const hostileFleet = (commanderTeam === 'friendly') ? this.game.hostileAircraft : this.game.alliedAircraft;
+      for (let i = 0; i < hostileFleet.length; i++) {
+        const h = hostileFleet[i];
+        if (h.hp > 0.05 && !h.isRTB && h.radarLockedTarget && h.radarLockedTarget.id === unitId) {
+          hasLocks = true;
+          break;
         }
       }
-      rwrState = hasLocks ? 'lock' : 'clean';
-      this.setFastText(detailEl, 'rwrDetail', hasLocks ? 'HOSTILE RADAR LOCK ON CRAFT' : 'NO EMISSIONS DETECTED');
+      rawState = hasLocks ? 'lock' : 'clean';
+      detailText = hasLocks ? 'HOSTILE RADAR LOCK ON CRAFT' : 'NO EMISSIONS DETECTED';
     }
+
+    const rank = { clean: 0, sweep: 1, lock: 2 };
+    const nowMs = performance.now();
+    if (!unitId) {
+      this._rwrStableState = 'clean';
+      this._rwrDowngradeCandidate = null;
+      this._rwrDowngradeSince = 0;
+    } else if (rank[rawState] >= rank[this._rwrStableState]) {
+      this._rwrStableState = rawState;
+      this._rwrDowngradeCandidate = null;
+      this._rwrDowngradeSince = 0;
+    } else {
+      const holdMs = (this._rwrStableState === 'lock') ? 550 : 450;
+      if (this._rwrDowngradeCandidate !== rawState) {
+        this._rwrDowngradeCandidate = rawState;
+        this._rwrDowngradeSince = nowMs;
+      } else if (nowMs - this._rwrDowngradeSince >= holdMs) {
+        this._rwrStableState = rawState;
+        this._rwrDowngradeCandidate = null;
+        this._rwrDowngradeSince = 0;
+      }
+    }
+
+    const rwrState = this._rwrStableState;
+    const detailEl = document.getElementById('rwr-threat-detail');
+    this.setFastText(detailEl, 'rwrDetail', detailText);
 
     const indicator = document.getElementById('rwr-state');
     if (indicator) {
