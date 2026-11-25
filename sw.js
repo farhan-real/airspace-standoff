@@ -1,6 +1,6 @@
 /* sw.js - AIRSPACE STANDOFF Automatic Network-First Service Worker with Offline Cache Fallback */
 
-const CACHE_NAME = 'airspace-standoff-app-v4';
+const CACHE_NAME = 'airspace-standoff-app-v5';
 const FONT_CACHE = 'airspace-standoff-fonts-v1';
 
 const CORE_ASSETS = [
@@ -295,20 +295,33 @@ const CORE_ASSETS = [
 
 const MANIFEST_CACHE_KEY = './__sw_manifest__';
 
+function cleanNavResponse(res) {
+  if (!res || !res.redirected) return res;
+  return new Response(res.body, {
+    status: res.status,
+    statusText: res.statusText,
+    headers: new Headers(res.headers)
+  });
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      for (const url of ['./', './index.html', './asset-manifest.json']) {
-        try {
-          const res = await fetch(new Request(url, { cache: 'no-cache' }));
-          if (res && res.ok) {
-            await cache.put(url, res.clone());
-            if (url === './asset-manifest.json') {
-              await cache.put(MANIFEST_CACHE_KEY, res);
-            }
-          }
-        } catch (_) {}
-      }
+      try {
+        const rootRes = await fetch(new Request('./', { cache: 'no-cache' }));
+        if (rootRes && rootRes.ok) {
+          const navRes = cleanNavResponse(rootRes);
+          await cache.put('./', navRes.clone());
+          await cache.put('./index.html', navRes);
+        }
+      } catch (_) {}
+      try {
+        const manRes = await fetch(new Request('./asset-manifest.json', { cache: 'no-cache' }));
+        if (manRes && manRes.ok) {
+          await cache.put('./asset-manifest.json', manRes.clone());
+          await cache.put(MANIFEST_CACHE_KEY, manRes);
+        }
+      } catch (_) {}
     }).then(() => self.skipWaiting())
   );
 });
@@ -463,19 +476,20 @@ self.addEventListener('fetch', (event) => {
       const manifestSyncPromise = IS_LOCAL_DEV ? Promise.resolve() : syncManifestCache(cache);
       try {
         const [res] = await Promise.all([
-          fetchFreshWithRetry('./index.html'),
+          fetchFreshWithRetry('./'),
           manifestSyncPromise
         ]);
         if (res && res.ok) {
-          await cache.put('./index.html', res.clone());
-          await cache.put('./', res.clone());
-          return res;
+          const navRes = cleanNavResponse(res);
+          await cache.put('./', navRes.clone());
+          await cache.put('./index.html', navRes.clone());
+          return navRes;
         }
       } catch (_) {
         await manifestSyncPromise;
       }
-      const cached = (await cache.match('./index.html')) || (await cache.match('./'));
-      if (cached) return cached;
+      const cached = (await cache.match('./')) || (await cache.match('./index.html'));
+      if (cached) return cleanNavResponse(cached);
       return fetch(req);
     })());
     return;
