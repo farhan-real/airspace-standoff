@@ -156,6 +156,7 @@ const CORE_ASSETS = [
   "./js/game.js",
   "./js/systems/combat/ai/commander.js",
   "./js/systems/combat/ai/evasion.js",
+  "./js/systems/combat/ai/flightprofile.js",
   "./js/systems/combat/ai/navigation.js",
   "./js/systems/combat/ai/planning.js",
   "./js/systems/combat/ai/salvo.js",

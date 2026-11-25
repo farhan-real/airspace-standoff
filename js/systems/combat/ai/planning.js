@@ -116,7 +116,7 @@ class AIPlanningSystem {
     };
   }
 
-  getPlannedAltitude(unit, profile, diffKey, airDoctrine) {
+  getPlannedAltitude(unit, profile, diffKey, airDoctrine, target = null) {
     if (!profile.verticalCombat) return unit.altFt || 28000;
     const role = unit.tacticalRole || (unit.spec && unit.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
     const altBias = airDoctrine ? airDoctrine.altitudeBiasFt : 0;
@@ -144,6 +144,22 @@ class AIPlanningSystem {
       baseAlt = isWingman ? 20000 : 34000;
     }
 
+    if (typeof AIFlightProfile !== 'undefined') {
+      const fp = AIFlightProfile.evaluate(unit, diffKey);
+      if (fp.hasTfr && (role === 'STRIKE' || fp.a2gAmmo > 0)) {
+        baseAlt = Math.round(AIFlightProfile.lerp(baseAlt, 8000, fp.precision));
+      } else if (fp.outOfBvr && (fp.wvrAmmo > 0 || fp.hasEnergyGun) && role !== 'SNIPER') {
+        const wvrTargetAlt = 26000 - Math.round(fp.agiScore * 6500);
+        baseAlt = Math.round(AIFlightProfile.lerp(baseAlt, wvrTargetAlt, fp.precision));
+      } else if (role !== 'STRIKE') {
+        const climbBonus = (fp.speedScore * 5500 + fp.radarReachScore * 3500 + fp.useWeight * 2500) * fp.precision;
+        if (fp.bvrAmmo > 0 && role !== 'DOGFIGHT') baseAlt += Math.round(climbBonus);
+        if (target && (target.altFt || 28000) < 15000) {
+          baseAlt -= Math.round((1.0 - fp.lookDownScore) * 6500 * fp.useLookDown);
+        }
+      }
+    }
+
     return Math.max(5000, Math.min(58000, baseAlt + altBias));
   }
 
@@ -168,23 +184,24 @@ class AIPlanningSystem {
 
   getSniperVector(unit, target, dist, diffKey) {
     const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
-    if (diffKey === 'LEGEND') {
-      if (dist < 46.0) return { heading: directAngle + Math.PI, throttle: 1.0 };
-      if (dist > 90.0) return { heading: directAngle, throttle: 0.90 };
-      return { heading: directAngle + (Math.sin(unit.age || 0) > 0 ? 1.15 : -1.15), throttle: 0.65 };
+    const halfConeRad = (((unit.spec && unit.spec.radarConeDeg) ? unit.spec.radarConeDeg : 120) / 2.0) * (Math.PI / 180.0);
+    const p = (typeof AIFlightProfile !== 'undefined') ? AIFlightProfile.getPrecision(diffKey, Boolean(unit && unit.isAce)) : 0.50;
+    const crankSign = (unit.id && unit.id.charCodeAt(unit.id.length - 1) % 2 === 0) ? 1 : -1;
+    const maxCrank = Math.min(halfConeRad * 0.82, 0.95);
+    const crankAngle = AIFlightProfile.lerp(0.50, maxCrank, p);
+
+    const escapeDist = AIFlightProfile.lerp(36.0, 48.0, p);
+    const pushDist = AIFlightProfile.lerp(75.0, 92.0, p);
+
+    if (dist < escapeDist) {
+      const escapeHeading = directAngle + crankSign * AIFlightProfile.lerp(Math.PI * 0.50, Math.PI, p);
+      const escapeThrottle = AIFlightProfile.lerp(0.60, 1.00, p);
+      return { heading: escapeHeading, throttle: escapeThrottle };
     }
-    if (diffKey === 'MASTER' || diffKey === 'FORTIFIED') {
-      if (dist < 44.0) return { heading: directAngle + (Math.PI * 0.85), throttle: 0.85 };
-      if (dist > 85.0) return { heading: directAngle, throttle: 0.85 };
-      return { heading: directAngle + (Math.sin(unit.age || 0) > 0 ? 1.0 : -1.0), throttle: 0.60 };
+    if (dist > pushDist) {
+      return { heading: directAngle, throttle: AIFlightProfile.lerp(0.70, 0.92, p) };
     }
-    if (diffKey === 'ACE' || diffKey === 'FORWARD') {
-      if (dist < 42.0) return { heading: directAngle + (Math.PI * 0.75), throttle: 0.50 };
-      if (dist > 80.0) return { heading: directAngle, throttle: 0.80 };
-      return { heading: directAngle, throttle: 0.60 };
-    }
-    if (dist < 38.0) return { heading: directAngle + (Math.PI / 2), throttle: 0.50 };
-    return { heading: directAngle, throttle: 0.65 };
+    return { heading: directAngle + crankSign * crankAngle, throttle: AIFlightProfile.lerp(0.68, 0.60, p) };
   }
 
   getInterceptVector(unit, target, dist) {
@@ -192,13 +209,111 @@ class AIPlanningSystem {
     return { heading: interceptAngle, throttle: dist > 30.0 ? 1.0 : 0.85 };
   }
 
-  getDogfightVector(unit, target) {
+  getDogfightVector(unit, target, dist = 15.0, diffKey = 'ACE') {
+    const fp = (typeof AIFlightProfile !== 'undefined') ? AIFlightProfile.evaluate(unit, diffKey) : null;
+    if (fp && (1.0 - fp.agiScore) * fp.precision > 0.40 && dist < 24.0 && fp.bvrAmmo > 0) {
+      return { heading: Math.atan2(target.y - unit.y, target.x - unit.x) + Math.PI * 0.85, throttle: 0.92 };
+    }
+    const pushThresh = (fp && fp.hasEnergyGun) ? Math.max(18.0, fp.gunRangeKm + 4.0) : 20.0;
+    if (dist > pushThresh) {
+      const leadAngle = Physics.calcLeadInterceptAngle(unit.x, unit.y, unit.speed, target.x, target.y, target.heading || 0, target.speed || 0.8);
+      return { heading: leadAngle, throttle: fp ? AIFlightProfile.clamp(0.88 - fp.useWeight * 0.14, 0.68, 0.94) : 0.86 };
+    }
     const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
-    const sOpt = unit.getOptimalCornerSpeed();
-    let targetThrottle = 0.65;
-    if (unit.speed > sOpt * 1.10) targetThrottle = 0.35;
-    else if (unit.speed < sOpt * 0.90) targetThrottle = 0.85;
-    return { heading: directAngle, throttle: targetThrottle };
+    const cornerThrottle = fp ? AIFlightProfile.computeCornerThrottle(unit, fp.effMaxMach, fp.precision, 0.65) : 0.65;
+    return { heading: directAngle, throttle: cornerThrottle };
+  }
+
+  getStatAwareSteering(unit, target, dist, diffKey) {
+    if (typeof AIFlightProfile === 'undefined' || !target) return null;
+    const fp = AIFlightProfile.evaluate(unit, diffKey);
+    const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+    const crankSign = (unit.id && unit.id.charCodeAt(unit.id.length - 1) % 2 === 0) ? 1 : -1;
+    const crankAngle = Math.min(fp.halfConeRad * 0.78, 0.92) * (1.0 - 0.35 * fp.useBeamSpike);
+
+    // BVR-dry: blend smoothly into WVR / dogfight / gun merge
+    if (fp.outOfBvr && (fp.wvrAmmo > 0 || fp.hasGunpod || fp.hasEnergyGun)) {
+      if ((1.0 - fp.agiScore) * fp.precision > 0.40 && fp.wvrAmmo === 0 && dist < 22.0) {
+        return { heading: directAngle + Math.PI * 0.85, throttle: 0.92 };
+      }
+      return this.getDogfightVector(unit, target, dist, diffKey);
+    }
+
+    // ECM Pod screening: continuous blend around umbrella bounds
+    const ecmWeight = fp.jamPower * fp.precision;
+    if (ecmWeight > 0.15 && dist >= 32.0 && dist <= 58.0 && fp.bvrAmmo > 0) {
+      return { heading: directAngle + crankSign * Math.min(fp.halfConeRad * 0.72, 0.85), throttle: 0.64 };
+    }
+
+    // Silent IR BVR: drag/crank earlier as irBvrRatio * precision rises
+    const irDragWeight = fp.irBvrRatio * (1.0 - fp.arhRatio) * fp.precision;
+    if (irDragWeight > 0.30 && dist < fp.preferredEngageKm * AIFlightProfile.lerp(0.70, 0.90, irDragWeight)) {
+      return { heading: directAngle + crankSign * (0.95 + 0.25 * fp.precision), throttle: 0.78 };
+    }
+
+    // Heavy/stiff standoff drag: continuously computed threshold and blending
+    if (fp.bvrAmmo > 0) {
+      const standOffBias = ((1.0 - fp.agiScore) * 0.55 + fp.useWeight * 0.45 + fp.useCaution * 0.60) * fp.precision;
+      const minStandOff = fp.preferredEngageKm * AIFlightProfile.clamp(0.45 + 0.35 * standOffBias, 0.40, 0.88);
+      if (standOffBias > 0.18 && dist < minStandOff) {
+        const turnAwayAngle = directAngle + crankSign * AIFlightProfile.lerp(Math.PI * 0.60, Math.PI * 0.84, standOffBias);
+        const escapeThrottle = AIFlightProfile.clamp(0.72 + fp.speedScore * 0.22, 0.70, 0.96);
+        return { heading: turnAwayAngle, throttle: escapeThrottle };
+      }
+      if (standOffBias > 0.12 && dist <= fp.preferredEngageKm * 1.15) {
+        return { heading: directAngle + crankSign * (crankAngle * 0.88), throttle: AIFlightProfile.computeCornerThrottle(unit, fp.effMaxMach, fp.precision, 0.66) };
+      }
+    }
+
+    // Stealth flanking: continuous flank bias proportional to useStealth
+    if (fp.useStealth > 0.08 && dist > 28.0) {
+      const mapH = (window.CONFIG && window.CONFIG.THEATER_HEIGHT_KM) || 100.0;
+      const flankBias = unit.y < mapH * 0.5 ? -0.46 : 0.46;
+      const throttle = AIFlightProfile.clamp(0.72 - fp.thermalVuln * 0.18, 0.50, 0.80);
+      return { heading: directAngle + flankBias * fp.useStealth, throttle };
+    }
+
+    // Nimble corner merge: scales with agility * (1 - weight) * precision
+    const dogfightAffinity = fp.agiScore * (1.0 - fp.useWeight) * fp.precision;
+    if (dogfightAffinity > 0.25 && dist <= AIFlightProfile.lerp(18.0, 30.0, dogfightAffinity)) {
+      return this.getDogfightVector(unit, target, dist, diffKey);
+    }
+
+    // Long-distance BVR pursuit
+    if (fp.bvrAmmo > 0 && dist > fp.preferredEngageKm && fp.speedScore * fp.precision > 0.15) {
+      const leadAngle = Physics.calcLeadInterceptAngle(unit.x, unit.y, unit.speed, target.x, target.y, target.heading || 0, target.speed || 0.8);
+      return { heading: leadAngle, throttle: AIFlightProfile.clamp(0.72 + fp.speedScore * 0.24 * fp.precision, 0.68, 0.98) };
+    }
+
+    return null;
+  }
+
+  getSwarmVector(unit, target, dist) {
+    const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+    const flankSign = (unit.id && unit.id.charCodeAt(unit.id.length - 1) % 2 === 0) ? 1 : -1;
+    const offset = dist > 22.0 ? (flankSign * 0.40) : 0.0;
+    return { heading: directAngle + offset, throttle: dist > 22.0 ? 0.92 : 0.78 };
+  }
+
+  getSeadVector(unit, target, dist, airTargets = []) {
+    const threat = (airTargets && airTargets.length > 0)
+      ? airTargets.reduce((best, cur) => (Math.hypot(cur.x - unit.x, cur.y - unit.y) < Math.hypot(best.x - unit.x, best.y - unit.y) ? cur : best), airTargets[0])
+      : target;
+    const refDist = threat ? Math.hypot(threat.x - unit.x, threat.y - unit.y) : dist;
+    const directAngle = Math.atan2((threat ? threat.y : target.y) - unit.y, (threat ? threat.x : target.x) - unit.x);
+    const orbitSign = (unit.id && unit.id.charCodeAt(unit.id.length - 1) % 2 === 0) ? 1 : -1;
+    if (refDist < 36.0) return { heading: directAngle + orbitSign * (Math.PI * 0.78), throttle: 0.72 };
+    if (refDist <= 56.0) return { heading: directAngle + orbitSign * (Math.PI / 2), throttle: 0.58 };
+    return { heading: directAngle, throttle: 0.66 };
+  }
+
+  getStrikeVector(unit, target, dist, maxA2GRangeKm = 0) {
+    const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+    if (maxA2GRangeKm >= 30.0) {
+      if (dist < 26.0) return { heading: directAngle + Math.PI * 0.82, throttle: 0.86 };
+      return { heading: directAngle, throttle: dist > 55.0 ? 0.82 : 0.68 };
+    }
+    return { heading: directAngle, throttle: dist > 18.0 ? 0.86 : 0.72 };
   }
 
   getAmbushVector(unit, target, dist, diffKey) {

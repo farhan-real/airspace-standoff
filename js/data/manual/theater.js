@@ -56,6 +56,16 @@ window.MANUAL_THEATER = [
         </div>
       </div>
 
+      <div class="ge-card" style="border-left:3px solid #00f5a0;margin-top:8px;">
+        <b style="color:#00f5a0;">CONTINUOUS DIFFICULTY-SCALED STAT, WEIGHT &amp; LOADOUT AI</b>
+        <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+          Adversary pilots evaluate their own <b>live airframe stats</b> (agility, sprint speed, G-limit, HP/armor, radar reach, look-down filter, RCS &amp; beam spike, thermal plume, TVC/COFFIN, IRST, TFR), <b>live payload weight (Wr)</b>, <b>pilot stress &amp; energy</b>, and <b>remaining weapons</b> along a smooth, fully continuous precision curve (<b>8% on Permissive Sector up to 100% on Extreme Threat Sector</b>) without artificial yes/no cutoff gates:<br>
+          &bull; <b>Low Difficulties (Permissive / Buffer &bull; 8% - 16% Precision):</b> Coarse, minimal repertoire &mdash; basic direct pursuit, broad barrel rolls or break turns, and simple weapon range firing without weight adjustments, corner-speed tuning, or thermal cooling.<br>
+          &bull; <b>Mid Difficulties (Contested &rarr; Forward &bull; 28% - 68% Precision):</b> Smoothly scales live weight standoff (heavier jets stand off farther, then push closer as missiles are spent), activates TFR ground-hugging, interpolates corner-speed throttle, blends 4th-root RCS stealth flanking, and adjusts altitude to hunt deck-skimming targets.<br>
+          &bull; <b>High Difficulties (High-Threat &rarr; Extreme Threat &bull; 78% - 100% Precision):</b> Full multi-variable optimization &mdash; an agile 3D TVC <i>Su-35S</i> pushes corner merges and weights Cobras heavily while cooling its 1.25x plume against IR missiles; a light <i>JAS-39E Gripen</i> flanks with low RCS; stiff <i>MiG-31BM</i> interceptors maintain high-Mach standoff and drag away before turn fights; stealth jets protect high beam-spike angles; and Ramjet / silent IR BVR shooters time their cranks dynamically.
+        </div>
+      </div>
+
       <div class="ge-subhead">2. EXPLOITING ENEMY WEAKNESSES</div>
       <div class="ge-card" style="border-left:3px solid #00f5a0;">
         <ul style="list-style:none;padding-left:0;font-size:0.72rem;line-height:1.55;color:#cbd5e1;">

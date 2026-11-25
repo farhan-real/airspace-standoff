@@ -48,19 +48,21 @@ class AIMissileTactics {
     let possibleTargets = [];
 
     if (role === 'SEAD' || docId === 'RADAR_JAMMING') {
-      const seadEmitters = bunkers.filter(s => s.type === 'RADAR_ARRAY' || s.type === 'EW_JAMMER' || s.type === 'S-400' || s.type === 'PANTSIR' || s.type === 'RADAR_VAN');
+      const seadEmitters = bunkers.filter(s => s.isEmitter || s.type === 'EW_JAMMER' || s.category === 'EW_RADAR' || s.category === 'LR_SAM' || s.category === 'MR_SAM');
       const ewAir = airTargets.filter(t => t.jamEfficiency > 0 || (t.spec && t.spec.category === 'EW'));
       possibleTargets = ewAir.concat(seadEmitters).concat(airTargets.filter(t => !ewAir.includes(t))).concat(bunkers.filter(s => !seadEmitters.includes(s)));
     } else if (role === 'STRIKE') {
-      const primaryBunkers = bunkers.filter(s => s.type === 'BUNKER' || s.type === 'FUEL_DEPOT');
+      const primaryBunkers = bunkers.filter(s => s.isPrimaryObjective || s.type === 'BUNKER' || s.type === 'FUEL_DEPOT');
       possibleTargets = primaryBunkers.concat(bunkers.filter(s => !primaryBunkers.includes(s))).concat(airTargets);
     } else {
       possibleTargets = airTargets.concat(bunkers);
     }
     if (possibleTargets.length === 0) return { isBingo: false, plan: null };
 
+    const fp = (typeof AIFlightProfile !== 'undefined') ? AIFlightProfile.evaluate(shooter, diffKey) : null;
+    const statPkBias = fp ? Math.round((fp.useStealth * 5.0 + fp.useCaution * 4.0 - fp.wr * 4.0 * fp.useWeight) * fp.precision) : 0;
     const reservePkAdd = inReserve ? tier.reservePkBoost : 0;
-    const requiredPk = Math.max(24, Math.min(86, tier.minPk + reservePkAdd + dyn.pkDelta + (airDoctrine ? airDoctrine.minPkOffset : 0)));
+    const requiredPk = Math.max(24, Math.min(86, tier.minPk + reservePkAdd + dyn.pkDelta + statPkBias + (airDoctrine ? airDoctrine.minPkOffset : 0)));
     const reserveRangeMult = inReserve ? 0.84 : 1.0;
     const rangeRatio = Math.max(0.45, Math.min(0.95, tier.rangeRatio * reserveRangeMult * (airDoctrine ? airDoctrine.engageRangeMult : 1.0)));
     const maxInboundCap = Math.max(1, Math.min(4, (profile.maxInboundPerTarget || 2) + (airDoctrine ? (airDoctrine.inboundCapBias || 0) : 0)));
@@ -96,7 +98,8 @@ class AIMissileTactics {
 
         const pkResult = Physics.calcPk(w, shooter, tgt, clouds);
         const pk = pkResult.pk || 0;
-        const distPkGate = (dist > w.rangeKm * 0.78 && !['CADET', 'BUFFER'].includes(diffKey)) ? (requiredPk + 10) : requiredPk;
+        const distPenalty = (dist > w.rangeKm * 0.75 && fp) ? Math.round(10 * fp.precision) : 0;
+        const distPkGate = requiredPk + distPenalty;
         if (pk < distPkGate) continue;
 
         let score = pk - (inboundsCount * 16);
@@ -111,10 +114,25 @@ class AIMissileTactics {
         if (docId === 'STEALTH_AMBUSH' && (w.isStealthMissile || w.seeker === 'IIR' || w.seeker === 'EO')) score += 22;
         if (docId === 'RADAR_JAMMING' && (tgt.jamEfficiency > 0 || (tgt.spec && tgt.spec.category === 'EW') || tgt.isEmitter)) score += 25;
 
+        if (role === 'SNIPER') {
+          if (dist >= 40.0 && w.rangeKm >= 75.0) score += 18;
+          if (tgt.isFlightLead || tgt.isAce || (tgt.spec && tgt.spec.category === 'STRIKE')) score += 18;
+        }
+        if (role === 'AMBUSH' && (w.isStealthMissile || w.seeker === 'IIR' || w.seeker === 'EO')) score += 18;
+        if (role === 'FLAGSHIP' && (w.isLaser || w.speedMach >= 4.0)) score += 15;
         if (role === 'DOGFIGHT' && (w.seeker === 'IIR' || w.seeker === 'EO' || w.trait === 'HOBS_VANE')) score += 22;
         if (role === 'INTERCEPT' && dist >= 25.0 && w.speedMach >= 3.5) score += 20;
         if (role === 'SWARM' && w.trait === 'SWARM_RIPPLE') score += 20;
         if (role === 'ESCORT' && tgt.radarLockedTarget && tgt.radarLockedTarget.team === shooter.team) score += 28;
+        if (role === 'STRIKE' && isSurface) score += 22;
+        if (fp) {
+          const standOffAffinity = (1.0 - fp.agiScore) * 0.6 + fp.useWeight * 0.4 + fp.useCaution * 0.4;
+          if (dist >= 28.0 && w.rangeKm >= 65.0) score += Math.round(18 * standOffAffinity * fp.precision);
+          if (w.trait === 'RAMJET_SUSTAINED' && dist >= 45.0) score += Math.round(14 * fp.useWeaponTraits);
+          if (dist <= 24.0 && (w.seeker === 'IIR' || w.seeker === 'EO' || w.trait === 'HOBS_VANE')) score += Math.round(16 * fp.agiScore * (1.0 - fp.useWeight * 0.5) * fp.precision);
+          if (fp.useStealth > 0 && (w.isStealthMissile || w.seeker === 'IIR' || w.seeker === 'EO')) score += Math.round(16 * fp.useStealth);
+          if (fp.hasIrst && tgt.spec && (tgt.spec.sigma_0 <= 0.05 || tgt.isNotching) && dist <= 38.0) score += Math.round(14 * fp.precision);
+        }
         if (dyn.inDanger) {
           if (tgt.radarLockedTarget && tgt.radarLockedTarget.id === shooter.id) score += 24;
           if (dist <= 22.0) score += 20;

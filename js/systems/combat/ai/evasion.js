@@ -64,40 +64,61 @@ class AIEvasionHandler {
     }
 
     const isOptical = Boolean(nearestMsl && nearestMsl.weapon && (nearestMsl.weapon.seeker === 'IIR' || nearestMsl.weapon.seeker === 'EO' || nearestMsl.weapon.seeker === 'OPT'));
+    const fp = (typeof AIFlightProfile !== 'undefined') ? AIFlightProfile.evaluate(hostile, diffKey) : null;
     if (isOptical && tier.irIdleAlpha !== null) {
-      hostile.engineAlpha = tier.irIdleAlpha;
-    } else if (tier.cornerThrottle || isAce) {
-      const sOpt = hostile.getOptimalCornerSpeed();
-      hostile.engineAlpha = hostile.speed > sOpt * 1.12 ? 0.42 : (hostile.speed < sOpt * 0.88 ? 0.88 : 0.65);
+      const vulnCut = fp ? (fp.thermalVuln * 0.14 * fp.precision) : 0;
+      hostile.engineAlpha = Math.max(0.20, tier.irIdleAlpha - vulnCut);
+    } else if (fp && (tier.cornerThrottle || isAce)) {
+      hostile.engineAlpha = AIFlightProfile.computeCornerThrottle(hostile, fp.effMaxMach, fp.precision, 0.65);
     }
   }
 
-  static selectManeuverId(hostile, incoming, nearestMsl, profile, tier, diffKey, effectiveNotchChance) {
+  static selectManeuverId(hostile, incoming, nearestMsl, profile, tier, diffKey, effectiveNotchChance, fp = null) {
     const isAce = Boolean(hostile.isAce);
     const dist = nearestMsl.distanceToTarget;
     const isRadar = Boolean(nearestMsl.weapon && (nearestMsl.weapon.seeker === 'ARH' || nearestMsl.weapon.seeker === 'PASSIVE_RADAR'));
     const isOptical = Boolean(nearestMsl.weapon && (nearestMsl.weapon.seeker === 'IIR' || nearestMsl.weapon.seeker === 'EO' || nearestMsl.weapon.seeker === 'OPT'));
     const hasCm = (hostile.chaff > 0 || hostile.countermeasures > 0);
 
-    if (isRadar && hostile.speed >= 0.30 && Math.random() < effectiveNotchChance) {
-      return 'DOPPLER_NOTCH';
+    const notchBias = fp ? fp.notchMod : 0;
+    const cobraChance = fp ? fp.cobraWeight : 0.45;
+    const splitSChance = fp ? fp.splitSWeight : 0.35;
+    const barrelChance = fp ? fp.barrelWeight : 0.50;
+    const zoomChance = fp ? fp.zoomWeight : 0.22;
+
+    const p = fp ? fp.precision : 0.50;
+    const candidates = [];
+
+    if (isRadar && hostile.speed >= 0.30) {
+      candidates.push({ id: 'DOPPLER_NOTCH', weight: Math.min(0.95, effectiveNotchChance + notchBias) });
     }
-    if (hostile.thrustVector === true && dist <= 15.0 && (isAce || tier.rank >= 4) && Math.random() < 0.58) {
-      return 'PUSH_COBRA';
+    if (hostile.thrustVector === true && dist <= 15.0) {
+      candidates.push({ id: 'PUSH_COBRA', weight: cobraChance * p });
     }
-    if (hostile.alt >= 0.18 && (incoming.length >= 2 || dist <= 18.0) && (isAce || tier.rank >= 2) && Math.random() < 0.44) {
-      return 'SPLIT_S';
+    if (hostile.alt >= 0.18) {
+      const splitSUrgency = incoming.length >= 2 ? 1.25 : 1.0;
+      candidates.push({ id: 'SPLIT_S', weight: splitSChance * splitSUrgency * p });
     }
-    if (isRadar && hasCm && hostile.cmTimer <= 0 && dist <= 16.0 && Math.random() < 0.40) {
-      return 'EMERGENCY_CM';
+    if (isRadar && hasCm && hostile.cmTimer <= 0 && dist <= 18.0) {
+      candidates.push({ id: 'EMERGENCY_CM', weight: 0.36 + p * 0.24 });
     }
-    if (hostile.speed >= 0.65 && hostile.alt < 0.45 && (isAce || tier.rank >= 2) && Math.random() < (isOptical ? 0.44 : 0.26)) {
-      return 'ZOOM_CLIMB';
+    if (hostile.speed >= 0.60 && hostile.alt < 0.50) {
+      const zoomBoost = isOptical ? 0.18 : 0.0;
+      candidates.push({ id: 'ZOOM_CLIMB', weight: (zoomChance + zoomBoost) * p });
     }
-    if (hostile.alt >= 0.10 && dist <= 25.0) {
-      return 'BARREL_ROLL';
+    if (hostile.alt >= 0.10 && dist <= 28.0) {
+      candidates.push({ id: 'BARREL_ROLL', weight: barrelChance });
     }
-    return 'BREAK_TURN';
+    candidates.push({ id: 'BREAK_TURN', weight: 0.45 });
+
+    let totalWeight = 0;
+    for (let i = 0; i < candidates.length; i++) totalWeight += Math.max(0.01, candidates[i].weight);
+    let roll = Math.random() * totalWeight;
+    for (let i = 0; i < candidates.length; i++) {
+      roll -= Math.max(0.01, candidates[i].weight);
+      if (roll <= 0) return candidates[i].id;
+    }
+    return candidates[0].id;
   }
 
   static handleDefensiveBehavior(hostile, profile, diffKey, dt, missiles, isFocused = true, airDoctrine = null) {
@@ -124,10 +145,12 @@ class AIEvasionHandler {
 
     if (hostile.glocTimer > 0 || (hostile._aiManeuverCooldown || 0) > 0) return;
 
+    const fp = (typeof AIFlightProfile !== 'undefined') ? AIFlightProfile.evaluate(hostile, diffKey) : null;
     const isStealth = Boolean(nearestMsl.isStealthMissile || (nearestMsl.rcs <= 0.005));
-    const reactDistance = isAce ? Math.max(tier.reactDist + 3.5, 20.0) : tier.reactDist;
-    const stealthDistance = isAce ? Math.max(tier.stealthDist + 2.5, 12.5) : tier.stealthDist;
-    const focusFactor = isFocused ? 1.0 : (tier.rank >= 6 ? 0.90 : 0.78);
+    const sensorAwareBonus = fp ? (((fp.hasIrst || hostile.hasDAS || hostile.hasESM) ? 2.2 : 0.0) + fp.wr * 2.2 + fp.useCaution * 2.6) * fp.precision : 0.0;
+    const reactDistance = (isAce ? Math.max(tier.reactDist + 3.5, 20.0) : tier.reactDist) + sensorAwareBonus;
+    const stealthDistance = (isAce ? Math.max(tier.stealthDist + 2.5, 12.5) : tier.stealthDist) + sensorAwareBonus * 0.6;
+    const focusFactor = isFocused ? 1.0 : AIFlightProfile.lerp(0.72, 0.94, fp ? fp.precision : 0.5);
     const triggerDistance = (isStealth ? stealthDistance : reactDistance) * focusFactor;
     if (nearestMsl.distanceToTarget > triggerDistance) return;
 
@@ -160,7 +183,7 @@ class AIEvasionHandler {
     const docNotchBias = airDoctrine ? airDoctrine.notchBias : 0.0;
     const effectiveNotchChance = Math.max(0, Math.min(0.88, baseNotchChance * closeRangeDegradation + docNotchBias));
 
-    const maneuverId = this.selectManeuverId(hostile, incoming, nearestMsl, profile, tier, diffKey, effectiveNotchChance);
+    const maneuverId = this.selectManeuverId(hostile, incoming, nearestMsl, profile, tier, diffKey, effectiveNotchChance, fp);
     const baseBonuses = { DOPPLER_NOTCH: 0.30, BARREL_ROLL: 0.28, PUSH_COBRA: 0.34, SPLIT_S: 0.28, EMERGENCY_CM: 0.26, ZOOM_CLIMB: 0.22, BREAK_TURN: 0.24 };
     const durations = { DOPPLER_NOTCH: 4.5, BARREL_ROLL: 4.0, PUSH_COBRA: 3.5, SPLIT_S: 4.5, EMERGENCY_CM: 4.5, ZOOM_CLIMB: 4.5, BREAK_TURN: 4.0 };
     const labels = { DOPPLER_NOTCH: 'DOPPLER NOTCH', BARREL_ROLL: 'BARREL ROLL', PUSH_COBRA: 'COBRA', SPLIT_S: 'SPLIT-S DIVE', EMERGENCY_CM: 'CHAFF SALVO', ZOOM_CLIMB: 'ZOOM CLIMB', BREAK_TURN: 'BREAK TURN' };
@@ -255,7 +278,11 @@ class AIEvasionHandler {
         continue;
       }
 
-      const desiredAlt = Math.max(8000, Math.min(58000, aceTier.climbAlt + altBias));
+      const plannedAlt = aiCommander.planning.getPlannedAltitude(ace, profile, diffKey, airDoctrine);
+      const aceRole = ace.tacticalRole || 'FLAGSHIP';
+      const desiredAlt = (aceRole === 'DOGFIGHT' || aceRole === 'STRIKE')
+        ? plannedAlt
+        : Math.max(8000, Math.min(58000, Math.max(aceTier.climbAlt + altBias, plannedAlt)));
       if (Math.abs((ace.altFt || 28000) - desiredAlt) > 3500) ace.targetAltFt = desiredAlt;
 
       const mergedAceProfile = Object.assign({}, profile, aceProf, { notchChance: aceTier.notchRate });
@@ -263,11 +290,12 @@ class AIEvasionHandler {
       if (!isFocused) continue;
 
       if (typeof AIMissileTactics !== 'undefined') {
-        const isStrikeAce = Boolean(ace.spec && ace.spec.role && (ace.spec.role.includes('Strike') || ace.spec.role.includes('Bomber')));
+        const isStrikeAce = Boolean(aceRole === 'STRIKE' || (ace.spec && ace.spec.role && (ace.spec.role.includes('Strike') || ace.spec.role.includes('Bomber'))));
         const targetsForAce = (isStrikeAce && visibleBunkers.length > 0) ? visibleBunkers.concat(candidateTargets) : candidateTargets;
         const acePlan = AIMissileTactics.selectAceTargetAndSalvo(ace, targetsForAce, clouds, allMissiles, diffKey, mergedAceProfile, airDoctrine);
+        const isEvading = (ace.activeManeuverTimer > 0);
 
-        if ((!acePlan || !acePlan.target) && untrackedContacts && untrackedContacts.length > 0) {
+        if (!isEvading && (!acePlan || !acePlan.target) && untrackedContacts && untrackedContacts.length > 0) {
           const trackOrder = aiCommander.planning.getTrackAcquisitionVector(ace, candidateTargets, untrackedContacts, allMissiles, diffKey);
           if (trackOrder && trackOrder.target) {
             ace.radarLockedTarget = trackOrder.target;
@@ -284,20 +312,32 @@ class AIEvasionHandler {
           ace.radarLockedTarget = tgt;
           const dist = Math.hypot(tgt.x - ace.x, tgt.y - ace.y);
           const docMove = AINavigationHandler.getDoctrineSteering(game, ace, tgt, dist, airDoctrine, atkDoctrine);
-          const desiredAngle = docMove ? docMove.heading : Physics.calcLeadInterceptAngle(ace.x, ace.y, ace.speed || 0.9, tgt.x, tgt.y, tgt.heading || 0, tgt.speed || 0);
+          let roleMove = null;
+          if (!docMove) {
+            if (aceRole === 'SNIPER') roleMove = aiCommander.planning.getSniperVector(ace, tgt, dist, diffKey);
+            else if (aceRole === 'INTERCEPT') roleMove = aiCommander.planning.getInterceptVector(ace, tgt, dist);
+            else if (aceRole === 'DOGFIGHT') roleMove = aiCommander.planning.getDogfightVector(ace, tgt, dist, diffKey);
+            else if (aceRole === 'AMBUSH') roleMove = aiCommander.planning.getAmbushVector(ace, tgt, dist, diffKey);
+            if (!roleMove && typeof aiCommander.planning.getStatAwareSteering === 'function') {
+              roleMove = aiCommander.planning.getStatAwareSteering(ace, tgt, dist, diffKey);
+            }
+          }
+          const desiredAngle = docMove ? docMove.heading : (roleMove ? roleMove.heading : Physics.calcLeadInterceptAngle(ace.x, ace.y, ace.speed || 0.9, tgt.x, tgt.y, tgt.heading || 0, tgt.speed || 0));
 
           let diff = desiredAngle - ace.heading;
           while (diff < -Math.PI) diff += Math.PI * 2;
           while (diff > Math.PI) diff -= Math.PI * 2;
 
-          const aceAgi = ace.getEffectiveAgility();
-          ace.heading += Math.max(-aceAgi * 1.1 * dt, Math.min(aceAgi * 1.1 * dt, diff));
-
-          if (Math.abs(diff) > 0.35) {
-            const sOpt = ace.getOptimalCornerSpeed();
-            ace.engineAlpha = ace.speed > sOpt * 1.12 ? 0.40 : (ace.speed < sOpt * 0.88 ? 0.85 : 0.65);
-          } else if (docMove) {
-            ace.engineAlpha = Math.max(0.25, Math.min(1.0, docMove.throttle + (airDoctrine ? airDoctrine.throttleBias : 0)));
+          if (!isEvading) {
+            const aceAgi = ace.getEffectiveAgility();
+            ace.heading += Math.max(-aceAgi * 1.1 * dt, Math.min(aceAgi * 1.1 * dt, diff));
+            if (Math.abs(diff) > 0.35) {
+              const sOpt = ace.getOptimalCornerSpeed();
+              ace.engineAlpha = ace.speed > sOpt * 1.12 ? 0.40 : (ace.speed < sOpt * 0.88 ? 0.85 : 0.65);
+            } else if (docMove || roleMove) {
+              const baseThrottle = docMove ? docMove.throttle : roleMove.throttle;
+              ace.engineAlpha = Math.max(0.25, Math.min(1.0, baseThrottle + (airDoctrine ? airDoctrine.throttleBias : 0)));
+            }
           }
 
           if (aiCommander.aceSalvoTimer <= 0 && !(ace._aiFireCooldown > 0) && game.tokenBucketRed >= 0.70 && !ace.isRTB) {

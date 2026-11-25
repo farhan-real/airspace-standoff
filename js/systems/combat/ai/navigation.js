@@ -108,24 +108,40 @@ class AINavigationHandler {
     }
 
     const role = hostile.tacticalRole || (hostile.spec && hostile.spec.category === 'EW' ? 'SEAD' : 'SWEEP');
+    const a2gOrdnance = (hostile.equippedWeapons || []).filter(it => it && it.ammo > 0 && it.weapon && (it.weapon.category === 'A2G' || it.weapon.isBunkerCracker || it.weapon.isAntiRadiation));
+    const hasA2GAmmo = a2gOrdnance.length > 0;
+    const maxA2GRangeKm = a2gOrdnance.reduce((m, it) => Math.max(m, it.weapon.rangeKm || 0), 0);
 
     let target = null;
     if (role === 'SEAD') {
-      const hostileRadars = (aiCommander.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0.05 && (s.type === 'RADAR_ARRAY' || s.type === 'EW_JAMMER' || s.type === 'S-400' || s.type === 'PANTSIR' || s.type === 'RADAR_VAN'));
-      if (hostileRadars.length > 0) target = hostileRadars[0];
-      else if (candidateAirTargets.length > 0) target = candidateAirTargets[0];
+      const hostileRadars = (hasA2GAmmo ? (aiCommander.game.surfaceUnits || []) : []).filter(s =>
+        s.team !== hostile.team && s.hp > 0.05 &&
+        (s.isEmitter || s.type === 'EW_JAMMER' || s.category === 'EW_RADAR' || s.category === 'LR_SAM' || s.category === 'MR_SAM')
+      );
+      if (hostileRadars.length > 0) {
+        target = hostileRadars.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), hostileRadars[0]);
+      } else if (candidateAirTargets.length > 0) {
+        target = candidateAirTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), candidateAirTargets[0]);
+      }
     } else if (role === 'STRIKE') {
-      const strikeTargets = (aiCommander.game.surfaceUnits || []).filter(s => s.team !== hostile.team && s.hp > 0.05 && (s.type === 'BUNKER' || s.type === 'FUEL_DEPOT' || !s.isIndestructible));
-      if (strikeTargets.length > 0) target = strikeTargets[0];
-      else if (candidateAirTargets.length > 0) target = candidateAirTargets[0];
+      const strikeTargets = (hasA2GAmmo ? (aiCommander.game.surfaceUnits || []) : []).filter(s => s.team !== hostile.team && s.hp > 0.05 && (s.isPrimaryObjective || s.type === 'BUNKER' || s.type === 'FUEL_DEPOT' || !s.isIndestructible));
+      if (strikeTargets.length > 0) {
+        target = strikeTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), strikeTargets[0]);
+      } else if (candidateAirTargets.length > 0) {
+        target = candidateAirTargets.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), candidateAirTargets[0]);
+      }
     } else if (candidateAirTargets.length > 0) {
-      const pool = (role === 'SNIPER')
-        ? (() => {
-            const priorityTargets = candidateAirTargets.filter(t => t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
-            return priorityTargets.length > 0 ? priorityTargets : candidateAirTargets;
-          })()
-        : candidateAirTargets;
-      const nearest = pool.reduce((best, cur) => (Math.hypot(cur.x - hostile.x, cur.y - hostile.y) < Math.hypot(best.x - hostile.x, best.y - hostile.y) ? cur : best), pool[0]);
+      let pool = candidateAirTargets;
+      let refUnit = hostile;
+      if (role === 'SNIPER') {
+        const priorityTargets = candidateAirTargets.filter(t => t.isFlightLead || t.isAce || (t.spec && t.spec.category === 'STRIKE'));
+        if (priorityTargets.length > 0) pool = priorityTargets;
+      } else if (role === 'ESCORT') {
+        const friendlies = (aiCommander.game.hostileAircraft || []).filter(h => h && h.id !== hostile.id && h.hp > 0.05);
+        const vip = friendlies.find(h => h.isAce || h.isFlightLead) || friendlies.find(h => h.tacticalRole === 'STRIKE' || h.tacticalRole === 'SEAD');
+        if (vip) refUnit = vip;
+      }
+      const nearest = pool.reduce((best, cur) => (Math.hypot(cur.x - refUnit.x, cur.y - refUnit.y) < Math.hypot(best.x - refUnit.x, best.y - refUnit.y) ? cur : best), pool[0]);
       const prevLock = hostile.radarLockedTarget && pool.find(t => t.id === hostile.radarLockedTarget.id);
       if (prevLock) {
         const prevDist = Math.hypot(prevLock.x - hostile.x, prevLock.y - hostile.y);
@@ -152,7 +168,7 @@ class AINavigationHandler {
     const tier = navTiers[diffKey];
 
     if (profile.verticalCombat) {
-      const targetAlt = aiCommander.planning.getPlannedAltitude(hostile, profile, diffKey, airDoctrine);
+      const targetAlt = aiCommander.planning.getPlannedAltitude(hostile, profile, diffKey, airDoctrine, target);
       if (Math.abs(hostile.altFt - targetAlt) > 3500) hostile.targetAltFt = targetAlt;
     }
 
@@ -197,21 +213,39 @@ class AINavigationHandler {
     } else if (docMove) {
       desiredHeading = docMove.heading;
       desiredThrottle = docMove.throttle;
-    } else if (role === 'SNIPER' && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
+    } else if (role === 'SNIPER') {
       const sniperMove = aiCommander.planning.getSniperVector(hostile, target, dist, diffKey);
       desiredHeading = sniperMove.heading; desiredThrottle = sniperMove.throttle;
     } else if (role === 'INTERCEPT') {
       const interceptMove = aiCommander.planning.getInterceptVector(hostile, target, dist);
       desiredHeading = interceptMove.heading; desiredThrottle = interceptMove.throttle;
     } else if (role === 'DOGFIGHT') {
-      const dogfightMove = aiCommander.planning.getDogfightVector(hostile, target);
+      const dogfightMove = aiCommander.planning.getDogfightVector(hostile, target, dist, diffKey);
       desiredHeading = dogfightMove.heading; desiredThrottle = dogfightMove.throttle;
+    } else if (role === 'SWARM') {
+      const swarmMove = aiCommander.planning.getSwarmVector(hostile, target, dist);
+      desiredHeading = swarmMove.heading; desiredThrottle = swarmMove.throttle;
+    } else if (role === 'SEAD') {
+      const seadMove = aiCommander.planning.getSeadVector(hostile, target, dist, candidateAirTargets);
+      desiredHeading = seadMove.heading; desiredThrottle = seadMove.throttle;
+    } else if (role === 'STRIKE' && hasA2GAmmo) {
+      const strikeMove = aiCommander.planning.getStrikeVector(hostile, target, dist, maxA2GRangeKm);
+      desiredHeading = strikeMove.heading; desiredThrottle = strikeMove.throttle;
     } else if (role === 'ESCORT') {
       const escortMove = aiCommander.planning.getEscortVector(hostile, target, dist);
       desiredHeading = escortMove.heading; desiredThrottle = escortMove.throttle;
-    } else if (role === 'AMBUSH' && ['ELITE', 'FORWARD', 'ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey)) {
+    } else if (role === 'AMBUSH') {
       const ambushMove = aiCommander.planning.getAmbushVector(hostile, target, dist, diffKey);
       desiredHeading = ambushMove.heading; desiredThrottle = ambushMove.throttle;
+    } else if (typeof aiCommander.planning.getStatAwareSteering === 'function') {
+      const statMove = aiCommander.planning.getStatAwareSteering(hostile, target, dist, diffKey);
+      if (statMove) {
+        desiredHeading = statMove.heading;
+        desiredThrottle = statMove.throttle;
+      } else if (dist < tier.overshootDist && Math.abs(hostile.heading - target.heading) > 1.8 && Math.random() < tier.overshootChance) {
+        hostile.engineAlpha = Math.max(0.25, Math.min(1.0, tier.throttle + throttleBias));
+        return;
+      }
     } else if (dist < tier.overshootDist) {
       if (Math.abs(hostile.heading - target.heading) > 1.8 && Math.random() < tier.overshootChance) {
         hostile.engineAlpha = Math.max(0.25, Math.min(1.0, tier.throttle + throttleBias));
@@ -229,9 +263,9 @@ class AINavigationHandler {
     const turnCap = effAgi * tier.turnMult * (isFocused ? 1.0 : 0.55);
     hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
 
-    const sOpt = hostile.getOptimalCornerSpeed();
-    if (!docMove && role !== 'SNIPER' && role !== 'INTERCEPT' && ['ACE', 'FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) && Math.abs(diff) > 0.40) {
-      desiredThrottle = hostile.speed > sOpt * 1.15 ? 0.40 : (hostile.speed < sOpt * 0.85 ? 0.85 : 0.65);
+    if (!docMove && role !== 'SNIPER' && role !== 'INTERCEPT' && typeof AIFlightProfile !== 'undefined' && Math.abs(diff) > 0.35) {
+      const fpNav = AIFlightProfile.evaluate(hostile, diffKey);
+      desiredThrottle = AIFlightProfile.computeCornerThrottle(hostile, fpNav.effMaxMach, fpNav.precision, desiredThrottle);
     }
     hostile.engineAlpha = Math.max(0.25, Math.min(1.0, (isFocused ? desiredThrottle : 0.50) + throttleBias));
   }
