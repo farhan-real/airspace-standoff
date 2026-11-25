@@ -283,7 +283,7 @@ class SquadronPresetsModalController {
       card.className = `sq-preset-card${isOpen ? ' is-open' : ''}`;
 
       const userButtonsHtml = entry.source === 'USER'
-        ? `<button type="button" class="sq-preset-icon-btn btn-sq-export" title="Export squadron preset JSON"><img src="icons/arrowdown.svg" width="11" height="11" alt="Export"></button>
+        ? `<button type="button" class="sq-preset-icon-btn export btn-sq-export" title="Export squadron preset JSON"><img src="icons/export.svg" width="12" height="12" alt="Export"></button>
            <button type="button" class="sq-preset-icon-btn btn-sq-rename" title="Rename squadron preset"><img src="icons/edit.svg" width="11" height="11" alt="Rename"></button>
            <button type="button" class="sq-preset-icon-btn alert btn-sq-delete" title="Delete squadron preset"><img src="icons/trash.svg" width="11" height="11" alt="Delete"></button>`
         : '';

@@ -172,6 +172,16 @@
   border-color: var(--theme-accent);
 }
 
+.sq-preset-icon-btn.export {
+  border-color: rgba(0, 245, 160, 0.44);
+  background: var(--jewel-green-bg);
+}
+
+.sq-preset-icon-btn.export:hover {
+  border-color: var(--color-green);
+  background: var(--jewel-green-hover);
+}
+
 .sq-preset-icon-btn.alert {
   border-color: rgba(255, 56, 100, 0.48);
   background: var(--jewel-red-bg);

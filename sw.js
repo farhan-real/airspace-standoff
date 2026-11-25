@@ -56,6 +56,7 @@ const CORE_ASSETS = [
   "./icons/diamond.svg",
   "./icons/dot.svg",
   "./icons/edit.svg",
+  "./icons/export.svg",
   "./icons/fullscreen.svg",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
