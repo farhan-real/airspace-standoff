@@ -1,6 +1,6 @@
 /* sw.js - AIRSPACE STANDOFF Automatic Network-First Service Worker with Offline Cache Fallback */
 
-const CACHE_NAME = 'airspace-standoff-app-v3';
+const CACHE_NAME = 'airspace-standoff-app-v4';
 const FONT_CACHE = 'airspace-standoff-fonts-v1';
 
 const CORE_ASSETS = [
@@ -289,13 +289,20 @@ const CORE_ASSETS = [
   "./manifest.webmanifest"
 ];
 
+const MANIFEST_CACHE_KEY = './__sw_manifest__';
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      for (const url of ['./', './index.html']) {
+      for (const url of ['./', './index.html', './asset-manifest.json']) {
         try {
           const res = await fetch(new Request(url, { cache: 'no-cache' }));
-          if (res && res.ok) await cache.put(url, res);
+          if (res && res.ok) {
+            await cache.put(url, res.clone());
+            if (url === './asset-manifest.json') {
+              await cache.put(MANIFEST_CACHE_KEY, res);
+            }
+          }
         } catch (_) {}
       }
     }).then(() => self.skipWaiting())
@@ -321,9 +328,11 @@ function isIgnoredLocalPath(pathname) {
     pathname.endsWith('/inspect_output.txt');
 }
 
-const MAX_CONCURRENT_FETCHES = 20;
+const IS_LOCAL_DEV = self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1';
+const MAX_CONCURRENT_FETCHES = 8;
 let activeFetchCount = 0;
 const fetchWaitQueue = [];
+const inFlightFetches = new Map();
 
 function runQueuedFetch(task) {
   return new Promise((resolve, reject) => {
@@ -343,24 +352,79 @@ function runQueuedFetch(task) {
   });
 }
 
-async function fetchFreshWithRetry(reqOrUrl, retries = 2) {
-  return runQueuedFetch(async () => {
+function getRetryDelayMs(res, attempt) {
+  if (res) {
+    const ra = res.headers.get('Retry-After');
+    const sec = ra ? Number(ra) : NaN;
+    if (Number.isFinite(sec) && sec > 0) {
+      return Math.min(3000, Math.max(150, sec * 1000));
+    }
+  }
+  const base = 150 * Math.pow(2, attempt);
+  const jitter = Math.floor(Math.random() * 90);
+  return Math.min(2500, base + jitter);
+}
+
+async function fetchFreshWithRetry(reqOrUrl, retries = 4) {
+  const key = typeof reqOrUrl === 'string' ? reqOrUrl : reqOrUrl.url;
+  if (inFlightFetches.has(key)) {
+    const shared = await inFlightFetches.get(key);
+    return shared ? shared.clone() : null;
+  }
+
+  const job = runQueuedFetch(async () => {
     let lastErr = null;
+    let lastRes = null;
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
         const res = await fetch(reqOrUrl, { cache: 'no-cache' });
         if (res && res.ok) return res;
-        if (res && res.status < 429) return res;
+        lastRes = res;
+        if (res && res.status !== 408 && res.status !== 429 && res.status < 500) {
+          return res;
+        }
       } catch (err) {
         lastErr = err;
       }
       if (attempt < retries) {
-        await new Promise((r) => setTimeout(r, 120 * (attempt + 1)));
+        await new Promise((r) => setTimeout(r, getRetryDelayMs(lastRes, attempt)));
       }
     }
+    if (lastRes) return lastRes;
     if (lastErr) throw lastErr;
     return null;
+  }).finally(() => {
+    inFlightFetches.delete(key);
   });
+
+  inFlightFetches.set(key, job);
+  const res = await job;
+  return res ? res.clone() : null;
+}
+
+async function syncManifestCache(cache) {
+  try {
+    const res = await fetchFreshWithRetry('./asset-manifest.json', 2);
+    if (!res || !res.ok) return;
+    const nextManifest = await res.clone().json();
+    const prevRes = await cache.match(MANIFEST_CACHE_KEY);
+    if (prevRes && prevRes.ok) {
+      try {
+        const prevManifest = await prevRes.json();
+        const deletions = [];
+        for (const [assetPath, prevHash] of Object.entries(prevManifest)) {
+          if (nextManifest[assetPath] !== prevHash) {
+            const absUrl = new URL(assetPath, self.location.href).href;
+            deletions.push(cache.delete(absUrl));
+            deletions.push(cache.delete(assetPath));
+          }
+        }
+        await Promise.all(deletions);
+      } catch (_) {}
+    }
+    await cache.put('./asset-manifest.json', res.clone());
+    await cache.put(MANIFEST_CACHE_KEY, res);
+  } catch (_) {}
 }
 
 self.addEventListener('fetch', (event) => {
@@ -392,14 +456,20 @@ self.addEventListener('fetch', (event) => {
   if (req.mode === 'navigate') {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
+      const manifestSyncPromise = IS_LOCAL_DEV ? Promise.resolve() : syncManifestCache(cache);
       try {
-        const res = await fetchFreshWithRetry('./index.html');
+        const [res] = await Promise.all([
+          fetchFreshWithRetry('./index.html'),
+          manifestSyncPromise
+        ]);
         if (res && res.ok) {
           await cache.put('./index.html', res.clone());
           await cache.put('./', res.clone());
           return res;
         }
-      } catch (_) {}
+      } catch (_) {
+        await manifestSyncPromise;
+      }
       const cached = (await cache.match('./index.html')) || (await cache.match('./'));
       if (cached) return cached;
       return fetch(req);
@@ -409,15 +479,24 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
+    if (!IS_LOCAL_DEV) {
+      const cached = await cache.match(req);
+      if (cached) return cached;
+    }
+
     try {
       const res = await fetchFreshWithRetry(req);
       if (res && res.ok) {
         await cache.put(req, res.clone());
         return res;
       }
-    } catch (_) {}
-    const cached = await cache.match(req);
-    if (cached) return cached;
-    return fetch(req);
+      const cached = await cache.match(req);
+      if (cached) return cached;
+      if (res) return res;
+    } catch (_) {
+      const cached = await cache.match(req);
+      if (cached) return cached;
+    }
+    return new Response('Network fetch failed', { status: 503, statusText: 'Service Unavailable' });
   })());
 });
