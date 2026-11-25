@@ -155,36 +155,42 @@ window.MANUAL_COMBAT = [
           <tbody>
             <tr>
               <td style="color:#00f0ff;font-weight:800;">Doppler Notch &amp; Chaff</td>
-              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">8.0s</td><td>+48%</td>
-              <td>Trigger on active radar (ARH) lock. Beams threat 90&deg; and deploys chaff bloom.</td>
+              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">4.5s</td><td>+30% base</td>
+              <td>Trigger on active radar (ARH) lock. Beams threat 90&deg; and deploys chaff bloom (scales with agility &amp; corner turn).</td>
             </tr>
             <tr>
               <td style="color:#38bdf8;font-weight:800;">High-G Barrel Roll</td>
-              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">7.0s</td><td>+45%</td>
+              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">4.0s</td><td>+28% base</td>
               <td>Trigger on inbound missile within 25 km. Spiral displacement forces ProNav lead lag.</td>
             </tr>
             <tr>
               <td style="color:#c084fc;font-weight:800;">Pugachev's Cobra</td>
-              <td>0.8 TOK</td><td style="color:#00f5a0;font-weight:700;">6.0s</td><td>+55%</td>
+              <td>0.8 TOK</td><td style="color:#00f5a0;font-weight:700;">3.5s</td><td>+34% base</td>
               <td>Requires TVC nozzles. Rapid deceleration creates closure mismatch, forcing overshoot.</td>
             </tr>
             <tr>
               <td style="color:#00f5a0;font-weight:800;">Split-S Dive</td>
-              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">7.5s</td><td>+45%</td>
-              <td>Requires altitude &ge; FL117 (alt &ge; 0.18). Inverts 180&deg; and dives beneath LR SAM floors.</td>
+              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">4.5s</td><td>+28% base</td>
+              <td>Requires altitude &ge; FL117 (alt &ge; 0.18). Inverts 180&deg; and dives to regain speed or drop beneath SAM floors.</td>
             </tr>
             <tr>
               <td style="color:#f59e0b;font-weight:800;">Emergency Chaff Salvo</td>
-              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">8.0s</td><td>+42%</td>
+              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">4.5s</td><td>+26% base</td>
               <td>Trigger on active radar lock. Releases dense chaff screen to disrupt tracking.</td>
             </tr>
             <tr>
               <td style="color:#ffd700;font-weight:800;">Zoom Climb</td>
-              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">8.0s</td><td>+38%</td>
-              <td>Climbs above low-altitude AAA and SHORAD ceilings while extending bomb glide range.</td>
+              <td>0.7 TOK</td><td style="color:#00f5a0;font-weight:700;">4.5s</td><td>+22% base</td>
+              <td>Climbs +8,500 ft above low-altitude AAA and SHORAD ceilings while extending bomb glide range.</td>
             </tr>
           </tbody>
         </table>
+      </div>
+      <div class="ge-card" style="border-left:3px solid #38bdf8;margin-top:8px;">
+        <b style="color:#38bdf8;">ADVERSARY MANEUVER AI (ALL DIFFICULTIES)</b>
+        <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
+          Enemy fighters across <b>all 10 difficulty tiers</b> actively execute these defensive maneuvers when threatened, scaling reaction distance (11.5 to 30 km), maneuver probability (58% to 98%), cooldown recovery (9.5s down to 3.2s), and maneuver sophistication from basic Barrel Rolls and Break Turns up to Split-S Dives (Veteran+), TVC Cobras (Elite+), and precision 90&deg; Doppler Notches.
+        </div>
       </div>
 
       <div class="ge-subhead">3. ELECTRONIC WARFARE, TARGETING PODS &amp; DECOYS</div>

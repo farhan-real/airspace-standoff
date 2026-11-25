@@ -115,6 +115,8 @@ class AICommander {
       doctrine: isAttack ? atkDoctrine.id : airDoctrine.id,
       doctrineName: isAttack ? atkDoctrine.name : airDoctrine.name,
       reactionCooldown: isAce ? aceProfile.reactionCooldown : baseProfile.reactionCooldown,
+      maneuverChance: isAce ? Math.min(0.99, (baseProfile.maneuverChance || 0.72) + 0.12) : (baseProfile.maneuverChance || 0.72),
+      maneuverCooldownSec: isAce ? Math.max(2.4, (baseProfile.maneuverCooldownSec || 6.0) - 1.2) : (baseProfile.maneuverCooldownSec || 6.0),
       notchChance: Math.max(0, Math.min(0.85, (isAce ? aceProfile.notchChance : baseProfile.notchChance) + airDoctrine.notchBias)),
       decoyDiscrimination: isAce ? aceProfile.decoyDiscrimination : baseProfile.decoyDiscrimination,
       blunderChance: isAce ? aceProfile.blunderChance : baseProfile.blunderChance
@@ -191,6 +193,7 @@ class AICommander {
 
     for (const h of aliveHostiles) {
       if (h._aiFireCooldown > 0) h._aiFireCooldown = Math.max(0, h._aiFireCooldown - dt);
+      if (h._aiManeuverCooldown > 0) h._aiManeuverCooldown = Math.max(0, h._aiManeuverCooldown - dt);
       if (!h.isAce) {
         const isFocused = this.isUnitFocused(h.id);
         AIEvasionHandler.handleDefensiveBehavior(h, profile, diffKey, dt, allMissiles, isFocused, airDoctrine);

@@ -37,9 +37,9 @@ window.MANUAL_THEATER = [
           </div>
         </div>
         <div class="ge-card">
-          <b style="color:#f43f5e;">4. DEFENSIVE NOTCHING &amp; CHAFF DEFENSE</b>
+          <b style="color:#f43f5e;">4. EVASIVE MANEUVERS, NOTCHING &amp; CHAFF</b>
           <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.45;">
-            Turning 90 degrees to break a radar lock (Doppler notching) is never automatic: Extreme Threat Sector pilots notch on ~55% of long-range shots, and at close range (under 15 km) that drops below 30% because quick turns are much harder.
+            Every difficulty actively defends with committed maneuvers (Barrel Rolls, Break Turns, Chaff Salvos, plus Split-S Dives &amp; Zoom Climbs at Veteran+, TVC Cobras at Elite+, and IR Idle cooling). Reaction range scales from 11.5 km (58% chance, 12% notch) on Permissive Sector up to 30 km (98% chance, 68% notch, 3.2s cooldown) on Extreme Threat Sector, dropping at close range (&lt;14 km).
           </div>
         </div>
         <div class="ge-card">
