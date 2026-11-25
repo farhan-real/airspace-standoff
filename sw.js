@@ -269,6 +269,7 @@ const CORE_ASSETS = [
   "./js/ui/procurement/catalog/shelf.js",
   "./js/ui/procurement/catalog/shelfcards.js",
   "./js/ui/procurement/dialogs/cards.js",
+  "./js/ui/procurement/dialogs/conflict.js",
   "./js/ui/procurement/dialogs/dialog.js",
   "./js/ui/procurement/dialogs/preconfig.js",
   "./js/ui/procurement/dialogs/squadronpresets.js",

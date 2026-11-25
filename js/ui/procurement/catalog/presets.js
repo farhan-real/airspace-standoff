@@ -92,14 +92,17 @@ class ProcurementPresets {
     const customManager = procurementManager.customLoadouts;
     const customMap = customManager.getAll();
     const count = Object.keys(customMap).length + 1;
-    procurementManager.showPromptModal('SAVE SQUADRON PRESET', 'Enter a name for this squadron configuration:', `Squadron ${count}`, (name) => {
+    procurementManager.showPromptModal('SAVE SQUADRON PRESET', 'Enter a name for this squadron configuration:', `Squadron ${count}`, async (name) => {
       if (name && name.trim()) {
         const cleanName = name.trim();
-        if (typeof PresetExchange !== 'undefined') {
-          const dupMsg = PresetExchange.findSquadronDuplicate(cleanName, procurementManager.game.procurementSquadron, customManager);
-          if (dupMsg) {
-            procurementManager.showAlertModal('DUPLICATE PRESET', dupMsg);
-            return;
+        if (typeof PresetExchange !== 'undefined' && typeof PresetConflictModal !== 'undefined') {
+          const conflict = PresetExchange.findSquadronConflict(cleanName, procurementManager.game.procurementSquadron, customManager.getAll());
+          if (conflict) {
+            const choice = await PresetConflictModal.prompt(conflict);
+            if (choice !== 'incoming') return;
+            if (conflict.existing.key !== cleanName) {
+              customManager.delete(conflict.existing.key);
+            }
           }
         }
         if (customManager.save(cleanName, procurementManager.game.procurementSquadron)) {

@@ -142,71 +142,105 @@ class PresetExchange {
     };
   }
 
-  static getExistingSquadronIndex(customLoadouts) {
+  static buildSquadronIndexFromMap(userMap) {
     const byName = new Map();
     const bySig = new Map();
 
     if (typeof ProcurementPresets !== 'undefined') {
       ProcurementPresets.getBuiltinPresetCatalog().forEach(meta => {
         const units = ProcurementPresets.getBuiltinPreset(meta.id);
-        byName.set(this.normalizeKey(meta.id), meta.name);
-        byName.set(this.normalizeKey(meta.name), meta.name);
-        bySig.set(this.squadronSignature(units), meta.name);
+        const rec = { key: meta.id, name: meta.name, source: 'BUILTIN', data: units };
+        byName.set(this.normalizeKey(meta.id), rec);
+        byName.set(this.normalizeKey(meta.name), rec);
+        bySig.set(this.squadronSignature(units), rec);
       });
     }
 
-    const userMap = customLoadouts ? customLoadouts.getAll() : {};
-    Object.entries(userMap).forEach(([name, units]) => {
+    Object.entries(userMap || {}).forEach(([name, units]) => {
       if (Array.isArray(units) && units.length > 0) {
-        byName.set(this.normalizeKey(name), name);
-        bySig.set(this.squadronSignature(units), name);
+        const rec = { key: name, name, source: 'USER', data: units };
+        byName.set(this.normalizeKey(name), rec);
+        bySig.set(this.squadronSignature(units), rec);
       }
     });
 
     return { byName, bySig };
   }
 
-  static findSquadronDuplicate(name, units, customLoadouts) {
-    const { byName, bySig } = this.getExistingSquadronIndex(customLoadouts);
-    const nameMatch = byName.get(this.normalizeKey(name));
-    if (nameMatch) return `Preset name "${name}" duplicates existing squadron preset "${nameMatch}".`;
-    const sigMatch = bySig.get(this.squadronSignature(units));
-    if (sigMatch) return `Configuration of "${name}" duplicates existing squadron preset "${sigMatch}".`;
-    return null;
+  static findSquadronConflict(name, units, userMap) {
+    const { byName, bySig } = this.buildSquadronIndexFromMap(userMap);
+    const nRec = byName.get(this.normalizeKey(name));
+    const sRec = bySig.get(this.squadronSignature(units));
+    if (!nRec && !sRec) return null;
+
+    const primary = nRec || sRec;
+    let reason = 'NAME';
+    if (nRec && sRec) {
+      reason = (nRec.key === sRec.key && nRec.source === sRec.source) ? 'NAME_AND_CONFIG' : 'NAME';
+    } else if (sRec) {
+      reason = 'CONFIG';
+    }
+
+    const blockReplace = Boolean(nRec && sRec && (nRec.key !== sRec.key || nRec.source !== sRec.source));
+    return {
+      kind: 'squadron',
+      reason,
+      blockReplace,
+      secondaryNote: blockReplace ? `Also matches configuration of "${sRec.name}" — resolve that preset first.` : '',
+      existing: primary,
+      incoming: { name, source: 'INCOMING', data: units }
+    };
   }
 
-  static getExistingAircraftIndex(customLoadouts) {
+  static buildAircraftIndexFromMap(customMap, defaultsMap) {
     const byName = new Map();
     const bySig = new Map();
-    const defaults = customLoadouts ? customLoadouts.getDefaultTemplates() : (window.AIRCRAFT_TEMPLATES || {});
-    const customs = customLoadouts ? customLoadouts.getCustomTemplates() : {};
+    const defaults = defaultsMap || (window.AIRCRAFT_TEMPLATES || {});
 
     Object.entries(defaults).forEach(([key, tpl]) => {
       if (!tpl || !tpl.specId) return;
       const label = tpl.name || key;
-      byName.set(this.normalizeKey(key), label);
-      byName.set(this.normalizeKey(label), label);
-      bySig.set(this.aircraftConfigSignature(tpl), label);
+      const rec = { key, name: label, source: 'BUILTIN', data: tpl };
+      byName.set(this.normalizeKey(key), rec);
+      byName.set(this.normalizeKey(label), rec);
+      bySig.set(this.aircraftConfigSignature(tpl), rec);
     });
 
-    Object.entries(customs).forEach(([key, tpl]) => {
+    Object.entries(customMap || {}).forEach(([key, tpl]) => {
       if (!tpl || !tpl.specId) return;
       const label = tpl.name || key;
-      byName.set(this.normalizeKey(key), label);
-      byName.set(this.normalizeKey(label), label);
-      bySig.set(this.aircraftConfigSignature(tpl), label);
+      const rec = { key, name: label, source: 'USER', data: tpl };
+      byName.set(this.normalizeKey(key), rec);
+      byName.set(this.normalizeKey(label), rec);
+      bySig.set(this.aircraftConfigSignature(tpl), rec);
     });
 
     return { byName, bySig };
   }
 
-  static findAircraftDuplicate(tpl, customLoadouts) {
-    const { byName, bySig } = this.getExistingAircraftIndex(customLoadouts);
-    const nameMatch = byName.get(this.normalizeKey(tpl.name));
-    if (nameMatch) return `Preset name "${tpl.name}" duplicates existing aircraft preset "${nameMatch}".`;
-    const sigMatch = bySig.get(this.aircraftConfigSignature(tpl));
-    if (sigMatch) return `Loadout of "${tpl.name}" duplicates existing aircraft preset "${sigMatch}".`;
-    return null;
+  static findAircraftConflict(tpl, customMap, defaultsMap) {
+    const { byName, bySig } = this.buildAircraftIndexFromMap(customMap, defaultsMap);
+    const nRec = byName.get(this.normalizeKey(tpl.name));
+    const sRec = bySig.get(this.aircraftConfigSignature(tpl));
+    if (!nRec && !sRec) return null;
+
+    const primary = nRec || sRec;
+    let reason = 'NAME';
+    if (nRec && sRec) {
+      reason = (nRec.key === sRec.key && nRec.source === sRec.source) ? 'NAME_AND_CONFIG' : 'NAME';
+    } else if (sRec) {
+      reason = 'CONFIG';
+    }
+
+    const blockReplace = Boolean(nRec && sRec && (nRec.key !== sRec.key || nRec.source !== sRec.source));
+    return {
+      kind: 'aircraft',
+      reason,
+      blockReplace,
+      secondaryNote: blockReplace ? `Also matches loadout of "${sRec.name}" — resolve that preset first.` : '',
+      existing: primary,
+      incoming: { name: tpl.name, source: 'INCOMING', data: tpl }
+    };
   }
 
   static exportAllSquadronPresets(customLoadouts) {
@@ -247,7 +281,7 @@ class PresetExchange {
     });
   }
 
-  static parseAndValidateSquadronPresetsImport(rawText, filename, customLoadouts) {
+  static parseSquadronPresetsPayload(rawText, filename) {
     let parsed;
     try {
       parsed = JSON.parse(rawText);
@@ -277,40 +311,11 @@ class PresetExchange {
       throw new Error('No squadron presets found in the imported JSON file.');
     }
 
-    const { byName, bySig } = this.getExistingSquadronIndex(customLoadouts);
-    const seenNames = new Map();
-    const seenSigs = new Map();
-    const validatedMap = {};
-
-    for (const [rawName, units] of entries) {
+    return entries.map(([rawName, units]) => {
       const cleanName = String(rawName || '').trim();
       if (!cleanName) throw new Error('Imported JSON contains an empty squadron preset name.');
-      const cleanUnits = this.validateSquadronUnits(units, cleanName);
-      const nKey = this.normalizeKey(cleanName);
-      const sig = this.squadronSignature(cleanUnits);
-
-      if (byName.has(nKey)) throw new Error(`Duplicate rejected: name "${cleanName}" matches existing preset "${byName.get(nKey)}".`);
-      if (bySig.has(sig)) throw new Error(`Duplicate rejected: "${cleanName}" matches existing preset "${bySig.get(sig)}".`);
-      if (seenNames.has(nKey)) throw new Error(`Duplicate rejected: file contains multiple entries named "${cleanName}".`);
-      if (seenSigs.has(sig)) throw new Error(`Duplicate rejected: "${cleanName}" has the same squadron setup as "${seenSigs.get(sig)}" in this file.`);
-
-      seenNames.set(nKey, cleanName);
-      seenSigs.set(sig, cleanName);
-      validatedMap[cleanName] = cleanUnits;
-    }
-
-    return { presets: validatedMap, names: Object.keys(validatedMap) };
-  }
-
-  static applySquadronPresetsImport(customLoadouts, validatedMap) {
-    if (!customLoadouts) throw new Error('CustomLoadoutsManager is required.');
-    const names = Object.keys(validatedMap);
-    for (const name of names) {
-      if (!customLoadouts.save(name, validatedMap[name])) {
-        throw new Error(`Failed to save imported squadron preset "${name}".`);
-      }
-    }
-    return names.length;
+      return { name: cleanName, units: this.validateSquadronUnits(units, cleanName) };
+    });
   }
 
   static exportAllAircraftPresets(customLoadouts) {
@@ -337,7 +342,7 @@ class PresetExchange {
     });
   }
 
-  static parseAndValidateAircraftPresetsImport(rawText, filename, customLoadouts) {
+  static parseAircraftPresetsPayload(rawText, filename) {
     let parsed;
     try {
       parsed = JSON.parse(rawText);
@@ -373,38 +378,7 @@ class PresetExchange {
       throw new Error('No aircraft presets found in the imported JSON file.');
     }
 
-    const { byName, bySig } = this.getExistingAircraftIndex(customLoadouts);
-    const seenNames = new Map();
-    const seenSigs = new Map();
-    const validatedMap = {};
-
-    for (const [rawKey, rawTpl] of entries) {
-      const cleanTpl = this.validateAircraftPreset(rawTpl, rawKey);
-      const nKey = this.normalizeKey(cleanTpl.name);
-      const sig = this.aircraftConfigSignature(cleanTpl);
-
-      if (byName.has(nKey)) throw new Error(`Duplicate rejected: name "${cleanTpl.name}" matches existing aircraft preset "${byName.get(nKey)}".`);
-      if (bySig.has(sig)) throw new Error(`Duplicate rejected: "${cleanTpl.name}" matches existing aircraft preset "${bySig.get(sig)}".`);
-      if (seenNames.has(nKey)) throw new Error(`Duplicate rejected: file contains multiple entries named "${cleanTpl.name}".`);
-      if (seenSigs.has(sig)) throw new Error(`Duplicate rejected: "${cleanTpl.name}" has the same loadout as "${seenSigs.get(sig)}" in this file.`);
-
-      seenNames.set(nKey, cleanTpl.name);
-      seenSigs.set(sig, cleanTpl.name);
-      validatedMap[cleanTpl.name] = cleanTpl;
-    }
-
-    return { presets: validatedMap, names: Object.keys(validatedMap) };
-  }
-
-  static applyAircraftPresetsImport(customLoadouts, validatedMap) {
-    if (!customLoadouts) throw new Error('CustomLoadoutsManager is required.');
-    const names = Object.keys(validatedMap);
-    for (const name of names) {
-      if (!customLoadouts.saveTemplate(name, validatedMap[name])) {
-        throw new Error(`Failed to save imported aircraft preset "${name}".`);
-      }
-    }
-    return names.length;
+    return entries.map(([rawKey, rawTpl]) => this.validateAircraftPreset(rawTpl, rawKey));
   }
 }
 

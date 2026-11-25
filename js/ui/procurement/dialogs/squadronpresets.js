@@ -72,17 +72,44 @@ class SquadronPresetsModalController {
     const importBtn = document.getElementById('btn-import-sq-presets');
     if (importBtn) {
       importBtn.onclick = async () => {
-        if (typeof DataExchange === 'undefined' || typeof PresetExchange === 'undefined') {
-          throw new Error('DataExchange and PresetExchange must be loaded.');
+        if (typeof DataExchange === 'undefined' || typeof PresetExchange === 'undefined' || typeof PresetConflictModal === 'undefined') {
+          throw new Error('DataExchange, PresetExchange, and PresetConflictModal must be loaded.');
         }
         try {
           const picked = await DataExchange.pickJsonFile();
           if (!picked) return;
-          const { presets } = PresetExchange.parseAndValidateSquadronPresetsImport(picked.text, picked.name, this.pm.customLoadouts);
-          const count = PresetExchange.applySquadronPresetsImport(this.pm.customLoadouts, presets);
+          const candidates = PresetExchange.parseSquadronPresetsPayload(picked.text, picked.name);
+          const workingMap = Object.assign({}, this.pm.customLoadouts.getAll());
+          const deletes = new Set();
+          const additions = {};
+          let skipped = 0;
+          let replaced = 0;
+
+          for (const item of candidates) {
+            const conflict = PresetExchange.findSquadronConflict(item.name, item.units, workingMap);
+            if (!conflict) {
+              workingMap[item.name] = item.units;
+              additions[item.name] = item.units;
+              continue;
+            }
+            const choice = await PresetConflictModal.prompt(conflict);
+            if (choice === 'cancel') return;
+            if (choice === 'existing') { skipped++; continue; }
+            delete workingMap[conflict.existing.key];
+            if (additions[conflict.existing.key]) delete additions[conflict.existing.key];
+            else deletes.add(conflict.existing.key);
+            workingMap[item.name] = item.units;
+            additions[item.name] = item.units;
+            replaced++;
+          }
+
+          for (const delKey of deletes) this.pm.customLoadouts.delete(delKey);
+          const addedKeys = Object.keys(additions);
+          for (const k of addedKeys) this.pm.customLoadouts.save(k, additions[k]);
+
           this.renderGrid();
           if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-          this.pm.showAlertModal('IMPORT COMPLETE', `Imported ${count} squadron preset${count === 1 ? '' : 's'}.`);
+          this.pm.showAlertModal('IMPORT COMPLETE', `Saved ${addedKeys.length} squadron preset(s) (${replaced} replaced, ${skipped} kept existing).`);
         } catch (err) {
           this.pm.showAlertModal('IMPORT FAILED', err.message || String(err));
         }

@@ -16,22 +16,28 @@ class ProcurementActionDispatcher {
     const spec = (window.AIRCRAFT_CATALOG || {})[item.specId] || {};
     const defName = `${item.callsign || spec.name} Config`;
 
-    procurementManager.showPromptModal('SAVE PRESET', `Save Aircraft #${sIdx + 1} configuration as a preset:`, defName, (name) => {
+    procurementManager.showPromptModal('SAVE PRESET', `Save Aircraft #${sIdx + 1} configuration as a preset:`, defName, async (name) => {
       if (name && name.trim()) {
+        const cleanName = name.trim();
         const candidate = {
-          name: name.trim(), specId: item.specId, roleCategory: 'CUSTOM', chosenGunId: item.chosenGunId || 'M61A2',
+          name: cleanName, specId: item.specId, roleCategory: 'CUSTOM', chosenGunId: item.chosenGunId || 'M61A2',
           weapons: [...(item.weapons || [])], upgrades: [...(item.upgrades || [])],
           desc: `User configuration based on ${spec.name} (${item.callsign}).`
         };
-        if (typeof PresetExchange !== 'undefined') {
-          const dupMsg = PresetExchange.findAircraftDuplicate(candidate, procurementManager.customLoadouts);
-          if (dupMsg) {
-            procurementManager.showAlertModal('DUPLICATE PRESET', dupMsg);
-            return;
+        if (typeof PresetExchange !== 'undefined' && typeof PresetConflictModal !== 'undefined') {
+          const customs = procurementManager.customLoadouts.getCustomTemplates();
+          const defaults = procurementManager.customLoadouts.getDefaultTemplates();
+          const conflict = PresetExchange.findAircraftConflict(candidate, customs, defaults);
+          if (conflict) {
+            const choice = await PresetConflictModal.prompt(conflict);
+            if (choice !== 'incoming') return;
+            if (conflict.existing.key !== cleanName) {
+              procurementManager.customLoadouts.deleteTemplate(conflict.existing.key);
+            }
           }
         }
-        procurementManager.customLoadouts.saveTemplate(name.trim(), candidate);
-        procurementManager.showAlertModal('PRESET SAVED', `Configuration "${name.trim()}" saved to preset library.`);
+        procurementManager.customLoadouts.saveTemplate(cleanName, candidate);
+        procurementManager.showAlertModal('PRESET SAVED', `Configuration "${cleanName}" saved to preset library.`);
         if (callback) callback();
       }
     });

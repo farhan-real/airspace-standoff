@@ -83,6 +83,27 @@ class ModalDialogTemplates {
             </div>
           </div>
         </div>`);
+    } else if (modalId === 'preset-conflict-modal') {
+      container.insertAdjacentHTML('beforeend', `
+        <div id="preset-conflict-modal" class="modal-backdrop" style="z-index: 4600 !important;">
+          <div class="inspect-window conflict-window">
+            <div class="inspect-header">
+              <div class="modal-title-row"><h2 id="preset-conflict-title">DUPLICATE PRESET</h2></div>
+              <button id="btn-close-preset-conflict" class="hud-btn small"><img src="icons/close.svg" width="10" height="10" alt="Close"></button>
+            </div>
+            <div class="conflict-summary-bar" id="preset-conflict-summary"></div>
+            <div class="inspect-body conflict-body">
+              <div class="conflict-grid" id="preset-conflict-grid"></div>
+            </div>
+            <div class="inspect-footer">
+              <div class="dialog-actions">
+                <button type="button" id="btn-conflict-cancel" class="hud-btn dialog-btn">CANCEL</button>
+                <button type="button" id="btn-conflict-keep-existing" class="hud-btn dialog-btn highlight">KEEP EXISTING</button>
+                <button type="button" id="btn-conflict-keep-new" class="hud-btn dialog-btn alert">KEEP NEW</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
     } else if (modalId === 'abort-confirm-modal') {
       container.insertAdjacentHTML('beforeend', `
         <div id="abort-confirm-modal" class="modal-backdrop">

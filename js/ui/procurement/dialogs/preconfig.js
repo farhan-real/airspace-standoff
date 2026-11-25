@@ -144,17 +144,45 @@ class PreconfigModalController {
     const importBtn = document.getElementById('btn-import-ac-presets');
     if (importBtn) {
       importBtn.onclick = async () => {
-        if (typeof DataExchange === 'undefined' || typeof PresetExchange === 'undefined') {
-          throw new Error('DataExchange and PresetExchange must be loaded.');
+        if (typeof DataExchange === 'undefined' || typeof PresetExchange === 'undefined' || typeof PresetConflictModal === 'undefined') {
+          throw new Error('DataExchange, PresetExchange, and PresetConflictModal must be loaded.');
         }
         try {
           const picked = await DataExchange.pickJsonFile();
           if (!picked) return;
-          const { presets } = PresetExchange.parseAndValidateAircraftPresetsImport(picked.text, picked.name, this.pm.customLoadouts);
-          const count = PresetExchange.applyAircraftPresetsImport(this.pm.customLoadouts, presets);
+          const candidates = PresetExchange.parseAircraftPresetsPayload(picked.text, picked.name);
+          const defaults = this.pm.customLoadouts.getDefaultTemplates();
+          const workingMap = Object.assign({}, this.pm.customLoadouts.getCustomTemplates());
+          const deletes = new Set();
+          const additions = {};
+          let skipped = 0;
+          let replaced = 0;
+
+          for (const tpl of candidates) {
+            const conflict = PresetExchange.findAircraftConflict(tpl, workingMap, defaults);
+            if (!conflict) {
+              workingMap[tpl.name] = tpl;
+              additions[tpl.name] = tpl;
+              continue;
+            }
+            const choice = await PresetConflictModal.prompt(conflict);
+            if (choice === 'cancel') return;
+            if (choice === 'existing') { skipped++; continue; }
+            delete workingMap[conflict.existing.key];
+            if (additions[conflict.existing.key]) delete additions[conflict.existing.key];
+            else deletes.add(conflict.existing.key);
+            workingMap[tpl.name] = tpl;
+            additions[tpl.name] = tpl;
+            replaced++;
+          }
+
+          for (const delKey of deletes) this.pm.customLoadouts.deleteTemplate(delKey);
+          const addedKeys = Object.keys(additions);
+          for (const k of addedKeys) this.pm.customLoadouts.saveTemplate(k, additions[k]);
+
           this.open();
           if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-          this.pm.showAlertModal('IMPORT COMPLETE', `Imported ${count} aircraft preset${count === 1 ? '' : 's'}.`);
+          this.pm.showAlertModal('IMPORT COMPLETE', `Saved ${addedKeys.length} aircraft preset(s) (${replaced} replaced, ${skipped} kept existing).`);
         } catch (err) {
           this.pm.showAlertModal('IMPORT FAILED', err.message || String(err));
         }
