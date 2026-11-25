@@ -9,8 +9,8 @@ window.ADVANCED_MANEUVER_CARDS = [
     name: 'Split-S Dive',
     badge: 'DIVE ESCAPE',
     whenToUse: 'TRIGGER: High-altitude missile volley',
-    whyToUse: 'BENEFIT: Invert 180 degrees, dive to break line-of-sight & regain speed (8.5s)',
-    evasionBonus: 0.52,
+    whyToUse: 'BENEFIT: Invert 180 degrees, dive to break line-of-sight & regain speed (6s)',
+    evasionBonus: 0.40,
     cost: 0.7,
     isRecommended: function(unit, game) {
       if (!unit || unit.alt < 0.22 || !game.missiles) return false;
@@ -27,18 +27,18 @@ window.ADVANCED_MANEUVER_CARDS = [
       unit.activeManeuverId = 'SPLIT_S';
       unit.dive();
       unit.heading = (unit.heading + Math.PI) % (Math.PI * 2);
-      unit.activeManeuverTimer = 8.5;
+      unit.activeManeuverTimer = 6.0;
 
-      let bonus = 0.52;
+      let bonus = 0.40;
       const agi = unit.getEffectiveAgility();
-      bonus *= Math.max(0.55, Math.min(1.55, agi / 0.85));
+      bonus *= Math.max(0.45, Math.min(1.40, agi / 0.85));
 
       const sOpt = unit.getOptimalCornerSpeed();
       const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
-      bonus *= Math.max(0.62, Math.min(1.25, 0.62 + 0.38 * turnOptEff));
+      bonus *= Math.max(0.55, Math.min(1.20, 0.55 + 0.45 * turnOptEff));
 
       if (unit.stress >= 0.65) bonus *= 0.75;
-      if (unit.isCoffin) bonus += 0.10;
+      if (unit.isCoffin) bonus += 0.06;
       unit.activeManeuverBonus = bonus;
 
       if (game && game.radar) {
@@ -52,8 +52,8 @@ window.ADVANCED_MANEUVER_CARDS = [
     name: 'Emergency Chaff Salvo',
     badge: 'CHAFF SCREEN',
     whenToUse: 'TRIGGER: Active radar missile lock',
-    whyToUse: 'BENEFIT: Dense chaff corridor disrupts radar tracking (9s)',
-    evasionBonus: 0.50,
+    whyToUse: 'BENEFIT: Dense chaff corridor disrupts radar tracking (6.5s)',
+    evasionBonus: 0.38,
     cost: 0.7,
     isRecommended: function(unit, game) {
       if (!unit || !game.missiles) return false;
@@ -69,16 +69,16 @@ window.ADVANCED_MANEUVER_CARDS = [
       unit.isNotching = false;
       unit.activeManeuverId = 'EMERGENCY_CM';
       unit.deployCountermeasures();
-      unit.cmTimer = 9.0;
-      unit.activeManeuverTimer = 9.0;
+      unit.cmTimer = 6.5;
+      unit.activeManeuverTimer = 6.5;
 
-      let bonus = 0.50;
+      let bonus = 0.38;
       const agi = unit.getEffectiveAgility();
-      bonus *= Math.max(0.60, Math.min(1.40, agi / 0.85));
+      bonus *= Math.max(0.55, Math.min(1.30, agi / 0.85));
 
       const sOpt = unit.getOptimalCornerSpeed();
       const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
-      bonus *= Math.max(0.62, Math.min(1.25, 0.62 + 0.38 * turnOptEff));
+      bonus *= Math.max(0.55, Math.min(1.20, 0.55 + 0.45 * turnOptEff));
       unit.activeManeuverBonus = bonus;
 
       if (game && game.radar) {
@@ -92,8 +92,8 @@ window.ADVANCED_MANEUVER_CARDS = [
     name: 'Zoom Climb',
     badge: 'ENERGY CLIMB',
     whenToUse: 'TRIGGER: Speed > Mach 0.7 in level flight',
-    whyToUse: 'BENEFIT: Converts airspeed into +8,500ft altitude gain (9s)',
-    evasionBonus: 0.46,
+    whyToUse: 'BENEFIT: Converts airspeed into +8,500ft altitude gain (6.5s)',
+    evasionBonus: 0.35,
     cost: 0.7,
     isRecommended: function(unit, game) {
       return unit && unit.speed >= 0.70 && unit.alt < 0.45;
@@ -106,15 +106,15 @@ window.ADVANCED_MANEUVER_CARDS = [
       unit.isNotching = false;
       unit.activeManeuverId = 'ZOOM_CLIMB';
       unit.zoomClimb();
-      unit.activeManeuverTimer = 9.0;
+      unit.activeManeuverTimer = 6.5;
 
-      let bonus = 0.46;
+      let bonus = 0.35;
       const agi = unit.getEffectiveAgility();
-      bonus *= Math.max(0.55, Math.min(1.50, agi / 0.85));
+      bonus *= Math.max(0.45, Math.min(1.35, agi / 0.85));
 
       const sOpt = unit.getOptimalCornerSpeed();
       const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
-      bonus *= Math.max(0.62, Math.min(1.25, 0.62 + 0.38 * turnOptEff));
+      bonus *= Math.max(0.55, Math.min(1.20, 0.55 + 0.45 * turnOptEff));
       unit.activeManeuverBonus = bonus;
 
       if (game && game.radar) {

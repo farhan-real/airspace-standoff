@@ -225,14 +225,13 @@ class MissileGuidanceSystem {
 
     let N = 4.0;
     if (!isStationaryTarget && tgt.activeManeuverTimer > 0) {
-      if (tgt.isNotching && missile.weapon && (missile.weapon.seeker === 'ARH' || missile.weapon.seeker === 'PASSIVE_RADAR')) N = 0.6;
-      else if (tgt.activeManeuverId === 'PUSH_COBRA') N = 1.0;
-      else if (tgt.activeManeuverId === 'BARREL_ROLL') N = 1.2;
-      else if (tgt.activeManeuverId === 'SPLIT_S') N = 1.6;
-      else if (tgt.activeManeuverId === 'ZOOM_CLIMB') N = 2.0;
-      else if (tgt.activeManeuverId === 'BREAK_TURN') N = 2.4;
+      if (tgt.isNotching && missile.weapon && (missile.weapon.seeker === 'ARH' || missile.weapon.seeker === 'PASSIVE_RADAR')) N = 1.6;
+      else if (tgt.activeManeuverId === 'PUSH_COBRA') N = 2.1;
+      else if (tgt.activeManeuverId === 'BARREL_ROLL') N = 2.2;
+      else if (tgt.activeManeuverId === 'SPLIT_S') N = 2.6;
+      else if (tgt.activeManeuverId === 'BREAK_TURN') N = 2.8;
+      else if (tgt.activeManeuverId === 'ZOOM_CLIMB') N = 3.0;
     }
-    if (!isStationaryTarget && tgt.cmTimer > 0) N *= 0.85;
 
     const effClosing = Math.max(0.05, closingVel);
     const proNavTurn = N * (effClosing / vm) * losRate;
@@ -340,7 +339,7 @@ class MissileGuidanceSystem {
       hasMixedSeekers = (inbounds.some(m => m.weapon && isRf(m.weapon.seeker)) && inbounds.some(m => m.weapon && isOpt(m.weapon.seeker)));
     }
 
-    let effectiveDefense = Math.min(0.78, primaryActiveEvasion + 0.25 * primaryPassiveBaseline);
+    let effectiveDefense = Math.min(0.64, primaryActiveEvasion + 0.25 * primaryPassiveBaseline);
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
     const salvoBonus = Math.min(0.30, Math.max(0, salvoCount - 1) * 0.12);
