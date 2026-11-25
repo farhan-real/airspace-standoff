@@ -87,11 +87,33 @@ class DataExchange {
   static extractUserTemplates(rawTemplates, game) {
     const cl = game && game.procurement ? game.procurement.customLoadouts : null;
     const defaults = cl ? cl.getDefaultTemplates() : (window.AIRCRAFT_TEMPLATES || {});
+    const builtinNames = new Set(Object.values(defaults).map(t => String((t && t.name) || '').trim().toLowerCase()).filter(Boolean));
     const out = {};
     if (!rawTemplates || typeof rawTemplates !== 'object') return out;
     for (const [k, tpl] of Object.entries(rawTemplates)) {
-      if (tpl && typeof tpl === 'object' && (tpl.roleCategory === 'CUSTOM' || !Object.prototype.hasOwnProperty.call(defaults, k))) {
+      if (!tpl || typeof tpl !== 'object') continue;
+      const tplName = String(tpl.name || k || '').trim().toLowerCase();
+      const isBuiltin = Object.prototype.hasOwnProperty.call(defaults, k) || builtinNames.has(tplName);
+      if (tpl.roleCategory === 'CUSTOM' || !isBuiltin) {
         out[k] = tpl;
+      }
+    }
+    return out;
+  }
+
+  static extractUserSquadronPresets(rawPresets) {
+    const out = {};
+    if (!rawPresets || typeof rawPresets !== 'object' || Array.isArray(rawPresets)) return out;
+    const builtinNames = new Set();
+    if (typeof ProcurementPresets !== 'undefined') {
+      ProcurementPresets.getBuiltinPresetCatalog().forEach(m => {
+        builtinNames.add(String(m.id || '').trim().toLowerCase());
+        builtinNames.add(String(m.name || '').trim().toLowerCase());
+      });
+    }
+    for (const [name, units] of Object.entries(rawPresets)) {
+      if (!builtinNames.has(String(name || '').trim().toLowerCase()) && Array.isArray(units) && units.length > 0) {
+        out[name] = units;
       }
     }
     return out;
@@ -140,6 +162,9 @@ class DataExchange {
           if (key === 'AIRSPACE_STANDOFF_AIRCRAFT_TEMPLATES') {
             const userOnly = this.extractUserTemplates(parsed, game);
             if (Object.keys(userOnly).length > 0) data[key] = userOnly;
+          } else if (key === 'AIRSPACE_STANDOFF_CUSTOM_LOADOUTS') {
+            const userSquadrons = this.extractUserSquadronPresets(parsed);
+            if (Object.keys(userSquadrons).length > 0) data[key] = userSquadrons;
           } else {
             data[key] = parsed;
           }

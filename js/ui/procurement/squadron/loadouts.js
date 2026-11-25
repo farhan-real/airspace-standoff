@@ -98,9 +98,13 @@ class CustomLoadoutsManager {
       if (!raw) return {};
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+      const builtinNames = new Set(Object.values(defaults).map(t => String((t && t.name) || '').trim().toLowerCase()).filter(Boolean));
       const customOnly = {};
       Object.entries(parsed).forEach(([k, tpl]) => {
-        if (tpl && typeof tpl === 'object' && (tpl.roleCategory === 'CUSTOM' || !Object.prototype.hasOwnProperty.call(defaults, k))) {
+        if (!tpl || typeof tpl !== 'object') return;
+        const tplName = String(tpl.name || k || '').trim().toLowerCase();
+        const isBuiltin = Object.prototype.hasOwnProperty.call(defaults, k) || builtinNames.has(tplName);
+        if (tpl.roleCategory === 'CUSTOM' || !isBuiltin) {
           customOnly[k] = tpl;
         }
       });
