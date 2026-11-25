@@ -94,10 +94,18 @@ class ProcurementPresets {
     const count = Object.keys(customMap).length + 1;
     procurementManager.showPromptModal('SAVE SQUADRON PRESET', 'Enter a name for this squadron configuration:', `Squadron ${count}`, (name) => {
       if (name && name.trim()) {
-        if (customManager.save(name.trim(), procurementManager.game.procurementSquadron)) {
-          ProcurementPresets.activePreset = `custom:${name.trim()}`;
+        const cleanName = name.trim();
+        if (typeof PresetExchange !== 'undefined') {
+          const dupMsg = PresetExchange.findSquadronDuplicate(cleanName, procurementManager.game.procurementSquadron, customManager);
+          if (dupMsg) {
+            procurementManager.showAlertModal('DUPLICATE PRESET', dupMsg);
+            return;
+          }
+        }
+        if (customManager.save(cleanName, procurementManager.game.procurementSquadron)) {
+          ProcurementPresets.activePreset = `custom:${cleanName}`;
           procurementManager.updateUI();
-          if (onSaved) onSaved(name.trim());
+          if (onSaved) onSaved(cleanName);
         }
       }
     });

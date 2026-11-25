@@ -56,6 +56,39 @@ class SquadronPresetsModalController {
       };
     }
 
+    const exportBtn = document.getElementById('btn-export-sq-presets');
+    if (exportBtn) {
+      exportBtn.onclick = () => {
+        if (typeof PresetExchange === 'undefined') throw new Error('PresetExchange is not loaded.');
+        try {
+          PresetExchange.exportAllSquadronPresets(this.pm.customLoadouts);
+          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        } catch (err) {
+          this.pm.showAlertModal('EXPORT SQUADRON PRESETS', err.message || String(err));
+        }
+      };
+    }
+
+    const importBtn = document.getElementById('btn-import-sq-presets');
+    if (importBtn) {
+      importBtn.onclick = async () => {
+        if (typeof DataExchange === 'undefined' || typeof PresetExchange === 'undefined') {
+          throw new Error('DataExchange and PresetExchange must be loaded.');
+        }
+        try {
+          const picked = await DataExchange.pickJsonFile();
+          if (!picked) return;
+          const { presets } = PresetExchange.parseAndValidateSquadronPresetsImport(picked.text, picked.name, this.pm.customLoadouts);
+          const count = PresetExchange.applySquadronPresetsImport(this.pm.customLoadouts, presets);
+          this.renderGrid();
+          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+          this.pm.showAlertModal('IMPORT COMPLETE', `Imported ${count} squadron preset${count === 1 ? '' : 's'}.`);
+        } catch (err) {
+          this.pm.showAlertModal('IMPORT FAILED', err.message || String(err));
+        }
+      };
+    }
+
     const catPills = document.querySelectorAll('#sq-presets-category-pills .cat-pill-btn');
     catPills.forEach(btn => {
       btn.onclick = () => {
@@ -223,7 +256,8 @@ class SquadronPresetsModalController {
       card.className = `sq-preset-card${isOpen ? ' is-open' : ''}`;
 
       const userButtonsHtml = entry.source === 'USER'
-        ? `<button type="button" class="sq-preset-icon-btn btn-sq-rename" title="Rename squadron preset"><img src="icons/edit.svg" width="11" height="11" alt="Rename"></button>
+        ? `<button type="button" class="sq-preset-icon-btn btn-sq-export" title="Export squadron preset JSON"><img src="icons/arrowdown.svg" width="11" height="11" alt="Export"></button>
+           <button type="button" class="sq-preset-icon-btn btn-sq-rename" title="Rename squadron preset"><img src="icons/edit.svg" width="11" height="11" alt="Rename"></button>
            <button type="button" class="sq-preset-icon-btn alert btn-sq-delete" title="Delete squadron preset"><img src="icons/trash.svg" width="11" height="11" alt="Delete"></button>`
         : '';
 
@@ -304,6 +338,20 @@ class SquadronPresetsModalController {
         if (typeof AudioSys !== 'undefined') AudioSys.playClick();
         this.close();
       };
+
+      const exportCardBtn = card.querySelector('.btn-sq-export');
+      if (exportCardBtn) {
+        exportCardBtn.onclick = (e) => {
+          e.stopPropagation();
+          if (typeof PresetExchange === 'undefined') throw new Error('PresetExchange is not loaded.');
+          try {
+            PresetExchange.exportSingleSquadronPreset(entry.id, entry.units);
+            if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+          } catch (err) {
+            this.pm.showAlertModal('EXPORT FAILED', err.message || String(err));
+          }
+        };
+      }
 
       const renameBtn = card.querySelector('.btn-sq-rename');
       if (renameBtn) {

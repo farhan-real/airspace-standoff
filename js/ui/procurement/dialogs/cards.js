@@ -3,7 +3,7 @@
  */
 
 class PreconfigCardsRenderer {
-  static buildCard(tpl, acMap, wpnMap, upgMap, deployCb, deleteCb) {
+  static buildCard(tpl, acMap, wpnMap, upgMap, deployCb, deleteCb, exportCb = null) {
     if (!window.BehaviorCodex) throw new Error('BehaviorCodex is not loaded.');
     const spec = acMap[tpl.specId];
     if (!spec) return null;
@@ -70,7 +70,7 @@ class PreconfigCardsRenderer {
       </div>
       <div class="pc-badges-row">
         <span class="pc-role-badge">${tpl.roleCategory}</span>
-        ${isCustom ? '<span class="adc-badge" style="background:#78350f;border:1px solid #f59e0b;color:#fef08a;">USER PRESET</span>' : ''}
+        ${isCustom ? '<span class="adc-badge" style="background:rgba(250,204,21,0.14);border:1px solid rgba(250,204,21,0.45);color:#fef08a;">USER PRESET</span>' : ''}
         <span class="adc-badge badge-cat-${category.toLowerCase()}">${category}</span>
         <span class="adc-badge" style="background:#091e36;border:1px solid #0284c7;color:#7dd3fc;">${tvcLabel}</span>
         <span class="adc-badge" style="background:${weightBg};border:1px solid ${weightBorder};color:${weightColor};" data-tag-title="PAYLOAD STATUS" data-tag-tooltip="Equipped Carriage: ${metrics ? metrics.totalMass : 0}kg / ${metrics ? metrics.maxMass : 5000}kg (${wrPercent}%). Weight tier: ${weightCategory}.">LOAD: ${metrics ? metrics.totalMass : 0}kg / ${metrics ? metrics.maxMass : 5000}kg (${wrPercent}% ${weightCategory})</span>
@@ -93,7 +93,7 @@ class PreconfigCardsRenderer {
       <div class="pc-footer">
         <div class="pc-footer-left">
           <button type="button" class="spec-inspect-btn" data-inspect-type="airframe" data-inspect-id="${spec.id}">SPECS</button>
-          ${isCustom ? `<button type="button" class="btn-delete-tpl">DELETE</button>` : ''}
+          ${isCustom ? `<button type="button" class="btn-export-tpl">EXPORT</button><button type="button" class="btn-delete-tpl">DELETE</button>` : ''}
         </div>
         <div class="pc-footer-right">
           <button type="button" class="btn-deploy-tpl">ASSIGN TO SQUADRON</button>
@@ -103,6 +103,14 @@ class PreconfigCardsRenderer {
 
     const deployBtn = card.querySelector('.btn-deploy-tpl');
     if (deployBtn && deployCb) deployBtn.onclick = () => deployCb(tpl);
+
+    const expBtn = card.querySelector('.btn-export-tpl');
+    if (expBtn && exportCb) {
+      expBtn.onclick = (e) => {
+        e.stopPropagation();
+        exportCb(tpl);
+      };
+    }
 
     const delBtn = card.querySelector('.btn-delete-tpl');
     if (delBtn && deleteCb) {

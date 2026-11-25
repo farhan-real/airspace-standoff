@@ -68,6 +68,11 @@ class SettingsManager {
   open() {
     this.ensureModal();
     const modal = document.getElementById('settings-modal');
+    if (modal) {
+      modal.querySelectorAll('.settings-tab-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.stab === this.currentTab);
+      });
+    }
     this.renderTabContent();
     if (modal) modal.classList.add('active');
     if (this.game.controls) this.game.controls.autoPauseOnDialogOpen();
@@ -136,6 +141,7 @@ class SettingsManager {
     if (this.currentTab === 'keybinds') this.renderKeybindsTab(container);
     else if (this.currentTab === 'audio') this.renderAudioTab(container);
     else if (this.currentTab === 'radar') this.renderRadarTab(container);
+    else if (this.currentTab === 'data') this.renderDataTab(container);
   }
 
   renderKeybindsTab(container) {
@@ -265,6 +271,93 @@ class SettingsManager {
     const rBtn = container.querySelector('#btn-cfg-reset-cam');
     if (cBtn && this.game.radar) cBtn.onclick = () => this.game.radar.trackActiveCraft();
     if (rBtn && this.game.radar) rBtn.onclick = () => this.game.radar.resetCamera();
+  }
+
+  renderDataTab(container) {
+    if (typeof DataExchange === 'undefined') throw new Error('DataExchange is not loaded.');
+    const summary = DataExchange.getGameDataSummary(this.game);
+
+    container.innerHTML = `
+      <div class="settings-data-summary">
+        <div class="settings-data-stat"><span class="sd-label">SQUADRON</span><b class="sd-val">${summary.squadronName}</b></div>
+        <div class="settings-data-stat"><span class="sd-label">CUSTOM PRESETS</span><b class="sd-val">${summary.customSquadronCount}</b></div>
+        <div class="settings-data-stat"><span class="sd-label">AIRCRAFT LOADOUTS</span><b class="sd-val">${summary.customTemplateCount}</b></div>
+        <div class="settings-data-stat"><span class="sd-label">LEADERBOARD</span><b class="sd-val">${summary.topSortiesCount}</b></div>
+        <div class="settings-data-stat"><span class="sd-label">SORTIE HISTORY</span><b class="sd-val">${summary.historyCount}</b></div>
+        <div class="settings-data-stat"><span class="sd-label">ACTIVE SAVE</span><b class="sd-val">${summary.hasSavedSortie ? 'PRESENT' : 'NONE'}</b></div>
+      </div>
+      <div class="settings-form-row">
+        <div class="settings-label-group"><label>EXPORT GAME DATA</label><span class="settings-hint">Download keybinds, audio, presets, templates, leaderboard, and saved sortie as JSON</span></div>
+        <button type="button" id="btn-export-gamedata" class="hud-btn small settings-data-btn export">EXPORT JSON</button>
+      </div>
+      <div class="settings-form-row">
+        <div class="settings-label-group"><label>IMPORT GAME DATA</label><span class="settings-hint">Restore a previously exported AIRSPACE STANDOFF game data JSON file</span></div>
+        <button type="button" id="btn-import-gamedata" class="hud-btn small settings-data-btn import">IMPORT JSON</button>
+      </div>
+      <div id="settings-data-status" class="settings-data-status hidden"></div>`;
+
+    const statusEl = container.querySelector('#settings-data-status');
+    const setStatus = (msg, isErr = false) => {
+      if (!statusEl) return;
+      statusEl.textContent = msg;
+      statusEl.className = `settings-data-status ${isErr ? 'error' : 'ok'}`;
+    };
+
+    const showAlert = (title, msg) => {
+      if (this.game && this.game.procurement && typeof this.game.procurement.showAlertModal === 'function') {
+        this.game.procurement.showAlertModal(title, msg);
+      } else {
+        setStatus(msg, true);
+      }
+    };
+
+    const expBtn = container.querySelector('#btn-export-gamedata');
+    if (expBtn) {
+      expBtn.onclick = () => {
+        try {
+          const count = DataExchange.exportGameData(this.game);
+          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+          setStatus(`Exported ${count} storage section${count === 1 ? '' : 's'} to JSON.`);
+        } catch (err) {
+          setStatus(err.message || String(err), true);
+          showAlert('EXPORT FAILED', err.message || String(err));
+        }
+      };
+    }
+
+    const impBtn = container.querySelector('#btn-import-gamedata');
+    if (impBtn) {
+      impBtn.onclick = async () => {
+        try {
+          const picked = await DataExchange.pickJsonFile();
+          if (!picked) return;
+          const { data, keys } = DataExchange.parseAndValidateGameData(picked.text);
+          const applyRestore = () => {
+            const count = DataExchange.applyGameDataImport(data, this.game, this);
+            this.renderTabContent();
+            const refreshedStatus = document.getElementById('settings-data-status');
+            if (refreshedStatus) {
+              refreshedStatus.textContent = `Imported ${count} game data section${count === 1 ? '' : 's'}.`;
+              refreshedStatus.className = 'settings-data-status ok';
+            }
+            if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+          };
+          if (this.game && this.game.procurement && typeof this.game.procurement.showConfirmModal === 'function') {
+            this.game.procurement.showConfirmModal(
+              'IMPORT GAME DATA',
+              `Replace current settings, presets, leaderboard, and saved sortie with ${keys.length} section(s) from "${picked.name}"?`,
+              applyRestore,
+              { confirmText: 'IMPORT', isAlert: true }
+            );
+          } else {
+            applyRestore();
+          }
+        } catch (err) {
+          setStatus(err.message || String(err), true);
+          showAlert('IMPORT FAILED', err.message || String(err));
+        }
+      };
+    }
   }
 }
 

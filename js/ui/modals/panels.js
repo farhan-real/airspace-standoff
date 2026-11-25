@@ -29,6 +29,8 @@ class ModalPanelsTemplates {
                 <div id="cdd-preconfig-airframe"></div>
                 <div id="cdd-preconfig-sort"></div>
                 <button type="button" class="hud-btn small highlight" id="btn-save-current-to-templates">+ SAVE CURRENT AIRCRAFT</button>
+                <button type="button" class="hud-btn small sq-preset-io-btn export" id="btn-export-ac-presets">EXPORT JSON</button>
+                <button type="button" class="hud-btn small sq-preset-io-btn import" id="btn-import-ac-presets">IMPORT JSON</button>
               </div>
               <div class="shelf-tabs preconfig-tabs" id="preconfig-category-tabs">
                 <button type="button" class="shelf-tab-btn active" data-pcat="ALL">ALL</button>
@@ -60,6 +62,8 @@ class ModalPanelsTemplates {
               <div class="preconfig-search-row">
                 <input type="text" id="sq-presets-search-input" class="hud-search-input" placeholder="Filter by squadron name, aircraft, gun, or missile...">
                 <button type="button" class="hud-btn small highlight" id="btn-save-current-squadron-modal">+ SAVE CURRENT SQUADRON</button>
+                <button type="button" class="hud-btn small sq-preset-io-btn export" id="btn-export-sq-presets">EXPORT JSON</button>
+                <button type="button" class="hud-btn small sq-preset-io-btn import" id="btn-import-sq-presets">IMPORT JSON</button>
               </div>
               <div class="preconfig-pills-row" id="sq-presets-category-pills">
                 <button type="button" class="cat-pill-btn active" data-sqcat="ALL">ALL</button>
@@ -133,6 +137,7 @@ class ModalPanelsTemplates {
               <button class="settings-tab-btn active" data-stab="keybinds">CONTROLS</button>
               <button class="settings-tab-btn" data-stab="audio">AUDIO</button>
               <button class="settings-tab-btn" data-stab="radar">DISPLAY &amp; RADAR</button>
+              <button class="settings-tab-btn" data-stab="data">GAME DATA</button>
             </div>
             <div class="settings-body" id="settings-tab-content"></div>
             <div class="settings-footer">

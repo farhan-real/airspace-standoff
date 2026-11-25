@@ -91,48 +91,54 @@ class CustomLoadoutsManager {
     return window.AIRCRAFT_TEMPLATES || {};
   }
 
+  getCustomTemplates() {
+    const defaults = this.getDefaultTemplates();
+    try {
+      const raw = this.storage.getItem(this.aircraftTemplateKey);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+      const customOnly = {};
+      Object.entries(parsed).forEach(([k, tpl]) => {
+        if (tpl && typeof tpl === 'object' && (tpl.roleCategory === 'CUSTOM' || !Object.prototype.hasOwnProperty.call(defaults, k))) {
+          customOnly[k] = tpl;
+        }
+      });
+      return customOnly;
+    } catch (e) {
+      console.warn('Failed to parse saved aircraft templates from storage:', e);
+      return {};
+    }
+  }
+
   getTemplates() {
     if (this._templatesCache) return this._templatesCache;
     const defaults = this.getDefaultTemplates();
-    try {
-      let raw = this.storage.getItem(this.aircraftTemplateKey);
-      if (!raw) {
-        this._templatesCache = defaults;
-        return defaults;
-      }
-      const parsed = JSON.parse(raw);
-      this._templatesCache = Object.assign({}, defaults, parsed);
-      return this._templatesCache;
-    } catch (e) {
-      console.warn('Failed to parse saved aircraft templates from storage:', e);
-      return defaults;
-    }
+    const custom = this.getCustomTemplates();
+    this._templatesCache = Object.assign({}, defaults, custom);
+    return this._templatesCache;
   }
 
   saveTemplate(templateName, aircraftConfig) {
     if (!templateName || !aircraftConfig) return false;
     this._templatesCache = null;
-    const all = this.getTemplates();
-    all[templateName.trim()] = JSON.parse(JSON.stringify(aircraftConfig));
-    this.storage.setItem(this.aircraftTemplateKey, JSON.stringify(all));
-    this._templatesCache = all;
+    const custom = this.getCustomTemplates();
+    const clean = JSON.parse(JSON.stringify(aircraftConfig));
+    clean.roleCategory = 'CUSTOM';
+    custom[templateName.trim()] = clean;
+    this.storage.setItem(this.aircraftTemplateKey, JSON.stringify(custom));
+    this._templatesCache = Object.assign({}, this.getDefaultTemplates(), custom);
     return true;
   }
 
   deleteTemplate(templateName) {
     if (!templateName) return false;
-    try {
-      let raw = this.storage.getItem(this.aircraftTemplateKey);
-      if (!raw) return false;
-      const parsed = JSON.parse(raw);
-      if (parsed[templateName]) {
-        delete parsed[templateName];
-        this.storage.setItem(this.aircraftTemplateKey, JSON.stringify(parsed));
-        this._templatesCache = null;
-        return true;
-      }
-    } catch (e) {
-      console.warn('Failed to delete template from storage:', e);
+    const custom = this.getCustomTemplates();
+    if (custom[templateName]) {
+      delete custom[templateName];
+      this.storage.setItem(this.aircraftTemplateKey, JSON.stringify(custom));
+      this._templatesCache = null;
+      return true;
     }
     return false;
   }

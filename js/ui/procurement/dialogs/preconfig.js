@@ -128,6 +128,39 @@ class PreconfigModalController {
       };
     }
 
+    const exportBtn = document.getElementById('btn-export-ac-presets');
+    if (exportBtn) {
+      exportBtn.onclick = () => {
+        if (typeof PresetExchange === 'undefined') throw new Error('PresetExchange is not loaded.');
+        try {
+          PresetExchange.exportAllAircraftPresets(this.pm.customLoadouts);
+          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+        } catch (err) {
+          this.pm.showAlertModal('EXPORT AIRCRAFT PRESETS', err.message || String(err));
+        }
+      };
+    }
+
+    const importBtn = document.getElementById('btn-import-ac-presets');
+    if (importBtn) {
+      importBtn.onclick = async () => {
+        if (typeof DataExchange === 'undefined' || typeof PresetExchange === 'undefined') {
+          throw new Error('DataExchange and PresetExchange must be loaded.');
+        }
+        try {
+          const picked = await DataExchange.pickJsonFile();
+          if (!picked) return;
+          const { presets } = PresetExchange.parseAndValidateAircraftPresetsImport(picked.text, picked.name, this.pm.customLoadouts);
+          const count = PresetExchange.applyAircraftPresetsImport(this.pm.customLoadouts, presets);
+          this.open();
+          if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+          this.pm.showAlertModal('IMPORT COMPLETE', `Imported ${count} aircraft preset${count === 1 ? '' : 's'}.`);
+        } catch (err) {
+          this.pm.showAlertModal('IMPORT FAILED', err.message || String(err));
+        }
+      };
+    }
+
     if (typeof CustomDropdown !== 'undefined') {
       CustomDropdown.setup('cdd-preconfig-sort', {
         label: 'SORT',
@@ -296,6 +329,14 @@ class PreconfigModalController {
             this.pm.customLoadouts.deleteTemplate(t.name);
             this.renderGrid();
           });
+        }, (t) => {
+          if (typeof PresetExchange === 'undefined') throw new Error('PresetExchange is not loaded.');
+          try {
+            PresetExchange.exportSingleAircraftPreset(t);
+            if (typeof AudioSys !== 'undefined') AudioSys.playClick();
+          } catch (err) {
+            this.pm.showAlertModal('EXPORT FAILED', err.message || String(err));
+          }
         });
         if (card) grid.appendChild(card);
       });

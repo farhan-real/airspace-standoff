@@ -18,11 +18,19 @@ class ProcurementActionDispatcher {
 
     procurementManager.showPromptModal('SAVE PRESET', `Save Aircraft #${sIdx + 1} configuration as a preset:`, defName, (name) => {
       if (name && name.trim()) {
-        procurementManager.customLoadouts.saveTemplate(name.trim(), {
+        const candidate = {
           name: name.trim(), specId: item.specId, roleCategory: 'CUSTOM', chosenGunId: item.chosenGunId || 'M61A2',
           weapons: [...(item.weapons || [])], upgrades: [...(item.upgrades || [])],
           desc: `User configuration based on ${spec.name} (${item.callsign}).`
-        });
+        };
+        if (typeof PresetExchange !== 'undefined') {
+          const dupMsg = PresetExchange.findAircraftDuplicate(candidate, procurementManager.customLoadouts);
+          if (dupMsg) {
+            procurementManager.showAlertModal('DUPLICATE PRESET', dupMsg);
+            return;
+          }
+        }
+        procurementManager.customLoadouts.saveTemplate(name.trim(), candidate);
         procurementManager.showAlertModal('PRESET SAVED', `Configuration "${name.trim()}" saved to preset library.`);
         if (callback) callback();
       }

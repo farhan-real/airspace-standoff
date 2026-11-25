@@ -273,6 +273,7 @@
 .pc-footer-right { display: inline-flex; align-items: center; margin-left: auto; }
 
 .pc-footer .spec-inspect-btn,
+.pc-footer .btn-export-tpl,
 .pc-footer .btn-delete-tpl,
 .pc-footer .btn-deploy-tpl {
   height: 26px;
@@ -294,6 +295,8 @@
 
 .pc-footer .spec-inspect-btn { background: var(--glass-3d-btn-bg); border: 1px solid rgba(255, 255, 255, 0.15); color: var(--color-cyan); }
 .pc-footer .spec-inspect-btn:hover { background: var(--glass-3d-btn-bg-hover); color: #ffffff; border-color: var(--color-cyan); transform: translateY(-1px); }
+.pc-footer .btn-export-tpl { background: var(--jewel-green-bg); border: 1px solid rgba(0, 245, 160, 0.46); color: #ecfdf5; }
+.pc-footer .btn-export-tpl:hover { background: var(--jewel-green-hover); border-color: var(--color-green); color: #ffffff; transform: translateY(-1px); }
 .pc-footer .btn-delete-tpl { background: var(--jewel-red-bg); border: 1px solid rgba(255, 56, 100, 0.50); color: #ffe4ec; }
 .pc-footer .btn-delete-tpl:hover { background: var(--jewel-red-hover); border-color: var(--color-red); color: #ffffff; transform: translateY(-1px); }
 

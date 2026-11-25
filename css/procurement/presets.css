@@ -372,3 +372,25 @@
     grid-template-columns: 1fr;
   }
 }
+
+.sq-preset-io-btn.export {
+  background: var(--jewel-green-bg);
+  border-color: rgba(0, 245, 160, 0.45);
+  color: #ecfdf5;
+}
+
+.sq-preset-io-btn.export:hover {
+  background: var(--jewel-green-hover);
+  border-color: var(--color-green);
+}
+
+.sq-preset-io-btn.import {
+  background: var(--jewel-purple-bg);
+  border-color: rgba(167, 139, 250, 0.48);
+  color: #f5f3ff;
+}
+
+.sq-preset-io-btn.import:hover {
+  background: var(--jewel-purple-hover);
+  border-color: var(--color-purple);
+}
