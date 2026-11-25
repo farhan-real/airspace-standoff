@@ -3,12 +3,16 @@
 .stores-stations-wrapper {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
   gap: 6px;
 }
 
 .station-section {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
   gap: 5px;
   background: rgba(0, 0, 0, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -25,6 +29,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
   font-size: 0.58rem;
   font-family: var(--font-untitled-sans);
   font-weight: 700;
@@ -36,6 +43,8 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 .station-title b {
@@ -270,7 +279,14 @@
   transform: translateY(-1px);
 }
 
-@media (max-width: 440px) {
+@media (max-width: 1024px), (max-height: 550px) {
+  .station-section { padding: 6px 7px; }
+  .installed-item-card { padding: 4px 6px; gap: 4px; }
+  .btn-reorder-item { width: 17px; height: 17px; }
+  .iic-title { font-size: 0.60rem; }
+  .iic-right-group { gap: 4px; min-width: 0; }
+  .iic-details { font-size: 0.52rem; gap: 3px; }
   .iic-slots-word { display: none; }
   .iic-slots-short { display: inline; }
+  .btn-dismount-item { padding: 2px 5px; font-size: 0.54rem; }
 }

@@ -107,8 +107,10 @@
 
 .catalog-grid {
   flex: 1 1 auto;
+  min-width: 0;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -141,6 +143,8 @@
 
 .catalog-item-card {
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   background: var(--glass-3d-card-bg);
   border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid rgba(255, 255, 255, 0.22);
@@ -280,18 +284,21 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1024px), (max-height: 550px) {
   .shelf-helper-bar { display: none !important; }
   .shelf-tabs { flex-wrap: nowrap; overflow-x: auto; white-space: nowrap; padding-bottom: 2px; scrollbar-width: none; }
   .shelf-tabs::-webkit-scrollbar { display: none; }
   .shelf-tab-btn { padding: 4px 8px; font-size: 0.60rem; flex-shrink: 0; }
-  .dense-sub-grid { gap: 6px; }
-  .catalog-item-card { padding: 8px 9px; gap: 4px; }
-  .cic-specs { font-size: 0.56rem; gap: 2px 6px; padding: 5px 6px; }
-  .catalog-item-card .spec-inspect-btn { padding: 0 7px; font-size: 0.58rem; }
-  .btn-quick-equip { padding: 0 8px; font-size: 0.58rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-}
-
-@media (max-width: 768px), (max-height: 550px) {
-  .dense-sub-grid { grid-template-columns: 1fr; gap: 6px; }
+  .dense-sub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+  .catalog-item-card { padding: 6px 7px; gap: 4px; }
+  .cic-top { font-size: 0.64rem; gap: 4px; }
+  .cic-top > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cic-type-bar { gap: 3px; font-size: 0.52rem; }
+  .badge-slots, .badge-mass { font-size: 0.50rem; padding: 1px 4px; }
+  .cic-specs { font-size: 0.50rem; gap: 2px 4px; padding: 4px 5px; }
+  .cic-specs > div { gap: 2px; }
+  .cic-desc { font-size: 0.58rem; line-height: 1.32; }
+  .catalog-item-card .adc-footer { gap: 4px; padding-top: 5px; }
+  .catalog-item-card .spec-inspect-btn { height: 22px; min-width: 38px; padding: 0 5px; font-size: 0.54rem; }
+  .btn-quick-equip { height: 22px; flex: 1 1 auto; padding: 0 6px; font-size: 0.54rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 }

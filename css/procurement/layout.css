@@ -38,7 +38,7 @@ body.safe-zone-on .procurement-window {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
   overflow: hidden;
   contain: layout;
@@ -49,6 +49,8 @@ body.safe-zone-on .procurement-window {
 .flight-roster {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
   min-height: 0;
   height: 100%;
   border: 1px solid rgba(255, 255, 255, 0.09);

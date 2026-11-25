@@ -27,8 +27,11 @@
 
 .squadron-container {
   flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   overflow-anchor: none;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -38,6 +41,10 @@
 }
 
 .squad-unit-card {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
   background: var(--glass-3d-card-bg);
   border: 1px solid var(--glass-3d-card-border);
   border-top: 1px solid rgba(255, 255, 255, 0.22);
@@ -94,7 +101,7 @@
 .suh-top-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; flex-wrap: wrap; }
 .suh-title-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
 .suh-right-meta { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.suh-preset-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-width: 0; }
+.suh-preset-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 5px 8px; width: 100%; min-width: 0; }
 .suh-preset-row .active-bay-badge { margin-left: auto; flex-shrink: 0; }
 
 .preset-match-line {
@@ -199,17 +206,20 @@
 
 .is-android .squadron-container,
 .is-android-apk .squadron-container {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   padding-right: 0;
 }
 
 .is-android .squad-unit-card,
 .is-android-apk .squad-unit-card {
-  padding: 9px 10px;
+  padding: 7px 8px;
   gap: 6px;
 }
 
-@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
-  .squadron-container { grid-template-columns: 1fr; padding-right: 0; }
-  .squad-unit-card { padding: 9px 10px; gap: 6px; }
+@media (max-width: 1024px), (max-height: 550px), (hover: none) and (pointer: coarse) {
+  .squadron-container { grid-template-columns: minmax(0, 1fr); padding-right: 0; gap: 7px; }
+  .squad-unit-card { padding: 7px 8px; gap: 6px; }
+  .roster-header-bar { gap: 4px 8px; flex-wrap: wrap; padding-bottom: 6px; margin-bottom: 6px; }
+  .squad-unit-name { font-size: 0.82rem; }
+  .squad-unit-actions .hud-btn.small { padding: 3px 7px; font-size: 0.56rem; }
 }

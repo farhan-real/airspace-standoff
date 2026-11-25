@@ -85,7 +85,7 @@
 
 .adc-metrics-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 3px 8px;
   background: #000000;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -95,7 +95,7 @@
   font-family: var(--font-dotdigital);
 }
 
-.adc-metric-cell { display: flex; justify-content: space-between; align-items: center; color: var(--color-moon-mist); padding: 1px 0; }
+.adc-metric-cell { display: flex; justify-content: space-between; align-items: center; color: var(--color-moon-mist); padding: 1px 0; min-width: 0; gap: 4px; }
 .adc-metric-cell .station-tag-box { margin-left: auto; }
 .adc-metric-cell b:not([class*="stat-tier"]) { color: #ffffff; }
 .adc-desc { font-size: 0.68rem; color: var(--color-moon-mist); line-height: 1.42; }
