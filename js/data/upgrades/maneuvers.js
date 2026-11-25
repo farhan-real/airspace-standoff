@@ -9,8 +9,8 @@ window.CORE_MANEUVER_CARDS = [
     name: 'Doppler Notch & Chaff',
     badge: 'RADAR BREAK',
     whenToUse: 'TRIGGER: Active radar (ARH) lock',
-    whyToUse: 'BENEFIT: Beams threat 90 degrees, cuts radial closure & deploys chaff (6.5s)',
-    evasionBonus: 0.42,
+    whyToUse: 'BENEFIT: Beams threat 90 degrees, cuts radial closure & deploys chaff (4.5s)',
+    evasionBonus: 0.30,
     cost: 0.7,
     isRecommended: function(unit, game) {
       if (!unit || !game.missiles) return false;
@@ -25,18 +25,18 @@ window.CORE_MANEUVER_CARDS = [
       const game = window.Game;
       unit.isNotching = true;
       unit.activeManeuverId = 'DOPPLER_NOTCH';
-      unit.activeManeuverTimer = 6.5;
+      unit.activeManeuverTimer = 4.5;
 
-      let bonus = 0.42;
+      let bonus = 0.30;
       const agi = unit.getEffectiveAgility();
-      bonus *= Math.max(0.45, Math.min(1.40, agi / 0.85));
+      bonus *= Math.max(0.40, Math.min(1.30, agi / 0.85));
 
       const sOpt = unit.getOptimalCornerSpeed();
       const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
-      bonus *= Math.max(0.55, Math.min(1.20, 0.55 + 0.45 * turnOptEff));
+      bonus *= Math.max(0.50, Math.min(1.15, 0.50 + 0.50 * turnOptEff));
 
       if (unit.stress >= 0.65) bonus *= 0.75;
-      if (unit.isCoffin) bonus += 0.06;
+      if (unit.isCoffin) bonus += 0.04;
       unit.activeManeuverBonus = bonus;
 
       let threatHeading = null;
@@ -67,8 +67,8 @@ window.CORE_MANEUVER_CARDS = [
     name: 'High-G Barrel Roll',
     badge: 'KINETIC DODGE',
     whenToUse: 'TRIGGER: Inbound missile < 25km',
-    whyToUse: 'BENEFIT: Spiral displacement disrupts proportional lead pursuit (5.5s)',
-    evasionBonus: 0.40,
+    whyToUse: 'BENEFIT: Spiral displacement disrupts proportional lead pursuit (4.0s)',
+    evasionBonus: 0.28,
     cost: 0.7,
     isRecommended: function(unit, game) {
       if (!unit || !game.missiles) return false;
@@ -83,18 +83,18 @@ window.CORE_MANEUVER_CARDS = [
       const game = window.Game;
       unit.isNotching = false;
       unit.activeManeuverId = 'BARREL_ROLL';
-      unit.activeManeuverTimer = 5.5;
+      unit.activeManeuverTimer = 4.0;
 
-      let bonus = 0.40;
+      let bonus = 0.28;
       const agi = unit.getEffectiveAgility();
-      bonus *= Math.max(0.45, Math.min(1.40, agi / 0.85));
+      bonus *= Math.max(0.40, Math.min(1.30, agi / 0.85));
 
       const sOpt = unit.getOptimalCornerSpeed();
       const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
-      bonus *= Math.max(0.55, Math.min(1.20, 0.55 + 0.45 * turnOptEff));
+      bonus *= Math.max(0.50, Math.min(1.15, 0.50 + 0.50 * turnOptEff));
 
       if (unit.stress >= 0.65) bonus *= 0.75;
-      if (unit.isCoffin) bonus += 0.06;
+      if (unit.isCoffin) bonus += 0.04;
       unit.activeManeuverBonus = bonus;
 
       unit.heading = (unit.heading + (Math.random() < 0.5 ? 0.75 : -0.75)) % (Math.PI * 2);
@@ -112,8 +112,8 @@ window.CORE_MANEUVER_CARDS = [
     name: "Pugachev's Cobra",
     badge: 'SUPER-MANEUVER',
     whenToUse: 'TRIGGER: Hostile on tail < 15km',
-    whyToUse: 'BENEFIT: High-alpha aerodynamic brake creates closure-rate mismatch (5s)',
-    evasionBonus: 0.48,
+    whyToUse: 'BENEFIT: High-alpha aerodynamic brake creates closure-rate mismatch (3.5s)',
+    evasionBonus: 0.34,
     cost: 0.8,
     isRecommended: function(unit, game) {
       if (!unit || !unit.thrustVector || !game.missiles) return false;
@@ -128,18 +128,18 @@ window.CORE_MANEUVER_CARDS = [
       const game = window.Game;
       unit.isNotching = false;
       unit.activeManeuverId = 'PUSH_COBRA';
-      unit.activeManeuverTimer = 5.0;
+      unit.activeManeuverTimer = 3.5;
 
-      let bonus = 0.48;
+      let bonus = 0.34;
       const agi = unit.getEffectiveAgility();
-      bonus *= Math.max(0.45, Math.min(1.40, agi / 0.85));
+      bonus *= Math.max(0.40, Math.min(1.30, agi / 0.85));
 
       const sOpt = unit.getOptimalCornerSpeed();
       const turnOptEff = unit.isCoffin ? 1.0 : Physics.calcTurnEfficiency(unit.speed, sOpt);
-      bonus *= Math.max(0.55, Math.min(1.20, 0.55 + 0.45 * turnOptEff));
+      bonus *= Math.max(0.50, Math.min(1.15, 0.50 + 0.50 * turnOptEff));
 
       if (unit.stress >= 0.65) bonus *= 0.75;
-      if (unit.isCoffin) bonus += 0.08;
+      if (unit.isCoffin) bonus += 0.05;
       unit.activeManeuverBonus = bonus;
 
       unit.speed = Math.max(0.24, unit.speed * 0.55);

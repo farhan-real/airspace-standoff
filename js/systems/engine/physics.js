@@ -242,7 +242,7 @@ const Physics = {
     const activeEvasion = Math.max((target.activeManeuverBonus > 0 && target.glocTimer <= 0) ? target.activeManeuverBonus : 0.0, notchBonus, chaffBonus, dircmBonus);
     const passiveBaseline = Math.max(target.isCoffin ? 0.25 : 0.0, target.isAce ? 0.08 : 0.0, target.isFlightLead ? 0.08 : 0.0);
     const targetEnergy = Math.max(0.20, Math.min(1.0, target.energy !== undefined ? target.energy : 1.0));
-    let effectiveDefense = Math.min(0.62, Math.max(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
+    let effectiveDefense = Math.min(0.48, Math.max(activeEvasion, passiveBaseline)) * Math.pow(targetEnergy, 0.75);
     if (hasMixedSeekers) effectiveDefense *= 0.55;
 
     const hojTargetActive = Boolean(target.jamEfficiency > 0 || (target.spec && (target.spec.isEW || target.spec.category === 'EW' || target.spec.R_0 >= 90)));
