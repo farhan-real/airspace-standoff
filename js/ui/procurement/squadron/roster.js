@@ -9,6 +9,56 @@ class ProcurementRoster {
     this.lastRenderKey = '';
   }
 
+  buildRenderKey(pm, squadron) {
+    return (squadron || []).map((it, idx) => {
+      if (!it) return `${idx}:EMPTY`;
+      return `${idx}:${it.specId}:${it.chosenGunId}:${JSON.stringify(it.weapons || [])}:${JSON.stringify(it.upgrades || [])}:${it.callsign}:${Boolean(it.isLead)}:${pm.activeBayIndex === idx}`;
+    }).join('|');
+  }
+
+  setActiveBay(pm, sIdx) {
+    const container = document.getElementById('squadron-list');
+    if (!container) {
+      pm.updateUI();
+      return;
+    }
+    pm.activeBayIndex = sIdx;
+    pm.targetEquipStation = null;
+
+    container.querySelectorAll('.squad-unit-card').forEach(cardEl => {
+      const cardIdx = parseInt(cardEl.dataset.sidx, 10);
+      const isSelected = (cardIdx === sIdx);
+      cardEl.classList.toggle('active-bay', isSelected);
+
+      const header = cardEl.querySelector('.squad-unit-header');
+      if (!header) return;
+      let subRow = header.querySelector('.suh-preset-row');
+      let badge = subRow ? subRow.querySelector('.active-bay-badge') : null;
+
+      if (isSelected) {
+        if (!subRow) {
+          subRow = document.createElement('div');
+          subRow.className = 'suh-preset-row';
+          const topRow = header.querySelector('.suh-top-row');
+          if (topRow) topRow.insertAdjacentElement('afterend', subRow);
+          else header.prepend(subRow);
+        }
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'active-bay-badge';
+          badge.textContent = 'SELECTED';
+          subRow.appendChild(badge);
+        }
+      } else if (badge) {
+        badge.remove();
+        if (subRow && subRow.children.length === 0) subRow.remove();
+      }
+    });
+
+    this.lastRenderKey = this.buildRenderKey(pm, pm.game.procurementSquadron);
+    if (pm.shelf) pm.shelf.syncActiveAircraft();
+  }
+
   updateCard(pm, sIdx) {
     const item = pm.game.procurementSquadron[sIdx];
     if (!item) {
@@ -22,6 +72,7 @@ class ProcurementRoster {
     }
 
     const prevScroll = container.scrollTop;
+    pm._suppressHeaderScroll = true;
 
     const oldCard = container.querySelector(`.squad-unit-card[data-sidx="${sIdx}"]`);
     if (oldCard && typeof RosterCardBuilder !== 'undefined') {
@@ -30,13 +81,16 @@ class ProcurementRoster {
         oldCard.replaceWith(newCard);
       }
     } else {
+      pm._suppressHeaderScroll = false;
       pm.updateUI();
       return;
     }
 
+    this.lastRenderKey = this.buildRenderKey(pm, pm.game.procurementSquadron);
     container.scrollTop = prevScroll;
     requestAnimationFrame(() => {
       if (container) container.scrollTop = prevScroll;
+      pm._suppressHeaderScroll = false;
     });
 
     this.updateSummaryHeader(pm);
@@ -135,16 +189,13 @@ class ProcurementRoster {
       this.pm.activeBayIndex = 0;
     }
 
-    const renderKey = squadron.map((it, idx) => {
-      if (!it) return `${idx}:EMPTY`;
-      return `${idx}:${it.specId}:${it.chosenGunId}:${JSON.stringify(it.weapons || [])}:${JSON.stringify(it.upgrades || [])}:${it.callsign}:${Boolean(it.isLead)}:${this.pm.activeBayIndex === idx}`;
-    }).join('|');
+    const renderKey = this.buildRenderKey(this.pm, squadron);
     const renderableAircraftCount = squadron.filter(Boolean).length;
     if (this.lastRenderKey === renderKey && container.children.length === renderableAircraftCount) return;
 
     const prevScroll = container.scrollTop;
     this.lastRenderKey = renderKey;
-    container.innerHTML = '';
+    this.pm._suppressHeaderScroll = true;
 
     if (typeof RosterCardBuilder !== 'undefined') {
       const fragment = document.createDocumentFragment();
@@ -153,12 +204,15 @@ class ProcurementRoster {
         const card = RosterCardBuilder.build(this.pm, item, sIdx);
         if (card) fragment.appendChild(card);
       });
-      container.appendChild(fragment);
+      container.replaceChildren(fragment);
+    } else {
+      container.innerHTML = '';
     }
 
     container.scrollTop = prevScroll;
     requestAnimationFrame(() => {
       if (container) container.scrollTop = prevScroll;
+      this.pm._suppressHeaderScroll = false;
     });
   }
 }

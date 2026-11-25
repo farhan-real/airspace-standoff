@@ -87,20 +87,37 @@ class ProcurementShelf {
 
   render(catalogEl, tab, category, query) {
     if (!catalogEl) return;
+    const sameTab = (this._lastRenderedTab === tab);
+    const prevScroll = sameTab ? catalogEl.scrollTop : 0;
+    this._lastRenderedTab = tab;
+
     this.initSearchBar();
     this.updateSearchPlaceholder(tab);
-    catalogEl.innerHTML = '';
-    this.updateInstructionHeader(tab);
+    if (this.pm) this.pm._suppressHeaderScroll = true;
+    try {
+      catalogEl.innerHTML = '';
+      this.updateInstructionHeader(tab);
 
-    if (tab === 'airframes') {
-      ShelfAirframesRenderer.renderAirframesTab(this, catalogEl, category, query);
-      return;
+      if (tab === 'airframes') {
+        ShelfAirframesRenderer.renderAirframesTab(this, catalogEl, category, query);
+      } else if (tab === 'guns') {
+        this.renderGunsTab(catalogEl, query);
+      } else if (tab === 'upgrades') {
+        this.renderUpgradesTab(catalogEl, query);
+      } else {
+        const catFilterMap = { a2a: 'A2A', a2g: 'A2G', utility: 'UTILITY' };
+        this.renderWeaponsTab(catalogEl, catFilterMap[tab] || 'ALL', query);
+      }
+
+      catalogEl.scrollTop = prevScroll;
+      requestAnimationFrame(() => {
+        if (catalogEl) catalogEl.scrollTop = prevScroll;
+        if (this.pm) this.pm._suppressHeaderScroll = false;
+      });
+    } catch (err) {
+      if (this.pm) this.pm._suppressHeaderScroll = false;
+      throw err;
     }
-    if (tab === 'guns') { this.renderGunsTab(catalogEl, query); return; }
-    if (tab === 'upgrades') { this.renderUpgradesTab(catalogEl, query); return; }
-
-    const catFilterMap = { a2a: 'A2A', a2g: 'A2G', utility: 'UTILITY' };
-    this.renderWeaponsTab(catalogEl, catFilterMap[tab] || 'ALL', query);
   }
 
   renderFilterPills(container, groups, activeId, onSelect) {

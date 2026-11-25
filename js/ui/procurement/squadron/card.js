@@ -162,9 +162,13 @@ class RosterCardBuilder {
     card.onclick = (e) => {
       if (!e.target.closest('button, input, select, .squad-callsign-tag, .custom-dropdown, .empty-internal-slot, .empty-bay-indicator, .installed-item-card')) {
         if (pm.activeBayIndex !== sIdx) {
-          pm.activeBayIndex = sIdx;
-          pm.targetEquipStation = null;
-          pm.updateUI();
+          if (pm.roster && typeof pm.roster.setActiveBay === 'function') {
+            pm.roster.setActiveBay(pm, sIdx);
+          } else {
+            pm.activeBayIndex = sIdx;
+            pm.targetEquipStation = null;
+            pm.updateUI();
+          }
         }
       }
     };

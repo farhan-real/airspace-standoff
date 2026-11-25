@@ -91,6 +91,7 @@ class ProcurementActionDispatcher {
       ticking = true;
       requestAnimationFrame(() => {
         ticking = false;
+        if (pm && pm._suppressHeaderScroll) return;
         if (document.querySelector('.custom-dropdown.open')) return;
 
         const shelf = document.getElementById('armory-catalog') || document.getElementById('proc-hanger-shelf');

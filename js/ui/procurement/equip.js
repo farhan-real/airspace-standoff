@@ -182,7 +182,6 @@ class ProcurementEquipHandler {
     });
     this.pm.activeBayIndex = this.pm.game.procurementSquadron.length - 1;
     this.pm.updateUI();
-    this.pm.renderCatalog();
   }
 
   cloneAirframe(sIdx) {
@@ -303,8 +302,7 @@ class ProcurementEquipHandler {
       item.upgrades.push(itemData.id);
     }
     if (typeof AudioSys !== 'undefined') AudioSys.playClick();
-    this.pm.updateUI();
-    this.pm.renderCatalog();
+    this.pm.updateSquadronCard(sIdx);
   }
 }
 
