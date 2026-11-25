@@ -58,14 +58,30 @@ class LeaderboardUI {
     if (window.Game && window.Game.controls) window.Game.controls.autoUnpauseOnDialogClose();
   }
 
-  static resolveDifficultyName(item) {
+  static resolveDifficultyEntry(item) {
     const diffKey = item.difficulty;
     const aiEntry = (window.AI_DIFFICULTIES && window.AI_DIFFICULTIES[diffKey]) ||
                     (window.AI_DIFFICULTIES && Object.values(window.AI_DIFFICULTIES).find(d => d.name === diffKey));
     const atkEntry = (window.ATTACK_DIFFICULTIES && window.ATTACK_DIFFICULTIES[diffKey]) ||
                      (window.ATTACK_DIFFICULTIES && Object.values(window.ATTACK_DIFFICULTIES).find(d => d.name === diffKey));
-    const entry = aiEntry || atkEntry;
-    return item.difficultyName || (entry ? entry.name : (diffKey || 'Contested Airspace'));
+    return aiEntry || atkEntry || null;
+  }
+
+  static resolveDifficultyName(item) {
+    const entry = LeaderboardUI.resolveDifficultyEntry(item);
+    return item.difficultyName || (entry ? entry.name : (item.difficulty || 'Contested Airspace'));
+  }
+
+  static resolveDifficultyWithMultiplierHtml(item) {
+    const entry = LeaderboardUI.resolveDifficultyEntry(item);
+    const name = item.difficultyName || (entry ? entry.name : (item.difficulty || 'Contested Airspace'));
+    const mult = (typeof item.diffMult === 'number' && !isNaN(item.diffMult))
+      ? item.diffMult
+      : (entry && typeof entry.scoreMultiplier === 'number' ? entry.scoreMultiplier : null);
+    if (mult !== null && !/\(\d+(?:\.\d+)?x\)/i.test(name)) {
+      return `${name} <span style="white-space:nowrap;">(${mult.toFixed(2)}x)</span>`;
+    }
+    return name;
   }
 
   static render() {
@@ -95,13 +111,13 @@ class LeaderboardUI {
 
     const rowsHtml = list.map((item, idx) => {
       const rankClass = idx === 0 ? 'rank-gold' : (idx === 1 ? 'rank-silver' : (idx === 2 ? 'rank-bronze' : 'rank-standard'));
-      const difficultyName = LeaderboardUI.resolveDifficultyName(item);
+      const difficultyDisplay = LeaderboardUI.resolveDifficultyWithMultiplierHtml(item);
 
       return `
         <tr class="leaderboard-row ${idx === 0 ? 'selected' : ''}" data-idx="${idx}">
           <td><span class="leaderboard-rank-tag ${rankClass}">#${idx + 1}</span></td>
           <td><b>${item.squadronName || 'Squadron'}</b><br><span style="color:#8494ab;font-size:0.56rem;">${item.date || ''}</span></td>
-          <td style="color:#7dd3fc;">${difficultyName}</td>
+          <td style="color:#7dd3fc;">${difficultyDisplay}</td>
           <td style="color:#00f0ff;">${item.timeStr || '00:00'}</td>
           <td style="text-align:right;"><b style="color:#00f5a0;font-size:0.74rem;">${(item.totalScore || 0).toLocaleString()}</b></td>
         </tr>`;
