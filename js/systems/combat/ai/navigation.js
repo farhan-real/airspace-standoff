@@ -4,6 +4,23 @@
  */
 
 class AINavigationHandler {
+  static applyBoundaryAvoidance(unit, desiredHeading, mapW, mapH) {
+    const margin = 12.0;
+    let pushX = 0.0;
+    let pushY = 0.0;
+    if (unit.x < margin) pushX = (margin - unit.x) / margin;
+    else if (unit.x > mapW - margin) pushX = -((unit.x - (mapW - margin)) / margin);
+    if (unit.y < margin) pushY = (margin - unit.y) / margin;
+    else if (unit.y > mapH - margin) pushY = -((unit.y - (mapH - margin)) / margin);
+    const mag = Math.hypot(pushX, pushY);
+    if (mag <= 0.02) return desiredHeading;
+    const blend = Math.min(1.0, mag * 1.15);
+    const inwardHdg = Math.atan2((mapH * 0.5) - unit.y + pushY * 30.0, (mapW * 0.5) - unit.x + pushX * 30.0);
+    const vx = Math.cos(desiredHeading) * (1.0 - blend) + Math.cos(inwardHdg) * blend;
+    const vy = Math.sin(desiredHeading) * (1.0 - blend) + Math.sin(inwardHdg) * blend;
+    return Math.atan2(vy, vx);
+  }
+
   static getDoctrineSteering(game, unit, target, dist, airDoctrine, atkDoctrine) {
     const mapW = window.CONFIG.THEATER_WIDTH_KM;
     const mapH = window.CONFIG.THEATER_HEIGHT_KM;
@@ -34,22 +51,43 @@ class AINavigationHandler {
       const isEwCraft = Boolean((unit.spec && unit.spec.category === 'EW') || unit.isEW || (unit.jamEfficiency && unit.jamEfficiency >= 0.25));
       if (isEwCraft && target) {
         const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
-        if (dist < 36.0) return { heading: directAngle + Math.PI * 0.78, throttle: 0.70 };
-        if (dist <= 54.0) return { heading: directAngle + (Math.PI / 2), throttle: 0.58 };
+        const orbitSign = (unit.id.charCodeAt(unit.id.length - 1) % 2 === 0) ? 1 : -1;
+        if (unit._aiDocPhase === 'EGRESS') {
+          if (dist >= 42.0) unit._aiDocPhase = 'ORBIT';
+        } else if (unit._aiDocPhase === 'ORBIT') {
+          if (dist < 36.0) unit._aiDocPhase = 'EGRESS';
+          else if (dist > 60.0) unit._aiDocPhase = 'INGRESS';
+        } else {
+          if (dist < 36.0) unit._aiDocPhase = 'EGRESS';
+          else if (dist <= 54.0) unit._aiDocPhase = 'ORBIT';
+          else unit._aiDocPhase = 'INGRESS';
+        }
+        if (unit._aiDocPhase === 'EGRESS') return { heading: directAngle + orbitSign * Math.PI * 0.78, throttle: 0.70 };
+        if (unit._aiDocPhase === 'ORBIT') return { heading: directAngle + orbitSign * (Math.PI / 2), throttle: 0.58 };
         return { heading: directAngle, throttle: 0.65 };
       }
       return null;
     }
 
-    if (airDoctrine.id === 'STEALTH_AMBUSH' && target && dist > 38.0) {
-      const corridorY = unit.y < mapH * 0.5 ? 12.0 : (mapH - 12.0);
-      return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.50 };
+    if (airDoctrine.id === 'STEALTH_AMBUSH' && target && dist > 38.0 && Math.abs(target.x - unit.x) > 22.0) {
+      const corridorY = unit.y < mapH * 0.5 ? 18.0 : (mapH - 18.0);
+      return { heading: Math.atan2(corridorY - unit.y, target.x - unit.x), throttle: 0.54 };
     }
 
     if (airDoctrine.id === 'STANDOFF' && target) {
       const directAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
-      if (dist < 44.0) return { heading: directAngle + Math.PI * 0.80, throttle: 0.86 };
-      if (dist <= 68.0) {
+      if (unit._aiDocPhase === 'EGRESS') {
+        if (dist >= 50.0) unit._aiDocPhase = 'CRANK';
+      } else if (unit._aiDocPhase === 'CRANK') {
+        if (dist < 44.0) unit._aiDocPhase = 'EGRESS';
+        else if (dist > 74.0) unit._aiDocPhase = 'INGRESS';
+      } else {
+        if (dist < 44.0) unit._aiDocPhase = 'EGRESS';
+        else if (dist <= 68.0) unit._aiDocPhase = 'CRANK';
+        else unit._aiDocPhase = 'INGRESS';
+      }
+      if (unit._aiDocPhase === 'EGRESS') return { heading: directAngle + Math.PI * 0.80, throttle: 0.86 };
+      if (unit._aiDocPhase === 'CRANK') {
         const crankSign = (unit.id.charCodeAt(unit.id.length - 1) % 2 === 0) ? 1 : -1;
         return { heading: directAngle + crankSign * 1.05, throttle: 0.65 };
       }
@@ -68,7 +106,14 @@ class AINavigationHandler {
         const offset = dist > 24.0 ? (spreadSign * 0.28) : 0.0;
         return { heading: directAngle + offset, throttle: 0.92 };
       }
-      if (dist < 40.0) return { heading: directAngle + Math.PI * 0.70, throttle: 0.68 };
+      if (unit._aiDocPhase === 'EGRESS') {
+        if (dist >= 46.0) unit._aiDocPhase = 'INGRESS';
+      } else if (dist < 40.0) {
+        unit._aiDocPhase = 'EGRESS';
+      } else {
+        unit._aiDocPhase = 'INGRESS';
+      }
+      if (unit._aiDocPhase === 'EGRESS') return { heading: directAngle + Math.PI * 0.70, throttle: 0.68 };
       return { heading: directAngle, throttle: 0.65 };
     }
 
@@ -77,10 +122,14 @@ class AINavigationHandler {
       const enemyCrossedLine = target && (isHostile ? (target.x >= mapW * 0.56) : (target.x <= mapW * 0.44));
       if (!target || (!enemyCrossedLine && dist > 52.0)) {
         const homeDist = Math.hypot(defensiveAnchorX - unit.x, (mapH * 0.5) - unit.y);
-        const patrolAngle = homeDist > 18.0
+        if (homeDist > 22.0) unit._aiDefHoldOrbit = false;
+        else if (homeDist < 15.0) unit._aiDefHoldOrbit = true;
+        const simTime = (game && game.simulation) ? game.simulation.elapsedTimeSec : 0;
+        const unitPhase = (unit.id ? unit.id.charCodeAt(unit.id.length - 1) : 0) * 0.7;
+        const patrolAngle = !unit._aiDefHoldOrbit
           ? Math.atan2((mapH * 0.5) - unit.y, defensiveAnchorX - unit.x)
-          : ((unit.age || 0) * 0.22 + (isHostile ? Math.PI : 0));
-        return { heading: patrolAngle, throttle: 0.52 };
+          : (simTime * 0.22 + unitPhase + (isHostile ? Math.PI : 0));
+        return { heading: patrolAngle, throttle: 0.54 };
       }
     }
 
@@ -88,17 +137,12 @@ class AINavigationHandler {
   }
 
   static handleNavigation(aiCommander, hostile, candidateAirTargets, visibleBunkers, profile, diffKey, dt, isFocused, airDoctrine, atkDoctrine, untrackedAirContacts = [], allMissiles = []) {
-    if (!hostile || hostile.activeManeuverTimer > 0 || hostile.hp <= 0.05) return;
+    if (!hostile || hostile.hp <= 0.05) return;
+    const hasInboundMissile = Boolean(allMissiles && allMissiles.some(m => m && m.active && m.target && m.target.id === hostile.id));
+    if (hostile.activeManeuverTimer > 0 && hasInboundMissile) return;
 
     if (hostile.isRTB) {
       hostile.radarLockedTarget = null;
-      if (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) || (airDoctrine && airDoctrine.id === 'DEFENSIVE_HOLD')) {
-        const egressHeading = aiCommander.planning.getCoveredEgressHeading(hostile);
-        let diff = egressHeading - hostile.heading;
-        while (diff < -Math.PI) diff += Math.PI * 2;
-        while (diff > Math.PI) diff -= Math.PI * 2;
-        hostile.heading += Math.max(-1.5 * dt, Math.min(1.5 * dt, diff));
-      }
       return;
     }
 
@@ -176,30 +220,42 @@ class AINavigationHandler {
     const docMove = this.getDoctrineSteering(aiCommander.game, hostile, target, dist, airDoctrine, atkDoctrine);
     const throttleBias = airDoctrine ? airDoctrine.throttleBias : 0.0;
 
+    const mapW = window.CONFIG.THEATER_WIDTH_KM;
+    const mapH = window.CONFIG.THEATER_HEIGHT_KM;
     const trackOrder = aiCommander.planning.getTrackAcquisitionVector(hostile, candidateAirTargets, untrackedAirContacts, allMissiles, diffKey);
     if (!target) {
       if (trackOrder) {
         hostile.radarLockedTarget = trackOrder.target;
-        let tDiff = trackOrder.heading - hostile.heading;
+        const safeTrackHdg = this.applyBoundaryAvoidance(hostile, trackOrder.heading, mapW, mapH);
+        let tDiff = safeTrackHdg - hostile.heading;
         while (tDiff < -Math.PI) tDiff += Math.PI * 2;
         while (tDiff > Math.PI) tDiff -= Math.PI * 2;
-        const turnCapSearch = hostile.getEffectiveAgility() * tier.turnMult * (isFocused ? 1.0 : 0.72);
+        const turnCapSearch = hostile.getEffectiveAgility() * tier.turnMult * (isFocused ? 1.0 : 0.85);
         hostile.heading += Math.max(-turnCapSearch * dt, Math.min(turnCapSearch * dt, tDiff));
         hostile.engineAlpha = Math.max(0.25, Math.min(1.0, trackOrder.throttle + throttleBias));
         return;
       }
       hostile.radarLockedTarget = null;
-      let idleHeading = Math.PI;
+      let idleHeading = Math.atan2((mapH * 0.5) - hostile.y, (mapW * 0.45) - hostile.x);
       if (docMove) idleHeading = docMove.heading;
       else if (wingmanOffset) idleHeading = Math.atan2(wingmanOffset.y - hostile.y, wingmanOffset.x - hostile.x);
+      idleHeading = this.applyBoundaryAvoidance(hostile, idleHeading, mapW, mapH);
       let diff = idleHeading - hostile.heading;
       while (diff < -Math.PI) diff += Math.PI * 2;
       while (diff > Math.PI) diff -= Math.PI * 2;
-      hostile.heading += Math.max(-0.8 * dt, Math.min(0.8 * dt, diff));
+      hostile.heading += Math.max(-0.95 * dt, Math.min(0.95 * dt, diff));
       hostile.engineAlpha = Math.max(0.25, Math.min(1.0, (docMove ? docMove.throttle : tier.throttle) + throttleBias));
       return;
     }
-    if (trackOrder && trackOrder.reason === 'F-POLE MIDCOURSE SUPPORT') {
+
+    const allowFPoleOverride = Boolean(
+      trackOrder &&
+      trackOrder.reason === 'F-POLE MIDCOURSE SUPPORT' &&
+      dist > 22.0 &&
+      role !== 'DOGFIGHT' &&
+      (!airDoctrine || airDoctrine.id !== 'AGGRESSIVE')
+    );
+    if (allowFPoleOverride) {
       target = trackOrder.target;
     }
 
@@ -207,7 +263,7 @@ class AINavigationHandler {
     let desiredHeading = Math.atan2(target.y - hostile.y, target.x - hostile.x);
     let desiredThrottle = tier.throttle;
 
-    if (trackOrder && trackOrder.reason === 'F-POLE MIDCOURSE SUPPORT') {
+    if (allowFPoleOverride) {
       desiredHeading = trackOrder.heading;
       desiredThrottle = trackOrder.throttle;
     } else if (docMove) {
@@ -242,32 +298,51 @@ class AINavigationHandler {
       if (statMove) {
         desiredHeading = statMove.heading;
         desiredThrottle = statMove.throttle;
-      } else if (dist < tier.overshootDist && Math.abs(hostile.heading - target.heading) > 1.8 && Math.random() < tier.overshootChance) {
-        hostile.engineAlpha = Math.max(0.25, Math.min(1.0, tier.throttle + throttleBias));
-        return;
+      } else if (wingmanOffset && dist > 30.0) {
+        desiredHeading = Math.atan2(wingmanOffset.y - hostile.y, wingmanOffset.x - hostile.x);
       }
-    } else if (dist < tier.overshootDist) {
-      if (Math.abs(hostile.heading - target.heading) > 1.8 && Math.random() < tier.overshootChance) {
-        hostile.engineAlpha = Math.max(0.25, Math.min(1.0, tier.throttle + throttleBias));
-        return;
-      }
-    } else if (wingmanOffset && dist > 20.0) {
+    } else if (wingmanOffset && dist > 30.0) {
       desiredHeading = Math.atan2(wingmanOffset.y - hostile.y, wingmanOffset.x - hostile.x);
     }
 
+    if (hostile._aiOvershootCd > 0) hostile._aiOvershootCd = Math.max(0, hostile._aiOvershootCd - dt);
+    if (hostile._aiOvershootTimer > 0) {
+      hostile._aiOvershootTimer = Math.max(0, hostile._aiOvershootTimer - dt);
+      hostile.engineAlpha = Math.max(0.25, Math.min(1.0, tier.throttle + throttleBias));
+      return;
+    }
+    if (!docMove && dist < tier.overshootDist && Math.abs(hostile.heading - (target.heading || 0)) > 1.8 && !(hostile._aiOvershootCd > 0)) {
+      hostile._aiOvershootCd = 4.2;
+      if (Math.random() < tier.overshootChance) {
+        hostile._aiOvershootTimer = 1.0;
+        hostile.engineAlpha = Math.max(0.25, Math.min(1.0, tier.throttle + throttleBias));
+        return;
+      }
+    }
+
+    if (hasInboundMissile && typeof AIEvasionHandler !== 'undefined' && typeof AIEvasionHandler.getDefensiveHoldHeading === 'function') {
+      const defHold = AIEvasionHandler.getDefensiveHoldHeading(hostile, allMissiles, diffKey);
+      if (defHold) {
+        desiredHeading = defHold.heading;
+        desiredThrottle = Math.max(desiredThrottle, defHold.throttle);
+      }
+    }
+
+    desiredHeading = this.applyBoundaryAvoidance(hostile, desiredHeading, mapW, mapH);
     let diff = desiredHeading - hostile.heading;
     while (diff < -Math.PI) diff += Math.PI * 2;
     while (diff > Math.PI) diff -= Math.PI * 2;
 
     const effAgi = hostile.getEffectiveAgility();
-    const turnCap = effAgi * tier.turnMult * (isFocused ? 1.0 : 0.55);
+    const turnCap = effAgi * tier.turnMult * (isFocused ? 1.0 : 0.85);
     hostile.heading += Math.max(-turnCap * dt, Math.min(turnCap * dt, diff));
 
     if (!docMove && role !== 'SNIPER' && role !== 'INTERCEPT' && typeof AIFlightProfile !== 'undefined' && Math.abs(diff) > 0.35) {
       const fpNav = AIFlightProfile.evaluate(hostile, diffKey);
       desiredThrottle = AIFlightProfile.computeCornerThrottle(hostile, fpNav.effMaxMach, fpNav.precision, desiredThrottle);
     }
-    hostile.engineAlpha = Math.max(0.25, Math.min(1.0, (isFocused ? desiredThrottle : 0.50) + throttleBias));
+    const effectiveThrottle = isFocused ? desiredThrottle : Math.max(0.42, desiredThrottle * 0.92);
+    hostile.engineAlpha = Math.max(0.25, Math.min(1.0, effectiveThrottle + throttleBias));
   }
 }
 

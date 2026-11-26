@@ -51,8 +51,11 @@ window.CORE_MANEUVER_CARDS = [
         threatHeading = Math.atan2(unit.radarLockedTarget.y - unit.y, unit.radarLockedTarget.x - unit.x);
       }
       if (threatHeading !== null) {
-        unit.heading = (threatHeading + Math.PI / 2) % (Math.PI * 2);
-        if (unit.heading < 0) unit.heading += Math.PI * 2;
+        const wrap = (h) => { let r = h % (Math.PI * 2); return r < 0 ? r + Math.PI * 2 : r; };
+        const angleDiff = (a, b) => { let d = a - b; while (d < -Math.PI) d += Math.PI * 2; while (d > Math.PI) d -= Math.PI * 2; return Math.abs(d); };
+        const leftBeam = wrap(threatHeading - Math.PI / 2);
+        const rightBeam = wrap(threatHeading + Math.PI / 2);
+        unit.heading = angleDiff(leftBeam, unit.heading) <= angleDiff(rightBeam, unit.heading) ? leftBeam : rightBeam;
       }
 
       unit.deployCountermeasures();

@@ -239,7 +239,16 @@ Aircraft.prototype.processRTB = function(dt) {
   const inSanctuary = isBlue ? (this.x <= targetX) : (this.x >= targetX);
 
   if (!inSanctuary) {
-    const baseHeading = isBlue ? Math.PI : 0.0;
+    let baseHeading = isBlue ? Math.PI : 0.0;
+    const game = window.Game;
+    const isAiHostile = (!isBlue && game && game.playerMode !== '2P' && game.ai && game.ai.planning);
+    if (isAiHostile) {
+      const diffKey = game.ai.getEffectiveDiffKey();
+      const docState = game.ai.getActiveDoctrines();
+      if (['FORTIFIED', 'MASTER', 'LEGEND'].includes(diffKey) || (docState && docState.airDoctrine && docState.airDoctrine.id === 'DEFENSIVE_HOLD')) {
+        baseHeading = game.ai.planning.getCoveredEgressHeading(this);
+      }
+    }
     let diff = baseHeading - this.heading;
     while (diff < -Math.PI) diff += Math.PI * 2;
     while (diff > Math.PI) diff -= Math.PI * 2;
