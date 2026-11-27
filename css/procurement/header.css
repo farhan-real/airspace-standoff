@@ -227,12 +227,12 @@
 
 .is-android-apk #btn-proc-fullscreen,
 .is-android-apk #btn-fullscreen-toggle,
-.is-pwa #btn-proc-fullscreen,
-.is-pwa #btn-fullscreen-toggle {
+.is-pwa-fullscreen #btn-proc-fullscreen,
+.is-pwa-fullscreen #btn-fullscreen-toggle {
   display: none !important;
 }
 
-@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+@media (display-mode: fullscreen) {
   #btn-proc-fullscreen,
   #btn-fullscreen-toggle {
     display: none !important;

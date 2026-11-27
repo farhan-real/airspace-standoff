@@ -23,10 +23,18 @@ class FullscreenHandler {
     return false;
   }
 
-  isPwa() {
+  isFullscreenDisplayMode() {
+    try {
+      if (window.matchMedia && window.matchMedia('(display-mode: fullscreen)').matches) {
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  isStandalonePwa() {
     try {
       if (window.matchMedia && (
-        window.matchMedia('(display-mode: fullscreen)').matches ||
         window.matchMedia('(display-mode: standalone)').matches ||
         window.matchMedia('(display-mode: minimal-ui)').matches
       )) {
@@ -39,8 +47,12 @@ class FullscreenHandler {
     return false;
   }
 
+  isPwa() {
+    return this.isFullscreenDisplayMode() || this.isStandalonePwa();
+  }
+
   shouldHideFullscreenControls() {
-    return this.isAndroidApk() || this.isPwa();
+    return this.isAndroidApk() || this.isFullscreenDisplayMode();
   }
 
   hasNativeSupport() {
@@ -248,6 +260,38 @@ class FullscreenHandler {
     btn.addEventListener('click', executeToggle);
   }
 
+  bindStandaloneAutoFullscreen() {
+    if (this._autoFsBound || !this.isStandalonePwa() || !this.hasNativeSupport()) return;
+    this._autoFsBound = true;
+
+    const cleanup = () => {
+      document.removeEventListener('touchend', onFirstGesture, true);
+      document.removeEventListener('click', onFirstGesture, true);
+      document.removeEventListener('keydown', onFirstGesture, true);
+    };
+
+    const onFirstGesture = (e) => {
+      if (e && e.target && typeof e.target.closest === 'function') {
+        if (e.target.closest('#btn-proc-fullscreen, #btn-fullscreen-toggle, #btn-cfg-fullscreen')) {
+          cleanup();
+          return;
+        }
+      }
+      cleanup();
+      if (this.isActive() || this.shouldHideFullscreenControls()) return;
+      this.requestNativeFullscreen().then((ok) => {
+        if (ok) {
+          this.updateUI();
+          this.triggerViewportResize();
+        }
+      });
+    };
+
+    document.addEventListener('touchend', onFirstGesture, { capture: true, passive: true });
+    document.addEventListener('click', onFirstGesture, true);
+    document.addEventListener('keydown', onFirstGesture, true);
+  }
+
   init() {
     if (this.isAndroidApk()) {
       if (document.documentElement) document.documentElement.classList.add('is-android-apk');
@@ -256,11 +300,17 @@ class FullscreenHandler {
       return;
     }
 
-    if (this.isPwa()) {
-      if (document.documentElement) document.documentElement.classList.add('is-pwa');
-      if (document.body) document.body.classList.add('is-pwa');
+    if (this.isFullscreenDisplayMode()) {
+      if (document.documentElement) document.documentElement.classList.add('is-pwa', 'is-pwa-fullscreen');
+      if (document.body) document.body.classList.add('is-pwa', 'is-pwa-fullscreen');
       this.updateUI();
       return;
+    }
+
+    if (this.isStandalonePwa()) {
+      if (document.documentElement) document.documentElement.classList.add('is-pwa', 'is-pwa-standalone');
+      if (document.body) document.body.classList.add('is-pwa', 'is-pwa-standalone');
+      this.bindStandaloneAutoFullscreen();
     }
 
     ['btn-proc-fullscreen', 'btn-fullscreen-toggle', 'btn-cfg-fullscreen'].forEach(id => {

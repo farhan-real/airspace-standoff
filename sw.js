@@ -1,6 +1,6 @@
 /* sw.js - AIRSPACE STANDOFF Automatic Network-First Service Worker with Offline Cache Fallback */
 
-const CACHE_NAME = 'airspace-standoff-app-v6';
+const CACHE_NAME = 'airspace-standoff-app-v7';
 const FONT_CACHE = 'airspace-standoff-fonts-v1';
 
 const CORE_ASSETS = [
