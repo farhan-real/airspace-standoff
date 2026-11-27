@@ -245,13 +245,18 @@
   color: #ffffff;
 }
 
-.cic-desc { font-size: 0.68rem; color: var(--color-moon-mist); line-height: 1.42; }
+.cic-desc {
+  font-size: 0.68rem;
+  color: var(--color-moon-mist);
+  line-height: 1.42;
+  margin-top: auto;
+}
 
 .cic-footer {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: auto;
+  margin-top: 0;
   padding-top: 4px;
   flex-shrink: 0;
 }

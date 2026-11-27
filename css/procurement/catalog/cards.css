@@ -98,7 +98,12 @@
 .adc-metric-cell { display: flex; justify-content: space-between; align-items: center; color: var(--color-moon-mist); padding: 1px 0; min-width: 0; gap: 4px; }
 .adc-metric-cell .station-tag-box { margin-left: auto; }
 .adc-metric-cell b:not([class*="stat-tier"]) { color: #ffffff; }
-.adc-desc { font-size: 0.68rem; color: var(--color-moon-mist); line-height: 1.42; }
+.adc-desc {
+  font-size: 0.68rem;
+  color: var(--color-moon-mist);
+  line-height: 1.42;
+  margin-top: auto;
+}
 
 .adc-footer {
   display: flex;
@@ -107,7 +112,8 @@
   gap: 6px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 7px;
-  margin-top: auto;
+  margin-top: 0;
+  flex-shrink: 0;
 }
 
 .adc-footer .spec-inspect-btn {
