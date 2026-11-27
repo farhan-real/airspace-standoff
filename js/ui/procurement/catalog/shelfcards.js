@@ -39,7 +39,7 @@ class ShelfCardBuilders {
       </div>
       ${specialLineHtml}
       <div class="cic-desc">${g.desc}</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+      <div class="cic-footer">
         <button type="button" class="spec-inspect-btn" data-inspect-type="gun" data-inspect-id="${g.id}">SPECS</button>
         <button type="button" class="btn-quick-equip btn-equip-gun" data-gun-id="${g.id}" style="flex:1;" ${!isComp ? 'disabled' : ''}>${!isComp ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP')}</button>
       </div>`;
@@ -81,7 +81,7 @@ class ShelfCardBuilders {
       </div>
       ${specialLineHtml}
       <div class="cic-desc">${upg.desc}</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+      <div class="cic-footer">
         <button type="button" class="spec-inspect-btn" data-inspect-type="upgrade" data-inspect-id="${upg.id}">SPECS</button>
         <button type="button" class="btn-quick-equip btn-equip-upgrade" data-upg-id="${upg.id}" style="flex:1;" ${isDisallowed ? 'disabled' : ''}>${isDisallowed ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP')}</button>
       </div>`;
@@ -180,7 +180,7 @@ class ShelfCardBuilders {
       <div class="cic-specs">${specsRow}</div>
       ${specialLineHtml}
       <div class="cic-desc">${wpn.behaviorDesc || wpn.desc}</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+      <div class="cic-footer">
         <button type="button" class="spec-inspect-btn" data-inspect-type="weapon" data-inspect-id="${wpn.id}">SPECS</button>
         <button type="button" class="btn-quick-equip btn-equip-wpn" data-wpn-id="${wpn.id}" style="flex:1;" ${isRestricted ? 'disabled' : ''}>${isRestricted ? 'INCOMPATIBLE' : (active ? `EQUIP TO AIRCRAFT #${active.index}` : 'EQUIP')}</button>
       </div>`;
