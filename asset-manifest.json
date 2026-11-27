@@ -60,7 +60,7 @@
   "./icons/settings.svg": "8477c4c28fb2",
   "./icons/star.svg": "f513aa84a895",
   "./icons/trash.svg": "216193449a36",
-  "./index.html": "ec7445cdd433",
+  "./index.html": "0cd38129dd00",
   "./js/data/aidifficulties.js": "6681be15cb54",
   "./js/data/aircraft.js": "cee0c95aec79",
   "./js/data/aircraft/airdominance.js": "794b6b71545d",
@@ -284,5 +284,5 @@
   "./js/ui/procurement/squadron/roster.js": "10ba54246ab2",
   "./js/ui/procurement/squadron/stations.js": "65a9cc0a81bb",
   "./js/ui/settings.js": "5792bf014a43",
-  "./manifest.webmanifest": "e3009e68ede6"
+  "./manifest.webmanifest": "090b1f243921"
 }
