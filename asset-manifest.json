@@ -1,5 +1,5 @@
 {
-  "./css/core/base.css": "2c3b8b25823b",
+  "./css/core/base.css": "276e315f95ed",
   "./css/core/codex.css": "bc92103d664a",
   "./css/core/dialogs/dialogs.css": "453be69d230e",
   "./css/core/dialogs/saveload.css": "f4e2f6053c05",
@@ -26,14 +26,14 @@
   "./css/hud/inspection/graphs.css": "f7055f4c38c2",
   "./css/hud/inspection/layout.css": "16e4f142523c",
   "./css/hud/radar.css": "6fc1d23a21eb",
-  "./css/hud/workspace.css": "3273471af66d",
+  "./css/hud/workspace.css": "379b5be901aa",
   "./css/leaderboard/dossier.css": "4203f3a60fb2",
   "./css/leaderboard/leaderboard.css": "1ae398656fd6",
   "./css/procurement/catalog/armory.css": "74e53313082c",
   "./css/procurement/catalog/cards.css": "0aa0d06e966a",
   "./css/procurement/catalog/preconfig.css": "64f935050af1",
-  "./css/procurement/header.css": "5c35810b163d",
-  "./css/procurement/layout.css": "46e032dfb11c",
+  "./css/procurement/header.css": "aa65a913fd54",
+  "./css/procurement/layout.css": "141373ab3cdb",
   "./css/procurement/presets.css": "7f3c279a3337",
   "./css/procurement/squadron/hardware.css": "f299e4ce7380",
   "./css/procurement/squadron/loadout.css": "f5d81d36e780",
@@ -223,7 +223,7 @@
   "./js/ui/controls.js": "e184ef4dea7f",
   "./js/ui/controls/keyboard.js": "c1a0a6d2385d",
   "./js/ui/controls/pointer.js": "aeb282be26ee",
-  "./js/ui/controls/screenmode.js": "2bfd76d9b68b",
+  "./js/ui/controls/screenmode.js": "79889094669b",
   "./js/ui/controls/targeting.js": "74fb39cb6fad",
   "./js/ui/dropdown.js": "24b8453830a6",
   "./js/ui/inspection/cognition.js": "8da3fb73e83c",
@@ -283,6 +283,6 @@
   "./js/ui/procurement/squadron/loadouts.js": "76ab24e4cdec",
   "./js/ui/procurement/squadron/roster.js": "10ba54246ab2",
   "./js/ui/procurement/squadron/stations.js": "65a9cc0a81bb",
-  "./js/ui/settings.js": "12d404a595f3",
-  "./manifest.webmanifest": "750785145ccc"
+  "./js/ui/settings.js": "5792bf014a43",
+  "./manifest.webmanifest": "e3009e68ede6"
 }

@@ -51,6 +51,7 @@ html, body {
   font-family: var(--font-untitled-sans);
   font-variant-numeric: tabular-nums;
   overflow: hidden;
+  inset: 0;
   height: 100%;
   width: 100%;
   position: fixed;

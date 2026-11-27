@@ -228,13 +228,20 @@ class SettingsManager {
 
   renderRadarTab(container) {
     const curZoom = (this.game.radar ? this.game.radar.zoom.toFixed(2) : '1.00');
-    const isFullscreenActive = this.game.controls && this.game.controls.fullscreen ? this.game.controls.fullscreen.isActive() : false;
-
-    container.innerHTML = `
+    const fsHandler = this.game.controls ? this.game.controls.fullscreen : null;
+    const hideFullscreen = Boolean(
+      fsHandler &&
+      typeof fsHandler.shouldHideFullscreenControls === 'function' &&
+      fsHandler.shouldHideFullscreenControls()
+    );
+    const isFullscreenActive = fsHandler ? fsHandler.isActive() : false;
+    const fullscreenRowHtml = hideFullscreen ? '' : `
       <div class="settings-form-row">
         <div class="settings-label-group"><label>FULLSCREEN DISPLAY</label><span class="settings-hint">Toggle full screen immersion across mobile, tablet or desktop</span></div>
         <button type="button" id="btn-cfg-fullscreen" class="hud-btn ${isFullscreenActive ? 'highlight' : ''}">${isFullscreenActive ? 'EXIT FULL' : 'FULLSCREEN'}</button>
-      </div>
+      </div>`;
+
+    container.innerHTML = `${fullscreenRowHtml}
       <div class="settings-form-row">
         <div class="settings-label-group"><label>CAMERA CUTOUT &amp; SAFE ZONE</label><span class="settings-hint">Pad viewport inwards to prevent phone camera notch overlap</span></div>
         <button type="button" id="btn-toggle-safe-zone" class="hud-btn ${this.safeZone ? 'highlight' : ''}">${this.safeZone ? 'SAFE ZONE: ON' : 'SAFE ZONE: OFF'}</button>

@@ -23,6 +23,26 @@ class FullscreenHandler {
     return false;
   }
 
+  isPwa() {
+    try {
+      if (window.matchMedia && (
+        window.matchMedia('(display-mode: fullscreen)').matches ||
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.matchMedia('(display-mode: minimal-ui)').matches
+      )) {
+        return true;
+      }
+      if (typeof window.navigator !== 'undefined' && window.navigator.standalone === true) {
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  shouldHideFullscreenControls() {
+    return this.isAndroidApk() || this.isPwa();
+  }
+
   hasNativeSupport() {
     const doc = document;
     return Boolean(
@@ -145,7 +165,7 @@ class FullscreenHandler {
   }
 
   async toggle() {
-    if (this.isAndroidApk()) return;
+    if (this.shouldHideFullscreenControls()) return;
 
     if (this.isActive()) {
       if (this.isPseudoFullscreen) {
@@ -170,7 +190,7 @@ class FullscreenHandler {
   }
 
   updateUI() {
-    if (this.isAndroidApk()) {
+    if (this.shouldHideFullscreenControls()) {
       const btnProc = document.getElementById('btn-proc-fullscreen');
       const btnHud = document.getElementById('btn-fullscreen-toggle');
       const btnCfg = document.getElementById('btn-cfg-fullscreen');
@@ -230,9 +250,15 @@ class FullscreenHandler {
 
   init() {
     if (this.isAndroidApk()) {
-      if (document.documentElement) {
-        document.documentElement.classList.add('is-android-apk');
-      }
+      if (document.documentElement) document.documentElement.classList.add('is-android-apk');
+      if (document.body) document.body.classList.add('is-android-apk');
+      this.updateUI();
+      return;
+    }
+
+    if (this.isPwa()) {
+      if (document.documentElement) document.documentElement.classList.add('is-pwa');
+      if (document.body) document.body.classList.add('is-pwa');
       this.updateUI();
       return;
     }
